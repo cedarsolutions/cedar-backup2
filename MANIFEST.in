@@ -1,0 +1,9 @@
+include setup.py
+include CedarBackup2/*.py
+include Changelog
+include README
+include TODO
+include LICENSE
+include INSTALL
+include unittest/*
+include unittest/data/*
