@@ -42,5 +42,6 @@ are backed up using tar and may be compressed using gzip or bzip2.
 # Using 'from CedarBackup2 import *' will just import the modules listed
 # in the __all__ variable.
 
-__all__ = [ 'release', 'util', 'knapsack', 'filesystem', 'peer', 'image', 'writer', 'config', ] 
+__all__ = [ 'release', 'cli', 'actions', 'util', 'knapsack', 
+            'filesystem', 'peer', 'image', 'writer', 'config', ] 
 
