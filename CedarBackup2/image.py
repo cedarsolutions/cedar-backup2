@@ -147,12 +147,12 @@ class IsoImage(object):
       To include the file C{../old.lis} at C{/foo/bar/old.lis}, you would
       still call::
 
-          addEntry(path="../old.lis", graftPoint="foo/bar")
+         addEntry(path="../old.lis", graftPoint="foo/bar")
 
       However, this call will result in C{/some/dir} being placed into
-      C{/foo/bar}, resulting in C{/foo/bar/dir}:
+      C{/foo/bar}, resulting in C{/foo/bar/dir}::
 
-          addEntry(path="/some/dir", graftPoint="foo/bar")
+         addEntry(path="/some/dir", graftPoint="foo/bar")
 
       This makes the object-wide graft point much more useful, since you really
       can set it once and then add a number of files and directories, as long
