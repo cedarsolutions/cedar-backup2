@@ -17,6 +17,15 @@
 
 FUTURE FUNCTIONALITY
 
+* Maybe calculate file hashes (SHA hashes) on memory-mapped file or 
+  something rather than string?  It's slow to load large files.
+
+  There is an ASPN recipe: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/259109
+
+  It looks to be quite straightforward, and I can't believe I missed it
+  before.  It should be a lot faster than what I am doing now, since it
+  doesn't require that the entire file be read into memory all at once.
+
 * Add in notes on configuration interface for extensions if they want 3rd parties to be able to deal with their configuration.
 * We should probably check the staging flag and refuse to stage if it's already been done...?
 * Add a config value or option for indicating whether backed-up files should be logged (if anyone cares).
