@@ -15,6 +15,24 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 * Change sort order of parameters, classes within modules, etc. where needed in Epydoc
-* Implement a removeUnchanged() method on the backup files list, taking same as its digest output
 * Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
-* PurgeItemList needs to match up better with requirements of purge action (i.e. way to purge files of a certain age)
+* Go back through configuration and make sure that new items from aborted 2.x branch are taken into account
+* Implement the configuration functionality and all of its regression tests
+* Write individual action functions (process.py) in terms of other lower-level functionality
+* Implement a cli module (might take this from aborted 2.x branch?) for command-line interface
+* Implement cback script in terms of the cli module (again, maybe right from aborted 2.x branch?)
+* Go back through bugzilla bugs and make sure they're all taken into account now that entire cli is finished
+* Create manpages and other instructions using either halibut or some other system
+* Rewrite Cedar Backup webpage online, to show new version and link to old version
+
+* Write some sort of "what's new" paragraph for release of 2.0beta1
+   - Entire codebase has been rewritten from the ground up using Python 2.3.
+   - Cleaner, more pythonic, better structured, sensible mix of classes and functions
+   - Much of the  lower-level is intended to be general-purpose "library" code
+   - All lower-level functionality is thoroughly regression tested via pyunit (XXX individual unit tests)
+   - Configuration class is standardized, so third-party Python programs can use it.
+   - Uses Python's integrated logging for realtime logs, much better than old logs.
+   - Uses Python's tar module rather than GNU tar via pipes, for more consistent behavior.
+   - Internal use of pipes should now be more robust and less prone to problems.
+   - Support for some new functionality, such as "optimized fit to disc" (???)
+   - Documentation has been completely rewritten
