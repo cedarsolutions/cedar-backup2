@@ -54,7 +54,7 @@ EPYDOC_DIR        = $(DOC_DIR)/cedar-backup
 # High-level rules
 ###################
 
-all: doc distrib
+all: 
 
 clean: docclean distribclean 
 	-@find . -name "*.pyc" | xargs rm -f
@@ -80,6 +80,7 @@ pycheck:
 # Documentation
 ################
 
+docsclean: docclean
 docclean:
 	-@$(RM) -rf $(EPYDOC_DIR)
 

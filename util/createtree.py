@@ -231,8 +231,8 @@ def filldir(config, basedir, depth):
    for linkitem in linkitems:
       linkindex += 1
       linkname = os.path.join(basedir, "%s%03d" % (config['linkprefix'], linkindex))
-      os.symlink(linkitem, linkname)
-      print "Created link [%s] to [%s]." % (linkname, linkitem)
+      os.symlink(os.path.basename(linkitem), linkname)
+      print "Created link [%s -> %s]." % (linkname, os.path.basename(linkitem))
 
 
 #########################
