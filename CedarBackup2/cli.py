@@ -82,19 +82,26 @@ Backwards Compatibility
 
 # System modules
 import sys
+import os
 import logging
 import getopt
 
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
-from CedarBackup2.util import RestrictedContentList, splitCommandLine
+from CedarBackup2.util import RestrictedContentList, splitCommandLine, getUidGid
 
 
 ########################################################################
 # Module-wide constants and variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.cli")
+logger = logging.getLogger("CedarBackup2.log.cli")
+
+DISK_LOG_FORMAT    = "%(asctime)s --> [%(levelname)-5s] %(message)s"
+DISK_OUTPUT_FORMAT = "%(message)s"
+SCREEN_LOG_FORMAT  = "%(message)s"
+SCREEN_LOG_STREAM  = sys.stdout
+DATE_FORMAT        = "%Y-%m-%dT%H:%M:%S %Z"
 
 DEFAULT_CONFIG     = "/etc/cback.conf"
 DEFAULT_LOGFILE    = "/var/log/cback.log"
@@ -179,6 +186,153 @@ def version(fd=sys.stdout):
    fd.write("\n")
    fd.write(" Use the --help option for usage information.\n")
    fd.write("\n")
+
+
+##########################
+# setupLogging() function
+##########################
+
+def setupLogging(options):
+   """
+   Set up logging based on command-line options.
+
+   There are two kinds of logging: flow logging and output logging.  Output
+   logging contains information about system commands executed by Cedar Backup,
+   for instance the calls to C{mkisofs} or C{mount}, etc.  Flow logging
+   contains error and informational messages used to understand program flow.
+   Flow log messages and output log messages are written to two different
+   loggers target (C{CedarBackup2.log} and C{CedarBackup2.output}).  Flow log
+   messages are written at the ERROR, INFO and DEBUG log levels, while output
+   log messages are generally only written at the INFO log level.
+
+   By default, output logging is disabled.  When the C{options.output} or
+   C{options.debug} flags are set, output logging will be written to the
+   configured logfile.  Output logging is never written to the screen.
+
+   By default, flow logging is enabled at the ERROR level to the screen and at
+   the INFO level to the configured logfile.  If the C{options.quiet} flag is
+   set, flow logging is enabled at the INFO level to the configured logfile
+   only (i.e. no output will be sent to the screen).  If the C{options.verbose}
+   flag is set, flow logging is enabled at the INFO level to both the screen
+   and the configured logfile.  If the C{options.debug} flag is set, flow
+   logging is enabled at the DEBUG level to both the screen and the configured
+   logfile.
+
+   @param options: Command-line options.
+   @type options: L{Options} object
+   """
+   logfile = setupLogfile(options)
+   setupFlowLogging(logfile, options)
+   setupOutputLogging(logfile, options)
+
+def setupLogfile(options):
+   """
+   Sets up and creates logfile as needed.
+
+   If the logfile already exists on disk, it will be left as-is, under the
+   assumption that it was created with appropriate ownership and permissions.
+   If the logfile does not exist on disk, it will be created as an empty file.
+   Ownership and permissions will remain at their defaults unless user/group
+   and/or mode are set in the options.
+
+   @note: This function is vulnerable to a race condition.  If the log file
+   does not exist when the function is run, it will attempt to create the file
+   as safely as possible (using C{O_CREAT}).  If two processes attempt to
+   create the file at the same time, then one of them will fail.  In practice,
+   this shouldn't really be a problem, but it might happen occassionally if two
+   instances of cback run concurrently or if cback collides with logrotate or
+   something.
+
+   @param options: Command-line options.
+   @return: Path to logfile on disk.
+   """
+   if options.logfile is None:
+      logfile = DEFAULT_LOGFILE
+   else:
+      logfile = options.logfile
+   if not os.path.exists(logfile):
+      if options.mode is None: 
+         os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND)).write("")
+      else:
+         os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND), options.mode).write("")
+      if options.user is not None and options.group is not None:
+         (uid, gid) = getUidGid(options.user, options.group)
+         os.chown(logfile, uid, gid)
+   return logfile
+
+def setupFlowLogging(logfile, options):
+   """
+   Sets up flow logging.
+   @param logfile: Path to logfile on disk.
+   @param options: Command-line options.
+   """
+   flowLogger = logging.getLogger("CedarBackup2.log")
+   flowLogger.setLevel(logging.DEBUG)    # let the logger see all messages
+   setupDiskFlowLogging(flowLogger, logfile, options)
+   setupScreenFlowLogging(flowLogger, options)
+
+def setupOutputLogging(logfile, options):
+   """
+   Sets up command output logging.
+   @param logfile: Path to logfile on disk.
+   @param options: Command-line options.
+   """
+   outputLogger = logging.getLogger("CedarBackup2.output")
+   outputLogger.setLevel(logging.DEBUG)      # let the logger see all messages
+   setupDiskOutputLogging(outputLogger, logfile, options)
+
+def setupDiskFlowLogging(flowLogger, logfile, options):
+   """
+   Sets up on-disk flow logging.
+   @param flowLogger: Python flow logger object.
+   @param logfile: Path to logfile on disk.
+   @param options: Command-line options.
+   """
+   formatter = logging.Formatter(fmt=DISK_LOG_FORMAT, datefmt=DATE_FORMAT)
+   handler = logging.FileHandler(logfile, mode="a")
+   handler.setFormatter(formatter)
+   if options.debug:
+      handler.setLevel(logging.DEBUG)
+   else:
+      handler.setLevel(logging.INFO)
+   flowLogger.addHandler(handler)
+
+def setupScreenFlowLogging(flowLogger, options):
+   """
+   Sets up on-screen flow logging.
+   @param flowLogger: Python flow logger object.
+   @param logfile: Path to logfile on disk.
+   @param options: Command-line options.
+   """
+   formatter = logging.Formatter(fmt=SCREEN_LOG_FORMAT)
+   handler = logging.StreamHandler(strm=SCREEN_LOG_STREAM)
+   handler.setFormatter(formatter)
+   if options.quiet:
+      handler.setLevel(logging.CRITICAL)  # effectively turn it off
+   elif options.verbose:
+      if options.debug:
+         handler.setLevel(logging.DEBUG)
+      else:
+         handler.setLevel(logging.INFO)
+   else:
+      handler.setLevel(logging.ERROR)
+   flowLogger.addHandler(handler)
+
+def setupDiskOutputLogging(outputLogger, logfile, options):
+   """
+   Sets up on-disk command output logging.
+   @param outputLogger: Python command output logger object.
+   @param logfile: Path to logfile on disk.
+   @param options: Command-line options.
+   """
+   formatter = logging.Formatter(fmt=DISK_OUTPUT_FORMAT, datefmt=DATE_FORMAT)
+   handler = logging.FileHandler(logfile, mode="a")
+   handler.setFormatter(formatter)
+   if options.debug or options.output:
+      handler.setLevel(logging.DEBUG)
+   else:
+      handler.setLevel(logging.CRITICAL)  # effectively turn it off
+   outputLogger.addHandler(handler)
 
 
 #########################################################################
