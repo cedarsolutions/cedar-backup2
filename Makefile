@@ -100,7 +100,7 @@ docsclean: docclean
 epydoc: interface-doc
 interface: interface-doc
 book: manual
-manual: manual
+manual: manual-doc
 
 doc: interface-doc manual-doc
 
