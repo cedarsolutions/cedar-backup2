@@ -75,6 +75,7 @@ import popen2
 import logging
 import pwd
 import grp
+import string
 
 
 ########################################################################
@@ -436,6 +437,62 @@ def convertSize(size, fromUnit, toUnit):
    else:
       raise ValueError("Unknown 'to' unit %d." % toUnit)
    
+
+##################################
+# getFunctionReference() function
+##################################
+
+def getFunctionReference(module, function):
+   """
+   Gets a reference to a named function.
+
+   This does some hokey-pokey to get back a reference to a dynamically named
+   function.  For instance, say you wanted to get a reference to the
+   C{os.path.isdir} function.  You could use::
+   
+      myfunc = getFunctionReference("os.path", "isdir")
+
+   Although we won't bomb out directly, behavior is pretty much undefined if
+   you pass in C{None} or C{""} for either C{module} or C{function}.
+
+   The only validation we enforce is that whatever we get back must be
+   callable.  
+
+   I derived this code based on the internals of the Python unittest
+   implementation.  I don't claim to completely understand how it works.
+
+   @param module: Name of module associated with function.
+   @type module: Something like "os.path" or "CedarBackup2.util"
+
+   @param function: Name of function
+   @type function: Something like "isdir" or "getUidGid"
+
+   @return: Reference to function associated with name.
+
+   @raise ImportError: If the function cannot be found. 
+   @raise ValueError: If the resulting reference is not callable.
+   """
+   parts = []
+   if module is not None and module != "":
+      parts = module.split(".")
+   if function is not None and function != "":
+      parts.append(function);
+   copy = parts[:]
+   while copy:
+      try:
+         module = __import__(string.join(copy, "."))
+         break
+      except ImportError:
+         del copy[-1]
+         if not copy: raise
+      parts = parts[1:]
+   obj = module
+   for part in parts:
+      obj = getattr(obj, part) 
+   if not callable(obj):
+      raise ValueError("Reference to %s.%s is not callable." % (module, function))
+   return obj
+
 
 #######################
 # getUidGid() function
