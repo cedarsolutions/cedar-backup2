@@ -2775,7 +2775,7 @@ class Config(object):
       """
       try:
          xmlDom = PyExpat.Reader().fromString(xmlData)
-         parent = Config._readFirstChild(xmlDom, "cb_config")
+         parent = Config.readFirstChild(xmlDom, "cb_config")
          self._reference = Config._parseReference(parent)
          self._extensions = Config._parseExtensions(parent)
          self._options = Config._parseOptions(parent)
@@ -2803,13 +2803,13 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       reference = None
-      section = Config._readFirstChild(parent, "reference")
+      section = Config.readFirstChild(parent, "reference")
       if section is not None:
          reference = ReferenceConfig()
-         reference.author = Config._readString(section, "author")
-         reference.revision = Config._readString(section, "revision")
-         reference.description = Config._readString(section, "description")
-         reference.generator = Config._readString(section, "generator")
+         reference.author = Config.readString(section, "author")
+         reference.revision = Config.readString(section, "revision")
+         reference.description = Config.readString(section, "description")
+         reference.generator = Config.readString(section, "generator")
       return reference
    _parseReference = staticmethod(_parseReference)
 
@@ -2832,7 +2832,7 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       extensions = None
-      section = Config._readFirstChild(parent, "extensions")
+      section = Config.readFirstChild(parent, "extensions")
       if section is not None:
          extensions = ExtensionsConfig()
          extensions.actions = Config._parseExtendedActions(section)
@@ -2857,14 +2857,14 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       options = None
-      section = Config._readFirstChild(parent, "options")
+      section = Config.readFirstChild(parent, "options")
       if section is not None:
          options = OptionsConfig()
-         options.startingDay = Config._readString(section, "starting_day")
-         options.workingDir = Config._readString(section, "working_dir")
-         options.backupUser = Config._readString(section, "backup_user")
-         options.backupGroup = Config._readString(section, "backup_group")
-         options.rcpCommand = Config._readString(section, "rcp_command")
+         options.startingDay = Config.readString(section, "starting_day")
+         options.workingDir = Config.readString(section, "working_dir")
+         options.backupUser = Config.readString(section, "backup_user")
+         options.backupGroup = Config.readString(section, "backup_group")
+         options.rcpCommand = Config.readString(section, "rcp_command")
       return options
    _parseOptions = staticmethod(_parseOptions)
 
@@ -2895,13 +2895,13 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       collect = None
-      section = Config._readFirstChild(parent, "collect")
+      section = Config.readFirstChild(parent, "collect")
       if section is not None:
          collect = CollectConfig()
-         collect.targetDir = Config._readString(section, "collect_dir")
-         collect.collectMode = Config._readString(section, "collect_mode")
-         collect.archiveMode = Config._readString(section, "archive_mode")
-         collect.ignoreFile = Config._readString(section, "ignore_file")
+         collect.targetDir = Config.readString(section, "collect_dir")
+         collect.collectMode = Config.readString(section, "collect_mode")
+         collect.archiveMode = Config.readString(section, "archive_mode")
+         collect.ignoreFile = Config.readString(section, "ignore_file")
          (collect.absoluteExcludePaths, unused, collect.excludePatterns) = Config._parseExclusions(section)
          collect.collectDirs = Config._parseCollectDirs(section)
       return collect
@@ -2929,10 +2929,10 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       stage = None
-      section = Config._readFirstChild(parent, "stage")
+      section = Config.readFirstChild(parent, "stage")
       if section is not None:
          stage = StageConfig()
-         stage.targetDir = Config._readString(section, "staging_dir")
+         stage.targetDir = Config.readString(section, "staging_dir")
          (stage.localPeers, stage.remotePeers) = Config._parsePeers(section)
       return stage
    _parseStage = staticmethod(_parseStage)
@@ -2957,16 +2957,16 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       store = None
-      section = Config._readFirstChild(parent, "store")
+      section = Config.readFirstChild(parent, "store")
       if section is not None:
          store = StoreConfig()
-         store.sourceDir = Config._readString(section,  "source_dir")
-         store.mediaType = Config._readString(section,  "media_type")
-         store.deviceType = Config._readString(section,  "device_type")
-         store.devicePath = Config._readString(section,  "target_device")
-         store.deviceScsiId = Config._readString(section,  "target_scsi_id")
-         store.driveSpeed = Config._readInteger(section, "drive_speed")
-         store.checkData = Config._readBoolean(section, "check_data")
+         store.sourceDir = Config.readString(section,  "source_dir")
+         store.mediaType = Config.readString(section,  "media_type")
+         store.deviceType = Config.readString(section,  "device_type")
+         store.devicePath = Config.readString(section,  "target_device")
+         store.deviceScsiId = Config.readString(section,  "target_scsi_id")
+         store.driveSpeed = Config.readInteger(section, "drive_speed")
+         store.checkData = Config.readBoolean(section, "check_data")
       return store
    _parseStore = staticmethod(_parseStore)
 
@@ -2987,7 +2987,7 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       purge = None
-      section = Config._readFirstChild(parent, "purge")
+      section = Config.readFirstChild(parent, "purge")
       if section is not None:
          purge = PurgeConfig()
          purge.purgeDirs = Config._parsePurgeDirs(section)
@@ -3011,13 +3011,13 @@ class Config(object):
       @raise ValueError: If the data at the location can't be read
       """
       lst = []
-      for entry in Config._readChildren(parent, "action"):
+      for entry in Config.readChildren(parent, "action"):
          if entry.nodeType == Node.ELEMENT_NODE:
             action = ExtendedAction()
-            action.name = Config._readString(entry, "name")
-            action.module = Config._readString(entry, "module")
-            action.function = Config._readString(entry, "function")
-            action.index = Config._readString(entry, "index")
+            action.name = Config.readString(entry, "name")
+            action.module = Config.readString(entry, "module")
+            action.function = Config.readString(entry, "function")
+            action.index = Config.readString(entry, "index")
             lst.append(action);
       if lst == []:
          lst = None
@@ -3045,13 +3045,13 @@ class Config(object):
 
       @return: Tuple of (absolute, relative, patterns) exclusions.
       """
-      section = Config._readFirstChild(parent, "exclude")
+      section = Config.readFirstChild(parent, "exclude")
       if section is None:
          return (None, None, None)
       else:
-         absolute = Config._readStringList(section, "abs_path")
-         relative = Config._readStringList(section, "rel_path")
-         patterns = Config._readStringList(section, "pattern")
+         absolute = Config.readStringList(section, "abs_path")
+         relative = Config.readStringList(section, "rel_path")
+         patterns = Config.readStringList(section, "pattern")
          return (absolute, relative, patterns)
    _parseExclusions = staticmethod(_parseExclusions)
 
@@ -3086,15 +3086,15 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       lst = []
-      for entry in Config._readChildren(parent, "dir"):
+      for entry in Config.readChildren(parent, "dir"):
          if entry.nodeType == Node.ELEMENT_NODE:
             cdir = CollectDir()
-            cdir.absolutePath = Config._readString(entry, "abs_path")
-            cdir.collectMode = Config._readString(entry, "mode")
+            cdir.absolutePath = Config.readString(entry, "abs_path")
+            cdir.collectMode = Config.readString(entry, "mode")
             if cdir.collectMode is None:
-               cdir.collectMode = Config._readString(entry, "collect_mode")
-            cdir.archiveMode = Config._readString(entry, "archive_mode")
-            cdir.ignoreFile = Config._readString(entry, "ignore_file")
+               cdir.collectMode = Config.readString(entry, "collect_mode")
+            cdir.archiveMode = Config.readString(entry, "archive_mode")
+            cdir.ignoreFile = Config.readString(entry, "ignore_file")
             (cdir.absoluteExcludePaths, cdir.relativeExcludePaths, cdir.excludePatterns) = Config._parseExclusions(entry)
             lst.append(cdir)
       if lst == []:
@@ -3117,11 +3117,11 @@ class Config(object):
       @raise ValueError: If the data at the location can't be read
       """
       lst = []
-      for entry in Config._readChildren(parent, "dir"):
+      for entry in Config.readChildren(parent, "dir"):
          if entry.nodeType == Node.ELEMENT_NODE:
             cdir = PurgeDir()
-            cdir.absolutePath = Config._readString(entry, "abs_path")
-            cdir.retainDays = Config._readInteger(entry, "retain_days")
+            cdir.absolutePath = Config.readString(entry, "abs_path")
+            cdir.retainDays = Config.readInteger(entry, "retain_days")
             lst.append(cdir)
       if lst == []:
          lst = None
@@ -3158,20 +3158,20 @@ class Config(object):
       """
       localPeers = []
       remotePeers = []
-      for entry in Config._readChildren(parent, "peer"):
+      for entry in Config.readChildren(parent, "peer"):
          if entry.nodeType == Node.ELEMENT_NODE:
-            peerType = Config._readString(entry, "type")
+            peerType = Config.readString(entry, "type")
             if peerType == "local":
                localPeer = LocalPeer()
-               localPeer.name = Config._readString(entry, "name")
-               localPeer.collectDir = Config._readString(entry, "collect_dir")
+               localPeer.name = Config.readString(entry, "name")
+               localPeer.collectDir = Config.readString(entry, "collect_dir")
                localPeers.append(localPeer)
             elif peerType == "remote":
                remotePeer = RemotePeer()
-               remotePeer.name = Config._readString(entry, "name")
-               remotePeer.collectDir = Config._readString(entry, "collect_dir")
-               remotePeer.remoteUser = Config._readString(entry, "backup_user")
-               remotePeer.rcpCommand = Config._readString(entry, "rcp_command")
+               remotePeer.name = Config.readString(entry, "name")
+               remotePeer.collectDir = Config.readString(entry, "collect_dir")
+               remotePeer.remoteUser = Config.readString(entry, "backup_user")
+               remotePeer.rcpCommand = Config.readString(entry, "rcp_command")
                remotePeers.append(remotePeer)
       if localPeers == []:
          localPeers = None
@@ -3233,11 +3233,11 @@ class Config(object):
       @param referenceConfig: Reference configuration section to be added to the document.
       """
       if referenceConfig is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "reference")
-         Config._addStringNode(xmlDom, sectionNode, "author", referenceConfig.author)
-         Config._addStringNode(xmlDom, sectionNode, "revision", referenceConfig.revision)
-         Config._addStringNode(xmlDom, sectionNode, "description", referenceConfig.description)
-         Config._addStringNode(xmlDom, sectionNode, "generator", referenceConfig.generator)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "reference")
+         Config.addStringNode(xmlDom, sectionNode, "author", referenceConfig.author)
+         Config.addStringNode(xmlDom, sectionNode, "revision", referenceConfig.revision)
+         Config.addStringNode(xmlDom, sectionNode, "description", referenceConfig.description)
+         Config.addStringNode(xmlDom, sectionNode, "generator", referenceConfig.generator)
    _addReference = staticmethod(_addReference)
 
    def _addExtensions(xmlDom, parentNode, extensionsConfig):
@@ -3257,7 +3257,7 @@ class Config(object):
       @param extensionsConfig: Extensions configuration section to be added to the document.
       """
       if extensionsConfig is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "extensions")
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "extensions")
          if extensionsConfig.actions is not None:
             for action in extensionsConfig.actions:
                Config._addExtendedAction(xmlDom, sectionNode, action)
@@ -3282,12 +3282,12 @@ class Config(object):
       @param optionsConfig: Options configuration section to be added to the document.
       """
       if optionsConfig is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "options")
-         Config._addStringNode(xmlDom, sectionNode, "starting_day", optionsConfig.startingDay)
-         Config._addStringNode(xmlDom, sectionNode, "working_dir", optionsConfig.workingDir)
-         Config._addStringNode(xmlDom, sectionNode, "backup_user", optionsConfig.backupUser)
-         Config._addStringNode(xmlDom, sectionNode, "backup_group", optionsConfig.backupGroup)
-         Config._addStringNode(xmlDom, sectionNode, "rcp_command", optionsConfig.rcpCommand)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "options")
+         Config.addStringNode(xmlDom, sectionNode, "starting_day", optionsConfig.startingDay)
+         Config.addStringNode(xmlDom, sectionNode, "working_dir", optionsConfig.workingDir)
+         Config.addStringNode(xmlDom, sectionNode, "backup_user", optionsConfig.backupUser)
+         Config.addStringNode(xmlDom, sectionNode, "backup_group", optionsConfig.backupGroup)
+         Config.addStringNode(xmlDom, sectionNode, "rcp_command", optionsConfig.rcpCommand)
    _addOptions = staticmethod(_addOptions)
 
    def _addCollect(xmlDom, parentNode, collectConfig):
@@ -3317,20 +3317,20 @@ class Config(object):
       @param collectConfig: Collect configuration section to be added to the document.
       """
       if collectConfig is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "collect")
-         Config._addStringNode(xmlDom, sectionNode, "collect_dir", collectConfig.targetDir)
-         Config._addStringNode(xmlDom, sectionNode, "collect_mode", collectConfig.collectMode)
-         Config._addStringNode(xmlDom, sectionNode, "archive_mode", collectConfig.archiveMode)
-         Config._addStringNode(xmlDom, sectionNode, "ignore_file", collectConfig.ignoreFile)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "collect")
+         Config.addStringNode(xmlDom, sectionNode, "collect_dir", collectConfig.targetDir)
+         Config.addStringNode(xmlDom, sectionNode, "collect_mode", collectConfig.collectMode)
+         Config.addStringNode(xmlDom, sectionNode, "archive_mode", collectConfig.archiveMode)
+         Config.addStringNode(xmlDom, sectionNode, "ignore_file", collectConfig.ignoreFile)
          if ((collectConfig.absoluteExcludePaths is not None and collectConfig.absoluteExcludePaths != []) or
              (collectConfig.excludePatterns is not None and collectConfig.excludePatterns != [])):
-            excludeNode = Config._addContainerNode(xmlDom, sectionNode, "exclude")
+            excludeNode = Config.addContainerNode(xmlDom, sectionNode, "exclude")
             if collectConfig.absoluteExcludePaths is not None:
                for absolutePath in collectConfig.absoluteExcludePaths:
-                  Config._addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
+                  Config.addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
             if collectConfig.excludePatterns is not None:
                for pattern in collectConfig.excludePatterns:
-                  Config._addStringNode(xmlDom, excludeNode, "pattern", pattern)
+                  Config.addStringNode(xmlDom, excludeNode, "pattern", pattern)
          if collectConfig.collectDirs is not None:
             for collectDir in collectConfig.collectDirs:
                Config._addCollectDir(xmlDom, sectionNode, collectDir)
@@ -3360,14 +3360,14 @@ class Config(object):
       @param stageConfig: Stage configuration section to be added to the document.
       """
       if stageConfig is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "stage")
-         Config._addStringNode(xmlDom, sectionNode, "staging_dir", stageConfig.targetDir)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "stage")
+         Config.addStringNode(xmlDom, sectionNode, "staging_dir", stageConfig.targetDir)
          if stageConfig.localPeers is not None:
             for localPeer in stageConfig.localPeers:
-               Config._addLocalPeer(xmlDom, sectionNode, localPeer)
+               Config.addLocalPeer(xmlDom, sectionNode, localPeer)
          if stageConfig.remotePeers is not None:
             for remotePeer in stageConfig.remotePeers:
-               Config._addRemotePeer(xmlDom, sectionNode, remotePeer)
+               Config.addRemotePeer(xmlDom, sectionNode, remotePeer)
    _addStage = staticmethod(_addStage)
 
    def _addStore(xmlDom, parentNode, storeConfig):
@@ -3391,14 +3391,14 @@ class Config(object):
       @param storeConfig: Store configuration section to be added to the document.
       """
       if storeConfig is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "store")
-         Config._addStringNode(xmlDom, sectionNode, "source_dir", storeConfig.sourceDir)
-         Config._addStringNode(xmlDom, sectionNode, "media_type", storeConfig.mediaType)
-         Config._addStringNode(xmlDom, sectionNode, "device_type", storeConfig.deviceType)
-         Config._addStringNode(xmlDom, sectionNode, "target_device", storeConfig.devicePath)
-         Config._addStringNode(xmlDom, sectionNode, "target_scsi_id", storeConfig.deviceScsiId)
-         Config._addIntegerNode(xmlDom, sectionNode, "drive_speed", storeConfig.driveSpeed)
-         Config._addBooleanNode(xmlDom, sectionNode, "check_data", storeConfig.checkData)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "store")
+         Config.addStringNode(xmlDom, sectionNode, "source_dir", storeConfig.sourceDir)
+         Config.addStringNode(xmlDom, sectionNode, "media_type", storeConfig.mediaType)
+         Config.addStringNode(xmlDom, sectionNode, "device_type", storeConfig.deviceType)
+         Config.addStringNode(xmlDom, sectionNode, "target_device", storeConfig.devicePath)
+         Config.addStringNode(xmlDom, sectionNode, "target_scsi_id", storeConfig.deviceScsiId)
+         Config.addIntegerNode(xmlDom, sectionNode, "drive_speed", storeConfig.driveSpeed)
+         Config.addBooleanNode(xmlDom, sectionNode, "check_data", storeConfig.checkData)
    _addStore = staticmethod(_addStore)
 
    def _addPurge(xmlDom, parentNode, purgeConfig):
@@ -3418,7 +3418,7 @@ class Config(object):
       @param purgeConfig: Purge configuration section to be added to the document.
       """
       if purgeConfig is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "purge")
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "purge")
          if purgeConfig.purgeDirs is not None:
             for purgeDir in purgeConfig.purgeDirs:
                Config._addPurgeDir(xmlDom, sectionNode, purgeDir)
@@ -3446,11 +3446,11 @@ class Config(object):
       @param action: Purge directory to be added to the document.
       """
       if action is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "action")
-         Config._addStringNode(xmlDom, sectionNode, "name", action.name)
-         Config._addStringNode(xmlDom, sectionNode, "module", action.module)
-         Config._addStringNode(xmlDom, sectionNode, "function", action.function)
-         Config._addIntegerNode(xmlDom, sectionNode, "index", action.index)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "action")
+         Config.addStringNode(xmlDom, sectionNode, "name", action.name)
+         Config.addStringNode(xmlDom, sectionNode, "module", action.module)
+         Config.addStringNode(xmlDom, sectionNode, "function", action.function)
+         Config.addIntegerNode(xmlDom, sectionNode, "index", action.index)
    _addExtendedAction = staticmethod(_addExtendedAction)
 
    def _addCollectDir(xmlDom, parentNode, collectDir):
@@ -3485,24 +3485,24 @@ class Config(object):
       @param collectDir: Collect directory to be added to the document.
       """
       if collectDir is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "dir")
-         Config._addStringNode(xmlDom, sectionNode, "abs_path", collectDir.absolutePath)
-         Config._addStringNode(xmlDom, sectionNode, "collect_mode", collectDir.collectMode)
-         Config._addStringNode(xmlDom, sectionNode, "archive_mode", collectDir.archiveMode)
-         Config._addStringNode(xmlDom, sectionNode, "ignore_file", collectDir.ignoreFile)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "dir")
+         Config.addStringNode(xmlDom, sectionNode, "abs_path", collectDir.absolutePath)
+         Config.addStringNode(xmlDom, sectionNode, "collect_mode", collectDir.collectMode)
+         Config.addStringNode(xmlDom, sectionNode, "archive_mode", collectDir.archiveMode)
+         Config.addStringNode(xmlDom, sectionNode, "ignore_file", collectDir.ignoreFile)
          if ((collectDir.absoluteExcludePaths is not None and collectDir.absoluteExcludePaths != []) or
              (collectDir.relativeExcludePaths is not None and collectDir.relativeExcludePaths != []) or
              (collectDir.excludePatterns is not None and collectDir.excludePatterns != [])):
-            excludeNode = Config._addContainerNode(xmlDom, sectionNode, "exclude")
+            excludeNode = Config.addContainerNode(xmlDom, sectionNode, "exclude")
             if collectDir.absoluteExcludePaths is not None:
                for absolutePath in collectDir.absoluteExcludePaths:
-                  Config._addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
+                  Config.addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
             if collectDir.relativeExcludePaths is not None:
                for relativePath in collectDir.relativeExcludePaths:
-                  Config._addStringNode(xmlDom, excludeNode, "rel_path", relativePath)
+                  Config.addStringNode(xmlDom, excludeNode, "rel_path", relativePath)
             if collectDir.excludePatterns is not None:
                for pattern in collectDir.excludePatterns:
-                  Config._addStringNode(xmlDom, excludeNode, "pattern", pattern)
+                  Config.addStringNode(xmlDom, excludeNode, "pattern", pattern)
    _addCollectDir = staticmethod(_addCollectDir)
 
    def _addLocalPeer(xmlDom, parentNode, localPeer):
@@ -3528,10 +3528,10 @@ class Config(object):
       @param localPeer: Purge directory to be added to the document.
       """
       if localPeer is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "peer")
-         Config._addStringNode(xmlDom, sectionNode, "name", localPeer.name)
-         Config._addStringNode(xmlDom, sectionNode, "type", "local")
-         Config._addStringNode(xmlDom, sectionNode, "collect_dir", localPeer.collectDir)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "peer")
+         Config.addStringNode(xmlDom, sectionNode, "name", localPeer.name)
+         Config.addStringNode(xmlDom, sectionNode, "type", "local")
+         Config.addStringNode(xmlDom, sectionNode, "collect_dir", localPeer.collectDir)
    _addLocalPeer = staticmethod(_addLocalPeer)
 
    def _addRemotePeer(xmlDom, parentNode, remotePeer):
@@ -3559,12 +3559,12 @@ class Config(object):
       @param remotePeer: Purge directory to be added to the document.
       """
       if remotePeer is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "peer")
-         Config._addStringNode(xmlDom, sectionNode, "name", remotePeer.name)
-         Config._addStringNode(xmlDom, sectionNode, "type", "remote")
-         Config._addStringNode(xmlDom, sectionNode, "collect_dir", remotePeer.collectDir)
-         Config._addStringNode(xmlDom, sectionNode, "backup_user", remotePeer.remoteUser)
-         Config._addStringNode(xmlDom, sectionNode, "rcp_command", remotePeer.rcpCommand)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "peer")
+         Config.addStringNode(xmlDom, sectionNode, "name", remotePeer.name)
+         Config.addStringNode(xmlDom, sectionNode, "type", "remote")
+         Config.addStringNode(xmlDom, sectionNode, "collect_dir", remotePeer.collectDir)
+         Config.addStringNode(xmlDom, sectionNode, "backup_user", remotePeer.remoteUser)
+         Config.addStringNode(xmlDom, sectionNode, "rcp_command", remotePeer.rcpCommand)
    _addRemotePeer = staticmethod(_addRemotePeer)
 
    def _addPurgeDir(xmlDom, parentNode, purgeDir):
@@ -3587,9 +3587,9 @@ class Config(object):
       @param purgeDir: Purge directory to be added to the document.
       """
       if purgeDir is not None:
-         sectionNode = Config._addContainerNode(xmlDom, parentNode, "dir")
-         Config._addStringNode(xmlDom, sectionNode, "abs_path", purgeDir.absolutePath)
-         Config._addIntegerNode(xmlDom, sectionNode, "retain_days", purgeDir.retainDays)
+         sectionNode = Config.addContainerNode(xmlDom, parentNode, "dir")
+         Config.addStringNode(xmlDom, sectionNode, "abs_path", purgeDir.absolutePath)
+         Config.addIntegerNode(xmlDom, sectionNode, "retain_days", purgeDir.retainDays)
    _addPurgeDir = staticmethod(_addPurgeDir)
 
 
@@ -3799,7 +3799,7 @@ class Config(object):
    # Low-level methods for parsing and generating XML
    ###################################################
 
-   def _readChildren(parent, name):
+   def readChildren(parent, name):
       """
       Returns a list of nodes with a given name immediately beneath the
       parent.
@@ -3826,9 +3826,9 @@ class Config(object):
             if entry.parentNode is parent:
                lst.append(entry)
       return lst
-   _readChildren = staticmethod(_readChildren)
+   readChildren = staticmethod(readChildren)
 
-   def _readFirstChild(parent, name):
+   def readFirstChild(parent, name):
       """
       Returns the first child with a given name immediately beneath the parent.
 
@@ -3840,13 +3840,13 @@ class Config(object):
 
       @return: First properly-named child of parent, or C{None} if no matching nodes are found.
       """
-      result = Config._readChildren(parent, name)
+      result = Config.readChildren(parent, name)
       if result is None or result == []:
          return None
       return result[0]
-   _readFirstChild = staticmethod(_readFirstChild)
+   readFirstChild = staticmethod(readFirstChild)
 
-   def _readStringList(parent, name):
+   def readStringList(parent, name):
       """
       Returns a list of the string contents associated with nodes with a given
       name immediately beneath the parent.
@@ -3854,7 +3854,7 @@ class Config(object):
       By "immediately beneath" the parent, we mean from among nodes that are
       direct children of the passed-in parent node.  
 
-      First, we find all of the nodes using L{_readChildren}, and then we
+      First, we find all of the nodes using L{readChildren}, and then we
       retrieve the "string contents" of each of those nodes.  The returned list
       has one entry per matching node.  We assume that string contents of a
       given node belong to the first C{TEXT_NODE} child of that node.  Nodes
@@ -3867,7 +3867,7 @@ class Config(object):
       @return: List of strings as described above, or C{None} if no matching nodes are found.
       """
       lst = []
-      result = Config._readChildren(parent, name)
+      result = Config.readChildren(parent, name)
       for entry in result:
          if entry.hasChildNodes:
             for child in entry.childNodes:
@@ -3877,9 +3877,9 @@ class Config(object):
       if lst == []:
          lst = None
       return lst
-   _readStringList = staticmethod(_readStringList)
+   readStringList = staticmethod(readStringList)
 
-   def _readString(parent, name):
+   def readString(parent, name):
       """
       Returns string contents of the first child with a given name immediately
       beneath the parent.
@@ -3894,13 +3894,13 @@ class Config(object):
 
       @return: String contents of node or C{None} if no matching nodes are found.
       """
-      result = Config._readStringList(parent, name)
+      result = Config.readStringList(parent, name)
       if result is None:
          return None
       return result[0]
-   _readString = staticmethod(_readString)
+   readString = staticmethod(readString)
 
-   def _readInteger(parent, name):
+   def readInteger(parent, name):
       """
       Returns integer contents of the first child with a given name immediately
       beneath the parent.
@@ -3914,14 +3914,14 @@ class Config(object):
       @return: Integer contents of node or C{None} if no matching nodes are found.
       @raise ValueError: If the string at the location can't be converted to an integer.
       """
-      result = Config._readString(parent, name)
+      result = Config.readString(parent, name)
       if result is None:
          return None
       else:
          return int(result)
-   _readInteger = staticmethod(_readInteger)
+   readInteger = staticmethod(readInteger)
 
-   def _readBoolean(parent, name):
+   def readBoolean(parent, name):
       """
       Returns boolean contents of the first child with a given name immediately
       beneath the parent.
@@ -3937,7 +3937,7 @@ class Config(object):
       @return: Boolean contents of node or C{None} if no matching nodes are found.
       @raise ValueError: If the string at the location can't be converted to a boolean.
       """
-      result = Config._readString(parent, name)
+      result = Config.readString(parent, name)
       if result is None:
          return None
       else:
@@ -3947,9 +3947,9 @@ class Config(object):
             return False
          else:
             raise ValueError("Boolean values must be one of %s." % VALID_BOOLEAN_VALUES)
-   _readBoolean = staticmethod(_readBoolean)
+   readBoolean = staticmethod(readBoolean)
 
-   def _addContainerNode(xmlDom, parentNode, nodeName):
+   def addContainerNode(xmlDom, parentNode, nodeName):
       """
       Adds a container node as the next child of a parent node.
 
@@ -3962,9 +3962,9 @@ class Config(object):
       containerNode = xmlDom.createElement(nodeName)
       parentNode.appendChild(containerNode)
       return containerNode
-   _addContainerNode = staticmethod(_addContainerNode)
+   addContainerNode = staticmethod(addContainerNode)
 
-   def _addStringNode(xmlDom, parentNode, nodeName, nodeValue):
+   def addStringNode(xmlDom, parentNode, nodeName, nodeValue):
       """
       Adds a text node as the next child of a parent, to contain a string.
 
@@ -3978,14 +3978,14 @@ class Config(object):
    
       @return: Reference to the newly-created node.
       """
-      containerNode = Config._addContainerNode(xmlDom, parentNode, nodeName)
+      containerNode = Config.addContainerNode(xmlDom, parentNode, nodeName)
       if nodeValue is not None:
          textNode = xmlDom.createTextNode(nodeValue)
          containerNode.appendChild(textNode)
       return containerNode
-   _addStringNode = staticmethod(_addStringNode)
+   addStringNode = staticmethod(addStringNode)
 
-   def _addIntegerNode(xmlDom, parentNode, nodeName, nodeValue):
+   def addIntegerNode(xmlDom, parentNode, nodeName, nodeValue):
       """
       Adds a text node as the next child of a parent, to contain an integer.
 
@@ -3993,7 +3993,7 @@ class Config(object):
       empty (i.e. will contain no text node child).
 
       The integer will be converted to a string using "%d".  The result will be
-      added to the document via L{_addStringNode}.
+      added to the document via L{addStringNode}.
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent node to create child for.
@@ -4003,12 +4003,12 @@ class Config(object):
       @return: Reference to the newly-created node.
       """
       if nodeValue is None:
-         return Config._addStringNode(xmlDom, parentNode, nodeName, None)
+         return Config.addStringNode(xmlDom, parentNode, nodeName, None)
       else:
-         return Config._addStringNode(xmlDom, parentNode, nodeName, "%d" % nodeValue)
-   _addIntegerNode = staticmethod(_addIntegerNode)
+         return Config.addStringNode(xmlDom, parentNode, nodeName, "%d" % nodeValue)
+   addIntegerNode = staticmethod(addIntegerNode)
 
-   def _addBooleanNode(xmlDom, parentNode, nodeName, nodeValue):
+   def addBooleanNode(xmlDom, parentNode, nodeName, nodeValue):
       """
       Adds a text node as the next child of a parent, to contain a boolean.
 
@@ -4017,7 +4017,7 @@ class Config(object):
 
       Boolean C{True}, or anything else interpreted as C{True} by Python, will
       be converted to a string "Y".  Anything else will be converted to a
-      string "N".  The result is added to the document via L{_addStringNode}.
+      string "N".  The result is added to the document via L{addStringNode}.
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent node to create child for.
@@ -4027,11 +4027,11 @@ class Config(object):
       @return: Reference to the newly-created node.
       """
       if nodeValue is None:
-         return Config._addStringNode(xmlDom, parentNode, nodeName, None)
+         return Config.addStringNode(xmlDom, parentNode, nodeName, None)
       else:
          if nodeValue:
-            return Config._addStringNode(xmlDom, parentNode, nodeName, "Y")
+            return Config.addStringNode(xmlDom, parentNode, nodeName, "Y")
          else:
-            return Config._addStringNode(xmlDom, parentNode, nodeName, "N")
-   _addBooleanNode = staticmethod(_addBooleanNode)
+            return Config.addStringNode(xmlDom, parentNode, nodeName, "N")
+   addBooleanNode = staticmethod(addBooleanNode)
 
