@@ -43,5 +43,6 @@ are backed up using tar and may be compressed using gzip or bzip2.
 # in the __all__ variable.
 
 __all__ = [ 'release', 'cli', 'actions', 'util', 'knapsack', 
-            'filesystem', 'peer', 'image', 'writer', 'config', ] 
+            'filesystem', 'peer', 'image', 'writer', 'config', 
+            'extend', ] 
 
