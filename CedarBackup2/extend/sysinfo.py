@@ -52,6 +52,8 @@ compressed using C{bzip2} to save space.
 
 This extension relies on the options and collect configurations in the standard
 Cedar Backup configuration file, but requires no new configuration of its own.
+No public functions other than the action are exposed since all of this is
+pretty simple.
 
 @note: The Debian-specific call (to C{dpkg}) will only be done if
 C{/usr/bin/dpkg} exists and can be executed.
