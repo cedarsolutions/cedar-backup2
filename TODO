@@ -16,6 +16,7 @@
 
 * Change sort order of parameters, classes within modules, etc. where needed in Epydoc
 * Implement "safe overwrite" functionality from aborted 2.x branch into CdWriter.
+* Come up with sensible "string" methods for classes (__str__ and __repr__ ??)
 * Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
 * Add "capacity mode" configuration from aborted 2.x branch into the configuration class.
 * Implement the configuration functionality and all of its regression tests
