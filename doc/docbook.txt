@@ -1,4 +1,6 @@
-All of the docbook functionality is based around a Debian system (or a
+The Cedar Backup Software Manual, found in manual/src, is written in
+DocBook Lite.  All of the docbook functionality used to build the actual
+documentation that I distribute is based around a Debian system (or a
 system with equivalent functionality) as the development system.  
 
 I built the entire docbook infrastructure based on the Subversion book:
