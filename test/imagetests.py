@@ -79,9 +79,12 @@ Full vs. Reduced Tests
    suite that has no surprising system, kernel or network requirements.  If you
    want to run all of the tests, set IMAGETESTS_FULL to "Y" in the environment.
 
-   In this module, the main dependency is a kernel that allows ISO images to be
-   mounted in-place, via a loopback mechanism.  If your kernel supports this
-   then it is safe to set IMAGETESTS_FULL to "Y".
+   In this module, there are three dependencies: the system must have
+   C{mkisofs} installed, the kernel must allow ISO images to be mounted
+   in-place via a loopback mechanism, and the current user must be allowed (via
+   C{sudo}) to mount and unmount such loopback filesystems.  See documentation
+   by the L{TestIsoImage.mountImage} and L{TestIsoImageunmountImage} methods
+   for more information on what C{sudo} access is required.
 
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -94,7 +97,21 @@ Full vs. Reduced Tests
 # Import standard modules
 import os
 import unittest
-from CedarBackup2.image import IsoImage
+import tempfile
+import tarfile
+from CedarBackup2.image import IsoImage, BYTES_PER_MBYTE
+from CedarBackup2.util import executeCommand
+
+
+#######################################################################
+# Module-wide configuration and constants
+#######################################################################
+
+DATA_DIRS = [ "./data", "./test/data", ]
+RESOURCES = [ "tree9.tar.gz", ]
+
+SUDO_CMD = [ "sudo", ]
+INVALID_FILE = "bogus"         # This file name should never exist
 
 
 #######################################################################
@@ -107,6 +124,55 @@ def runAllTests():
       return os.environ["IMAGETESTS_FULL"] == "Y"
    else:
       return False
+
+def findResources():
+   """Returns a dictionary of locations for various resources."""
+   resources = { }
+   for resource in RESOURCES:
+      for resourceDir in DATA_DIRS:
+         path = os.path.join(resourceDir, resource);
+         if os.path.exists(path):
+            resources[resource] = path
+            break
+      else:
+         raise Exception("Unable to find resource [%s]." % resource)
+   return resources
+
+def extractTar(tmpdir, filepath):
+   """Extracts the indicated tar file to self.tmpdir."""
+   tar = tarfile.open(filepath)
+   for tarinfo in tar:
+      tar.extract(tarinfo, tmpdir)
+
+def buildPath(components):
+   """Builds a complete path from a list of components."""
+   path = components[0]
+   for component in components[1:]:
+      path = os.path.join(path, component)
+   return path
+
+def removedir(tree):
+   """Recursively removes an entire directory."""
+   for root, dirs, files in os.walk(tree, topdown=False):
+      for name in files:
+         path = os.path.join(root, name)
+         if os.path.islink(path):
+            os.remove(path)
+         elif os.path.isfile(path):
+            os.remove(path)
+      for name in dirs:
+         path = os.path.join(root, name)
+         if os.path.islink(path):
+            os.remove(path)
+         elif os.path.isdir(path):
+            os.rmdir(path)
+   os.rmdir(tree)
+
+def getBytes(mb):
+   """
+   Converts a megabyte (MB) value to bytes.
+   """
+   return float(mb) * BYTES_PER_MBYTE
 
 
 #######################################################################
@@ -126,10 +192,62 @@ class TestIsoImage(unittest.TestCase):
    ################
 
    def setUp(self):
-      pass
+      try:
+         self.tmpdir = tempfile.mkdtemp()
+         self.resources = findResources()
+      except Exception, e:
+         self.fail(e)
 
    def tearDown(self):
-      pass
+      removedir(self.tmpdir)
+
+
+   ##################
+   # Utility methods
+   ##################
+
+   def mountImage(self, imagePath):
+      """
+      Mounts an ISO image at C{self.tmpdir/mnt} using loopback.
+
+      Note that this will fail unless the user has been granted permissions via
+      sudo, using something like this:
+
+         Cmnd_Alias LOOPMOUNT = /bin/mount -t iso9660 -o loop * *
+
+      Keep in mind that this entry is a security hole, so you might not want to
+      keep it in C{/etc/sudoers} all of the time.
+
+      @return: Path the image is mounted at.
+      @raise IOError: If the command cannot be executed.
+      """
+      mountPath = self.buildPath([ "mnt", ])
+      os.mkdir(mountPath)
+      args = [ "mount", "-t", "iso9660", "-o", "loop", imagePath, mountPath, ]
+      (result, output) = executeCommand(SUDO_CMD, args, returnOutput=True)
+      if result != 0:
+         raise IOError("Error (%d) executing mkisofs command to mount image." % result)
+      return mountPath
+      
+   def unmountImage(self):
+      """
+      Unmounts an ISO image from C{self.tmpdir/mnt}.
+
+      Note that this will fail unless the user has been granted permissions via
+      sudo, using something like this:
+
+         Cmnd_Alias LOOPUNMOUNT  = /bin/umount -t iso9660 *
+
+      Keep in mind that this entry is a security hole, so you might not want to
+      keep it in C{/etc/sudoers} all of the time.
+
+      @raise IOError: If the command cannot be executed.
+      """
+      mountPath = self.buildPath([ "mnt", ])
+      args = [ "umount", "-t", "iso9660", mountPath, ]
+      (result, output) = executeCommand(SUDO_CMD, args, returnOutput=False)
+      if result != 0:
+         raise IOError("Error (%d) executing mkisofs command to unmount image." % result)
 
 
    ###################
@@ -167,214 +285,476 @@ class TestIsoImage(unittest.TestCase):
       self.failUnlessEqual(None, isoImage.volumeId)
 
 
-   #######################
-   # Test utility methods
-   #######################
+   ##################
+   # Utility methods
+   ##################
+
+   def extractTar(self, tarname):
+      """Extracts a tarfile with a particular name."""
+      extractTar(self.tmpdir, self.resources['%s.tar.gz' % tarname])
+
+   def buildPath(self, components):
+      """Builds a complete search path from a list of components."""
+      components.insert(0, self.tmpdir)
+      return buildPath(components)
+
+
+   ################################
+   # Test IsoImage utility methods
+   ################################
 
    def testUtilityMethods_001(self):
       """
       Test _buildDirEntries() with an empty entries dictionary.
       """
-      pass
+      entries = {}
+      result = IsoImage._buildDirEntries(entries)
+      self.failUnlessEqual(0, len(result))
 
    def testUtilityMethods_002(self):
       """
       Test _buildDirEntries() with an entries dictionary that has no graft points.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = None
+      entries["/four/five/six"] = None
+      entries["/seven/eight/nine"] = None
+      result = IsoImage._buildDirEntries(entries)
+      self.failUnlessEqual(3, len(result))
+      self.failUnless("/one/two/three" in result)
+      self.failUnless("/four/five/six" in result)
+      self.failUnless("/seven/eight/nine" in result)
 
    def testUtilityMethods_003(self):
       """
       Test _buildDirEntries() with an entries dictionary that has all graft points.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "/backup1"
+      entries["/four/five/six"] = "backup2"
+      entries["/seven/eight/nine"] = "backup3"
+      result = IsoImage._buildDirEntries(entries)
+      self.failUnlessEqual(3, len(result))
+      self.failUnless("backup1/=/one/two/three" in result)
+      self.failUnless("backup2/=/four/five/six" in result)
+      self.failUnless("backup3/=/seven/eight/nine" in result)
 
    def testUtilityMethods_004(self):
       """
       Test _buildDirEntries() with an entries dictionary that has mixed graft points and not.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      entries["/four/five/six"] = None
+      entries["/seven/eight/nine"] = "/backup3"
+      result = IsoImage._buildDirEntries(entries)
+      self.failUnlessEqual(3, len(result))
+      self.failUnless("backup1/=/one/two/three" in result)
+      self.failUnless("/four/five/six" in result)
+      self.failUnless("backup3/=/seven/eight/nine" in result)
 
    def testUtilityMethods_005(self):
       """
       Test _buildGeneralArgs() with all optional values as None.
       """
-      pass
+      isoImage = IsoImage()
+      result = isoImage._buildGeneralArgs()
+      self.failUnlessEqual(0, len(result))
 
    def testUtilityMethods_006(self):
       """
       Test _buildGeneralArgs() with applicationId set.
       """
-      pass
+      isoImage = IsoImage()
+      isoImage.applicationId = "one"
+      result = isoImage._buildGeneralArgs()
+      self.failUnlessEqual(["-A", "one", ], result)
 
    def testUtilityMethods_007(self):
       """
       Test _buildGeneralArgs() with biblioFile set.
       """
-      pass
+      isoImage = IsoImage()
+      isoImage.biblioFile = "two"
+      result = isoImage._buildGeneralArgs()
+      self.failUnlessEqual(["-biblio", "two", ], result)
 
    def testUtilityMethods_008(self):
       """
       Test _buildGeneralArgs() with publisherId set.
       """
-      pass
+      isoImage = IsoImage()
+      isoImage.publisherId = "three"
+      result = isoImage._buildGeneralArgs()
+      self.failUnlessEqual(["-publisher", "three", ], result)
 
    def testUtilityMethods_009(self):
       """
       Test _buildGeneralArgs() with preparerId set.
       """
-      pass
+      isoImage = IsoImage()
+      isoImage.preparerId = "four"
+      result = isoImage._buildGeneralArgs()
+      self.failUnlessEqual(["-p", "four", ], result)
 
    def testUtilityMethods_010(self):
       """
       Test _buildGeneralArgs() with volumeId set.
       """
-      pass
+      isoImage = IsoImage()
+      isoImage.volumeId = "five"
+      result = isoImage._buildGeneralArgs()
+      self.failUnlessEqual(["-V", "five", ], result)
 
    def testUtilityMethods_011(self):
       """
-      Test _buildSizeArgs() with useRockRidge set to True.
+      Test _buildSizeArgs() with device and boundaries at defaults.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage()
+      result = isoImage._buildSizeArgs(entries)
+      self.failUnlessEqual(["-print-size", "-graft-points", "-r", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_012(self):
       """
-      Test _buildSizeArgs() with useRockRidge set to False.
+      Test _buildSizeArgs() with useRockRidge set to True and device and
+      boundaries at defaults.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage()
+      isoImage.useRockRidge = True
+      result = isoImage._buildSizeArgs(entries)
+      self.failUnlessEqual(["-print-size", "-graft-points", "-r", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_013(self):
       """
-      Test _buildSizeArgs() with device as None and boundaries as non-None.
+      Test _buildSizeArgs() with useRockRidge set to False and device and
+      boundaries at defaults.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage()
+      isoImage.useRockRidge = False
+      result = isoImage._buildSizeArgs(entries)
+      self.failUnlessEqual(["-print-size", "-graft-points", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_014(self):
       """
-      Test _buildSizeArgs() with device as non-None and boundaries as None.
+      Test _buildSizeArgs() with device as None and boundaries as non-None.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage(device=None, boundaries=(1, 2))
+      result = isoImage._buildSizeArgs(entries)
+      self.failUnlessEqual(["-print-size", "-graft-points", "-r", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_015(self):
       """
-      Test _buildSizeArgs() with device and boundaries as non-None.
+      Test _buildSizeArgs() with device as non-None and boundaries as None.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage(device="/dev/cdrw", boundaries=None)
+      result = isoImage._buildSizeArgs(entries)
+      self.failUnlessEqual(["-print-size", "-graft-points", "-r", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_016(self):
       """
-      Test _buildWriteArgs() with useRockRidge set to True.
+      Test _buildSizeArgs() with device and boundaries as non-None.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage(device="/dev/cdrw", boundaries=(1, 2))
+      result = isoImage._buildSizeArgs(entries)
+      self.failUnlessEqual(["-print-size", "-graft-points", "-r", "-C", "1,2", "-M", "/dev/cdrw", "backup1/=/one/two/three", ], 
+                           result)
 
    def testUtilityMethods_017(self):
       """
-      Test _buildWriteArgs() with useRockRidge set to False.
+      Test _buildWriteArgs() with device and boundaries at defaults.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage()
+      result = isoImage._buildWriteArgs(entries, "/tmp/file.iso")
+      self.failUnlessEqual(["-graft-points", "-r", "-o", "/tmp/file.iso", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_018(self):
       """
-      Test _buildWriteArgs() with device as None and boundaries as non-None.
+      Test _buildWriteArgs() with useRockRidge set to True and device and
+      boundaries at defaults.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage()
+      isoImage.useRockRidge = True
+      result = isoImage._buildWriteArgs(entries, "/tmp/file.iso")
+      self.failUnlessEqual(["-graft-points", "-r", "-o", "/tmp/file.iso", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_019(self):
       """
-      Test _buildWriteArgs() with device as non-None and boundaries as None.
+      Test _buildWriteArgs() with useRockRidge set to False and device and
+      boundaries at defaults.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage()
+      isoImage.useRockRidge = False
+      result = isoImage._buildWriteArgs(entries, "/tmp/file.iso")
+      self.failUnlessEqual(["-graft-points", "-o", "/tmp/file.iso", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_020(self):
       """
-      Test _buildWriteArgs() with device and boundaries as non-None.
+      Test _buildWriteArgs() with device as None and boundaries as non-None.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage(device=None, boundaries=(3, 4))
+      isoImage.useRockRidge = False
+      result = isoImage._buildWriteArgs(entries, "/tmp/file.iso")
+      self.failUnlessEqual(["-graft-points", "-o", "/tmp/file.iso", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_021(self):
       """
-      Test _calculateSizes with an empty entries dictionary.
+      Test _buildWriteArgs() with device as non-None and boundaries as None.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage(device="/dev/cdrw", boundaries=None)
+      isoImage.useRockRidge = False
+      result = isoImage._buildWriteArgs(entries, "/tmp/file.iso")
+      self.failUnlessEqual(["-graft-points", "-o", "/tmp/file.iso", "backup1/=/one/two/three", ], result)
 
    def testUtilityMethods_022(self):
       """
-      Test _calculateSizes with an entries dictionary containing only a single file.
+      Test _buildWriteArgs() with device and boundaries as non-None.
       """
-      pass
+      entries = {}
+      entries["/one/two/three"] = "backup1"
+      isoImage = IsoImage(device="/dev/cdrw", boundaries=(3, 4))
+      isoImage.useRockRidge = False
+      result = isoImage._buildWriteArgs(entries, "/tmp/file.iso")
+      self.failUnlessEqual(["-graft-points", "-o", "/tmp/file.iso", "-C", "3,4", "-M", "/dev/cdrw", "backup1/=/one/two/three", ], 
+                           result)
 
    def testUtilityMethods_023(self):
       """
-      Test _calculateSizes with an entries dictionary containing multiple files.
+      Test _calculateSizes with an empty entries dictionary.
       """
-      pass
+      entries = {}
+      (map, total) = IsoImage._calculateSizes(entries)
+      self.failUnlessEqual({}, map)
+      self.failUnlessEqual(0, total)
 
    def testUtilityMethods_024(self):
       """
-      Test _calculateSizes with an entries dictionary containing files, directories and links.
+      Test _calculateSizes with an entries dictionary containing only a single file.
       """
-      pass
-
+      entries = {}
+      self.extractTar("tree9")
+      file = self.buildPath(["tree9", "file001", ])
+      entries[file] = None
+      (map, total) = IsoImage._calculateSizes(entries)
+      self.failUnlessEqual({ file:(file,155), }, map)
+      self.failUnlessEqual(155, total)
+      
    def testUtilityMethods_025(self):
       """
-      Test _buildEntries with an empty entries dictionary and empty items list.
+      Test _calculateSizes with an entries dictionary containing multiple files.
       """
-      pass
+      entries = {}
+      self.extractTar("tree9")
+      file1 = self.buildPath(["tree9", "file001", ])
+      file2 = self.buildPath(["tree9", "file002", ])
+      file3 = self.buildPath(["tree9", "dir001", "file001", ])
+      entries[file1] = None
+      entries[file2] = None
+      entries[file3] = None
+      (map, total) = IsoImage._calculateSizes(entries)
+      self.failUnlessEqual({ file1:(file1,155), file2:(file2,242), file3:(file3,243), }, map)
+      self.failUnlessEqual(640, total)
 
    def testUtilityMethods_026(self):
       """
-      Test _buildEntries with a valid entries dictionary and items list.
+      Test _calculateSizes with an entries dictionary containing files,
+      directories, links and invalid items.
       """
-      pass
+      entries = {}
+      self.extractTar("tree9")
+      file1 = self.buildPath(["tree9", "file001", ])
+      file2 = self.buildPath(["tree9", "file002", ])
+      file3 = self.buildPath(["tree9", "dir001", "file001", ])
+      file4 = self.buildPath(["tree9", INVALID_FILE, ])
+      dir1 = self.buildPath(["tree9", "dir001", ])
+      link1 = self.buildPath(["tree9", "link001", ])
+      entries[file1] = None
+      entries[file2] = None
+      entries[file3] = None
+      entries[file4] = None
+      entries[dir1] = None
+      entries[link1] = None
+      (map, total) = IsoImage._calculateSizes(entries)
+      self.failUnlessEqual({ file1:(file1,155), file2:(file2,242), file3:(file3,243), }, map)
+      self.failUnlessEqual(640, total)
 
    def testUtilityMethods_027(self):
       """
-      Test _buildEntries with an items list containing a key not in the entries dictionary.
+      Test _buildEntries with an empty entries dictionary and empty items list.
       """
-      pass
+      entries = {}
+      items = []
+      result = IsoImage._buildEntries(entries, items)
+      self.failUnlessEqual({}, result)
 
    def testUtilityMethods_028(self):
       """
-      Test _expandEntries with an empty entries dictionary.
+      Test _buildEntries with a valid entries dictionary and items list.
       """
-      pass
+      entries = { "a":1, "b":2, "c":3, "d":4, "e":5, "f":6, }
+      items = [ "a", "c", "e", ]
+      result = IsoImage._buildEntries(entries, items)
+      self.failUnlessEqual({ "a":1, "c":3, "e":5, }, result)
 
    def testUtilityMethods_029(self):
       """
-      Test _expandEntries with an entries dictionary containing only a single file.
+      Test _buildEntries with an items list containing a key not in the entries dictionary.
       """
-      pass
+      entries = { "a":1, "b":2, "c":3, "d":4, "e":5, "f":6, }
+      items = [ "a", "c", "e", "z", ]
+      self.failUnlessRaises(KeyError, IsoImage._buildEntries, entries, items)
 
    def testUtilityMethods_030(self):
       """
-      Test _expandEntries with an entries dictionary containing only files.
+      Test _expandEntries with an empty entries dictionary.
       """
-      pass
+      entries = {}
+      result = IsoImage._expandEntries(entries)
+      self.failUnlessEqual({}, result)
 
    def testUtilityMethods_031(self):
       """
-      Test _expandEntries with an entries dictionary containing only a single empty directory.
+      Test _expandEntries with an entries dictionary containing only a single file.
       """
-      pass
+      entries = {}
+      self.extractTar("tree9")
+      file = self.buildPath(["tree9", "file001", ])
+      entries[file] = None
+      result = IsoImage._expandEntries(entries)
+      self.failUnlessEqual({ file:None, }, result)
 
    def testUtilityMethods_032(self):
       """
-      Test _expandEntries with an entries dictionary containing only a single non-empty directory.
+      Test _expandEntries with an entries dictionary containing only files.
       """
-      pass
+      entries = {}
+      self.extractTar("tree9")
+      file1 = self.buildPath(["tree9", "file001", ])
+      file2 = self.buildPath(["tree9", "file002", ])
+      entries[file1] = None
+      entries[file2] = "whatever"
+      result = IsoImage._expandEntries(entries)
+      self.failUnlessEqual({ file1:None, file2:"whatever", }, result)
 
    def testUtilityMethods_033(self):
       """
-      Test _expandEntries with an entries dictionary containing only directories.
+      Test _expandEntries with an entries dictionary containing only a single empty directory.
       """
-      pass
+      entries = {}
+      self.extractTar("tree9")
+      dir1 = self.buildPath(["tree9", "dir002", "dir001", ])
+      entries[dir1] = "something"
+      result = IsoImage._expandEntries(entries)
+      self.failUnlessEqual({}, result)
 
    def testUtilityMethods_034(self):
       """
+      Test _expandEntries with an entries dictionary containing only a single non-empty directory.
+      """
+      entries = {}
+      self.extractTar("tree9")
+      dir1 = self.buildPath(["tree9", "dir001", ])
+      file1 = self.buildPath(["tree9", "dir001", "file001", ])
+      file2 = self.buildPath(["tree9", "dir001", "file002", ])
+      file1graft = os.path.join("something", "dir001")
+      file2graft = os.path.join("something", "dir001")
+      entries[dir1] = "something/dir001"
+      result = IsoImage._expandEntries(entries)
+      self.failUnlessEqual({ file1:file1graft, file2:file2graft, }, result)
+
+   def testUtilityMethods_035(self):
+      """
+      Test _expandEntries with an entries dictionary containing only directories.
+      """
+      entries = {}
+      self.extractTar("tree9")
+      dir1 = self.buildPath(["tree9", "dir001", ])
+      dir2 = self.buildPath(["tree9", "dir002", ])
+      file1 = self.buildPath(["tree9", "dir001", "file001", ])
+      file2 = self.buildPath(["tree9", "dir001", "file002", ])
+      file3 = self.buildPath(["tree9", "dir002", "file001", ])
+      file4 = self.buildPath(["tree9", "dir002", "file002", ])
+      file1graft = os.path.join("something", "dir001")
+      file2graft = os.path.join("something", "dir001")
+      file3graft = os.path.join("whatever", "dir002")
+      file4graft = os.path.join("whatever", "dir002")
+      entries[dir1] = "something/dir001"
+      entries[dir2] = "whatever/dir002"
+      result = IsoImage._expandEntries(entries)
+      self.failUnlessEqual({ file1:file1graft, file2:file2graft, file3:file3graft, file4:file4graft, }, result)
+
+   def testUtilityMethods_036(self):
+      """
       Test _expandEntries with an entries dictionary containing files and directories.
       """
-      pass
+      entries = {}
+      self.extractTar("tree9")
+      dir1 = self.buildPath(["tree9", "dir001", ])
+      dir2 = self.buildPath(["tree9", "dir002", ])
+      file1 = self.buildPath(["tree9", "dir001", "file001", ])
+      file2 = self.buildPath(["tree9", "dir001", "file002", ])
+      file3 = self.buildPath(["tree9", "dir002", "file001", ])
+      file4 = self.buildPath(["tree9", "dir002", "file002", ])
+      file5 = self.buildPath(["tree9", "file001", ])
+      file6 = self.buildPath(["tree9", "file002", ])
+      file1graft = os.path.join("something", "dir001")
+      file2graft = os.path.join("something", "dir001")
+      file3graft = None
+      file4graft = None
+      file5graft = None
+      file6graft = os.path.join("three")
+      entries[dir1] = "something/dir001"
+      entries[dir2] = None
+      entries[file5] = None
+      entries[file6] = "three"
+      result = IsoImage._expandEntries(entries)
+      self.failUnlessEqual({ file1:file1graft, file2:file2graft, file3:file3graft, file4:file4graft,
+                             file5:file5graft, file6:file6graft, }, result)
 
+   def testUtilityMethods_037(self):
+      """
+      Test _expandEntries with a deeply-nested entries dictionary.
+      """
+      entries = {}
+      self.extractTar("tree9")
+      dir = self.buildPath(["tree9", ])
+      file1 = self.buildPath(["tree9", "dir001", "file001", ])
+      file2 = self.buildPath(["tree9", "dir001", "file002", ])
+      file3 = self.buildPath(["tree9", "dir002", "file001", ])
+      file4 = self.buildPath(["tree9", "dir002", "file002", ])
+      file5 = self.buildPath(["tree9", "file001", ])
+      file6 = self.buildPath(["tree9", "file002", ])
+      file1graft = os.path.join("bogus", "tree9", "dir001")
+      file2graft = os.path.join("bogus", "tree9", "dir001")
+      file3graft = os.path.join("bogus", "tree9", "dir002")
+      file4graft = os.path.join("bogus", "tree9", "dir002")
+      file5graft = os.path.join("bogus", "tree9")
+      file6graft = os.path.join("bogus", "tree9")
+      entries[dir] = "bogus/tree9"
+      result = IsoImage._expandEntries(entries)
+      self.failUnlessEqual({ file1:file1graft, file2:file2graft, file3:file3graft, file4:file4graft,
+                             file5:file5graft, file6:file6graft, }, result)
 
    ##################
    # Test addEntry()
@@ -384,91 +764,167 @@ class TestIsoImage(unittest.TestCase):
       """
       Attempt to add a non-existent entry.
       """
-      pass
+      file = self.buildPath([ INVALID_FILE, ])
+      isoImage = IsoImage()
+      self.failUnlessRaises(ValueError, isoImage.addEntry, file)
 
    def testAddEntry_002(self):
       """
       Attempt to add a an entry that is a soft link to a file.
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "dir002", "link003", ])
+      isoImage = IsoImage()
+      self.failUnlessRaises(ValueError, isoImage.addEntry, file)
 
    def testAddEntry_003(self):
       """
-      Attempt to add a an entry that is a soft link to a directory.
+      Attempt to add a an entry that is a soft link to a directory
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "link001", ])
+      isoImage = IsoImage()
+      self.failUnlessRaises(ValueError, isoImage.addEntry, file)
 
    def testAddEntry_004(self):
       """
       Attempt to add a file, no graft point set.
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file)
+      self.failUnlessEqual({ file:None, }, isoImage.entries)
 
    def testAddEntry_005(self):
       """
       Attempt to add a file, graft point set on the object level.
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage(graftPoint="whatever")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file)
+      self.failUnlessEqual({ file:"whatever", }, isoImage.entries)
 
    def testAddEntry_006(self):
       """
       Attempt to add a file, graft point set on the method level.
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file, graftPoint="stuff")
+      self.failUnlessEqual({ file:"stuff", }, isoImage.entries)
 
    def testAddEntry_007(self):
       """
       Attempt to add a file, graft point set on the object and method levels.
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage(graftPoint="whatever")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file, graftPoint="stuff")
+      self.failUnlessEqual({ file:"stuff", }, isoImage.entries)
 
    def testAddEntry_008(self):
       """
       Attempt to add a directory, no graft point set.
       """
-      pass
+      self.extractTar("tree9")
+      dir = self.buildPath([ "tree9" ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(dir)
+      self.failUnlessEqual({ dir:None, }, isoImage.entries)
 
    def testAddEntry_009(self):
       """
       Attempt to add a directory, graft point set on the object level.
       """
-      pass
+      self.extractTar("tree9")
+      dir = self.buildPath([ "tree9" ])
+      isoImage = IsoImage(graftPoint="p")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(dir)
+      self.failUnlessEqual({ dir:"p/tree9" }, isoImage.entries)
 
    def testAddEntry_010(self):
       """
       Attempt to add a directory, graft point set on the method level.
       """
-      pass
+      self.extractTar("tree9")
+      dir = self.buildPath([ "tree9" ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(dir, graftPoint="s")
+      self.failUnlessEqual({ dir:"s/tree9", }, isoImage.entries)
 
    def testAddEntry_011(self):
       """
       Attempt to add a directory, graft point set on the object and methods levels.
       """
-      pass
+      self.extractTar("tree9")
+      dir = self.buildPath([ "tree9" ])
+      isoImage = IsoImage(graftPoint="p")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(dir, graftPoint="s")
+      self.failUnlessEqual({ dir:"s/tree9", }, isoImage.entries)
 
    def testAddEntry_012(self):
       """
       Attempt to add a file that has already been added, override=False.
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file)
+      self.failUnlessEqual({ file:None, }, isoImage.entries)
+      self.failUnlessRaises(ValueError, isoImage.addEntry, file, override=False)
+      self.failUnlessEqual({ file:None, }, isoImage.entries)
 
    def testAddEntry_013(self):
       """
       Attempt to add a file that has already been added, override=True.
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file)
+      self.failUnlessEqual({ file:None, }, isoImage.entries)
+      isoImage.addEntry(file, override=True)
+      self.failUnlessEqual({ file:None, }, isoImage.entries)
 
    def testAddEntry_014(self):
       """
       Attempt to add a directory that has already been added, override=False, changing the graft point.
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage(graftPoint="whatever")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file, graftPoint="one")
+      self.failUnlessEqual({ file:"one", }, isoImage.entries)
+      self.failUnlessRaises(ValueError, isoImage.addEntry, file, graftPoint="two", override=False)
+      self.failUnlessEqual({ file:"one", }, isoImage.entries)
 
    def testAddEntry_015(self):
       """
       Attempt to add a directory that has already been added, override=True, changing the graft point.
       """
-      pass
+      self.extractTar("tree9")
+      file = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage(graftPoint="whatever")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file, graftPoint="one")
+      self.failUnlessEqual({ file:"one", }, isoImage.entries)
+      isoImage.addEntry(file, graftPoint="two", override=True)
+      self.failUnlessEqual({ file:"two", }, isoImage.entries)
 
 
    ##########################
@@ -480,12 +936,20 @@ class TestIsoImage(unittest.TestCase):
       Test with an empty list.
       """
       pass
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      self.failUnlessRaises(ValueError, isoImage.getEstimatedSize)
 
    def testGetEstimatedSize_002(self):
       """
       Test with non-empty empty list.
       """
-      pass
+      self.extractTar("tree9")
+      dir = self.buildPath([ "tree9", ])
+      isoImage = IsoImage()
+      isoImage.addEntry(dir, graftPoint="base")
+      result = isoImage.getEstimatedSize()
+      self.failUnless(result > 0)
 
 
    ####################
@@ -496,35 +960,102 @@ class TestIsoImage(unittest.TestCase):
       """
       Attempt to prune an image containing no entries.
       """
-      pass
+      isoImage = IsoImage()
+      self.failUnlessRaises(ValueError, isoImage.pruneImage, getBytes(650))
    
    def testPruneImage_002(self):
       """
       Attempt to prune a non-empty image using a capacity for which all entries
       will fit.
       """
-      pass
+      self.extractTar("tree9")
+      dir = self.buildPath([ "tree9", ])
+      file1 = self.buildPath([ "tree9", "file001", ])
+      file2 = self.buildPath([ "tree9", "file002", ])
+      file3 = self.buildPath([ "tree9", "dir001", "file001", ])
+      file4 = self.buildPath([ "tree9", "dir001", "file002", ])
+      file5 = self.buildPath([ "tree9", "dir002", "file001", ])
+      file6 = self.buildPath([ "tree9", "dir002", "file002", ])
+      dirgraft = "b/tree9"
+      file1graft = os.path.join("b", "tree9")
+      file2graft = os.path.join("b", "tree9")
+      file3graft = os.path.join("b", "tree9", "dir001")
+      file4graft = os.path.join("b", "tree9", "dir001")
+      file5graft = os.path.join("b", "tree9", "dir002")
+      file6graft = os.path.join("b", "tree9", "dir002")
+      isoImage = IsoImage()
+      isoImage.addEntry(dir, graftPoint="b")
+      self.failUnlessEqual({ dir:dirgraft, }, isoImage.entries)
+      result = isoImage.pruneImage(getBytes(650))  # plenty large for everything to fit
+      self.failUnless(result > 0)
+      self.failUnlessEqual({ file1:file1graft, file2:file2graft, file3:file3graft, file4:file4graft, 
+                             file5:file5graft, file6:file6graft, }, isoImage.entries)
    
    def testPruneImage_003(self):
       """
       Attempt to prune a non-empty image using a capacity for which some
       entries will fit.
+
+      This is one of those tests that may be fairly sensitive to specific
+      mkisofs versions, but I don't know for sure.  A pretty-much empty image
+      has around 381860 bytes of overhead.  If I set a capacity slightly larger
+      than that (say 382000 bytes), some files should fit but not others.  All I
+      can try to validate is that we don't get an exception and that the total
+      number of included files is greater than zero.
       """
-      pass
+      self.extractTar("tree9")
+      dir = self.buildPath([ "tree9", ])
+      isoImage = IsoImage()
+      isoImage.addEntry(dir, None)
+      self.failUnlessEqual({ dir:None, }, isoImage.entries)
+      result = isoImage.pruneImage(382000)  # from experimentation
+      self.failUnless(result > 0)
+      self.failUnless(len(isoImage.entries.keys()) > 0 and len(isoImage.entries.keys()) < 6)
    
    def testPruneImage_004(self):
       """
       Attempt to prune a non-empty image using a capacity for which no entries
       will fit.
+
+      This is one of those tests that may be fairly sensitive to specific
+      mkisofs versions, but I don't know for sure.  A pretty-much empty image
+      has around 381860 bytes of overhead.  I think if I use this for my
+      capacity, that no files will fit and I'll throw an IOError because of
+      that.  However, there's always the chance that the IOError is because not
+      even the ISO header will fit, and we won't be able to differentiate those
+      two cases.
+
+      It's also important that the entries dictionary not be changed when an
+      exception is thrown!
       """
-      pass
+      self.extractTar("tree9")
+      dir = self.buildPath([ "tree9", ])
+      isoImage = IsoImage()
+      isoImage.addEntry(dir, None)
+      self.failUnlessEqual({ dir:None, }, isoImage.entries)
+      self.failUnlessRaises(IOError, isoImage.pruneImage, 381860)  # from experimentation
    
    def testPruneImage_005(self):
       """
       Attempt to prune a non-empty image using a capacity for which not even
       the overhead will fit.
+
+      This is one of those tests that may be fairly sensitive to specific
+      mkisofs versions, but I don't know for sure.  A pretty-much empty image
+      has around 381860 bytes of overhead.  I'm assuming that if I use a really
+      small size (say, 10000 bytes) that I'll always get an IOError when even
+      the overhead won't fit.
+
+      It's also important that the entries dictionary not be changed when an
+      exception is thrown!
       """
-      pass
+      self.extractTar("tree9")
+      dir = self.buildPath([ "tree9", ])
+      isoImage = IsoImage()
+      isoImage.addEntry(dir, "b")
+      self.failUnlessEqual({ dir:"b/tree9", }, isoImage.entries)
+      self.failUnlessRaises(IOError, isoImage.pruneImage, 10000)  # from experimentation
+      self.failUnlessEqual({ dir:"b/tree9", }, isoImage.entries)
    
 
    ####################
@@ -535,51 +1066,176 @@ class TestIsoImage(unittest.TestCase):
       """
       Attempt to write an image containing no entries.
       """
-      pass
+      isoImage = IsoImage()
+      imagePath = self.buildPath([ "image.iso", ])
+      self.failUnlessRaises(ValueError, isoImage.writeImage, imagePath)
 
    def testWriteImage_002(self):
       """
-      Attempt to write an image containing only an empty directory.
+      Attempt to write an image containing only an empty directory, no graft point.
       """
-      pass
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir = self.buildPath([ "tree9", "dir001", "dir002", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
 
    def testWriteImage_003(self):
       """
-      Attempt to write an image containing only a non-empty directory.
+      Attempt to write an image containing only an empty directory, with a graft point.
       """
-      pass
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir = self.buildPath([ "tree9", "dir001", "dir002", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir, graftPoint="base")
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
 
    def testWriteImage_004(self):
       """
-      Attempt to write an image containing only a file.
+      Attempt to write an image containing only a non-empty directory, no graft
+      point.
       """
-      pass
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir = self.buildPath([ "tree9", "dir002" ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
 
    def testWriteImage_005(self):
       """
-      Attempt to write an image containing a file and an empty directory.
+      Attempt to write an image containing only a non-empty directory, with a
+      graft point.
       """
-      pass
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir = self.buildPath([ "tree9", "dir002" ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir, graftPoint=os.path.join("something", "else"))
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
 
    def testWriteImage_006(self):
       """
-      Attempt to write an image containing a file and a non-empty directory.
+      Attempt to write an image containing only a file, no graft point.
       """
-      pass
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      file = self.buildPath([ "tree9", "file001" ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
 
    def testWriteImage_007(self):
       """
-      Attempt to write an image containing several files and a non-empty
-      directory.
+      Attempt to write an image containing only a file, with a graft point.
       """
-      pass
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      file = self.buildPath([ "tree9", "file001" ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file, graftPoint="point")
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
 
    def testWriteImage_008(self):
       """
-      Attempt to write an image containing several files and a non-empty
-      directory, which has been pruned.
+      Attempt to write an image containing a file and an empty directory, no
+      graft points.
       """
-      pass
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      file = self.buildPath([ "tree9", "file001" ])
+      dir = self.buildPath([ "tree9", "dir001", "dir002", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file)
+      isoImage.addEntry(dir)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
+
+   def testWriteImage_009(self):
+      """
+      Attempt to write an image containing a file and an empty directory, with
+      graft points.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage(graftPoint="base")
+      file = self.buildPath([ "tree9", "file001" ])
+      dir = self.buildPath([ "tree9", "dir001", "dir002", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file, graftPoint="other")
+      isoImage.addEntry(dir)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
+
+   def testWriteImage_010(self):
+      """
+      Attempt to write an image containing a file and a non-empty directory,
+      mixed graft points.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage(graftPoint="base")
+      file = self.buildPath([ "tree9", "file001" ])
+      dir = self.buildPath([ "tree9", "dir001", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file, graftPoint=None)
+      isoImage.addEntry(dir)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
+
+   def testWriteImage_011(self):
+      """
+      Attempt to write an image containing several files and a non-empty
+      directory, mixed graft points.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage(graftPoint="base")
+      file1 = self.buildPath([ "tree9", "file001" ])
+      file2 = self.buildPath([ "tree9", "file002" ])
+      dir = self.buildPath([ "tree9", "dir001", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file1, graftPoint=None)
+      isoImage.addEntry(file2, graftPoint="other")
+      isoImage.addEntry(dir)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
+
+   def testWriteImage_012(self):
+      """
+      Attempt to write an image which has been pruned, containing several files
+      and a non-empty directory, mixed graft points.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage(graftPoint="base")
+      file1 = self.buildPath([ "tree9", "file001" ])
+      file2 = self.buildPath([ "tree9", "file002" ])
+      dir1 = self.buildPath([ "tree9", "dir001", ])
+      dir2 = self.buildPath([ "tree9", "dir002", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file1, graftPoint=None)
+      isoImage.addEntry(file2)
+      isoImage.addEntry(dir1)
+      isoImage.addEntry(dir2, graftPoint="other")
+      isoImage.pruneImage(getBytes(650))
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      self.unmountImage()
 
 
 #######################################################################
