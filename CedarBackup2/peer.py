@@ -70,7 +70,7 @@ from CedarBackup2.util import splitCommandLine, executeCommand
 # Module-wide constants and variables
 ########################################################################
 
-logger                  = logging.getLogger("CedarBackup2.peer")
+logger                  = logging.getLogger("CedarBackup2.log.peer")
 
 DEF_RCP_COMMAND         = [ "/usr/bin/scp", "-B", "-q", "-C" ]
 DEF_COLLECT_INDICATOR   = "cback.collect"

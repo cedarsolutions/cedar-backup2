@@ -260,7 +260,7 @@ from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList
 # Module-wide constants and variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.config")
+logger = logging.getLogger("CedarBackup2.log.config")
 
 DEFAULT_DEVICE_TYPE   = "cdwriter"
 DEFAULT_MEDIA_TYPE    = "cdrw-74"

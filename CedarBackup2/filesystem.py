@@ -64,7 +64,7 @@ from CedarBackup2.util import AbsolutePathList, ObjectTypeList, calculateFileAge
 # Module-wide variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.filesystem")
+logger = logging.getLogger("CedarBackup2.log.filesystem")
 
 
 ########################################################################

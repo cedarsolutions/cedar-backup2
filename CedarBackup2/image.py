@@ -62,7 +62,8 @@ from CedarBackup2.writer import validateScsiId
 # Module-wide constants and variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.image")
+logger = logging.getLogger("CedarBackup2.log.image")
+
 MKISOFS_CMD          = [ "mkisofs", ]
 
 

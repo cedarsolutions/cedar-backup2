@@ -81,7 +81,8 @@ import grp
 # Module-wide constants and variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.util")
+logger = logging.getLogger("CedarBackup2.log.util")
+outputLogger = logging.getLogger("CedarBackup2.output")
 
 ISO_SECTOR_SIZE    = 2048.0   # in bytes
 
@@ -516,8 +517,8 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False):
    the L{popen2.Popen4} documentation.  If C{returnOutput} is passed in as
    C{True}, the function will return a tuple of C{(status, output)} where
    C{output} is a list of strings, one entry per line in the output from the
-   command.  Output is always logged to the C{logger.info()} target, regardless
-   of whether it's returned.
+   command.  Output is always logged to the C{ouputLogger.info()} target,
+   regardless of whether it's returned.
 
    By default, C{stdout} and C{stderr} will be intermingled in the output.
    However, if you pass in C{ignoreStderr=True}, then only C{stdout} will be
@@ -559,7 +560,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False):
       line = pipe.fromchild.readline()
       if not line: break
       if returnOutput: output.append(line)
-      logger.info(line[:-1])  # this way the log will (hopefully) get updated in realtime
+      outputLogger.info(line[:-1])  # this way the log will (hopefully) get updated in realtime
    if returnOutput:
       return (pipe.wait(), output)
    else:
