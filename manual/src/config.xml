@@ -2238,6 +2238,15 @@
 cback all
          </programlisting>
 
+         <para>
+            You should consider adding the <option>--output</option> or
+            <option>-O</option> switch to your <command>cback</command>
+            command-line in cron.  This will result in larger logs, but could
+            help diagnose problems when commands like
+            <command>cdrecord</command> or <command>mkisofs</command> fail
+            mysteriously.
+         </para>
+
          <note>
             <para>
                On a Debian system, execution of daily backups is controlled by
@@ -2591,7 +2600,16 @@ The key fingerprint is:
 30 00 * * * root  cback collect
 30 06 * * * root  cback purge
          </programlisting>
-                          
+
+         <para>
+            You should consider adding the <option>--output</option> or
+            <option>-O</option> switch to your <command>cback</command>
+            command-line in cron.  This will result in larger logs, but could
+            help diagnose problems when commands like
+            <command>cdrecord</command> or <command>mkisofs</command> fail
+            mysteriously.
+         </para>
+
          <para>
             You will need to coordinate the collect and purge actions on the
             client so that the collect action completes before the master
@@ -2951,6 +2969,15 @@ The key fingerprint is:
 30 04 * * * root  cback store
 30 06 * * * root  cback purge
          </programlisting>
+
+         <para>
+            You should consider adding the <option>--output</option> or
+            <option>-O</option> switch to your <command>cback</command>
+            command-line in cron.  This will result in larger logs, but could
+            help diagnose problems when commands like
+            <command>cdrecord</command> or <command>mkisofs</command> fail
+            mysteriously.
+         </para>
                           
          <para>
             You will need to coordinate the collect and purge actions on
