@@ -428,6 +428,11 @@ class RemotePeer(object):
       """
       Initializes a remote backup peer.
 
+      @note: If provided, the C{localUser} will be used to any remote copies
+      that are required.  It can only be used if the root user is executing the
+      backup.  The root user will C{su} to the local user and execute the
+      remote copies as that user.
+
       @note: If provided, the rcp command will eventually be parsed into a list
       of strings suitable for passing to L{popen2.Popen4} in order to avoid
       security holes related to shell interpolation.   This parsing will be
@@ -446,11 +451,11 @@ class RemotePeer(object):
       @param remoteUser: Name of the Cedar Backup user on the remote peer
       @type remoteUser: String representing a username, valid via the copy command
 
-      @param localUser: Name of the Cedar Backup user on the current host
-      @type localUser: String representing a username, valid on the current host
-
       @param rcpCommand: An rcp-compatible copy command to use for copying files from the peer
       @type rcpCommand: String representing a system command including required arguments
+
+      @param localUser: Name of the Cedar Backup user on the current host
+      @type localUser: String representing a username, valid on the current host
 
       @raise ValueError: If collect directory is not an absolute path
       """
@@ -704,7 +709,7 @@ class RemotePeer(object):
       finally:
          if os.path.exists(targetFile):
             try:
-               os.path.remove(targetFile)
+               os.remove(targetFile)
             except: pass
 
    def writeStageIndicator(self, stageIndicator=None):
@@ -742,7 +747,7 @@ class RemotePeer(object):
          sourceFile = os.path.join(self.workingDir, DEF_STAGE_INDICATOR)
          targetFile = os.path.join(self.collectDir, DEF_STAGE_INDICATOR)
       else:
-         sourceFile = os.path.join(self.workingDir, stageIndicator)
+         sourceFile = os.path.join(self.workingDir, DEF_STAGE_INDICATOR)
          targetFile = os.path.join(self.collectDir, stageIndicator)
       try:
          if not os.path.exists(sourceFile):

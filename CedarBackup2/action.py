@@ -869,7 +869,8 @@ def executeStore(configPath, options, config):
    entireDisc = rebuildMedia or todayIsStart
    stagingDirs = _findCorrectDailyDir(config)
    _writeImage(config, entireDisc, stagingDirs)
-   if config.stage.checkData:
+   if config.store.checkData:
+      logger.debug("Running consistency check of media.")
       _consistencyCheck(config, stagingDirs)
    _writeStoreIndicator(config, stagingDirs)
    logger.info("Executed the 'store' action successfully.")
@@ -936,10 +937,13 @@ def _writeImage(config, entireDisc, stagingDirs):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there is a problem writing the image to disc.
    """
+   logger.debug("entireDisc: %s" % entireDisc)
    writer = _getWriter(config)
    capacity = writer.retrieveCapacity(entireDisc=entireDisc)
+   logger.debug("Media capacity: %d bytes" % capacity.bytesAvailable)
    image = IsoImage(writer.device, capacity.boundaries)
    for stageDir in stagingDirs.keys():
+      logger.debug("Adding stage directory [%s]." % stageDir)
       dateSuffix = stagingDirs[stageDir]
       image.addEntry(path=stageDir, graftPoint=dateSuffix, contentsOnly=True)
    imageSize = image.getEstimatedSize()
@@ -949,8 +953,13 @@ def _writeImage(config, entireDisc, stagingDirs):
       raise IOError("Media does not contain enough capacity to store image.")
    try:
       (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)
-      handle.close()
+      try:
+         close(handle)
+      except: pass
       image.writeImage(imagePath)
+      logger.debug("Completed creating image.")
+      writer.writeImage(imagePath, entireDisc)
+      logger.debug("Completed writing image to disc.")
    finally:
       if os.path.exists(imagePath): 
          try:
@@ -987,19 +996,33 @@ def _consistencyCheck(config, stagingDirs):
    logger.debug("Running consistency check.")
    mountPoint = tempfile.mkdtemp(dir=config.options.workingDir)
    try:
-      args = [ "-tiso9660", config.store.backupDevice, mountPoint ]
-      result = executeCommand(MOUNT_CMD, args, returnOutput=False, ignoreStderr=True)
+      args = [ "-t", "iso9660", config.store.devicePath, mountPoint ]
+      result = executeCommand(MOUNT_CMD, args, returnOutput=False, ignoreStderr=True)[0]
       if result != 0:
          raise IOError("Error [%d] mounting media for consistency check." % result)
       for stagingDir in stagingDirs.keys():
+         if stagingDir[-1:] == os.pathsep:
+            stagingDir = stagingDir[:-1]
+         stagingDirLen = len(stagingDir)
          dateSuffix = stagingDirs[stagingDir]
+         discDir = os.path.join(mountPoint, dateSuffix)
+         if discDir[-1:] == os.pathsep:
+            discDir = discDir[:-1]
+         logger.debug("Checking [%s] vs. [%s]." % (stagingDir, discDir))
          filesystemList = BackupFileList()
-         mediaList = BackupFileList()
          filesystemList.addDirContents(stagingDir)
-         mediaList.addDirContents(os.path.join(mountPoint, dateSuffix))
          filesystemMap = filesystemList.generateDigestMap()
+         compareMap = {}
+         for key in filesystemMap.keys():
+            newKey = key[stagingDirLen:]
+            newKey = os.path.join(discDir, newKey)
+            compareMap[newKey] = filesystemMap[key]
+         mediaList = BackupFileList()
+         mediaList.addDirContents(discDir)
          mediaMap = mediaList.generateDigestMap()
-         if filesystemMap.keys() != mediaMap.keys():
+         print mediaMap
+         print compareMap
+         if compareMap.keys() != mediaMap.keys():
             raise IOError("Consistency check failed: filesystem and media have different contents.")
          for filename in filesystemMap.keys():
             if filesystemMap[filename] != mediaMap[filename]:
@@ -1099,6 +1122,7 @@ def executeRebuild(configPath, options, config):
    stagingDirs = _findRebuildDirs(config)
    _writeImage(config, True, stagingDirs)
    if config.stage.checkData:
+      logger.debug("Running consistency check of media.")
       _consistencyCheck(config, stagingDirs)
    _writeStoreIndicator(config, stagingDirs)
    logger.info("Executed the 'rebuild' action successfully.")
