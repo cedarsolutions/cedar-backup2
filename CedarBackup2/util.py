@@ -101,13 +101,122 @@ UNIT_SECTORS       = 3
 
 
 ########################################################################
+# UnorderedList class definition
+########################################################################
+
+class UnorderedList(list):
+
+   """
+   Class representing an "unordered list".
+
+   An "unordered list" is a list in which only the contents matter, not the
+   order in which the contents appear in the list.  
+   
+   For instance, we might be keeping track of set of paths in a list, because
+   it's convenient to have them in that form.  However, for comparison
+   purposes, we would only care that the lists contain exactly the same
+   contents, regardless of order.  
+
+   I have come up with two reasonable ways of doing this, plus a couple more
+   that would work but would be a pain to implement.  My first method is to
+   copy and sort each list, comparing the sorted versions.  This will only work
+   if two lists with exactly the same members are guaranteed to sort in exactly
+   the same order.  The second way would be to create two Sets and then compare
+   the sets.  However, this would lose information about any duplicates in
+   either list.  I've decided to go with option #1 for now.  I'll modify this
+   code if I run into problems in the future.
+
+   We override the original C{__eq__}, C{__ne__}, C{__ge__}, C{__gt__},
+   C{__le__} and C{__lt__} list methods to change the definition of the various
+   comparison operators.  In all cases, the comparison is changed to return the
+   result of the original operation I{but instead comparing sorted lists}.
+   This is going to be quite a bit slower than a normal list, so you probably
+   only want to use it on small lists.
+   """
+
+   def __eq__(self, other):
+      """
+      Definition of C{==} operator for this class.
+      @param other: Other object to compare to.
+      @return: True/false depending on whether C{self == other}.
+      """
+      selfSorted = self[:]
+      otherSorted = other[:]
+      selfSorted.sort()
+      otherSorted.sort()
+      return selfSorted.__eq__(otherSorted)
+
+   def __ne__(self, other):
+      """
+      Definition of C{!=} operator for this class.
+      @param other: Other object to compare to.
+      @return: True/false depending on whether C{self != other}.
+      """
+      selfSorted = self[:]
+      otherSorted = other[:]
+      selfSorted.sort()
+      otherSorted.sort()
+      return selfSorted.__ne__(otherSorted)
+
+   def __ge__(self, other):
+      """
+      Definition of S{>=} operator for this class.
+      @param other: Other object to compare to.
+      @return: True/false depending on whether C{self >= other}.
+      """
+      selfSorted = self[:]
+      otherSorted = other[:]
+      selfSorted.sort()
+      otherSorted.sort()
+      return selfSorted.__ge__(otherSorted)
+
+   def __gt__(self, other):
+      """
+      Definition of C{>} operator for this class.
+      @param other: Other object to compare to.
+      @return: True/false depending on whether C{self > other}.
+      """
+      selfSorted = self[:]
+      otherSorted = other[:]
+      selfSorted.sort()
+      otherSorted.sort()
+      return selfSorted.__gt__(otherSorted)
+
+   def __le__(self, other):
+      """
+      Definition of S{<=} operator for this class.
+      @param other: Other object to compare to.
+      @return: True/false depending on whether C{self <= other}.
+      """
+      selfSorted = self[:]
+      otherSorted = other[:]
+      selfSorted.sort()
+      otherSorted.sort()
+      return selfSorted.__le__(otherSorted)
+
+   def __lt__(self, other):
+      """
+      Definition of C{<} operator for this class.
+      @param other: Other object to compare to.
+      @return: True/false depending on whether C{self < other}.
+      """
+      selfSorted = self[:]
+      otherSorted = other[:]
+      selfSorted.sort()
+      otherSorted.sort()
+      return selfSorted.__lt__(otherSorted)
+
+
+########################################################################
 # AbsolutePathList class definition
 ########################################################################
 
-class AbsolutePathList(list):
+class AbsolutePathList(UnorderedList):
 
    """
    Class representing a list of absolute paths.
+
+   This is an unordered list.
 
    We override the C{append}, C{insert} and C{extend} methods to ensure that
    any item added to the list is an absolute path.  
@@ -146,10 +255,12 @@ class AbsolutePathList(list):
 # ObjectTypeList class definition
 ########################################################################
 
-class ObjectTypeList(list):
+class ObjectTypeList(UnorderedList):
 
    """
    Class representing a list containing only objects with a certain type.
+
+   This is an unordered list.
 
    We override the C{append}, C{insert} and C{extend} methods to ensure that
    any item added to the list matches the type that is requested.  The

@@ -77,12 +77,274 @@ Full vs. Reduced Tests
 
 # Import standard modules
 import unittest
-from CedarBackup2.util import executeCommand
+from CedarBackup2.util import executeCommand, UnorderedList
 
 
 #######################################################################
 # Test Case Classes
 #######################################################################
+
+##########################
+# TestUnorderedList class
+##########################
+
+class TestUnorderedList(unittest.TestCase):
+
+   """Tests for the UnorderedList class."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   ##################################
+   # Test unordered list comparisons
+   ##################################
+
+   def testComparison_001(self):
+      """
+      Test two empty lists.
+      """
+      list1 = UnorderedList()
+      list2 = UnorderedList()
+      self.failUnlessEqual(list1, list2)
+      self.failUnlessEqual(list2, list1)
+
+   def testComparison_002(self):
+      """
+      Test empty vs. non-empty list.
+      """
+      list1 = UnorderedList()
+      list2 = UnorderedList()
+      list1.append(1)
+      list1.append(2)
+      list1.append(3)
+      list1.append(4)
+      self.failUnlessEqual([1,2,3,4,], list1)
+      self.failUnlessEqual([2,3,4,1,], list1)
+      self.failUnlessEqual([3,4,1,2,], list1)
+      self.failUnlessEqual([4,1,2,3,], list1)
+      self.failUnlessEqual(list1, [4,3,2,1,])
+      self.failUnlessEqual(list1, [3,2,1,4,])
+      self.failUnlessEqual(list1, [2,1,4,3,])
+      self.failUnlessEqual(list1, [1,4,3,2,])
+      self.failIfEqual(list1, list2)
+      self.failIfEqual(list2, list1)
+
+   def testComparison_003(self):
+      """
+      Test two non-empty lists, completely different contents.
+      """
+      list1 = UnorderedList()
+      list2 = UnorderedList()
+      list1.append(1)
+      list1.append(2)
+      list1.append(3)
+      list1.append(4)
+      list2.append('a')
+      list2.append('b')
+      list2.append('c')
+      list2.append('d')
+      self.failUnlessEqual([1,2,3,4,], list1)
+      self.failUnlessEqual([2,3,4,1,], list1)
+      self.failUnlessEqual([3,4,1,2,], list1)
+      self.failUnlessEqual([4,1,2,3,], list1)
+      self.failUnlessEqual(list1, [4,3,2,1,])
+      self.failUnlessEqual(list1, [3,2,1,4,])
+      self.failUnlessEqual(list1, [2,1,4,3,])
+      self.failUnlessEqual(list1, [1,4,3,2,])
+      self.failUnlessEqual(['a','b','c','d',], list2)
+      self.failUnlessEqual(['b','c','d','a',], list2)
+      self.failUnlessEqual(['c','d','a','b',], list2)
+      self.failUnlessEqual(['d','a','b','c',], list2)
+      self.failUnlessEqual(list2, ['d','c','b','a',])
+      self.failUnlessEqual(list2, ['c','b','a','d',])
+      self.failUnlessEqual(list2, ['b','a','d','c',])
+      self.failUnlessEqual(list2, ['a','d','c','b',])
+      self.failIfEqual(list1, list2)
+      self.failIfEqual(list2, list1)
+
+   def testComparison_004(self):
+      """
+      Test two non-empty lists, different but overlapping contents.
+      """
+      list1 = UnorderedList()
+      list2 = UnorderedList()
+      list1.append(1)
+      list1.append(2)
+      list1.append(3)
+      list1.append(4)
+      list2.append(3)
+      list2.append(4)
+      list2.append('a')
+      list2.append('b')
+      self.failUnlessEqual([1,2,3,4,], list1)
+      self.failUnlessEqual([2,3,4,1,], list1)
+      self.failUnlessEqual([3,4,1,2,], list1)
+      self.failUnlessEqual([4,1,2,3,], list1)
+      self.failUnlessEqual(list1, [4,3,2,1,])
+      self.failUnlessEqual(list1, [3,2,1,4,])
+      self.failUnlessEqual(list1, [2,1,4,3,])
+      self.failUnlessEqual(list1, [1,4,3,2,])
+      self.failUnlessEqual([3,4,'a','b',], list2)
+      self.failUnlessEqual([4,'a','b',3,], list2)
+      self.failUnlessEqual(['a','b',3,4,], list2)
+      self.failUnlessEqual(['b',3,4,'a',], list2)
+      self.failUnlessEqual(list2, ['b','a',4,3,])
+      self.failUnlessEqual(list2, ['a',4,3,'b',])
+      self.failUnlessEqual(list2, [4,3,'b','a',])
+      self.failUnlessEqual(list2, [3,'b','a',4,])
+      self.failIfEqual(list1, list2)
+      self.failIfEqual(list2, list1)
+
+   def testComparison_005(self):
+      """
+      Test two non-empty lists, exactly the same contents, same order.
+      """
+      list1 = UnorderedList()
+      list2 = UnorderedList()
+      list1.append(1)
+      list1.append(2)
+      list1.append(3)
+      list1.append(4)
+      list2.append(1)
+      list2.append(2)
+      list2.append(3)
+      list2.append(4)
+      self.failUnlessEqual([1,2,3,4,], list1)
+      self.failUnlessEqual([2,3,4,1,], list1)
+      self.failUnlessEqual([3,4,1,2,], list1)
+      self.failUnlessEqual([4,1,2,3,], list1)
+      self.failUnlessEqual(list1, [4,3,2,1,])
+      self.failUnlessEqual(list1, [3,2,1,4,])
+      self.failUnlessEqual(list1, [2,1,4,3,])
+      self.failUnlessEqual(list1, [1,4,3,2,])
+      self.failUnlessEqual([1,2,3,4,], list2)
+      self.failUnlessEqual([2,3,4,1,], list2)
+      self.failUnlessEqual([3,4,1,2,], list2)
+      self.failUnlessEqual([4,1,2,3,], list2)
+      self.failUnlessEqual(list2, [4,3,2,1,])
+      self.failUnlessEqual(list2, [3,2,1,4,])
+      self.failUnlessEqual(list2, [2,1,4,3,])
+      self.failUnlessEqual(list2, [1,4,3,2,])
+      self.failUnlessEqual(list1, list2)
+      self.failUnlessEqual(list2, list1)
+
+   def testComparison_006(self):
+      """
+      Test two non-empty lists, exactly the same contents, different order.
+      """
+      list1 = UnorderedList()
+      list2 = UnorderedList()
+      list1.append(1)
+      list1.append(2)
+      list1.append(3)
+      list1.append(4)
+      list2.append(3)
+      list2.append(1)
+      list2.append(2)
+      list2.append(4)
+      self.failUnlessEqual([1,2,3,4,], list1)
+      self.failUnlessEqual([2,3,4,1,], list1)
+      self.failUnlessEqual([3,4,1,2,], list1)
+      self.failUnlessEqual([4,1,2,3,], list1)
+      self.failUnlessEqual(list1, [4,3,2,1,])
+      self.failUnlessEqual(list1, [3,2,1,4,])
+      self.failUnlessEqual(list1, [2,1,4,3,])
+      self.failUnlessEqual(list1, [1,4,3,2,])
+      self.failUnlessEqual([1,2,3,4,], list2)
+      self.failUnlessEqual([2,3,4,1,], list2)
+      self.failUnlessEqual([3,4,1,2,], list2)
+      self.failUnlessEqual([4,1,2,3,], list2)
+      self.failUnlessEqual(list2, [4,3,2,1,])
+      self.failUnlessEqual(list2, [3,2,1,4,])
+      self.failUnlessEqual(list2, [2,1,4,3,])
+      self.failUnlessEqual(list2, [1,4,3,2,])
+      self.failUnlessEqual(list1, list2)
+      self.failUnlessEqual(list2, list1)
+
+   def testComparison_007(self):
+      """
+      Test two non-empty lists, exactly the same contents, some duplicates,
+      same order.
+      """
+      list1 = UnorderedList()
+      list2 = UnorderedList()
+      list1.append(1)
+      list1.append(2)
+      list1.append(2)
+      list1.append(3)
+      list1.append(4)
+      list1.append(4)
+      list2.append(1)
+      list2.append(2)
+      list2.append(2)
+      list2.append(3)
+      list2.append(4)
+      list2.append(4)
+      self.failUnlessEqual([1,2,2,3,4,4,], list1)
+      self.failUnlessEqual([2,2,3,4,1,4,], list1)
+      self.failUnlessEqual([2,3,4,1,4,2,], list1)
+      self.failUnlessEqual([2,4,1,4,2,3,], list1)
+      self.failUnlessEqual(list1, [1,2,2,3,4,4,])
+      self.failUnlessEqual(list1, [2,2,3,4,1,4,])
+      self.failUnlessEqual(list1, [2,3,4,1,4,2,])
+      self.failUnlessEqual(list1, [2,4,1,4,2,3,])
+      self.failUnlessEqual([1,2,2,3,4,4,], list2)
+      self.failUnlessEqual([2,2,3,4,1,4,], list2)
+      self.failUnlessEqual([2,3,4,1,4,2,], list2)
+      self.failUnlessEqual([2,4,1,4,2,3,], list2)
+      self.failUnlessEqual(list2, [1,2,2,3,4,4,])
+      self.failUnlessEqual(list2, [2,2,3,4,1,4,])
+      self.failUnlessEqual(list2, [2,3,4,1,4,2,])
+      self.failUnlessEqual(list2, [2,4,1,4,2,3,])
+      self.failUnlessEqual(list1, list2)
+      self.failUnlessEqual(list2, list1)
+
+   def testComparison_008(self):
+      """
+      Test two non-empty lists, exactly the same contents, some duplicates,
+      different order.
+      """
+      list1 = UnorderedList()
+      list2 = UnorderedList()
+      list1.append(1)
+      list1.append(2)
+      list1.append(2)
+      list1.append(3)
+      list1.append(4)
+      list1.append(4)
+      list2.append(3)
+      list2.append(1)
+      list2.append(2)
+      list2.append(2)
+      list2.append(4)
+      list2.append(4)
+      self.failUnlessEqual([1,2,2,3,4,4,], list1)
+      self.failUnlessEqual([2,2,3,4,1,4,], list1)
+      self.failUnlessEqual([2,3,4,1,4,2,], list1)
+      self.failUnlessEqual([2,4,1,4,2,3,], list1)
+      self.failUnlessEqual(list1, [1,2,2,3,4,4,])
+      self.failUnlessEqual(list1, [2,2,3,4,1,4,])
+      self.failUnlessEqual(list1, [2,3,4,1,4,2,])
+      self.failUnlessEqual(list1, [2,4,1,4,2,3,])
+      self.failUnlessEqual([1,2,2,3,4,4,], list2)
+      self.failUnlessEqual([2,2,3,4,1,4,], list2)
+      self.failUnlessEqual([2,3,4,1,4,2,], list2)
+      self.failUnlessEqual([2,4,1,4,2,3,], list2)
+      self.failUnlessEqual(list2, [1,2,2,3,4,4,])
+      self.failUnlessEqual(list2, [2,2,3,4,1,4,])
+      self.failUnlessEqual(list2, [2,3,4,1,4,2,])
+      self.failUnlessEqual(list2, [2,4,1,4,2,3,])
+      self.failUnlessEqual(list1, list2)
+      self.failUnlessEqual(list2, list1)
+
 
 ######################
 # TestFunctions class
@@ -103,9 +365,9 @@ class TestFunctions(unittest.TestCase):
       pass
 
 
-   #########################
-   # Tests executeCommand() 
-   #########################
+   ########################
+   # Test executeCommand() 
+   ########################
          
    def testExecuteCommand_001(self):
       """
@@ -793,6 +1055,7 @@ class TestFunctions(unittest.TestCase):
 def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
+                              unittest.makeSuite(TestUnorderedList, 'test'),
                               unittest.makeSuite(TestFunctions, 'test'),
                             ))
 
