@@ -163,7 +163,12 @@ def _todayIsStart(startingDay):
 
    @return: Boolean indicating whether today is the starting day.
    """
-   return time.localtime().tm_wday == _deriveDayOfWeek(startingDay)
+   value = time.localtime().tm_wday == _deriveDayOfWeek(startingDay)
+   if value:
+      logger.debug("Today is the start of the week.")
+   else:
+      logger.debug("Today is NOT the start of the week.")
+   return value
 
 
 ##################################
@@ -582,9 +587,10 @@ def executeCollect(configPath, options, config):
    @raise TarError: If there is a problem creating a tar file
    """
    logger.debug("Executing collect action.")
-   fullBackup = options.full
    if config.options is None or config.collect is None:
       raise ValueError("Collect configuration is not properly filled in.")
+   fullBackup = options.full
+   logger.debug("Full backup flag is [%s]" % fullBackup)
    todayIsStart = _todayIsStart(config.options.startingDay)
    resetDigest = fullBackup or todayIsStart
    logger.debug("Reset digest flag is [%s]" % resetDigest)
@@ -749,6 +755,7 @@ def executeStage(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there are problems reading or writing files.
    """
+   logger.debug("Executing stage action.")
    if config.options is None or config.stage is None:
       raise ValueError("Stage configuration is not properly filled in.")
    dailyDir = _getDailyDir(config)
@@ -862,11 +869,14 @@ def executeStore(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there are problems reading or writing files.
    """
-   rebuildMedia = options.full
+   logger.debug("Executing store action.")
    if config.options is None or config.store is None:
       raise ValueError("Store configuration is not properly filled in.")
+   rebuildMedia = options.full
+   logger.debug("Rebuild media flag [%s]" % rebuildMedia)
    todayIsStart = _todayIsStart(config.options.startingDay)
    entireDisc = rebuildMedia or todayIsStart
+   logger.debug("Entire disc flag [%s]" % entireDisc)
    stagingDirs = _findCorrectDailyDir(config)
    _writeImage(config, entireDisc, stagingDirs)
    if config.store.checkData:
@@ -1056,6 +1066,7 @@ def executePurge(configPath, options, config):
 
    @raise ValueError: Under many generic error conditions
    """
+   logger.debug("Executing purge action.")
    if config.options is None or config.purge is None:
       raise ValueError("Purge configuration is not properly filled in.")
    if config.purge.purgeDirs is not None:
@@ -1095,6 +1106,7 @@ def executeRebuild(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there are problems reading or writing files.
    """
+   logger.debug("Executing rebuild action.")
    if config.options is None or config.store is None:
       raise ValueError("Rebuild configuration is not properly filled in.")
    stagingDirs = _findRebuildDirs(config)
@@ -1174,6 +1186,7 @@ def executeValidate(configPath, options, config):
 
    @raise ValueError: If some configuration value is invalid.
    """
+   logger.debug("Executing validate action.")
    if options.quiet:
       logfunc = logger.info   # info so it goes to the log
    else:
