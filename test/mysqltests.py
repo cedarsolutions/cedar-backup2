@@ -106,7 +106,7 @@ Full vs. Reduced Tests
 
 # System modules
 import unittest
-from gzip import GzipFile
+from bz2 import BZ2File
 import tempfile
 import os
 from StringIO import StringIO
@@ -1036,10 +1036,10 @@ class TestFunctions(unittest.TestCase):
       Test with no database name, compress=True.
       """
       (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, name=None, compress=True)
-      self.failUnlessEqual(self.buildPath(["mysqldump.txt.gz"]), filename)
+      self.failUnlessEqual(self.buildPath(["mysqldump.txt.bz2"]), filename)
       outputFile.write("Hello, world.\n")
       outputFile.close()
-      realContents = GzipFile(filename=filename, mode="r").readlines()
+      realContents = BZ2File(filename=filename, mode="r").readlines()
       self.failUnlessEqual(1, len(realContents))
       self.failUnlessEqual("Hello, world.\n", realContents[0])
 
@@ -1060,10 +1060,10 @@ class TestFunctions(unittest.TestCase):
       Test with a simple database name, compress=True.
       """
       (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, name="database", compress=True)
-      self.failUnlessEqual(self.buildPath(["mysqldump-database.txt.gz"]), filename)
+      self.failUnlessEqual(self.buildPath(["mysqldump-database.txt.bz2"]), filename)
       outputFile.write("Hello, world.\n")
       outputFile.close()
-      realContents = GzipFile(filename=filename, mode="r").readlines()
+      realContents = BZ2File(filename=filename, mode="r").readlines()
       self.failUnlessEqual(1, len(realContents))
       self.failUnlessEqual("Hello, world.\n", realContents[0])
 
@@ -1084,10 +1084,10 @@ class TestFunctions(unittest.TestCase):
       Test with a database name containing spaces, compress=True.
       """
       (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, name="name with spaces", compress=True)
-      self.failUnlessEqual(self.buildPath(["mysqldump-name with spaces.txt.gz"]), filename)
+      self.failUnlessEqual(self.buildPath(["mysqldump-name with spaces.txt.bz2"]), filename)
       outputFile.write("Hello, world.\n")
       outputFile.close()
-      realContents = GzipFile(filename=filename, mode="r").readlines()
+      realContents = BZ2File(filename=filename, mode="r").readlines()
       self.failUnlessEqual(1, len(realContents))
       self.failUnlessEqual("Hello, world.\n", realContents[0])
 
