@@ -141,6 +141,7 @@ def main():
       import test.peertests as peertests
       import test.imagetests as imagetests
       import test.writertests as writertests
+      import test.configtests as configtests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -174,6 +175,7 @@ def main():
                                peertests.suite(),
                                imagetests.suite(),
                                writertests.suite(),
+                               configtests.suite(),
                               ))
    unittest.TextTestRunner(verbosity=1).run(suite)
    print ""
