@@ -41,7 +41,7 @@ are backed up using tar and may be compressed using gzip or bzip2.
 """
 
 setup (
-   name             = 'CedarBackup',
+   name             = 'CedarBackup2',
    version          = VERSION,
    description      = 'Implements secure remote and local backups to CD-R or CD-RW.',
    long_description = LONG_DESCRIPTION,
