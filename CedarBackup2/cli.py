@@ -489,7 +489,7 @@ def _usage(fd=sys.stderr):
    fd.write("   validate       Validate configuration only\n")
    fd.write("\n")
    fd.write(" You may also specify extended actions that have been defined in\n")
-   fd.write(" configuration.")
+   fd.write(" configuration.\n")
    fd.write("\n")
    fd.write(" You must specify at least one action to take.  More than one of\n")
    fd.write(" the \"collect\", \"stage\", \"store\" or \"purge\" actions and/or\n")
