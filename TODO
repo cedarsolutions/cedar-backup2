@@ -26,6 +26,7 @@ BUGS TO FIX
 * Figure out why incremental backups don't seem to pay any attention to the digest on disk
 * Ignore file isn't configured
 * Why does digest have only 25 entries if list for boot has 26 entries?
+* AAARGH.  Purge removed collect directory.
 
 TESTS TO ADD
 
@@ -51,12 +52,13 @@ DOCUMENTATION
 * Rewrite Cedar Backup webpage online, to show new version and link to old version.
 * Add documentation for --stack option  (don't leave it undocumented)
 * Maybe add --stack to notes on how to report bugs, i.e. if you get an error that doesn't make sense, re-run with --stack
+* Change "1500" unit tests to "1700" unit tests everywhere I mention it.
 
 * Write some sort of "what's new" paragraph for release of 2.0beta1
    - Entire codebase has been rewritten from the ground up using Python 2.3.
    - Cleaner, more pythonic, better structured, sensible mix of classes and functions
    - Much of the lower-level is intended to be general-purpose "library" code
-   - All lower-level functionality is thoroughly regression tested via pyunit (1500+ individual unit tests)
+   - All lower-level functionality is thoroughly regression tested via pyunit (1700+ individual unit tests)
    - Configuration class is standardized, so third-party Python programs can use it.
    - Uses Python's integrated logging for realtime logs, much better than old logs.
    - Uses Python's tar module rather than GNU tar via pipes, for more consistent behavior.

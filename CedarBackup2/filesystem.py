@@ -358,6 +358,26 @@ class FilesystemList(list):
       @return: Number of items recursively added to the list
       @raise ValueError: If path is not a directory or does not exist.
       """
+      return self._addDirContentsRecursive(path)
+
+   def _addDirContentsRecursive(self, path, includePath=True):
+      """
+      Internal implementation of C{addDirContents}.
+
+      This internal implementation exists due to some refactoring.  Basically,
+      some subclasses have a need to add the contents of a directory, but not
+      the directory itself.  This is different than the standard C{FilesystemList}
+      behavior and actually ends up making a special case out of the first
+      call in the recursive chain.  Since I don't want to expose the modified
+      interface, C{addDirContents} ends up being wholly implemented in terms 
+      of this method.
+
+      @param path: Directory path whose contents should be added to the list.
+      @param includePath: Indicates whether to include the path as well as contents.
+
+      @return: Number of items recursively added to the list
+      @raise ValueError: If path is not a directory or does not exist.
+      """
       added = 0
       if not os.path.exists(path) or not os.path.isdir(path):
          logger.debug("Path [%s] is not a directory or does not exist on disk." % path)
@@ -372,7 +392,8 @@ class FilesystemList(list):
       if self.ignoreFile is not None and os.path.exists(os.path.join(path, self.ignoreFile)):
          logger.debug("Path [%s] is excluded based on ignore file." % path)
          return added
-      added += self.addDir(path)    # could actually be excluded by addDir, yet 
+      if includePath:
+         added += self.addDir(path)    # could actually be excluded by addDir, yet 
       for entry in os.listdir(path):
          entrypath = os.path.join(path, entry)
          if os.path.isfile(entrypath):
@@ -381,7 +402,7 @@ class FilesystemList(list):
             if os.path.islink(entrypath):
                added += self.addDir(entrypath)
             else:
-               added += self.addDirContents(entrypath)
+               added += self._addDirContentsRecursive(entrypath)
       return added
 
 
@@ -871,6 +892,11 @@ class PurgeItemList(FilesystemList):
    L{FilesystemList}, this class adds functionality to remove items that are
    too young to be purged, and to actually remove each item in the list from
    the filesystem.
+
+   The other main difference is that when you add a directory's contents to a
+   purge item list, the directory itself is not added to the list.  This way,
+   if someone asks to purge within in C{/opt/backup/collect}, that directory
+   doesn't get removed once all of the files within it is gone.
    """
 
    ##############
@@ -880,6 +906,46 @@ class PurgeItemList(FilesystemList):
    def __init__(self):
       """Initializes a list with no configured exclusions."""
       FilesystemList.__init__(self)
+
+
+   ##############
+   # Add methods
+   ##############
+
+   def addDirContents(self, path):
+      """
+      Adds the contents of a directory to the list.
+
+      The path must exist and must be a directory or a link to a directory.
+      The contents of the directory (but I{not} the directory path itself) will
+      be recursively added to the list, subject to any exclusions that are in
+      place.  
+
+      @note: If a directory's absolute path matches an exclude pattern or path,
+      or if the directory contains the configured ignore file, then the
+      directory and all of its contents will be recursively excluded from the
+      list.
+
+      @note: If the passed-in directory happens to be a soft link, it will
+      still be recursed.  However, any soft links I{within} the directory will
+      only be added by name, not recursively.   Any invalid soft links (i.e.
+      soft links that point to non-existent items) will be silently ignored.
+
+      @note: The L{excludeDirs} flag only controls whether any given soft link
+      path itself is added to the list once it has been discovered.  It does
+      I{not} modify any behavior related to directory recursion.
+   
+      @note: The L{excludeDirs} flag only controls whether any given directory
+      path itself is added to the list once it has been discovered.  It does
+      I{not} modify any behavior related to directory recursion.
+
+      @param path: Directory path whose contents should be added to the list
+      @type path: String representing a path on disk
+
+      @return: Number of items recursively added to the list
+      @raise ValueError: If path is not a directory or does not exist.
+      """
+      return super(PurgeItemList, self)._addDirContentsRecursive(path, includePath=False)
 
 
    ##################
