@@ -3,6 +3,11 @@ Version 2.0.0	26 Feb 2005
 	* Complete ground-up rewrite for 2.0.0 release.
 	* See doc/release.txt for more details about changes.
 
+Version 1.13   25 Jan 2005
+
+	* Fix boundaries calculation when using kernal >= 2.6.8 (closes: #16).
+	* Look for a matching boundaries pattern among all lines, not just the first.
+
 Version 1.12   16 Jan 2005
 
 	* Add support for ATAPI devices, just like ATA (closes: #15).

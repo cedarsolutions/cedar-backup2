@@ -40,7 +40,7 @@ RM                = rm
 SETUP             = $(PYTHON) ./setup.py
 SUDO              = sudo
 VALIDATE          = util/validate
-VERSION           = `cat CedarBackup2/release.py | grep VERSION | awk -F\" '{print $$2}'`
+VERSION           = `cat CedarBackup2/release.py | grep '^VERSION' | awk -F\" '{print $$2}'`
 URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $$2}'`
 
 
