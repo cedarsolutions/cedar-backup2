@@ -584,8 +584,8 @@ class BackupFileList(FilesystemList):
    total size of the files in the list and a way to export the list into tar
    form.
 
-   @sort: __init__, addDir, totalSize, generateSizeMap, 
-          generateDigestMap, generateFitted, generateTarfile
+   @sort: __init__, addDir, totalSize, generateSizeMap, generateDigestMap, 
+          generateFitted, generateTarfile, removeUnchanged
    """
 
    ##############
@@ -675,12 +675,22 @@ class BackupFileList(FilesystemList):
       that the soft link points at, which doesn't make any sense.
 
       @return: Dictionary mapping file to digest value
+      @see L{removeUnchanged}
       """
       table = { }
       for entry in self:
          if os.path.isfile(entry) and not os.path.islink(entry):
-            table[entry] = sha.new(open(entry).read()).hexdigest()
+            table[entry] = BackupFileList._generateDigest(entry)
       return table
+   
+   def _generateDigest(path):
+      """
+      Generates an SHA digest for a given file on disk.
+      @param path: Path to generate digest for.
+      @return: ASCII-safe SHA digest for the file.
+      """
+      return sha.new(open(path).read()).hexdigest()
+   _generateDigest = staticmethod(_generateDigest)
 
    def generateFitted(self, capacity, algorithm="worst_fit"):
       """
@@ -788,6 +798,52 @@ class BackupFileList(FilesystemList):
             try: os.remove(path) 
             except: pass
          raise
+
+   def removeUnchanged(self, digestMap):
+      """
+      Removes unchanged entries from the list.
+   
+      This method relies on a digest map as returned from L{generateDigestMap}.
+      For each entry in C{digestMap}, if the entry also exists in the current
+      list I{and} the entry in the current list has the same digest value as in
+      the map, the entry in the current list will be removed.
+
+      This method offers a convenient way for callers to filter unneeded
+      entries from a list.  The idea is that a caller will capture a digest map
+      from C{generateDigestMap} immediately before beginning a backup, and will
+      save off that map using C{pickle} or some other method.  Then, the caller
+      could use this method sometime in the future to filter out any unchanged
+      files based on the saved-off map.
+
+      For performance reasons, this method actually ends up rebuilding the list
+      from scratch.  First, we build a temporary dictionary containing all of
+      the items from the original list.  Then, we remove items as needed from
+      the dictionary (which is faster than the equivalent operation on a list).
+      Finally, we replace the contents of the current list based on the keys
+      left in the dictionary.  
+
+      We only generate a digest value for files we actually need to check, and
+      we'll ignore any entry in the list which isn't a file that currently
+      exists on disk.
+
+      @param digestMap: Dictionary mapping file name to digest value.
+      @type digestMap: Map as returned from L{generateDigestMap}.
+
+      @return: Number of entries removed
+      """
+      removed = 0
+      table = {}
+      for entry in self:
+         table[entry] = None
+      for entry in digestMap.keys():
+         if table.has_key(entry):
+            if os.path.isfile(entry) and not os.path.islink(entry):
+               digest = BackupFileList._generateDigest(entry)
+               if digest == digestMap[entry]:
+                  removed += 1
+                  del table[entry]
+      self[:] = table.keys()
+      return removed
 
 
 ########################################################################

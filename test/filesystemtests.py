@@ -12436,6 +12436,384 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
 
+   ###########################
+   # Test removeUnchanged()
+   ###########################
+         
+   def testRemoveUnchanged_001(self):
+      """
+      Test on an empty list with an empty digest map.
+      """
+      digestMap = {}
+      backupList = BackupFileList()
+      self.failUnlessEqual(0, len(backupList))
+      backupList.removeUnchanged(digestMap)
+      self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
+      self.failUnlessEqual(0, len(backupList))
+
+   def testRemoveUnchanged_002(self):
+      """
+      Test on an empty list with an non-empty digest map.
+      """
+      digestMap = { self.buildPath([ "tree9", "dir001", "file001", ]):"4ff529531c7e897cd3df90ed76355de7e21e77ee", 
+                    self.buildPath([ "tree9", "dir001", "file002", ]):"9d473094a22ecf2ae299c25932c941795d1d6cba", 
+                    self.buildPath([ "tree9", "dir002", "file001", ]):"2f68cdda26b643ca0e53be6348ae1255b8786c4b", 
+                    self.buildPath([ "tree9", "dir002", "file002", ]):"0cc03b3014d1ca7188264677cf01f015d72d26cb", 
+                    self.buildPath([ "tree9", "file001", ])          :"3ef0b16a6237af9200b7a46c1987d6a555973847", 
+                    self.buildPath([ "tree9", "file002", ])          :"fae89085ee97b57ccefa7e30346c573bb0a769db", }
+      backupList = BackupFileList()
+      self.failUnlessEqual(0, len(backupList))
+      backupList.removeUnchanged(digestMap)
+      self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
+      self.failUnlessEqual(0, len(backupList))
+
+   def testRemoveUnchanged_003(self):
+      """
+      Test on an non-empty list with an empty digest map.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      digestMap = { }
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      count = backupList.removeUnchanged(digestMap)
+      self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+
+   def testRemoveUnchanged_004(self):
+      """
+      Test with a digest map containing only entries that are not in the list.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      digestMap = { self.buildPath([ "tree9", "dir003", "file001", ]):"4ff529531c7e897cd3df90ed76355de7e21e77ee", 
+                    self.buildPath([ "tree9", "dir003", "file002", ]):"9d473094a22ecf2ae299c25932c941795d1d6cba", 
+                    self.buildPath([ "tree9", "dir004", "file001", ]):"2f68cdda26b643ca0e53be6348ae1255b8786c4b", 
+                    self.buildPath([ "tree9", "dir004", "file002", ]):"0cc03b3014d1ca7188264677cf01f015d72d26cb", 
+                    self.buildPath([ "tree9", "file003", ])          :"3ef0b16a6237af9200b7a46c1987d6a555973847", 
+                    self.buildPath([ "tree9", "file004", ])          :"fae89085ee97b57ccefa7e30346c573bb0a769db", }
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      count = backupList.removeUnchanged(digestMap)
+      self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+
+   def testRemoveUnchanged_005(self):
+      """
+      Test with a digest map containing only entries that are in the list, with
+      non-matching digests.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      digestMap = { self.buildPath([ "tree9", "dir001", "file001", ]):"4ff529531c7e8AAAAAAAAAAAAAAAAAA7e21e77ee", 
+                    self.buildPath([ "tree9", "dir001", "file002", ]):"9d473094a22ecAAAAAAAAAAAAAAAAAA95d1d6cba", 
+                    self.buildPath([ "tree9", "dir002", "file001", ]):"2f68cdda26b64AAAAAAAAAAAAAAAAAA5b8786c4b", 
+                    self.buildPath([ "tree9", "dir002", "file002", ]):"0cc03b3014d1cAAAAAAAAAAAAAAAAAA5d72d26cb", 
+                    self.buildPath([ "tree9", "file001", ])          :"3ef0b16a6237aAAAAAAAAAAAAAAAAAA555973847", 
+                    self.buildPath([ "tree9", "file002", ])          :"fae89085ee97bAAAAAAAAAAAAAAAAAAbb0a769db", }
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      count = backupList.removeUnchanged(digestMap)
+      self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+
+   def testRemoveUnchanged_006(self):
+      """
+      Test with a digest map containing only entries that are in the list, with
+      matching digests.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      digestMap = { self.buildPath([ "tree9", "dir001", "file001", ]):"4ff529531c7e897cd3df90ed76355de7e21e77ee", 
+                    self.buildPath([ "tree9", "dir001", "file002", ]):"9d473094a22ecf2ae299c25932c941795d1d6cba", 
+                    self.buildPath([ "tree9", "dir002", "file001", ]):"2f68cdda26b643ca0e53be6348ae1255b8786c4b", 
+                    self.buildPath([ "tree9", "dir002", "file002", ]):"0cc03b3014d1ca7188264677cf01f015d72d26cb", 
+                    self.buildPath([ "tree9", "file001", ])          :"3ef0b16a6237af9200b7a46c1987d6a555973847", 
+                    self.buildPath([ "tree9", "file002", ])          :"fae89085ee97b57ccefa7e30346c573bb0a769db", }
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      count = backupList.removeUnchanged(digestMap)
+      self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
+      self.failUnlessEqual(6, count)
+      self.failUnlessEqual(9, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+
+   def testRemoveUnchanged_007(self):
+      """
+      Test with a digest map containing both entries that are and are not in
+      the list, with non-matching digests.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      digestMap = { self.buildPath([ "tree9", "dir001", "file001", ]):"4ff529531cCCCCCCCCCCCCCCCCCCCCCCCCCe77ee", 
+                    self.buildPath([ "tree9", "dir001", "file002", ]):"9d473094a2CCCCCCCCCCCCCCCCCCCCCCCCCd6cba", 
+                    self.buildPath([ "tree9", "dir003", "file001", ]):"2f68cdda26CCCCCCCCCCCCCCCCCCCCCCCCC86c4b", 
+                    self.buildPath([ "tree9", "dir003", "file002", ]):"0cc03b3014CCCCCCCCCCCCCCCCCCCCCCCCCd26cb", 
+                    self.buildPath([ "tree9", "file001", ])          :"3ef0b16a62CCCCCCCCCCCCCCCCCCCCCCCCC73847", 
+                    self.buildPath([ "tree9", "file003", ])          :"fae89085eeCCCCCCCCCCCCCCCCCCCCCCCCC769db", }
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      count = backupList.removeUnchanged(digestMap)
+      self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+
+   def testRemoveUnchanged_008(self):
+      """
+      Test with a digest map containing both entries that are and are not in
+      the list, with matching digests.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      digestMap = { self.buildPath([ "tree9", "dir001", "file001", ]):"4ff529531c7e897cd3df90ed76355de7e21e77ee", 
+                    self.buildPath([ "tree9", "dir001", "file002", ]):"9d473094a22ecf2ae299c25932c941795d1d6cba", 
+                    self.buildPath([ "tree9", "dir003", "file001", ]):"2f68cdda26b643ca0e53be6348ae1255b8786c4b", 
+                    self.buildPath([ "tree9", "dir003", "file002", ]):"0cc03b3014d1ca7188264677cf01f015d72d26cb", 
+                    self.buildPath([ "tree9", "file001", ])          :"3ef0b16a6237af9200b7a46c1987d6a555973847", 
+                    self.buildPath([ "tree9", "file003", ])          :"fae89085ee97b57ccefa7e30346c573bb0a769db", }
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      count = backupList.removeUnchanged(digestMap)
+      self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
+      self.failUnlessEqual(3, count)
+      self.failUnlessEqual(12, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+
+   def testRemoveUnchanged_009(self):
+      """
+      Test with a digest map containing both entries that are and are not in
+      the list, with matching and non-matching digests.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      digestMap = { self.buildPath([ "tree9", "dir001", "file001", ]):"4ff529531AAAAAAAAAAAAAAAAAAAAAAAe21e77ee", 
+                    self.buildPath([ "tree9", "dir001", "file002", ]):"9d473094a22ecf2ae299c25932c941795d1d6cba", 
+                    self.buildPath([ "tree9", "dir003", "file001", ]):"2f68cdda26b643ca0e53be6348ae1255b8786c4b", 
+                    self.buildPath([ "tree9", "dir003", "file002", ]):"0cc03b3014d1ca7188264677cf01f015d72d26cb", 
+                    self.buildPath([ "tree9", "file001", ])          :"3ef0b16a6237af9200b7a46c1987d6a555973847", 
+                    self.buildPath([ "tree9", "file003", ])          :"fae89085ee97b57ccefa7e30346c573bb0a769db", }
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      count = backupList.removeUnchanged(digestMap)
+      self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
+      self.failUnlessEqual(2, count)
+      self.failUnlessEqual(13, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+
+
 ##########################
 # TestPurgeItemList class
 ##########################
