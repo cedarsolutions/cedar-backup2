@@ -2,6 +2,7 @@ Version 2.3.0	10 Mar 2005
 
 	* Make 'extend' package public by listing it in CedarBackup2/__init__.py.
 	* Reimplement digest generation to use incremental method (now ~3x faster).
+	* Tweak manifest to be a little more selective about what's distributed.
 
 Version 2.2.0	09 Mar 2005
 
