@@ -205,7 +205,7 @@ class TestOptions(unittest.TestCase):
    # Test constructor and attributes
    ##################################
 
-   def testConstructor_002(self):
+   def testConstructor_001(self):
       """
       Test constructor with no arguments.
       """
@@ -221,9 +221,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_003(self):
+   def testConstructor_002(self):
       """
       Test constructor with validate=False, no other arguments.
       """
@@ -239,9 +240,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_004(self):
+   def testConstructor_003(self):
       """
       Test constructor with argumentList=[], validate=False.
       """
@@ -257,9 +259,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_005(self):
+   def testConstructor_004(self):
       """
       Test constructor with argumentString="", validate=False.
       """
@@ -275,9 +278,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_006(self):
+   def testConstructor_005(self):
       """
       Test constructor with argumentList=["--help", ], validate=False.
       """
@@ -293,9 +297,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_007(self):
+   def testConstructor_006(self):
       """
       Test constructor with argumentString="--help", validate=False.
       """
@@ -311,9 +316,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_008(self):
+   def testConstructor_007(self):
       """
       Test constructor with argumentList=["-h", ], validate=False.
       """
@@ -329,9 +335,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_009(self):
+   def testConstructor_008(self):
       """
       Test constructor with argumentString="-h", validate=False.
       """
@@ -347,9 +354,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_010(self):
+   def testConstructor_009(self):
       """
       Test constructor with argumentList=["--version", ], validate=False.
       """
@@ -365,9 +373,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_011(self):
+   def testConstructor_010(self):
       """
       Test constructor with argumentString="--version", validate=False.
       """
@@ -383,9 +392,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_012(self):
+   def testConstructor_011(self):
       """
       Test constructor with argumentList=["-V", ], validate=False.
       """
@@ -401,9 +411,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_013(self):
+   def testConstructor_012(self):
       """
       Test constructor with argumentString="-V", validate=False.
       """
@@ -419,9 +430,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_014(self):
+   def testConstructor_013(self):
       """
       Test constructor with argumentList=["--verbose", ], validate=False.
       """
@@ -437,9 +449,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_015(self):
+   def testConstructor_014(self):
       """
       Test constructor with argumentString="--verbose", validate=False.
       """
@@ -455,9 +468,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_016(self):
+   def testConstructor_015(self):
       """
       Test constructor with argumentList=["-b", ], validate=False.
       """
@@ -473,9 +487,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_017(self):
+   def testConstructor_016(self):
       """
       Test constructor with argumentString="-b", validate=False.
       """
@@ -491,9 +506,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_018(self):
+   def testConstructor_017(self):
       """
       Test constructor with argumentList=["--quiet", ], validate=False.
       """
@@ -509,9 +525,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_019(self):
+   def testConstructor_018(self):
       """
       Test constructor with argumentString="--quiet", validate=False.
       """
@@ -527,9 +544,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_020(self):
+   def testConstructor_019(self):
       """
       Test constructor with argumentList=["-q", ], validate=False.
       """
@@ -545,9 +563,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_021(self):
+   def testConstructor_020(self):
       """
       Test constructor with argumentString="-q", validate=False.
       """
@@ -563,33 +582,34 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_022(self):
+   def testConstructor_021(self):
       """
       Test constructor with argumentList=["--config", ], validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--config", ], validate=False)
 
-   def testConstructor_023(self):
+   def testConstructor_022(self):
       """
       Test constructor with argumentString="--config", validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--config", validate=False)
 
-   def testConstructor_024(self):
+   def testConstructor_023(self):
       """
       Test constructor with argumentList=["-c", ], validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-c", ], validate=False)
 
-   def testConstructor_025(self):
+   def testConstructor_024(self):
       """
       Test constructor with argumentString="-c", validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-c", validate=False)
 
-   def testConstructor_026(self):
+   def testConstructor_025(self):
       """
       Test constructor with argumentList=["--config", "something", ], validate=False.
       """
@@ -605,9 +625,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_027(self):
+   def testConstructor_026(self):
       """
       Test constructor with argumentString="--config something", validate=False.
       """
@@ -623,9 +644,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_028(self):
+   def testConstructor_027(self):
       """
       Test constructor with argumentList=["-c", "something", ], validate=False.
       """
@@ -641,9 +663,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_029(self):
+   def testConstructor_028(self):
       """
       Test constructor with argumentString="-c something", validate=False.
       """
@@ -659,9 +682,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_030(self):
+   def testConstructor_029(self):
       """
       Test constructor with argumentList=["--full", ], validate=False.
       """
@@ -677,9 +701,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_031(self):
+   def testConstructor_030(self):
       """
       Test constructor with argumentString="--full", validate=False.
       """
@@ -695,9 +721,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_032(self):
+   def testConstructor_031(self):
       """
       Test constructor with argumentList=["-f", ], validate=False.
       """
@@ -713,9 +740,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_033(self):
+   def testConstructor_032(self):
       """
       Test constructor with argumentString="-f", validate=False.
       """
@@ -731,33 +759,34 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_034(self):
+   def testConstructor_033(self):
       """
       Test constructor with argumentList=["--logfile", ], validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--logfile", ], validate=False)
 
-   def testConstructor_035(self):
+   def testConstructor_034(self):
       """
       Test constructor with argumentString="--logfile", validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--logfile", validate=False)
 
-   def testConstructor_036(self):
+   def testConstructor_035(self):
       """
       Test constructor with argumentList=["-l", ], validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-l", ], validate=False)
 
-   def testConstructor_037(self):
+   def testConstructor_036(self):
       """
       Test constructor with argumentString="-l", validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-l", validate=False)
 
-   def testConstructor_038(self):
+   def testConstructor_037(self):
       """
       Test constructor with argumentList=["--logfile", "something", ], validate=False.
       """
@@ -773,9 +802,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_039(self):
+   def testConstructor_038(self):
       """
       Test constructor with argumentString="--logfile something", validate=False.
       """
@@ -791,9 +821,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_040(self):
+   def testConstructor_039(self):
       """
       Test constructor with argumentList=["-l", "something", ], validate=False.
       """
@@ -809,9 +840,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_041(self):
+   def testConstructor_040(self):
       """
       Test constructor with argumentString="-l something", validate=False.
       """
@@ -827,57 +859,58 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_042(self):
+   def testConstructor_041(self):
       """
       Test constructor with argumentList=["--owner", ], validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--owner", ], validate=False)
 
-   def testConstructor_043(self):
+   def testConstructor_042(self):
       """
       Test constructor with argumentString="--owner", validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--owner", validate=False)
 
-   def testConstructor_044(self):
+   def testConstructor_043(self):
       """
       Test constructor with argumentList=["-o", ], validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-o", ], validate=False)
 
-   def testConstructor_045(self):
+   def testConstructor_044(self):
       """
       Test constructor with argumentString="-o", validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-o", validate=False)
 
-   def testConstructor_046(self):
+   def testConstructor_045(self):
       """
       Test constructor with argumentList=["--owner", "something", ], validate=False.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--owner", "something", ], validate=False)
 
-   def testConstructor_047(self):
+   def testConstructor_046(self):
       """
       Test constructor with argumentString="--owner something", validate=False.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--owner something", validate=False)
 
-   def testConstructor_048(self):
+   def testConstructor_047(self):
       """
       Test constructor with argumentList=["-o", "something", ], validate=False.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-o", "something", ], validate=False)
 
-   def testConstructor_049(self):
+   def testConstructor_048(self):
       """
       Test constructor with argumentString="-o something", validate=False.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-o something", validate=False)
 
-   def testConstructor_050(self):
+   def testConstructor_049(self):
       """
       Test constructor with argumentList=["--owner", "a:b", ], validate=False.
       """
@@ -893,9 +926,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_051(self):
+   def testConstructor_050(self):
       """
       Test constructor with argumentString="--owner a:b", validate=False.
       """
@@ -911,9 +945,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_052(self):
+   def testConstructor_051(self):
       """
       Test constructor with argumentList=["-o", "a:b", ], validate=False.
       """
@@ -929,9 +964,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_053(self):
+   def testConstructor_052(self):
       """
       Test constructor with argumentString="-o a:b", validate=False.
       """
@@ -947,57 +983,58 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_054(self):
+   def testConstructor_053(self):
       """
       Test constructor with argumentList=["--mode", ], validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--mode", ], validate=False)
 
-   def testConstructor_055(self):
+   def testConstructor_054(self):
       """
       Test constructor with argumentString="--mode", validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--mode", validate=False)
 
-   def testConstructor_056(self):
+   def testConstructor_055(self):
       """
       Test constructor with argumentList=["-m", ], validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-m", ], validate=False)
 
-   def testConstructor_057(self):
+   def testConstructor_056(self):
       """
       Test constructor with argumentString="-m", validate=False.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-m", validate=False)
 
-   def testConstructor_058(self):
+   def testConstructor_057(self):
       """
       Test constructor with argumentList=["--mode", "something", ], validate=False.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--mode", "something", ], validate=False)
 
-   def testConstructor_059(self):
+   def testConstructor_058(self):
       """
       Test constructor with argumentString="--mode something", validate=False.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--mode something", validate=False)
 
-   def testConstructor_060(self):
+   def testConstructor_059(self):
       """
       Test constructor with argumentList=["-m", "something", ], validate=False.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-m", "something", ], validate=False)
 
-   def testConstructor_061(self):
+   def testConstructor_060(self):
       """
       Test constructor with argumentString="-m something", validate=False.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-m something", validate=False)
 
-   def testConstructor_062(self):
+   def testConstructor_061(self):
       """
       Test constructor with argumentList=["--mode", "631", ], validate=False.
       """
@@ -1013,9 +1050,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(0631, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_063(self):
+   def testConstructor_062(self):
       """
       Test constructor with argumentString="--mode 631", validate=False.
       """
@@ -1031,9 +1069,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(0631, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_064(self):
+   def testConstructor_063(self):
       """
       Test constructor with argumentList=["-m", "631", ], validate=False.
       """
@@ -1049,9 +1088,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(0631, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_065(self):
+   def testConstructor_064(self):
       """
       Test constructor with argumentString="-m 631", validate=False.
       """
@@ -1067,9 +1107,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(0631, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_066(self):
+   def testConstructor_065(self):
       """
       Test constructor with argumentList=["--output", ], validate=False.
       """
@@ -1085,9 +1126,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_067(self):
+   def testConstructor_066(self):
       """
       Test constructor with argumentString="--output", validate=False.
       """
@@ -1103,9 +1145,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_068(self):
+   def testConstructor_067(self):
       """
       Test constructor with argumentList=["-O", ], validate=False.
       """
@@ -1121,9 +1164,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_069(self):
+   def testConstructor_068(self):
       """
       Test constructor with argumentString="-O", validate=False.
       """
@@ -1139,9 +1183,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_070(self):
+   def testConstructor_069(self):
       """
       Test constructor with argumentList=["--debug", ], validate=False.
       """
@@ -1157,9 +1202,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(True, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_071(self):
+   def testConstructor_070(self):
       """
       Test constructor with argumentString="--debug", validate=False.
       """
@@ -1175,9 +1221,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(True, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_072(self):
+   def testConstructor_071(self):
       """
       Test constructor with argumentList=["-d", ], validate=False.
       """
@@ -1193,9 +1240,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(True, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_073(self):
+   def testConstructor_072(self):
       """
       Test constructor with argumentString="-d", validate=False.
       """
@@ -1211,9 +1259,86 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(True, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_073(self):
+      """
+      Test constructor with argumentList=["--stack", ], validate=False.
+      """
+      options = Options(argumentList=["--stack", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(True, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_074(self):
+      """
+      Test constructor with argumentString="--stack", validate=False.
+      """
+      options = Options(argumentString="--stack", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(True, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_075(self):
+      """
+      Test constructor with argumentList=["-s", ], validate=False.
+      """
+      options = Options(argumentList=["-s", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(True, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_076(self):
+      """
+      Test constructor with argumentString="-s", validate=False.
+      """
+      options = Options(argumentString="-s", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(True, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_077(self):
       """
       Test constructor with argumentList=["all", ], validate=False.
       """
@@ -1229,9 +1354,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["all", ], options.actions)
 
-   def testConstructor_075(self):
+   def testConstructor_078(self):
       """
       Test constructor with argumentString="all", validate=False.
       """
@@ -1247,9 +1373,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["all", ], options.actions)
 
-   def testConstructor_076(self):
+   def testConstructor_079(self):
       """
       Test constructor with argumentList=["collect", ], validate=False.
       """
@@ -1265,9 +1392,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", ], options.actions)
 
-   def testConstructor_077(self):
+   def testConstructor_080(self):
       """
       Test constructor with argumentString="collect", validate=False.
       """
@@ -1283,9 +1411,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", ], options.actions)
 
-   def testConstructor_078(self):
+   def testConstructor_081(self):
       """
       Test constructor with argumentList=["stage", ], validate=False.
       """
@@ -1301,9 +1430,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["stage", ], options.actions)
 
-   def testConstructor_079(self):
+   def testConstructor_082(self):
       """
       Test constructor with argumentString="stage", validate=False.
       """
@@ -1319,9 +1449,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["stage", ], options.actions)
 
-   def testConstructor_080(self):
+   def testConstructor_083(self):
       """
       Test constructor with argumentList=["store", ], validate=False.
       """
@@ -1337,9 +1468,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["store", ], options.actions)
 
-   def testConstructor_081(self):
+   def testConstructor_084(self):
       """
       Test constructor with argumentString="store", validate=False.
       """
@@ -1355,9 +1487,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["store", ], options.actions)
 
-   def testConstructor_082(self):
+   def testConstructor_085(self):
       """
       Test constructor with argumentList=["purge", ], validate=False.
       """
@@ -1373,9 +1506,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["purge", ], options.actions)
 
-   def testConstructor_083(self):
+   def testConstructor_086(self):
       """
       Test constructor with argumentString="purge", validate=False.
       """
@@ -1391,9 +1525,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["purge", ], options.actions)
 
-   def testConstructor_084(self):
+   def testConstructor_087(self):
       """
       Test constructor with argumentList=["rebuild", ], validate=False.
       """
@@ -1409,9 +1544,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
-   def testConstructor_085(self):
+   def testConstructor_088(self):
       """
       Test constructor with argumentString="rebuild", validate=False.
       """
@@ -1427,9 +1563,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
-   def testConstructor_086(self):
+   def testConstructor_089(self):
       """
       Test constructor with argumentList=["validate", ], validate=False.
       """
@@ -1445,9 +1582,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["validate", ], options.actions)
 
-   def testConstructor_087(self):
+   def testConstructor_090(self):
       """
       Test constructor with argumentString="validate", validate=False.
       """
@@ -1463,9 +1601,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["validate", ], options.actions)
 
-   def testConstructor_088(self):
+   def testConstructor_091(self):
       """
       Test constructor with argumentList=["collect", "all", ], validate=False.
       """
@@ -1481,9 +1620,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "all", ], options.actions)
 
-   def testConstructor_089(self):
+   def testConstructor_092(self):
       """
       Test constructor with argumentString="collect all", validate=False.
       """
@@ -1499,9 +1639,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "all", ], options.actions)
 
-   def testConstructor_090(self):
+   def testConstructor_093(self):
       """
       Test constructor with argumentList=["collect", "rebuild", ], validate=False.
       """
@@ -1517,9 +1658,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "rebuild", ], options.actions)
 
-   def testConstructor_091(self):
+   def testConstructor_094(self):
       """
       Test constructor with argumentString="collect rebuild", validate=False.
       """
@@ -1535,9 +1677,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "rebuild", ], options.actions)
 
-   def testConstructor_092(self):
+   def testConstructor_095(self):
       """
       Test constructor with argumentList=["collect", "validate", ], validate=False.
       """
@@ -1553,9 +1696,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "validate", ], options.actions)
 
-   def testConstructor_093(self):
+   def testConstructor_096(self):
       """
       Test constructor with argumentString="collect validate", validate=False.
       """
@@ -1571,9 +1715,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "validate", ], options.actions)
 
-   def testConstructor_094(self):
+   def testConstructor_097(self):
       """
       Test constructor with argumentList=["-d", "--verbose", "-O", "--mode", "600", "collect", "stage", ], validate=False.
       """
@@ -1589,9 +1734,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(0600, options.mode)
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(True, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
-   def testConstructor_095(self):
+   def testConstructor_098(self):
       """
       Test constructor with argumentString="-d --verbose -O --mode 600 collect stage", validate=False.
       """
@@ -1607,21 +1753,22 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(0600, options.mode)
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(True, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
-   def testConstructor_096(self):
+   def testConstructor_099(self):
       """
       Test constructor with argumentList=[], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=[], validate=True)
 
-   def testConstructor_097(self):
+   def testConstructor_100(self):
       """
       Test constructor with argumentString="", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="", validate=True)
 
-   def testConstructor_098(self):
+   def testConstructor_101(self):
       """
       Test constructor with argumentList=["--help", ], validate=True.
       """
@@ -1637,9 +1784,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_099(self):
+   def testConstructor_102(self):
       """
       Test constructor with argumentString="--help", validate=True.
       """
@@ -1655,9 +1803,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_100(self):
+   def testConstructor_103(self):
       """
       Test constructor with argumentList=["-h", ], validate=True.
       """
@@ -1673,9 +1822,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_101(self):
+   def testConstructor_104(self):
       """
       Test constructor with argumentString="-h", validate=True.
       """
@@ -1691,9 +1841,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_102(self):
+   def testConstructor_105(self):
       """
       Test constructor with argumentList=["--version", ], validate=True.
       """
@@ -1709,9 +1860,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_103(self):
+   def testConstructor_106(self):
       """
       Test constructor with argumentString="--version", validate=True.
       """
@@ -1727,9 +1879,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_104(self):
+   def testConstructor_107(self):
       """
       Test constructor with argumentList=["-V", ], validate=True.
       """
@@ -1745,9 +1898,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_105(self):
+   def testConstructor_108(self):
       """
       Test constructor with argumentString="-V", validate=True.
       """
@@ -1763,369 +1917,394 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_106(self):
+   def testConstructor_109(self):
       """
       Test constructor with argumentList=["--verbose", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--verbose", ], validate=True)
 
-   def testConstructor_107(self):
+   def testConstructor_110(self):
       """
       Test constructor with argumentString="--verbose", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--verbose", validate=True)
 
-   def testConstructor_108(self):
+   def testConstructor_111(self):
       """
       Test constructor with argumentList=["-b", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-b", ], validate=True)
 
-   def testConstructor_109(self):
+   def testConstructor_112(self):
       """
       Test constructor with argumentString="-b", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-b", validate=True)
 
-   def testConstructor_110(self):
+   def testConstructor_113(self):
       """
       Test constructor with argumentList=["--quiet", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--quiet", ], validate=True)
 
-   def testConstructor_111(self):
+   def testConstructor_114(self):
       """
       Test constructor with argumentString="--quiet", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--quiet", validate=True)
 
-   def testConstructor_112(self):
+   def testConstructor_115(self):
       """
       Test constructor with argumentList=["-q", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-q", ], validate=True)
 
-   def testConstructor_113(self):
+   def testConstructor_116(self):
       """
       Test constructor with argumentString="-q", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-q", validate=True)
 
-   def testConstructor_114(self):
+   def testConstructor_117(self):
       """
       Test constructor with argumentList=["--config", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--config", ], validate=True)
 
-   def testConstructor_115(self):
+   def testConstructor_118(self):
       """
       Test constructor with argumentString="--config", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--config", validate=True)
 
-   def testConstructor_116(self):
+   def testConstructor_119(self):
       """
       Test constructor with argumentList=["-c", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-c", ], validate=True)
 
-   def testConstructor_117(self):
+   def testConstructor_120(self):
       """
       Test constructor with argumentString="-c", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-c", validate=True)
 
-   def testConstructor_118(self):
+   def testConstructor_121(self):
       """
       Test constructor with argumentList=["--config", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--config", "something", ], validate=True)
 
-   def testConstructor_119(self):
+   def testConstructor_122(self):
       """
       Test constructor with argumentString="--config something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--config something", validate=True)
 
-   def testConstructor_120(self):
+   def testConstructor_123(self):
       """
       Test constructor with argumentList=["-c", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-c", "something", ], validate=True)
 
-   def testConstructor_121(self):
+   def testConstructor_124(self):
       """
       Test constructor with argumentString="-c something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-c something", validate=True)
 
-   def testConstructor_122(self):
+   def testConstructor_125(self):
       """
       Test constructor with argumentList=["--full", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--full", ], validate=True)
 
-   def testConstructor_123(self):
+   def testConstructor_126(self):
       """
       Test constructor with argumentString="--full", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--full", validate=True)
 
-   def testConstructor_124(self):
+   def testConstructor_127(self):
       """
       Test constructor with argumentList=["-f", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-f", ], validate=True)
 
-   def testConstructor_125(self):
+   def testConstructor_128(self):
       """
       Test constructor with argumentString="-f", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-f", validate=True)
 
-   def testConstructor_126(self):
+   def testConstructor_129(self):
       """
       Test constructor with argumentList=["--logfile", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--logfile", ], validate=True)
 
-   def testConstructor_127(self):
+   def testConstructor_130(self):
       """
       Test constructor with argumentString="--logfile", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--logfile", validate=True)
 
-   def testConstructor_128(self):
+   def testConstructor_131(self):
       """
       Test constructor with argumentList=["-l", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-l", ], validate=True)
 
-   def testConstructor_129(self):
+   def testConstructor_132(self):
       """
       Test constructor with argumentString="-l", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-l", validate=True)
 
-   def testConstructor_130(self):
+   def testConstructor_133(self):
       """
       Test constructor with argumentList=["--logfile", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--logfile", "something", ], validate=True)
 
-   def testConstructor_131(self):
+   def testConstructor_134(self):
       """
       Test constructor with argumentString="--logfile something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--logfile something", validate=True)
 
-   def testConstructor_132(self):
+   def testConstructor_135(self):
       """
       Test constructor with argumentList=["-l", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-l", "something", ], validate=True)
 
-   def testConstructor_133(self):
+   def testConstructor_136(self):
       """
       Test constructor with argumentString="-l something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-l something", validate=True)
 
-   def testConstructor_134(self):
+   def testConstructor_137(self):
       """
       Test constructor with argumentList=["--owner", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--owner", ], validate=True)
 
-   def testConstructor_135(self):
+   def testConstructor_138(self):
       """
       Test constructor with argumentString="--owner", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--owner", validate=True)
 
-   def testConstructor_136(self):
+   def testConstructor_139(self):
       """
       Test constructor with argumentList=["-o", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-o", ], validate=True)
 
-   def testConstructor_137(self):
+   def testConstructor_140(self):
       """
       Test constructor with argumentString="-o", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-o", validate=True)
 
-   def testConstructor_138(self):
+   def testConstructor_141(self):
       """
       Test constructor with argumentList=["--owner", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--owner", "something", ], validate=True)
 
-   def testConstructor_139(self):
+   def testConstructor_142(self):
       """
       Test constructor with argumentString="--owner something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--owner something", validate=True)
 
-   def testConstructor_140(self):
+   def testConstructor_143(self):
       """
       Test constructor with argumentList=["-o", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-o", "something", ], validate=True)
 
-   def testConstructor_141(self):
+   def testConstructor_144(self):
       """
       Test constructor with argumentString="-o something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-o something", validate=True)
 
-   def testConstructor_142(self):
+   def testConstructor_145(self):
       """
       Test constructor with argumentList=["--owner", "a:b", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--owner", "a:b", ], validate=True)
 
-   def testConstructor_143(self):
+   def testConstructor_146(self):
       """
       Test constructor with argumentString="--owner a:b", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--owner a:b", validate=True)
 
-   def testConstructor_144(self):
+   def testConstructor_147(self):
       """
       Test constructor with argumentList=["-o", "a:b", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-o", "a:b", ], validate=True)
 
-   def testConstructor_145(self):
+   def testConstructor_148(self):
       """
       Test constructor with argumentString="-o a:b", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-o a:b", validate=True)
 
-   def testConstructor_146(self):
+   def testConstructor_149(self):
       """
       Test constructor with argumentList=["--mode", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--mode", ], validate=True)
 
-   def testConstructor_147(self):
+   def testConstructor_150(self):
       """
       Test constructor with argumentString="--mode", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--mode", validate=True)
 
-   def testConstructor_148(self):
+   def testConstructor_151(self):
       """
       Test constructor with argumentList=["-m", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-m", ], validate=True)
 
-   def testConstructor_149(self):
+   def testConstructor_152(self):
       """
       Test constructor with argumentString="-m", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-m", validate=True)
 
-   def testConstructor_150(self):
+   def testConstructor_153(self):
       """
       Test constructor with argumentList=["--mode", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--mode", "something", ], validate=True)
 
-   def testConstructor_151(self):
+   def testConstructor_154(self):
       """
       Test constructor with argumentString="--mode something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--mode something", validate=True)
 
-   def testConstructor_152(self):
+   def testConstructor_155(self):
       """
       Test constructor with argumentList=["-m", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-m", "something", ], validate=True)
 
-   def testConstructor_153(self):
+   def testConstructor_156(self):
       """
       Test constructor with argumentString="-m something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-m something", validate=True)
 
-   def testConstructor_154(self):
+   def testConstructor_157(self):
       """
       Test constructor with argumentList=["--mode", "631", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--mode", "631", ], validate=True)
 
-   def testConstructor_155(self):
+   def testConstructor_158(self):
       """
       Test constructor with argumentString="--mode 631", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--mode 631", validate=True)
 
-   def testConstructor_156(self):
+   def testConstructor_159(self):
       """
       Test constructor with argumentList=["-m", "631", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-m", "631", ], validate=True)
 
-   def testConstructor_157(self):
+   def testConstructor_160(self):
       """
       Test constructor with argumentString="-m 631", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-m 631", validate=True)
 
-   def testConstructor_158(self):
+   def testConstructor_161(self):
       """
       Test constructor with argumentList=["--output", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--output", ], validate=True)
 
-   def testConstructor_159(self):
+   def testConstructor_162(self):
       """
       Test constructor with argumentString="--output", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--output", validate=True)
 
-   def testConstructor_160(self):
+   def testConstructor_163(self):
       """
       Test constructor with argumentList=["-O", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-O", ], validate=True)
 
-   def testConstructor_161(self):
+   def testConstructor_164(self):
       """
       Test constructor with argumentString="-O", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-O", validate=True)
 
-   def testConstructor_162(self):
+   def testConstructor_165(self):
       """
       Test constructor with argumentList=["--debug", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--debug", ], validate=True)
 
-   def testConstructor_163(self):
+   def testConstructor_166(self):
       """
       Test constructor with argumentString="--debug", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--debug", validate=True)
 
-   def testConstructor_164(self):
+   def testConstructor_167(self):
       """
       Test constructor with argumentList=["-d", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-d", ], validate=True)
 
-   def testConstructor_165(self):
+   def testConstructor_168(self):
       """
       Test constructor with argumentString="-d", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-d", validate=True)
 
-   def testConstructor_166(self):
+   def testConstructor_169(self):
+      """
+      Test constructor with argumentList=["--stack", ], validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentList=["--stack", ], validate=True)
+
+   def testConstructor_170(self):
+      """
+      Test constructor with argumentString="--stack", validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentString="--stack", validate=True)
+
+   def testConstructor_171(self):
+      """
+      Test constructor with argumentList=["-s", ], validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentList=["-s", ], validate=True)
+
+   def testConstructor_172(self):
+      """
+      Test constructor with argumentString="-s", validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentString="-s", validate=True)
+
+   def testConstructor_173(self):
       """
       Test constructor with argumentList=["all", ], validate=True.
       """
@@ -2141,9 +2320,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["all", ], options.actions)
 
-   def testConstructor_167(self):
+   def testConstructor_174(self):
       """
       Test constructor with argumentString="all", validate=True.
       """
@@ -2159,9 +2339,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["all", ], options.actions)
 
-   def testConstructor_168(self):
+   def testConstructor_175(self):
       """
       Test constructor with argumentList=["collect", ], validate=True.
       """
@@ -2177,9 +2358,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", ], options.actions)
 
-   def testConstructor_169(self):
+   def testConstructor_176(self):
       """
       Test constructor with argumentString="collect", validate=True.
       """
@@ -2195,9 +2377,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", ], options.actions)
 
-   def testConstructor_170(self):
+   def testConstructor_177(self):
       """
       Test constructor with argumentList=["stage", ], validate=True.
       """
@@ -2213,9 +2396,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["stage", ], options.actions)
 
-   def testConstructor_171(self):
+   def testConstructor_178(self):
       """
       Test constructor with argumentString="stage", validate=True.
       """
@@ -2231,9 +2415,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["stage", ], options.actions)
 
-   def testConstructor_172(self):
+   def testConstructor_179(self):
       """
       Test constructor with argumentList=["store", ], validate=True.
       """
@@ -2249,9 +2434,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["store", ], options.actions)
 
-   def testConstructor_173(self):
+   def testConstructor_180(self):
       """
       Test constructor with argumentString="store", validate=True.
       """
@@ -2267,9 +2453,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["store", ], options.actions)
 
-   def testConstructor_174(self):
+   def testConstructor_181(self):
       """
       Test constructor with argumentList=["purge", ], validate=True.
       """
@@ -2285,9 +2472,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["purge", ], options.actions)
 
-   def testConstructor_175(self):
+   def testConstructor_182(self):
       """
       Test constructor with argumentString="purge", validate=True.
       """
@@ -2303,9 +2491,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["purge", ], options.actions)
 
-   def testConstructor_176(self):
+   def testConstructor_183(self):
       """
       Test constructor with argumentList=["rebuild", ], validate=True.
       """
@@ -2321,9 +2510,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
-   def testConstructor_177(self):
+   def testConstructor_184(self):
       """
       Test constructor with argumentString="rebuild", validate=True.
       """
@@ -2339,9 +2529,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
-   def testConstructor_178(self):
+   def testConstructor_185(self):
       """
       Test constructor with argumentList=["validate", ], validate=True.
       """
@@ -2357,9 +2548,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["validate", ], options.actions)
 
-   def testConstructor_179(self):
+   def testConstructor_186(self):
       """
       Test constructor with argumentString="validate", validate=True.
       """
@@ -2375,9 +2567,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(None, options.mode)
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["validate", ], options.actions)
 
-   def testConstructor_180(self):
+   def testConstructor_187(self):
       """
       Test constructor with argumentList=["-d", "--verbose", "-O", "--mode", "600", "collect", "stage", ], validate=True.
       """
@@ -2393,9 +2586,10 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(0600, options.mode)
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(True, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
-   def testConstructor_181(self):
+   def testConstructor_188(self):
       """
       Test constructor with argumentString="-d --verbose -O --mode 600 collect stage", validate=True.
       """
@@ -2411,6 +2605,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(0600, options.mode)
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(True, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
 
@@ -2450,6 +2645,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2463,6 +2659,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failUnlessEqual(options1, options2)
@@ -2491,6 +2688,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = False
@@ -2504,6 +2702,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2532,6 +2731,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2545,6 +2745,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2573,6 +2774,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2586,6 +2788,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2614,6 +2817,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2627,6 +2831,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2655,6 +2860,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2668,6 +2874,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2696,6 +2903,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2709,6 +2917,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2737,6 +2946,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2750,6 +2960,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2778,6 +2989,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2791,6 +3003,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2819,6 +3032,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = 0600
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2832,6 +3046,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2860,6 +3075,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = False
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2873,6 +3089,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2901,6 +3118,7 @@ class TestOptions(unittest.TestCase):
       options1.mode = "631"
       options1.output = True
       options1.debug = True
+      options1.stacktrace = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -2914,6 +3132,7 @@ class TestOptions(unittest.TestCase):
       options2.mode = 0631
       options2.output = True
       options2.debug = False
+      options1.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -2922,6 +3141,49 @@ class TestOptions(unittest.TestCase):
       self.failUnless(not options1 <= options2)
       self.failUnless(options1 > options2)
       self.failUnless(options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_014(self):
+      """
+      Test comparison of two identical objects, all attributes filled in, stacktrace different.
+      """
+      options1 = Options()
+      options2 = Options()
+
+      options1.help = True
+      options1.version = True
+      options1.verbose = True
+      options1.quiet = True
+      options1.config = "config"
+      options1.full = True
+      options1.logfile = "logfile"
+      options1.owner = ("a", "b")
+      options1.mode = "631"
+      options1.output = True
+      options1.debug = True
+      options1.stacktrace = False
+      options1.actions = ["collect", ]
+
+      options2.help = True
+      options2.version = True
+      options2.verbose = True
+      options2.quiet = True
+      options2.config = "config"
+      options2.full = True
+      options2.logfile = "logfile"
+      options2.owner = ("a", "b")
+      options2.mode = 0631
+      options2.output = True
+      options2.debug = True
+      options2.stacktrace = True
+      options2.actions = ["collect", ]
+
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
       self.failUnless(options1 != options2)
 
 
@@ -3013,20 +3275,27 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(["--debug", ], argumentList)
 
    def testBuildArgumentList_013(self):
+      """Test with stacktrace set, validate=False."""
+      options = Options()
+      options.stacktrace = True
+      argumentList = options.buildArgumentList(validate=False)
+      self.failUnlessEqual(["--stack", ], argumentList)
+
+   def testBuildArgumentList_014(self):
       """Test with actions containing one item, validate=False."""
       options = Options()
       options.actions = [ "collect", ]
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["collect", ], argumentList)
 
-   def testBuildArgumentList_014(self):
+   def testBuildArgumentList_015(self):
       """Test with actions containing multiple items, validate=False."""
       options = Options()
       options.actions = [ "collect", "stage", "store", "purge", ]
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["collect", "stage", "store", "purge", ], argumentList)
 
-   def testBuildArgumentList_015(self):
+   def testBuildArgumentList_016(self):
       """Test with all values set, actions containing one item, validate=False."""
       options = Options()
       options.help = True
@@ -3040,13 +3309,14 @@ class TestOptions(unittest.TestCase):
       options.mode = "631"
       options.output = True
       options.debug = True
+      options.stacktrace = True
       options.actions = ["collect", ]
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
                              "--full", "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
-                             "--output", "--debug", "collect", ], argumentList)
+                             "--output", "--debug", "--stack", "collect", ], argumentList)
 
-   def testBuildArgumentList_016(self):
+   def testBuildArgumentList_017(self):
       """Test with all values set, actions containing multiple items, validate=False."""
       options = Options()
       options.help = True
@@ -3060,100 +3330,107 @@ class TestOptions(unittest.TestCase):
       options.mode = "631"
       options.output = True
       options.debug = True
+      options.stacktrace = True
       options.actions = ["collect", "stage", ]
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
                              "--full", "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
-                             "--output", "--debug", "collect", "stage", ], argumentList)
+                             "--output", "--debug", "--stack", "collect", "stage", ], argumentList)
 
-   def testBuildArgumentList_017(self):
+   def testBuildArgumentList_018(self):
       """Test with no values set, validate=True."""
       options = Options()
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_018(self):
+   def testBuildArgumentList_019(self):
       """Test with help set, validate=True."""
       options = Options()
       options.help = True
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--help", ], argumentList)
 
-   def testBuildArgumentList_019(self):
+   def testBuildArgumentList_020(self):
       """Test with version set, validate=True."""
       options = Options()
       options.version = True
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--version", ], argumentList)
 
-   def testBuildArgumentList_020(self):
+   def testBuildArgumentList_021(self):
       """Test with verbose set, validate=True."""
       options = Options()
       options.verbose = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_021(self):
+   def testBuildArgumentList_022(self):
       """Test with quiet set, validate=True."""
       options = Options()
       options.quiet = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_022(self):
+   def testBuildArgumentList_023(self):
       """Test with config set, validate=True."""
       options = Options()
       options.config = "stuff"
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_023(self):
+   def testBuildArgumentList_024(self):
       """Test with full set, validate=True."""
       options = Options()
       options.full = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_024(self):
+   def testBuildArgumentList_025(self):
       """Test with logfile set, validate=True."""
       options = Options()
       options.logfile = "bogus"
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_025(self):
+   def testBuildArgumentList_026(self):
       """Test with owner set, validate=True."""
       options = Options()
       options.owner = ("ken", "group")
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_026(self):
+   def testBuildArgumentList_027(self):
       """Test with mode set, validate=True."""
       options = Options()
       options.mode = 0644
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_027(self):
+   def testBuildArgumentList_028(self):
       """Test with output set, validate=True."""
       options = Options()
       options.output = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_028(self):
+   def testBuildArgumentList_029(self):
       """Test with debug set, validate=True."""
       options = Options()
       options.debug = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_029(self):
+   def testBuildArgumentList_030(self):
+      """Test with stacktrace set, validate=True."""
+      options = Options()
+      options.stacktrace = True
+      self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
+
+   def testBuildArgumentList_031(self):
       """Test with actions containing one item, validate=True."""
       options = Options()
       options.actions = [ "collect", ]
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["collect", ], argumentList)
 
-   def testBuildArgumentList_030(self):
+   def testBuildArgumentList_032(self):
       """Test with actions containing multiple items, validate=True."""
       options = Options()
       options.actions = [ "collect", "stage", "store", "purge", ]
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["collect", "stage", "store", "purge", ], argumentList)
 
-   def testBuildArgumentList_031(self):
+   def testBuildArgumentList_033(self):
       """Test with all values set, actions containing one item, validate=True."""
       options = Options()
       options.help = True
@@ -3167,13 +3444,14 @@ class TestOptions(unittest.TestCase):
       options.mode = "631"
       options.output = True
       options.debug = True
+      options.stacktrace = True
       options.actions = ["collect", ]
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
                              "--full", "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
-                             "--output", "--debug", "collect", ], argumentList)
+                             "--output", "--debug", "--stack", "collect", ], argumentList)
 
-   def testBuildArgumentList_032(self):
+   def testBuildArgumentList_034(self):
       """Test with all values set, actions containing multiple items, validate=True."""
       options = Options()
       options.help = True
@@ -3187,11 +3465,12 @@ class TestOptions(unittest.TestCase):
       options.mode = "631"
       options.output = True
       options.debug = True
+      options.stacktrace = True
       options.actions = ["collect", "stage", ]
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
                              "--full", "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
-                             "--output", "--debug", "collect", "stage", ], argumentList)
+                             "--output", "--debug", "--stack", "collect", "stage", ], argumentList)
 
 
    #############################
@@ -3282,20 +3561,27 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual("--debug ", argumentString)
 
    def testBuildArgumentString_013(self):
+      """Test with stacktrace set, validate=False."""
+      options = Options()
+      options.stacktrace = True
+      argumentString = options.buildArgumentString(validate=False)
+      self.failUnlessEqual("--stack ", argumentString)
+
+   def testBuildArgumentString_014(self):
       """Test with actions containing one item, validate=False."""
       options = Options()
       options.actions = [ "collect", ]
       argumentString = options.buildArgumentString(validate=False)
       self.failUnlessEqual('"collect" ', argumentString)
 
-   def testBuildArgumentString_014(self):
+   def testBuildArgumentString_015(self):
       """Test with actions containing multiple items, validate=False."""
       options = Options()
       options.actions = [ "collect", "stage", "store", "purge", ]
       argumentString = options.buildArgumentString(validate=False)
       self.failUnlessEqual('"collect" "stage" "store" "purge" ', argumentString)
 
-   def testBuildArgumentString_015(self):
+   def testBuildArgumentString_016(self):
       """Test with all values set, actions containing one item, validate=False."""
       options = Options()
       options.help = True
@@ -3309,11 +3595,12 @@ class TestOptions(unittest.TestCase):
       options.mode = "631"
       options.output = True
       options.debug = True
+      options.stacktrace = True
       options.actions = ["collect", ]
       argumentString = options.buildArgumentString(validate=False)
-      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug "collect" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" ', argumentString)
 
-   def testBuildArgumentString_016(self):
+   def testBuildArgumentString_017(self):
       """Test with all values set, actions containing multiple items, validate=False."""
       options = Options()
       options.help = True
@@ -3327,98 +3614,105 @@ class TestOptions(unittest.TestCase):
       options.mode = "631"
       options.output = True
       options.debug = True
+      options.stacktrace = True
       options.actions = ["collect", "stage", ]
       argumentString = options.buildArgumentString(validate=False)
-      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug "collect" "stage" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" "stage" ', argumentString)
 
-   def testBuildArgumentString_017(self):
+   def testBuildArgumentString_018(self):
       """Test with no values set, validate=True."""
       options = Options()
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_018(self):
+   def testBuildArgumentString_019(self):
       """Test with help set, validate=True."""
       options = Options()
       options.help = True
       argumentString = options.buildArgumentString(validate=True)
       self.failUnlessEqual("--help ", argumentString)
 
-   def testBuildArgumentString_019(self):
+   def testBuildArgumentString_020(self):
       """Test with version set, validate=True."""
       options = Options()
       options.version = True
       argumentString = options.buildArgumentString(validate=True)
       self.failUnlessEqual("--version ", argumentString)
 
-   def testBuildArgumentString_020(self):
+   def testBuildArgumentString_021(self):
       """Test with verbose set, validate=True."""
       options = Options()
       options.verbose = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_021(self):
+   def testBuildArgumentString_022(self):
       """Test with quiet set, validate=True."""
       options = Options()
       options.quiet = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_022(self):
+   def testBuildArgumentString_023(self):
       """Test with config set, validate=True."""
       options = Options()
       options.config = "stuff"
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_023(self):
+   def testBuildArgumentString_024(self):
       """Test with full set, validate=True."""
       options = Options()
       options.full = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_024(self):
+   def testBuildArgumentString_025(self):
       """Test with logfile set, validate=True."""
       options = Options()
       options.logfile = "bogus"
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_025(self):
+   def testBuildArgumentString_026(self):
       """Test with owner set, validate=True."""
       options = Options()
       options.owner = ("ken", "group")
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_026(self):
+   def testBuildArgumentString_027(self):
       """Test with mode set, validate=True."""
       options = Options()
       options.mode = 0644
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_027(self):
+   def testBuildArgumentString_028(self):
       """Test with output set, validate=True."""
       options = Options()
       options.output = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_028(self):
+   def testBuildArgumentString_029(self):
       """Test with debug set, validate=True."""
       options = Options()
       options.debug = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_029(self):
+   def testBuildArgumentString_030(self):
+      """Test with stacktrace set, validate=True."""
+      options = Options()
+      options.stacktrace = True
+      self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
+
+   def testBuildArgumentString_031(self):
       """Test with actions containing one item, validate=True."""
       options = Options()
       options.actions = [ "collect", ]
       argumentString = options.buildArgumentString(validate=True)
       self.failUnlessEqual('"collect" ', argumentString)
 
-   def testBuildArgumentString_030(self):
+   def testBuildArgumentString_032(self):
       """Test with actions containing multiple items, validate=True."""
       options = Options()
       options.actions = [ "collect", "stage", "store", "purge", ]
       argumentString = options.buildArgumentString(validate=True)
       self.failUnlessEqual('"collect" "stage" "store" "purge" ', argumentString)
 
-   def testBuildArgumentString_031(self):
+   def testBuildArgumentString_033(self):
       """Test with all values set, actions containing one item, validate=True."""
       options = Options()
       options.help = True
@@ -3432,11 +3726,12 @@ class TestOptions(unittest.TestCase):
       options.mode = "631"
       options.output = True
       options.debug = True
+      options.stacktrace = True
       options.actions = ["collect", ]
       argumentString = options.buildArgumentString(validate=True)
-      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug "collect" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" ', argumentString)
 
-   def testBuildArgumentString_032(self):
+   def testBuildArgumentString_034(self):
       """Test with all values set, actions containing multiple items, validate=True."""
       options = Options()
       options.help = True
@@ -3450,9 +3745,10 @@ class TestOptions(unittest.TestCase):
       options.mode = "631"
       options.output = True
       options.debug = True
+      options.stacktrace = True
       options.actions = ["collect", "stage", ]
       argumentString = options.buildArgumentString(validate=True)
-      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug "collect" "stage" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" "stage" ', argumentString)
 
 
 ######################
