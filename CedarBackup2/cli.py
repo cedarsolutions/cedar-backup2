@@ -166,7 +166,7 @@ def cli():
       - C{3}: Error configuring logging
       - C{4}: Error parsing indicated configuration file
       - C{5}: Backup was interrupted with a CTRL-C or similar
-      - C{6}: Error executing backup or understanding requested actions
+      - C{6}: Error executing specified backup actions
 
    @note: This function contains a good amount of logging at the INFO level,
    because this is the right place to document high-level flow of control (i.e.
