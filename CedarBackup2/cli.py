@@ -81,6 +81,7 @@ Backwards Compatibility
 ########################################################################
 
 # System modules
+import sys
 import logging
 import getopt
 
@@ -118,62 +119,66 @@ LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet',
 # usage() function
 ###################
 
-def usage():
+def usage(fd=sys.stderr):
    """
-   Provides usage information for the cback script.
+   Prints usage information for the cback script.
+   @param fd: File descriptor used to print information.
+   @note: The C{fd} is used rather than C{print} to facilitate unit testing.
    """
-   print ""
-   print " Usage: cback [switches] action(s)"
-   print ""
-   print " The following switches are accepted:"
-   print ""
-   print "   -h, --help     Display this usage/help listing"
-   print "   -V, --version  Display version information"
-   print "   -b, --verbose  Print verbose output as well as logging to disk"
-   print "   -q, --quiet    Run quietly (display no output to the screen)"
-   print "   -c, --config   Path to config file (default: %s)" % DEFAULT_CONFIG
-   print "   -f, --full     Perform a full backup, regardless of configuration"
-   print "   -l, --logfile  Path to logfile (default: %s)" % DEFAULT_LOGFILE
-   print "   -o, --owner    Logfile ownership, user:group (default: %s)" % DEFAULT_OWNERSHIP
-   print "   -m, --mode     Logfile permissions mode (default: %o)" % DEFAULT_MODE
-   print "   -O, --output   Record some sub-command (i.e. tar) output to the log"
-   print "   -d, --debug    Write debugging information to the log (implies --output)"
-   print ""
-   print " The following actions may be specified:"
-   print ""
-   print "   all            Take all normal actions (collect, stage, store, purge)"
-   print "   collect        Take the collect action"
-   print "   stage          Take the stage action"
-   print "   store          Take the store action"
-   print "   purge          Take the purge action"
-   print "   rebuild        Rebuild \"this week's\" disc if possible"
-   print "   validate       Validate configuration only"
-   print ""
-   print " You must specify at least one action to take.  More than one of"
-   print " the \"collect\", \"stage\", \"store\" or \"purge\" actions may be "
-   print " specified in any arbitrary order; they will be executed in a "
-   print " sensible order.  The \"all\", \"rebuild\" or \"validate\" "
-   print " actions may not be combined with other actions."
-   print ""
+   fd.write("\n")
+   fd.write(" Usage: cback [switches] action(s)\n")
+   fd.write("\n")
+   fd.write(" The following switches are accepted:\n")
+   fd.write("\n")
+   fd.write("   -h, --help     Display this usage/help listing\n")
+   fd.write("   -V, --version  Display version information\n")
+   fd.write("   -b, --verbose  Print verbose output as well as logging to disk\n")
+   fd.write("   -q, --quiet    Run quietly (display no output to the screen)\n")
+   fd.write("   -c, --config   Path to config file (default: %s)" % DEFAULT_CONFIG)
+   fd.write("   -f, --full     Perform a full backup, regardless of configuration\n")
+   fd.write("   -l, --logfile  Path to logfile (default: %s)" % DEFAULT_LOGFILE)
+   fd.write("   -o, --owner    Logfile ownership, user:group (default: %s)" % DEFAULT_OWNERSHIP)
+   fd.write("   -m, --mode     Octal logfile permissions mode (default: %o)" % DEFAULT_MODE)
+   fd.write("   -O, --output   Record some sub-command (i.e. tar) output to the log\n")
+   fd.write("   -d, --debug    Write debugging information to the log (implies --output)\n")
+   fd.write("\n")
+   fd.write(" The following actions may be specified:\n")
+   fd.write("\n")
+   fd.write("   all            Take all normal actions (collect, stage, store, purge)\n")
+   fd.write("   collect        Take the collect action\n")
+   fd.write("   stage          Take the stage action\n")
+   fd.write("   store          Take the store action\n")
+   fd.write("   purge          Take the purge action\n")
+   fd.write("   rebuild        Rebuild \"this week's\" disc if possible\n")
+   fd.write("   validate       Validate configuration only\n")
+   fd.write("\n")
+   fd.write(" You must specify at least one action to take.  More than one of\n")
+   fd.write(" the \"collect\", \"stage\", \"store\" or \"purge\" actions may be \n")
+   fd.write(" specified in any arbitrary order; they will be executed in a \n")
+   fd.write(" sensible order.  The \"all\", \"rebuild\" or \"validate\" \n")
+   fd.write(" actions may not be combined with other actions.\n")
+   fd.write("\n")
 
 
 #####################
 # version() function
 #####################
 
-def version():
+def version(fd=sys.stdout):
    """
-   Provides version information for the cback script.
+   Prints version information for the cback script.
+   @param fd: File descriptor used to print information.
+   @note: The C{fd} is used rather than C{print} to facilitate unit testing.
    """
-   print ""
-   print " Cedar Backup version %s, released %s." % (VERSION, DATE)
-   print ""
-   print " Copyright (c) %s Kenneth J. Pronovici <pronovic@ieee.org>." % COPYRIGHT
-   print " This is free software; there is NO warranty.  See the"
-   print " GNU General Public License version 2 for copying conditions."
-   print ""
-   print " Use the --help option for usage information."
-   print ""
+   fd.write("\n")
+   fd.write(" Cedar Backup version %s, released %s." % (VERSION, DATE))
+   fd.write("\n")
+   fd.write(" Copyright (c) %s Kenneth J. Pronovici <pronovic@ieee.org>." % COPYRIGHT)
+   fd.write(" This is free software; there is NO warranty.  See the\n")
+   fd.write(" GNU General Public License version 2 for copying conditions.\n")
+   fd.write("\n")
+   fd.write(" Use the --help option for usage information.\n")
+   fd.write("\n")
 
 
 #########################################################################
