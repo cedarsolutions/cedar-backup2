@@ -30,6 +30,7 @@
 # Programs and commands
 ########################
 
+CD                = cd
 CP                = cp
 EPYDOC            = epydoc
 MKDIR             = mkdir
@@ -46,10 +47,12 @@ URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $
 # Locations
 ############
 
+DOC_DIR           = ./doc
 DIST_DIR          = ./build
 SDIST_DIR         = $(DIST_DIR)/sdist
-DOC_DIR           = ./doc
-EPYDOC_DIR        = $(DOC_DIR)/cedar-backup2
+MANUAL_SRC        = $(DOC_DIR)/manual
+INTERFACE_DIR     = $(DOC_DIR)/cedar-backup2/interface
+MANUAL_DIR        = $(DOC_DIR)/cedar-backup2/manual
 
 
 ###################
@@ -90,19 +93,32 @@ allcheck:
 # Documentation
 ################
 
-docsclean: docclean
-docclean:
-	-@$(RM) -rf $(EPYDOC_DIR)
-
+# Aliases, since I can't remember what to type. :)
 docs: doc
-doc: $(EPYDOC_DIR)
-	@$(EPYDOC) --name "CedarBackup2"  \
-                   --target $(EPYDOC_DIR) \
-                   --url $(URL)           \
-                   CedarBackup2/*.py
+docsclean: docclean
+epydoc: interface-doc
+interface: interface-doc
+book: manual
+manual: manual
 
-$(EPYDOC_DIR):
-	@$(MKDIR) -p $(EPYDOC_DIR)
+doc: interface-doc manual-doc
+
+interface-doc: $(INTERFACE_DIR)
+	@$(EPYDOC) --name "CedarBackup2" --target $(INTERFACE_DIR) --url $(URL) CedarBackup2/*.py
+
+manual-doc: $(MANUAL_DIR)
+	-@$(CD) $(MANUAL_SRC) && $(MAKE) install
+
+docclean:
+	-@$(CD) $(MANUAL_SRC) && $(MAKE) clean
+	-@$(RM) -rf $(INTERFACE_DIR)
+	-@$(RM) -rf $(MANUAL_DIR)
+
+$(MANUAL_DIR):
+	@$(MKDIR) -p $(MANUAL_DIR)
+
+$(INTERFACE_DIR):
+	@$(MKDIR) -p $(INTERFACE_DIR)
 
 
 ################
@@ -137,5 +153,5 @@ debdist: sdist
 debdistclean: 
 	@$(RM) -f $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz 
 
-.PHONY: all clean unittest test check pychecker pycheck doc doclean distrib sdist sdistclean debdist debdistclean
+.PHONY: all clean unittest test check pychecker pycheck doc docclean interface-doc manual-doc distrib sdist sdistclean debdist debdistclean
 
