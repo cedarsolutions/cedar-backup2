@@ -1,7 +1,6 @@
 Version 2.3.2	unreleased
 
-	* Re-license manual under GPL with clarifications (Creative
-	  Commons licenses are not considered to be DFSG-free).
+	* Re-license manual under GPL with clarifications to satisfy DFSG.
 
 Version 2.3.1	23 Mar 2005
 
