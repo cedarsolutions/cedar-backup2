@@ -67,12 +67,15 @@ test:
 ##################################
 # Stylistic and function checking
 ##################################
-# Pycheck catches a lot of different things.  It's kind of like
-# lint for Python.  A few warnings are expected.
+# Pycheck catches a lot of different things.  It's kind of like lint for
+# Python.  A few warnings are expected.  The main check rule only checks the
+# implementation in CedarBackup2/.  The other rule checks all of the python
+# code in the system.
 
-check: pycheck
-pychecker: pycheck
-pycheck: 
+check: 
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py
+
+allcheck: 
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py test/*.py util/*.py
 
 
