@@ -336,6 +336,9 @@ class LocalPeer(object):
       @note: If you have user/group as strings, call the L{util.getUidGid}
       function to get the associated uid/gid as an ownership tuple.
 
+      @note: We will not overwrite a target file that exists when this method
+      is invoked.  If the target already exists, we'll raise an exception.
+
       @param sourceFile: Source file to copy
       @type sourceFile: String representing a file on disk, as an absolute path
 
@@ -350,6 +353,7 @@ class LocalPeer(object):
 
       @raise ValueError: If the passed-in source file is not a regular file.
       @raise ValueError: If a path cannot be encoded properly.
+      @raise IOError: If the target file already exists.
       @raise IOError: If there is an IO error copying the file
       @raise OSError: If there is an OS error copying or changing permissions on a file
       """
@@ -357,6 +361,8 @@ class LocalPeer(object):
       sourceFile = encodePath(sourceFile)
       if targetFile is None:
          return
+      if os.path.exists(targetFile):
+         raise IOError("Target file [%s] already exists." % targetFile)
       if sourceFile is None:
          open(targetFile, "w").write("")
       else:
@@ -586,15 +592,16 @@ class RemotePeer(object):
       When a peer has completed collecting its backup files, it will write an
       empty indicator file into its collect directory.  This method checks to
       see whether that indicator has been written.  If the remote copy command
-      fails, we return C{False} as if the file weren't there.  We depend on the
-      rcp command returning some sort of error if the file doesn't exist.
+      fails, we return C{False} as if the file weren't there. 
 
       If you need to, you can override the name of the collect indicator file
       by passing in a different name.
 
-      @note: This method's behavior is UNIX-specific.  It depends on the
-      ability of L{tempfile.NamedTemporaryFile} to create files that can be
-      opened more than once.
+      @note: Apparently, we can't count on all rcp-compatible implementations
+      to return sensible errors for some error conditions.  As an example, the
+      C{scp} command in Debian 'woody' returns a zero (normal) status even when
+      it can't find a host or if the login or path is invalid.  Because of
+      this, the implementation of this method is rather convoluted.
 
       @param collectIndicator: Name of the collect indicator file to check
       @type collectIndicator: String representing name of a file in the collect directory
@@ -602,17 +609,35 @@ class RemotePeer(object):
       @return: Boolean true/false depending on whether the indicator exists.
       @raise ValueError: If a path cannot be encoded properly.
       """
-      collectIndicator = encodePath(collectIndicator)
-      targetFile = tempfile.NamedTemporaryFile()
-      if collectIndicator is None:
-         sourceFile = os.path.join(self.collectDir, DEF_COLLECT_INDICATOR)
-      else:
-         sourceFile = os.path.join(self.collectDir, collectIndicator)
       try:
-         RemotePeer._copyRemoteFile(self.remoteUser, self.name, self._rcpCommandList, sourceFile, targetFile.name)
-         return True
-      except:
-         return False
+         targetDir = tempfile.mkdtemp()   # create a temp directory to copy the file into
+         if collectIndicator is None:
+            sourceFile = os.path.join(self.collectDir, DEF_COLLECT_INDICATOR)
+            targetFile = os.path.join(targetDir, DEF_COLLECT_INDICATOR)
+         else:
+            collectIndicator = encodePath(collectIndicator)
+            sourceFile = os.path.join(self.collectDir, collectIndicator)
+            targetFile = os.path.join(targetDir, collectIndicator) 
+         logger.debug("Fetch remote collect indicator [%s] into [%s]." % (sourceFile, targetFile))
+         if os.path.exists(targetFile):
+            raise Exception("Internal error: target existed before it should; we can't do anything sensible.")
+         try:
+            RemotePeer._copyRemoteFile(self.remoteUser, self.name, self._rcpCommandList, sourceFile, targetFile)
+            if os.path.exists(targetFile):
+               return True
+            else:
+               return False
+         except: 
+            return False
+      finally:
+         if os.path.exists(targetFile):
+            try:
+               os.path.remove(targetFile)
+            except: pass
+         if os.path.exists(targetDir):
+            try:
+               os.path.rmdir(targetDir)
+            except: pass
 
    def writeStageIndicator(self, stageIndicator=None):
       """
@@ -699,6 +724,13 @@ class RemotePeer(object):
       someone else is messing with the directory at the same time we're doing
       the remote copy - but it's about as good as we're going to get.
 
+      @note: Apparently, we can't count on all rcp-compatible implementations
+      to return sensible errors for some error conditions.  As an example, the
+      C{scp} command in Debian 'woody' returns a zero (normal) status even
+      when it can't find a host or if the login or path is invalid.  We try
+      to work around this by issuing C{IOError} if we don't copy any files from
+      the remote host.
+
       @param remoteUser: Name of the Cedar Backup user on the remote peer
       @type remoteUser: String representing a username, valid via the copy command
 
@@ -747,12 +779,23 @@ class RemotePeer(object):
       Copies a remote source file to a target file.
 
       @note: Internally, we have to go through and escape any spaces in the
-      source and target paths with double-backslash, otherwise things get
-      screwed up.  I hope this is portable to various different rcp methods,
-      but I guess it might not be (all I have to test with is OpenSSH).
+      source path with double-backslash, otherwise things get screwed up.   It
+      doesn't seem to be required in the target path. I hope this is portable
+      to various different rcp methods, but I guess it might not be (all I have
+      to test with is OpenSSH).
 
       @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
+
+      @note: We will not overwrite a target file that exists when this method
+      is invoked.  If the target already exists, we'll raise an exception.
+
+      @note: Apparently, we can't count on all rcp-compatible implementations
+      to return sensible errors for some error conditions.  As an example, the
+      C{scp} command in Debian 'woody' returns a zero (normal) status even when
+      it can't find a host or if the login or path is invalid.  We try to work
+      around this by issuing C{IOError} the target file does not exist when
+      we're done.
 
       @param remoteUser: Name of the Cedar Backup user on the remote peer
       @type remoteUser: String representing a username, valid via the copy command
@@ -775,13 +818,18 @@ class RemotePeer(object):
       @param permissions: Permissions that the staged files should have
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
+      @raise IOError: If the target file already exists.
       @raise IOError: If there is an IO error copying the file
       @raise OSError: If there is an OS error changing permissions on the file
       """
+      if os.path.exists(targetFile):
+         raise IOError("Target file [%s] already exists." % targetFile)
       copySource = "%s@%s:%s" % (remoteUser, remoteHost, sourceFile.replace(" ", "\\ "))
-      result = executeCommand(rcpCommand, [copySource, targetFile.replace(" ", "\\ ")])[0]
+      result = executeCommand(rcpCommand, [copySource, targetFile, ])[0]
       if result != 0:
          raise IOError("Error (%d) copying file from remote host." % result)
+      if not os.path.exists(targetFile):
+         raise IOError("Apparently unable to copy file from remote host.")
       if ownership is not None:
          os.chown(targetFile, ownership[0], ownership[1])
       if permissions is not None:
