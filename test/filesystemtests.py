@@ -29,7 +29,7 @@
 # Language : Python (>= 2.3)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Tests filesystem-related objects.
+# Purpose  : Tests filesystem-related classes.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # This file was created with a width of 132 characters, and NO tabs.
@@ -44,7 +44,7 @@ Unit tests for CedarBackup2/filesystem.py.
 Test Notes
 ==========
 
-   This module contains individual tests for each of the objects implemented in
+   This module contains individual tests for each of the classes implemented in
    filesystem.py: FilesystemList, BackupFileList and PurgeItemList.
 
    The BackupFileList and PurgeItemList classes inherit from FilesystemList,
@@ -179,7 +179,7 @@ def removedir(tree):
 
 class TestFilesystemList(unittest.TestCase):
 
-   """Tests for the FilesystemList object."""
+   """Tests for the FilesystemList class."""
 
    ################
    # Setup methods
@@ -10642,7 +10642,7 @@ class TestFilesystemList(unittest.TestCase):
 
 class TestBackupFileList(unittest.TestCase):
 
-   """Tests for the BackupFileList object."""
+   """Tests for the BackupFileList class."""
 
    ################
    # Setup methods
@@ -11789,7 +11789,7 @@ class TestBackupFileList(unittest.TestCase):
 
 class TestPurgeItemList(unittest.TestCase):
 
-   """Tests for the PurgeItemList object."""
+   """Tests for the PurgeItemList class."""
 
    ################
    # Setup methods
@@ -12161,10 +12161,11 @@ class TestPurgeItemList(unittest.TestCase):
 
 def suite():
    """Returns a suite containing all the test cases in this module."""
-   return unittest.TestSuite((unittest.makeSuite(TestFilesystemList, 'test'),
+   return unittest.TestSuite((
+                              unittest.makeSuite(TestFilesystemList, 'test'),
                               unittest.makeSuite(TestBackupFileList, 'test'),
-                              unittest.makeSuite(TestPurgeItemList, 'test'), ))
-
+                              unittest.makeSuite(TestPurgeItemList, 'test'), 
+                            ))
 
 
 ########################################################################

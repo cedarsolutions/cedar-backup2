@@ -2476,7 +2476,9 @@ class TestKnapsack(unittest.TestCase):
 
 def suite():
    """Returns a suite containing all the test cases in this module."""
-   return unittest.TestSuite((unittest.makeSuite(TestKnapsack, 'test'), ))
+   return unittest.TestSuite((
+                              unittest.makeSuite(TestKnapsack, 'test'), 
+                            ))
 
 
 ########################################################################
