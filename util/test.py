@@ -145,8 +145,8 @@ def main():
 
    # Create and run the test suite
    print ""
-#   suite = unittest.TestSuite((knapsacktests.suite(), filesystemtests.suite()))
-   suite = unittest.TestSuite((filesystemtests.suite(),))
+   suite = unittest.TestSuite((knapsacktests.suite(), filesystemtests.suite()))
+#   suite = unittest.TestSuite((filesystemtests.suite(),))
    unittest.TextTestRunner(verbosity=1).run(suite)
    print ""
 
