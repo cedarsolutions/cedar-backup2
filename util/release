@@ -1,0 +1,21 @@
+#!/bin/ksh
+# Sensibly creates a release label in Subversion.
+
+if [[ $# != 1 || ${1} == "--help" ]]
+then
+   print "Usage: release <version>"
+   exit 1
+fi
+
+VERSION=${1}
+
+svn copy svn+ssh://daystrom/opt/public/svn/software/pycross/trunk \
+         svn+ssh://daystrom/opt/public/svn/software/pycross/tags/CEDAR_BACKUP_V${VERSION} \
+         -m "Tagging the ${VERSION}} release of Cedar Backup."
+
+print "Completed tagging release ${VERSION} of Cedar Backup"
+print ""
+print "Make sure to re-run if you forgot to update Changelog"
+print "or CedarBackup2/release.py!"
+print ""
+
