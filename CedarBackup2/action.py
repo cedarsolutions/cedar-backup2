@@ -980,6 +980,10 @@ def _consistencyCheck(config, stagingDirs):
    check.  A positive confirmation of "no problems" is also written to the log
    with C{info} priority.
 
+   The unmount of the device is done with C{-l} ("lazy unmount") in attempt to
+   avoid occasional problems observed when trying to unmount the drive after
+   there are read errors during the consistency check.
+
    @warning: The implementation of this function is very UNIX-specific and is
    probably Linux-specific as well.
 
@@ -1004,7 +1008,7 @@ def _consistencyCheck(config, stagingDirs):
    finally:
       if os.path.isdir(mountPoint):
          try:
-            executeCommand(UMOUNT_CMD, [ mountPoint, ], returnOutput=False, ignoreStderr=True)
+            executeCommand(UMOUNT_CMD, [ "-l", mountPoint, ], returnOutput=False, ignoreStderr=True)
             os.rmdir(mountPoint)
          except: pass
 
