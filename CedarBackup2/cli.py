@@ -1295,7 +1295,7 @@ class Options(object):
          argumentString += "--output "
       if self.debug:
          argumentString += "--debug "
-      if self.debug:
+      if self.stacktrace:
          argumentString += "--stack "
       if self.actions is not None:
          for action in self.actions:
