@@ -47,7 +47,7 @@ collect action.  Aside from its own configuration, it requires the options and
 collect configuration sections in the standard Cedar Backup configuration file.
 
 The backup is done via the C{mysqldump} command included with the MySQL
-product.  Output is always to a file compressed using C{bzip2}.  Administrators
+product.  Output can be compressed using C{gzip} or C{bzip2}.  Administrators
 can configure the extension either to back up all databases or to back up only
 specific databases.  The extension assumes that all databases can be backed up
 by a single user (typically "root").
