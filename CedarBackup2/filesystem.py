@@ -138,8 +138,8 @@ class FilesystemList(list):
       """
       Adds a file to the list.
    
-      The path must exist and must be a file or a link to a file.  It will be
-      added to the list subject to any exclusions that are in place.
+      The path must exist and must be a file or a link to an existing file.  It
+      will be added to the list subject to any exclusions that are in place. 
 
       @param path: File path to be added to the list
       @type path: String representing a path on disk
@@ -171,10 +171,10 @@ class FilesystemList(list):
       """
       Adds a directory to the list.
    
-      The path must exist and must be a directory or a link to a directory.  It
-      will be added to the list subject to any exclusions that are in place.
-      The L{ignoreFile} does not apply to this method, only to
-      L{addDirContents}.
+      The path must exist and must be a directory or a link to an existing
+      directory.  It will be added to the list subject to any exclusions that
+      are in place.  The L{ignoreFile} does not apply to this method, only to
+      L{addDirContents}.  
 
       @param path: Directory path to be added to the list
       @type path: String representing a path on disk
@@ -218,7 +218,8 @@ class FilesystemList(list):
 
       @note: If the passed-in directory happens to be a soft link, it will
       still be recursed.  However, any soft links I{within} the directory will
-      only be added by name, not recursively.  
+      only be added by name, not recursively.   Any invalid soft links (i.e
+      soft links that point to non-existent items) will be silently ignored.
 
       @note: The L{excludeDirs} flag only controls whether any given soft link
       path itself is added to the list once it has been discovered.  It does
@@ -712,18 +713,28 @@ class PurgeItemList(FilesystemList):
       Errors will be ignored.
       
       To faciliate easy removal of directories that will end up being empty,
-      the delete process happens in two passes: files first, then directories.
+      the delete process happens in two passes: files first (including soft
+      links), then directories.
+
+      @return: Tuple containing count of (files, dirs) removed
       """
+      files = 0
+      dirs = 0
       for entry in self:
-         if os.path.exists(entry) and os.path.isfile(entry):
+         if os.path.exists(entry) and (os.path.isfile(entry) or os.path.islink(entry)):
             try:
-               os.path.remove(entry)
+               os.remove(entry)
+               files += 1
+               logger.debug("Purged file [%s]." % entry)
             except OSError:
                pass
       for entry in self:
-         if os.path.exists(entry) and os.path.isdir(entry):
+         if os.path.exists(entry) and os.path.isdir(entry) and not os.path.islink(entry):
             try:
-               os.path.rmdir(entry)
+               os.rmdir(entry)
+               dirs += 1
+               logger.debug("Purged empty directory [%s]." % entry)
             except OSError:
                pass
+      return (files, dirs)
 
