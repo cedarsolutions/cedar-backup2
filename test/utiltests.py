@@ -381,7 +381,7 @@ class TestFunctions(unittest.TestCase):
       """Gets a path to a temporary file on disk."""
       (fd, name) = tempfile.mkstemp(dir=self.tmpdir)
       try:
-         close(fd)
+         os.close(fd)
       except: pass
       return name
 

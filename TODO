@@ -17,6 +17,8 @@
 
 FUTURE FUNCTIONALITY
 
+* Add in notes on configuration interface for extensions if they want 3rd parties to be able to deal with their configuration.
+* Maybe make cli module have main routine that is basically the same as cback script?
 * Logging levels for the collect action aren't quite right - need either more or less info to make sense.
 * We should probably check the staging flag and refuse to stage if it's already been done...?
 * Add a config value or option for indicating whether backed-up files should be logged (if anyone cares).
