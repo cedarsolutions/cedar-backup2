@@ -102,7 +102,6 @@ Full vs. Reduced Tests
 
 import os
 import unittest
-import tempfile
 from CedarBackup2.testutil import findResources, removedir, failUnlessAssignRaises
 from CedarBackup2.config import ExtendedAction, CollectDir, PurgeDir, LocalPeer, RemotePeer
 from CedarBackup2.config import ReferenceConfig, ExtensionsConfig, OptionsConfig
