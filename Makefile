@@ -59,8 +59,9 @@ all: doc distrib
 clean: docclean distribclean 
 	-@find . -name "*.pyc" | xargs rm -f
 
+unittest:
 test:
-	@$(PYTHON) util/unittest.py
+	@$(PYTHON) util/test.py
 
 
 ##################################
@@ -126,5 +127,5 @@ debdist: sdist
 debdistclean: 
 	@$(RM) -f $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz 
 
-.PHONY: all clean test check pychecker pycheck doc doclean distrib sdist sdistclean debdist debdistclean
+.PHONY: all clean unittest test check pychecker pycheck doc doclean distrib sdist sdistclean debdist debdistclean
 
