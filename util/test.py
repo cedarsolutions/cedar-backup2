@@ -65,7 +65,7 @@ expect to find in the CedarBackup2 directory.)
 We also want to make sure we are running the correct 'test' package - not one
 found elsewhere on the user's path - since 'test' could be a relatively common
 name for a package.  (The filesystemtests.py import below is just one example
-of one of the files we would expect to find in the CedarBackup2 unittest
+of one of the files we would expect to find in the CedarBackup2 test
 directory.)
 
 Finally, this script might be used people who won't have an environment that
