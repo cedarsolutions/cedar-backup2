@@ -10561,69 +10561,142 @@ class TestBackupFileList(unittest.TestCase):
       except: pass
 
 
+   ##################
+   # Utility methods
+   ##################
+
+   def extractTar(self, tarname):
+      """Extracts a tarfile with a particular name."""
+      extractTar(self.tmpdir, self.resources['%s.tar.gz' % tarname])
+
+   def buildPath(self, components):
+      """Builds a complete search path from a list of components."""
+      components.insert(0, self.tmpdir)
+      return buildPath(components)
+
+
    ################
    # Test addDir()
    ################
          
    def testAddDir_001(self):
       """
-      Test that function is overridden with empty list, no exclusions.
+      Test that function is overridden, no exclusions.
+
+      Since this function calls the superclass by definition, we can
+      skimp a bit on validation and only ensure that it seems to be
+      overridden properly.
       """
-      pass
+      self.extractTar("tree5")
+      fsList = BackupFileList()
+      dirPath = self.buildPath(["tree5", "dir001"])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(0, len(fsList))
+      dirPath = self.buildPath(["tree5", "dir002", "link001", ])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([dirPath], fsList)
 
    def testAddDir_002(self):
       """
-      Test that function is overridden with non-empty list, no exclusions.
+      Test that function is overridden, excludeFiles set.
+
+      Since this function calls the superclass by definition, we can
+      skimp a bit on validation and only ensure that it seems to be
+      overridden properly.
       """
-      pass
+      self.extractTar("tree5")
+      fsList = BackupFileList()
+      fsList.excludeFiles = True
+      dirPath = self.buildPath(["tree5", "dir001"])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(0, len(fsList))
+      dirPath = self.buildPath(["tree5", "dir002", "link001", ])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([dirPath], fsList)
 
    def testAddDir_003(self):
       """
-      Test that function is overridden with empty list, excludeFiles sets.
+      Test that function is overridden, excludeDirs set.
+
+      Since this function calls the superclass by definition, we can
+      skimp a bit on validation and only ensure that it seems to be
+      overridden properly.
       """
-      pass
+      self.extractTar("tree5")
+      fsList = BackupFileList()
+      fsList.excludeDirs = True
+      dirPath = self.buildPath(["tree5", "dir001"])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(0, len(fsList))
+      dirPath = self.buildPath(["tree5", "dir002", "link001", ])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(0, len(fsList))
 
    def testAddDir_004(self):
       """
-      Test that function is overridden with non-empty list, excludeFiles sets.
+      Test that function is overridden, excludeLinks set.
+
+      Since this function calls the superclass by definition, we can
+      skimp a bit on validation and only ensure that it seems to be
+      overridden properly.
       """
-      pass
+      self.extractTar("tree5")
+      fsList = BackupFileList()
+      fsList.excludeLinks = True
+      dirPath = self.buildPath(["tree5", "dir001"])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(0, len(fsList))
+      dirPath = self.buildPath(["tree5", "dir002", "link001", ])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(0, len(fsList))
 
    def testAddDir_005(self):
       """
-      Test that function is overridden with empty list, excludeDirs sets.
+      Test that function is overridden, excludePaths set.
+
+      Since this function calls the superclass by definition, we can
+      skimp a bit on validation and only ensure that it seems to be
+      overridden properly.
       """
-      pass
+      self.extractTar("tree5")
+      fsList = BackupFileList()
+      fsList.excludePaths = [ NOMATCH_PATH ]
+      dirPath = self.buildPath(["tree5", "dir001"])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(0, len(fsList))
+      dirPath = self.buildPath(["tree5", "dir002", "link001", ])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([dirPath], fsList)
 
    def testAddDir_006(self):
       """
-      Test that function is overridden with non-empty list, excludeDirs sets.
-      """
-      pass
+      Test that function is overridden, excludePatterns set.
 
-   def testAddDir_007(self):
+      Since this function calls the superclass by definition, we can
+      skimp a bit on validation and only ensure that it seems to be
+      overridden properly.
       """
-      Test that function is overridden with empty list, excludePaths sets.
-      """
-      pass
-
-   def testAddDir_008(self):
-      """
-      Test that function is overridden with non-empty list, excludePaths sets.
-      """
-      pass
-
-   def testAddDir_009(self):
-      """
-      Test that function is overridden with empty list, excludePatterns sets.
-      """
-      pass
-
-   def testAddDir_010(self):
-      """
-      Test that function is overridden with non-empty list, excludePatterns sets.
-      """
-      pass
+      self.extractTar("tree5")
+      fsList = BackupFileList()
+      fsList.excludePaths = [ NOMATCH_PATH ]
+      dirPath = self.buildPath(["tree5", "dir001"])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(0, len(fsList))
+      dirPath = self.buildPath(["tree5", "dir002", "link001", ])
+      count = fsList.addDir(dirPath)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([dirPath], fsList)
 
 
    ###################
@@ -10634,25 +10707,100 @@ class TestBackupFileList(unittest.TestCase):
       """
       Test on an empty list.
       """
-      pass
+      fsList = BackupFileList()
+      size = fsList.totalSize()
+      self.failUnlessEqual(0, size)
 
    def testTotalSize_002(self):
       """
-      Test on a non-empty list containing a directory.
+      Test on a non-empty list containing only valid entries.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      size = fsList.totalSize()
+      self.failUnlessEqual(1116, size)
 
    def testTotalSize_003(self):
       """
-      Test on a non-empty list containing a non-existent file.
+      Test on a non-empty list containing a directory (which shouldn't be
+      possible).
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", "dir001", ]))     # back-door around addDir() 
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001" ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      size = fsList.totalSize()
+      self.failUnlessEqual(1116, size)
 
    def testTotalSize_004(self):
       """
-      Test on a non-empty list containing only valid entries.
+      Test on a non-empty list containing a non-existent file.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", INVALID_FILE, ]))     # file won't exist on disk
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", INVALID_FILE ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      size = fsList.totalSize()
+      self.failUnlessEqual(1116, size)
 
 
    #########################
@@ -10663,54 +10811,267 @@ class TestBackupFileList(unittest.TestCase):
       """
       Test on an empty list.
       """
-      pass
+      fsList = BackupFileList()
+      sizeMap = fsList.generateSizeMap()
+      self.failUnlessEqual(0, len(sizeMap))
 
    def testGenerateSizeMap_002(self):
       """
-      Test on a non-empty list containing a directory.
+      Test on a non-empty list containing only valid entries.
       """
-      pass
-
-   def testGenerateSizeMap_003(self):
-      """
-      Test on a non-empty list containing a non-existent file.
-      """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      sizeMap = fsList.generateSizeMap()
+      self.failUnlessEqual(15, len(sizeMap))
+      self.failUnlessEqual(243, sizeMap[self.buildPath([ "tree9", "dir001", "file001", ]) ])
+      self.failUnlessEqual(268, sizeMap[self.buildPath([ "tree9", "dir001", "file002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir001", "link001", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir001", "link002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir001", "link003", ]) ])
+      self.failUnlessEqual(134, sizeMap[self.buildPath([ "tree9", "dir002", "file001", ]) ])
+      self.failUnlessEqual(74, sizeMap[self.buildPath([ "tree9", "dir002", "file002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link001", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link003", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link004", ]) ])
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree9", "file001", ]) ])
+      self.failUnlessEqual(242, sizeMap[self.buildPath([ "tree9", "file002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "link001", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "link002", ]) ])
 
    def testGenerateSizeMap_004(self):
       """
-      Test on a non-empty list containing only valid entries.
+      Test on a non-empty list containing a directory (which shouldn't be
+      possible).
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", "dir001", ]))     # back-door around addDir() 
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001" ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      sizeMap = fsList.generateSizeMap()
+      self.failUnlessEqual(15, len(sizeMap))
+      self.failUnlessEqual(243, sizeMap[self.buildPath([ "tree9", "dir001", "file001", ]) ])
+      self.failUnlessEqual(268, sizeMap[self.buildPath([ "tree9", "dir001", "file002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir001", "link001", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir001", "link002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir001", "link003", ]) ])
+      self.failUnlessEqual(134, sizeMap[self.buildPath([ "tree9", "dir002", "file001", ]) ])
+      self.failUnlessEqual(74, sizeMap[self.buildPath([ "tree9", "dir002", "file002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link001", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link003", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link004", ]) ])
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree9", "file001", ]) ])
+      self.failUnlessEqual(242, sizeMap[self.buildPath([ "tree9", "file002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "link001", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "link002", ]) ])
+
+   def testGenerateSizeMap_005(self):
+      """
+      Test on a non-empty list containing a non-existent file.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", INVALID_FILE, ]))     # file won't exist on disk
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", INVALID_FILE ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      sizeMap = fsList.generateSizeMap()
+      self.failUnlessEqual(15, len(sizeMap))
+      self.failUnlessEqual(243, sizeMap[self.buildPath([ "tree9", "dir001", "file001", ]) ])
+      self.failUnlessEqual(268, sizeMap[self.buildPath([ "tree9", "dir001", "file002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir001", "link001", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir001", "link002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir001", "link003", ]) ])
+      self.failUnlessEqual(134, sizeMap[self.buildPath([ "tree9", "dir002", "file001", ]) ])
+      self.failUnlessEqual(74, sizeMap[self.buildPath([ "tree9", "dir002", "file002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link001", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link003", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "dir002", "link004", ]) ])
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree9", "file001", ]) ])
+      self.failUnlessEqual(242, sizeMap[self.buildPath([ "tree9", "file002", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "link001", ]) ])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "link002", ]) ])
 
 
    ###########################
    # Test generateDigestMap()
    ###########################
          
-   def testGenerateDigestMap01(self):
+   def testGenerateDigestMap_001(self):
       """
       Test on an empty list.
       """
-      pass
+      fsList = BackupFileList()
+      digestMap = fsList.generateDigestMap()
+      self.failUnlessEqual(0, len(digestMap))
 
-   def testGenerateDigestMap02(self):
-      """
-      Test on a non-empty list containing a directory.
-      """
-      pass
-
-   def testGenerateDigestMap03(self):
-      """
-      Test on a non-empty list containing a non-existent file.
-      """
-      pass
-
-   def testGenerateDigestMap04(self):
+   def testGenerateDigestMap_002(self):
       """
       Test on a non-empty list containing only valid entries.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      digestMap = fsList.generateDigestMap()
+      self.failUnlessEqual(6, len(digestMap))
+      self.failUnlessEqual("4ff529531c7e897cd3df90ed76355de7e21e77ee", digestMap[self.buildPath([ "tree9", "dir001", "file001", ])])
+      self.failUnlessEqual("9d473094a22ecf2ae299c25932c941795d1d6cba", digestMap[self.buildPath([ "tree9", "dir001", "file002", ])])
+      self.failUnlessEqual("2f68cdda26b643ca0e53be6348ae1255b8786c4b", digestMap[self.buildPath([ "tree9", "dir002", "file001", ])])
+      self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", digestMap[self.buildPath([ "tree9", "dir002", "file002", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree9", "file001", ])])
+      self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", digestMap[self.buildPath([ "tree9", "file002", ])])
+
+   def testGenerateDigestMap_004(self):
+      """
+      Test on a non-empty list containing a directory (which shouldn't be
+      possible).
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", "dir001", ]))     # back-door around addDir() 
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001" ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      digestMap = fsList.generateDigestMap()
+      self.failUnlessEqual(6, len(digestMap))
+      self.failUnlessEqual("4ff529531c7e897cd3df90ed76355de7e21e77ee", digestMap[self.buildPath([ "tree9", "dir001", "file001", ])])
+      self.failUnlessEqual("9d473094a22ecf2ae299c25932c941795d1d6cba", digestMap[self.buildPath([ "tree9", "dir001", "file002", ])])
+      self.failUnlessEqual("2f68cdda26b643ca0e53be6348ae1255b8786c4b", digestMap[self.buildPath([ "tree9", "dir002", "file001", ])])
+      self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", digestMap[self.buildPath([ "tree9", "dir002", "file002", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree9", "file001", ])])
+      self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", digestMap[self.buildPath([ "tree9", "file002", ])])
+
+   def testGenerateDigestMap_005(self):
+      """
+      Test on a non-empty list containing a non-existent file.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", INVALID_FILE, ]))     # file won't exist on disk
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", INVALID_FILE ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      digestMap = fsList.generateDigestMap()
+      self.failUnlessEqual(6, len(digestMap))
+      self.failUnlessEqual("4ff529531c7e897cd3df90ed76355de7e21e77ee", digestMap[self.buildPath([ "tree9", "dir001", "file001", ])])
+      self.failUnlessEqual("9d473094a22ecf2ae299c25932c941795d1d6cba", digestMap[self.buildPath([ "tree9", "dir001", "file002", ])])
+      self.failUnlessEqual("2f68cdda26b643ca0e53be6348ae1255b8786c4b", digestMap[self.buildPath([ "tree9", "dir002", "file001", ])])
+      self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", digestMap[self.buildPath([ "tree9", "dir002", "file002", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree9", "file001", ])])
+      self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", digestMap[self.buildPath([ "tree9", "file002", ])])
 
 
    ########################
@@ -10721,37 +11082,222 @@ class TestBackupFileList(unittest.TestCase):
       """
       Test on an empty list.
       """
-      pass
+      fsList = BackupFileList()
+      fittedList = fsList.generateFitted(2000)
+      self.failUnlessEqual(0, len(fittedList))
 
    def testGenerateFitted_002(self):
       """
-      Test on a non-empty list containing a directory.
+      Test on a non-empty list containing only valid entries, all of which fit.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      fittedList = fsList.generateFitted(2000)
+      self.failUnlessEqual(15, len(fittedList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fittedList)
 
    def testGenerateFitted_003(self):
       """
-      Test on a non-empty list containing a non-existent file.
+      Test on a non-empty list containing only valid entries, some of which fit.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      fittedList = fsList.generateFitted(80)
+      self.failUnlessEqual(10, len(fittedList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fittedList)
 
    def testGenerateFitted_004(self):
       """
-      Test on a non-empty list containing only valid entries, all of which fit.
+      Test on a non-empty list containing only valid entries, none of which fit.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      fittedList = fsList.generateFitted(0)
+      self.failUnlessEqual(0, len(fittedList))
+      fittedList = fsList.generateFitted(50)
+      self.failUnlessEqual(9, len(fittedList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fittedList)
 
    def testGenerateFitted_005(self):
       """
-      Test on a non-empty list containing only valid entries, some of which fit.
+      Test on a non-empty list containing a directory (which shouldn't be
+      possible).
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", "dir001", ]))     # back-door around addDir() 
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001" ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      fittedList = fsList.generateFitted(2000)
+      self.failUnlessEqual(15, len(fittedList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fittedList)
 
    def testGenerateFitted_006(self):
       """
-      Test on a non-empty list containing only valid entries, none of which fit.
+      Test on a non-empty list containing a non-existent file.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", INVALID_FILE, ]))     # file won't exist on disk
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", INVALID_FILE ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      fittedList = fsList.generateFitted(2000)
+      self.failUnlessEqual(15, len(fittedList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fittedList)
 
 
    #########################
@@ -10762,55 +11308,379 @@ class TestBackupFileList(unittest.TestCase):
       """
       Test on an empty list.
       """
-      pass
+      fsList = BackupFileList()
+      tarPath = self.buildPath(["file.tar", ])      
+      try:
+         fsList.generateTarfile(tarPath)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnless(not os.path.exists(tarPath))
 
    def testGenerateTarfile_002(self):
       """
-      Test on a non-empty list containing a directory.
+      Test on a non-empty list containing a directory (which shouldn't be
+      possible).
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", "dir001", ]))     # back-door around addDir() 
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001" ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      tarPath = self.buildPath(["file.tar",])      
+      fsList.generateTarfile(tarPath)
+      self.failUnless(tarfile.is_tarfile(tarPath))
+      tarFile = tarfile.open(tarPath)
+      tarList = tarFile.getnames()
+      tarFile.close()
+      self.failUnlessEqual(16, len(tarList))
+      self.failUnless(self.buildPath([ "tree9", "dir001/" ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
    def testGenerateTarfile_003(self):
       """
       Test on a non-empty list containing a non-existent file, ignore=False.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", INVALID_FILE, ]))     # file won't exist on disk
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", INVALID_FILE ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      tarPath = self.buildPath(["file.tar", ])      
+      try:
+         fsList.generateTarfile(tarPath, ignore=False)
+         self.fail("Expected TarError.")
+      except tarfile.TarError: pass
+      except Exception, e: self.fail("Expected TarError, got: %s" % e)
+      self.failUnless(not os.path.exists(tarPath))
 
    def testGenerateTarfile_004(self):
       """
       Test on a non-empty list containing a non-existent file, ignore=True.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      fsList.append(self.buildPath([ "tree9", INVALID_FILE, ]))     # file won't exist on disk
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", INVALID_FILE ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      tarPath = self.buildPath(["file.tar", ])      
+      fsList.generateTarfile(tarPath, ignore=True)
+      self.failUnless(tarfile.is_tarfile(tarPath))
+      tarFile = tarfile.open(tarPath)
+      tarList = tarFile.getnames()
+      tarFile.close()
+      self.failUnlessEqual(15, len(tarList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
    def testGenerateTarfile_005(self):
       """
       Test on a non-empty list containing only valid entries, with an invalid mode.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      tarPath = self.buildPath(["file.tar", ])      
+      try:
+         fsList.generateTarfile(tarPath, mode="bogus")
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnless(not os.path.exists(tarPath))
 
    def testGenerateTarfile_006(self):
       """
       Test on a non-empty list containing only valid entries, default mode.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      tarPath = self.buildPath(["file.tar", ])      
+      fsList.generateTarfile(tarPath)
+      self.failUnless(tarfile.is_tarfile(tarPath))
+      tarFile = tarfile.open(tarPath)
+      tarList = tarFile.getnames()
+      tarFile.close()
+      self.failUnlessEqual(15, len(tarList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
    def testGenerateTarfile_007(self):
       """
       Test on a non-empty list containing only valid entries, 'tar' mode.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      tarPath = self.buildPath(["file.tar", ])      
+      fsList.generateTarfile(tarPath)
+      self.failUnless(tarfile.is_tarfile(tarPath))
+      tarFile = tarfile.open(tarPath)
+      tarList = tarFile.getnames()
+      tarFile.close()
+      self.failUnlessEqual(15, len(tarList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
    def testGenerateTarfile_008(self):
       """
       Test on a non-empty list containing only valid entries, 'targz' mode.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      tarPath = self.buildPath(["file.tar.gz", ])      
+      fsList.generateTarfile(tarPath, mode="targz")
+      self.failUnless(tarfile.is_tarfile(tarPath))
+      tarFile = tarfile.open(tarPath)
+      tarList = tarFile.getnames()
+      tarFile.close()
+      self.failUnlessEqual(15, len(tarList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
    def testGenerateTarfile_009(self):
       """
       Test on a non-empty list containing only valid entries, 'tarbz2' mode.
       """
-      pass
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      fsList = BackupFileList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+      tarPath = self.buildPath(["file.tar.bz2", ])      
+      fsList.generateTarfile(tarPath, mode="tarbz2")
+      self.failUnless(tarfile.is_tarfile(tarPath))
+      tarFile = tarfile.open(tarPath)
+      tarList = tarFile.getnames()
+      tarFile.close()
+      self.failUnlessEqual(15, len(tarList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
 
 ##########################
