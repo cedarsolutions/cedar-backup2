@@ -1,0 +1,37 @@
+# vim: set ft=text80:
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#              C E D A R
+#          S O L U T I O N S       "Software done right."
+#           S O F T W A R E
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Author   : Kenneth J. Pronovici <pronovic@ieee.org>
+# Project  : Cedar Backup, release 2
+# Revision : $Id$
+# Purpose  : README for package
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+Cedar Backup is a Python package that supports secure backups of files
+on local and remote hosts to CD-R or CD-RW media.  The package is
+focused around weekly backups to a single disc, with the expectation
+that the disc will be changed or overwritten at the beginning of each
+week.  If your hardware is new enough, the script can write multisession
+discs, allowing you to add to a disc in a daily fashion.  Directories
+are backed up using GNU tar(1) and may be compressed using several
+different methods.
+
+For more information, see the Cedar Backup web site:
+
+   http://cedar-solutions.com/software/cedar-backup
+
+If you regularly use Cedar Backup, you might also like to join the
+low-volume Cedar Backup mailing list:
+
+   http://cedar-solutions.com/listarchives/
+
+Use this mailing list to report bugs or for help using Cedar Backup.
+
+
