@@ -150,9 +150,11 @@ def main():
    if "full" in sys.argv:
       os.environ["PEERTESTS_FULL"] = "Y"
       os.environ["IMAGETESTS_FULL"] = "Y"
+      os.environ["UTILTESTS_FULL"] = "Y"
    else:
       os.environ["PEERTESTS_FULL"] = "N"
       os.environ["IMAGETESTS_FULL"] = "N"
+      os.environ["UTILTESTS_FULL"] = "N"
 
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."

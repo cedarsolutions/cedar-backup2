@@ -48,17 +48,12 @@ Code Coverage
    classes implemented in peer.py, including the C{LocalPeer} and C{RemotePeer}
    classes.
 
-   There are some parts of this functionality that can't be tested easily.  For
-   instance, the stage code allows the caller to change ownership on files.
-   Generally, this can only be done by root, and we won't be running these
-   tests as root.  We'll have to hope that the code that tests the way
-   permissions are changed gives us enough coverage.
-
-   Network-related testing also causes us problems.  In order to test the
-   RemotePeer, we need a "remote" host that we can rcp to and from.  We want to
-   fall back on using localhost and the current user, but that might not be
-   safe or appropriate.  The compromise is that many of the remote peer tests
-   will only be run if PEERTESTS_FULL is set to "Y" in the environment.
+   Unfortunately, some of the code can't be tested.  In particular, the stage
+   code allows the caller to change ownership on files.  Generally, this can
+   only be done by root, and most people won't be running these tests as root.
+   As such, we can't test this functionality.  There are also some other pieces
+   of functionality that can only be tested in certain environments (see
+   below).
 
 Naming Conventions
 ==================
@@ -71,6 +66,22 @@ Naming Conventions
    Each method has a docstring describing what it's supposed to accomplish.  I
    feel that this makes it easier to judge how important a given failure is,
    and also makes it somewhat easier to diagnose and fix individual problems.
+
+Full vs. Reduced Tests
+======================
+
+   Some Cedar Backup regression tests require a specialized environment in
+   order to run successfully.  This environment won't necessarily be available
+   on every build system out there (for instance, on a Debian autobuilder).
+   Because of this, the default behavior is to run a "reduced feature set" test
+   suite that has no surprising system, kernel or network requirements.  If you
+   want to run all of the tests, set PEERTESTS_FULL to "Y" in the environment.
+
+   In this module, network-related testing is what causes us our biggest
+   problems.  In order to test the RemotePeer, we need a "remote" host that we
+   can rcp to and from.  We want to fall back on using localhost and the
+   current user, but that might not be safe or appropriate.  As such, we'll
+   only run these tests if PEERTESTS_FULL is set to "Y" in the environment.
 
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """

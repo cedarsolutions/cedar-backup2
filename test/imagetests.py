@@ -45,24 +45,17 @@ Code Coverage
 =============
 
    This module contains individual tests for the public functions and classes
-   implemented in image.py.  There are also tests for many of the private
-   methods (see some further notes below).
-
-   There are some parts of this functionality that can't be tested everywhere.
-   For instance, to completely test the ISO functionality, mkisofs must be
-   installed and the kernel must allow loopback filesystems to be mounted.
-   Some systems (like a Debian autobuilder) won't support these things, and yet
-   we might still want to be able to run some tests on those systems.  Because
-   of this, some of the tests will only be run if IMAGETESTS_FULL is set to "Y"
-   in the environment.
+   implemented in image.py.  There are also tests for several of the private
+   methods.
 
    I usually prefer to test only the public interface to a class, because that
    way the regression tests don't depend on the internal implementation.  In
-   this case, I've decided to test some of the private methods because their
+   this case, I've decided to test some of the private methods, because their
    "privateness" is more a matter of presenting a clean external interface than
    anything else (most of the private methods are static).  Being able to test
-   these methods also makes it easier to validate some of the functionality
-   even if IMAGETESTS_FULL is not set to "Y" in the environment.
+   these methods also makes it easier to gain some reasonable confidence in the
+   code even some tests are not run because IMAGETESTS_FULL is not set to "Y"
+   in the environment (see below).
 
 Naming Conventions
 ==================
@@ -75,6 +68,20 @@ Naming Conventions
    Each method has a docstring describing what it's supposed to accomplish.  I
    feel that this makes it easier to judge how important a given failure is,
    and also makes it somewhat easier to diagnose and fix individual problems.
+
+Full vs. Reduced Tests
+======================
+
+   Some Cedar Backup regression tests require a specialized environment in
+   order to run successfully.  This environment won't necessarily be available
+   on every build system out there (for instance, on a Debian autobuilder).
+   Because of this, the default behavior is to run a "reduced feature set" test
+   suite that has no surprising system, kernel or network requirements.  If you
+   want to run all of the tests, set IMAGETESTS_FULL to "Y" in the environment.
+
+   In this module, the main dependency is a kernel that allows ISO images to be
+   mounted in-place, via a loopback mechanism.  If your kernel supports this
+   then it is safe to set IMAGETESTS_FULL to "Y".
 
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """

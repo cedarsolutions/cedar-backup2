@@ -77,6 +77,14 @@ Naming Conventions
    accomplish.  I feel that this makes it easier to judge the extent of a
    problem when one exists.
 
+Full vs. Reduced Tests
+======================
+
+   All of the tests in this module are considered safe to be run in an average
+   build environment.  There is a no need to use a FILESYSTEMTESTS_FULL
+   environment variable to provide a "reduced feature set" test suite as for
+   some of the other test modules.
+
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
