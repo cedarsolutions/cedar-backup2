@@ -82,14 +82,14 @@ Debugging these Tests
 import sys
 import os
 import unittest
-import CedarBackup2.knapsack
+import CedarBackup2.knapsack as knapsack
 
 
 #######################################################################
 # Module-wide configuration and constants
 #######################################################################
 
-DATA_DIRS = [ './data', './unittest/data' ]
+DATA_DIRS = [ './data', './test/data' ]
 RESOURCES = [ "tree1.tar.gz", "tree2.tar.gz", "tree3.tar.gz", "tree4.tar.gz", "tree5.tar.gz", "tree6.tar.gz" ]
 
 
@@ -167,7 +167,7 @@ class TestKnapsack(unittest.TestCase):
 
 def suite():
    """Returns a suite containing all the test cases in this module."""
-   return unittest.TestSuite((unittest.makeSuite(TestKnapsack, 'test')))
+   return unittest.TestSuite((unittest.makeSuite(TestKnapsack, 'test'), ))
 
 
 ########################################################################
