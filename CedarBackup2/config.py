@@ -1294,7 +1294,7 @@ class ExtensionsConfig(object):
    def __init__(self, actions=None):
       """
       Constructor for the C{ExtensionsConfig} class.
-      @param extendedActions: List of extended actions
+      @param actions: List of extended actions
       """
       self._actions = None
       self.actions = actions
@@ -3485,7 +3485,7 @@ class Config(object):
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
-      @param localPeer: Purge directory to be added to the document.
+      @param action: Purge directory to be added to the document.
       """
       if action is not None:
          sectionNode = Config._addContainerNode(xmlDom, parentNode, "action")
