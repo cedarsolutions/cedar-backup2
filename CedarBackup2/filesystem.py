@@ -279,7 +279,6 @@ class FilesystemList(list):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
-      logger.debug("Added path [%s] into list." % path)
       return 1
 
    def addDir(self, path):
@@ -314,7 +313,6 @@ class FilesystemList(list):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
-      logger.debug("Added path [%s] into list." % path)
       return 1
 
    def addDirContents(self, path):
@@ -621,7 +619,6 @@ class BackupFileList(FilesystemList):
       @raise ValueError: If path is not a directory or does not exist.
       """
       if os.path.isdir(path) and not os.path.islink(path):
-         logger.debug("Ignored directory [%s] in overridden method.")
          return 0
       else:
          return FilesystemList.addDir(self, path)
@@ -787,11 +784,11 @@ class BackupFileList(FilesystemList):
             except tarfile.TarError:
                if not ignore:
                   raise
-               logger.info("Unable to add file [%s]; going on anyway.")
+               logger.info("Unable to add file [%s]; going on anyway." % entry)
             except OSError, e:
                if not ignore:
                   raise tarfile.TarError(e)
-               logger.info("Unable to add file [%s]; going on anyway.")
+               logger.info("Unable to add file [%s]; going on anyway." % entry)
          tar.close()
       except tarfile.TarError:
          if os.path.exists(path): 

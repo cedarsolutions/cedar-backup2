@@ -516,10 +516,10 @@ def getUidGid(user, group):
    try:
       uid = pwd.getpwnam(user)[2]
       gid = grp.getgrnam(group)[2]
-      logger.debug("Translated user/group %s/%s into uid/gid %d/%d." % (user, group, uid, gid))
+      logger.debug("Translated [%s:%s] into [%d:%d]." % (user, group, uid, gid))
       return (uid, gid)
    except Exception, e:
-      logger.debug("Error looking up uid and gid for user/group %s/%s: %s" % (user, group, e))
+      logger.debug("Error looking up uid and gid for [%s:%s]: %s" % (user, group, e))
       raise ValueError("Unable to lookup up uid and gid for passed in user/group.")
 
 
@@ -675,7 +675,7 @@ def deviceMounted(devicePath):
       for line in lines:
          (mountDevice, mountPoint, remainder) = line.split(None, 2)
          if mountDevice == devicePath:
-            logger.debug("Device %s is mounted at %s." % (devicePath, mountPoint))
+            logger.debug("Device [%s] is mounted at [%s]." % (devicePath, mountPoint))
             return True
    return False
 
