@@ -3871,7 +3871,13 @@ class Config(object):
       By "immediately beneath" the parent, we mean from among nodes that are
       direct children of the passed-in parent node.  We assume that string
       contents of a given node belong to the first C{TEXT_NODE} child of that
-      node
+      node.
+
+      Note: even though the XML document returns unicode data, this method will
+      always return string data, encoded as utf-8.  This is because I want to
+      just use strings internally throughout all Cedar Backup code. (Sometimes I
+      get odd interactions between locale and unicode strings, especially with
+      filesystem operations like C{os.listdir}.)
 
       @param parent: Parent node to search beneath.
       @param name: Name of node to search for.
@@ -3881,7 +3887,10 @@ class Config(object):
       result = Config._readStringList(parent, name)
       if result is None:
          return None
-      return result[0]
+      if isinstance(result[0], unicode):
+         return result[0].encode("utf-8")
+      else:
+         return result[0]
    _readString = staticmethod(_readString)
 
    def _readInteger(parent, name):
