@@ -28,17 +28,26 @@
 # Language : Python (>= 2.3)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Provides location to maintain version information.
+# Purpose  : Provides ISO image-related objects.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # This file was created with a width of 132 characters, and NO tabs.
 
+########################################################################
+# Module documentation
+########################################################################
+
 """
-Provides location to maintain version information.
+Provides ISO image-related objects.
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
-COPYRIGHT   = "2004"
-VERSION     = "2.0.0"
-DATE        = "unreleased"
+
+########################################################################
+# IsoImage class definition
+########################################################################
+
+def IsoImage(object):
+   pass
+
 

@@ -69,6 +69,7 @@ test:
 # Pycheck catches a lot of different things.  It's kind of like
 # lint for Python.  A few warnings are expected.
 
+check: pycheck
 pychecker: pycheck
 pycheck: 
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py
