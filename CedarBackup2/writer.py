@@ -47,7 +47,7 @@ Provides image writer-related objects.
 # ImageWriter class definition
 ########################################################################
 
-def ImageWriter(object):
+class ImageWriter(object):
    pass
 
 
@@ -55,7 +55,7 @@ def ImageWriter(object):
 # CdWriter class definition
 ########################################################################
 
-def CdWriter(ImageWriter):
+class CdWriter(ImageWriter):
    pass
 
 

@@ -47,7 +47,7 @@ Provides process-related objects.
 # CollectProcess class definition
 ########################################################################
 
-def CollectProcess(object):
+class CollectProcess(object):
    pass
 
 
@@ -55,7 +55,7 @@ def CollectProcess(object):
 # PurgeProcess class definition
 ########################################################################
 
-def PurgeProcess(object):
+class PurgeProcess(object):
    pass
 
 
@@ -63,7 +63,7 @@ def PurgeProcess(object):
 # StageProcess class definition
 ########################################################################
 
-def StageProcess(object):
+class StageProcess(object):
    pass
 
 
@@ -71,7 +71,7 @@ def StageProcess(object):
 # StoreProcess class definition
 ########################################################################
 
-def StoreProcess(object):
+class StoreProcess(object):
    pass
 
 
@@ -79,7 +79,7 @@ def StoreProcess(object):
 # RebuildProcess class definition
 ########################################################################
 
-def RebuildProcess(object):
+class RebuildProcess(object):
    pass
 
 
