@@ -1,10 +1,12 @@
 Version 2.1.0	unreleased 
 
-	* Fixed doc/chack.1 .TH line to give proper manpage section.
-	* Added outputFile parameter to util.executeCommand() function.
+	* Fixed doc/cback.1 .TH line to give proper manpage section.
+	* Added optional outputFile parameter to util.executeCommand() function.
 	* Made static XML methods in config.Config public, for use by extensions.
-	* Created MySQL extension in CedarBackup2.extend.mysql.executeAction.
-	* Created MySQL extension in CedarBackup2.extend.sysinfo.executeAction.
+	* Refactored private code into public in action.py, for use by extensions.
+	* Created MySQL extension in CedarBackup2.extend.mysql.
+	* Created sysinfo extension in CedarBackup2.extend.sysinfo.
+	* Created Subversion extension in CedarBackup2.extend.subversion.
 	* Added regression tests as needed for new functionality.
 
 Version 2.0.0	26 Feb 2005

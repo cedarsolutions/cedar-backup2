@@ -284,6 +284,8 @@ class TestBDBRepository(unittest.TestCase):
       """
       repository = BDBRepository()
       self.failUnlessEqual(None, repository.compressMode)
+      repository.compressMode = "none"
+      self.failUnlessEqual("none", repository.compressMode)
       repository.compressMode = "bzip2"
       self.failUnlessEqual("bzip2", repository.compressMode)
       repository.compressMode = "gzip"

@@ -84,7 +84,7 @@ from CedarBackup2.image import IsoImage
 from CedarBackup2.writer import CdWriter
 from CedarBackup2.writer import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 from CedarBackup2.filesystem import BackupFileList, PurgeItemList, compareContents
-from CedarBackup2.util import executeCommand, getUidGid, getFunctionReference, deviceMounted
+from CedarBackup2.util import executeCommand, getUidGid, changeOwnership, getFunctionReference, deviceMounted
 from CedarBackup2.config import DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE
 
 
@@ -147,11 +147,11 @@ def _deriveDayOfWeek(dayName):
       return -1  # What else can we do??  Thrown an exception, I guess.
 
 
-###########################
-# _todayIsStart() function
-###########################
+#####################
+# isStart() function
+#####################
 
-def _todayIsStart(startingDay):
+def isStart(startingDay):
    """
    Indicates whether "today" is the backup starting day per configuration.
 
@@ -171,11 +171,11 @@ def _todayIsStart(startingDay):
    return value
 
 
-##################################
-# _buildNormalizedPath() function
-##################################
+#################################
+# buildNormalizedPath() function
+#################################
 
-def _buildNormalizedPath(absPath):
+def buildNormalizedPath(absPath):
    """
    Returns a "normalized" path based on an absolute path.
 
@@ -192,25 +192,6 @@ def _buildNormalizedPath(absPath):
    normalized = re.sub("\/", "-", normalized)
    normalized = re.sub("\s", "_", normalized)
    return normalized
-
-
-##############################
-# _changeOwnership() function
-##############################
-
-def _changeOwnership(path, user, group):
-   """
-   Changes ownership of path to match the user and group.
-   @param path: Path whose ownership to change.
-   @param user: User which owns file.
-   @param group: Group which owns file.
-   """
-   try:
-      (uid, gid) = getUidGid(user, group)
-      os.chown(path, uid, gid)
-   except Exception, e:
-      logger.error("Error changing ownership of [%s]: %s" % (path, e))
-
 
 
 ########################################################################
@@ -288,7 +269,7 @@ def _getDigestPath(config, collectDir):
    @param collectDir: Collect directory object.
    @return: Absolute path to the digest associated with the collect directory.
    """
-   normalized = _buildNormalizedPath(collectDir.absolutePath)
+   normalized = buildNormalizedPath(collectDir.absolutePath)
    filename = "%s.%s" % (normalized, DIGEST_EXTENSION)
    digestPath = os.path.join(config.options.workingDir, filename)
    logger.debug("Digest path is [%s]" % digestPath)
@@ -313,7 +294,7 @@ def _getTarfilePath(config, collectDir, archiveMode):
       extension = "tar.gz"
    elif archiveMode == 'tarbz2':
       extension = "tar.bz2"
-   normalized = _buildNormalizedPath(collectDir.absolutePath)
+   normalized = buildNormalizedPath(collectDir.absolutePath)
    filename = "%s.%s" % (normalized, extension)
    tarfilePath = os.path.join(config.collect.targetDir, filename)
    logger.debug("Tarfile path is [%s]" % tarfilePath)
@@ -591,7 +572,7 @@ def executeCollect(configPath, options, config):
       raise ValueError("Collect configuration is not properly filled in.")
    fullBackup = options.full
    logger.debug("Full backup flag is [%s]" % fullBackup)
-   todayIsStart = _todayIsStart(config.options.startingDay)
+   todayIsStart = isStart(config.options.startingDay)
    resetDigest = fullBackup or todayIsStart
    logger.debug("Reset digest flag is [%s]" % resetDigest)
    if config.collect.collectDirs is not None:
@@ -651,7 +632,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
       logger.info("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
       if len(backupList) > 0:
          backupList.generateTarfile(tarfilePath, archiveMode, True)
-         _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
+         changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
    else:
       if resetDigest:
          logger.debug("Based on resetDigest flag, digest will be cleared.")
@@ -665,7 +646,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
       logger.info("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
       if len(backupList) > 0:
          backupList.generateTarfile(tarfilePath, archiveMode, True)
-         _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
+         changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
       _writeDigest(config, newDigest, digestPath)
 
 def _loadDigest(digestPath):
@@ -705,7 +686,7 @@ def _writeDigest(config, digest, digestPath):
    """
    try: 
       pickle.dump(digest, open(digestPath, "w"))
-      _changeOwnership(digestPath, config.options.backupUser, config.options.backupGroup)
+      changeOwnership(digestPath, config.options.backupUser, config.options.backupGroup)
       logger.debug("Wrote new digest [%s] to disk: %d entries." % (digestPath, len(digest)))
    except: 
       logger.error("Failed to write digest [%s] to disk." % digestPath)
@@ -719,7 +700,7 @@ def _writeCollectIndicator(config):
    logger.debug("Writing collect indicator [%s]." % filename)
    try:
       open(filename, "w").write("")
-      _changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
+      changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
    except Exception, e:
       logger.error("Error writing collect indicator: %s", e)
 
@@ -803,7 +784,7 @@ def _createStagingDirs(config, dailyDir, peers):
          logger.debug("Creating staging directory [%s]." % dailyDir)
          os.makedirs(dailyDir)
          for path in [ dailyDir, os.path.join(dailyDir, ".."), os.path.join(dailyDir, "..", ".."), ]:
-            _changeOwnership(path, config.options.backupUser, config.options.backupGroup)
+            changeOwnership(path, config.options.backupUser, config.options.backupGroup)
       except Exception, e:
          raise Exception("Unable to create staging directory: %s" % e)
    for peer in peers:
@@ -815,7 +796,7 @@ def _createStagingDirs(config, dailyDir, peers):
          try:
             logger.debug("Creating peer staging directory [%s]." % peerDir)
             os.makedirs(peerDir)
-            _changeOwnership(peerDir, config.options.backupUser, config.options.backupGroup)
+            changeOwnership(peerDir, config.options.backupUser, config.options.backupGroup)
          except Exception, e:
             raise Exception("Unable to create staging directory: %s" % e)
    return mapping
@@ -836,7 +817,7 @@ def _writeStageIndicator(config, dailyDir):
    logger.debug("Writing stage indicator [%s]." % filename)
    try:
       open(filename, "w").write("")
-      _changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
+      changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
    except Exception, e:
       logger.error("Error writing stage indicator: %s", e)
 
@@ -874,7 +855,7 @@ def executeStore(configPath, options, config):
       raise ValueError("Store configuration is not properly filled in.")
    rebuildMedia = options.full
    logger.debug("Rebuild media flag [%s]" % rebuildMedia)
-   todayIsStart = _todayIsStart(config.options.startingDay)
+   todayIsStart = isStart(config.options.startingDay)
    entireDisc = rebuildMedia or todayIsStart
    logger.debug("Entire disc flag [%s]" % entireDisc)
    stagingDirs = _findCorrectDailyDir(config)
@@ -1041,7 +1022,7 @@ def _writeStoreIndicator(config, stagingDirs):
       logger.debug("Writing store indicator [%s]." % filename)
       try:
          open(filename, "w").write("")
-         _changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
+         changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
       except Exception, e:
          logger.error("Error writing store indicator: %s", e)
 

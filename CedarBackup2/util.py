@@ -40,7 +40,7 @@
 """
 Provides general-purpose utilities. 
 
-@sort: AbsolutePathList, ObjectTypeList, convertSize, getUidGid, 
+@sort: AbsolutePathList, ObjectTypeList, convertSize, getUidGid, changeOwnership, 
        splitCommandLine, executeCommand, calculateFileAge, encodePath, 
        ISO_SECTOR_SIZE, BYTES_PER_KBYTE, KBYTES_PER_MBYTE, BYTES_PER_MBYTE,
        BYTES_PER_SECTOR, SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, 
@@ -522,6 +522,24 @@ def getUidGid(user, group):
    except Exception, e:
       logger.debug("Error looking up uid and gid for [%s:%s]: %s" % (user, group, e))
       raise ValueError("Unable to lookup up uid and gid for passed in user/group.")
+
+
+#############################
+# changeOwnership() function
+#############################
+
+def changeOwnership(path, user, group):
+   """
+   Changes ownership of path to match the user and group.
+   @param path: Path whose ownership to change.
+   @param user: User which owns file.
+   @param group: Group which owns file.
+   """
+   try:
+      (uid, gid) = getUidGid(user, group)
+      os.chown(path, uid, gid)
+   except Exception, e:
+      logger.error("Error changing ownership of [%s]: %s" % (path, e))
 
 
 ##############################
