@@ -119,10 +119,10 @@ VALID_ACTIONS      = [ "collect", "stage", "store", "purge", "rebuild", "validat
 COMBINE_ACTIONS    = [ "collect", "stage", "store", "purge", ]
 NONCOMBINE_ACTIONS = [ "rebuild", "validate", "all", ]
 
-SHORT_SWITCHES     = "hVbqc:fl:o:m:Od"
+SHORT_SWITCHES     = "hVbqc:fl:o:m:Ods"
 LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet', 
                        'config=', 'full', 'logfile=', 'owner=', 
-                       'mode=', 'output', 'debug', ]
+                       'mode=', 'output', 'debug', 'stack', ]
 
 
 #######################################################################
@@ -165,7 +165,8 @@ def cli():
       - C{2}: Error processing command-line arguments
       - C{3}: Error configuring logging
       - C{4}: Error parsing indicated configuration file
-      - C{5}: Error executing backup or understanding requested actions
+      - C{5}: Backup was interrupted with a CTRL-C or similar
+      - C{6}: Error executing backup or understanding requested actions
 
    @note: This function contains a good amount of logging at the INFO level,
    because this is the right place to document high-level flow of control (i.e.
@@ -208,8 +209,8 @@ def cli():
       return 3
 
    logger.info("Cedar Backup run started.")
-   logger.info("Options were: %s" % options)
-   logger.info("Logfile is: %s" % logfile)
+   logger.info("Options were [%s]" % options)
+   logger.info("Logfile is [%s]" % logfile)
 
    if options.config is None:
       logger.debug("Using default configuration file.")
@@ -219,20 +220,30 @@ def cli():
       configPath = options.config
 
    try:
-      logger.info("Configuration path: %s" % configPath)
+      logger.info("Configuration path is [%s]" % configPath)
       config = Config(xmlPath=configPath)
+      if config.extensions is not None:
+         actionSet = _ActionSet(options.actions, config.extensions.actions)
+      else:
+         actionSet = _ActionSet(options.actions, None)
    except Exception, e:
       logger.error("Error reading configuration: %s" % e)
       logger.info("Cedar Backup run completed with status 4.")
       return 4
 
-   try:
-      actionSet = _ActionSet(options.actions, config.extensions.actions)
+   if options.stacktrace:
       actionSet.executeActions(configPath, options, config)
-   except Exception, e:
-      logger.error("Error executing backup: %s" % e)
-      logger.info("Cedar Backup run completed with status 5.")
-      return 5
+   else:
+      try:
+         actionSet.executeActions(configPath, options, config)
+      except KeyboardInterrupt:
+         logger.error("Backup interrupted.")
+         logger.info("Cedar Backup run completed with status 5.")
+         return 5
+      except Exception, e:
+         logger.error("Error executing backup: %s" % e)
+         logger.info("Cedar Backup run completed with status 6.")
+         return 6
 
    logger.info("Cedar Backup run completed with status 0.")
    return 0
@@ -378,10 +389,10 @@ class _ActionSet(object):
          raise ValueError("No actions specified.")
       for action in actions:
          if action not in VALID_ACTIONS and action not in extensionNames:
-            raise ValueError("Action '%s' is not a valid action or extended action." % action)
+            raise ValueError("Action [%s] is not a valid action or extended action." % action)
       for action in NONCOMBINE_ACTIONS:
          if action in actions and actions != [ action, ]:
-            raise ValueError("Action '%s' may not be combined with other actions." % action)
+            raise ValueError("Action [%s] may not be combined with other actions." % action)
    _validateActions = staticmethod(_validateActions)
 
    def _buildActionSet(actions, extensionDict):
@@ -474,6 +485,7 @@ def _usage(fd=sys.stderr):
    fd.write("   -m, --mode     Octal logfile permissions mode (default: %o)\n" % DEFAULT_MODE)
    fd.write("   -O, --output   Record some sub-command (i.e. tar) output to the log\n")
    fd.write("   -d, --debug    Write debugging information to the log (implies --output)\n")
+   fd.write("   -s, --stack    Dump a Python stack trace instead of swallowing exceptions\n")
    fd.write("\n")
    fd.write(" The following actions may be specified:\n")
    fd.write("\n")
@@ -590,10 +602,10 @@ def _setupLogfile(options):
       else:
          os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND, options.mode)).write("")
       try:
-         if options.owner is None and options.group is None:
+         if options.owner is None or len(options.owner) < 2:
             (uid, gid) = getUidGid(DEFAULT_OWNERSHIP[0], DEFAULT_OWNERSHIP[1])
          else:
-            (uid, gid) = getUidGid(options.owner, options.group)
+            (uid, gid) = getUidGid(options.owner[0], options.owner[1])
          os.chown(logfile, uid, gid)
       except: pass
    return logfile
@@ -785,6 +797,7 @@ class Options(object):
       self._mode = None
       self._output = False
       self._debug = False
+      self._stacktrace = False
       self._actions = None
       self.actions = []    # initialize to an empty list; remainder are OK
       if argumentList is not None and argumentString is not None:
@@ -879,6 +892,11 @@ class Options(object):
             return 1
       if self._debug != other._debug:
          if self._debug < other._debug:
+            return -1
+         else:
+            return 1
+      if self._stacktrace != other._stacktrace:
+         if self._stacktrace < other._stacktrace:
             return -1
          else:
             return 1
@@ -1086,6 +1104,22 @@ class Options(object):
       """
       return self._debug
 
+   def _setStacktrace(self, value):
+      """
+      Property target used to set the stacktrace flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._stacktrace = True
+      else:
+         self._stacktrace = False
+
+   def _getStacktrace(self):
+      """
+      Property target used to get the stacktrace flag.
+      """
+      return self._stacktrace
+
    def _setActions(self, value):
       """
       Property target used to set the actions list.
@@ -1120,6 +1154,7 @@ class Options(object):
    mode = property(_getMode, _setMode, None, "Command-line mode (C{-m,--mode}) parameter.")
    output = property(_getOutput, _setOutput, None, "Command-line output (C{-O,--output}) flag.")
    debug = property(_getDebug, _setDebug, None, "Command-line debug (C{-d,--debug}) flag.")
+   stacktrace = property(_getStacktrace, _setStacktrace, None, "Command-line stacktrace (C{-s,--stack}) flag.")
    actions = property(_getActions, _setActions, None, "Command-line actions list.")
 
 
@@ -1201,6 +1236,8 @@ class Options(object):
          argumentList.append("--output")
       if self.debug:
          argumentList.append("--debug")
+      if self.stacktrace:
+         argumentList.append("--stack")
       if self.actions is not None:
          for action in self.actions:
             argumentList.append(action)
@@ -1258,6 +1295,8 @@ class Options(object):
          argumentString += "--output "
       if self.debug:
          argumentString += "--debug "
+      if self.debug:
+         argumentString += "--stack "
       if self.actions is not None:
          for action in self.actions:
             argumentString +=  "\"%s\" " % action
@@ -1318,4 +1357,6 @@ class Options(object):
          self.output = True
       if switches.has_key("-d") or switches.has_key("--debug"):
          self.debug = True
+      if switches.has_key("-s") or switches.has_key("--stack"):
+         self.stacktrace = True
 
