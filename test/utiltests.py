@@ -76,7 +76,6 @@ Full vs. Reduced Tests
 ########################################################################
 
 # Import standard modules
-import os
 import unittest
 from CedarBackup2.util import executeCommand
 
