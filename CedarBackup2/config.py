@@ -214,8 +214,10 @@ Validation
 
 @sort: LocalPeer, RemotePeer, CollectDir, PurgeDir, ReferenceConfig, OptionsConfig
        CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config,
-       DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE, DEFAULT_CAPACITY_MODE, 
-       VALID_DEVICE_TYPES, VALID_MEDIA_TYPES, VALID_CAPACITY_MODES
+       DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE, DEFAULT_CAPACITY_MODE,
+       TRUE_BOOLEAN_VALUES, FALSE_BOOLEAN_VALUES, VALID_DEVICE_TYPES,
+       VALID_MEDIA_TYPES, VALID_CAPACITY_MODES, VALID_COLLECT_MODES,
+       VALID_ARCHIVE_MODES, VALID_BOOLEAN_VALUES
 
 @var DEFAULT_DEVICE_TYPE: The default device type.
 @var DEFAULT_MEDIA_TYPE: The default media type.
@@ -225,6 +227,9 @@ Validation
 @var VALID_CAPACITY_MODES: List of valid capacity modes.
 @var VALID_COLLECT_MODES: List of valid collect modes.
 @var VALID_ARCHIVE_MODES: List of valid archive modes.
+@var TRUE_BOOLEAN_VALUES: List of boolean values in XML representing C{True}.
+@var FALSE_BOOLEAN_VALUES: List of boolean values in XML representing C{False}.
+@var VALID_BOOLEAN_VALUES: List of valid boolean values in XML.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -242,6 +247,7 @@ from StringIO import StringIO
 from xml.dom.ext.reader import PyExpat
 from xml.xpath import Evaluate
 from xml.parsers.expat import ExpatError
+from xml.dom.minidom import Node
 from xml.dom.minidom import getDOMImplementation
 from xml.dom.minidom import parseString
 from xml.dom.ext import PrettyPrint
@@ -266,6 +272,10 @@ VALID_MEDIA_TYPES     = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
 VALID_CAPACITY_MODES  = [ "fail", "discard", "overwrite", "rebuild", "rewrite", ]
 VALID_COLLECT_MODES   = [ "daily", "weekly", "incr", ]
 VALID_ARCHIVE_MODES   = [ "tar", "targz", "tarbz2", ]
+
+TRUE_BOOLEAN_VALUES   = [ "Y", "y", ]
+FALSE_BOOLEAN_VALUES  = [ "N", "n", ]
+VALID_BOOLEAN_VALUES  = TRUE_BOOLEAN_VALUES + FALSE_BOOLEAN_VALUES
 
 
 ########################################################################
@@ -296,7 +306,9 @@ class CollectDir(object):
 
    @note: Lists within this class are "unordered" for equality comparisons.
 
-   @sort: absolutePath, collectMode, archiveMode, ignoreFile, absoluteExcludePaths, relativeExcludePaths, excludePatterns
+   @sort: __init__, __repr__, __str__, __cmp__, absolutePath, collectMode,
+          archiveMode, ignoreFile, absoluteExcludePaths, relativeExcludePaths,
+          excludePatterns
    """
 
    def __init__(self, absolutePath=None, collectMode=None, archiveMode=None, ignoreFile=None,
@@ -343,7 +355,7 @@ class CollectDir(object):
       """
       Informal string representation for class instance.
       """
-      return "CollectDir(%s, %s, %s)" % (self.absolutePath, self.collectMode, self.archiveMode)
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -556,7 +568,7 @@ class PurgeDir(object):
       - The absolute path must be an absolute path
       - The retain days value must be an integer >= 0.
 
-   @sort: absolutePath, retainDays
+   @sort: __init__, __repr__, __str__, __cmp__, absolutePath, retainDays
    """
 
    def __init__(self, absolutePath=None, retainDays=None):
@@ -583,7 +595,7 @@ class PurgeDir(object):
       """
       Informal string representation for class instance.
       """
-      return "PurgeDir(%s, %s)" % (self.absolutePath, self.retainDays)
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -670,7 +682,7 @@ class LocalPeer(object):
       - The peer name must be a non-empty string.
       - The collect directory must be an absolute path.
    
-   @sort: name, collectDir
+   @sort: __init__, __repr__, __str__, __cmp__, name, collectDir
    """
 
    def __init__(self, name=None, collectDir=None):
@@ -697,7 +709,7 @@ class LocalPeer(object):
       """
       Informal string representation for class instance.
       """
-      return "LocalPeer(%s, %s)" % (self.name, self.collectDir)
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -780,7 +792,7 @@ class RemotePeer(object):
       - The remote user must be a non-empty string.
       - The rcp command must be a non-empty string.
 
-   @sort: name, collectDir, remoteUser, rcpCommand
+   @sort: __init__, __repr__, __str__, __cmp__, name, collectDir, remoteUser, rcpCommand
    """
 
    def __init__(self, name=None, collectDir=None, remoteUser=None, rcpCommand=None):
@@ -813,7 +825,7 @@ class RemotePeer(object):
       """
       Informal string representation for class instance.
       """
-      return "RemotePeer(%s, %s, %s, %s)" % (self.name, self.collectDir, self.remoteUser, self.rcpCommand)
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -939,7 +951,7 @@ class ReferenceConfig(object):
    validation on the contents of any of the fields, although we generally
    expect them to be strings.
 
-   @sort: author, revision, description, generator
+   @sort: __init__, __repr__, __str__, __cmp__, author, revision, description, generator
    """
 
    def __init__(self, author=None, revision=None, description=None, generator=None):
@@ -970,7 +982,7 @@ class ReferenceConfig(object):
       """
       Informal string representation for class instance.
       """
-      return "ReferenceConfig(%s, %s, %s, %s)" % (self.author, self.revision, self.description, self.generator)
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -1084,7 +1096,7 @@ class OptionsConfig(object):
       - The starting day must be a day of the week in English, i.e. C{"monday"}, C{"tuesday"}, etc.  
       - All of the other values must be non-empty strings if they are set to something other than C{None}.
 
-   @sort: startingDay, workingDir, backupUser, backupGroup, rcpCommand
+   @sort: __init__, __repr__, __str__, __cmp__, startingDay, workingDir, backupUser, backupGroup, rcpCommand
    """
 
    def __init__(self, startingDay=None, workingDir=None, backupUser=None, backupGroup=None, rcpCommand=None):
@@ -1121,8 +1133,7 @@ class OptionsConfig(object):
       """
       Informal string representation for class instance.
       """
-      return "OptionsConfig(%s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir, self.backupUser, 
-                                                    self.backupGroup, self.rcpCommand)
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -1287,7 +1298,9 @@ class CollectConfig(object):
 
    @note: Lists within this class are "unordered" for equality comparisons.
 
-   @sort: targetDir, collectMode, archiveMode, ignoreFile, absoluteExcludePaths, excludePatterns, collectDirs
+   @sort: __init__, __repr__, __str__, __cmp__, targetDir, 
+          collectMode, archiveMode, ignoreFile, absoluteExcludePaths, 
+          excludePatterns, collectDirs
    """
 
    def __init__(self, targetDir=None, collectMode=None, archiveMode=None, ignoreFile=None,
@@ -1332,7 +1345,7 @@ class CollectConfig(object):
       """
       Informal string representation for class instance.
       """
-      return "CollectConfig(%s, %s, %s)" % (self.targetDir, self.collectMode, self.archiveMode)
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -1549,7 +1562,7 @@ class StageConfig(object):
 
    @note: Lists within this class are "unordered" for equality comparisons.
 
-   @sort: targetDir, localPeers, remotePeers
+   @sort: __init__, __repr__, __str__, __cmp__, targetDir, localPeers, remotePeers
    """
 
    def __init__(self, targetDir=None, localPeers=None, remotePeers=None):
@@ -1579,7 +1592,7 @@ class StageConfig(object):
       """
       Informal string representation for class instance.
       """
-      return "StageConfig(%s, %s, %s)" % (self.targetDir, self.localPeers, self.remotePeers)
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -1704,7 +1717,8 @@ class StoreConfig(object):
    The device type field mostly exists for planned future extensions, such as
    support for DVD writers.
 
-   @sort: sourceDir, mediaType, deviceType, devicePath, deviceScsiId, 
+   @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
+          mediaType, deviceType, devicePath, deviceScsiId, 
           driveSpeed, checkData, safeOverwrite, capacityMode
    """
 
@@ -1757,9 +1771,7 @@ class StoreConfig(object):
       """
       Informal string representation for class instance.
       """
-      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
-                                                                  self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                                  self.checkData, self.safeOverwrite, self.capacityMode)
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -2003,7 +2015,7 @@ class PurgeConfig(object):
 
    @note: Lists within this class are "unordered" for equality comparisons.
 
-   @sort: purgeDirs
+   @sort: __init__, __repr__, __str__, __cmp__, purgeDirs
    """
 
    def __init__(self, purgeDirs=None):
@@ -2025,7 +2037,7 @@ class PurgeConfig(object):
       """
       Informal string representation for class instance.
       """
-      return "PurgeConfig(%s)" % self.purgeDirs
+      return self.__repr__()
 
    def __cmp__(self, other):
       """
@@ -2109,7 +2121,11 @@ class Config(object):
 
    @note: Lists within this class are "unordered" for equality comparisons.
 
-   @sort: __init__, extractXml, validate, reference, options, collect, stage, store, purge
+   @sort: __init__, __repr__, __str__, __cmp__, extractXml, validate, 
+          reference, options, collect, stage, store, purge,
+          _getReference, _setReference, _getOptions, _setOptions,
+          _getCollect, _setCollect, _getStage, _setStage,
+          _getStore, _setStore, _getPurge, _setPurge
    """
 
    ##############
@@ -2190,7 +2206,7 @@ class Config(object):
       """
       Informal string representation for class instance.
       """
-      return "Config(%s, %s, %s, %s, %s, %s)" % (self.reference, self.options, self.collect, self.stage, self.store, self.purge)
+      return self.__repr__()
 
 
    #############################
@@ -2470,16 +2486,17 @@ class Config(object):
       """
       try:
          xmlDom = PyExpat.Reader().fromString(xmlData)
-         self._reference = Config._parseReference(xmlDom)
-         self._options = Config._parseOptions(xmlDom)
-         self._collect = Config._parseCollect(xmlDom)
-         self._stage = Config._parseStage(xmlDom)
-         self._store = Config._parseStore(xmlDom)
-         self._purge = Config._parsePurge(xmlDom)
+         parent = Config._readFirstChild(xmlDom, "cb_config")
+         self._reference = Config._parseReference(parent)
+         self._options = Config._parseOptions(parent)
+         self._collect = Config._parseCollect(parent)
+         self._stage = Config._parseStage(parent)
+         self._store = Config._parseStore(parent)
+         self._purge = Config._parsePurge(parent)
       except (IOError, ExpatError), e:
          raise ValueError("Unable to parse XML document: %s" % e)
 
-   def _parseReference(xmlDom):
+   def _parseReference(parent):
       """
       Parses a reference configuration section.
       
@@ -2490,20 +2507,23 @@ class Config(object):
          description    //cb_config/reference/description
          generator      //cb_config/reference/generator
 
+      @param parent: Parent node to search beneath.
+
       @return: C{ReferenceConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       reference = None
-      if Config._nodeExists(xmlDom, "//cb_config/reference"):
+      section = Config._readFirstChild(parent, "reference")
+      if section is not None:
          reference = ReferenceConfig()
-         reference.author = Config._readString(xmlDom, "//cb_config/reference/author")
-         reference.revision = Config._readString(xmlDom, "//cb_config/reference/revision")
-         reference.description = Config._readString(xmlDom, "//cb_config/reference/description")
-         reference.generator = Config._readString(xmlDom, "//cb_config/reference/generator")
+         reference.author = Config._readString(section, "author")
+         reference.revision = Config._readString(section, "revision")
+         reference.description = Config._readString(section, "description")
+         reference.generator = Config._readString(section, "generator")
       return reference
    _parseReference = staticmethod(_parseReference)
 
-   def _parseOptions(xmlDom):
+   def _parseOptions(parent):
       """
       Parses a options configuration section.
 
@@ -2515,21 +2535,24 @@ class Config(object):
          backupGroup    //cb_config/options/backup_group
          rcpCommand     //cb_config/options/rcp_command
 
+      @param parent: Parent node to search beneath.
+
       @return: C{OptionsConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       options = None
-      if Config._nodeExists(xmlDom, "//cb_config/options"):
+      section = Config._readFirstChild(parent, "options")
+      if section is not None:
          options = OptionsConfig()
-         options.startingDay = Config._readString(xmlDom, "//cb_config/options/starting_day")
-         options.workingDir = Config._readString(xmlDom, "//cb_config/options/working_dir")
-         options.backupUser = Config._readString(xmlDom, "//cb_config/options/backup_user")
-         options.backupGroup = Config._readString(xmlDom, "//cb_config/options/backup_group")
-         options.rcpCommand = Config._readString(xmlDom, "//cb_config/options/rcp_command")
+         options.startingDay = Config._readString(section, "starting_day")
+         options.workingDir = Config._readString(section, "working_dir")
+         options.backupUser = Config._readString(section, "backup_user")
+         options.backupGroup = Config._readString(section, "backup_group")
+         options.rcpCommand = Config._readString(section, "rcp_command")
       return options
    _parseOptions = staticmethod(_parseOptions)
 
-   def _parseCollect(xmlDom):
+   def _parseCollect(parent):
       """
       Parses a collect configuration section.
 
@@ -2547,26 +2570,28 @@ class Config(object):
          excludePatterns      //cb_config/collect/exclude/pattern
          collectDirs          //cb_config/collect/dir
    
-      The individual collect directory entries are parsed by
-      L{_parseCollectDir}.
+      The exclusions are parsed by L{_parseExclusions} and the collect
+      directories are parsed by L{_parseCollectDirs}.
+
+      @param parent: Parent node to search beneath.
 
       @return: C{CollectConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       collect = None
-      if Config._nodeExists(xmlDom, "//cb_config/collect"):
+      section = Config._readFirstChild(parent, "collect")
+      if section is not None:
          collect = CollectConfig()
-         collect.targetDir = Config._readString(xmlDom, "//cb_config/collect/collect_dir")
-         collect.collectMode = Config._readString(xmlDom, "//cb_config/collect/collect_mode")
-         collect.archiveMode = Config._readString(xmlDom, "//cb_config/collect/archive_mode")
-         collect.ignoreFile = Config._readString(xmlDom, "//cb_config/collect/ignore_file")
-         collect.absoluteExcludePaths = Config._readList(xmlDom, "//cb_config/collect/exclude/abs_path", Config._readString)
-         collect.excludePatterns = Config._readList(xmlDom, "//cb_config/collect/exclude/pattern", Config._readString)
-         collect.collectDirs = Config._readList(xmlDom, "//cb_config/collect/dir", Config._parseCollectDir)
+         collect.targetDir = Config._readString(section, "collect_dir")
+         collect.collectMode = Config._readString(section, "collect_mode")
+         collect.archiveMode = Config._readString(section, "archive_mode")
+         collect.ignoreFile = Config._readString(section, "ignore_file")
+         (collect.absoluteExcludePaths, unused, collect.excludePatterns) = Config._parseExclusions(section)
+         collect.collectDirs = Config._parseCollectDirs(section)
       return collect
    _parseCollect = staticmethod(_parseCollect)
 
-   def _parseStage(xmlDom):
+   def _parseStage(parent):
       """
       Parses a stage configuration section.
 
@@ -2580,24 +2605,23 @@ class Config(object):
          localPeers     //cb_config/stage/peer
          remotePeers    //cb_config/stage/peer
 
-      The individual peer entries are parsed by L{_parseLocalPeer} and
-      L{_parseRemotePeer}.  Since remote and local peers each have the same
-      expression (they're both in C{peer} nodes), these functions each ignore
-      entries matching the expression which aren't of the correct type.
+      The individual peer entries are parsed by L{_parsePeers}.
+
+      @param parent: Parent node to search beneath.
 
       @return: C{StageConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       stage = None
-      if Config._nodeExists(xmlDom, "//cb_config/stage"):
+      section = Config._readFirstChild(parent, "stage")
+      if section is not None:
          stage = StageConfig()
-         stage.targetDir = Config._readString(xmlDom, "//cb_config/stage/staging_dir")
-         stage.localPeers = Config._readList(xmlDom, "//cb_config/stage/peer", Config._parseLocalPeer)      # ignores remote
-         stage.remotePeers = Config._readList(xmlDom, "//cb_config/stage/peer", Config._parseRemotePeer)    # ignores local
+         stage.targetDir = Config._readString(section, "staging_dir")
+         (stage.localPeers, stage.remotePeers) = Config._parsePeers(section)
       return stage
    _parseStage = staticmethod(_parseStage)
 
-   def _parseStore(xmlDom):
+   def _parseStore(parent):
       """
       Parses a store configuration section.
 
@@ -2613,25 +2637,28 @@ class Config(object):
          safeOverwrite     //cb_config/store/safe_overwrite
          capacityMode      //cb_config/store/capacity_mode
 
+      @param parent: Parent node to search beneath.
+
       @return: C{StoreConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       store = None
-      if Config._nodeExists(xmlDom, "//cb_config/store"):
+      section = Config._readFirstChild(parent, "store")
+      if section is not None:
          store = StoreConfig()
-         store.sourceDir = Config._readString(xmlDom,  "//cb_config/store/source_dir")
-         store.mediaType = Config._readString(xmlDom,  "//cb_config/store/media_type")
-         store.deviceType = Config._readString(xmlDom,  "//cb_config/store/device_type")
-         store.devicePath = Config._readString(xmlDom,  "//cb_config/store/target_device")
-         store.deviceScsiId = Config._readString(xmlDom,  "//cb_config/store/target_scsi_id")
-         store.driveSpeed = Config._readInteger(xmlDom, "//cb_config/store/drive_speed")
-         store.checkData = Config._readBoolean(xmlDom, "//cb_config/store/check_data")
-         store.safeOverwrite = Config._readBoolean(xmlDom, "//cb_config/store/safe_overwrite")
-         store.capacityMode = Config._readString(xmlDom,  "//cb_config/store/capacity_mode")
+         store.sourceDir = Config._readString(section,  "source_dir")
+         store.mediaType = Config._readString(section,  "media_type")
+         store.deviceType = Config._readString(section,  "device_type")
+         store.devicePath = Config._readString(section,  "target_device")
+         store.deviceScsiId = Config._readString(section,  "target_scsi_id")
+         store.driveSpeed = Config._readInteger(section, "drive_speed")
+         store.checkData = Config._readBoolean(section, "check_data")
+         store.safeOverwrite = Config._readBoolean(section, "safe_overwrite")
+         store.capacityMode = Config._readString(section,  "capacity_mode")
       return store
    _parseStore = staticmethod(_parseStore)
 
-   def _parsePurge(xmlDom):
+   def _parsePurge(parent):
       """
       Parses a purge configuration section.
 
@@ -2640,30 +2667,62 @@ class Config(object):
 
          purgeDirs     //cb_config/purge/dir
 
-      The individual directory entries are parsed by L{_parsePurgeDir}.
+      The individual directory entries are parsed by L{_parsePurgeDirs}.
+
+      @param parent: Parent node to search beneath.
 
       @return: C{PurgeConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       purge = None
-      if Config._nodeExists(xmlDom, "//cb_config/purge"):
+      section = Config._readFirstChild(parent, "purge")
+      if section is not None:
          purge = PurgeConfig()
-         purge.purgeDirs = Config._readList(xmlDom, "//cb_config/purge/dir", Config._parsePurgeDir)
+         purge.purgeDirs = Config._parsePurgeDirs(section)
       return purge
    _parsePurge = staticmethod(_parsePurge)
 
-   def _parseCollectDir(xmlDom, baseExpr):
+   def _parseExclusions(parent):
       """
-      Reads a C{CollectDir} object from the DOM tree using the specified expression.
+      Reads exclusions data from immediately beneath the parent.
 
-      This method takes a simplified expression, i.e. C{"//one/two/three"}.  
+      We read groups of the following items, one list element per item::
+
+         absolute    exclude/abs_path
+         relative    exclude/rel_path
+         patterns    exclude/pattern
+
+      If there are none of some pattern (i.e. no relative path items) then
+      C{None} will be returned for that item in the tuple.  
+
+      This method can be used to parse exclusions on both the collect
+      configuration level and on the collect directory level within collect
+      configuration.
+
+      @param parent: Parent node to search beneath.
+
+      @return: Tuple of (absolute, relative, patterns) exclusions.
+      """
+      section = Config._readFirstChild(parent, "exclude")
+      if section is None:
+         return (None, None, None)
+      else:
+         absolute = Config._readStringList(section, "abs_path")
+         relative = Config._readStringList(section, "rel_path")
+         patterns = Config._readStringList(section, "pattern")
+         return (absolute, relative, patterns)
+   _parseExclusions = staticmethod(_parseExclusions)
+
+   def _parseCollectDirs(parent):
+      """
+      Reads a list of C{CollectDir} objects from immediately beneath the parent.
 
       We read the following individual fields::
 
-         absolutePath            <baseExpr>/abs_path
-         collectMode             <baseExpr>/mode I{or} <baseExpr>/collect_mode
-         archiveMode             <baseExpr>/archive_mode
-         ignoreFile              <baseExpr>/ignore_file
+         absolutePath            abs_path
+         collectMode             mode I{or} <baseExpr>/collect_mode
+         archiveMode             archive_mode
+         ignoreFile              ignore_file
 
       The collect mode is a special case.  Just a C{mode} tag is accepted for
       backwards compatibility, but we prefer C{collect_mode} for consistency
@@ -2673,220 +2732,260 @@ class Config(object):
       We also read groups of the following items, one list element per
       item::
 
-         absoluteExcludePaths    <baseExpr>/exclude/abs_path
-         relativeExcludePaths    <baseExpr>/exclude/rel_path
-         excludePatterns         <baseExpr>/exclude/pattern
+         absoluteExcludePaths    exclude/abs_path
+         relativeExcludePaths    exclude/rel_path
+         excludePatterns         exclude/pattern
 
-      @param xmlDom: DOM tree to search within.
-      @param baseExpr: Base XPath expression describing location to read.
+      The exclusions are parsed by L{_parseExclusions}.
 
-      @return: C{CollectDir} object based on data at location, or C{None} if the node is not found.
-      @raise ValueError: If the data at the location can't be read
+      @param parent: Parent node to search beneath.
+
+      @return: List of C{CollectDir} objects or C{None} if none are found.
+      @raise ValueError: If some filled-in value is invalid.
       """
-      collectDir = None
-      if Config._nodeExists(xmlDom, baseExpr):
-         collectDir = CollectDir()
-         collectDir.absolutePath = Config._readString(xmlDom, "%s/abs_path" % baseExpr)
-         if Config._nodeExists(xmlDom, "%s/mode" % baseExpr):
-            collectDir.collectMode = Config._readString(xmlDom, "%s/mode" % baseExpr)
-         else:
-            collectDir.collectMode = Config._readString(xmlDom, "%s/collect_mode" % baseExpr)
-         collectDir.archiveMode = Config._readString(xmlDom, "%s/archive_mode" % baseExpr)
-         collectDir.ignoreFile = Config._readString(xmlDom, "%s/ignore_file" % baseExpr)
-         collectDir.absoluteExcludePaths = Config._readList(xmlDom, "%s/exclude/abs_path" % baseExpr, Config._readString)
-         collectDir.relativeExcludePaths = Config._readList(xmlDom, "%s/exclude/rel_path" % baseExpr, Config._readString)
-         collectDir.excludePatterns = Config._readList(xmlDom, "%s/exclude/pattern" % baseExpr, Config._readString)
-      return collectDir
-   _parseCollectDir = staticmethod(_parseCollectDir)
+      lst = []
+      for entry in Config._readChildren(parent, "dir"):
+         if entry.nodeType == Node.ELEMENT_NODE:
+            cdir = CollectDir()
+            cdir.absolutePath = Config._readString(entry, "abs_path")
+            cdir.collectMode = Config._readString(entry, "mode")
+            if cdir.collectMode is None:
+               cdir.collectMode = Config._readString(entry, "collect_mode")
+            cdir.archiveMode = Config._readString(entry, "archive_mode")
+            cdir.ignoreFile = Config._readString(entry, "ignore_file")
+            (cdir.absoluteExcludePaths, cdir.relativeExcludePaths, cdir.excludePatterns) = Config._parseExclusions(entry)
+            lst.append(cdir)
+      if lst == []:
+         lst = None
+      return lst
+   _parseCollectDirs = staticmethod(_parseCollectDirs)
 
-   def _parsePurgeDir(xmlDom, baseExpr):
+   def _parsePurgeDirs(parent):
       """
-      Reads a C{PurgeDir} object from the DOM tree using the specified expression.
-
-      This method takes a simplified expression, i.e. C{"//one/two/three"}.  
+      Reads a list of C{PurgeDir} objects from immediately beneath the parent.
 
       We read the following individual fields::
 
          absolutePath            <baseExpr>/abs_path
          retainDays              <baseExpr>/retain_days
 
-      @param xmlDom: DOM tree to search within.
-      @param baseExpr: Base XPath expression describing location to read.
+      @param parent: Parent node to search beneath.
 
-      @return: C{PurgeDir} object based on data at location, or C{None} if the node is not found.
+      @return: List of C{PurgeDir} objects or C{None} if none are found.
       @raise ValueError: If the data at the location can't be read
       """
-      purgeDir = None
-      if Config._nodeExists(xmlDom, baseExpr):
-         purgeDir = PurgeDir()
-         purgeDir.absolutePath = Config._readString(xmlDom, "%s/abs_path" % baseExpr)
-         purgeDir.retainDays = Config._readInteger(xmlDom, "%s/retain_days" % baseExpr)
-      return purgeDir
-   _parsePurgeDir = staticmethod(_parsePurgeDir)
+      lst = []
+      for entry in Config._readChildren(parent, "dir"):
+         if entry.nodeType == Node.ELEMENT_NODE:
+            cdir = PurgeDir()
+            cdir.absolutePath = Config._readString(entry, "abs_path")
+            cdir.retainDays = Config._readInteger(entry, "retain_days")
+            lst.append(cdir)
+      if lst == []:
+         lst = None
+      return lst
+   _parsePurgeDirs = staticmethod(_parsePurgeDirs)
 
-   def _parseLocalPeer(xmlDom, baseExpr):
+   def _parsePeers(parent):
       """
-      Reads a C{LocalPeer} object from the DOM tree using the specified expression.
+      Reads remote and local peer data from immediately beneath the parent.
 
-      This method takes a simplified expression, i.e. C{"//one/two/three"}.  
+      We read the following individual fields for both remote
+      and local peers::
 
-      We read the following individual fields::
+         name        name
+         collectDir  collect_dir
 
-         name        <baseExpr>/name
-         collectDir  <baseExpr>/collect_dir
+      We also read the following individual fields for remote peers
+      only::
 
-      Additionally, the value in C{<baseDir>/type} is used to determine whether
-      this entry is a local peer.  If the type is C{"local"}, it's a local
-      peer.  Any other kinds of peers are ignored.
+         remoteUser  backup_user
+         rcpCommand  rcp_command
 
-      @param xmlDom: DOM tree to search within.
-      @param baseExpr: Base XPath expression describing location to read.
-
-      @return: C{LocalPeer} object based on data at location, or C{None} if not a local peer.
-      @raise ValueError: If the data at the location can't be read
-      """
-      localPeer = None
-      if Config._nodeExists(xmlDom, baseExpr):
-         peerType = Config._readString(xmlDom, "%s/type" % baseExpr)
-         if peerType == "local":
-            localPeer = LocalPeer()
-            localPeer.name = Config._readString(xmlDom, "%s/name" % baseExpr)
-            localPeer.collectDir = Config._readString(xmlDom, "%s/collect_dir" % baseExpr)
-      return localPeer
-   _parseLocalPeer = staticmethod(_parseLocalPeer)
-
-   def _parseRemotePeer(xmlDom, baseExpr):
-      """
-      Reads a C{RemotePeer} object from the DOM tree using the specified expression.
-
-      This method takes a simplified expression, i.e. C{"//one/two/three"}.  
-
-      We read the following individual fields::
-
-         name        <baseExpr>/name
-         collectDir  <baseExpr>/collect_dir
-         remoteUser  <baseExpr>/backup_user
-         rcpCommand  <baseExpr>/rcp_command
-
-      Additionally, the value in C{<baseDir>/type} is used to determine whether
+      Additionally, the value in the C{type} field is used to determine whether
       this entry is a remote peer.  If the type is C{"remote"}, it's a remote
-      peer.  Any other kinds of peers are ignored.
+      peer, and if the type is C{"local"}, it's a remote peer.
 
-      @param xmlDom: DOM tree to search within.
-      @param baseExpr: Base XPath expression describing location to read.
+      If there are none of one type of peer (i.e. no local peers) then C{None}
+      will be returned for that item in the tuple.  
 
-      @return: C{RemotePeer} object based on data at location, or C{None} if not a remote peer.
+      @param parent: Parent node to search beneath.
+
+      @return: Tuple of (local, remote) peer lists.
       @raise ValueError: If the data at the location can't be read
       """
-      remotePeer = None
-      if Config._nodeExists(xmlDom, baseExpr):
-         peerType = Config._readString(xmlDom, "%s/type" % baseExpr)
-         if peerType == "remote":
-            remotePeer = RemotePeer()
-            remotePeer.name = Config._readString(xmlDom, "%s/name" % baseExpr)
-            remotePeer.collectDir = Config._readString(xmlDom, "%s/collect_dir" % baseExpr)
-            remotePeer.remoteUser = Config._readString(xmlDom, "%s/backup_user" % baseExpr)
-            remotePeer.rcpCommand = Config._readString(xmlDom, "%s/rcp_command" % baseExpr)
-      return remotePeer
-   _parseRemotePeer = staticmethod(_parseRemotePeer)
+      localPeers = []
+      remotePeers = []
+      for entry in Config._readChildren(parent, "peer"):
+         if entry.nodeType == Node.ELEMENT_NODE:
+            peerType = Config._readString(entry, "type")
+            if peerType == "local":
+               localPeer = LocalPeer()
+               localPeer.name = Config._readString(entry, "name")
+               localPeer.collectDir = Config._readString(entry, "collect_dir")
+               localPeers.append(localPeer)
+            elif peerType == "remote":
+               remotePeer = RemotePeer()
+               remotePeer.name = Config._readString(entry, "name")
+               remotePeer.collectDir = Config._readString(entry, "collect_dir")
+               remotePeer.remoteUser = Config._readString(entry, "backup_user")
+               remotePeer.rcpCommand = Config._readString(entry, "rcp_command")
+               remotePeers.append(remotePeer)
+      if localPeers == []:
+         localPeers = None
+      if remotePeers == []:
+         remotePeers = None
+      return (localPeers, remotePeers)
+   _parsePeers = staticmethod(_parsePeers)
 
-   def _nodeExists(xmlDom, expr):
+   def _readChildren(parent, name):
       """
-      Indicates whether a particular location exists in a DOM tree.
-      This method takes a simplified expression, i.e. C{"//one/two/three"}.
-      @param xmlDom: DOM tree to search within.
-      @param expr: XPath expression describing location to read.
-      @return: Boolean true/false depending on whether node exists.
-      """
-      result = Evaluate(expr, xmlDom.documentElement)
-      if result == []:
-         return False
-      return True
-   _nodeExists = staticmethod(_nodeExists)
+      Returns a list of nodes with a given name immediately beneath the
+      parent.
 
-   def _readString(xmlDom, expr):
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      Underneath, we use the Python C{getElementsByTagName} method, which is
+      pretty cool, but which (surprisingly) returns a list of all children with
+      a given name below the parent, at any level.  We just prune that list to
+      include only children whose C{parentNode} matches the passed-in parent.
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of nodes to search for.
+
+      @return: List of child nodes with correct parent, or an empty list if
+      no matching nodes are found.
       """
-      Reads a string from the DOM tree using the specified expression.
-      This method takes a simplified expression, i.e. C{"//one/two/three"}.
-      @param xmlDom: DOM tree to search within.
-      @param expr: XPath expression describing location to read.
-      @return: String value at location specified by C{expr}, or C{None}.
+      lst = []
+      if parent is not None:
+         result = parent.getElementsByTagName(name)
+         for entry in result:
+            if entry.parentNode is parent:
+               lst.append(entry)
+      return lst
+   _readChildren = staticmethod(_readChildren)
+
+   def _readFirstChild(parent, name):
       """
-      result = Evaluate("string(%s)" % expr, xmlDom.documentElement)
-      if len(result) >= 1:
-         return result
-      else:
+      Returns the first child with a given name immediately beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: First properly-named child of parent, or C{None} if no matching nodes are found.
+      """
+      result = Config._readChildren(parent, name)
+      if result is None or result == []:
          return None
+      return result[0]
+   _readFirstChild = staticmethod(_readFirstChild)
+
+   def _readStringList(parent, name):
+      """
+      Returns a list of the string contents associated with nodes with a given
+      name immediately beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      First, we find all of the nodes using L{_readChildren}, and then we
+      retrieve the "string contents" of each of those nodes.  The returned list
+      has one entry per matching node.  We assume that string contents of a
+      given node belong to the first C{TEXT_NODE} child of that node.  Nodes
+      which have no C{TEXT_NODE} children are not represented in the returned
+      list.
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: List of strings as described above, or C{None} if no matching nodes are found.
+      """
+      lst = []
+      result = Config._readChildren(parent, name)
+      for entry in result:
+         if entry.hasChildNodes:
+            for child in entry.childNodes:
+               if child.nodeType == Node.TEXT_NODE:
+                  lst.append(child.nodeValue)
+                  break
+      if lst == []:
+         lst = None
+      return lst
+   _readStringList = staticmethod(_readStringList)
+
+   def _readString(parent, name):
+      """
+      Returns string contents of the first child with a given name immediately
+      beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  We assume that string
+      contents of a given node belong to the first C{TEXT_NODE} child of that
+      node
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: String contents of node or C{None} if no matching nodes are found.
+      """
+      result = Config._readStringList(parent, name)
+      if result is None:
+         return None
+      return result[0]
    _readString = staticmethod(_readString)
 
-   def _readInteger(xmlDom, expr):
+   def _readInteger(parent, name):
       """
-      Reads an integer from the DOM tree using the specified expression.
-      This method takes a simplified expression, i.e. C{"//one/two/three"}.
-      @param xmlDom: DOM tree to search within.
-      @param expr: XPath expression describing location to read.
-      @return: Integer value at location specified by C{expr}, or C{None}.
+      Returns integer contents of the first child with a given name immediately
+      beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: Integer contents of node or C{None} if no matching nodes are found.
       @raise ValueError: If the string at the location can't be converted to an integer.
       """
-      result = Config._readString(xmlDom, expr)
+      result = Config._readString(parent, name)
       if result is None:
          return None
       else:
          return int(result)
    _readInteger = staticmethod(_readInteger)
 
-   def _readBoolean(xmlDom, expr):
+   def _readBoolean(parent, name):
       """
-      Reads a boolean value from the DOM tree using the specified expression.
-      This method takes a simplified expression, i.e. C{"//one/two/three"}.
-      Booleans must be one-character strings: C{"Y"}, C{"y"}, C{"N"} or C{"n"}.
-      @param expr: XPath expression describing location to read.
-      @return: Boolean value at location specified by C{expr}, or C{None}.
+      Returns boolean contents of the first child with a given name immediately
+      beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      The string value of the node must be one of the values in L{VALID_BOOLEAN_VALUES}.
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: Boolean contents of node or C{None} if no matching nodes are found.
       @raise ValueError: If the string at the location can't be converted to a boolean.
       """
-      result = Config._readString(xmlDom, expr)
+      result = Config._readString(parent, name)
       if result is None:
          return None
       else:
-         if len(result) != 1 or result not in ["Y", "y", "N", "n", ]:
-            raise ValueError("Boolean values must be ['Y', 'y', 'N', 'n'].")
-         if result in ['Y', 'y']:
+         if result in TRUE_BOOLEAN_VALUES:
             return True
-         else:
+         elif result in FALSE_BOOLEAN_VALUES:
             return False
+         else:
+            raise ValueError("Boolean values must be one of %s." % VALID_BOOLEAN_VALUES)
    _readBoolean = staticmethod(_readBoolean)
-
-   def _readList(xmlDom, baseExpr, func):
-      """
-      Reads a list of elements with the given expression, using C{func}.
-
-      If there are no elements matching the expression, then C{[]} is returned.
-      Otherwise, C{func} will be called once (with a valid expression) for each
-      elements matching the base expression.  
-
-      The C{func} must have the same form as L{_readString}.  If it returns
-      C{None}, then that particular result will be ignored.  This gives the
-      function a way to say "whoops, this location doesn't apply to me" without
-      throwing an exception and killing the parse process.
-
-      @param xmlDom: DOM tree to search within.
-      @param baseExpr: Base XPath expression describing location to read.
-      @param func: Function to call to read an individual item.
-
-      @return: List of elements, one per item matching the base expression.
-      """
-      result = Evaluate(baseExpr, xmlDom.documentElement)
-      if result == []:
-         return None
-      else:
-         elements = []
-         indices = range(1, len(result)+1)
-         for i in indices:
-            result = func(xmlDom, "%s[%d]" % (baseExpr, i))
-            if result is not None:
-               elements.append(result)
-         return elements
-   _readList = staticmethod(_readList)
 
 
    ###########################################
