@@ -521,10 +521,10 @@ class BackupFileList(FilesystemList):
       Entries which do not exist on disk are ignored.
       @return: Total size, in bytes 
       """
-      total = 0
+      total = 0.0
       for entry in self:
          if os.path.isfile(entry) and not os.path.islink(entry):
-            total += os.stat(entry).st_size
+            total += float(os.stat(entry).st_size)
       return total
 
    def generateSizeMap(self):
@@ -537,9 +537,9 @@ class BackupFileList(FilesystemList):
       table = { }
       for entry in self:
          if os.path.islink(entry):
-            table[entry] = 0
+            table[entry] = 0.0
          elif os.path.isfile(entry):
-            table[entry] = os.stat(entry).st_size
+            table[entry] = float(os.stat(entry).st_size)
       return table
 
    def generateDigestMap(self):
@@ -590,9 +590,9 @@ class BackupFileList(FilesystemList):
       table = { }
       for entry in self:
          if os.path.islink(entry):
-            table[entry] = (entry, 0)
+            table[entry] = (entry, 0.0)
          elif os.path.isfile(entry):
-            table[entry] = (entry, os.stat(entry).st_size)
+            table[entry] = (entry, float(os.stat(entry).st_size))
       if algorithm == "first_fit": return firstFit(table, capacity)[0]
       elif algorithm == "best_fit": return bestFit(table, capacity)[0]
       elif algorithm == "worst_fit": return worstFit(table, capacity)[0]
