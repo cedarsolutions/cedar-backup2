@@ -39,7 +39,7 @@
 
 """
 Provides process-related objects.
-@author Kenneth J. Pronovici <pronovic@ieee.org>
+@author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
 
