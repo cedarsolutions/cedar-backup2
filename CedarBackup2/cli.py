@@ -44,14 +44,15 @@ Summary
 =======
 
    The functionality in this module encapsulates the command-line interface for
-   the cback script.  The cback script itself basically just invokes one method
-   in this module, making it very simple.  That, in turn, makes it simpler to
-   validate the command line interface (for instance, it's easier to run
-   pychecker against a module, and unit tests are easier, too).
+   the cback script.  The cback script itself is very short, basically just an
+   invokation of one function implemented here.  That, in turn, makes it
+   simpler to validate the command line interface (for instance, it's easier to
+   run pychecker against a module, and unit tests are easier, too).
 
    The objects and functions implemented in this module are probably not useful
    to any code external to Cedar Backup.   Anyone else implementing their own
-   command-line interface would have to reimplement all of this anyway.
+   command-line interface would have to reimplement (or at least enhance) all
+   of this anyway.
 
 Backwards Compatibility
 =======================

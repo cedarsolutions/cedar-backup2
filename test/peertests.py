@@ -99,6 +99,7 @@ import unittest
 import tempfile
 import tarfile
 import getpass
+from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, getMaskAsMode, getLogin
 from CedarBackup2.peer import LocalPeer, RemotePeer
 from CedarBackup2.peer import DEF_RCP_COMMAND, DEF_COLLECT_INDICATOR, DEF_STAGE_INDICATOR
 
@@ -121,68 +122,12 @@ NONEXISTENT_CMD  = "/bogus/~~~ZZZZ/bad/not/there"     # This command should neve
 # Utility functions
 #######################################################################
 
-def findResources():
-   """Returns a dictionary of locations for various resources."""
-   resources = { }
-   for resource in RESOURCES:
-      for resourceDir in DATA_DIRS:
-         path = os.path.join(resourceDir, resource);
-         if os.path.exists(path):
-            resources[resource] = path
-            break
-      else:
-         raise Exception("Unable to find resource [%s]." % resource)
-   return resources
-
-def extractTar(tmpdir, filepath):
-   """Extracts the indicated tar file to self.tmpdir."""
-   tar = tarfile.open(filepath)
-   for tarinfo in tar:
-      tar.extract(tarinfo, tmpdir)
-
-def buildPath(components):
-   """Builds a complete path from a list of components."""
-   path = components[0]
-   for component in components[1:]:
-      path = os.path.join(path, component)
-   return path
-
-def removedir(tree):
-   """Recursively removes an entire directory."""
-   for root, dirs, files in os.walk(tree, topdown=False):
-      for name in files:
-         path = os.path.join(root, name)
-         if os.path.islink(path):
-            os.remove(path)
-         elif os.path.isfile(path):
-            os.remove(path)
-      for name in dirs:
-         path = os.path.join(root, name)
-         if os.path.islink(path):
-            os.remove(path)
-         elif os.path.isdir(path):
-            os.rmdir(path)
-   os.rmdir(tree)
-
 def runAllTests():
    """Returns true/false depending on whether the full test suite should be run."""
    if "PEERTESTS_FULL" in os.environ:
       return os.environ["PEERTESTS_FULL"] == "Y"
    else:
       return False
-
-def getMaskAsMode():
-   """Returns the user's current umask inverted to a mode."""
-   umask = os.umask(0777)
-   os.umask(umask)
-   return int(~umask & 0777)  # invert, then use only lower bytes 
-
-def getLogin():
-   """
-   Returns the name of the currently-logged in user.  This might fail under
-   some circumstances - but if it does, our tests would fail anyway.
-   """
-   return getpass.getuser()
 
 
 #######################################################################
@@ -204,7 +149,7 @@ class TestLocalPeer(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -703,7 +648,7 @@ class TestRemotePeer(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
