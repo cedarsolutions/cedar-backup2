@@ -1,4 +1,0 @@
-# bool:  ignore all warnings from standard library components
-#   (this includes anything under the standard library, eg, site-packages)
-ignoreStandardLibrary = 1
-
