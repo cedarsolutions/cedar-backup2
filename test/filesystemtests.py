@@ -8446,7 +8446,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       fsList = FilesystemList()
       try:
-         count = fsList.removeMatch(pattern=None)
+         fsList.removeMatch(pattern=None)
          self.fail("Expected TypeError.")
       except TypeError: pass
       except Exception, e: self.fail("Expected TypeError, got: %s" % e)
@@ -9672,7 +9672,6 @@ class TestFilesystemList(unittest.TestCase):
       Test with a non-empty list containing only invalid entries.
       """
       self.extractTar("tree9")
-      path = self.buildPath(["tree9"])
       fsList = FilesystemList()
       fsList.append(self.buildPath([ "tree9", "%s-1" % INVALID_FILE, ]))     # file won't exist on disk
       fsList.append(self.buildPath([ "tree9", "%s-2" % INVALID_FILE, ]))     # file won't exist on disk
@@ -10243,7 +10242,6 @@ class TestFilesystemList(unittest.TestCase):
       Test with a non-empty list containing only invalid entries.
       """
       self.extractTar("tree9")
-      path = self.buildPath(["tree9"])
       fsList = FilesystemList()
       fsList.append(self.buildPath([ "tree9", "%s-1" % INVALID_FILE, ]))     # file won't exist on disk
       fsList.append(self.buildPath([ "tree9", "%s-2" % INVALID_FILE, ]))     # file won't exist on disk
