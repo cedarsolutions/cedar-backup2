@@ -2,9 +2,10 @@ include setup.py
 include CedarBackup2/*.py
 include Changelog
 include README
+include CREDITS
 include TODO
 include LICENSE
 include INSTALL
-include doc/*
+include doc/cedar-backup2/*
 include test/*.py
 include test/data/*
