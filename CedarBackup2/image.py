@@ -54,7 +54,7 @@ import logging
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.knapsack import worstFit
-from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_SECTORS
+from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_SECTORS, encodePath
 from CedarBackup2.writer import validateScsiId
 
 
@@ -410,7 +410,9 @@ class IsoImage(object):
 
       @raise ValueError: If path is not a file or directory, or does not exist.
       @raise ValueError: If the path has already been added, and override is not set.
+      @raise ValueError: If a path cannot be encoded properly.
       """
+      path = encodePath(path)
       if not override:
          if path in self.entries.keys():
             raise ValueError("Path has already been added to the image.")
@@ -488,7 +490,9 @@ class IsoImage(object):
 
       @raise IOError: If there is an error writing the image to disk.
       @raise ValueError: If there are no filesystem entries in the image
+      @raise ValueError: If a path cannot be encoded properly.
       """
+      imagePath = encodePath(imagePath)
       if len(self.entries.keys()) == 0:
          raise ValueError("Image does not contain any entries.")
       args = self._buildWriteArgs(self.entries, imagePath)

@@ -66,6 +66,8 @@ import tarfile
 import time
 import getpass
 
+from CedarBackup2.util import encodePath
+
 
 ########################################################################
 # Public functions
@@ -105,11 +107,12 @@ def buildPath(components):
    For instance, constructs C{"/a/b/c"} from C{["/a", "b", "c",]}.
    @param components: List of components.
    @returns: String path constructed from components.
+   @raise ValueError: If a path cannot be encoded properly.
    """
    path = components[0]
    for component in components[1:]:
       path = os.path.join(path, component)
-   return path
+   return encodePath(path)
 
 
 #######################
@@ -121,7 +124,9 @@ def removedir(tree):
    Recursively removes an entire directory.
    This is basically taken from an example on python.com.  
    @param tree: Directory tree to remove.
+   @raise ValueError: If a path cannot be encoded properly.
    """
+   tree = encodePath(tree)
    for root, dirs, files in os.walk(tree, topdown=False):
       for name in files:
          path = os.path.join(root, name)
@@ -147,7 +152,10 @@ def extractTar(tmpdir, filepath):
    Extracts the indicated tar file to the indicated tmpdir.
    @param tmpdir: Temp directory to extract to.
    @param filepath: Path to tarfile to extract.
+   @raise ValueError: If a path cannot be encoded properly.
    """
+   tmpdir = encodePath(tmpdir)
+   filepath = encodePath(filepath)
    tar = tarfile.open(filepath)
    for tarinfo in tar:
       tar.extract(tarinfo, tmpdir)
@@ -157,16 +165,19 @@ def extractTar(tmpdir, filepath):
 # changeFileAge() function
 ###########################
 
-def changeFileAge(file, subtract=None):
+def changeFileAge(filename, subtract=None):
    """
    Changes a file age using the C{os.utime} function.
+   @param filename: File to operate on.
    @param subtract: Number of seconds to subtract from the current time.
+   @raise ValueError: If a path cannot be encoded properly.
    """
+   filename = encodePath(filename)
    if subtract is None:
-      os.utime(file, None)
+      os.utime(filename, None)
    else:
       newTime = time.time() - subtract
-      os.utime(file, (newTime, newTime))
+      os.utime(filename, (newTime, newTime))
 
 
 ###########################

@@ -63,7 +63,7 @@ import re
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import splitCommandLine, executeCommand
+from CedarBackup2.util import splitCommandLine, executeCommand, encodePath
 
 
 ########################################################################
@@ -156,10 +156,11 @@ class LocalPeer(object):
       The value must be an absolute path and cannot be C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is C{None} or is not an absolute path.
+      @raise ValueError: If a path cannot be encoded properly.
       """
       if value is None or not os.path.isabs(value):
          raise ValueError("Collect directory must be an absolute path.")
-      self._collectDir = value
+      self._collectDir = encodePath(value)
 
    def _getCollectDir(self):
       """
@@ -200,10 +201,12 @@ class LocalPeer(object):
 
       @raise ValueError: If collect directory is not a directory or does not exist 
       @raise ValueError: If target directory is not a directory, does not exist or is not absolute.
+      @raise ValueError: If a path cannot be encoded properly.
       @raise IOError: If there were no files to stage (i.e. the directory was empty)
       @raise IOError: If there is an IO error copying a file.
       @raise OSError: If there is an OS error copying or changing permissions on a file
       """
+      targetDir = encodePath(targetDir)
       if not os.path.isabs(targetDir):
          logger.debug("Target directory [%s] not an absolute path." % targetDir)
          raise ValueError("Target directory must be an absolute path.")
@@ -231,7 +234,9 @@ class LocalPeer(object):
       @type collectIndicator: String representing name of a file in the collect directory
 
       @return: Boolean true/false depending on whether the indicator exists.
+      @raise ValueError: If a path cannot be encoded properly.
       """
+      collectIndicator = encodePath(collectIndicator)
       if collectIndicator is None:
          return os.path.exists(os.path.join(self.collectDir, DEF_COLLECT_INDICATOR))
       else:
@@ -261,9 +266,11 @@ class LocalPeer(object):
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @raise ValueError: If collect directory is not a directory or does not exist 
+      @raise ValueError: If a path cannot be encoded properly.
       @raise IOError: If there is an IO error creating the file.
       @raise OSError: If there is an OS error creating or changing permissions on the file
       """
+      stageIndicator = encodePath(stageIndicator)
       if not os.path.exists(self.collectDir) or not os.path.isdir(self.collectDir):
          logger.debug("Collect directory [%s] is not a directory or does not exist on disk." % self.collectDir)
          raise ValueError("Collect directory is not a directory or does not exist on disk.")
@@ -305,9 +312,12 @@ class LocalPeer(object):
 
       @return: Number of files copied from the source directory to the target directory.
       @raise ValueError: If source or target is not a directory or does not exist.
+      @raise ValueError: If a path cannot be encoded properly.
       @raise IOError: If there is an IO error copying the files.
       @raise OSError: If there is an OS error copying or changing permissions on a files
       """
+      sourceDir = encodePath(sourceDir)
+      targetDir = encodePath(targetDir)
       for fileName in os.listdir(sourceDir):
          sourceFile = os.path.join(sourceDir, fileName)
          targetFile = os.path.join(targetDir, fileName)
@@ -339,9 +349,12 @@ class LocalPeer(object):
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @raise ValueError: If the passed-in source file is not a regular file.
+      @raise ValueError: If a path cannot be encoded properly.
       @raise IOError: If there is an IO error copying the file
       @raise OSError: If there is an OS error copying or changing permissions on a file
       """
+      targetFile = encodePath(targetFile)
+      sourceFile = encodePath(sourceFile)
       if targetFile is None:
          return
       if sourceFile is None:
@@ -454,10 +467,11 @@ class RemotePeer(object):
       The value must be an absolute path and cannot be C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is C{None} or is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is None or not os.path.isabs(value):
          raise ValueError("Collect directory must be an absolute path.")
-      self._collectDir = value
+      self._collectDir = encodePath(value)
 
    def _getCollectDir(self):
       """
@@ -551,9 +565,11 @@ class RemotePeer(object):
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @raise ValueError: If target directory is not a directory, does not exist or is not absolute.
+      @raise ValueError: If a path cannot be encoded properly.
       @raise IOError: If there is an IO error copying a file.
       @raise OSError: If there is an OS error copying or changing permissions on a file
       """
+      targetDir = encodePath(targetDir)
       if not os.path.isabs(targetDir):
          logger.debug("Target directory [%s] not an absolute path." % targetDir)
          raise ValueError("Target directory must be an absolute path.")
@@ -584,7 +600,9 @@ class RemotePeer(object):
       @type collectIndicator: String representing name of a file in the collect directory
 
       @return: Boolean true/false depending on whether the indicator exists.
+      @raise ValueError: If a path cannot be encoded properly.
       """
+      collectIndicator = encodePath(collectIndicator)
       targetFile = tempfile.NamedTemporaryFile()
       if collectIndicator is None:
          sourceFile = os.path.join(self.collectDir, DEF_COLLECT_INDICATOR)
@@ -618,9 +636,11 @@ class RemotePeer(object):
       @type stageIndicator: String representing name of a file in the collect directory
 
       @raise ValueError: If collect directory is not a directory or does not exist 
+      @raise ValueError: If a path cannot be encoded properly.
       @raise IOError: If there is an IO error creating the file.
       @raise OSError: If there is an OS error creating or changing permissions on the file
       """
+      stageIndicator = encodePath(stageIndicator)
       if not os.path.exists(self.collectDir) or not os.path.isdir(self.collectDir):
          logger.debug("Collect directory [%s] is not a directory or does not exist on disk." % self.collectDir)
          raise ValueError("Collect directory is not a directory or does not exist on disk.")

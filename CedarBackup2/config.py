@@ -120,6 +120,19 @@ XML Configuration Structure
    won't matter until validation takes place (see the I{Validation} section
    below).
 
+Unicode vs. String Data
+=======================
+
+   By default, all string data that comes out of XML documents in Python is
+   unicode data (i.e. C{u"whatever"}).  This is fine for many things, but when
+   it comes to filesystem paths, it can cause us some problems.  We really want
+   strings to be encoded in the filesystem encoding rather than being unicode.
+   So, most elements in configuration which represent filesystem paths are
+   coverted to plain strings using L{util.encodePath}.  The main exception is
+   the various C{absoluteExcludePath} and C{relativeExcludePath} lists.  These
+   are I{not} converted, because they are generally only used for filtering,
+   not for filesystem operations.
+
 Validation 
 ==========
 
@@ -260,7 +273,7 @@ from xml.dom.ext import PrettyPrint
 
 # Cedar Backup modules
 from CedarBackup2.writer import validateScsiId, validateDriveSpeed
-from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList
+from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, encodePath
 
 
 ########################################################################
@@ -599,11 +612,12 @@ class CollectDir(object):
       The value must be an absolute path if it is not C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if not os.path.isabs(value):
             raise ValueError("Absolute path must be, er, an absolute path.")
-      self._absolutePath = value
+      self._absolutePath = encodePath(value)
 
    def _getAbsolutePath(self):
       """
@@ -813,11 +827,12 @@ class PurgeDir(object):
       The value must be an absolute path if it is not C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if not os.path.isabs(value):
             raise ValueError("Absolute path must, er, be an absolute path.")
-      self._absolutePath = value
+      self._absolutePath = encodePath(value)
 
    def _getAbsolutePath(self):
       """
@@ -944,11 +959,12 @@ class LocalPeer(object):
       The value must be an absolute path if it is not C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if not os.path.isabs(value):
             raise ValueError("Collect directory must be an absolute path.")
-      self._collectDir = value
+      self._collectDir = encodePath(value)
 
    def _getCollectDir(self):
       """
@@ -1070,11 +1086,12 @@ class RemotePeer(object):
       The value must be an absolute path if it is not C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if not os.path.isabs(value):
             raise ValueError("Collect directory must be an absolute path.")
-      self._collectDir = value
+      self._collectDir = encodePath(value)
 
    def _getCollectDir(self):
       """
@@ -1474,11 +1491,12 @@ class OptionsConfig(object):
       The value must be an absolute path if it is not C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if not os.path.isabs(value):
             raise ValueError("Working directory must be an absolute path.")
-      self._workingDir = value
+      self._workingDir = encodePath(value)
 
    def _getWorkingDir(self):
       """
@@ -1679,11 +1697,12 @@ class CollectConfig(object):
       The value must be an absolute path if it is not C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if not os.path.isabs(value):
             raise ValueError("Target directory must be an absolute path.")
-      self._targetDir = value
+      self._targetDir = encodePath(value)
 
    def _getTargetDir(self):
       """
@@ -1730,11 +1749,12 @@ class CollectConfig(object):
       Property target used to set the ignore file.
       The value must be a non-empty string if it is not C{None}.
       @raise ValueError: If the value is an empty string.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if len(value) < 1:
             raise ValueError("The ignore file must be a non-empty string.")
-      self._ignoreFile = value
+      self._ignoreFile = encodePath(value)
 
    def _getIgnoreFile(self):
       """
@@ -1906,11 +1926,12 @@ class StageConfig(object):
       The value must be an absolute path if it is not C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if not os.path.isabs(value):
             raise ValueError("Target directory must be an absolute path.")
-      self._targetDir = value
+      self._targetDir = encodePath(value)
 
    def _getTargetDir(self):
       """
@@ -2098,11 +2119,12 @@ class StoreConfig(object):
       The value must be an absolute path if it is not C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if not os.path.isabs(value):
             raise ValueError("Source directory must be an absolute path.")
-      self._sourceDir = value
+      self._sourceDir = encodePath(value)
 
    def _getSourceDir(self):
       """
@@ -2151,11 +2173,12 @@ class StoreConfig(object):
       The value must be an absolute path if it is not C{None}.
       It does not have to exist on disk at the time of assignment.
       @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if not os.path.isabs(value):
             raise ValueError("Device path must be an absolute path.")
-      self._devicePath = value
+      self._devicePath = encodePath(value)
 
    def _getDevicePath(self):
       """
@@ -3845,9 +3868,6 @@ class Config(object):
       which have no C{TEXT_NODE} children are not represented in the returned
       list.
 
-      @note: Even though XML documents use unicode data, this method will
-      always return string data, encoded as utf-8. 
-
       @param parent: Parent node to search beneath.
       @param name: Name of node to search for.
 
@@ -3859,10 +3879,7 @@ class Config(object):
          if entry.hasChildNodes:
             for child in entry.childNodes:
                if child.nodeType == Node.TEXT_NODE:
-                  if isinstance(child.nodeValue, unicode):
-                     lst.append(child.nodeValue.encode("utf-8"))
-                  else:
-                     lst.append(child.nodeValue)
+                  lst.append(child.nodeValue)
                   break
       if lst == []:
          lst = None
@@ -3879,9 +3896,6 @@ class Config(object):
       contents of a given node belong to the first C{TEXT_NODE} child of that
       node.
 
-      @note: Even though XML documents use unicode data, this method will
-      always return string data, encoded as utf-8. 
-
       @param parent: Parent node to search beneath.
       @param name: Name of node to search for.
 
@@ -3890,10 +3904,7 @@ class Config(object):
       result = Config._readStringList(parent, name)
       if result is None:
          return None
-      if isinstance(result[0], unicode):
-         return result[0].encode("utf-8")
-      else:
-         return result[0]
+      return result[0]
    _readString = staticmethod(_readString)
 
    def _readInteger(parent, name):

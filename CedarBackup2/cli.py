@@ -88,7 +88,7 @@ import getopt
 
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
-from CedarBackup2.util import RestrictedContentList, splitCommandLine, getFunctionReference, getUidGid
+from CedarBackup2.util import RestrictedContentList, splitCommandLine, getFunctionReference, getUidGid, encodePath
 from CedarBackup2.config import Config
 from CedarBackup2.action import executeCollect, executeStage, executeStore, executePurge, executeRebuild, executeValidate
 
@@ -1010,11 +1010,12 @@ class Options(object):
    def _setLogfile(self, value):
       """
       Property target used to set the logfile parameter.
+      @raise ValueError: If the value cannot be encoded properly.
       """
       if value is not None:
          if len(value) < 1:
             raise ValueError("The logfile parameter must be a non-empty string.") 
-      self._logfile = value
+      self._logfile = encodePath(value)
 
    def _getLogfile(self):
       """
