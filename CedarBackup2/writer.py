@@ -858,7 +858,9 @@ class CdWriter(object):
       of values.  There isn't supposed to be whitespace, but we allow it anyway
       in the regular expression.  Any lines below the one line we parse are
       completely ignored.  It would be a good idea to ignore C{stderr} when
-      executing the C{cdrecord} command that generates output for this method.
+      executing the C{cdrecord} command that generates output for this method,
+      because sometimes C{cdrecord} spits out kernel warnings about the actual
+      output.
 
       The results are returned as a tuple of (lower, upper) as needed by the
       C{IsoImage} class.  Note that these values are in terms of ISO sectors,
