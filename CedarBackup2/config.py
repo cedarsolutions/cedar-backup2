@@ -3364,10 +3364,10 @@ class Config(object):
          Config.addStringNode(xmlDom, sectionNode, "staging_dir", stageConfig.targetDir)
          if stageConfig.localPeers is not None:
             for localPeer in stageConfig.localPeers:
-               Config.addLocalPeer(xmlDom, sectionNode, localPeer)
+               Config._addLocalPeer(xmlDom, sectionNode, localPeer)
          if stageConfig.remotePeers is not None:
             for remotePeer in stageConfig.remotePeers:
-               Config.addRemotePeer(xmlDom, sectionNode, remotePeer)
+               Config._addRemotePeer(xmlDom, sectionNode, remotePeer)
    _addStage = staticmethod(_addStage)
 
    def _addStore(xmlDom, parentNode, storeConfig):
