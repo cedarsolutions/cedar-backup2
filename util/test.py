@@ -160,14 +160,14 @@ def main():
    # Create and run the test suite
    print ""
    suite = unittest.TestSuite((
-#                               utiltests.suite(),
-#                               knapsacktests.suite(), 
-#                               filesystemtests.suite(),
+                               utiltests.suite(),
+                               knapsacktests.suite(), 
+                               filesystemtests.suite(),
                                peertests.suite(),
-#                               imagetests.suite(),
-#                               writertests.suite(),
-#                               configtests.suite(),
-#                               clitests.suite(),
+                               imagetests.suite(),
+                               writertests.suite(),
+                               configtests.suite(),
+                               clitests.suite(),
                               ))
    unittest.TextTestRunner(verbosity=1).run(suite)
    print ""
