@@ -730,7 +730,12 @@ class RemotePeer(object):
       if result != 0:
          raise IOError("Error (%d) copying files from remote host." % result)
       afterSet = RemotePeer._getDirContents(targetDir)
-      for targetFile in afterSet.difference(beforeSet):  # files we added as part of copy
+      if len(afterSet) == 0:
+         raise IOError("Did not copy any files from remote host.")
+      differenceSet = afterSet.difference(beforeSet)  # files we added as part of copy
+      if len(differenceSet) == 0:
+         raise IOError("Did not copy any files from remote host.")
+      for targetFile in differenceSet:
          if ownership is not None:
             os.chown(targetFile, ownership[0], ownership[1])
          if permissions is not None:
