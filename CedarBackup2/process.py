@@ -39,47 +39,89 @@
 
 """
 Provides process-related objects.
+
+@sort: executeCollect, executeStage, executeStore, executePurge, executeRebuild
+
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
 
 ########################################################################
-# CollectProcess class definition
+# Imported modules
 ########################################################################
 
-class CollectProcess(object):
-   pass
-
-
-########################################################################
-# PurgeProcess class definition
-########################################################################
-
-class PurgeProcess(object):
-   pass
+# System modules
+import logging
 
 
 ########################################################################
-# StageProcess class definition
+# Module-wide constants and variables
 ########################################################################
 
-class StageProcess(object):
-   pass
-
-
-########################################################################
-# StoreProcess class definition
-########################################################################
-
-class StoreProcess(object):
-   pass
+logger = logging.getLogger("CedarBackup2.log.process")
 
 
 ########################################################################
-# RebuildProcess class definition
+# Public functions
 ########################################################################
 
-class RebuildProcess(object):
-   pass
+def executeCollect(config, full):
+   """
+   Executes the collect backup action.
 
+   @param config: Program configuration.
+   @type config: Config object.
+
+   @param full: Indicates whether full backup was flagged.
+   @type full: Boolean value.
+   """
+   logger.info("Executing collect action.")
+
+def executeStage(config, full):
+   """
+   Executes the stage backup action.
+
+   @param config: Program configuration.
+   @type config: Config object.
+
+   @param full: Indicates whether full backup was flagged.
+   @type full: Boolean value.
+   """
+   logger.info("Executing stage action.")
+
+def executeStore(config, full):
+   """
+   Executes the store backup action.
+
+   @param config: Program configuration.
+   @type config: Config object.
+
+   @param full: Indicates whether full backup was flagged.
+   @type full: Boolean value.
+   """
+   logger.info("Executing store action.")
+
+def executePurge(config, full):
+   """
+   Executes the purge backup action.
+
+   @param config: Program configuration.
+   @type config: Config object.
+
+   @param full: Indicates whether full backup was flagged.
+   @type full: Boolean value.
+   """
+   logger.info("Executing purge action.")
+
+def executeRebuild(config, full):
+   """
+   Executes the rebuild backup action.
+
+   @param config: Program configuration.
+   @type config: Config object.
+
+   @param full: Indicates whether full backup was flagged.
+   @type full: Boolean value.
+   """
+   logger.info("Executing rebuild action.")
 
