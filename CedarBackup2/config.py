@@ -70,11 +70,10 @@ External Python Libraries
    depends on the XPath functionality provided by the PyXML product in the
    C{xml.xpath} package.
 
-   The XPath library that I'm using is not particularly fast.  This is
-   particularly noticable when reading lists of things with the [n] syntax.  I
-   have considered moving to the 4Suite version of the library (which should be
-   roughly compatible) but I haven't gotten around to it yet.  I may also want
-   to rework some parts of the parsing to depend less on XPath.
+   The PyXML XPath library is not particularly fast.  This is particularly
+   noticable when reading lists of things with the C{[n]} syntax.  Because of
+   this, the code jumps through some performance-improvement hoops that would
+   normally not be required when using a faster library.
 
 Backwards Compatibility
 =======================
