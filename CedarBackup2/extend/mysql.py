@@ -49,7 +49,8 @@ collect configuration sections in the standard Cedar Backup configuration file.
 The backup is done via the C{mysqldump} command included with the MySQL
 product.  Output is always to a file compressed using C{bzip2}.  Administrators
 can configure the extension either to back up all databases or to back up only
-specific databases.  
+specific databases.  The extension assumes that all databases can be backed up
+by a single user (typically "root").
 
 Note that this code always produces a full backup.  There is currently no
 facility for making incremental backups.  If/when someone has a need for this
@@ -62,7 +63,9 @@ information about available MySQL databases, usernames and passwords.
 Unfortunately, use of this extension I{will} expose usernames and passwords in
 the process listing (via C{ps}) when the backup is running.  This is because
 none of the official MySQL backup scripts provide a good way to specify
-password other than via the C{--password} command-line option.
+password other than via the C{--password} command-line option.  The only
+workaround I can come up with would be to manipulate program I/O interactively
+through a pipe, which is a real pain.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -105,8 +108,17 @@ MYSQLDUMP_COMMAND = [ "mysqldump", ]
 class MysqlConfig(object):
 
    """
-   Class representing a Cedar Backup MySQL configuration.
+   Class representing MySQL configuration.
+
    The MySQL configuration information is used for backing up MySQL databases.
+
+   The following restrictions exist on data in this class:
+
+      - The user and password must always be filled in
+      - The 'all' flag must be 'Y' if no databases are defined.
+      - The 'all' flag must be 'N' if any databases are defined.
+      - Any values in the databases list must be strings.
+
    @sort: __init__, __repr__, __str__, __cmp__, user, password, all, databases
    """
 
@@ -259,8 +271,8 @@ class LocalConfig(object):
 
    This is not a general-purpose configuration object like the main Cedar
    Backup configuration object.  Instead, it just knows how to parse and emit
-   configuration values.  Third parties who need to read and write
-   configuration related to this extension should access it through the
+   MySQL-specific configuration values.  Third parties who need to read and
+   write configuration related to this extension should access it through the
    constructor, C{validate} and C{addConfig} methods.
 
    @note: Lists within this class are "unordered" for equality comparisons.
@@ -455,7 +467,7 @@ class LocalConfig(object):
 
       @param parent: Parent node to search beneath.
 
-      @return: C{ReferenceConfig} object or C{None} if the section does not exist.
+      @return: C{MysqlConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       mysql = None

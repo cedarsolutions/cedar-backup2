@@ -3062,7 +3062,7 @@ class Config(object):
       We read the following individual fields::
 
          absolutePath            abs_path
-         collectMode             mode I{or} <baseExpr>/collect_mode
+         collectMode             mode I{or} collect_mode
          archiveMode             archive_mode
          ignoreFile              ignore_file
 
