@@ -1,6 +1,7 @@
 Version 2.3.0	unreleased
 
 	* Make 'extend' package public by listing it in CedarBackup2/__init__.py.
+	* Reimplement digest generation to use incremental method (now ~3x faster).
 
 Version 2.2.0	09 Mar 2005
 
