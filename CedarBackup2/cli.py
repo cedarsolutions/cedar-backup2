@@ -213,22 +213,22 @@ def cli():
 
    try:
       if 'rebuild' in options.actions:
-         executeRebuild(config, options.full)
+         executeRebuild(config)
       elif 'all' in options.actions:
          logger.debug("Since 'all' action was specified, we will execute collect, stage, store and purge.")
          executeCollect(config, options.full)
-         executeStage(config, options.full)
+         executeStage(config)
          executeStore(config, options.full)
-         executePurge(config, options.full)
+         executePurge(config)
       else:
          if 'collect' in options.actions:
             executeCollect(config, options.full)
          if 'stage' in options.actions:
-            executeStage(config, options.full)
+            executeStage(config)
          if 'store' in options.actions:
             executeStore(config, options.full)
          if 'purge' in options.actions:
-            executePurge(config, options.full)
+            executePurge(config)
    except Exception, e:
       logger.error("Error executing backup: %s" % e)
       logger.info("Cedar Backup run completed with status 5.")
