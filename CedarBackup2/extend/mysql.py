@@ -47,7 +47,7 @@ collect action.  Aside from its own configuration, it requires the options and
 collect configuration sections in the standard Cedar Backup configuration file.
 
 The backup is done via the C{mysqldump} command included with the MySQL
-product.  Output is always to a file compressed using C{gzip}.  Administrators
+product.  Output is always to a file compressed using C{bzip2}.  Administrators
 can configure the extension either to back up all databases or to back up only
 specific databases.  
 
@@ -74,7 +74,7 @@ password other than via the C{--password} command-line option.
 # System modules
 import os
 import logging
-from gzip import GzipFile
+from bz2 import BZ2File
 
 # XML-related modules
 from xml.dom.ext.reader import PyExpat
@@ -475,10 +475,10 @@ class LocalConfig(object):
 ########################################################################
 
 ###########################
-# executeBackup() function
+# executeAction() function
 ###########################
 
-def executeBackup(configPath, options, config):
+def executeAction(configPath, options, config):
    """
    Executes the MySQL backup action.
 
@@ -558,7 +558,7 @@ def _getOutputFile(targetDir, name, compress=True):
    Opens the output file used for saving the MySQL dump.
 
    The filename is either C{"mysqldump.txt"} or C{"mysqldump-name.txt"}.  The
-   C{".gz"} extension is added if C{compress} is C{True}. 
+   C{".bz2"} extension is added if C{compress} is C{True}. 
 
    @param targetDir: Target directory to write file in.
    @param name: Name of the database (if any)
@@ -571,10 +571,10 @@ def _getOutputFile(targetDir, name, compress=True):
    else:
       filename = os.path.join(targetDir, "mysqldump-%s.txt" % name)
    if compress:
-      filename = "%s.gz" % filename
+      filename = "%s.bz2" % filename
    logger.debug("MySQL dump file will be [%s]." % filename)
    if compress:
-      outputFile = GzipFile(filename, "w")
+      outputFile = BZ2File(filename, "w")
    else:
       outputFile = open(filename, "w")
    return (outputFile, filename)
