@@ -76,6 +76,8 @@ DEF_RCP_COMMAND         = [ "/usr/bin/scp", "-B", "-q", "-C" ]
 DEF_COLLECT_INDICATOR   = "cback.collect"
 DEF_STAGE_INDICATOR     = "cback.stage"
 
+SU_COMMAND              = [ "su" ]
+
 
 ########################################################################
 # LocalPeer class definition
@@ -199,6 +201,8 @@ class LocalPeer(object):
       @param permissions: Permissions that the staged files should have
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
+      @return: Number of files copied from the source directory to the target directory.
+
       @raise ValueError: If collect directory is not a directory or does not exist 
       @raise ValueError: If target directory is not a directory, does not exist or is not absolute.
       @raise ValueError: If a path cannot be encoded properly.
@@ -216,7 +220,10 @@ class LocalPeer(object):
       if not os.path.exists(targetDir) or not os.path.isdir(targetDir):
          logger.debug("Target directory [%s] is not a directory or does not exist on disk." % targetDir)
          raise ValueError("Target directory is not a directory or does not exist on disk.")
-      LocalPeer._copyLocalDir(self.collectDir, targetDir, ownership, permissions)
+      count = LocalPeer._copyLocalDir(self.collectDir, targetDir, ownership, permissions)
+      if count == 0:
+         raise IOError("Did not copy any files from local peer.")
+      return count
 
    def checkCollectIndicator(self, collectIndicator=None):
       """
@@ -311,20 +318,24 @@ class LocalPeer(object):
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @return: Number of files copied from the source directory to the target directory.
+
       @raise ValueError: If source or target is not a directory or does not exist.
       @raise ValueError: If a path cannot be encoded properly.
       @raise IOError: If there is an IO error copying the files.
       @raise OSError: If there is an OS error copying or changing permissions on a files
       """
+      filesCopied = 0
       sourceDir = encodePath(sourceDir)
       targetDir = encodePath(targetDir)
       for fileName in os.listdir(sourceDir):
          sourceFile = os.path.join(sourceDir, fileName)
          targetFile = os.path.join(targetDir, fileName)
          LocalPeer._copyLocalFile(sourceFile, targetFile, ownership, permissions)
+         filesCopied += 1
+      return filesCopied
    _copyLocalDir = staticmethod(_copyLocalDir)
 
-   def _copyLocalFile(sourceFile=None, targetFile=None, ownership=None, permissions=None):
+   def _copyLocalFile(sourceFile=None, targetFile=None, ownership=None, permissions=None, overwrite=True):
       """
       Copies a source file to a target file.
 
@@ -332,9 +343,6 @@ class LocalPeer(object):
       overwritten as an empty file.  If the target file is C{None}, this method
       is a no-op.  Attempting to copy a soft link or a directory will result in
       an exception.
-
-      @note: If you have user/group as strings, call the L{util.getUidGid}
-      function to get the associated uid/gid as an ownership tuple.
 
       @note: We will not overwrite a target file that exists when this method
       is invoked.  If the target already exists, we'll raise an exception.
@@ -351,6 +359,9 @@ class LocalPeer(object):
       @param permissions: Permissions that the staged files should have
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
+      @param overwrite: Indicates whether it's OK to overwrite the target file.
+      @type overwrite: Boolean true/false.
+
       @raise ValueError: If the passed-in source file is not a regular file.
       @raise ValueError: If a path cannot be encoded properly.
       @raise IOError: If the target file already exists.
@@ -361,8 +372,9 @@ class LocalPeer(object):
       sourceFile = encodePath(sourceFile)
       if targetFile is None:
          return
-      if os.path.exists(targetFile):
-         raise IOError("Target file [%s] already exists." % targetFile)
+      if not overwrite:
+         if os.path.exists(targetFile):
+            raise IOError("Target file [%s] already exists." % targetFile)
       if sourceFile is None:
          open(targetFile, "w").write("")
       else:
@@ -404,7 +416,7 @@ class RemotePeer(object):
    interface shared with the C{LocalPeer} class.
 
    @sort: __init__, stagePeer, checkCollectIndicator, writeStageIndicator, 
-          _getDirContents _copyRemoteDir, _copyRemoteFile, _pushLocalFile, 
+          _getDirContents, _copyRemoteDir, _copyRemoteFile, _pushLocalFile, 
           name, collectDir, remoteUser, rcpCommand
    """
 
@@ -412,7 +424,7 @@ class RemotePeer(object):
    # Constructor
    ##############
 
-   def __init__(self, name, collectDir, remoteUser, rcpCommand=None):
+   def __init__(self, name, collectDir, workingDir, remoteUser, rcpCommand=None, localUser=None):
       """
       Initializes a remote backup peer.
 
@@ -428,8 +440,14 @@ class RemotePeer(object):
       @param collectDir: Path to the peer's collect directory 
       @type collectDir: String representing an absolute path on the remote peer
 
+      @param workingDir: Working directory that can be used to create temporary files, etc.
+      @type workingDir: String representing an absolute path on the current host.
+      
       @param remoteUser: Name of the Cedar Backup user on the remote peer
       @type remoteUser: String representing a username, valid via the copy command
+
+      @param localUser: Name of the Cedar Backup user on the current host
+      @type localUser: String representing a username, valid on the current host
 
       @param rcpCommand: An rcp-compatible copy command to use for copying files from the peer
       @type rcpCommand: String representing a system command including required arguments
@@ -438,12 +456,16 @@ class RemotePeer(object):
       """
       self._name = None
       self._collectDir = None
+      self._workingDir = None
       self._remoteUser = None
+      self._localUser = None
       self._rcpCommand = None
       self._rcpCommandList = None
       self.name = name
       self.collectDir = collectDir
+      self.workingDir = workingDir
       self.remoteUser = remoteUser
+      self.localUser = localUser
       self.rcpCommand = rcpCommand
 
 
@@ -485,6 +507,23 @@ class RemotePeer(object):
       """
       return self._collectDir
 
+   def _setWorkingDir(self, value):
+      """
+      Property target used to set the working directory.
+      The value must be an absolute path and cannot be C{None}.
+      @raise ValueError: If the value is C{None} or is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
+      """
+      if value is None or not os.path.isabs(value):
+         raise ValueError("Working directory must be an absolute path.")
+      self._workingDir = encodePath(value)
+
+   def _getWorkingDir(self):
+      """
+      Property target used to get the working directory.
+      """
+      return self._workingDir
+
    def _setRemoteUser(self, value):
       """
       Property target used to set the remote user.
@@ -500,6 +539,23 @@ class RemotePeer(object):
       Property target used to get the remote user.
       """
       return self._remoteUser
+
+   def _setLocalUser(self, value):
+      """
+      Property target used to set the local user.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("Peer local user must be a non-empty string.")
+      self._localUser = value
+
+   def _getLocalUser(self):
+      """
+      Property target used to get the local user.
+      """
+      return self._localUser
 
    def _setRcpCommand(self, value):
       """
@@ -535,7 +591,9 @@ class RemotePeer(object):
 
    name = property(_getName, _setName, None, "Name of the peer (a valid DNS hostname).")
    collectDir = property(_getCollectDir, _setCollectDir, None, "Path to the peer's collect directory (an absolute local path).")
+   workingDir = property(_getWorkingDir, _setWorkingDir, None, "Path to the peer's working directory (an absolute local path).")
    remoteUser = property(_getRemoteUser, _setRemoteUser, None, "Name of the Cedar Backup user on the remote peer.")
+   localUser = property(_getLocalUser, _setLocalUser, None, "Name of the Cedar Backup user on the current host.")
    rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "An rcp-compatible copy command to use for copying files.")
 
 
@@ -570,8 +628,11 @@ class RemotePeer(object):
       @param permissions: Permissions that the staged files should have
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
+      @return: Number of files copied from the source directory to the target directory.
+
       @raise ValueError: If target directory is not a directory, does not exist or is not absolute.
       @raise ValueError: If a path cannot be encoded properly.
+      @raise IOError: If there were no files to stage (i.e. the directory was empty)
       @raise IOError: If there is an IO error copying a file.
       @raise OSError: If there is an OS error copying or changing permissions on a file
       """
@@ -582,8 +643,14 @@ class RemotePeer(object):
       if not os.path.exists(targetDir) or not os.path.isdir(targetDir):
          logger.debug("Target directory [%s] is not a directory or does not exist on disk." % targetDir)
          raise ValueError("Target directory is not a directory or does not exist on disk.")
-      RemotePeer._copyRemoteDir(self.remoteUser, self.name, self._rcpCommandList, 
-                                self.collectDir, targetDir, ownership, permissions)
+      count = RemotePeer._copyRemoteDir(self.remoteUser, self.localUser, self.name, 
+                                        self._rcpCommand, self._rcpCommandList, 
+                                        self.collectDir, targetDir, 
+                                        ownership, permissions)
+      if count == 0:
+         raise IOError("Did not copy any files from local peer.")
+      return count
+      
 
    def checkCollectIndicator(self, collectIndicator=None):
       """
@@ -610,33 +677,34 @@ class RemotePeer(object):
       @raise ValueError: If a path cannot be encoded properly.
       """
       try:
-         targetDir = tempfile.mkdtemp()   # create a temp directory to copy the file into
          if collectIndicator is None:
             sourceFile = os.path.join(self.collectDir, DEF_COLLECT_INDICATOR)
-            targetFile = os.path.join(targetDir, DEF_COLLECT_INDICATOR)
+            targetFile = os.path.join(self.workingDir, DEF_COLLECT_INDICATOR)
          else:
             collectIndicator = encodePath(collectIndicator)
             sourceFile = os.path.join(self.collectDir, collectIndicator)
-            targetFile = os.path.join(targetDir, collectIndicator) 
-         logger.debug("Fetch remote collect indicator [%s] into [%s]." % (sourceFile, targetFile))
+            targetFile = os.path.join(self.workingDir, collectIndicator) 
+         logger.debug("Fetch remote [%s] into [%s]." % (sourceFile, targetFile))
          if os.path.exists(targetFile):
-            raise Exception("Internal error: target existed before it should; we can't do anything sensible.")
+            try:
+               os.remove(targetFile)
+            except Exception, e: 
+               raise Exception("Internal error: target existed before it should; we can't do anything sensible.")
          try:
-            RemotePeer._copyRemoteFile(self.remoteUser, self.name, self._rcpCommandList, sourceFile, targetFile)
+            RemotePeer._copyRemoteFile(self.remoteUser, self.localUser, self.name, 
+                                       self._rcpCommand, self._rcpCommandList, 
+                                       sourceFile, targetFile, 
+                                       overwrite=False)
             if os.path.exists(targetFile):
                return True
             else:
                return False
-         except: 
+         except:
             return False
       finally:
          if os.path.exists(targetFile):
             try:
                os.path.remove(targetFile)
-            except: pass
-         if os.path.exists(targetDir):
-            try:
-               os.path.rmdir(targetDir)
             except: pass
 
    def writeStageIndicator(self, stageIndicator=None):
@@ -669,12 +737,24 @@ class RemotePeer(object):
       if not os.path.exists(self.collectDir) or not os.path.isdir(self.collectDir):
          logger.debug("Collect directory [%s] is not a directory or does not exist on disk." % self.collectDir)
          raise ValueError("Collect directory is not a directory or does not exist on disk.")
-      sourceFile = tempfile.NamedTemporaryFile()
+      sourceFile = tempfile.NamedTemporaryFile(dir=self.workingDir)
       if stageIndicator is None:
+         sourceFile = os.path.join(self.workingDir, DEF_STAGE_INDICATOR)
          targetFile = os.path.join(self.collectDir, DEF_STAGE_INDICATOR)
       else:
+         sourceFile = os.path.join(self.workingDir, stageIndicator)
          targetFile = os.path.join(self.collectDir, stageIndicator)
-      RemotePeer._pushLocalFile(self.remoteUser, self.name, self._rcpCommandList, sourceFile.name, targetFile)
+      try:
+         if not os.path.exists(sourceFile):
+            open(sourceFile, "w").write("")
+         RemotePeer._pushLocalFile(self.remoteUser, self.localUser, self.name, 
+                                   self._rcpCommand, self._rcpCommandList, 
+                                   sourceFile, targetFile)
+      finally:
+         if os.path.exists(sourceFile):
+            try:
+               os.remove(sourceFile)
+            except: pass
 
 
    ##################
@@ -702,7 +782,8 @@ class RemotePeer(object):
       return sets.Set(contents)
    _getDirContents = staticmethod(_getDirContents)
 
-   def _copyRemoteDir(remoteUser, remoteHost, rcpCommand, sourceDir, targetDir, ownership=None, permissions=None):
+   def _copyRemoteDir(remoteUser, localUser, remoteHost, rcpCommand, rcpCommandList, 
+                      sourceDir, targetDir, ownership=None, permissions=None):
       """
       Copies files from the source directory to the target directory.
 
@@ -734,11 +815,17 @@ class RemotePeer(object):
       @param remoteUser: Name of the Cedar Backup user on the remote peer
       @type remoteUser: String representing a username, valid via the copy command
 
+      @param localUser: Name of the Cedar Backup user on the current host
+      @type localUser: String representing a username, valid on the current host
+
       @param remoteHost: Hostname of the remote peer
       @type remoteHost: String representing a hostname, accessible via the copy command
 
-      @param rcpCommand: An rcp-compatible copy command to use for copying files
-      @type rcpCommand: Command as a list to be passed to L{util.executeCommand}
+      @param rcpCommand: An rcp-compatible copy command to use for copying files from the peer
+      @type rcpCommand: String representing a system command including required arguments
+
+      @param rcpCommandList: An rcp-compatible copy command to use for copying files
+      @type rcpCommandList: Command as a list to be passed to L{util.executeCommand}
 
       @param sourceDir: Source directory
       @type sourceDir: String representing a directory on disk
@@ -753,28 +840,41 @@ class RemotePeer(object):
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @return: Number of files copied from the source directory to the target directory.
+
       @raise ValueError: If source or target is not a directory or does not exist.
       @raise IOError: If there is an IO error copying the files.
       """
       beforeSet = RemotePeer._getDirContents(targetDir)
-      copySource = "%s@%s:%s/*" % (remoteUser, remoteHost, sourceDir)
-      result = executeCommand(rcpCommand, [copySource, targetDir])[0]
-      if result != 0:
-         raise IOError("Error (%d) copying files from remote host." % result)
+      if localUser is not None:
+         if os.getuid() != 0:
+            raise IOError("Only root can remote copy as another user.")
+         actualCommand = "%s %s@%s:%s/* %s" % (rcpCommand, remoteUser, remoteHost, sourceDir, targetDir)
+         result = executeCommand(SU_COMMAND, [localUser, "-c", actualCommand])[0]
+         if result != 0:
+            raise IOError("Error (%d) copying files from remote host as local user [%s]." % (result, localUser))
+      else:
+         copySource = "%s@%s:%s/*" % (remoteUser, remoteHost, sourceDir)
+         result = executeCommand(rcpCommandList, [copySource, targetDir])[0]
+         if result != 0:
+            raise IOError("Error (%d) copying files from remote host (no local user)." % result)
       afterSet = RemotePeer._getDirContents(targetDir)
       if len(afterSet) == 0:
-         raise IOError("Did not copy any files from remote host.")
+         raise IOError("Did not copy any files from remote peer.")
       differenceSet = afterSet.difference(beforeSet)  # files we added as part of copy
       if len(differenceSet) == 0:
-         raise IOError("Did not copy any files from remote host.")
+         raise IOError("Apparently did not copy any new files from remote peer.")
       for targetFile in differenceSet:
          if ownership is not None:
             os.chown(targetFile, ownership[0], ownership[1])
          if permissions is not None:
             os.chmod(targetFile, permissions)
+      return len(differenceSet)
    _copyRemoteDir = staticmethod(_copyRemoteDir)
 
-   def _copyRemoteFile(remoteUser, remoteHost, rcpCommand, sourceFile, targetFile, ownership=None, permissions=None):
+   def _copyRemoteFile(remoteUser, localUser, remoteHost, 
+                       rcpCommand, rcpCommandList,
+                       sourceFile, targetFile, ownership=None, 
+                       permissions=None, overwrite=True):
       """
       Copies a remote source file to a target file.
 
@@ -803,8 +903,14 @@ class RemotePeer(object):
       @param remoteHost: Hostname of the remote peer
       @type remoteHost: String representing a hostname, accessible via the copy command
 
-      @param rcpCommand: An rcp-compatible copy command to use for copying files
-      @type rcpCommand: Command as a list to be passed to L{util.executeCommand}
+      @param localUser: Name of the Cedar Backup user on the current host
+      @type localUser: String representing a username, valid on the current host
+
+      @param rcpCommand: An rcp-compatible copy command to use for copying files from the peer
+      @type rcpCommand: String representing a system command including required arguments
+
+      @param rcpCommandList: An rcp-compatible copy command to use for copying files
+      @type rcpCommandList: Command as a list to be passed to L{util.executeCommand}
 
       @param sourceFile: Source file to copy
       @type sourceFile: String representing a file on disk, as an absolute path
@@ -818,16 +924,28 @@ class RemotePeer(object):
       @param permissions: Permissions that the staged files should have
       @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
+      @param overwrite: Indicates whether it's OK to overwrite the target file.
+      @type overwrite: Boolean true/false.
+
       @raise IOError: If the target file already exists.
       @raise IOError: If there is an IO error copying the file
       @raise OSError: If there is an OS error changing permissions on the file
       """
-      if os.path.exists(targetFile):
-         raise IOError("Target file [%s] already exists." % targetFile)
-      copySource = "%s@%s:%s" % (remoteUser, remoteHost, sourceFile.replace(" ", "\\ "))
-      result = executeCommand(rcpCommand, [copySource, targetFile, ])[0]
-      if result != 0:
-         raise IOError("Error (%d) copying file from remote host." % result)
+      if not overwrite:
+         if os.path.exists(targetFile):
+            raise IOError("Target file [%s] already exists." % targetFile)
+      if localUser is not None:
+         if os.getuid() != 0:
+            raise IOError("Only root can remote copy as another user.")
+         actualCommand = "%s %s@%s:%s %s" % (rcpCommand, remoteUser, remoteHost, sourceFile.replace(" ", "\\ "), targetFile)
+         result = executeCommand(SU_COMMAND, [localUser, "-c", actualCommand])[0]
+         if result != 0:
+            raise IOError("Error (%d) copying [%s] from remote host as local user [%s]." % (result, sourceFile, localUser))
+      else:
+         copySource = "%s@%s:%s" % (remoteUser, remoteHost, sourceFile.replace(" ", "\\ "))
+         result = executeCommand(rcpCommandList, [copySource, targetFile])[0]
+         if result != 0:
+            raise IOError("Error (%d) copying [%s] from remote host (no local user)." % (result, sourceFile))
       if not os.path.exists(targetFile):
          raise IOError("Apparently unable to copy file from remote host.")
       if ownership is not None:
@@ -836,9 +954,14 @@ class RemotePeer(object):
          os.chmod(targetFile, permissions)
    _copyRemoteFile = staticmethod(_copyRemoteFile)
 
-   def _pushLocalFile(remoteUser, remoteHost, rcpCommand, sourceFile, targetFile):
+   def _pushLocalFile(remoteUser, localUser, remoteHost, 
+                      rcpCommand, rcpCommandList,
+                      sourceFile, targetFile, overwrite=True):
       """
       Copies a local source file to a remote host.
+
+      @note: We will not overwrite a target file that exists when this method
+      is invoked.  If the target already exists, we'll raise an exception.
 
       @note: Internally, we have to go through and escape any spaces in the
       source and target paths with double-backslash, otherwise things get
@@ -851,11 +974,17 @@ class RemotePeer(object):
       @param remoteUser: Name of the Cedar Backup user on the remote peer
       @type remoteUser: String representing a username, valid via the copy command
 
+      @param localUser: Name of the Cedar Backup user on the current host
+      @type localUser: String representing a username, valid on the current host
+
       @param remoteHost: Hostname of the remote peer
       @type remoteHost: String representing a hostname, accessible via the copy command
 
-      @param rcpCommand: An rcp-compatible copy command to use for copying files
-      @type rcpCommand: Command as a list to be passed to L{util.executeCommand}
+      @param rcpCommand: An rcp-compatible copy command to use for copying files from the peer
+      @type rcpCommand: String representing a system command including required arguments
+
+      @param rcpCommandList: An rcp-compatible copy command to use for copying files
+      @type rcpCommandList: Command as a list to be passed to L{util.executeCommand}
 
       @param sourceFile: Source file to copy
       @type sourceFile: String representing a file on disk, as an absolute path
@@ -863,12 +992,26 @@ class RemotePeer(object):
       @param targetFile: Target file to create
       @type targetFile: String representing a file on disk, as an absolute path
 
+      @param overwrite: Indicates whether it's OK to overwrite the target file.
+      @type overwrite: Boolean true/false.
+
       @raise IOError: If there is an IO error copying the file
       @raise OSError: If there is an OS error changing permissions on the file
       """
-      copyTarget = "%s@%s:%s" % (remoteUser, remoteHost, targetFile.replace(" ", "\\ "))
-      result = executeCommand(rcpCommand, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
-      if result != 0:
-         raise IOError("Error (%d) copying file to remote host." % result)
+      if not overwrite:
+         if os.path.exists(targetFile):
+            raise IOError("Target file [%s] already exists." % targetFile)
+      if localUser is not None:
+         if os.getuid() != 0:
+            raise IOError("Only root can remote copy as another user.")
+         actualCommand = '%s "%s" "%s@%s:%s"' % (rcpCommand, sourceFile, remoteUser, remoteHost, targetFile)
+         result = executeCommand(SU_COMMAND, [localUser, "-c", actualCommand])[0]
+         if result != 0:
+            raise IOError("Error (%d) copying [%s] to remote host as local user [%s]." % (result, sourceFile, localUser))
+      else:
+         copyTarget = "%s@%s:%s" % (remoteUser, remoteHost, targetFile.replace(" ", "\\ "))
+         result = executeCommand(rcpCommandList, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
+         if result != 0:
+            raise IOError("Error (%d) copying [%s] to remote host (no local user)." % (result, sourceFile))
    _pushLocalFile = staticmethod(_pushLocalFile)
 

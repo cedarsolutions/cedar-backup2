@@ -607,7 +607,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False):
 
    @return: Tuple of C{(result, output)} as described above.
    """
-   logger.debug("Executing command [%s] with args %s." % (command, args))
+   logger.debug("Executing command %s with args %s." % (command, args))
    output = []
    fields = command[:]        # make sure to copy it so we don't destroy it
    fields.extend(args)
@@ -681,9 +681,9 @@ def deviceMounted(devicePath):
    return False
 
 
-######################
-# encodePath function
-######################
+########################
+# encodePath() function
+########################
 
 def encodePath(path):
 

@@ -51,10 +51,13 @@ Extension Architecture Interface, i.e. the same interface that extensions will
 implement.  There's no particular reason it has to be this way, except that it
 seems more straightforward to do it this way.
 
-The code is organized into two sections: internal utility code and public
-functions.  Utility functions related to a single public function are grouped
-with that function (below it, typically).  Utility functions used in more than
-one place are higher up in the code.
+The code is organized into three rough sections: general utility code,
+attribute "getter" functions, and public functions.  Attribute getter function
+encode rules for getting the correct value for various attributes.  For
+instance, what do we do when the device type is unset or if a collect dir
+doesn't have an ignore file set, etc.  They are grouped roughly by the action
+that they are associated with.  Other utility functions related to a single
+public function are grouped with that function (below it, typically).  
 
 @sort: executeCollect, executeStage, executeStore, executePurge, executeRebuild, executeValidate
 
@@ -79,8 +82,10 @@ import datetime
 from CedarBackup2.peer import RemotePeer, LocalPeer
 from CedarBackup2.image import IsoImage
 from CedarBackup2.writer import CdWriter
+from CedarBackup2.writer import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 from CedarBackup2.filesystem import BackupFileList, PurgeItemList
 from CedarBackup2.util import executeCommand, getUidGid, getFunctionReference, deviceMounted
+from CedarBackup2.config import DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE
 
 
 ########################################################################
@@ -109,11 +114,11 @@ UMOUNT_CMD           = [ "umount", ]
 # Utility functions
 ########################################################################
 
-###########################
-# _getDayOfWeek() function
-###########################
+##############################
+# _deriveDayOfWeek() function
+##############################
 
-def _getDayOfWeek(dayName):
+def _deriveDayOfWeek(dayName):
    """
    Converts English day name to numeric day of week as from C{time.localtime}.
 
@@ -139,7 +144,7 @@ def _getDayOfWeek(dayName):
    elif dayName.lower() == "sunday":
       return 6
    else:
-      return -1  # What else can we do??
+      return -1  # What else can we do??  Thrown an exception, I guess.
 
 
 ###########################
@@ -158,14 +163,14 @@ def _todayIsStart(startingDay):
 
    @return: Boolean indicating whether today is the starting day.
    """
-   return time.localtime().tm_wday == _getDayOfWeek(startingDay)
+   return time.localtime().tm_wday == _deriveDayOfWeek(startingDay)
 
 
-################################
-# _getNormalizedPath() function
-################################
+##################################
+# _buildNormalizedPath() function
+##################################
 
-def _getNormalizedPath(absPath):
+def _buildNormalizedPath(absPath):
    """
    Returns a "normalized" path based on an absolute path.
 
@@ -202,6 +207,312 @@ def _changeOwnership(path, user, group):
       logger.error("Error changing ownership of [%s]: %s" % (path, e))
 
 
+
+########################################################################
+# Attribute "getter" functions
+########################################################################
+
+############################
+# getCollectMode() function
+############################
+
+def _getCollectMode(config, collectDir):
+   """
+   Gets the collect mode that should be used for a collect directory.
+   Use directory's if possible, otherwise take from collect section.
+   @param config: Config object.
+   @param collectDir: Collect directory object.
+   @return: Collect mode to use.
+   """
+   if collectDir.collectMode is None:
+      collectMode = config.collect.collectMode
+   else:
+      collectMode = collectDir.collectMode
+   logger.debug("Collect mode is [%s]" % collectMode)
+   return collectMode
+
+
+#############################
+# _getArchiveMode() function
+#############################
+
+def _getArchiveMode(config, collectDir):
+   """
+   Gets the archive mode that should be used for a collect directory.
+   Use directory's if possible, otherwise take from collect section.
+   @param config: Config object.
+   @param collectDir: Collect directory object.
+   @return: Archive mode to use.
+   """
+   if collectDir.archiveMode is None:
+      archiveMode = config.collect.archiveMode
+   else:
+      archiveMode = collectDir.archiveMode
+   logger.debug("Archive mode is [%s]" % archiveMode)
+   return archiveMode
+
+
+############################
+# _getIgnoreFile() function
+############################
+
+def _getIgnoreFile(config, collectDir):
+   """
+   Gets the ignore file that should be used for a collect directory.
+   Use directory's if possible, otherwise take from collect section.
+   @param config: Config object.
+   @param collectDir: Collect directory object.
+   @return: Ignore file to use.
+   """
+   if collectDir.ignoreFile is None:
+      ignoreFile = config.collect.ignoreFile
+   else:
+      ignoreFile = collectDir.ignoreFile
+   logger.debug("Ignore file is [%s]" % ignoreFile)
+   return ignoreFile
+
+
+############################
+# _getDigestPath() function
+############################
+
+def _getDigestPath(config, collectDir):
+   """
+   Gets the digest path associated with a collect directory.
+   @param config: Config object.
+   @param collectDir: Collect directory object.
+   @return: Absolute path to the digest associated with the collect directory.
+   """
+   normalized = _buildNormalizedPath(collectDir.absolutePath)
+   filename = "%s.%s" % (normalized, DIGEST_EXTENSION)
+   digestPath = os.path.join(config.options.workingDir, filename)
+   logger.debug("Digest path is [%s]" % digestPath)
+   return digestPath
+
+
+#############################
+# _getTarfilePath() function
+#############################
+
+def _getTarfilePath(config, collectDir, archiveMode):
+   """
+   Gets the tarfile path (including correct extension) associated with a collect directory.
+   @param config: Config object.
+   @param collectDir: Collect directory object.
+   @param archiveMode: Archive mode to use for this tarfile.
+   @return: Absolute path to the tarfile associated with the collect directory.
+   """
+   if archiveMode == 'tar':
+      extension = "tar"
+   elif archiveMode == 'targz':
+      extension = "tar.gz"
+   elif archiveMode == 'tarbz2':
+      extension = "tar.bz2"
+   normalized = _buildNormalizedPath(collectDir.absolutePath)
+   filename = "%s.%s" % (normalized, extension)
+   tarfilePath = os.path.join(config.collect.targetDir, filename)
+   logger.debug("Tarfile path is [%s]" % tarfilePath)
+   return tarfilePath
+
+
+############################
+# _getExclusions() function
+############################
+
+def _getExclusions(config, collectDir):
+   """
+   Gets exclusions (file and patterns) associated with a collect directory.
+
+   The returned files value is a list of absolute paths to be excluded from the
+   backup for a given directory.  It is derived from the collect configuration
+   absolute exclude paths and the collect directory's absolute and relative
+   exclude paths.  
+   
+   The returned patterns value is a list of patterns to be excluded from the
+   backup for a given directory.  It is derived from the list of patterns from
+   the collect configuration and from the collect directory itself.
+
+   @param config: Config object.
+   @param collectDir: Collect directory object.
+
+   @return: Tuple (files, patterns) indicating what to exclude.
+   """
+   paths = []
+   if config.collect.absoluteExcludePaths is not None:
+      paths.extend(config.collect.absoluteExcludePaths)
+   if collectDir.absoluteExcludePaths is not None:
+      paths.extend(collectDir.absoluteExcludePaths)
+   if collectDir.relativeExcludePaths is not None:
+      for relativePath in collectDir.relativeExcludePaths:
+         paths.append(os.path.join(collectDir.absolutePath, relativePath))
+   patterns = []
+   if config.collect.excludePatterns is not None:
+      patterns.extend(config.collect.excludePatterns)
+   if collectDir.excludePatterns is not None:
+      patterns.extend(collectDir.excludePatterns)
+   logger.debug("Exclude paths: %s" % paths)
+   logger.debug("Exclude patterns: %s" % patterns)
+   return(paths, patterns)
+
+
+##########################
+# _getDailyDir() function
+##########################
+
+def _getDailyDir(config):
+   """
+   Gets the daily staging directory.
+   
+   This is just a directory in the form C{staging/YYYY/MM/DD}, i.e.
+   C{staging/2000/10/07}, except it will be an absolute path based on
+   C{config.stage.targetDir}.
+
+   @param config: Config object
+
+   @return: Path of daily staging directory.
+   """
+   dailyDir = os.path.join(config.stage.targetDir, time.strftime(DIR_TIME_FORMAT))
+   logger.debug("Daily staging directory is [%s]." % dailyDir)
+   return dailyDir
+
+
+############################
+# _getLocalPeers() function
+############################
+
+def _getLocalPeers(config):
+   """
+   Return a list of L{LocalPeer} objects based on configuration.
+   @param config: Config object.
+   @return: List of L{LocalPeer} objects.
+   """
+   localPeers = []
+   if config.stage.localPeers is not None:
+      for peer in config.stage.localPeers:
+         localPeer = LocalPeer(peer.name, peer.collectDir)
+         localPeers.append(localPeer)
+         logger.debug("Found local peer: [%s]" % localPeer.name)
+   return localPeers
+
+
+#############################
+# _getRemotePeers() function
+#############################
+
+def _getRemotePeers(config):
+   """
+   Return a list of L{RemotePeer} objects based on configuration.
+   @param config: Config object.
+   @return: List of L{RemotePeer} objects.
+   """
+   remotePeers = []
+   if config.stage.remotePeers is not None:
+      for peer in config.stage.remotePeers:
+         remoteUser = _getRemoteUser(config, peer)
+         rcpCommand = _getRcpCommand(config, peer)
+         remotePeer = RemotePeer(peer.name, peer.collectDir, config.options.workingDir, 
+                                 remoteUser, rcpCommand, config.options.backupUser)
+         remotePeers.append(remotePeer)
+         logger.debug("Found remote peer: [%s]" % remotePeer.name)
+   return remotePeers
+
+
+############################
+# _getRemoteUser() function
+############################
+
+def _getRemoteUser(config, remotePeer):
+   """
+   Gets the remote user associated with a remote peer.
+   Use peer's if possible, otherwise take from options section.
+   @param config: Config object.
+   @param remotePeer: Configuration-style remote peer object.
+   @return: Name of remote user associated with remote peer.
+   """
+   if remotePeer.remoteUser is None:
+      return config.options.backupUser
+   return remotePeer.remoteUser
+
+
+############################
+# _getRcpCommand() function
+############################
+
+def _getRcpCommand(config, remotePeer):
+   """
+   Gets the RCP command associated with a remote peer.
+   Use peer's if possible, otherwise take from options section.
+   @param config: Config object.
+   @param remotePeer: Configuration-style remote peer object.
+   @return: RCP command associated with remote peer.
+   """
+   if remotePeer.rcpCommand is None:
+      return config.options.rcpCommand
+   return remotePeer.rcpCommand
+
+
+############################
+# _getDeviceType() function
+############################
+
+def _getDeviceType(config):
+   """
+   Gets the device type that should be used for storing.
+
+   Use the configured device type if not C{None}, otherwise use
+   L{config.DEFAULT_DEVICE_TYPE}.
+
+   @param config: Config object.
+   @return: Device type to be used.
+   """
+   if config.store.deviceType is None:
+      deviceType = DEFAULT_DEVICE_TYPE
+   else:
+      deviceType = config.store.deviceType
+   logger.debug("Device type is [%s]" % deviceType)
+   return deviceType
+
+
+###########################
+# _getMediaType() function
+###########################
+
+def _getMediaType(config):
+   """
+   Gets the media type that should be used for storing.
+
+   Use the configured media type if not C{None}, otherwise use
+   C{DEFAULT_MEDIA_TYPE}.  
+
+   Once we figure out what configuration value to use, we return a media
+   type value that is valid in C{writer.py}, one of C{MEDIA_CDR_74},
+   C{MEDIA_CDRW_74}, C{MEDIA_CDR_80} or C{MEDIA_CDRW_80}.
+
+   @param config: Config object.
+
+   @return: Media type to be used as a writer media type value.
+   @raise ValueError: If the media type is not valid.
+   """
+   if config.store.mediaType is None:
+      mediaType = DEFAULT_MEDIA_TYPE
+   else:
+      mediaType = config.store.mediaType
+   if mediaType == "cdr-74":
+      logger.debug("Media type is MEDIA_CDR_74.")
+      return MEDIA_CDR_74
+   elif mediaType == "cdrw-74":
+      logger.debug("Media type is MEDIA_CDRW_74.")
+      return MEDIA_CDRW_74
+   elif mediaType == "cdr-80":
+      logger.debug("Media type is MEDIA_CDR_80.")
+      return MEDIA_CDR_80
+   elif mediaType == "cdrw-80":
+      logger.debug("Media type is MEDIA_CDRW_80.")
+      return MEDIA_CDRW_80
+   else:
+      raise ValueError("Media type [%s] is not valid." % mediaType)
+
+
 ########################
 # _getWriter() function
 ########################
@@ -231,137 +542,14 @@ def _getWriter(config):
    @raise ValueError: If there is a problem getting the writer.
    @raise IOError: If there is a problem creating the writer object.
    """
+   deviceType = _getDeviceType(config)
+   mediaType = _getMediaType(config)
    if deviceMounted(config.store.devicePath):
       raise IOError("Device [%s] is currently mounted." % (config.store.devicePath))
-   if config.store.deviceType == "cdwriter":
-      return CdWriter(config.store.devicePath, config.store.deviceScsiId, config.store.driveSpeed, config.store.mediaType)
+   if deviceType == "cdwriter":
+      return CdWriter(config.store.devicePath, config.store.deviceScsiId, config.store.driveSpeed, mediaType)
    else:
       raise ValueError("Device type [%s] is invalid." % config.store.deviceType)
-
-
-#########################
-# _writeImage() function
-#########################
-
-def _writeImage(config, entireDisc, stagingDirs):
-   """
-   Builds and writes an ISO image containing the indicated stage directories.
-
-   The generated image will contain each of the staging directories listed in
-   C{stagingDirs}.  The directories will be placed into the image at the root by
-   date, so staging directory C{/opt/stage/2005/02/10} will be placed into the
-   disc at C{/2005/02/10}.
-
-   @param config: Config object.
-   @param entireDisc: Indicates whether entire disc should be used
-   @param stagingDirs: Dictionary mapping directory path to date suffix.
-
-   @raise ValueError: Under many generic error conditions
-   @raise IOError: If there is a problem writing the image to disc.
-   """
-   writer = _getWriter(config)
-   capacity = writer.retrieveCapacity(entireDisc=entireDisc)
-   image = IsoImage(writer.device, capacity.boundaries)
-   for stageDir in stagingDirs.keys():
-      dateSuffix = stagingDirs[stageDir]
-      image.addEntry(path=stageDir, graftPoint=dateSuffix, contentsOnly=True)
-   imageSize = image.getEstimatedSize()
-   logger.info("Image size will be %.0f bytes." % imageSize)
-   if imageSize > capacity.bytesAvailable:
-      logger.error("Image (%.0f bytes) does not fit in available capacity (%.0f bytes)." % (imageSize, capacity.bytesAvailable))
-      raise IOError("Media does not contain enough capacity to store image.")
-   try:
-      (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)
-      handle.close()
-      image.writeImage(imagePath)
-   finally:
-      if os.path.exists(imagePath): 
-         try:
-            os.unlink(imagePath)
-         except: pass
-
-
-###############################
-# _consistencyCheck() function
-###############################
-
-def _consistencyCheck(config, stagingDirs):
-   """
-   Runs a consistency check against media in the backup device.
-
-   It seems that sometimes, it's possible to create a corrupted multisession
-   disc (i.e. one that cannot be read) although no errors were encountered
-   while writing the disc.  This consistency check makes sure that the data
-   read from disc matches the data that was used to create the disc.
-
-   The function mounts the device at a temporary mount point in the working
-   directory, and then compares the indicated staging directories in the
-   staging directory and on the media.  The comparison is done via the
-   L{BackupFileList} object's built-in functionality for generating digest
-   maps.
-
-   If no exceptions are thrown, there were no problems with the consistency
-   check.  A positive confirmation of "no problems" is also written to the log
-   with C{info} priority.
-
-   @warning: The implementation of this function is very UNIX-specific and is
-   probably Linux-specific as well.
-
-   @param config: Config object.
-   @param stagingDirs: Dictionary mapping directory path to date suffix.
-
-   @raise IOError: If there is a problem working with the media.
-   """
-   logger.debug("Running consistency check.")
-   mountPoint = tempfile.mkdtemp(dir=config.options.workingDir)
-   try:
-      args = [ "-tiso9660", config.store.backupDevice, mountPoint ]
-      result = executeCommand(MOUNT_CMD, args, returnOutput=False, ignoreStderr=True)
-      if result != 0:
-         raise IOError("Error [%d] mounting media for consistency check." % result)
-      for stagingDir in stagingDirs.keys():
-         dateSuffix = stagingDirs[stagingDir]
-         filesystemList = BackupFileList()
-         mediaList = BackupFileList()
-         filesystemList.addDirContents(stagingDir)
-         mediaList.addDirContents(os.path.join(mountPoint, dateSuffix))
-         filesystemMap = filesystemList.generateDigestMap()
-         mediaMap = mediaList.generateDigestMap()
-         if filesystemMap.keys() != mediaMap.keys():
-            raise IOError("Consistency check failed: filesystem and media have different contents.")
-         for filename in filesystemMap.keys():
-            if filesystemMap[filename] != mediaMap[filename]:
-               raise IOError("Consistency check failed: file [%s] differs." % filename)
-         logger.info("Consistency check completed for [%s].  No problems found." % stagingDir)
-   finally:
-      if os.path.isdir(mountPoint):
-         try:
-            executeCommand(UMOUNT_CMD, [ mountPoint, ], returnOutput=False, ignoreStderr=True)
-            os.rmdir(mountPoint)
-         except: pass
-
-
-#######################
-# _writeStoreIndicator
-#######################
-
-def _writeStoreIndicator(config, stagingDirs):
-   """
-   Writes a store indicator file into staging directories.
-
-   The store indicator is written into each of the staging directories when
-   either a store or rebuild action has written the staging directory to disc.
-
-   @param config: Config object.
-   @param stagingDirs: Dictionary mapping directory path to date suffix.
-   """
-   for stagingDir in stagingDirs.keys():
-      filename = os.path.join(stagingDir, STORE_INDICATOR)
-      try:
-         open(filename, "w").write("")
-         _changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
-      except Exception, e:
-         logger.error("Error writing store indicator: %s", e)
 
 
 ########################################################################
@@ -420,119 +608,6 @@ def executeCollect(configPath, options, config):
    _writeCollectIndicator(config)
    logger.info("Executed the 'collect' action successfully.")
 
-def _getCollectMode(config, collectDir):
-   """
-   Gets the collect mode that should be used for a collect directory.
-   Use directory's if possible, otherwise take from collect section.
-   @param config: Config object.
-   @param collectDir: Collect directory object.
-   @return: Collect mode to use.
-   """
-   if collectDir.collectMode is None:
-      collectMode = config.collect.collectMode
-   else:
-      collectMode = collectDir.collectMode
-   logger.debug("Collect mode is [%s]" % collectMode)
-   return collectMode
-
-def _getArchiveMode(config, collectDir):
-   """
-   Gets the archive mode that should be used for a collect directory.
-   Use directory's if possible, otherwise take from collect section.
-   @param config: Config object.
-   @param collectDir: Collect directory object.
-   @return: Archive mode to use.
-   """
-   if collectDir.archiveMode is None:
-      archiveMode = config.collect.archiveMode
-   else:
-      archiveMode = collectDir.archiveMode
-   logger.debug("Archive mode is [%s]" % archiveMode)
-   return archiveMode
-
-def _getIgnoreFile(config, collectDir):
-   """
-   Gets the ignore file that should be used for a collect directory.
-   Use directory's if possible, otherwise take from collect section.
-   @param config: Config object.
-   @param collectDir: Collect directory object.
-   @return: Ignore file to use.
-   """
-   if collectDir.ignoreFile is None:
-      ignoreFile = config.collect.ignoreFile
-   else:
-      ignoreFile = collectDir.ignoreFile
-   logger.debug("Ignore file is [%s]" % ignoreFile)
-   return ignoreFile
-
-def _getDigestPath(config, collectDir):
-   """
-   Gets the digest path associated with a collect directory.
-   @param config: Config object.
-   @param collectDir: Collect directory object.
-   @return: Absolute path to the digest associated with the collect directory.
-   """
-   normalized = _getNormalizedPath(collectDir.absolutePath)
-   filename = "%s.%s" % (normalized, DIGEST_EXTENSION)
-   digestPath = os.path.join(config.options.workingDir, filename)
-   logger.debug("Digest path is [%s]" % digestPath)
-   return digestPath
-
-def _getTarfilePath(config, collectDir, archiveMode):
-   """
-   Gets the tarfile path (including correct extension) associated with a collect directory.
-   @param config: Config object.
-   @param collectDir: Collect directory object.
-   @param archiveMode: Archive mode to use for this tarfile.
-   @return: Absolute path to the tarfile associated with the collect directory.
-   """
-   if archiveMode == 'tar':
-      extension = "tar"
-   elif archiveMode == 'targz':
-      extension = "tar.gz"
-   elif archiveMode == 'tarbz2':
-      extension = "tar.bz2"
-   normalized = _getNormalizedPath(collectDir.absolutePath)
-   filename = "%s.%s" % (normalized, extension)
-   tarfilePath = os.path.join(config.collect.targetDir, filename)
-   logger.debug("Tarfile path is [%s]" % tarfilePath)
-   return tarfilePath
-
-def _getExclusions(config, collectDir):
-   """
-   Gets exclusions (file and patterns) associated with a collect directory.
-
-   The returned files value is a list of absolute paths to be excluded from the
-   backup for a given directory.  It is derived from the collect configuration
-   absolute exclude paths and the collect directory's absolute and relative
-   exclude paths.  
-   
-   The returned patterns value is a list of patterns to be excluded from the
-   backup for a given directory.  It is derived from the list of patterns from
-   the collect configuration and from the collect directory itself.
-
-   @param config: Config object.
-   @param collectDir: Collect directory object.
-
-   @return: Tuple (files, patterns) indicating what to exclude.
-   """
-   paths = []
-   if config.collect.absoluteExcludePaths is not None:
-      paths.extend(config.collect.absoluteExcludePaths)
-   if collectDir.absoluteExcludePaths is not None:
-      paths.extend(collectDir.absoluteExcludePaths)
-   if collectDir.relativeExcludePaths is not None:
-      for relativePath in collectDir.relativeExcludePaths:
-         paths.append(os.path.join(collectDir.absolutePath, relativePath))
-   patterns = []
-   if config.collect.excludePatterns is not None:
-      patterns.extend(config.collect.excludePatterns)
-   if collectDir.excludePatterns is not None:
-      patterns.extend(collectDir.excludePatterns)
-   logger.debug("Exclude paths: %s" % paths)
-   logger.debug("Exclude patterns: %s" % patterns)
-   return(paths, patterns)
-
 def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMode, 
                       ignoreFile, resetDigest, digestPath, excludePaths, excludePatterns):
    """
@@ -566,24 +641,26 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
    backupList.excludePatterns = excludePatterns
    backupList.addDirContents(absolutePath)
    if collectMode != 'incr':
-      logger.debug("Collect mode is not 'incr'; no digest will be used.")
-      logger.debug("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
-      backupList.generateTarfile(tarfilePath, archiveMode, True)
-      _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
+      logger.debug("Collect mode is [%s]; no digest will be used." % collectMode)
+      logger.info("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
+      if len(backupList) > 0:
+         backupList.generateTarfile(tarfilePath, archiveMode, True)
+         _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
    else:
-      digest = {}
       if resetDigest:
          logger.debug("Based on resetDigest flag, digest will be cleared.")
+         oldDigest = {}
       else:
          logger.debug("Based on resetDigest flag, digest will loaded from disk.")
-         digest = _loadDigest(digestPath)
-         removed = backupList.removeUnchanged(digest)
-         logger.debug("Removed %d unchanged files based on digest values." % removed)
-      logger.debug("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
-      backupList.generateTarfile(tarfilePath, archiveMode, True)
-      _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
-      digest = backupList.generateDigestMap()
-      _writeDigest(config, digest, digestPath)
+         oldDigest = _loadDigest(digestPath)
+      newDigest = backupList.generateDigestMap()   # be sure to do this before removing unchanged files!
+      removed = backupList.removeUnchanged(oldDigest)
+      logger.debug("Removed %d unchanged files based on digest values." % removed)
+      logger.info("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
+      if len(backupList) > 0:
+         backupList.generateTarfile(tarfilePath, archiveMode, True)
+         _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
+      _writeDigest(config, newDigest, digestPath)
 
 def _loadDigest(digestPath):
    """
@@ -633,6 +710,7 @@ def _writeCollectIndicator(config):
    @param config: Config object.
    """
    filename = os.path.join(config.collect.targetDir, COLLECT_INDICATOR)
+   logger.debug("Writing collect indicator [%s]." % filename)
    try:
       open(filename, "w").write("")
       _changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
@@ -679,81 +757,22 @@ def executeStage(configPath, options, config):
    allPeers = localPeers + remotePeers
    stagingDirs = _createStagingDirs(config, dailyDir, allPeers)
    for peer in allPeers:
+      logger.info("Staging peer [%s]." % peer.name)
       if not peer.checkCollectIndicator():
          logger.error("Peer [%s] was not ready to be staged." % peer.name)
          continue
+      logger.debug("Found collect indicator.")
       targetDir = stagingDirs[peer.name]
-      ownership = (config.options.backupUser, config.options.backupGroup)
-      peer.stagePeer(targetDir=targetDir, ownership=ownership)  # note: utilize effective user's default umask
-      peer.writeStageIndicator()
+      ownership = getUidGid(config.options.backupUser,  config.options.backupGroup)
+      logger.debug("Using target dir [%s], ownership [%d:%d]." % (targetDir, ownership[0], ownership[1]))
+      try:
+         count = peer.stagePeer(targetDir=targetDir, ownership=ownership)  # note: utilize effective user's default umask
+         logger.info("Staged %d files for this peer." % count)
+         peer.writeStageIndicator()
+      except (ValueError, IOError, OSError), e:
+         logger.error("Error staging [%s]: %s" % (peer.name, e))
    _writeStageIndicator(config, dailyDir)
    logger.info("Executed the 'stage' action successfully.")
-
-def _getDailyDir(config):
-   """
-   Gets the daily staging directory.
-   
-   This is just a directory in the form C{staging/YYYY/MM/DD}, i.e.
-   C{staging/2000/10/07}, except it will be an absolute path based on
-   C{config.stage.targetDir}.
-
-   @param config: Config object
-
-   @return: Path of daily staging directory.
-   """
-   return os.path.join(config.stage.targetDir, time.strftime(DIR_TIME_FORMAT))
-
-def _getLocalPeers(config):
-   """
-   Return a list of L{LocalPeer} objects based on configuration.
-   @param config: Config object.
-   @return: List of L{LocalPeer} objects.
-   """
-   localPeers = []
-   if config.stage.localPeers is not None:
-      for peer in config.stage.localPeers:
-         localPeer = LocalPeer(peer.name, peer.collectDir)
-         localPeers.append(localPeer)
-   return localPeers
-
-def _getRemotePeers(config):
-   """
-   Return a list of L{RemotePeer} objects based on configuration.
-   @param config: Config object.
-   @return: List of L{RemotePeer} objects.
-   """
-   remotePeers = []
-   if config.stage.remotePeers is not None:
-      for peer in config.stage.remotePeers:
-         remoteUser = _getRemoteUser(config, peer)
-         rcpCommand = _getRcpCommand(config, peer)
-         remotePeer = RemotePeer(peer.name, peer.collectDir, remoteUser, rcpCommand)
-         remotePeers.append(remotePeer)
-   return remotePeers
-
-def _getRemoteUser(config, remotePeer):
-   """
-   Gets the remote user associated with a remote peer.
-   Use peer's if possible, otherwise take from options section.
-   @param config: Config object.
-   @param remotePeer: Configuration-style remote peer object.
-   @return: Name of remote user associated with remote peer.
-   """
-   if remotePeer.remoteUser is None:
-      return config.options.backupUser
-   return remotePeer.remoteUser
-
-def _getRcpCommand(config, remotePeer):
-   """
-   Gets the RCP command associated with a remote peer.
-   Use peer's if possible, otherwise take from options section.
-   @param config: Config object.
-   @param remotePeer: Configuration-style remote peer object.
-   @return: RCP command associated with remote peer.
-   """
-   if remotePeer.rcpCommand is None:
-      return config.options.rcpCommand
-   return remotePeer.rcpCommand
 
 def _createStagingDirs(config, dailyDir, peers):
    """
@@ -770,8 +789,11 @@ def _createStagingDirs(config, dailyDir, peers):
    @return: Dictionary mapping peer name to staging directory.
    """
    mapping = {}
-   if not os.path.isdir(dailyDir):
+   if os.path.isdir(dailyDir):
+      logger.warn("Staging directory [%s] already existed." % dailyDir)
+   else:
       try:
+         logger.debug("Creating staging directory [%s]." % dailyDir)
          os.makedirs(dailyDir)
          for path in [ dailyDir, os.path.join(dailyDir, ".."), os.path.join(dailyDir, "..", ".."), ]:
             _changeOwnership(path, config.options.backupUser, config.options.backupGroup)
@@ -779,12 +801,16 @@ def _createStagingDirs(config, dailyDir, peers):
          raise Exception("Unable to create staging directory: %s" % e)
    for peer in peers:
       peerDir = os.path.join(dailyDir, peer.name)
-      try:
-         os.makedirs(peerDir)
-         _changeOwnership(peerDir, config.options.backupUser, config.options.backupGroup)
-         mapping[peer.name] = peerDir
-      except Exception, e:
-         raise Exception("Unable to create staging directory: %s" % e)
+      mapping[peer.name] = peerDir
+      if os.path.isdir(peerDir):
+         logger.warn("Peer staging directory [%s] already existed." % peerDir)
+      else:
+         try:
+            logger.debug("Creating peer staging directory [%s]." % peerDir)
+            os.makedirs(peerDir)
+            _changeOwnership(peerDir, config.options.backupUser, config.options.backupGroup)
+         except Exception, e:
+            raise Exception("Unable to create staging directory: %s" % e)
    return mapping
       
 def _writeStageIndicator(config, dailyDir):
@@ -800,6 +826,7 @@ def _writeStageIndicator(config, dailyDir):
    @param dailyDir: Daily staging directory.
    """
    filename = os.path.join(dailyDir, STAGE_INDICATOR)
+   logger.debug("Writing stage indicator [%s]." % filename)
    try:
       open(filename, "w").write("")
       _changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
@@ -893,6 +920,117 @@ def _findCorrectDailyDir(config):
       return { tomorrowPath:tomorrowDate }
    raise IOError("Unable to find a staging directory to store (tried today, yesterday, tomorrow).")
 
+def _writeImage(config, entireDisc, stagingDirs):
+   """
+   Builds and writes an ISO image containing the indicated stage directories.
+
+   The generated image will contain each of the staging directories listed in
+   C{stagingDirs}.  The directories will be placed into the image at the root by
+   date, so staging directory C{/opt/stage/2005/02/10} will be placed into the
+   disc at C{/2005/02/10}.
+
+   @param config: Config object.
+   @param entireDisc: Indicates whether entire disc should be used
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+
+   @raise ValueError: Under many generic error conditions
+   @raise IOError: If there is a problem writing the image to disc.
+   """
+   writer = _getWriter(config)
+   capacity = writer.retrieveCapacity(entireDisc=entireDisc)
+   image = IsoImage(writer.device, capacity.boundaries)
+   for stageDir in stagingDirs.keys():
+      dateSuffix = stagingDirs[stageDir]
+      image.addEntry(path=stageDir, graftPoint=dateSuffix, contentsOnly=True)
+   imageSize = image.getEstimatedSize()
+   logger.info("Image size will be %.0f bytes." % imageSize)
+   if imageSize > capacity.bytesAvailable:
+      logger.error("Image (%.0f bytes) does not fit in available capacity (%.0f bytes)." % (imageSize, capacity.bytesAvailable))
+      raise IOError("Media does not contain enough capacity to store image.")
+   try:
+      (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)
+      handle.close()
+      image.writeImage(imagePath)
+   finally:
+      if os.path.exists(imagePath): 
+         try:
+            os.unlink(imagePath)
+         except: pass
+
+def _consistencyCheck(config, stagingDirs):
+   """
+   Runs a consistency check against media in the backup device.
+
+   It seems that sometimes, it's possible to create a corrupted multisession
+   disc (i.e. one that cannot be read) although no errors were encountered
+   while writing the disc.  This consistency check makes sure that the data
+   read from disc matches the data that was used to create the disc.
+
+   The function mounts the device at a temporary mount point in the working
+   directory, and then compares the indicated staging directories in the
+   staging directory and on the media.  The comparison is done via the
+   L{BackupFileList} object's built-in functionality for generating digest
+   maps.
+
+   If no exceptions are thrown, there were no problems with the consistency
+   check.  A positive confirmation of "no problems" is also written to the log
+   with C{info} priority.
+
+   @warning: The implementation of this function is very UNIX-specific and is
+   probably Linux-specific as well.
+
+   @param config: Config object.
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+
+   @raise IOError: If there is a problem working with the media.
+   """
+   logger.debug("Running consistency check.")
+   mountPoint = tempfile.mkdtemp(dir=config.options.workingDir)
+   try:
+      args = [ "-tiso9660", config.store.backupDevice, mountPoint ]
+      result = executeCommand(MOUNT_CMD, args, returnOutput=False, ignoreStderr=True)
+      if result != 0:
+         raise IOError("Error [%d] mounting media for consistency check." % result)
+      for stagingDir in stagingDirs.keys():
+         dateSuffix = stagingDirs[stagingDir]
+         filesystemList = BackupFileList()
+         mediaList = BackupFileList()
+         filesystemList.addDirContents(stagingDir)
+         mediaList.addDirContents(os.path.join(mountPoint, dateSuffix))
+         filesystemMap = filesystemList.generateDigestMap()
+         mediaMap = mediaList.generateDigestMap()
+         if filesystemMap.keys() != mediaMap.keys():
+            raise IOError("Consistency check failed: filesystem and media have different contents.")
+         for filename in filesystemMap.keys():
+            if filesystemMap[filename] != mediaMap[filename]:
+               raise IOError("Consistency check failed: file [%s] differs." % filename)
+         logger.info("Consistency check completed for [%s].  No problems found." % stagingDir)
+   finally:
+      if os.path.isdir(mountPoint):
+         try:
+            executeCommand(UMOUNT_CMD, [ mountPoint, ], returnOutput=False, ignoreStderr=True)
+            os.rmdir(mountPoint)
+         except: pass
+
+def _writeStoreIndicator(config, stagingDirs):
+   """
+   Writes a store indicator file into staging directories.
+
+   The store indicator is written into each of the staging directories when
+   either a store or rebuild action has written the staging directory to disc.
+
+   @param config: Config object.
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+   """
+   for stagingDir in stagingDirs.keys():
+      filename = os.path.join(stagingDir, STORE_INDICATOR)
+      logger.debug("Writing store indicator [%s]." % filename)
+      try:
+         open(filename, "w").write("")
+         _changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
+      except Exception, e:
+         logger.error("Error writing store indicator: %s", e)
+
 
 ##########################
 # executePurge() function
@@ -982,7 +1120,7 @@ def _findRebuildDirs(config):
    @raise IOError: If we do not find at least one staging directory.
    """
    stagingDirs = {}
-   start = _getDayOfWeek(config.options.startingDay)
+   start = _deriveDayOfWeek(config.options.startingDay)
    today = datetime.date.today()
    if today.weekday() >= start:
       days = today.weekday() - start + 1
