@@ -16,31 +16,17 @@
 
 ITEMS TO TEST
 
-* Test store process for non-first day of week
-* Test store process where disc would be filled
-* Test rebuild process on first day of week
+* Test consistency-check logic
 * Build some unit tests for generic action-related code
-
-BUGS TO FIX
-
-
-TESTS TO ADD
-
-* Create tests for new localUser functionality in creating remote peer.
-* Create tests for creating tarfile with extremely long names (> 100 for link, > 256 for file)
 * Refactor out consistency check code and test it?
-* Create tests for number of files copied with stagePeer() - I added this functionality.
 
 
 ADMINISTRATIVE
 
-* Document that remote peer's attempt at counting new files might be "broken" if some files already exist.
-* Document new localuser/real user and working directory behavior in remote peer
 * Decide (maybe ask the list) whether it's important to list every file that is backed up
 * Clean up home debbuild environment (not really Cedar Backup - just noticed it)
 * Do a bunch of sample runs to get the logging level right (difference between "normal" and debug...?)
 * Come up with a standard svn label script to do releases, so I can't forget as easily.
-* Backport Python 2.3 and Python XML for 2.3 to woody to support 1.0.  Couldn't we have released sooner?
 
 
 DOCUMENTATION
@@ -76,4 +62,4 @@ FUTURE FUNCTIONALITY
 * Somehow figure out if a full backup (i.e. disc-restart) has been missed (bug #6)
 * Perhaps update configuration to disallow two extensions with same name (right now, behavior is undefined).
 * Perhaps update configuration to disallow two peers with same name (right now, behavior is undefined).
-* Maybe make all paths in config (including exclude paths?) use encodePath - is this worth it?
+* Come up with non-PyUnit code to stress test actions, etc. which can't be automated and need to run as root.

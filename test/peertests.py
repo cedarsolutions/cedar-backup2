@@ -546,7 +546,8 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnless(os.path.exists(targetDir))
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
       peer = LocalPeer(name, collectDir)
-      peer.stagePeer(targetDir=targetDir)
+      stagedFiles = peer.stagePeer(targetDir=targetDir)
+      self.failUnlessEqual(7, len(stagedFiles))
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(7, len(stagedFiles))
       self.failUnless("file001" in stagedFiles)
@@ -571,7 +572,8 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnless(os.path.exists(targetDir))
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
       peer = LocalPeer(name, collectDir)
-      peer.stagePeer(targetDir=targetDir)
+      stagedFiles = peer.stagePeer(targetDir=targetDir)
+      self.failUnlessEqual(7, len(stagedFiles))
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(7, len(stagedFiles))
       self.failUnless("file001" in stagedFiles)
@@ -614,7 +616,8 @@ class TestLocalPeer(unittest.TestCase):
          permissions = 0642   # arbitrary, but different than umask would give
       else:
          permissions = 0400   # arbitrary
-      peer.stagePeer(targetDir=targetDir, permissions=permissions)
+      stagedFiles = peer.stagePeer(targetDir=targetDir, permissions=permissions)
+      self.failUnlessEqual(7, len(stagedFiles))
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(7, len(stagedFiles))
       self.failUnless("file001" in stagedFiles)
@@ -1308,7 +1311,8 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(targetDir))
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      peer.stagePeer(targetDir=targetDir)
+      stagedFiles = peer.stagePeer(targetDir=targetDir)
+      self.failUnlessEqual(7, len(stagedFiles))
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(7, len(stagedFiles))
       self.failUnless("file001" in stagedFiles)
@@ -1335,7 +1339,8 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(targetDir))
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      peer.stagePeer(targetDir=targetDir)
+      stagedFiles = peer.stagePeer(targetDir=targetDir)
+      self.failUnlessEqual(7, len(stagedFiles))
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(7, len(stagedFiles))
       self.failUnless("file001" in stagedFiles)
@@ -1387,7 +1392,8 @@ class TestRemotePeer(unittest.TestCase):
          permissions = 0642   # arbitrary, but different than umask would give
       else:
          permissions = 0400   # arbitrary
-      peer.stagePeer(targetDir=targetDir, permissions=permissions)
+      stagedFiles = peer.stagePeer(targetDir=targetDir, permissions=permissions)
+      self.failUnlessEqual(7, len(stagedFiles))
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(7, len(stagedFiles))
       self.failUnless("file001" in stagedFiles)

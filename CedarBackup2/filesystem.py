@@ -791,6 +791,13 @@ class BackupFileList(FilesystemList):
       However, to be safe, everything is explicitly added to the tar archive
       non-recursively so it's safe to include soft links to directories.
 
+      @note: The Python C{tarfile} module, which is used internally here, is
+      supposed to deal properly with long filenames and links.  In my testing,
+      I have found that it appears to be able to add long really long filenames
+      to archives, but doesn't do a good job reading them back out, even out of
+      an archive it created.  Fortunately, all Cedar Backup does is add files
+      to archives.
+
       @param path: Path of tar file to create on disk
       @type path: String representing a path on disk
 
