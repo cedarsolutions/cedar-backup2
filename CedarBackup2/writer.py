@@ -631,10 +631,12 @@ class CdWriter(object):
       """
       if boundaries is None or boundaries[0] == 0:
          sectorsAvailable = media.capacity - media.initialLeadIn
+         if sectorsAvailable < 0: sectorsAvailable = 0
          bytesUsed = 0
          bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
       else:
          sectorsAvailable = media.capacity - boundaries[1] - media.leadIn
+         if sectorsAvailable < 0: sectorsAvailable = 0
          bytesUsed = convertSize(boundaries[1], UNIT_SECTORS, UNIT_BYTES)
          bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
       return MediaCapacity(bytesUsed, bytesAvailable, boundaries)

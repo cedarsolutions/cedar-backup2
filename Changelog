@@ -1,7 +1,8 @@
 Version 2.1.2	unreleased
 
-	* Fix a few error messages with incorrect arguments in extensions.
-	* Do not log ls and dpkg output to debug log in sysinfo extension.
+	* Fix a few extension error messages with incorrect (missing) arguments.
+	* In sysinfo extension, do not log ls and dpkg output to debug log.
+	* Fix CdWriter, which reported negative capacity when disc was almost full.
 
 Version 2.1.1	06 Mar 2005
 
