@@ -57,10 +57,10 @@ EPYDOC_DIR        = $(DOC_DIR)/cedar-backup
 all: doc distrib
 
 clean: docclean distribclean 
-	find . -name "*.pyc" | xargs rm -f
+	-@find . -name "*.pyc" | xargs rm -f
 
 test:
-	$(PYTHON) util/unittest.py
+	-@$(PYTHON) util/unittest.py
 
 
 ##################################
@@ -82,7 +82,7 @@ pycheck:
 ################
 
 docclean:
-	-$(RM) -rf $(EPYDOC_DIR)
+	-@$(RM) -rf $(EPYDOC_DIR)
 
 doc: $(EPYDOC_DIR)
 	@$(EPYDOC) --name "CedarBackup"   \
@@ -106,25 +106,25 @@ $(EPYDOC_DIR):
 distrib: doc sdist debdist 
 
 distribclean: sdistclean debdistclean
-	-$(RM) -f MANIFEST 
-	-$(RM) -rf $(DIST_DIR)
+	-@$(RM) -f MANIFEST 
+	-@$(RM) -rf $(DIST_DIR)
 
 sdist: $(SDIST_DIR)
-	$(SETUP) sdist --dist-dir $(SDIST_DIR)
-	$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz ../
+	@$(SETUP) sdist --dist-dir $(SDIST_DIR)
+	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz ../
 
 $(SDIST_DIR):
-	$(MKDIR) -p $(SDIST_DIR)
+	@$(MKDIR) -p $(SDIST_DIR)
 
 sdistclean: 
-	$(RM) -f $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz
+	@$(RM) -f $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz
 
 debdist: sdist
-	$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz
-	$(CP) $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz ../
+	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz
+	@$(CP) $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz ../
 
 debdistclean: 
-	$(RM) -f $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz 
+	@$(RM) -f $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz 
 
-.PHONY: all clean test pychecker pycheck doc doclean distrib sdist sdistclean debdist debdistclean
+.PHONY: all clean test check pychecker pycheck doc doclean distrib sdist sdistclean debdist debdistclean
 

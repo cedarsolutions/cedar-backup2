@@ -214,7 +214,7 @@ def filldir(config, basedir, depth):
    linkindex = 0
    for linkitem in linkitems:
       linkindex += 1
-      linkname = os.path.join(basedir, (config['linkprefix'], linkindex))
+      linkname = os.path.join(basedir, "%s%03d" % (config['linkprefix'], linkindex))
       os.symlink(linkitem, linkname)
       print "Created link [%s] to [%s]." % (linkname, linkitem)
 
@@ -296,11 +296,13 @@ def main():
       sys.exit(2)
 
    # Create the tree (this is a recursive call)
-   try:
-      os.mkdir(basedir)
-      filldir(config, basedir, 1)
-   except Exception, e:
-      print "Error filling directory: %s" % e
+   os.mkdir(basedir)
+   filldir(config, basedir, 1)
+#   try:
+#      os.mkdir(basedir)
+#      filldir(config, basedir, 1)
+#   except Exception, e:
+#      print "Error filling directory: %s" % e
 
    # Print a closing message
    print "Completed with no errors."
