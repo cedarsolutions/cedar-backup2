@@ -874,12 +874,12 @@ def unmount(mountPoint, removeAfter=False, attempts=1, waitSeconds=0):
    """
    if os.path.ismount(mountPoint):
       for attempt in range(0, attempts):
-         logger.debug("Attempt %d to unmount [%s]." % mountPoint)
+         logger.debug("Making attempt %d to unmount [%s]." % (attempt, mountPoint))
          result = executeCommand(UMOUNT_CMD, [ mountPoint, ], returnOutput=False, ignoreStderr=True)[0]
          if result != 0:
             logger.error("Error [%d] unmounting [%s] on attempt %d." % (result, mountPoint, attempt))
          elif os.path.ismount(mountPoint):
-            logger.error("After attempt %d, [%s] is still mounted." % (mountPoint, attempt))
+            logger.error("After attempt %d, [%s] is still mounted." % (attempt, mountPoint))
          else:
             logger.debug("Successfully unmounted [%s] on attempt %d." % (mountPoint, attempt))
             break  # this will cause us to skip the loop else: clause
