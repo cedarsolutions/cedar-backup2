@@ -58,7 +58,7 @@ import tarfile
 
 # Cedar Backup modules
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
-from CedarBackup2.util import AbsolutePathList, ObjectTypeList, calculateFileAge, encodePath
+from CedarBackup2.util import AbsolutePathList, ObjectTypeList, UnorderedList, calculateFileAge, encodePath
 
 
 ########################################################################
@@ -1105,13 +1105,12 @@ def compareContents(path1, path2, verbose=False):
    generating a digest map for each path and comparing the two.
 
    If no exception is thrown, the two directories are considered identical.
-   The thrown C{ValueError} exception distinguishes between the directories
-   containing different files, and containing the same files with differing
-   content.
 
    If the C{verbose} flag is C{True}, then an alternate (but slower) method is
    used so that any thrown exception can indicate exactly which file caused the
-   comparison to fail.
+   comparison to fail.  The thrown C{ValueError} exception distinguishes
+   between the directories containing different files, and containing the same
+   files with differing content.
 
    @param path1: First path to compare.
    @type path1: String representing a path on disk
@@ -1131,13 +1130,15 @@ def compareContents(path1, path2, verbose=False):
    path2List = BackupFileList()
    path2List.addDirContents(path2)
    path2Digest = path2List.generateDigestMap(stripPrefix=normalizeDir(path2))
-   if path1Digest.keys() != path2Digest.keys():
-      raise ValueError("Directories contain a different set of files.")
    if not verbose:
       if path1Digest != path2Digest:
-         raise ValueError("File contents vary between directories.")
+         raise ValueError("Consistency check failed.")
    else:
-      for key in path1Digest.keys():
+      list1 = UnorderedList(path1Digest.keys())
+      list2 = UnorderedList(path2Digest.keys())
+      if list1 != list2:
+         raise ValueError("Directories contain a different set of files.")
+      for key in list1:
          if path1Digest[key] != path2Digest[key]:
             raise ValueError("File contents for [%s] vary between directories." % key)
 

@@ -248,8 +248,8 @@ class MediaCapacity(object):
    available for data storage, including any required lead-in.  
 
    The boundaries value is either C{None} (if multisession discs are not
-   supported) or in exactly the form provided by C{cdrecord -msinfo}.  It can
-   be passed as-is to the C{IsoImage} class.
+   supported or if the disc has no boundaries) or in exactly the form provided
+   by C{cdrecord -msinfo}.  It can be passed as-is to the C{IsoImage} class.
 
    @sort: __init__, bytesUsed, bytesAvailable, boundaries
    """
@@ -560,7 +560,8 @@ class CdWriter(object):
       does not support writing multisession discs or if C{useMulti} is passed
       in as C{False}, the capacity will also be as if the disc were to be
       rewritten from scratch, but the indicated boundaries value will be
-      C{None}.  Otherwise, the capacity (including the boundaries) will
+      C{None}.  The same will happen if the disc cannot be read for some
+      reason.  Otherwise, the capacity (including the boundaries) will
       represent whatever space remains on the disc to be filled by future
       sessions.
 
@@ -580,9 +581,10 @@ class CdWriter(object):
       """
       Gets the ISO boundaries for the media.
 
-      If C{entireDisc} is passed in as C{True} the boundaries will be C{0,0},
+      If C{entireDisc} is passed in as C{True} the boundaries will be C{None},
       as if the disc were to be rewritten from scratch.  If the drive does not
       support writing multisession discs, the returned value will be C{None}.
+      The same will happen if the disc can't be read for some reason.
       Otherwise, the returned value will be represent the boundaries of the
       disc's current contents.
 
@@ -605,7 +607,7 @@ class CdWriter(object):
       elif not useMulti:
          return None
       elif entireDisc:
-         return (0, 0)
+         return None
       else:
          args = CdWriter._buildBoundariesArgs(self._scsiId)
          (result, output) = executeCommand(CDRECORD_CMD, args, returnOutput=True, ignoreStderr=True)
@@ -852,6 +854,8 @@ class CdWriter(object):
       not bytes.  Clients should generally consider the boundaries value
       opaque, however.
 
+      @note: If the boundaries output can't be parsed, we return C{None}.
+
       @param output: Output from a C{cdrecord -msinfo} command.
 
       @return: Boundaries tuple as described above.
@@ -859,7 +863,7 @@ class CdWriter(object):
       """
       if len(output) < 1:
          logger.warn("Unable to read disc (might not be initialized); returning full capacity.")
-         return (0, 0)
+         return None
       boundaryPattern = re.compile(r"(^\s*)([0-9]*)(\s*,\s*)([0-9]*)(\s*$)")
       parsed = boundaryPattern.search(output[0])
       if not parsed:

@@ -374,6 +374,11 @@ class IsoImage(object):
       C{mkisofs} behavior for adding directories, which is to add only the
       items within the directory, and not the directory itself.
 
+      @note: Things get I{odd} if you try to add a directory to an image that
+      will be written to a multisession disc, and the same directory already
+      exists in an earlier session on that disc.  Not all of the data gets
+      written.  You really wouldn't want to do this anyway, I guess.
+
       @note: An exception will be thrown if the path has already been added to
       the image, unless the C{override} parameter is set to C{True}.
 
