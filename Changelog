@@ -1,6 +1,7 @@
-Version 2.0.0    unreleased
+Version 2.0.0	26 Feb 2005
 
-	* Complete rewrite for 2.0.0 release.
+	* Complete ground-up rewrite for 2.0.0 release.
+	* See doc/release.txt for more details about changes.
 
 Version 1.12   16 Jan 2005
 

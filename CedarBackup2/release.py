@@ -12,7 +12,7 @@
 # Language : Python (>= 2.3)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Provides location to maintain version information.
+# Purpose  : Provides location to maintain release information.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -21,7 +21,7 @@ Provides location to maintain version information.
 
 @sort: AUTHOR, EMAIL, COPYRIGHT, VERSION, DATE, URL
 
-@var AUTHOR: Author of software for reference.
+@var AUTHOR: Author of software.
 @var EMAIL: Email address of author.
 @var COPYRIGHT: Copyright date.
 @var VERSION: Software version.
@@ -35,6 +35,6 @@ AUTHOR      = "Kenneth J. Pronovici"
 EMAIL       = "pronovic@ieee.org"
 COPYRIGHT   = "2004-2005"
 VERSION     = "2.0.0"
-DATE        = "unreleased"
+DATE        = "26 Feb 2005"
 URL         = "http://cedar-solutions.com/software/cedar-backup"
 
