@@ -136,6 +136,7 @@ def main():
       import test.knapsacktests as knapsacktests
       import test.filesystemtests as filesystemtests
       import test.peertests as peertests
+      import test.utiltests as utiltests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -161,6 +162,7 @@ def main():
    # Create and run the test suite
    print ""
    suite = unittest.TestSuite((
+                               utiltests.suite(),
                                knapsacktests.suite(), 
                                filesystemtests.suite(),
                                peertests.suite(),
