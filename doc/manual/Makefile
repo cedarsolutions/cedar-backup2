@@ -26,8 +26,8 @@
 #
 # The original Makefile was (c) 2000-2004 CollabNet (see CREDITS).
 #
-# Note that by default, we only build HTML and HTML chunk output, not
-# PDF or Postscript.
+# Note that by default, we only build HTML, HTML chunk and PDF output,
+# not Postscript.
 
 
 ########################
@@ -73,7 +73,7 @@ MANUAL_IMAGES            = $(MANUAL_DIR)/images/*.png
 
 all: manual-html manual-chunk 
 
-install: install-manual-html install-manual-chunk 
+install: install-manual-pdf install-manual-html install-manual-chunk 
 
 clean: 
 	-@$(RM) -f $(MANUAL_HTML_TARGET) $(MANUAL_FO_TARGET)

@@ -170,9 +170,8 @@
             <term><xref linkend="cedar-install"/></term>
             <listitem>
                <para>
-                  Explains how to install and configure the Cedar Backup
-                  package either from the Python source distribution or from
-                  the Debian package.
+                  Explains how to install the Cedar Backup package either from
+                  the Python source distribution or from the Debian package.
                </para>
             </listitem>
          </varlistentry>
@@ -182,7 +181,7 @@
             <listitem>
                <para>
                   Provides detailed information about how to configure Cedar
-                  Backup.  
+                  Backup.
                </para>
             </listitem>
          </varlistentry>
@@ -192,10 +191,7 @@
             <listitem>
                <para>
                   Covers the major differences between the current Cedar Backup
-                  release and the previous 1.0 release.  Differences are
-                  generally noted in the appropriate sections throughout the
-                  text of the manual, but some users might be interested in
-                  seeing a concise summary of the differences.
+                  release and the previous 1.0 release. 
                </para>
             </listitem>
          </varlistentry>
@@ -207,6 +203,17 @@
                   Specifies the Cedar Backup extension architecture interface,
                   through which third party developers can write extensions to
                   Cedar Backup.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><xref linkend="cedar-appendixc"/></term>
+            <listitem>
+               <para>
+                  Provides some additional information about the packages which
+                  Cedar Backup relies on, including information about how to
+                  find documentation and packages on non-Debian systems.
                </para>
             </listitem>
          </varlistentry>
@@ -227,6 +234,26 @@
          Control with Subversion</ulink>.  Many thanks to the authors (and
          O'Reilly) for making this excellent reference available under a free
          and open license.
+      </para>
+
+      <para>
+         There are not very many Cedar Backup users today, but almost all of
+         them have contributed in some way to the documentation in this manual,
+         either by asking questions, making suggestions or finding bugs.  I'm
+         glad to have them as users, and I hope that this new release meets
+         their needs even better than the previous release.
+      </para>
+
+      <para>
+         My wife Julie puts up with a lot.  It's sometimes not easy to live
+         with someone who hacks on open source code in his free time &mdash;
+         even when you're a pretty good engineer yourself, like she is.  First,
+         she managed to live with a dual-boot Debian and Windoze machine; then
+         she managed to get used to IceWM rather than a prettier desktop; and
+         eventually she even managed to cope with <command>vim</command> when
+         she needed to.  Now, even after all that, she has graciously
+         volunteered to edit this manual.  I much appreciate her skill with a
+         red pen.
       </para>
 
    </sect1>
