@@ -606,6 +606,17 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnlessEqual(name, peer.name)
       self.failUnlessEqual(collectDir, peer.collectDir)
 
+   def testBasic_003(self):
+      """
+      Make sure attributes are set properly for valid constructor input, with
+      spaces in the collect directory path.
+      """
+      name = "peer1"
+      collectDir = "/ absolute / path/   name "
+      peer = LocalPeer(name, collectDir)
+      self.failUnlessEqual(name, peer.name)
+      self.failUnlessEqual(collectDir, peer.collectDir)
+
 
    ###############################
    # Test checkCollectIndicator()
@@ -694,6 +705,38 @@ class TestLocalPeer(unittest.TestCase):
       result = peer.checkCollectIndicator(collectIndicator="different")
       self.failUnlessEqual(True, result)
 
+   def testCheckCollectIndicator_007(self):
+      """
+      Attempt to check collect indicator collect indicator file that does exist,
+      with spaces in the collect directory path.
+      """
+      name = "peer1"
+      collectDir = self.buildPath(["collect directory here", ])
+      collectIndicator = self.buildPath(["collect directory here", DEF_COLLECT_INDICATOR, ])
+      os.mkdir(collectDir)
+      open(collectIndicator, "w").write("")     # touch the file
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(os.path.exists(collectIndicator))
+      peer = LocalPeer(name, collectDir)
+      result = peer.checkCollectIndicator()
+      self.failUnlessEqual(True, result)
+
+   def testCheckCollectIndicator_008(self):
+      """
+      Attempt to check collect indicator collect indicator file that does exist, custom name,
+      with spaces in the collect directory path and collect indicator file name.
+      """
+      name = "peer1"
+      collectDir = self.buildPath([" collect dir ", ])
+      collectIndicator = self.buildPath([" collect dir ", "different, file", ])
+      os.mkdir(collectDir)
+      open(collectIndicator, "w").write("")     # touch the file
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(os.path.exists(collectIndicator))
+      peer = LocalPeer(name, collectDir)
+      result = peer.checkCollectIndicator(collectIndicator="different, file")
+      self.failUnlessEqual(True, result)
+
 
    #############################
    # Test writeStageIndicator()
@@ -759,6 +802,34 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       peer = LocalPeer(name, collectDir)
       peer.writeStageIndicator(stageIndicator="whatever")
+      self.failUnless(os.path.exists(stageIndicator))
+
+   def testWriteStageIndicator_006(self):
+      """
+      Attempt to write stage indicator in a valid directory, with spaces
+      in the directory name.
+      """
+      name = "peer1"
+      collectDir = self.buildPath(["collect from this directory", ])
+      stageIndicator = self.buildPath(["collect from this directory", DEF_STAGE_INDICATOR, ])
+      os.mkdir(collectDir)
+      self.failUnless(os.path.exists(collectDir))
+      peer = LocalPeer(name, collectDir)
+      peer.writeStageIndicator()
+      self.failUnless(os.path.exists(stageIndicator))
+
+   def testWriteStageIndicator_007(self):
+      """
+      Attempt to write stage indicator in a valid directory, custom name,
+      with spaces in the directory name and the file name.
+      """
+      name = "peer1"
+      collectDir = self.buildPath(["collect ME", ])
+      stageIndicator = self.buildPath(["collect ME", "   whatever-it-takes you", ])
+      os.mkdir(collectDir)
+      self.failUnless(os.path.exists(collectDir))
+      peer = LocalPeer(name, collectDir)
+      peer.writeStageIndicator(stageIndicator="   whatever-it-takes you")
       self.failUnless(os.path.exists(stageIndicator))
 
 
@@ -856,6 +927,23 @@ class TestLocalPeer(unittest.TestCase):
 
    def testStagePeer_007(self):
       """
+      Attempt to stage files with empty collect directory, where the target
+      directory name contains spaces.
+      """
+      self.extractTar("tree2")
+      name = "peer1"
+      collectDir = self.buildPath(["tree2", "dir001", ])
+      targetDir = self.buildPath([" target directory ", ])
+      os.mkdir(targetDir)
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(os.path.exists(targetDir))
+      peer = LocalPeer(name, collectDir)
+      peer.stagePeer(targetDir=targetDir)
+      stagedFiles = os.listdir(targetDir)
+      self.failUnlessEqual([], stagedFiles)
+
+   def testStagePeer_008(self):
+      """
       Attempt to stage files with non-empty collect directory.
       """
       self.extractTar("tree1")
@@ -878,7 +966,32 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnless("file006" in stagedFiles)
       self.failUnless("file007" in stagedFiles)
 
-   def testStagePeer_008(self):
+   def testStagePeer_009(self):
+      """
+      Attempt to stage files with non-empty collect directory, where the
+      target directory name contains spaces.
+      """
+      self.extractTar("tree1")
+      name = "peer1"
+      collectDir = self.buildPath(["tree1", ])
+      targetDir = self.buildPath(["target directory place", ])
+      os.mkdir(targetDir)
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(os.path.exists(targetDir))
+      self.failUnlessEqual(0, len(os.listdir(targetDir)))
+      peer = LocalPeer(name, collectDir)
+      peer.stagePeer(targetDir=targetDir)
+      stagedFiles = os.listdir(targetDir)
+      self.failUnlessEqual(7, len(stagedFiles))
+      self.failUnless("file001" in stagedFiles)
+      self.failUnless("file002" in stagedFiles)
+      self.failUnless("file003" in stagedFiles)
+      self.failUnless("file004" in stagedFiles)
+      self.failUnless("file005" in stagedFiles)
+      self.failUnless("file006" in stagedFiles)
+      self.failUnless("file007" in stagedFiles)
+
+   def testStagePeer_010(self):
       """
       Attempt to stage files with non-empty collect directory containing links and directories.
       """
@@ -893,7 +1006,7 @@ class TestLocalPeer(unittest.TestCase):
       peer = LocalPeer(name, collectDir)
       self.failUnlessRaises(ValueError, peer.stagePeer, targetDir=targetDir)
 
-   def testStagePeer_009(self):
+   def testStagePeer_011(self):
       """
       Attempt to stage files with non-empty collect directory and attempt to set valid permissions.
       """
@@ -997,6 +1110,20 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(DEF_RCP_COMMAND, peer.rcpCommand)
 
    def testBasic_003(self):
+      """
+      Make sure attributes are set properly for valid constructor input, where
+      the collect directory contains spaces.
+      """
+      name = REMOTE_HOST
+      collectDir = "/absolute/path/to/ a large directory"
+      remoteUser = getLogin()
+      peer = RemotePeer(name, remoteUser, collectDir)
+      self.failUnlessEqual(name, peer.name)
+      self.failUnlessEqual(collectDir, peer.collectDir)
+      self.failUnlessEqual(remoteUser, peer.remoteUser)
+      self.failUnlessEqual(DEF_RCP_COMMAND, peer.rcpCommand)
+
+   def testBasic_004(self):
       """
       Make sure attributes are set properly for valid constructor input, custom rcp command.
       """
@@ -1114,6 +1241,38 @@ class TestRemotePeer(unittest.TestCase):
 
    def testCheckCollectIndicator_008(self):
       """
+      Attempt to check collect indicator collect indicator file that does not
+      exist, where the collect directory contains spaces.
+      """
+      name = REMOTE_HOST
+      collectDir = self.buildPath(["collect directory path", ])
+      collectIndicator = self.buildPath(["collect directory path", DEF_COLLECT_INDICATOR, ])
+      remoteUser = getLogin()
+      os.mkdir(collectDir)
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(not os.path.exists(collectIndicator))
+      peer = RemotePeer(name, remoteUser, collectDir)
+      result = peer.checkCollectIndicator()
+      self.failUnlessEqual(False, result)
+
+   def testCheckCollectIndicator_009(self):
+      """
+      Attempt to check collect indicator collect indicator file that does not
+      exist, custom name, where the collect directory contains spaces.
+      """
+      name = REMOTE_HOST
+      collectDir = self.buildPath(["  you collect here   ", ])
+      collectIndicator = self.buildPath(["  you collect here   ", NONEXISTENT_FILE, ])
+      remoteUser = getLogin()
+      os.mkdir(collectDir)
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(not os.path.exists(collectIndicator))
+      peer = RemotePeer(name, remoteUser, collectDir)
+      result = peer.checkCollectIndicator()
+      self.failUnlessEqual(False, result)
+
+   def testCheckCollectIndicator_010(self):
+      """
       Attempt to check collect indicator collect indicator file that does exist.
       """
       name = REMOTE_HOST
@@ -1128,7 +1287,7 @@ class TestRemotePeer(unittest.TestCase):
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(True, result)
 
-   def testCheckCollectIndicator_009(self):
+   def testCheckCollectIndicator_011(self):
       """
       Attempt to check collect indicator collect indicator file that does exist, custom name.
       """
@@ -1142,6 +1301,41 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectIndicator))
       peer = RemotePeer(name, remoteUser, collectDir)
       result = peer.checkCollectIndicator(collectIndicator="whatever")
+      self.failUnlessEqual(True, result)
+
+   def testCheckCollectIndicator_012(self):
+      """
+      Attempt to check collect indicator collect indicator file that does exist,
+      where the collect directory contains spaces.
+      """
+      name = REMOTE_HOST
+      collectDir = self.buildPath(["collect NOT", ])
+      collectIndicator = self.buildPath(["collect NOT", DEF_COLLECT_INDICATOR, ])
+      remoteUser = getLogin()
+      os.mkdir(collectDir)
+      self.failUnless(os.path.exists(collectDir))
+      open(collectIndicator, "w").write("")     # touch the file
+      self.failUnless(os.path.exists(collectIndicator))
+      peer = RemotePeer(name, remoteUser, collectDir)
+      result = peer.checkCollectIndicator()
+      self.failUnlessEqual(True, result)
+
+   def testCheckCollectIndicator_013(self):
+      """
+      Attempt to check collect indicator collect indicator file that does
+      exist, custom name, where the collect directory and indicator file
+      contain spaces.
+      """
+      name = REMOTE_HOST
+      collectDir = self.buildPath([" from here collect!", ])
+      collectIndicator = self.buildPath([" from here collect!", "whatever, dude", ])
+      remoteUser = getLogin()
+      os.mkdir(collectDir)
+      self.failUnless(os.path.exists(collectDir))
+      open(collectIndicator, "w").write("")     # touch the file
+      self.failUnless(os.path.exists(collectIndicator))
+      peer = RemotePeer(name, remoteUser, collectDir)
+      result = peer.checkCollectIndicator(collectIndicator="whatever, dude")
       self.failUnlessEqual(True, result)
 
 
@@ -1242,6 +1436,38 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(not os.path.exists(stageIndicator))
       peer = RemotePeer(name, remoteUser, collectDir)
       peer.writeStageIndicator(stageIndicator="newname")
+      self.failUnless(os.path.exists(stageIndicator))
+
+   def testWriteStageIndicator_008(self):
+      """
+      Attempt to write stage indicator in a valid directory that contains
+      spaces.
+      """
+      name = REMOTE_HOST
+      collectDir = self.buildPath(["with spaces collect", ])
+      stageIndicator = self.buildPath(["with spaces collect", DEF_STAGE_INDICATOR, ])
+      remoteUser = getLogin()
+      os.mkdir(collectDir)
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(not os.path.exists(stageIndicator))
+      peer = RemotePeer(name, remoteUser, collectDir)
+      peer.writeStageIndicator()
+      self.failUnless(os.path.exists(stageIndicator))
+
+   def testWriteStageIndicator_009(self):
+      """
+      Attempt to write stage indicator in a valid directory, custom name, where
+      the collect directory and the custom name contain spaces.
+      """
+      name = REMOTE_HOST
+      collectDir = self.buildPath(["collect, soon", ])
+      stageIndicator = self.buildPath(["collect, soon", "new name with spaces", ])
+      remoteUser = getLogin()
+      os.mkdir(collectDir)
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(not os.path.exists(stageIndicator))
+      peer = RemotePeer(name, remoteUser, collectDir)
+      peer.writeStageIndicator(stageIndicator="new name with spaces")
       self.failUnless(os.path.exists(stageIndicator))
 
 
@@ -1390,6 +1616,25 @@ class TestRemotePeer(unittest.TestCase):
 
    def testStagePeer_010(self):
       """
+      Attempt to stage files with empty collect directory, with a target
+      directory that contains spaces.
+      @note: This test assumes that scp returns an error if the directory is empty.
+      """
+      name = REMOTE_HOST
+      collectDir = self.buildPath(["collect", ])
+      targetDir = self.buildPath(["target DIR", ])
+      remoteUser = getLogin()
+      os.mkdir(collectDir)
+      os.mkdir(targetDir)
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(os.path.exists(targetDir))
+      peer = RemotePeer(name, remoteUser, collectDir)
+      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      stagedFiles = os.listdir(targetDir)
+      self.failUnlessEqual([], stagedFiles)
+
+   def testStagePeer_011(self):
+      """
       Attempt to stage files with non-empty collect directory.
       """
       self.extractTar("tree1")
@@ -1413,7 +1658,33 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless("file006" in stagedFiles)
       self.failUnless("file007" in stagedFiles)
 
-   def testStagePeer_011(self):
+   def testStagePeer_012(self):
+      """
+      Attempt to stage files with non-empty collect directory, with a target
+      directory that contains spaces.
+      """
+      self.extractTar("tree1")
+      name = REMOTE_HOST
+      collectDir = self.buildPath(["tree1", ])
+      targetDir = self.buildPath(["write the target here, now!", ])
+      remoteUser = getLogin()
+      os.mkdir(targetDir)
+      self.failUnless(os.path.exists(collectDir))
+      self.failUnless(os.path.exists(targetDir))
+      self.failUnlessEqual(0, len(os.listdir(targetDir)))
+      peer = RemotePeer(name, remoteUser, collectDir)
+      peer.stagePeer(targetDir=targetDir)
+      stagedFiles = os.listdir(targetDir)
+      self.failUnlessEqual(7, len(stagedFiles))
+      self.failUnless("file001" in stagedFiles)
+      self.failUnless("file002" in stagedFiles)
+      self.failUnless("file003" in stagedFiles)
+      self.failUnless("file004" in stagedFiles)
+      self.failUnless("file005" in stagedFiles)
+      self.failUnless("file006" in stagedFiles)
+      self.failUnless("file007" in stagedFiles)
+
+   def testStagePeer_013(self):
       """
       Attempt to stage files with non-empty collect directory containing links and directories.
       @note: We assume that scp copies the files even though it returns an error due to directories.
@@ -1434,7 +1705,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless("file001" in stagedFiles)
       self.failUnless("file002" in stagedFiles)
 
-   def testStagePeer_012(self):
+   def testStagePeer_014(self):
       """
       Attempt to stage files with non-empty collect directory and attempt to set valid permissions.
       """
