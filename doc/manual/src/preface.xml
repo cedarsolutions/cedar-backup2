@@ -79,6 +79,13 @@
          <variablelist>
 
             <varlistentry>
+            <term><filename>Term</filename></term>
+               <listitem>
+                  <para>Used for first use of important terms.</para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
                <term><command>Command</command></term>
                <listitem>
                   <para>Used for commands, command output, and switches</para>
