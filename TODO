@@ -16,22 +16,22 @@
 
 MISSING FUNCTIONALITY FOR 2.0
 
-* Standard action functions must all check at their top whether their configuration section exists, and error out otherwise
-* Implement logic to check (today, yesterday, tomorrow) when storing, so backups work over midnite (bug #1)
-* Implement consistency check in store action - it's not even stubbed right now.
-* Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
-* Write individual action functions (process.py) in terms of other lower-level functionality
-* Make sure that errors such as failure to connect to peer are reliably indicated outside of log (bug #12)
-* Make validate action report on missing directories and bad permissions (at CLI level and not configuration level). (bug #7)
-* Make validate action check that users exist, as well - as much checking as possible after config is valid.
+None!
+
+
+ITEMS THAT SHOULD BE DONE BUT NEED TESTING
+
+* Build some unit tests for generic action-related code
+* Write unit test for deviceMounted() function - might be difficult?
 * Test _ActionSet and _ActionItem functionality, hopefully in a unit test of some sort
-* Make sure that --full backup always backs up weekly items, even if it isn't the start of the week.
 
 
 ADMINISTRATIVE
 
 * Change sort order of parameters, classes within modules, etc. where needed in Epydoc
 * Do a bunch of sample runs to get the logging level right (difference between "normal" and debug...?)
+* Come up with a standard svn label script to do releases, so I can't forget as easily.
+* Backport Python 2.3 and Python XML for 2.3 to woody to support 1.0.  Couldn't we have released sooner?
 
 
 DOCUMENTATION

@@ -18,6 +18,7 @@
          <name>bogus</name>
          <module>module</module>
          <function>something</function>
+         <index>350</index>
       </action>
    </extensions>
    <options>

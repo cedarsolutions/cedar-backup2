@@ -3613,8 +3613,8 @@ class Config(object):
       Validates extensions configuration.
 
       The list of actions may be either C{None} or an empty list C{[]} if
-      desired.  Each extended action must include a name, a module and a
-      function.  The index value is optional.
+      desired.  Each extended action must include a name, a module, a 
+      function and an index.
 
       @raise ValueError: If reference configuration is invalid.
       """
