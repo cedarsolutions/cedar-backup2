@@ -105,16 +105,15 @@ def _validateDevice(device, unittest=False):
 def validateScsiId(scsiId):
    """
    Validates a SCSI id string.
-   SCSI id must be a string in the form C{[ATA:]scsibus,target,lun}.
+   SCSI id must be a string in the form C{[ATA:|ATAPI:]scsibus,target,lun}.
    @note: For consistency, if C{None} is passed in, C{None} will be returned.
    @param scsiId: SCSI id for the device.
    @return: SCSI id as a string, suitable for assignment to C{CdWriter.scsiId}.
    @raise ValueError: If the SCSI id string is invalid.
    """
-   ataPattern = re.compile(r"^\s*ATA:[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
-   normalPattern = re.compile(r"^\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
-   if not ataPattern.search(scsiId) and not normalPattern.search(scsiId):
-      raise ValueError("SCSI id must be in the form '[ATA:]scsibus,target,lun'.")
+   pattern = re.compile(r"^\s*(?:ATA:|ATAPI:)?[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
+   if not pattern.search(scsiId):
+      raise ValueError("SCSI id must be in the form '[ATA:|ATAPI:]scsibus,target,lun'.")
    return scsiId
 
 def validateDriveSpeed(driveSpeed):
@@ -410,7 +409,7 @@ class CdWriter(object):
       @type device: Absolute path to a filesystem device, i.e. C{/dev/cdrw}
 
       @param scsiId: SCSI id for the device.
-      @type scsiId: SCSI id in the form C{[ATA:]scsibus,target,lun}
+      @type scsiId: SCSI id in the form C{[ATA:|ATAPI:]scsibus,target,lun}
 
       @param driveSpeed: Speed at which the drive writes.
       @type driveSpeed: Use C{2} for 2x device, etc. or C{None} to use device default.
@@ -511,7 +510,7 @@ class CdWriter(object):
       return self._deviceCanEject
 
    device = property(_getDevice, None, None, doc="Filesystem device name for this writer.")
-   scsiId = property(_getScsiId, None, None, doc="SCSI id for the device, in the form C{[ATA:]scsibus,target,lun}.")
+   scsiId = property(_getScsiId, None, None, doc="SCSI id for the device, in the form C{[ATA:|ATAPI:]scsibus,target,lun}.")
    driveSpeed = property(_getDriveSpeed, None, None, doc="Speed at which the drive writes.")
    media = property(_getMedia, None, None, doc="Definition of media that is expected to be in the device.")
    deviceType = property(_getDeviceType, None, None, doc="Type of the device, as returned from C{cdrecord -prcap}.")
@@ -912,7 +911,7 @@ class CdWriter(object):
       The arguments will cause the C{cdrecord} command to ask the device
       for a list of its capacities via the C{-prcap} switch.
 
-      @param scsiId: SCSI id for the device, in the form C{[ATA:]scsibus,target,lun}.
+      @param scsiId: SCSI id for the device, in the form C{[ATA:|ATAPI:]scsibus,target,lun}.
 
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
       """
@@ -930,7 +929,7 @@ class CdWriter(object):
       the current multisession boundaries of the media using the C{-msinfo}
       switch.
 
-      @param scsiId: SCSI id for the device, in the form C{[ATA:]scsibus,target,lun}.
+      @param scsiId: SCSI id for the device, in the form C{[ATA:|ATAPI:]scsibus,target,lun}.
 
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
       """
@@ -949,7 +948,7 @@ class CdWriter(object):
       as to whether the action makes sense (i.e. to whether the media even can
       be blanked).
 
-      @param scsiId: SCSI id for the device, in the form C{[ATA:]scsibus,target,lun}.
+      @param scsiId: SCSI id for the device, in the form C{[ATA:|ATAPI:]scsibus,target,lun}.
       @param driveSpeed: Speed at which the drive writes.
 
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
@@ -974,7 +973,7 @@ class CdWriter(object):
       the action makes sense (i.e. to whether the device even can write
       multisession discs, for instance).
 
-      @param scsiId: SCSI id for the device, in the form C{[ATA:]scsibus,target,lun}.
+      @param scsiId: SCSI id for the device, in the form C{[ATA:|ATAPI:]scsibus,target,lun}.
       @param imagePath: Path to an ISO image on disk.
       @param driveSpeed: Speed at which the drive writes.
       @param writeMulti: Indicates whether to write a multisession disc.
