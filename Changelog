@@ -1,7 +1,8 @@
-Version 2.1.0	unreleased 
+Version 2.1.0	06 Mar 2005
 
 	* Fixed doc/cback.1 .TH line to give proper manpage section.
-	* Fix a few logging statements for collect action, to be clearer.
+	* Fix a few logging statements for the collect action, to be clearer.
+	* Fix regression tests that failed in a Debian pbuilder environment.
 	* Add simple main routine to cli.py, so executing it is the same as cback.
 	* Added optional outputFile and doNotLog parameters to util.executeCommand().
 	* Display byte quantities in sensible units (i.e. bytes, kB, MB) when logged.
@@ -9,7 +10,8 @@ Version 2.1.0	unreleased
 	* Created MySQL extension in CedarBackup2.extend.mysql.
 	* Created sysinfo extension in CedarBackup2.extend.sysinfo.
 	* Created Subversion extension in CedarBackup2.extend.subversion.
-	* Added regression tests as needed for new functionality.
+	* Added regression tests as needed for new extension functionality.
+	* Added Chapter 5, Official Extensions in the user manual.
 
 Version 2.0.0	26 Feb 2005
 
