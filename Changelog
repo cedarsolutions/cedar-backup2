@@ -1,6 +1,7 @@
 Version 2.1.0	06 Mar 2005
 
 	* Fixed doc/cback.1 .TH line to give proper manpage section.
+	* Updated README to more completely describe what Cedar Backup is.
 	* Fix a few logging statements for the collect action, to be clearer.
 	* Fix regression tests that failed in a Debian pbuilder environment.
 	* Add simple main routine to cli.py, so executing it is the same as cback.
