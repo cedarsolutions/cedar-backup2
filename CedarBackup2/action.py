@@ -917,19 +917,22 @@ def _findCorrectDailyDir(config):
    todayPath = os.path.join(config.stage.targetDir, todayDate)
    yesterdayPath = os.path.join(config.stage.targetDir, yesterdayDate)
    tomorrowPath = os.path.join(config.stage.targetDir, tomorrowDate)
-   todayIndicator = os.path.join(todayPath, STAGE_INDICATOR)
-   yesterdayIndicator = os.path.join(yesterdayPath, STAGE_INDICATOR)
-   tomorrowIndicator = os.path.join(tomorrowPath, STAGE_INDICATOR)
-   if os.path.isdir(todayPath) and os.path.exists(todayIndicator):
+   todayStageInd = os.path.join(todayPath, STAGE_INDICATOR)
+   yesterdayStageInd = os.path.join(yesterdayPath, STAGE_INDICATOR)
+   tomorrowStageInd = os.path.join(tomorrowPath, STAGE_INDICATOR)
+   todayStoreInd = os.path.join(todayPath, STORE_INDICATOR)
+   yesterdayStoreInd = os.path.join(yesterdayPath, STORE_INDICATOR)
+   tomorrowStoreInd = os.path.join(tomorrowPath, STORE_INDICATOR)
+   if os.path.isdir(todayPath) and os.path.exists(todayStageInd) and not os.path.exists(todayStoreInd):
       logger.info("Store process will use current day's stage directory [%s]" % todayPath)
       return { todayPath:todayDate }
-   elif os.path.isdir(yesterdayPath) and os.path.exists(yesterdayIndicator):
+   elif os.path.isdir(yesterdayPath) and os.path.exists(yesterdayStageInd) and not os.path.exists(yesterdayStoreInd):
       logger.info("Store process will use previous day's stage directory [%s]" % yesterdayPath)
       return { yesterdayPath:yesterdayDate }
-   elif os.path.isdir(tomorrowPath) and os.path.exists(tomorrowIndicator):
+   elif os.path.isdir(tomorrowPath) and os.path.exists(tomorrowStageInd) and not os.path.exists(tomorrowStoreInd):
       logger.info("Store process will use next day's stage directory [%s]" % tomorrowPath)
       return { tomorrowPath:tomorrowDate }
-   raise IOError("Unable to find a staging directory to store (tried today, yesterday, tomorrow).")
+   raise IOError("Unable to find unused staging directory to store (tried today, yesterday, tomorrow).")
 
 def _writeImage(config, entireDisc, stagingDirs):
    """
@@ -1014,7 +1017,7 @@ def _consistencyCheck(config, stagingDirs):
       for stagingDir in stagingDirs.keys():
          discDir = os.path.join(mountPoint, stagingDirs[stagingDir])
          logger.debug("Checking [%s] vs. [%s]." % (stagingDir, discDir))
-         compareContents(stagingDir, discDir)
+         compareContents(stagingDir, discDir, verbose=True)
          logger.info("Consistency check completed for [%s].  No problems found." % stagingDir)
    finally:
       if os.path.isdir(mountPoint):
