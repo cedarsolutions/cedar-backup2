@@ -338,7 +338,7 @@ class RestrictedContentList(UnorderedList):
    comparison, so pretty much anything can be in the list of valid values.
 
    The C{valuesDescr} value will be used in exceptions, i.e. C{"Item must be
-   one of values in VALID_ACTIONS" if C{valuesDescr} is C{"VALID_ACTIONS"}.
+   one of values in VALID_ACTIONS"} if C{valuesDescr} is C{"VALID_ACTIONS"}.
    """
    
    def __init__(self, valuesList, valuesDescr):
