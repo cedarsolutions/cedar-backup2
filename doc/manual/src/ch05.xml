@@ -27,19 +27,25 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 -->
 
-<chapter id="cedar-ch-5">
+<chapter id="cedar-trouble">
 
-
-   <title>Installation on a Debian System</title>
-
+   <title>Troubleshooting</title>
 
    <!-- ################################################################# -->
-   <!-- ######################## SECTION 1 ############################## -->
-   <!-- ################################################################# -->
 
-   <sect1 id="cedar-ch-5-sect-1">
+   <simplesect id="cedar-trouble-quote">
+    
+      <comment>Reference: http://en.wikiquote.org/wiki/Programming</comment>
 
-   </sect1>
+      <blockquote>
+         <para>
+            <quote>Debugging is twice as hard as writing the code in the first place.
+            Therefore, if you write the code as cleverly as possible, you are, by
+            definition, not smart enough to debug it.</quote>&mdash; Brian W. Kernighan
+          </para>
+      </blockquote>
+
+   </simplesect>
 
 </chapter>
 
