@@ -71,6 +71,14 @@ name for a package.  (The filesystemtests.py import below is just one example
 of one of the files we would expect to find in the CedarBackup2 unittest
 directory.)
 
+Finally, this script might be used people who won't have an environment that
+allows running all of the tests, especially certain tests related to remote
+connectivity.  Most people should run the script with no arguments.  This will
+result in a "reduced feature set" test suite that with no surprising system or
+network dependencies.  People who understand what they're doing can put "full"
+as one of the arguments on the command-line, and they'll get all of the
+available tests.
+
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -133,6 +141,12 @@ def main():
       print "You must either run the unit tests from the CedarBackup2 source"
       print "tree, or properly set the PYTHONPATH enviroment variable."
       sys.exit(1)
+
+   # Set flags in the environment to control tests
+   if "full" in sys.argv:
+      os.environ["PEERTESTS_REMOTE"] = "Y"
+   else:
+      os.environ["PEERTESTS_REMOTE"] = "N"
 
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."
