@@ -1,8 +1,10 @@
 Version 2.1.2	unreleased
 
 	* Fix a few extension error messages with incorrect (missing) arguments.
-	* In sysinfo extension, do not log ls and dpkg output to debug log.
+	* In sysinfo extension, do not log ls and dpkg output to the debug log.
 	* Fix CdWriter, which reported negative capacity when disc was almost full.
+	* Make displayBytes deal properly with negative values via math.fabs().
+	* Change displayBytes to default to 2 digits after the decimal point.
 
 Version 2.1.1	06 Mar 2005
 
