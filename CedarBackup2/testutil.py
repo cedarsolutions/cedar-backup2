@@ -213,11 +213,11 @@ def failUnlessAssignRaises(testCase, exception, object, property, value):
    easy way to wrap the assignment checks.  It's not pretty, or as intuitive as
    the original check it's modeled on, but it does work.
 
-   Let's assume you make this method call:
+   Let's assume you make this method call::
 
       testCase.failUnlessAssignRaises(ValueError, collectDir, "absolutePath", absolutePath)
 
-   If you do this, a test case failure will be raised unless the assignment:
+   If you do this, a test case failure will be raised unless the assignment::
 
       collectDir.absolutePath = absolutePath
 
