@@ -14,6 +14,7 @@ svn copy svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/trunk \
          -m "Tagging the ${VERSION}} release of Cedar Backup."
 
 print "Completed tagging release ${VERSION} of Cedar Backup:"
+print ""
 
 svn list --verbose svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags
 
