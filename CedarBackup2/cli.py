@@ -104,7 +104,7 @@ VALID_ACTIONS      = [ "collect", "stage", "store", "purge", "rebuild", "validat
 COMBINE_ACTIONS    = [ "collect", "stage", "store", "purge", ]
 NONCOMBINE_ACTIONS = [ "rebuild", "validate", "all", ]
 
-SHORT_SWITCHES     = "hVbqcflomOd"
+SHORT_SWITCHES     = "hVbqc:fl:o:m:Od"
 LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet', 
                        'config=', 'full', 'logfile=', 'owner=', 
                        'mode=', 'output', 'debug', ]
@@ -287,9 +287,10 @@ class Options(object):
       self._logfile = None
       self._owner = None
       self._mode = None
-      self._output = None
-      self._debug = None
+      self._output = False
+      self._debug = False
       self._actions = None
+      self.actions = []    # initialize to an empty list; remainder are OK
       if argumentList is not None and argumentString is not None:
          raise ValueError("Use either argumentList or argumentString, but not both.")
       if argumentString is not None:
@@ -338,6 +339,11 @@ class Options(object):
             return 1
       if self._version != other._version:
          if self._version < other._version:
+            return -1
+         else:
+            return 1
+      if self._verbose != other._verbose:
+         if self._verbose < other._verbose:
             return -1
          else:
             return 1
@@ -507,16 +513,19 @@ class Options(object):
       """
       Property target used to set the owner parameter.
       If not C{None}, the owner must be a C{(user,group)} tuple or list.
+      Strings (and inherited children of strings) are explicitly disallowed.
       The value will be normalized to a tuple.
       @raise ValueError: If the value is not valid.
       """
       if value is None:
          self._owner = None
       else:
+         if isinstance(value, str):
+            raise ValueError("Must specify user and group tuple for owner parameter.")
          if len(value) != 2:
-            raise ValueError("Must specify user and group for owner parameter.")
+            raise ValueError("Must specify user and group tuple for owner parameter.")
          if len(value[0]) < 1 or len(value[1]) < 1:
-            raise ValueError("User and group values must be non-empty strings.")
+            raise ValueError("User and group tuple values must be non-empty strings.")
          self._owner = (value[0], value[1])
 
    def _getOwner(self):
@@ -534,7 +543,10 @@ class Options(object):
          self._mode = None
       else:
          try:
-            value = int(value, 8)
+            if isinstance(value, str):
+               value = int(value, 8)
+            else:
+               value = int(value)
          except TypeError:
             raise ValueError("Mode must be an octal integer >= 0, i.e. 644.")
          if value < 0:
@@ -604,7 +616,7 @@ class Options(object):
       return self._actions
 
    help = property(_getHelp, _setHelp, None, "Command-line help (C{-h,--help}) flag.")
-   version = property(_getHelp, _setHelp, None, "Command-line version (C{-V,--version}) flag.")
+   version = property(_getVersion, _setVersion, None, "Command-line version (C{-V,--version}) flag.")
    verbose = property(_getVerbose, _setVerbose, None, "Command-line help (C{-b,--verbose}) flag.")
    quiet = property(_getQuiet, _setQuiet, None, "Command-line help (C{-q,--quiet}) flag.")
    config = property(_getConfig, _setConfig, None, "Command-line help (C{-c,--config}) parameter.")
@@ -625,12 +637,10 @@ class Options(object):
       """
       Validates command-line options represented by the object.
 
-      At least one action must be specified.  Actions from among
-      L{COMBINE_ACTIONS} may be combined in any arbitrary order.  The actions
-      from within L{NONCOMBINE_ACTIONS} may not be combined with other actions.
-
-      The C{--quiet} and C{--verbose} options are mutually exclusive.  Only
-      one of the two may be specified.
+      Unless C{--help} or C{--version} are supplied, at least one action must
+      be specified.  Actions from among L{COMBINE_ACTIONS} may be combined in
+      any arbitrary order.  The actions from within L{NONCOMBINE_ACTIONS} may
+      not be combined with other actions.
 
       Other validations (as for allowed values for particular options) will be
       taken care of at assignment time by the properties functionality.
@@ -640,13 +650,12 @@ class Options(object):
 
       @raise ValueError: If one of the validations fails.
       """
-      if self.actions is None or len(self.actions) == 0:
-         raise ValueError("At least one action must be specified.")
+      if not self.help and not self.version:
+         if self.actions is None or len(self.actions) == 0:
+            raise ValueError("At least one action must be specified.")
       for action in NONCOMBINE_ACTIONS:
          if action in self.actions and self.actions != [ action, ]:
             raise ValueError("Action %s may not be combined with other actions." % action)
-      if self.quiet and self.verbose:
-         raise ValueError("The --quiet and --verbose actions are mutually exclusive.")
 
    def buildArgumentList(self, validate=True):
       """
@@ -655,9 +664,10 @@ class Options(object):
       The original order of the various arguments (if, indeed, the object was
       initialized with a command-line) is not preserved in this generated
       argument list.   Besides that, the argument list is normalized to use the
-      long option names (i.e. --version rather than -V) and to quote all string
-      arguments with double quotes (C{"}).  The resulting list will be suitable
-      for passing back to the constructor in the C{argumentList} parameter.
+      long option names (i.e. --version rather than -V).  The resulting list
+      will be suitable for passing back to the constructor in the
+      C{argumentList} parameter.  Unlike L{buildArgumentString}, string
+      arguments are not quoted here, because there is no need for it.  
 
       Unless the C{validate} parameter is C{False}, the L{Options.validate}
       method will be called (with its default arguments) against the
@@ -686,22 +696,26 @@ class Options(object):
       if self.quiet:
          argumentList.append("--quiet")
       if self.config is not None:
-         argumentList.append("--config \"%s\"" % self.config)
+         argumentList.append("--config")
+         argumentList.append(self.config)
       if self.full:
          argumentList.append("--full")
       if self.logfile is not None:
-         argumentList.append("--logfile \"%s\"" % self.logfile)
+         argumentList.append("--logfile")
+         argumentList.append(self.logfile)
       if self.owner is not None:
-         argumentList.append("--owner \"%s:%s\"" % (self.owner[0], self.owner[1]))
+         argumentList.append("--owner")
+         argumentList.append("%s:%s" % (self.owner[0], self.owner[1]))
       if self.mode is not None:
-         argumentList.append("--mode %o" % self.mode)
+         argumentList.append("--mode")
+         argumentList.append("%o" % self.mode)
       if self.output:
          argumentList.append("--output")
       if self.debug:
          argumentList.append("--debug")
       if self.actions is not None:
          for action in self.actions:
-            argumentList.append( "\"%s\"" % action)
+            argumentList.append(action)
       return argumentList
 
    def buildArgumentString(self, validate=True):
@@ -731,9 +745,34 @@ class Options(object):
       @return: String representation of command-line arguments.
       @raise ValueError: If options within the object are invalid.
       """
+      if validate:
+         self.validate()
       argumentString = ""
-      for item in self.buildArgumentList(validate):
-         argumentString += "%s " % item
+      if self._help:
+         argumentString += "--help "
+      if self.version:
+         argumentString += "--version "
+      if self.verbose:
+         argumentString += "--verbose "
+      if self.quiet:
+         argumentString += "--quiet "
+      if self.config is not None:
+         argumentString += "--config \"%s\" " % self.config
+      if self.full:
+         argumentString += "--full "
+      if self.logfile is not None:
+         argumentString += "--logfile \"%s\" " % self.logfile
+      if self.owner is not None:
+         argumentString += "--owner \"%s:%s\" " % (self.owner[0], self.owner[1])
+      if self.mode is not None:
+         argumentString += "--mode %o " % self.mode
+      if self.output:
+         argumentString += "--output "
+      if self.debug:
+         argumentString += "--debug "
+      if self.actions is not None:
+         for action in self.actions:
+            argumentString +=  "\"%s\" " % action
       return argumentString
 
    def _parseArgumentList(self, argumentList):
@@ -781,7 +820,7 @@ class Options(object):
          self.logfile = switches["--logfile"]
       if switches.has_key("-o"):
          self.owner = switches["-o"].split(":", 1)
-      if switches.has_key("--output"):
+      if switches.has_key("--owner"):
          self.owner = switches["--owner"].split(":", 1)
       if switches.has_key("-m"):
          self.mode = switches["-m"]
