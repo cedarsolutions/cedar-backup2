@@ -84,14 +84,17 @@ class FilesystemList(list):
    in several forms (all files, all directories, all items matching a pattern,
    or all directories containing a specific "ignore file").  Symbolic links
    backed up non-recursively, i.e. the link to a directory is backed up, but
-   not the contents of that link.
+   not the contents of that link (we don't want to deal with recursive loops,
+   etc.).
 
    The custom methods such as L{addFile} will only add items if they exist on
    the filesystem and do not match any exclusions that are already in place.
    However, since a FilesystemList is a subclass of Python's standard list
    class, callers can also add items to the list in the usual way, using
    methods like C{append()} or C{insert()}.  No validations apply to items
-   added to the list in this way.
+   added to the list in this way; however, many list-manipulation methods deal
+   "gracefully" with items that don't exist in the filesystem, often by
+   ignoring them.
 
    Once a list has been created, callers can remove individual items from the
    list using standard methods like C{pop()} or C{remove()} or they can use
@@ -117,14 +120,14 @@ class FilesystemList(list):
 
    def __init__(self):
       """Initializes a list with no configured exclusions."""
-      logger.debug("Created new list with no configured exclusions.")
       list.__init__(self)
       self.excludeFiles = False
-      self.excludeDirs = False
       self.excludeLinks = False
+      self.excludeDirs = False
       self.excludePaths = []
       self.excludePatterns = []
       self.ignoreFile = None
+      logger.debug("Created new list with no configured exclusions.")
 
 
    ##############
@@ -147,11 +150,11 @@ class FilesystemList(list):
       if not os.path.exists(path) or not os.path.isfile(path):
          logger.debug("Path [%s] is not a file or does not exist on disk." % path)
          raise ValueError("Path is not a file or does not exist on disk.")
-      if self.excludeFiles:
-         logger.debug("Path [%s] is excluded based on excludeFiles." % path)
-         return 0
       if self.excludeLinks and os.path.islink(path):
          logger.debug("Path [%s] is excluded based on excludeLinks." % path)
+         return 0
+      if self.excludeFiles:
+         logger.debug("Path [%s] is excluded based on excludeFiles." % path)
          return 0
       if path in self.excludePaths:
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
@@ -180,13 +183,13 @@ class FilesystemList(list):
       @raise ValueError: If path is not a directory or does not exist.
       """
       if not os.path.exists(path) or not os.path.isdir(path):
-         logger.debug("Path [%s] is not a file or does not exist on disk." % path)
+         logger.debug("Path [%s] is not a directory or does not exist on disk." % path)
          raise ValueError("Path is not a directory or does not exist on disk.")
-      if self.excludeDirs:
-         logger.debug("Path [%s] is excluded based on excludeDirs." % path)
-         return 0
       if self.excludeLinks and os.path.islink(path):
          logger.debug("Path [%s] is excluded based on excludeLinks." % path)
+         return 0
+      if self.excludeDirs:
+         logger.debug("Path [%s] is excluded based on excludeDirs." % path)
          return 0
       if path in self.excludePaths:
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
@@ -458,11 +461,12 @@ class BackupFileList(FilesystemList):
    List of files to be backed up.
 
    A BackupFileList is a L{FilesystemList} containing a list of files to be
-   backed up.  It only contains files, not directories.  On top of the generic
-   functionality provided by L{FilesystemList}, this class adds functionality
-   to keep a hash (checksum) for each file in the list, and it also provides a
-   method to calculate the total size of the files in the list and a way to
-   export the list into tar form.
+   backed up.  It only contains files, not directories (soft links are treated
+   like files).  On top of the generic functionality provided by
+   L{FilesystemList}, this class adds functionality to keep a hash (checksum)
+   for each file in the list, and it also provides a method to calculate the
+   total size of the files in the list and a way to export the list into tar
+   form.
    """
 
    ##############
@@ -471,7 +475,7 @@ class BackupFileList(FilesystemList):
 
    def __init__(self):
       """Initializes a list with no configured exclusions."""
-      logger.debug("Created new list with no configured exclusions.")
+      FilesystemList.__init__(self)   
 
 
    ################################
@@ -481,17 +485,27 @@ class BackupFileList(FilesystemList):
    def addDir(self, path):
       """
       Adds a directory to the list.
-   
-      This class does not allow directories to be added, so this overridden
-      method just ignores the directory and returns zero
 
-      @param path: Directory path to be added to the list (ignored)
-      @type path: String representing a path on disk (ignored)
+      Note that this class does not allow directories to be added by themselves
+      (a backup list contains only files).  However, since links to directories
+      are technically files, we allow them to be added.
 
-      @return: Always zero
+      This method is implemented in terms of the superclass method, with one
+      additional validation: the superclass method is only called if the
+      passed-in path is both a directory and a link.  All of the superclass's
+      existing validations and restrictions apply.
+
+      @param path: Directory path to be added to the list
+      @type path: String representing a path on disk
+
+      @return: Number of items added to the list.
+      @raise ValueError: If path is not a directory or does not exist.
       """
-      logger.debug("Overriddent addDir(%s) is a no-op." % path)
-      return 0
+      if os.path.isdir(path) and not os.path.islink(path):
+         logger.debug("Ignored directory [%s] in overridden method.")
+         return 0
+      else:
+         return FilesystemList.addDir(self, path)
 
 
    ##################
@@ -501,21 +515,30 @@ class BackupFileList(FilesystemList):
    def totalSize(self):
       """
       Returns the total size among all files in the list.
+      Only files are counted.  
+      Soft links that point at files are ignored.
+      Entries which do not exist on disk are ignored.
       @return: Total size, in bytes 
       """
       total = 0
       for entry in self:
-         total += os.stat(entry)['st_size']
+         if os.path.isfile(entry) and not os.path.islink(entry):
+            total += os.stat(entry).st_size
       return total
 
    def generateSizeMap(self):
       """
       Generates a mapping from file to file size in bytes.
+      The mapping does include soft links, which are listed with size zero.
+      Entries which do not exist on disk are ignored.
       @return: Dictionary mapping file to file size
       """
       table = { }
       for entry in self:
-         table[entry] = os.stat(entry)['st_size']
+         if os.path.islink(entry):
+            table[entry] = 0
+         elif os.path.isfile(entry):
+            table[entry] = os.stat(entry).st_size
       return table
 
    def generateDigestMap(self):
@@ -527,11 +550,17 @@ class BackupFileList(FilesystemList):
       the type of the hash will not change unless the library major version
       number is bumped.
 
+      Entries which do not exist on disk are ignored.
+
+      Soft links are ignored.  We would end up generating a digest for the file
+      that the soft link points at, which doesn't make any sense.
+
       @return: Dictionary mapping file to digest value
       """
       table = { }
       for entry in self:
-         table[entry] = sha.new(open(entry).read()).hexdigest()
+         if os.path.isfile(entry) and not os.path.islink(entry):
+            table[entry] = sha.new(open(entry).read()).hexdigest()
       return table
 
    def generateFitted(self, capacity, algorithm="worst_fit"):
@@ -557,11 +586,16 @@ class BackupFileList(FilesystemList):
       @return: Copy of list with total size no larger than indicated capacity
       @raise ValueError: If the algorithm is invalid.
       """
-      sizeMap = self.generateSizeMap()
-      if algorithm == "first_fit": return firstFit(sizeMap, capacity)[0]
-      elif algorithm == "best_fit": return bestFit(sizeMap, capacity)[0]
-      elif algorithm == "worst_fit": return worstFit(sizeMap, capacity)[0]
-      elif algorithm == "alternate_fit": return alternateFit(sizeMap, capacity)[0]
+      table = { }
+      for entry in self:
+         if os.path.islink(entry):
+            table[entry] = (entry, 0)
+         elif os.path.isfile(entry):
+            table[entry] = (entry, os.stat(entry).st_size)
+      if algorithm == "first_fit": return firstFit(table, capacity)[0]
+      elif algorithm == "best_fit": return bestFit(table, capacity)[0]
+      elif algorithm == "worst_fit": return worstFit(table, capacity)[0]
+      elif algorithm == "alternate_fit": return alternateFit(table, capacity)[0]
       else: raise ValueError("Algorithm [%s] is invalid." % algorithm);
 
    def generateTarfile(self, path, mode='tar', ignore=False):
@@ -580,10 +614,10 @@ class BackupFileList(FilesystemList):
       By default, the whole method call fails if there are problems adding any
       of the files to the archive, resulting in an exception.  Under these
       circumstances, callers are advised that they might want to call
-      L{verify()} and then attempt to extract the tar file a second time, since
-      the most common cause of failures is a missing file (a file that existed
-      when the list was built, but is gone again by the time the tar file is
-      built).  
+      L{removeInvalid()} and then attempt to extract the tar file a second
+      time, since the most common cause of failures is a missing file (a file
+      that existed when the list was built, but is gone again by the time the
+      tar file is built).  
 
       If you want to, you can pass in C{ignore=True}, and the method will
       ignore errors encountered when adding individual files to the archive
@@ -593,8 +627,9 @@ class BackupFileList(FilesystemList):
       be thrown.
 
       @note: No validation is done as to whether the entries in the list are
-      files, since only files should be in an object like this.  However, to be
-      safe, everything is explicitly added to the tar archive non-recursively.
+      files, since only files or soft links should be in an object like this.
+      However, to be safe, everything is explicitly added to the tar archive
+      non-recursively so it's safe to include soft links to directories.
 
       @param path: Path of tar file to create on disk
       @type path: String representing a path on disk
@@ -606,8 +641,10 @@ class BackupFileList(FilesystemList):
       @type ignore: Boolean
 
       @raise ValueError: If mode is not valid
+      @raise ValueError: If list is empty
       @raise TarError: If there is a problem creating the tar file
       """
+      if len(self) == 0: raise ValueError("Empty list cannot be used to generate tarfile.")
       if(mode == 'tar'): tarmode = "w:"
       elif(mode == 'targz'): tarmode = "w:gz"
       elif(mode == 'tarbz2'): tarmode = "w:bz2"
@@ -621,6 +658,10 @@ class BackupFileList(FilesystemList):
             except tarfile.TarError:
                if not ignore:
                   raise
+               logger.info("Unable to add file [%s]; going on anyway.")
+            except OSError, e:
+               if not ignore:
+                  raise tarfile.TarError(e)
                logger.info("Unable to add file [%s]; going on anyway.")
          tar.close()
       except tarfile.TarError:
