@@ -53,9 +53,9 @@ You'll get a good feel for how it works using something like this::
     python knapsackdemo.py /usr/bin 35
 
 The output should look fine on an 80-column display.  On my Duron 850 with
-784MB of RAM (Linux 2.4, Python 2.3), this runs in about 0.410 seconds of
-elapsed time (neglecting the time required to build the list of files to fit).
-A bigger, nastier test is to build a 650 MB list out of / or /usr.
+784MB of RAM (Linux 2.6, Python 2.3), this runs in 0.360 seconds of elapsed
+time (neglecting the time required to build the list of files to fit).  A
+bigger, nastier test is to build a 650 MB list out of / or /usr.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """

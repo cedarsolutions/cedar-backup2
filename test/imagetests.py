@@ -54,8 +54,8 @@ Code Coverage
    "privateness" is more a matter of presenting a clean external interface than
    anything else (most of the private methods are static).  Being able to test
    these methods also makes it easier to gain some reasonable confidence in the
-   code even some tests are not run because IMAGETESTS_FULL is not set to "Y"
-   in the environment (see below).
+   code even if some tests are not run because IMAGETESTS_FULL is not set to
+   "Y" in the environment (see below).
 
 Naming Conventions
 ==================

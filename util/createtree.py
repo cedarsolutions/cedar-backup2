@@ -174,9 +174,8 @@ def filldir(config, basedir, depth):
    The directory will be filled in with a random number of files, directories
    and soft-links based on ranges specified in configuration.   Any
    newly-created directories will be recursively filled as allowed by the
-   configured maximum depth.  Soft links are always created in absolute terms
-   (i.e.  C{/tmp/aa/link1} -> C{/tmp/aa/file1}).  There's no particular reason
-   for this; I had to pick something.
+   configured maximum depth.  Soft links are always created in relative terms
+   (i.e.  C{link1} -> C{file1}).
 
    @note: When we create file, directory and link names, we assume that the
    index of the name (i.e. the counter) doesn't exceed three digits for
