@@ -159,7 +159,7 @@ def cli():
    generally return when all specified actions have been completed.  Actions
    are ignored if the help, version or validate flags are set.
 
-   A different error code is returned for each type of failure::
+   A different error code is returned for each type of failure:
 
       - C{1}: The Python interpreter version is < 2.3
       - C{2}: Error processing command-line arguments

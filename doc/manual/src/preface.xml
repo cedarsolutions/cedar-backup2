@@ -187,17 +187,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term><xref linkend="cedar-appendixa"/></term>
-            <listitem>
-               <para>
-                  Covers the major differences between the current Cedar Backup
-                  release and the previous 1.0 release. 
-               </para>
-            </listitem>
-         </varlistentry>
-
-         <varlistentry>
-            <term><xref linkend="cedar-appendixb"/></term>
+            <term><xref linkend="cedar-extensions"/></term>
             <listitem>
                <para>
                   Specifies the Cedar Backup extension architecture interface,
@@ -208,7 +198,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term><xref linkend="cedar-appendixc"/></term>
+            <term><xref linkend="cedar-depends"/></term>
             <listitem>
                <para>
                   Provides some additional information about the packages which

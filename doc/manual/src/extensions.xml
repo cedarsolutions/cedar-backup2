@@ -21,22 +21,21 @@
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 # Language : O'Reilly DocBook Lite XML DTD
 # Project  : Cedar Backup, release 2
-# Revision : $Id: appendixb.xml 568 2005-02-08 23:08:25Z pronovic $
-# Purpose  : Cedar Backup Software Manual, Appendix B (Dependencies).
+# Revision : $Id$
+# Purpose  : Cedar Backup Software Manual, extensions appendix.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 -->
 
-<appendix id="cedar-appendixc">
+<appendix id="cedar-extensions">
 
-   <title>Dependencies</title>
+   <title>Extension Architecture Interface</title>
    
    <simplesect>
 
       <para>
-         Provides some additional information about the packages which Cedar
-         Backup relies on, including information about how to find
-         documentation and packages on non-Debian systems.
+         Specifies the Cedar Backup extension architecture, through which third
+         party developers can write extensions to Cedar Backup.
       </para>
 
    </simplesect>

@@ -53,6 +53,7 @@ DIST_DIR          = ./build
 SDIST_DIR         = $(DIST_DIR)/sdist
 MANUAL_SRC        = $(DOC_DIR)/manual
 INTERFACE_DIR     = $(DOC_DIR)/cedar-backup2/interface
+INTERFACE_TEMPDIR = $(DOC_DIR)/cedar-backup2/interface/tmp
 MANUAL_DIR        = $(DOC_DIR)/cedar-backup2/manual
 
 
@@ -103,12 +104,19 @@ book: manual
 
 doc: interface-doc manual-doc
 
-interface-doc: $(INTERFACE_DIR)
+interface-doc: interface-html interface-pdf
+
+interface-html: $(INTERFACE_DIR)
 	@$(EPYDOC) --name "CedarBackup2" --target $(INTERFACE_DIR) --url $(URL) CedarBackup2/*.py
+
+interface-pdf: $(INTERFACE_DIR) $(INTERFACE_TEMPDIR)
+	@$(EPYDOC) --pdf --name "CedarBackup2" --target $(INTERFACE_TEMPDIR) --url $(URL) CedarBackup2/*.py && \
+	mv $(INTERFACE_TEMPDIR)/api.pdf $(INTERFACE_DIR) && rm -rf $(INTERFACE_TEMPDIR)
 
 manual-doc: $(MANUAL_DIR)
 	-@$(CD) $(MANUAL_SRC) && $(MAKE) install
 
+# For convenience, this rule builds chunk only
 manual: 
 	-@$(CD) $(MANUAL_SRC) && $(MAKE) manual-chunk && $(MAKE) install-manual-chunk
 
@@ -118,6 +126,7 @@ validate:
 docclean:
 	-@$(CD) $(MANUAL_SRC) && $(MAKE) clean
 	-@$(RM) -rf $(INTERFACE_DIR)
+	-@$(RM) -rf $(INTERFACE_TEMPDIR)
 	-@$(RM) -rf $(MANUAL_DIR)
 
 $(MANUAL_DIR):
@@ -125,6 +134,9 @@ $(MANUAL_DIR):
 
 $(INTERFACE_DIR):
 	@$(MKDIR) -p $(INTERFACE_DIR)
+
+$(INTERFACE_TEMPDIR):
+	@$(MKDIR) -p $(INTERFACE_TEMPDIR)
 
 
 ################

@@ -161,7 +161,7 @@ $ apt-get install cedar-backup2
             (think RPMs for Mandrake or RedHat, or Gentoo's Portage system).
             If you are not sure how to install these packages on your
             system, you might want to check out 
-            <xref linkend="cedar-appendixc"/>.  This appendix provides links
+            <xref linkend="cedar-depends"/>.  This appendix provides links
             to <quote>upstream</quote> source packages, plus as much
             information as I have been able to gather about packages for
             non-Debian platforms.
