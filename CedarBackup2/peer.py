@@ -80,7 +80,7 @@ DEF_STAGE_INDICATOR     = "cback.stage"
 # getUidGid() function
 #######################
 
-def getUidGcid(user, group):
+def getUidGid(user, group):
    """
    Get the uid/gid associated with a user/group pair
 
