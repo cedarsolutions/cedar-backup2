@@ -14,24 +14,6 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-REMAINING V2.0 RELEASE TASKS
-
-* Get Julie's changes into the documentation
-* Rewrite Cedar Backup webpage online
-* Add 'manual.txt' option for building docs (lynx --dump or something?)
-
-* Refactor out consistency check code and test it?
-* Test consistency-check logic
-* Build some unit tests for generic action-related code
-
-* Run through full "normal" test cycle successfully on daystrom and agamemnon
-* Finish fully testing rebuild logic 
-
-* Come up with a standard svn label script to do releases, so I can't forget as easily.
-
-* Manpage should list explicit return values, since we specify them anyway.
-  Probably test and make sure that they come out with that number on the command-line.
-
 
 FUTURE FUNCTIONALITY
 
@@ -43,8 +25,35 @@ FUTURE FUNCTIONALITY
 * Somehow figure out if a full backup (i.e. disc-restart) has been missed (bug #6)
 * Perhaps update configuration to disallow two extensions with same name (right now, behavior is undefined).
 * Perhaps update configuration to disallow two peers with same name (right now, behavior is undefined).
+* Would be nice if "XXXX bytes" output could be in engineering notation or something - ByteQuantity object or something?
+
+
+TESTING IMPROVEMENTS
+
+* Create unit tests for the store/rebuild "find directories" functions in action.py (and maybe refactor)
 * Come up with non-PyUnit code to stress test high-actions, etc. 
+
+
+PLANNED EXTENSIONS
+
 * Create Subversion extension (initially, for backing up Berkely DB repositories)
 * Create "system info" extension to dump fdisk information, etc. to collect directory.
 * Create MySQL extension to back up MySQL databases like Bugzilla.
+
+
+DOCUMENTATION IMPROVEMENTS
+
+Documentation in some places is difficult to read, especially in the config section.
+
+Julie has some ideas for how I can fix it.  In particular, she suggests that I shouldn't
+duplicate description unless I have to (i.e. ignore file in two places) and she suggets
+that I be clearer (or at least more consistent) in the way I discuss whether a field is
+optional, required, can be repeated, etc.
+
+Julie also thinks that I may be able to rework the setup sections (master and client)
+to avoid duplication.  There is a lot of duplication there, but I'm kind of at a loss
+as to the best way to present it to the user.  I'm not sure if it's better to have
+completely different sections or one section with "if master, do this, if client do this"
+in it.
+
 
