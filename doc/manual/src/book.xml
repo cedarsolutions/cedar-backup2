@@ -37,7 +37,6 @@
 <!ENTITY ch04        SYSTEM "ch04.xml">
 <!ENTITY ch05        SYSTEM "ch05.xml">
 <!ENTITY ch06        SYSTEM "ch06.xml">
-<!ENTITY ch07        SYSTEM "ch07.xml">
 <!ENTITY appa        SYSTEM "appa.xml">
 <!ENTITY appb        SYSTEM "appb.xml">
 <!ENTITY copyright   SYSTEM "copyright.xml">
@@ -83,7 +82,6 @@
    &ch04;
    &ch05;
    &ch06;
-   &ch07;
    &appa;
    &appb;
    &copyright;

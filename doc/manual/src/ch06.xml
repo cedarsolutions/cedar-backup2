@@ -27,37 +27,23 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 -->
 
-<chapter id="cedar-ch-6">
+<chapter id="cedar-devel">
 
-   <title>Troubleshooting</title>
-
+   <title>Developer Information</title>
 
    <!-- ################################################################# -->
-   <!-- ########################  LEADER  ############################### -->
-   <!-- ################################################################# -->
 
-   <simplesect>
+   <simplesect id="cedar-devel-quote">
     
-      <comment>Reference: http://en.wikiquote.org/wiki/Programming</comment>
+      <comment>Reference: http://en.wikiquote.org/wiki/Linus_Torvalds</comment>
 
       <blockquote>
          <para>
-            <quote>Debugging is twice as hard as writing the code in the first place.
-            Therefore, if you write the code as cleverly as possible, you are, by
-            definition, not smart enough to debug it.</quote>&mdash; Brian W. Kernighan
+            <quote>Talk is cheap. Show me the code.</quote>&mdash; Linus Torvalds
           </para>
       </blockquote>
 
    </simplesect>
-
-
-   <!-- ################################################################# -->
-   <!-- ######################## SECTION 1 ############################## -->
-   <!-- ################################################################# -->
-
-   <sect1 id="cedar-ch-6-sect-1">
-
-   </sect1>
 
 </chapter>
 
