@@ -39,7 +39,7 @@
 
 """
 Provides filesystem-related objects.
-@author Kenneth J. Pronovici <pronovic@ieee.org>
+@author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
 
@@ -192,12 +192,12 @@ class FilesystemList(list):
       added, as well as all of their children, etc., etc.), subject to the same
       exclusions as usual.
 
-      @note If a directory's absolute path matches an exclude pattern or path,
+      @note: If a directory's absolute path matches an exclude pattern or path,
       or if the directory contains the configured ignore file, then the
       directory and all of its contents will be recursively excluded from the
       list.
    
-      @note The L{excludeDirs} flag only controls whether the directory path
+      @note: The L{excludeDirs} flag only controls whether the directory path
       itself is added to the list once it has been discovered.  It does I{not}
       affect whether the directory will actually be recursed into in search of
       other children.

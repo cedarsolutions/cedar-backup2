@@ -83,6 +83,7 @@ pycheck:
 docclean:
 	-@$(RM) -rf $(EPYDOC_DIR)
 
+docs: doc
 doc: $(EPYDOC_DIR)
 	@$(EPYDOC) --name "CedarBackup"   \
                    --target $(EPYDOC_DIR) \
