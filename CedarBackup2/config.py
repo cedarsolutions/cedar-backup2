@@ -3845,6 +3845,9 @@ class Config(object):
       which have no C{TEXT_NODE} children are not represented in the returned
       list.
 
+      @note: Even though XML documents use unicode data, this method will
+      always return string data, encoded as utf-8. 
+
       @param parent: Parent node to search beneath.
       @param name: Name of node to search for.
 
@@ -3856,7 +3859,10 @@ class Config(object):
          if entry.hasChildNodes:
             for child in entry.childNodes:
                if child.nodeType == Node.TEXT_NODE:
-                  lst.append(child.nodeValue)
+                  if isinstance(child.nodeValue, unicode):
+                     lst.append(child.nodeValue.encode("utf-8"))
+                  else:
+                     lst.append(child.nodeValue)
                   break
       if lst == []:
          lst = None
@@ -3873,11 +3879,8 @@ class Config(object):
       contents of a given node belong to the first C{TEXT_NODE} child of that
       node.
 
-      Note: even though the XML document returns unicode data, this method will
-      always return string data, encoded as utf-8.  This is because I want to
-      just use strings internally throughout all Cedar Backup code. (Sometimes I
-      get odd interactions between locale and unicode strings, especially with
-      filesystem operations like C{os.listdir}.)
+      @note: Even though XML documents use unicode data, this method will
+      always return string data, encoded as utf-8. 
 
       @param parent: Parent node to search beneath.
       @param name: Name of node to search for.

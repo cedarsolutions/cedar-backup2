@@ -266,9 +266,9 @@ def _writeImage(config, entireDisc, stagingDirs):
       dateSuffix = stagingDirs[stageDir]
       image.addEntry(path=stageDir, graftPoint=dateSuffix, contentsOnly=True)
    imageSize = image.getEstimatedSize()
-   logger.info("Image size will be %.2f bytes." % imageSize)
+   logger.info("Image size will be %.0f bytes." % imageSize)
    if imageSize > capacity.bytesAvailable:
-      logger.error("Image (%.2f bytes) does not fit in available capacity (%.2f bytes)." % (imageSize, capacity.bytesAvailable))
+      logger.error("Image (%.0f bytes) does not fit in available capacity (%.0f bytes)." % (imageSize, capacity.bytesAvailable))
       raise IOError("Media does not contain enough capacity to store image.")
    try:
       (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)
@@ -405,11 +405,15 @@ def executeCollect(configPath, options, config):
          logger.debug("Working with collect directory [%s]" % collectDir.absolutePath)
          collectMode = _getCollectMode(config, collectDir)
          archiveMode = _getArchiveMode(config, collectDir)
+         ignoreFile = _getIgnoreFile(config, collectDir)
          digestPath = _getDigestPath(config, collectDir)
          tarfilePath = _getTarfilePath(config, collectDir, archiveMode)
+         (excludePaths, excludePatterns) = _getExclusions(config, collectDir)
          if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
             logger.debug("Directory meets criteria to be backed up today.")
-            _collectDirectory(config, collectDir.absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath)
+            _collectDirectory(config, collectDir.absolutePath, tarfilePath, 
+                              collectMode, archiveMode, ignoreFile, resetDigest, 
+                              digestPath, excludePaths, excludePatterns)
          else:
             logger.debug("Directory will not be backed up, per collect mode.")
          logger.info("Completed collecting directory [%s]" % collectDir.absolutePath)
@@ -446,6 +450,21 @@ def _getArchiveMode(config, collectDir):
    logger.debug("Archive mode is [%s]" % archiveMode)
    return archiveMode
 
+def _getIgnoreFile(config, collectDir):
+   """
+   Gets the ignore file that should be used for a collect directory.
+   Use directory's if possible, otherwise take from collect section.
+   @param config: Config object.
+   @param collectDir: Collect directory object.
+   @return: Ignore file to use.
+   """
+   if collectDir.ignoreFile is None:
+      ignoreFile = config.collect.ignoreFile
+   else:
+      ignoreFile = collectDir.ignoreFile
+   logger.debug("Ignore file is [%s]" % ignoreFile)
+   return ignoreFile
+
 def _getDigestPath(config, collectDir):
    """
    Gets the digest path associated with a collect directory.
@@ -479,7 +498,44 @@ def _getTarfilePath(config, collectDir, archiveMode):
    logger.debug("Tarfile path is [%s]" % tarfilePath)
    return tarfilePath
 
-def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath):
+def _getExclusions(config, collectDir):
+   """
+   Gets exclusions (file and patterns) associated with a collect directory.
+
+   The returned files value is a list of absolute paths to be excluded from the
+   backup for a given directory.  It is derived from the collect configuration
+   absolute exclude paths and the collect directory's absolute and relative
+   exclude paths.  
+   
+   The returned patterns value is a list of patterns to be excluded from the
+   backup for a given directory.  It is derived from the list of patterns from
+   the collect configuration and from the collect directory itself.
+
+   @param config: Config object.
+   @param collectDir: Collect directory object.
+   @param archiveMode: Archive mode to use for this tarfile.
+
+   @return: Tuple (files, patterns) indicating what to exclude.
+   """
+   paths = []
+   if config.collect.absoluteExcludePaths is not None:
+      paths.extend(config.collect.absoluteExcludePaths)
+   if collectDir.absoluteExcludePaths is not None:
+      paths.extend(collectDir.absoluteExcludePaths)
+   if collectDir.relativeExcludePaths is not None:
+      for relativePath in collectDir.relativeExcludePaths:
+         paths.append(os.path.join(collectDir.absolutePath, relativePath))
+   patterns = []
+   if config.collect.excludePatterns is not None:
+      patterns.extend(config.collect.excludePatterns)
+   if collectDir.excludePatterns is not None:
+      patterns.extend(collectDir.excludePatterns)
+   logger.debug("Exclude paths: %s" % paths)
+   logger.debug("Exclude patterns: %s" % patterns)
+   return(paths, patterns)
+
+def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMode, 
+                      ignoreFile, resetDigest, digestPath, excludePaths, excludePatterns):
    """
    Collects a directory.
    
@@ -497,24 +553,34 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
    @param config: Config object.
    @param absolutePath: Absolute path of directory to collect.
    @param tarfilePath: Path to tarfile that should be created.
-   @param collectMode: Collect mode to use
-   @param archiveMode: Archive mode to use
-   @param resetDigest: Reset digest flag
+   @param collectMode: Collect mode to use.
+   @param archiveMode: Archive mode to use.
+   @param ignoreFile: Ignore file to use.
+   @param resetDigest: Reset digest flag.
    @param digestPath: Path to digest file on disk, if needed.
+   @param excludePaths: List of absolute paths to exclude.
+   @param excludePatterns: List of patterns to exclude.
    """
    backupList = BackupFileList()
+   backupList.ignoreFile = ignoreFile
+   backupList.excludePaths = excludePaths
+   backupList.excludePatterns = excludePatterns
    backupList.addDirContents(absolutePath)
    if collectMode != 'incr':
-      logger.debug("Backing up %d files in this directory." % len(backupList))
+      logger.debug("Collect mode is not 'incr'; no digest will be used.")
+      logger.debug("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
       backupList.generateTarfile(tarfilePath, archiveMode, True)
       _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
    else:
       digest = {}
-      if not resetDigest:
+      if resetDigest:
+         logger.debug("Based on resetDigest flag, digest will be cleared.")
+      else:
+         logger.debug("Based on resetDigest flag, digest will loaded from disk.")
          digest = _loadDigest(digestPath)
          removed = backupList.removeUnchanged(digest)
-         logger.debug("Removed %d unchanged files from backup list." % removed)
-      logger.debug("Backing up %d files in this directory." % len(backupList))
+         logger.debug("Removed %d unchanged files based on digest values." % removed)
+      logger.debug("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
       backupList.generateTarfile(tarfilePath, archiveMode, True)
       _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
       digest = backupList.generateDigestMap()
@@ -525,22 +591,24 @@ def _loadDigest(digestPath):
    Loads the indicated digest path from disk into a dictionary.
 
    If we can't load the digest successfully (either because it doesn't exist or
-   for some other reason), then an empty dictionary will be returned (but the
-   condition will be logged).
+   for some other reason), then an empty dictionary will be returned - but the
+   condition will be logged.
 
    @param digestPath: Path to the digest file on disk.
 
    @return: Dictionary representing contents of digest path.
    """
    if not os.path.isfile(digestPath):
+      digest = {}
       logger.debug("Digest [%s] does not exist on disk." % digestPath)
-      return {}
    else:
       try: 
-         return pickle.load(open(digestPath, "r"))
+         digest = pickle.load(open(digestPath, "r"))
+         logger.debug("Loaded digest [%s] from disk: %d entries." % (digestPath, len(digest)))
       except: 
+         digest = {}
          logger.error("Failed loading digest [%s] from disk." % digestPath)
-         return {}
+   return digest
 
 def _writeDigest(config, digest, digestPath):
    """
@@ -556,6 +624,7 @@ def _writeDigest(config, digest, digestPath):
    try: 
       pickle.dump(digest, open(digestPath, "w"))
       _changeOwnership(digestPath, config.options.backupUser, config.options.backupGroup)
+      logger.debug("Wrote new digest [%s] to disk: %d entries." % (digestPath, len(digest)))
    except: 
       logger.error("Failed to write digest [%s] to disk." % digestPath)
 
