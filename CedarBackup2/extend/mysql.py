@@ -548,13 +548,13 @@ def executeAction(configPath, options, config):
    local = LocalConfig(xmlPath=configPath)
    if local.mysql.all:
       logger.info("Backing up all databases.")
-      _backupDatabase(config.collect.collectDir, local.mysql.compressMode, local.mysql.user, local.mysql.password, 
+      _backupDatabase(config.collect.targetDir, local.mysql.compressMode, local.mysql.user, local.mysql.password, 
                       config.options.backupUser, config.options.backupGroup, None)
    else:
       logger.debug("Backing up %d individual databases." % len(local.mysql.databases))
       for database in local.mysql.databases:
          logger.info("Backing up database [%s]." % database)
-         _backupDatabase(config.collect.collectDir, local.mysql.compressMode, local.mysql.user, local.mysql.password, 
+         _backupDatabase(config.collect.targetDir, local.mysql.compressMode, local.mysql.user, local.mysql.password, 
                          config.options.backupUser, config.options.backupGroup, database)
    logger.info("Executed the MySQL extended action successfully.")
 
@@ -659,10 +659,10 @@ def backupDatabase(user, password, backupFile, database=None):
    else:
       args.insert(0, "--databases")
       args.append(database)
-   result = executeCommand(MYSQLDUMP_COMMAND, args, returnOutput=False, ignoreStderr=True, outputFile=backupFile)[0]
+   result = executeCommand(MYSQLDUMP_COMMAND, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
    if result != 0:
       if database is None:
-         raise IOError("Error [%d] executing MySQL database dump for all databases.")
+         raise IOError("Error [%d] executing MySQL database dump for all databases." % result)
       else:
-         raise IOError("Error [%d] executing MySQL database dump for database [%s]." % database)
+         raise IOError("Error [%d] executing MySQL database dump for database [%s]." % (result, database))
 

@@ -114,9 +114,9 @@ def executeAction(configPath, options, config):
    logger.debug("Executing sysinfo extended action.")
    if config.options is None or config.collect is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
-   _dumpDebianPackages(config.collect.collectDir)
-   _dumpPartitionTable(config.collect.collectDir)
-   _dumpFilesystemContents(config.collect.collectDir)
+   _dumpDebianPackages(config.collect.targetDir)
+   _dumpPartitionTable(config.collect.targetDir)
+   _dumpFilesystemContents(config.collect.targetDir)
    logger.info("Executed the sysinfo extended action successfully.")
 
 def _dumpDebianPackages(targetDir, compress=True):
@@ -165,9 +165,8 @@ def _dumpFilesystemContents(targetDir, compress=True):
    """
    (outputFile, filename) = _getOutputFile(targetDir, "ls-laR", compress)
    try:
-      result = executeCommand(LS_COMMAND, [], returnOutput=False, ignoreStderr=True, outputFile=outputFile)[0]
-      if result != 0:
-         raise IOError("Error [%d] executing filesystem contents dump.")
+      # Note: can't count on return status from 'ls', so we don't check it.
+      executeCommand(LS_COMMAND, [], returnOutput=False, ignoreStderr=True, outputFile=outputFile)
    finally:
       outputFile.close()
    if not os.path.exists(filename):
