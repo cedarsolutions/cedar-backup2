@@ -49,7 +49,7 @@ URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $
 DIST_DIR          = ./build
 SDIST_DIR         = $(DIST_DIR)/sdist
 DOC_DIR           = ./doc
-EPYDOC_DIR        = $(DOC_DIR)/cedar-backup
+EPYDOC_DIR        = $(DOC_DIR)/cedar-backup2
 
 
 ###################
