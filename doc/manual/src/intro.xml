@@ -117,8 +117,8 @@
       <para>
          Because I had become fed up with the prospect of maintaining a large
          volume of Perl code, I decided to abandon that language in favor of
-         Python <footnote><para>See <ulink url="http://www.python.org/">Python's 
-         homepage</ulink> for more information.</para></footnote>.
+         Python. <footnote><para>See <ulink url="http://www.python.org/">Python's 
+         homepage</ulink> for more information.</para></footnote>
          At the time, I chose Python mostly because I was interested in
          learning it, but in retrospect it turned out to be a very good
          decision.  Python has almost all of the strengths of Perl, but few of
@@ -154,11 +154,10 @@
          <application>kbackup</application>, still left something to be
          desired.  In November of 2003, I began an attempt at cleaning
          up the codebase.  I converted all of the internal documentation to use
-         Epydoc <footnote><para>Epydoc is a Python code documentation tool.  
+         Epydoc, <footnote><para>Epydoc is a Python code documentation tool.  
          See <ulink url="http://epydoc.sourceforge.net/">Epydoc's SourceForge site</ulink> 
-         for more information.</para></footnote>, 
-         and updated the code to use the newly-released Python logging package
-         <footnote><para>See the
+         for more information.</para></footnote> and updated the code to use 
+         the newly-released Python logging package <footnote><para>See the
          <ulink url="http://docs.python.org/lib/module-logging.html">Python library documentation</ulink>
          for more information.</para></footnote> after having a good experience
          with Java's log4j.  However, I was still not satisfied with the code,
@@ -177,10 +176,10 @@
          compact, better focused, and better documented than any release before
          it.  Utility code is less application-specific, and is now usable as a
          general-purpose library.  The 2.0 release also includes a complete
-         regression test suite of over 1500 tests <footnote><para>Implemented
+         regression test suite of over 1500 tests, <footnote><para>Implemented
          using Python's unit test framework.  See the 
          <ulink url="http://docs.python.org/lib/module-unittest.html">Python library documentation</ulink>
-         for more information.</para></footnote>, which will help to ensure that quality
+         for more information.</para></footnote> which will help to ensure that quality
          is maintained as development continues into the future.
       </para>
 

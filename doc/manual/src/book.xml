@@ -39,6 +39,7 @@
 <!ENTITY devel       SYSTEM "devel.xml">
 <!ENTITY appendixa   SYSTEM "appendixa.xml">
 <!ENTITY appendixb   SYSTEM "appendixb.xml">
+<!ENTITY appendixc   SYSTEM "appendixc.xml">
 <!ENTITY copyright   SYSTEM "copyright.xml">
 ]>
 
@@ -65,9 +66,9 @@
          <para>
             This work is licensed under the Creative Commons Attribution-ShareAlike License. 
             To view a copy of this license, visit
-            http://creativecommons.org/licenses/by-sa/2.0/ or send a letter to
-            Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305,
-            USA.
+            <systemitem class="url">http://creativecommons.org/licenses/by-sa/2.0/</systemitem>
+            or send a letter to Creative Commons, 559 Nathan Abbott Way,
+            Stanford, California 94305, USA.
          </para>
       </legalnotice>
 
@@ -84,6 +85,7 @@
    &devel;
    &appendixa;
    &appendixb;
+   &appendixc;
    &copyright;
 
 </book>
