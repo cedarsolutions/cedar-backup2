@@ -142,6 +142,7 @@ def main():
       import test.configtests as configtests
       import test.clitests as clitests
       import test.mysqltests as mysqltests
+      import test.subversiontests as subversiontests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -178,6 +179,7 @@ def main():
                                configtests.suite(),
                                clitests.suite(),
                                mysqltests.suite(),
+                               subversiontests.suite(),
                               ))
    unittest.TextTestRunner(verbosity=1).run(suite)
    print ""
