@@ -216,7 +216,7 @@ Validation
    if desired.  All purge directories must contain a path and a retain days
    value.
 
-@sort: LocalPeer, RemotePeer, CollectDir, PurgeDir, ExtendedAction,
+@sort: ExtendedAction, CollectDir, PurgeDir, LocalPeer, RemotePeer, 
        ReferenceConfig, ExtensionsConfig, OptionsConfig CollectConfig, 
        StageConfig, StoreConfig, PurgeConfig, Config,
        DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE, DEFAULT_CAPACITY_MODE,
