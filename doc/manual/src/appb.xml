@@ -1,6 +1,35 @@
+<!--
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#              C E D A R
+#          S O L U T I O N S       "Software done right."
+#           S O F T W A R E
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Copyright (c) 2005 Kenneth J. Pronovici.
+# All rights reserved.
+#
+# This work is licensed under the Creative Commons Attribution-
+# ShareAlike License. To view a copy of this license, visit
+# http://creativecommons.org/licenses/by-sa/2.0/
+# or send a letter to Creative Commons, 559 Nathan Abbott Way,
+# Stanford, California 94305, USA.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Author   : Kenneth J. Pronovici <pronovic@ieee.org>
+# Language : O'Reilly DocBook Lite XML DTD
+# Project  : Cedar Backup, release 2
+# Revision : $Id$
+# Purpose  : Cedar Backup Software Manual, Appendix B
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+-->
+
 <appendix id="cedar-appendix-b">
 
-   <title>Specification of the Cedar Backup Extension Architecture</title>
+   <title>Extension Architecture</title>
    
    <simplesect>
 

@@ -1,77 +1,76 @@
+<!-- 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#              C E D A R
+#          S O L U T I O N S       "Software done right."
+#           S O F T W A R E
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Copyright (c) 2005 Kenneth J. Pronovici.
+# All rights reserved.
+#
+# This work is licensed under the Creative Commons Attribution-
+# ShareAlike License. To view a copy of this license, visit
+# http://creativecommons.org/licenses/by-sa/2.0/
+# or send a letter to Creative Commons, 559 Nathan Abbott Way,
+# Stanford, California 94305, USA.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Author   : Kenneth J. Pronovici <pronovic@ieee.org>
+# Language : O'Reilly DocBook Lite XML DTD
+# Project  : Cedar Backup, release 2
+# Revision : $Id$
+# Purpose  : Cedar Backup Software Manual, Chapter 0.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+-->
+
 <preface id="cedar-ch-0">
+
    <title>Preface</title>
   
-   <!-- ================================================================= -->
-   <!-- ======================== SECTION 0 ============================== -->
-   <!-- ================================================================= -->
 
-   <simplesect>
-    
-      <blockquote>
-         <para>
-            <quote>Only wimps use tape backup: real men just upload their
-            important stuff on ftp, and let the rest of the world mirror
-            it.</quote>&mdash; Linus Torvalds, at the 
-            <ulink url="http://groups-beta.google.com/group/linux.dev.kernel/msg/76ae734d543e396d">release</ulink> 
-            of Linux 2.0.8 on 20 July 1996.
-          </para>
-      </blockquote>
-
-      <para>
-         This user manual has been written to document the 2.x series of Cedar
-         Backup, released in early 2005.
-      </para>
-
-      <para>
-         Cedar Backup is a Python package that supports secure backups of files
-         on local and remote hosts to CD-R or CD-RW media.  The package is
-         focused around weekly backups to a single disc, with the expectation
-         that the disc will be changed or overwritten at the beginning of each
-         week.  If your hardware is new enough, the script can write
-         multisession discs, allowing you to add to a disc in a daily fashion.
-         Directories are backed up using tar and may be compressed using gzip
-         or bzip2.
-      </para>
-
-      <para>
-         There are many different backup software implementations out there in
-         the free-and open-source world. Cedar Backup aims to fill a niche: it
-         aims to be a good fit for people who need to back up a limited amount
-         important data to CD-R or CD-RW on a regular basis. Cedar Backup isn't
-         for you if you want to back up your MP3 collection every night, or if
-         you want to back up a few hundred machines. However, if you administer 
-         a small set machines, and you want to run daily incremental backups
-         for things like system configuration, current email, small web sites,
-         or a CVS repository, then Cedar Backup is probably worth investigating.
-      </para>
-
-   </simplesect>
-
-
-   <!-- ================================================================= -->
-   <!-- ======================== SECTION 1 ============================== -->
-   <!-- ================================================================= -->
+   <!-- ################################################################# -->
+   <!-- ######################## SECTION 1 ############################## -->
+   <!-- ################################################################# -->
 
    <sect1 id="cedar-ch-0-sect-1">
+
+      <title>Purpose</title>
+
+      <para>
+         This software manual has been written to document the 2.0 series of
+         Cedar Backup, released in early 2005.
+      </para>
+
+   </sect1>
+
+
+   <!-- ################################################################# -->
+   <!-- ######################## SECTION 2 ############################## -->
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-ch-0-sect-2">
 
       <title>Audience</title>
     
       <para>
-         This book is written for computer-literate people who need to know how
-         to use and configure Cedar Backup on their Linux system.  Cedar Backup
-         to back to manage their data.  For consistency, the examples in this
-         book assume the reader is relatively comfortable with Unix and
+         This book is written for computer-literate administrators who need to
+         use and configure Cedar Backup on their Linux system.  The examples in
+         this book assume the reader is relatively comfortable with Unix and
          command-line interfaces.
       </para>
 
    </sect1>
 
 
-   <!-- ================================================================= -->
-   <!-- ======================== SECTION 2 ============================== -->
-   <!-- ================================================================= -->
+   <!-- ################################################################# -->
+   <!-- ######################## SECTION 3 ############################## -->
+   <!-- ################################################################# -->
 
-   <sect1 id="cedar-ch-0-sect-2">
+   <sect1 id="cedar-ch-0-sect-3">
 
       <title>Conventions Used in This Book</title>
     
@@ -79,9 +78,9 @@
          This section covers the various conventions used in this book.
       </para>
     
-      <!-- ***************************************************************** -->
+      <!-- ################################################################# -->
 
-      <sect2 id="cedar-ch-0-sect2.1">
+      <sect2 id="cedar-ch-0-sect3.1">
 
          <title>Typographic Conventions</title>
             
@@ -112,9 +111,9 @@
 
       </sect2>
 
-    <!-- ***************************************************************** -->
+      <!-- ################################################################# -->
 
-      <sect2 id="cedar-ch-0-sect2.2">
+      <sect2 id="cedar-ch-0-sect3.2">
          <title>Icons</title>
 
          <note>
@@ -140,17 +139,13 @@
   </sect1>
 
 
-   <!-- ================================================================= -->
-   <!-- ======================== SECTION 3 ============================== -->
-   <!-- ================================================================= -->
+   <!-- ################################################################# -->
+   <!-- ######################## SECTION 4 ############################## -->
+   <!-- ################################################################# -->
 
-   <sect1 id="cedar-ch-0-sect-3">
+   <sect1 id="cedar-ch-0-sect-4">
 
       <title>Organization of This Manual</title>
-
-      <para>
-         The chapters that follow and their contents are listed here:
-      </para>
 
       <variablelist>
         
@@ -176,7 +171,17 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Chapter 3, <emphasis>Installation from Source</emphasis></term>
+            <term>Chapter 3, <emphasis>Configuration</emphasis></term>
+            <listitem>
+               <para>
+                  Provides detailed information about how to configure Cedar
+                  Backup.  
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term>Chapter 4, <emphasis>Installation from Source</emphasis></term>
             <listitem>
                <para>
                   Explains how to install and configure the Cedar Backup
@@ -186,7 +191,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Chapter 4, <emphasis>Installation on a Debian System</emphasis></term>
+            <term>Chapter 5, <emphasis>Installation on a Debian System</emphasis></term>
             <listitem>
                <para>
                   Explains how to install and configure the Cedar Backup
@@ -196,22 +201,12 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Chapter 5, <emphasis>Troubleshooting</emphasis></term>
+            <term>Chapter 6, <emphasis>Troubleshooting</emphasis></term>
             <listitem>
                <para>
                   Discusses general troubleshooting techniques and provides
                   information about how to read the logfile, interpret
                   debugging information, etc., etc.
-               </para>
-            </listitem>
-         </varlistentry>
-
-         <varlistentry>
-            <term>Chapter 6, <emphasis>Using Extensions</emphasis></term>
-            <listitem>
-               <para>
-                  Provides user-level information about using third-party
-                  extensions to Cedar Backup.
                </para>
             </listitem>
          </varlistentry>
@@ -244,7 +239,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Appendix B, <emphasis>Specification of the Cedar Backup Extension Architecture</emphasis></term>
+            <term>Appendix B, <emphasis>Extension Architecture</emphasis></term>
             <listitem>
                <para>
                   Specifies the Cedar Backup extension architecture, through
@@ -256,23 +251,29 @@
 
     </variablelist>
 
-  </sect1>
+   </sect1>
 
 
-  <!-- ================================================================= -->
-  <!-- ======================== SECTION 4 ============================== -->
-  <!-- ================================================================= -->
+   <!-- ################################################################# -->
+   <!-- ######################## SECTION 5 ############################## -->
+   <!-- ################################################################# -->
 
-   <sect1 id="cedar-ch-0-sect-4">
+   <sect1 id="cedar-ch-0-sect-5">
 
       <title>Acknowledgments</title>
 
       <para>
-         I would like to acknowlege that the structure of this book and some of
-         the basic boilerplate has been taken from the book 
-         <ulink url="http://svnbook.red-bean.com/">Version Control with
-         Subversion</ulink>.  Many thanks to the authors (and O'Reilly) for
-         making this excellent reference available under a free license.
+         The structure of this book and some of the basic boilerplate has been
+         taken from the book <ulink url="http://svnbook.red-bean.com/">Version
+         Control with Subversion</ulink>.  Many thanks to the authors (and
+         O'Reilly) for making this excellent reference available under a free
+         license.
+      </para>
+
+      <para>
+         Many improvements in this documentation relative to what was available
+         with 1.0 are due to suggestions from Cedar Backup users, in particular
+         Daniel Bonniot.
       </para>
 
    </sect1>

@@ -1,15 +1,44 @@
+<!-- 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#              C E D A R
+#          S O L U T I O N S       "Software done right."
+#           S O F T W A R E
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Copyright (c) 2005 Kenneth J. Pronovici.
+# All rights reserved.
+#
+# This work is licensed under the Creative Commons Attribution-
+# ShareAlike License. To view a copy of this license, visit
+# http://creativecommons.org/licenses/by-sa/2.0/
+# or send a letter to Creative Commons, 559 Nathan Abbott Way,
+# Stanford, California 94305, USA.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Author   : Kenneth J. Pronovici <pronovic@ieee.org>
+# Language : O'Reilly DocBook Lite XML DTD
+# Project  : Cedar Backup, release 2
+# Revision : $Id$
+# Purpose  : Cedar Backup Software Manual, Chapter 4
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+-->
+
 <chapter id="cedar-ch-4">
 
-   <title>Installation on a Debian System</title>
+   <title>Installation from Source</title>
 
-   <simplesect>
 
-      <para>
-         This chapter explains how to install and configure the Cedar Backup
-         package using the official Debian package.
-      </para>
+   <!-- ################################################################# -->
+   <!-- ######################## SECTION 1 ############################## -->
+   <!-- ################################################################# -->
 
-   </simplesect>
+   <sect1 id="cedar-ch-4-sect-1">
+
+   </sect1>
 
 </chapter>
 
