@@ -214,9 +214,8 @@ Validation
 
    I{Store Validations}
 
-   The device type and drive speed and capacity mode are optional, and all
-   other values are required (missing booleans will be set to defaults, which
-   is OK).
+   The device type and drive speed are optional, and all other values are
+   required (missing booleans will be set to defaults, which is OK).
 
    The image writer functionality in the C{writer} module is supposed to be
    able to handle a device speed of C{None}.  Any caller which needs a "real"
@@ -232,22 +231,20 @@ Validation
 @sort: ExtendedAction, CollectDir, PurgeDir, LocalPeer, RemotePeer, 
        ReferenceConfig, ExtensionsConfig, OptionsConfig CollectConfig, 
        StageConfig, StoreConfig, PurgeConfig, Config,
-       DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE, DEFAULT_CAPACITY_MODE,
-       TRUE_BOOLEAN_VALUES, FALSE_BOOLEAN_VALUES, VALID_DEVICE_TYPES,
-       VALID_MEDIA_TYPES, VALID_CAPACITY_MODES, VALID_COLLECT_MODES,
-       VALID_ARCHIVE_MODES, VALID_BOOLEAN_VALUES
+       TRUE_BOOLEAN_VALUES, FALSE_BOOLEAN_VALUES, VALID_BOOLEAN_VALUES,
+       DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE, 
+       VALID_DEVICE_TYPES, VALID_MEDIA_TYPES, 
+       VALID_COLLECT_MODES, VALID_ARCHIVE_MODES, 
 
-@var DEFAULT_DEVICE_TYPE: The default device type.
-@var DEFAULT_MEDIA_TYPE: The default media type.
-@var DEFAULT_CAPACITY_MODE: The default capacity mode.
-@var VALID_DEVICE_TYPES: List of valid device types.
-@var VALID_MEDIA_TYPES: List of valid media types.
-@var VALID_CAPACITY_MODES: List of valid capacity modes.
-@var VALID_COLLECT_MODES: List of valid collect modes.
-@var VALID_ARCHIVE_MODES: List of valid archive modes.
+@var VALID_BOOLEAN_VALUES: List of valid boolean values in XML.
 @var TRUE_BOOLEAN_VALUES: List of boolean values in XML representing C{True}.
 @var FALSE_BOOLEAN_VALUES: List of boolean values in XML representing C{False}.
-@var VALID_BOOLEAN_VALUES: List of valid boolean values in XML.
+@var DEFAULT_DEVICE_TYPE: The default device type.
+@var DEFAULT_MEDIA_TYPE: The default media type.
+@var VALID_DEVICE_TYPES: List of valid device types.
+@var VALID_MEDIA_TYPES: List of valid media types.
+@var VALID_COLLECT_MODES: List of valid collect modes.
+@var VALID_ARCHIVE_MODES: List of valid archive modes.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -282,19 +279,17 @@ from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, e
 
 logger = logging.getLogger("CedarBackup2.log.config")
 
-DEFAULT_DEVICE_TYPE   = "cdwriter"
-DEFAULT_MEDIA_TYPE    = "cdrw-74"
-DEFAULT_CAPACITY_MODE = "fail"
-
-VALID_DEVICE_TYPES    = [ "cdwriter", ]
-VALID_MEDIA_TYPES     = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
-VALID_CAPACITY_MODES  = [ "fail", "discard", "overwrite", "rebuild", "rewrite", ]
-VALID_COLLECT_MODES   = [ "daily", "weekly", "incr", ]
-VALID_ARCHIVE_MODES   = [ "tar", "targz", "tarbz2", ]
-
 TRUE_BOOLEAN_VALUES   = [ "Y", "y", ]
 FALSE_BOOLEAN_VALUES  = [ "N", "n", ]
 VALID_BOOLEAN_VALUES  = TRUE_BOOLEAN_VALUES + FALSE_BOOLEAN_VALUES
+
+DEFAULT_DEVICE_TYPE   = "cdwriter"
+DEFAULT_MEDIA_TYPE    = "cdrw-74"
+
+VALID_DEVICE_TYPES    = [ "cdwriter", ]
+VALID_MEDIA_TYPES     = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
+VALID_COLLECT_MODES   = [ "daily", "weekly", "incr", ]
+VALID_ARCHIVE_MODES   = [ "tar", "targz", "tarbz2", ]
 
 
 ########################################################################
@@ -2010,7 +2005,6 @@ class StoreConfig(object):
       - The source directory must be an absolute path.
       - The media type must be one of the values in L{VALID_MEDIA_TYPES}.
       - The device type must be one of the values in L{VALID_DEVICE_TYPES}.
-      - The capacity mode must be one of the values in L{VALID_CAPACITY_MODES}.
       - The device path must be an absolute path.
       - The SCSI id must be in the form specified by L{writer.validateScsiId}.
       - The drive speed must be an integer >= 1
@@ -3762,9 +3756,8 @@ class Config(object):
       """
       Validates store configuration.
 
-      The device type, drive speed and capacity mode are optional, and all
-      other values are required (missing booleans will be set to defaults,
-      which is OK).
+      The device type, drive speed are optional, and all other values are
+      required (missing booleans will be set to defaults, which is OK).
 
       The image writer functionality in the C{writer} module is supposed to be
       able to handle a device speed of C{None}.  Any caller which needs a

@@ -99,7 +99,7 @@ from CedarBackup2.action import executeCollect, executeStage, executeStore, exec
 
 logger = logging.getLogger("CedarBackup2.log.cli")
 
-DISK_LOG_FORMAT    = "%(asctime)s --> [%(levelname)-5s] %(message)s"
+DISK_LOG_FORMAT    = "%(asctime)s --> [%(levelname)-7s] %(message)s"
 DISK_OUTPUT_FORMAT = "%(message)s"
 SCREEN_LOG_FORMAT  = "%(message)s"
 SCREEN_LOG_STREAM  = sys.stdout
