@@ -45,9 +45,7 @@ Summary
 
    Cedar Backup stores all of its configuration in an XML document typically
    called C{cback.conf}.  The standard location for this document is in
-   C{/etc}, but users can specify a different location if they want to.  The
-   C{cback.dtd} file included with the source distribution is an SGML DTD which
-   specifies the format of C{cback.conf}.
+   C{/etc}, but users can specify a different location if they want to.  
 
    The C{Config} class is a Python object representation of a Cedar Backup XML
    configuration file.  The representation is two-way: XML data can be used to
@@ -59,8 +57,8 @@ Summary
    Cedar Backup configuration on disk.  Cedar Backup will use the class as its
    internal representation of configuration, and applications external to Cedar
    Backup itself (such as a hypothetical third-party configuration tool written
-   in Python) should also use the class when they need to read and write
-   configuration files.
+   in Python or a third party extension module) should also use the class when
+   they need to read and write configuration files.
 
 External Python Libraries
 =========================
@@ -72,8 +70,8 @@ External Python Libraries
 
    The PyXML XPath library is not particularly fast.  This is particularly
    noticable when reading lists of things with the C{[n]} syntax.  Because of
-   this, the code jumps through some performance-improvement hoops that would
-   normally not be required when using a faster library.
+   this, this configuration code jumps through some performance-improvement
+   hoops that would normally not be required when using a faster library.
 
 Backwards Compatibility
 =======================
@@ -101,9 +99,10 @@ XML Configuration Structure
    Generally speaking, the XML input I{must} result in a C{Config} object which
    passes the validations laid out below in the I{Validation} section.  
 
-   An XML configuration file is composed of six sections:
+   An XML configuration file is composed of seven sections:
 
       - I{reference}: specifies reference information about the file (author, revision, etc)
+      - I{extensions}: specifies mappings to Cedar Backup extensions (external code)
       - I{options}: specifies global configuration options
       - I{collect}: specifies configuration related to the collect action
       - I{stage}: specifies configuration related to the stage action
@@ -143,7 +142,7 @@ Validation
    L{Config.validate} method.  This method can be called at any time by a
    client, and will always be called immediately after creating a C{Config}
    object from XML data and before exporting a C{Config} object to XML.  This
-   way, we get acceptable ease-of-use but we also don't accept or emit invalid
+   way, we get decent ease-of-use but we also don't accept or emit invalid
    configuration files.
 
    The L{Config.validate} implementation actually takes two passes to
@@ -159,6 +158,12 @@ Validation
    I{Reference Validations}
 
    No validations.
+
+   I{Extensions Validations}
+
+   The list of actions may be either C{None} or an empty list C{[]} if desired.
+   Each extended action must include a name, a module and a function.  The index
+   value is optional.
 
    I{Options Validations}
 
@@ -211,8 +216,9 @@ Validation
    if desired.  All purge directories must contain a path and a retain days
    value.
 
-@sort: LocalPeer, RemotePeer, CollectDir, PurgeDir, ReferenceConfig, OptionsConfig
-       CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config,
+@sort: LocalPeer, RemotePeer, CollectDir, PurgeDir, ExtendedAction,
+       ReferenceConfig, ExtensionsConfig, OptionsConfig CollectConfig, 
+       StageConfig, StoreConfig, PurgeConfig, Config,
        DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE, DEFAULT_CAPACITY_MODE,
        TRUE_BOOLEAN_VALUES, FALSE_BOOLEAN_VALUES, VALID_DEVICE_TYPES,
        VALID_MEDIA_TYPES, VALID_CAPACITY_MODES, VALID_COLLECT_MODES,
@@ -239,6 +245,7 @@ Validation
 
 # System modules
 import os
+import re
 import logging
 from StringIO import StringIO
 
@@ -932,6 +939,190 @@ class RemotePeer(object):
 
 
 ########################################################################
+# ExtendedAction class definition
+########################################################################
+
+class ExtendedAction(object):
+
+   """
+   Class representing an extended action.
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   Essentially, an extended action needs to allow the following to happen::
+
+      exec("from %s import %s" % (module, function))
+      exec("%s(action, configPath")" % function)
+
+   The following restrictions exist on data in this class:
+
+      - The action name must be a non-empty string consisting of lower-case letters and digits.
+      - The module must be a non-empty string and a valid Python identifier.
+      - The function must be an on-empty string and a valid Python identifier.
+      - The index must be a positive integer.
+
+   @sort: __init__, __repr__, __str__, __cmp__, action, module, function, index
+   """
+
+   def __init__(self, name=None, module=None, function=None, index=None):
+      """
+      Constructor for the C{ExtendedAction} class.
+
+      @param name: Name of the extended action
+      @param module: Name of the module containing the extended action function
+      @param function: Name of the extended action function
+      @param index: Index of action, for execution ordering
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      self._name = None
+      self._module = None
+      self._function = None
+      self._index = None
+      self.name = name
+      self.module = module
+      self.function = function
+      self.index = index
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "ExtendedAction(%s, %s, %s, %s)" % (self.name, self.module, self.function, self.index)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._name != other._name:
+         if self._name < other._name:
+            return -1
+         else:
+            return 1
+      if self._module != other._module: 
+         if self._module < other._module: 
+            return -1
+         else:
+            return 1
+      if self._function != other._function:
+         if self._function < other._function:
+            return -1
+         else:
+            return 1
+      if self._index != other._index:
+         if self._index < other._index:
+            return -1
+         else:
+            return 1
+      return 0
+
+   def _setName(self, value):
+      """
+      Property target used to set the action name.
+      The value must be a non-empty string if it is not C{None}.
+      It must also consist only of lower-case letters and digits.
+      @raise ValueError: If the value is an empty string.
+      """
+      pattern = re.compile(r"^[A-Za-z0-9]*$")
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The action name must be a non-empty string.")
+         if not pattern.search(value):
+            raise ValueError("The action name must consist of only lower-case letters and digits.")
+      self._name = value
+
+   def _getName(self):
+      """
+      Property target used to get the action name.
+      """
+      return self._name
+
+   def _setModule(self, value):
+      """
+      Property target used to set the module name.
+      The value must be a non-empty string if it is not C{None}.
+      It must also be a valid Python identifier.
+      @raise ValueError: If the value is an empty string.
+      """
+      pattern = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$")
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The module name must be a non-empty string.")
+         if not pattern.search(value):
+            raise ValueError("The module name must be a valid Python identifier.")
+      self._module = value
+
+   def _getModule(self):
+      """
+      Property target used to get the module name.
+      """
+      return self._module
+
+   def _setFunction(self, value):
+      """
+      Property target used to set the function name.
+      The value must be a non-empty string if it is not C{None}.
+      It must also be a valid Python identifier.
+      @raise ValueError: If the value is an empty string.
+      """
+      pattern = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The function name must be a non-empty string.")
+         if not pattern.search(value):
+            raise ValueError("The function name must be a valid Python identifier.")
+      self._function = value
+
+   def _getFunction(self):
+      """
+      Property target used to get the function name.
+      """
+      return self._function
+
+   def _setIndex(self, value):
+      """
+      Property target used to set the action index.
+      The value must be an integer >= 0.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is None:
+         self._index = None
+      else:
+         try:
+            value = int(value)
+         except TypeError:
+            raise ValueError("Action index value must be an integer >= 0.")
+         if value < 0:
+            raise ValueError("Action index value must be an integer >= 0.")
+         self._index = value
+
+   def _getIndex(self):
+      """
+      Property target used to get the action index.
+      """
+      return self._index
+
+   name = property(_getName, _setName, None, "Name of the extended action.")
+   module = property(_getModule, _setModule, None, "Name of the module containing the extended action function.")
+   function = property(_getFunction, _setFunction, None, "Name of the extended action function.")
+   index = property(_getIndex, _setIndex, None, "Index of action, for execution ordering.")
+
+
+########################################################################
 # ReferenceConfig class definition
 ########################################################################
 
@@ -1069,6 +1260,96 @@ class ReferenceConfig(object):
    revision = property(_getRevision, _setRevision, None, "Revision of the configuration file.")
    description = property(_getDescription, _setDescription, None, "Description of the configuration file.")
    generator = property(_getGenerator, _setGenerator, None, "Tool that generated the configuration file.")
+
+
+########################################################################
+# ExtensionsConfig class definition
+########################################################################
+
+class ExtensionsConfig(object):
+
+   """
+   Class representing Cedar Backup extensions configuration.
+
+   Extensions configuration is used to specify "extended actions" implemented
+   by code external to Cedar Backup.  For instance, a hypothetical third party
+   might write extension code to collect Subversion repository data.  If they
+   write a properly-formatted extension function, they can use the extension
+   configuration to map a command-line Cedar Backup action (i.e. "subversion")
+   to their function.
+   
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   The following restrictions exist on data in this class:
+
+      - The actions list must be a list of C{ExtendedAction} objects.
+
+   @sort: __init__, __repr__, __str__, __cmp__, actions
+   """
+
+   def __init__(self, actions=None):
+      """
+      Constructor for the C{ExtensionsConfig} class.
+      @param extendedActions: List of extended actions
+      """
+      self._actions = None
+      self.actions = actions
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "ExtensionConfig(%s)" % self.actions
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._actions != other._actions:
+         if self._actions < other._actions:
+            return -1
+         else:
+            return 1
+      return 0
+
+   def _setActions(self, value):
+      """
+      Property target used to set the actions list.
+      Either the value must be C{None} or each element must be an C{ExtendedAction}.
+      @raise ValueError: If the value is not a C{ExtendedAction}
+      """
+      if value is None:
+         self._actions = None
+      else:
+         try:
+            saved = self._actions
+            self._actions = ObjectTypeList(ExtendedAction, "ExtendedAction")
+            self._actions.extend(value)
+         except Exception, e:
+            self._actions = saved
+            raise e
+
+   def _getActions(self):
+      """
+      Property target used to get the actions list.
+      """
+      return self._actions
+
+   actions = property(_getActions, _setActions, None, "List of extended actions.")
 
 
 ########################################################################
@@ -2121,10 +2402,10 @@ class Config(object):
    @note: Lists within this class are "unordered" for equality comparisons.
 
    @sort: __init__, __repr__, __str__, __cmp__, extractXml, validate, 
-          reference, options, collect, stage, store, purge,
-          _getReference, _setReference, _getOptions, _setOptions,
-          _getCollect, _setCollect, _getStage, _setStage,
-          _getStore, _setStore, _getPurge, _setPurge
+          reference, extensions, options, collect, stage, store, purge,
+          _getReference, _setReference, _getExtensions, _setExtensions, 
+          _getOptions, _setOptions, _getCollect, _setCollect, _getStage, 
+          _setStage, _getStore, _setStore, _getPurge, _setPurge
    """
 
    ##############
@@ -2167,12 +2448,14 @@ class Config(object):
       @raise ValueError: If the parsed configuration document is not valid.
       """
       self._reference = None
+      self._extensions = None
       self._options = None
       self._collect = None
       self._stage = None
       self._store = None
       self._purge = None
       self.reference = None
+      self.extensions = None
       self.options = None
       self.collect = None
       self.stage = None
@@ -2199,7 +2482,8 @@ class Config(object):
       """
       Official string representation for class instance.
       """
-      return "Config(%s, %s, %s, %s, %s, %s)" % (self.reference, self.options, self.collect, self.stage, self.store, self.purge)
+      return "Config(%s, %s, %s, %s, %s, %s, %s)" % (self.reference, self.extensions, self.options, 
+                                                     self.collect, self.stage, self.store, self.purge)
 
    def __str__(self):
       """
@@ -2223,6 +2507,11 @@ class Config(object):
          return 1
       if self._reference != other._reference:
          if self._reference < other._reference:
+            return -1
+         else:
+            return 1
+      if self._extensions != other._extensions:
+         if self._extensions < other._extensions:
             return -1
          else:
             return 1
@@ -2276,6 +2565,25 @@ class Config(object):
       Property target used to get the reference configuration value.
       """
       return self._reference
+
+   def _setExtensions(self, value):
+      """
+      Property target used to set the extensions configuration value.
+      If not C{None}, the value must be a C{ExtensionsConfig} object.
+      @raise ValueError: If the value is not a C{ExtensionsConfig}
+      """
+      if value is None:
+         self._extensions = None
+      else:
+         if not isinstance(value, ExtensionsConfig):
+            raise ValueError("Value must be a C{ExtensionsConfig} object.")
+         self._extensions = value
+
+   def _getExtensions(self):
+      """
+      Property target used to get the extensions configuration value.
+      """
+      return self._extensions
 
    def _setOptions(self, value):
       """
@@ -2373,6 +2681,7 @@ class Config(object):
       return self._purge
 
    reference = property(_getReference, _setReference, None, "Reference configuration in terms of a C{ReferenceConfig} object.")
+   extensions = property(_getExtensions, _setExtensions, None, "Extensions configuration in terms of a C{ExtensionsConfig} object.")
    options = property(_getOptions, _setOptions, None, "Options configuration in terms of a C{OptionsConfig} object.")
    collect = property(_getCollect, _setCollect, None, "Collect configuration in terms of a C{CollectConfig} object.")
    stage = property(_getStage, _setStage, None, "Stage configuration in terms of a C{StageConfig} object.")
@@ -2422,7 +2731,7 @@ class Config(object):
       else:
          return xmlData
 
-   def validate(self, requireOneAction=True, requireReference=False, requireOptions=True, 
+   def validate(self, requireOneAction=True, requireReference=False, requireExtensions=False, requireOptions=True, 
                 requireCollect=False, requireStage=False, requireStore=False, requirePurge=False):
       """
       Validates configuration represented by the object.
@@ -2435,6 +2744,7 @@ class Config(object):
 
       @param requireOneAction: Require at least one of the collect, stage, store or purge sections.
       @param requireReference: Require the reference section.
+      @param requireExtensions: Require the extensions section.
       @param requireOptions: Require the options section.
       @param requireCollect: Require the collect section.
       @param requireStage: Require the stage section.
@@ -2447,6 +2757,8 @@ class Config(object):
          raise ValueError("At least one of the collect, stage, store and purge sections is required.")
       if requireReference and self.reference is None:
          raise ValueError("The reference is section is required.")
+      if requireExtensions and self.extensions is None:
+         raise ValueError("The extensions is section is required.")
       if requireOptions and self.options is None:
          raise ValueError("The options is section is required.")
       if requireCollect and self.collect is None:
@@ -2460,9 +2772,9 @@ class Config(object):
       self._validateContents()
 
 
-   ########################################
-   # Internal methods used for parsing XML
-   ########################################
+   #####################################
+   # High-level methods for parsing XML
+   #####################################
 
    def _parseXmlData(self, xmlData):
       """
@@ -2487,6 +2799,7 @@ class Config(object):
          xmlDom = PyExpat.Reader().fromString(xmlData)
          parent = Config._readFirstChild(xmlDom, "cb_config")
          self._reference = Config._parseReference(parent)
+         self._extensions = Config._parseExtensions(parent)
          self._options = Config._parseOptions(parent)
          self._collect = Config._parseCollect(parent)
          self._stage = Config._parseStage(parent)
@@ -2521,6 +2834,32 @@ class Config(object):
          reference.generator = Config._readString(section, "generator")
       return reference
    _parseReference = staticmethod(_parseReference)
+
+   def _parseExtensions(parent):
+      """
+      Parses an extensions configuration section.
+      
+      We read groups of the following items, one list element per item::
+
+         name                 //cb_config/extensions/action/name
+         module               //cb_config/extensions/action/module
+         function             //cb_config/extensions/action/function
+         index                //cb_config/extensions/action/index
+   
+      The extended actions are parsed by L{_parseExtendedActions}.
+
+      @param parent: Parent node to search beneath.
+
+      @return: C{ExtensionsConfig} object or C{None} if the section does not exist.
+      @raise ValueError: If some filled-in value is invalid.
+      """
+      extensions = None
+      section = Config._readFirstChild(parent, "extensions")
+      if section is not None:
+         extensions = ExtensionsConfig()
+         extensions.actions = Config._parseExtendedActions(section)
+      return extensions
+   _parseExtensions = staticmethod(_parseExtensions)
 
    def _parseOptions(parent):
       """
@@ -2681,6 +3020,36 @@ class Config(object):
       return purge
    _parsePurge = staticmethod(_parsePurge)
 
+   def _parseExtendedActions(parent):
+      """
+      Reads extended actions data from immediately beneath the parent.
+
+      We read the following individual fields from each extended action::
+
+         name        name
+         module      module
+         function    function
+         index       index
+
+      @param parent: Parent node to search beneath.
+
+      @return: List of extended actions.
+      @raise ValueError: If the data at the location can't be read
+      """
+      actions = []
+      for entry in Config._readChildren(parent, "action"):
+         if entry.nodeType == Node.ELEMENT_NODE:
+            action = ExtendedAction()
+            action.name = Config._readString(entry, "name")
+            action.module = Config._readString(entry, "module")
+            action.function = Config._readString(entry, "function")
+            action.index = Config._readString(entry, "index")
+            actions.append(action);
+      if actions == []:
+         actions = None
+      return actions
+   _parseExtendedActions = staticmethod(_parseExtendedActions)
+
    def _parseExclusions(parent):
       """
       Reads exclusions data from immediately beneath the parent.
@@ -2837,159 +3206,10 @@ class Config(object):
       return (localPeers, remotePeers)
    _parsePeers = staticmethod(_parsePeers)
 
-   def _readChildren(parent, name):
-      """
-      Returns a list of nodes with a given name immediately beneath the
-      parent.
 
-      By "immediately beneath" the parent, we mean from among nodes that are
-      direct children of the passed-in parent node.  
-
-      Underneath, we use the Python C{getElementsByTagName} method, which is
-      pretty cool, but which (surprisingly) returns a list of all children with
-      a given name below the parent, at any level.  We just prune that list to
-      include only children whose C{parentNode} matches the passed-in parent.
-
-      @param parent: Parent node to search beneath.
-      @param name: Name of nodes to search for.
-
-      @return: List of child nodes with correct parent, or an empty list if
-      no matching nodes are found.
-      """
-      lst = []
-      if parent is not None:
-         result = parent.getElementsByTagName(name)
-         for entry in result:
-            if entry.parentNode is parent:
-               lst.append(entry)
-      return lst
-   _readChildren = staticmethod(_readChildren)
-
-   def _readFirstChild(parent, name):
-      """
-      Returns the first child with a given name immediately beneath the parent.
-
-      By "immediately beneath" the parent, we mean from among nodes that are
-      direct children of the passed-in parent node.  
-
-      @param parent: Parent node to search beneath.
-      @param name: Name of node to search for.
-
-      @return: First properly-named child of parent, or C{None} if no matching nodes are found.
-      """
-      result = Config._readChildren(parent, name)
-      if result is None or result == []:
-         return None
-      return result[0]
-   _readFirstChild = staticmethod(_readFirstChild)
-
-   def _readStringList(parent, name):
-      """
-      Returns a list of the string contents associated with nodes with a given
-      name immediately beneath the parent.
-
-      By "immediately beneath" the parent, we mean from among nodes that are
-      direct children of the passed-in parent node.  
-
-      First, we find all of the nodes using L{_readChildren}, and then we
-      retrieve the "string contents" of each of those nodes.  The returned list
-      has one entry per matching node.  We assume that string contents of a
-      given node belong to the first C{TEXT_NODE} child of that node.  Nodes
-      which have no C{TEXT_NODE} children are not represented in the returned
-      list.
-
-      @param parent: Parent node to search beneath.
-      @param name: Name of node to search for.
-
-      @return: List of strings as described above, or C{None} if no matching nodes are found.
-      """
-      lst = []
-      result = Config._readChildren(parent, name)
-      for entry in result:
-         if entry.hasChildNodes:
-            for child in entry.childNodes:
-               if child.nodeType == Node.TEXT_NODE:
-                  lst.append(child.nodeValue)
-                  break
-      if lst == []:
-         lst = None
-      return lst
-   _readStringList = staticmethod(_readStringList)
-
-   def _readString(parent, name):
-      """
-      Returns string contents of the first child with a given name immediately
-      beneath the parent.
-
-      By "immediately beneath" the parent, we mean from among nodes that are
-      direct children of the passed-in parent node.  We assume that string
-      contents of a given node belong to the first C{TEXT_NODE} child of that
-      node
-
-      @param parent: Parent node to search beneath.
-      @param name: Name of node to search for.
-
-      @return: String contents of node or C{None} if no matching nodes are found.
-      """
-      result = Config._readStringList(parent, name)
-      if result is None:
-         return None
-      return result[0]
-   _readString = staticmethod(_readString)
-
-   def _readInteger(parent, name):
-      """
-      Returns integer contents of the first child with a given name immediately
-      beneath the parent.
-
-      By "immediately beneath" the parent, we mean from among nodes that are
-      direct children of the passed-in parent node.  
-
-      @param parent: Parent node to search beneath.
-      @param name: Name of node to search for.
-
-      @return: Integer contents of node or C{None} if no matching nodes are found.
-      @raise ValueError: If the string at the location can't be converted to an integer.
-      """
-      result = Config._readString(parent, name)
-      if result is None:
-         return None
-      else:
-         return int(result)
-   _readInteger = staticmethod(_readInteger)
-
-   def _readBoolean(parent, name):
-      """
-      Returns boolean contents of the first child with a given name immediately
-      beneath the parent.
-
-      By "immediately beneath" the parent, we mean from among nodes that are
-      direct children of the passed-in parent node.  
-
-      The string value of the node must be one of the values in L{VALID_BOOLEAN_VALUES}.
-
-      @param parent: Parent node to search beneath.
-      @param name: Name of node to search for.
-
-      @return: Boolean contents of node or C{None} if no matching nodes are found.
-      @raise ValueError: If the string at the location can't be converted to a boolean.
-      """
-      result = Config._readString(parent, name)
-      if result is None:
-         return None
-      else:
-         if result in TRUE_BOOLEAN_VALUES:
-            return True
-         elif result in FALSE_BOOLEAN_VALUES:
-            return False
-         else:
-            raise ValueError("Boolean values must be one of %s." % VALID_BOOLEAN_VALUES)
-   _readBoolean = staticmethod(_readBoolean)
-
-
-   ###########################################
-   # Internal methods used for generating XML
-   ###########################################
+   ########################################
+   # High-level methods for generating XML
+   ########################################
 
    def _extractXml(self):
       """
@@ -3008,6 +3228,7 @@ class Config(object):
       xmlDom = impl.createDocument(None, "cb_config", None)
       parentNode = xmlDom.documentElement
       Config._addReference(xmlDom, parentNode, self.reference)
+      Config._addExtensions(xmlDom, parentNode, self.extensions)
       Config._addOptions(xmlDom, parentNode, self.options)
       Config._addCollect(xmlDom, parentNode, self.collect)
       Config._addStage(xmlDom, parentNode, self.stage)
@@ -3044,6 +3265,29 @@ class Config(object):
          Config._addStringNode(xmlDom, sectionNode, "description", referenceConfig.description)
          Config._addStringNode(xmlDom, sectionNode, "generator", referenceConfig.generator)
    _addReference = staticmethod(_addReference)
+
+   def _addExtensions(xmlDom, parentNode, extensionsConfig):
+      """
+      Adds an <extensions> configuration section as the next child of a parent.
+
+      We add groups of the following items, one list element per item::
+
+         actions        //cb_config/extensions/action
+
+      The extended action entries are added by L{_addExtendedAction}.
+
+      If C{extensionsConfig} is C{None}, then no container will be added.
+
+      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param parentNode: Parent that the section should be appended to.
+      @param extensionsConfig: Extensions configuration section to be added to the document.
+      """
+      if extensionsConfig is not None:
+         sectionNode = Config._addContainerNode(xmlDom, parentNode, "extensions")
+         if extensionsConfig.actions is not None:
+            for action in extensionsConfig.actions:
+               Config._addExtendedAction(xmlDom, sectionNode, action)
+   _addExtensions = staticmethod(_addExtensions)
 
    def _addOptions(xmlDom, parentNode, optionsConfig):
       """
@@ -3210,6 +3454,35 @@ class Config(object):
                Config._addPurgeDir(xmlDom, sectionNode, purgeDir)
    _addPurge = staticmethod(_addPurge)
 
+   def _addExtendedAction(xmlDom, parentNode, action):
+      """
+      Adds an extended action container as the next child of a parent.
+
+      We add the following fields to the document::
+
+         name        action/name
+         module      action/module
+         function    action/function
+         index       action/index
+
+      The <action> node itself is created as the next child of the parent node.
+      This method only adds one action node.  The parent must loop for each action
+      in the C{ExtensionsConfig} object.
+
+      If C{action} is C{None}, this method call will be a no-op.
+
+      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param parentNode: Parent that the section should be appended to.
+      @param localPeer: Purge directory to be added to the document.
+      """
+      if action is not None:
+         sectionNode = Config._addContainerNode(xmlDom, parentNode, "action")
+         Config._addStringNode(xmlDom, sectionNode, "name", action.name)
+         Config._addStringNode(xmlDom, sectionNode, "module", action.module)
+         Config._addStringNode(xmlDom, sectionNode, "function", action.function)
+         Config._addIntegerNode(xmlDom, sectionNode, "index", action.index)
+   _addExtendedAction = staticmethod(_addExtendedAction)
+
    def _addCollectDir(xmlDom, parentNode, collectDir):
       """
       Adds a collect directory container as the next child of a parent.
@@ -3349,96 +3622,10 @@ class Config(object):
          Config._addIntegerNode(xmlDom, sectionNode, "retain_days", purgeDir.retainDays)
    _addPurgeDir = staticmethod(_addPurgeDir)
 
-   def _addContainerNode(xmlDom, parentNode, nodeName):
-      """
-      Adds a container node as the next child of a parent node.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
-      @param parentNode: Parent node to create child for.
-      @param nodeName: Name of the new container node.
-
-      @return: Reference to the newly-created node.
-      """
-      containerNode = xmlDom.createElement(nodeName)
-      parentNode.appendChild(containerNode)
-      return containerNode
-   _addContainerNode = staticmethod(_addContainerNode)
-
-   def _addStringNode(xmlDom, parentNode, nodeName, nodeValue):
-      """
-      Adds a text node as the next child of a parent, to contain a string.
-
-      If the C{nodeValue} is None, then the node will be created, but will be
-      empty (i.e. will contain no text node child).
-
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
-      @param parentNode: Parent node to create child for.
-      @param nodeName: Name of the new container node.
-      @param nodeValue: The value to put into the node.
-   
-      @return: Reference to the newly-created node.
-      """
-      containerNode = Config._addContainerNode(xmlDom, parentNode, nodeName)
-      if nodeValue is not None:
-         textNode = xmlDom.createTextNode(nodeValue)
-         containerNode.appendChild(textNode)
-      return containerNode
-   _addStringNode = staticmethod(_addStringNode)
-
-   def _addIntegerNode(xmlDom, parentNode, nodeName, nodeValue):
-      """
-      Adds a text node as the next child of a parent, to contain an integer.
-
-      If the C{nodeValue} is None, then the node will be created, but will be
-      empty (i.e. will contain no text node child).
-
-      The integer will be converted to a string using "%d".  The result will be
-      added to the document via L{_addStringNode}.
-
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
-      @param parentNode: Parent node to create child for.
-      @param nodeName: Name of the new container node.
-      @param nodeValue: The value to put into the node.
-   
-      @return: Reference to the newly-created node.
-      """
-      if nodeValue is None:
-         return Config._addStringNode(xmlDom, parentNode, nodeName, None)
-      else:
-         return Config._addStringNode(xmlDom, parentNode, nodeName, "%d" % nodeValue)
-   _addIntegerNode = staticmethod(_addIntegerNode)
-
-   def _addBooleanNode(xmlDom, parentNode, nodeName, nodeValue):
-      """
-      Adds a text node as the next child of a parent, to contain a boolean.
-
-      If the C{nodeValue} is None, then the node will be created, but will be
-      empty (i.e. will contain no text node child).
-
-      Boolean C{True}, or anything else interpreted as C{True} by Python, will
-      be converted to a string "Y".  Anything else will be converted to a
-      string "N".  The result is added to the document via L{_addStringNode}.
-
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
-      @param parentNode: Parent node to create child for.
-      @param nodeName: Name of the new container node.
-      @param nodeValue: The value to put into the node.
-   
-      @return: Reference to the newly-created node.
-      """
-      if nodeValue is None:
-         return Config._addStringNode(xmlDom, parentNode, nodeName, None)
-      else:
-         if nodeValue:
-            return Config._addStringNode(xmlDom, parentNode, nodeName, "Y")
-         else:
-            return Config._addStringNode(xmlDom, parentNode, nodeName, "N")
-   _addBooleanNode = staticmethod(_addBooleanNode)
-
-
-   ###############################################
-   # Internal methods used for validating content
-   ###############################################
+   #################################################
+   # High-level methods used for validating content
+   #################################################
 
    def _validateContents(self):
       """
@@ -3453,6 +3640,7 @@ class Config(object):
       @raise ValueError: If configuration is invalid.
       """
       self._validateReference()
+      self._validateExtensions()
       self._validateOptions()
       self._validateCollect()
       self._validateStage()
@@ -3466,6 +3654,26 @@ class Config(object):
       @raise ValueError: If reference configuration is invalid.
       """
       pass
+
+   def _validateExtensions(self):
+      """
+      Validates extensions configuration.
+
+      The list of actions may be either C{None} or an empty list C{[]} if
+      desired.  Each extended action must include a name, a module and a
+      function.  The index value is optional.
+
+      @raise ValueError: If reference configuration is invalid.
+      """
+      if self.extensions is not None:
+         if self.extensions.actions is not None:
+            for action in self.extensions.actions:
+               if action.name is None:
+                  raise ValueError("Each extended action must set a name.")
+               if action.module is None:
+                  raise ValueError("Each extended action must set a module.")
+               if action.function is None:
+                  raise ValueError("Each extended action must set a function.")
 
    def _validateOptions(self):
       """
@@ -3614,4 +3822,245 @@ class Config(object):
                   raise ValueError("Each purge directory must set an absolute path.")
                if purgeDir.retainDays is None:
                   raise ValueError("Each purge directory must set a retain days value.")
+
+
+   ###################################################
+   # Low-level methods for parsing and generating XML
+   ###################################################
+
+   def _readChildren(parent, name):
+      """
+      Returns a list of nodes with a given name immediately beneath the
+      parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      Underneath, we use the Python C{getElementsByTagName} method, which is
+      pretty cool, but which (surprisingly?) returns a list of all children
+      with a given name below the parent, at any level.  We just prune that
+      list to include only children whose C{parentNode} matches the passed-in
+      parent.
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of nodes to search for.
+
+      @return: List of child nodes with correct parent, or an empty list if
+      no matching nodes are found.
+      """
+      lst = []
+      if parent is not None:
+         result = parent.getElementsByTagName(name)
+         for entry in result:
+            if entry.parentNode is parent:
+               lst.append(entry)
+      return lst
+   _readChildren = staticmethod(_readChildren)
+
+   def _readFirstChild(parent, name):
+      """
+      Returns the first child with a given name immediately beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: First properly-named child of parent, or C{None} if no matching nodes are found.
+      """
+      result = Config._readChildren(parent, name)
+      if result is None or result == []:
+         return None
+      return result[0]
+   _readFirstChild = staticmethod(_readFirstChild)
+
+   def _readStringList(parent, name):
+      """
+      Returns a list of the string contents associated with nodes with a given
+      name immediately beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      First, we find all of the nodes using L{_readChildren}, and then we
+      retrieve the "string contents" of each of those nodes.  The returned list
+      has one entry per matching node.  We assume that string contents of a
+      given node belong to the first C{TEXT_NODE} child of that node.  Nodes
+      which have no C{TEXT_NODE} children are not represented in the returned
+      list.
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: List of strings as described above, or C{None} if no matching nodes are found.
+      """
+      lst = []
+      result = Config._readChildren(parent, name)
+      for entry in result:
+         if entry.hasChildNodes:
+            for child in entry.childNodes:
+               if child.nodeType == Node.TEXT_NODE:
+                  lst.append(child.nodeValue)
+                  break
+      if lst == []:
+         lst = None
+      return lst
+   _readStringList = staticmethod(_readStringList)
+
+   def _readString(parent, name):
+      """
+      Returns string contents of the first child with a given name immediately
+      beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  We assume that string
+      contents of a given node belong to the first C{TEXT_NODE} child of that
+      node
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: String contents of node or C{None} if no matching nodes are found.
+      """
+      result = Config._readStringList(parent, name)
+      if result is None:
+         return None
+      return result[0]
+   _readString = staticmethod(_readString)
+
+   def _readInteger(parent, name):
+      """
+      Returns integer contents of the first child with a given name immediately
+      beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: Integer contents of node or C{None} if no matching nodes are found.
+      @raise ValueError: If the string at the location can't be converted to an integer.
+      """
+      result = Config._readString(parent, name)
+      if result is None:
+         return None
+      else:
+         return int(result)
+   _readInteger = staticmethod(_readInteger)
+
+   def _readBoolean(parent, name):
+      """
+      Returns boolean contents of the first child with a given name immediately
+      beneath the parent.
+
+      By "immediately beneath" the parent, we mean from among nodes that are
+      direct children of the passed-in parent node.  
+
+      The string value of the node must be one of the values in L{VALID_BOOLEAN_VALUES}.
+
+      @param parent: Parent node to search beneath.
+      @param name: Name of node to search for.
+
+      @return: Boolean contents of node or C{None} if no matching nodes are found.
+      @raise ValueError: If the string at the location can't be converted to a boolean.
+      """
+      result = Config._readString(parent, name)
+      if result is None:
+         return None
+      else:
+         if result in TRUE_BOOLEAN_VALUES:
+            return True
+         elif result in FALSE_BOOLEAN_VALUES:
+            return False
+         else:
+            raise ValueError("Boolean values must be one of %s." % VALID_BOOLEAN_VALUES)
+   _readBoolean = staticmethod(_readBoolean)
+
+   def _addContainerNode(xmlDom, parentNode, nodeName):
+      """
+      Adds a container node as the next child of a parent node.
+
+      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param parentNode: Parent node to create child for.
+      @param nodeName: Name of the new container node.
+
+      @return: Reference to the newly-created node.
+      """
+      containerNode = xmlDom.createElement(nodeName)
+      parentNode.appendChild(containerNode)
+      return containerNode
+   _addContainerNode = staticmethod(_addContainerNode)
+
+   def _addStringNode(xmlDom, parentNode, nodeName, nodeValue):
+      """
+      Adds a text node as the next child of a parent, to contain a string.
+
+      If the C{nodeValue} is None, then the node will be created, but will be
+      empty (i.e. will contain no text node child).
+
+      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param parentNode: Parent node to create child for.
+      @param nodeName: Name of the new container node.
+      @param nodeValue: The value to put into the node.
+   
+      @return: Reference to the newly-created node.
+      """
+      containerNode = Config._addContainerNode(xmlDom, parentNode, nodeName)
+      if nodeValue is not None:
+         textNode = xmlDom.createTextNode(nodeValue)
+         containerNode.appendChild(textNode)
+      return containerNode
+   _addStringNode = staticmethod(_addStringNode)
+
+   def _addIntegerNode(xmlDom, parentNode, nodeName, nodeValue):
+      """
+      Adds a text node as the next child of a parent, to contain an integer.
+
+      If the C{nodeValue} is None, then the node will be created, but will be
+      empty (i.e. will contain no text node child).
+
+      The integer will be converted to a string using "%d".  The result will be
+      added to the document via L{_addStringNode}.
+
+      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param parentNode: Parent node to create child for.
+      @param nodeName: Name of the new container node.
+      @param nodeValue: The value to put into the node.
+   
+      @return: Reference to the newly-created node.
+      """
+      if nodeValue is None:
+         return Config._addStringNode(xmlDom, parentNode, nodeName, None)
+      else:
+         return Config._addStringNode(xmlDom, parentNode, nodeName, "%d" % nodeValue)
+   _addIntegerNode = staticmethod(_addIntegerNode)
+
+   def _addBooleanNode(xmlDom, parentNode, nodeName, nodeValue):
+      """
+      Adds a text node as the next child of a parent, to contain a boolean.
+
+      If the C{nodeValue} is None, then the node will be created, but will be
+      empty (i.e. will contain no text node child).
+
+      Boolean C{True}, or anything else interpreted as C{True} by Python, will
+      be converted to a string "Y".  Anything else will be converted to a
+      string "N".  The result is added to the document via L{_addStringNode}.
+
+      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param parentNode: Parent node to create child for.
+      @param nodeName: Name of the new container node.
+      @param nodeValue: The value to put into the node.
+   
+      @return: Reference to the newly-created node.
+      """
+      if nodeValue is None:
+         return Config._addStringNode(xmlDom, parentNode, nodeName, None)
+      else:
+         if nodeValue:
+            return Config._addStringNode(xmlDom, parentNode, nodeName, "Y")
+         else:
+            return Config._addStringNode(xmlDom, parentNode, nodeName, "N")
+   _addBooleanNode = staticmethod(_addBooleanNode)
 

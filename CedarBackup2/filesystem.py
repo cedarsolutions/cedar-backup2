@@ -275,7 +275,7 @@ class FilesystemList(list):
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return 0
       for pattern in self.excludePatterns:
-         if re.compile("^%s$" % pattern).match(path):
+         if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
@@ -310,7 +310,7 @@ class FilesystemList(list):
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return 0
       for pattern in self.excludePatterns:
-         if re.compile("^%s$" % pattern).match(path):
+         if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
@@ -358,7 +358,7 @@ class FilesystemList(list):
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return added
       for pattern in self.excludePatterns:
-         if re.compile("^%s$" % pattern).match(path):
+         if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return added
       if self.ignoreFile is not None and os.path.exists(os.path.join(path, self.ignoreFile)):
