@@ -517,71 +517,45 @@ def executeAction(configPath, options, config):
       logger.debug("Backing up %d individual databases." % len(local.mysql.databases))
       for database in local.mysql.databases:
          logger.info("Backing up database [%s]." % database)
-         _backupDatabase(config.collect.collectDir, local.mysql.user, local.mysql.password, name=database)
+         _backupDatabase(config.collect.collectDir, local.mysql.user, local.mysql.password, database)
    logger.info("Executed the MySQL extended action successfully.")
 
-def _backupDatabase(targetDir, user, password, name=None, compress=True):
+def _backupDatabase(targetDir, user, password, database=None, compress=True):
    """
    Backs up an individual MySQL database, or all databases.
 
    @param targetDir:  Directory into which backups should be written.
    @param user: User to use for connecting to the database.
    @param password: Password associated with user.
-   @param name: Name of database, or C{None} for all databases.
+   @param database: Name of database, or C{None} for all databases.
 
    @return: Name of the generated backup file.
 
    @raise ValueError: If some value is missing or invalid.
    @raise IOError: If there is a problem executing the MySQL dump.
    """
-   args = _buildDumpArgs(user, password, name)
-   (outputFile, filename) = _getOutputFile(targetDir, name, compress)
-   try:
-      result = executeCommand(MYSQLDUMP_COMMAND, args, returnOutput=False, ignoreStderr=True, outputFile=outputFile)[0]
-      if result != 0:
-         raise IOError("Error [%d] executing MySQL database dump.")
-   finally:
-      outputFile.close()
+   (outputFile, filename) = _getOutputFile(targetDir, database, compress)
+   backupDatabase(user, password, outputFile, database)
    if not os.path.exists(filename):
       raise IOError("Dump file [%s] does not seem to exist after backup completed." % filename)
 
-def _buildDumpArgs(user, password, name):
-   """
-   Builds list of arguments to be passed to C{mysqldump} command.
-
-   @param user: User to use for connecting to the database.
-   @param password: Password associated with user.
-   @param name: Name of database, or C{None} for all databases.
-
-   @raise ValueError: If some value is missing or invalid.
-   """
-   if user is None or password is None:
-      raise ValueError("User and password are required.")
-   args = [ "-all", "--flush-logs", "--opt", "--user=%s" % user, "--password=%s" % password, ]
-   if name is None:
-      args.insert(0, "--all-databases")
-   else:
-      args.insert(0, "--databases")
-      args.append(name)
-   return args
-
-def _getOutputFile(targetDir, name, compress=True):
+def _getOutputFile(targetDir, database, compress=True):
    """
    Opens the output file used for saving the MySQL dump.
 
-   The filename is either C{"mysqldump.txt"} or C{"mysqldump-name.txt"}.  The
+   The filename is either C{"mysqldump.txt"} or C{"mysqldump-<database>.txt"}.  The
    C{".bz2"} extension is added if C{compress} is C{True}. 
 
    @param targetDir: Target directory to write file in.
-   @param name: Name of the database (if any)
+   @param database: Name of the database (if any)
    @param compress: Indicates whether to write compressed output.
 
    @return: Tuple of (Output file object, filename)
    """
-   if name is None:
+   if database is None:
       filename = os.path.join(targetDir, "mysqldump.txt")
    else:
-      filename = os.path.join(targetDir, "mysqldump-%s.txt" % name)
+      filename = os.path.join(targetDir, "mysqldump-%s.txt" % database)
    if compress:
       filename = "%s.bz2" % filename
    logger.debug("MySQL dump file will be [%s]." % filename)
@@ -590,4 +564,61 @@ def _getOutputFile(targetDir, name, compress=True):
    else:
       outputFile = open(filename, "w")
    return (outputFile, filename)
+
+
+############################
+# backupDatabase() function
+############################
+
+def backupDatabase(user, password, backupFile, database=None):
+   """
+   Backs up an individual MySQL database, or all databases.
+
+   This function backs up either a named local MySQL database or all local
+   MySQL databases, using the passed in user and password for connectivity.
+
+   The backup data will be written into the passed-in back file.  Normally,
+   this would be an object as returned from C{open}, but you might want to use
+   something a C{GzipFile} to write compressed output.
+
+   @note: Typically, you would use the C{root} user to back up all databases.
+
+   @param user: User to use for connecting to the database.
+   @param password: Password associated with user.
+   @param backupFile: Python file object to use for writing backup.
+   @param database: Name of the database to be backed up.
+
+   @raise ValueError: If some value is missing or invalid.
+   @raise IOError: If there is a problem executing the MySQL dump.
+   """
+   args = _buildDumpArgs(user, password, database)
+   try:
+      result = executeCommand(MYSQLDUMP_COMMAND, args, returnOutput=False, ignoreStderr=True, outputFile=backupFile)[0]
+      if result != 0:
+         if database is None:
+            raise IOError("Error [%d] executing MySQL database dump for all databases.")
+         else:
+            raise IOError("Error [%d] executing MySQL database dump for database [%s]." % database)
+   finally:
+      backupFile.close()
+
+def _buildDumpArgs(user, password, database):
+   """
+   Builds list of arguments to be passed to C{mysqldump} command.
+
+   @param user: User to use for connecting to the database.
+   @param password: Password associated with user.
+   @param database: Name of database, or C{None} for all databases.
+
+   @raise ValueError: If some value is missing or invalid.
+   """
+   if user is None or password is None:
+      raise ValueError("User and password are required.")
+   args = [ "-all", "--flush-logs", "--opt", "--user=%s" % user, "--password=%s" % password, ]
+   if database is None:
+      args.insert(0, "--all-databases")
+   else:
+      args.insert(0, "--databases")
+      args.append(database)
+   return args
 

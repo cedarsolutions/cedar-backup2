@@ -1035,7 +1035,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test with no database name, compress=True.
       """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, name=None, compress=True)
+      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database=None, compress=True)
       self.failUnlessEqual(self.buildPath(["mysqldump.txt.bz2"]), filename)
       outputFile.write("Hello, world.\n")
       outputFile.close()
@@ -1047,7 +1047,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test with no database name, compress=False.
       """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, name=None, compress=False)
+      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database=None, compress=False)
       self.failUnlessEqual(self.buildPath(["mysqldump.txt"]), filename)
       outputFile.write("Hello, world.\n")
       outputFile.close()
@@ -1059,7 +1059,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test with a simple database name, compress=True.
       """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, name="database", compress=True)
+      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database="database", compress=True)
       self.failUnlessEqual(self.buildPath(["mysqldump-database.txt.bz2"]), filename)
       outputFile.write("Hello, world.\n")
       outputFile.close()
@@ -1071,7 +1071,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test with a simple database name, compress=False.
       """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, name="database", compress=False)
+      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database="database", compress=False)
       self.failUnlessEqual(self.buildPath(["mysqldump-database.txt"]), filename)
       outputFile.write("Hello, world.\n")
       outputFile.close()
@@ -1083,7 +1083,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test with a database name containing spaces, compress=True.
       """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, name="name with spaces", compress=True)
+      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database="name with spaces", compress=True)
       self.failUnlessEqual(self.buildPath(["mysqldump-name with spaces.txt.bz2"]), filename)
       outputFile.write("Hello, world.\n")
       outputFile.close()
@@ -1095,7 +1095,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test with a database name containing spaces, compress=False.
       """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, name="name with spaces", compress=False)
+      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database="name with spaces", compress=False)
       self.failUnlessEqual(self.buildPath(["mysqldump-name with spaces.txt"]), filename)
       outputFile.write("Hello, world.\n")
       outputFile.close()
