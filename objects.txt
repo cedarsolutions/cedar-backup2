@@ -21,14 +21,13 @@ FilesystemList - Generic class that represents a list of filesystem items:
  
 BackupFileList - FilesystemList containing a list of files, to be backed
                  up.  Only includes files, not directories.  It adds
-                 functionality to keep a hash (SHA, MD5, whatever) for each
+                 functionality to keep a digist (SHA, MD5, whatever) for each
                  file, know the total size of the files in the list, create
-                 a tar file containing the files in the list, etc.
+                 a tar file containing the files in the list, etc.  
 
 PurgeItemList  - FilesystemList containing files and directories to be
-                 purged.  Includes individual files and individual
-                 directories (which will *not* be treated recursively).
-                 Adds the ability to purge the entries in the list.
+                 purged.  Adds the ability to purge the entries in the
+                 list.  Directories can only be purged if they are empty.
 
 CollectProcess - Encapsulates a collect process on the local peer for
                  the given day.  Would be initialized with Configuration
@@ -71,7 +70,9 @@ IsoImage       - Which would represent an ISO image on disk, and would let
                  you add directories (which graft points, etc.) and set
                  various mkisofs options, etc.  It also includes a way to
                  do a consistency check of the expected image vs. the
-                 fileystem at some indicated location.
+                 fileystem at some indicated location and includes a way
+                 to add only files that fit in an image of a certain size,
+                 etc.
 
 ImageWriter    - Generic class (interface?) that represents a device which
                  can write an IsoImage.  

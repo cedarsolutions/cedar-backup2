@@ -46,8 +46,7 @@ focused around weekly backups to a single disc, with the expectation
 that the disc will be changed or overwritten at the beginning of each
 week.  If your hardware is new enough, the script can write multisession
 discs, allowing you to add to a disc in a daily fashion.  Directories
-are backed up using GNU tar(1) and may be compressed using several
-different methods.
+are backed up using tar and may be compressed using gzip or bzip2.
 
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -60,5 +59,5 @@ different methods.
 # Using 'from CedarBackup2 import *' will just import the modules listed
 # in the __all__ variable.
 
-__all__ = [ 'release', ]
+__all__ = [ 'release', 'knapsack', 'filesystem', ]
 

@@ -37,9 +37,8 @@ on local and remote hosts to CD-R or CD-RW media.  The package is
 focused around weekly backups to a single disc, with the expectation
 that the disc will be changed or overwritten at the beginning of each
 week.  If your hardware is new enough, the script can write multisession
-discs, allowing you to add to a disc in a daily fashion.  Directories
-are backed up using GNU tar(1) and may be compressed using several
-different methods.
+discs, allowing you to add to a disc in a daily fashion.   Directories
+are backed up using tar and may be compressed using gzip or bzip2.
 """
 
 setup (
