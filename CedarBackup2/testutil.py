@@ -65,6 +65,8 @@ import os
 import tarfile
 import time
 import getpass
+import random
+import string
 
 from CedarBackup2.util import encodePath
 
@@ -157,6 +159,7 @@ def extractTar(tmpdir, filepath):
    tmpdir = encodePath(tmpdir)
    filepath = encodePath(filepath)
    tar = tarfile.open(filepath)
+   tar.posix = False
    for tarinfo in tar:
       tar.extract(tarinfo, tmpdir)
 
@@ -205,6 +208,26 @@ def getLogin():
    some circumstances - but if it does, our tests would fail anyway.
    """
    return getpass.getuser()
+
+
+############################
+# randomFilename() function
+############################
+
+def randomFilename(length, prefix=None, suffix=None):
+   """
+   Generates a random filename with the given length.
+   @param length: Length of filename.
+   @return Random filename.
+   """
+   characters = [None] * length
+   for i in xrange(length):
+      characters[i] = random.choice(string.uppercase)
+   if prefix is None:
+      prefix = ""
+   if suffix is None:
+      suffix = ""
+   return "%s%s%s" % (prefix, "".join(characters), suffix)
 
 
 ####################################
