@@ -770,7 +770,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
       writer._deviceSupportsMulti = True;
       boundaries = writer._getBoundaries(entireDisc=True, useMulti=True)
-      self.failUnlessEqual((0, 0), boundaries)
+      self.failUnlessEqual(None, boundaries)
 
    def testCapacity_023(self):
       """
