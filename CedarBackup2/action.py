@@ -954,7 +954,7 @@ def _writeImage(config, entireDisc, stagingDirs):
    try:
       (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)
       try:
-         close(handle)
+         os.close(handle)
       except: pass
       image.writeImage(imagePath)
       logger.debug("Completed creating image.")

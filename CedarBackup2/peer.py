@@ -344,6 +344,9 @@ class LocalPeer(object):
       is a no-op.  Attempting to copy a soft link or a directory will result in
       an exception.
 
+      @note: If you have user/group as strings, call the L{util.getUidGid}
+      function to get the associated uid/gid as an ownership tuple.
+
       @note: We will not overwrite a target file that exists when this method
       is invoked.  If the target already exists, we'll raise an exception.
 
@@ -406,7 +409,13 @@ class RemotePeer(object):
    This is a class representing a remote (networked) peer in a backup pool.
    Remote peers are backed up using an rcp-compatible copy command.  A remote
    peer has associated with it a name (which must be a valid hostname), a
-   collect directory and a copy method (an rcp-compatible command).
+   collect directory, a working directory and a copy method (an rcp-compatible
+   command).  
+
+   You can also set an optional local user value.  This username will be used
+   as the local user for any remote copies that are required.  It can only be
+   used if the root user is executing the backup.  The root user will C{su} to
+   the local user and execute the remote copies as that user.
 
    The copy method is associated with the peer and not with the actual request
    to copy, because we can envision that each remote host might have a
@@ -427,11 +436,6 @@ class RemotePeer(object):
    def __init__(self, name, collectDir, workingDir, remoteUser, rcpCommand=None, localUser=None):
       """
       Initializes a remote backup peer.
-
-      @note: If provided, the C{localUser} will be used to any remote copies
-      that are required.  It can only be used if the root user is executing the
-      backup.  The root user will C{su} to the local user and execute the
-      remote copies as that user.
 
       @note: If provided, the rcp command will eventually be parsed into a list
       of strings suitable for passing to L{popen2.Popen4} in order to avoid
@@ -614,6 +618,11 @@ class RemotePeer(object):
       passed in, ownership and permissions will be applied to the files that
       are copied.  
 
+      @note: The returned count of copied files might be inaccurate if some of
+      the copied files already existed in the staging directory prior to the
+      copy taking place.  We don't clear the staging directory first, because
+      some extension might also be using it.
+
       @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
@@ -693,8 +702,8 @@ class RemotePeer(object):
          if os.path.exists(targetFile):
             try:
                os.remove(targetFile)
-            except Exception, e: 
-               raise Exception("Internal error: target existed before it should; we can't do anything sensible.")
+            except:
+               raise Exception("Internal error: target existed before it should.")
          try:
             RemotePeer._copyRemoteFile(self.remoteUser, self.localUser, self.name, 
                                        self._rcpCommand, self._rcpCommandList, 
@@ -797,6 +806,11 @@ class RemotePeer(object):
       if new values are not specified.  Behavior when copying soft links from
       the collect directory is dependent on the behavior of the specified rcp
       command.
+
+      @note: The returned count of copied files might be inaccurate if some of
+      the copied files already existed in the staging directory prior to the
+      copy taking place.  We don't clear the staging directory first, because
+      some extension might also be using it.
 
       @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
