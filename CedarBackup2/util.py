@@ -72,6 +72,7 @@ Provides general-purpose utilities.
 ########################################################################
 
 import sys
+import math
 import os
 import re
 import time
@@ -449,7 +450,7 @@ def convertSize(size, fromUnit, toUnit):
 # displayBytes() function
 ##########################
 
-def displayBytes(bytes, digits=3):
+def displayBytes(bytes, digits=2):
    """
    Format a byte quantity so it can be sensibly displayed.
 
@@ -465,24 +466,25 @@ def displayBytes(bytes, digits=3):
       print "Size: %s" % displayBytes(bytes)
 
    What comes out will be sensibly formatted.  The indicated number of digits
-   will be listed after the decimal point.
+   will be listed after the decimal point, rounded based on whatever rules are
+   used by Python's standard C{%f} string format specifier.
 
    @param bytes: Byte quantity.
    @type bytes: Integer number of bytes.
 
    @param digits: Number of digits to display after the decimal point.
-   @type digits: Integer value, typically 3-10.
+   @type digits: Integer value, typically 2-5.
 
    @return: String, formatted for sensible display.
    """
    bytes = float(bytes)
-   if bytes < BYTES_PER_KBYTE:
+   if math.fabs(bytes) < BYTES_PER_KBYTE:
       format = "%.0f bytes"
       value = bytes
-   elif bytes < BYTES_PER_MBYTE:
+   elif math.fabs(bytes) < BYTES_PER_MBYTE:
       format = "%." + "%d" % digits + "f kB"
       value = bytes / BYTES_PER_KBYTE
-   elif bytes < BYTES_PER_GBYTE:
+   elif math.fabs(bytes) < BYTES_PER_GBYTE:
       format = "%." + "%d" % digits + "f MB"
       value = bytes / BYTES_PER_MBYTE
    else:
