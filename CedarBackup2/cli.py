@@ -107,7 +107,7 @@ DATE_FORMAT        = "%Y-%m-%dT%H:%M:%S %Z"
 
 DEFAULT_CONFIG     = "/etc/cback.conf"
 DEFAULT_LOGFILE    = "/var/log/cback.log"
-DEFAULT_OWNERSHIP  = "root:adm"
+DEFAULT_OWNERSHIP  = [ "root", "adm", ]
 DEFAULT_MODE       = 0640
 
 VALID_ACTIONS      = [ "collect", "stage", "store", "purge", "rebuild", "validate", "all", ]
@@ -142,40 +142,80 @@ def cli():
 
    A different error code is returned for each type of failure::
 
-      - C{1}: Error processing command-line arguments
-      - C{2}: Error configuring logging
-      - C{3}: Error parsing indicated configuration file
-      - C{4}: Error executing backup
+      - C{1}: The Python interpreter version is < 2.3
+      - C{2}: Error processing command-line arguments
+      - C{3}: Error configuring logging
+      - C{4}: Error parsing indicated configuration file
+      - C{5}: Error executing backup
+
+   @note: This function contains a good amount of logging at the INFO level,
+   because this is the right place to document high-level flow of control (i.e.
+   what the command-line options were, what config file was being used, etc.)
 
    @return: Error code as described above.
    """
    try:
+      if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 3]:
+         sys.stderr.write("Python version 2.3 or greater required.\n")
+         return 1
+   except:
+      # sys.version_info isn't available before 2.0
+      sys.stderr.write("Python version 2.3 or greater required.\n")
+      return 1
+
+   try:
       options = Options(argumentList=sys.argv[1:])
    except Exception, e:
       _usage()
-      return 1
+      sys.stderr.write(" *** Error: %s\n" % e)
+      return 2
+
    if options.help:
       _usage()
       return 0
    if options.version:
       _version()
       return 0
+
    try:
-      _setupLogging(options)
+      logfile = _setupLogging(options)
    except Exception, e:
       sys.stderr.write("Error setting up logging: %s\n" % e)
-      return 2
-   try:
-      config = Config(xmlPath=options.config)
-   except Exception, e:
-      logger.error("Configuration error: %s" % e)
       return 3
+
+   logger.info("Cedar Backup run started.")
+   logger.info("Options were: %s" % options)
+   logger.info("Logfile is: %s" % logfile)
+
+   try:
+      if options.config is None:
+         logger.debug("Using default configuration file.")
+         logger.info("Configuration path: %s" % DEFAULT_CONFIG)
+         config = Config(xmlPath=DEFAULT_CONFIG)
+      else:
+         logger.debug("Using user-supplied configuration file.")
+         logger.info("Configuration path: %s" % options.config)
+         config = Config(xmlPath=options.config)
+      logger.info("Configuration is valid.")
+   except Exception, e:
+      logger.error("Error reading configuration: %s" % e)
+      logger.info("Cedar Backup run completed with status 4.")
+      return 4
+
    if 'validate' in options.actions:
+      if not options.quiet:
+         print "Configuration is valid."
+      logger.debug("Exiting early because only configuration validation was requested.")
+      logger.info("Cedar Backup run completed with status 0.")
       return 0
+
+   logger.info("Specified actions: %s" % options.actions)
+
    try:
       if 'rebuild' in options.actions:
          executeRebuild(config, options.full)
       elif 'all' in options.actions:
+         logger.debug("Since 'all' action was specified, we will execute collect, stage, store and purge.")
          executeCollect(config, options.full)
          executeStage(config, options.full)
          executeStore(config, options.full)
@@ -191,7 +231,10 @@ def cli():
             executePurge(config, options.full)
    except Exception, e:
       logger.error("Error executing backup: %s" % e)
-      return 4
+      logger.info("Cedar Backup run completed with status 5.")
+      return 5
+
+   logger.info("Cedar Backup run completed with status 0.")
    return 0
 
 
@@ -221,7 +264,7 @@ def _usage(fd=sys.stderr):
    fd.write("   -c, --config   Path to config file (default: %s)\n" % DEFAULT_CONFIG)
    fd.write("   -f, --full     Perform a full backup, regardless of configuration\n")
    fd.write("   -l, --logfile  Path to logfile (default: %s)\n" % DEFAULT_LOGFILE)
-   fd.write("   -o, --owner    Logfile ownership, user:group (default: %s)\n" % DEFAULT_OWNERSHIP)
+   fd.write("   -o, --owner    Logfile ownership, user:group (default: %s:%s)\n" % (DEFAULT_OWNERSHIP[0], DEFAULT_OWNERSHIP[1]))
    fd.write("   -m, --mode     Octal logfile permissions mode (default: %o)\n" % DEFAULT_MODE)
    fd.write("   -O, --output   Record some sub-command (i.e. tar) output to the log\n")
    fd.write("   -d, --debug    Write debugging information to the log (implies --output)\n")
@@ -297,10 +340,13 @@ def _setupLogging(options):
 
    @param options: Command-line options.
    @type options: L{Options} object
+
+   @return: Path to logfile on disk.
    """
    logfile = _setupLogfile(options)
    _setupFlowLogging(logfile, options)
    _setupOutputLogging(logfile, options)
+   return logfile
 
 def _setupLogfile(options):
    """
@@ -310,7 +356,8 @@ def _setupLogfile(options):
    assumption that it was created with appropriate ownership and permissions.
    If the logfile does not exist on disk, it will be created as an empty file.
    Ownership and permissions will remain at their defaults unless user/group
-   and/or mode are set in the options.
+   and/or mode are set in the options.  We ignore errors setting the indicated
+   user and group.
 
    @note: This function is vulnerable to a race condition.  If the log file
    does not exist when the function is run, it will attempt to create the file
@@ -321,6 +368,7 @@ def _setupLogfile(options):
    something.
 
    @param options: Command-line options.
+
    @return: Path to logfile on disk.
    """
    if options.logfile is None:
@@ -332,9 +380,13 @@ def _setupLogfile(options):
          os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND, DEFAULT_MODE)).write("")
       else:
          os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND, options.mode)).write("")
-      if options.owner is not None and options.group is not None:
-         (uid, gid) = getUidGid(options.owner, options.group)
+      try:
+         if options.owner is None and options.group is None:
+            (uid, gid) = getUidGid(DEFAULT_OWNERSHIP[0], DEFAULT_OWNERSHIP[1])
+         else:
+            (uid, gid) = getUidGid(options.owner, options.group)
          os.chown(logfile, uid, gid)
+      except: pass
    return logfile
 
 def _setupFlowLogging(logfile, options):
@@ -544,8 +596,7 @@ class Options(object):
       """
       Official string representation for class instance.
       """
-      argumentString = self.buildArgumentString(validate=False)
-      return "Config(argumentString=%s)" % argumentString
+      return self.buildArgumentString(validate=False)
 
    def __str__(self):
       """
@@ -890,7 +941,7 @@ class Options(object):
             raise ValueError("At least one action must be specified.")
       for action in NONCOMBINE_ACTIONS:
          if action in self.actions and self.actions != [ action, ]:
-            raise ValueError("Action %s may not be combined with other actions." % action)
+            raise ValueError("Action '%s' may not be combined with other actions." % action)
 
    def buildArgumentList(self, validate=True):
       """

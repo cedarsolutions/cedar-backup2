@@ -75,7 +75,7 @@ def executeCollect(config, full):
    @param full: Indicates whether full backup was flagged.
    @type full: Boolean value.
    """
-   logger.info("Executing collect action.")
+   logger.info("Completed collect action successfully.")
 
 def executeStage(config, full):
    """
@@ -87,7 +87,7 @@ def executeStage(config, full):
    @param full: Indicates whether full backup was flagged.
    @type full: Boolean value.
    """
-   logger.info("Executing stage action.")
+   logger.info("Completed stage action successfully.")
 
 def executeStore(config, full):
    """
@@ -99,7 +99,7 @@ def executeStore(config, full):
    @param full: Indicates whether full backup was flagged.
    @type full: Boolean value.
    """
-   logger.info("Executing store action.")
+   logger.info("Completed store action successfully.")
 
 def executePurge(config, full):
    """
@@ -111,7 +111,7 @@ def executePurge(config, full):
    @param full: Indicates whether full backup was flagged.
    @type full: Boolean value.
    """
-   logger.info("Executing purge action.")
+   logger.info("Completed purge action successfully.")
 
 def executeRebuild(config, full):
    """
@@ -123,5 +123,5 @@ def executeRebuild(config, full):
    @param full: Indicates whether full backup was flagged.
    @type full: Boolean value.
    """
-   logger.info("Executing rebuild action.")
+   logger.info("Completed rebuild action successfully.")
 
