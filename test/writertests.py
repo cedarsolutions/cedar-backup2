@@ -95,6 +95,16 @@ from CedarBackup2.writer import MediaDefinition, MediaCapacity, CdWriter
 from CedarBackup2.writer import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 
 
+########################################################################
+# Constants
+########################################################################
+
+MB650 = (650.0*1024.0*1024.0)    # 650 MB
+MB700 = (700.0*1024.0*1024.0)    # 700 MB
+ILEAD = (11400.0*2048.0)         # Initial lead-in
+SLEAD = (6900.0*2048.0)          # Session lead-in
+
+
 #######################################################################
 # Test Case Classes
 #######################################################################
@@ -544,176 +554,204 @@ class TestCdWriter(unittest.TestCase):
       """
       Test _calculateCapacity for boundaries of None and MEDIA_CDR_74.
       """
+      expectedAvailable = MB650-ILEAD # 650 MB, minus initial lead-in
       media = MediaDefinition(MEDIA_CDR_74)
       boundaries = None
       capacity = CdWriter._calculateCapacity(media, boundaries)
       self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((650.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual(None, capacity.boundaries)
 
    def testCapacity_002(self):
       """
       Test _calculateCapacity for boundaries of None and MEDIA_CDRW_74.
       """
+      expectedAvailable = MB650-ILEAD  # 650 MB, minus initial lead-in
       media = MediaDefinition(MEDIA_CDRW_74)
       boundaries = None
       capacity = CdWriter._calculateCapacity(media, boundaries)
       self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((650.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual(None, capacity.boundaries)
 
    def testCapacity_003(self):
       """
       Test _calculateCapacity for boundaries of None and MEDIA_CDR_80.
       """
+      expectedAvailable = MB700-ILEAD  # 700 MB, minus initial lead-in
       media = MediaDefinition(MEDIA_CDR_80)
       boundaries = None
       capacity = CdWriter._calculateCapacity(media, boundaries)
       self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((700.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 700 MB minus lead-in
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual(None, capacity.boundaries)
 
    def testCapacity_004(self):
       """
       Test _calculateCapacity for boundaries of None and MEDIA_CDRW_80.
       """
+      expectedAvailable = MB700-ILEAD # 700 MB, minus initial lead-in
       media = MediaDefinition(MEDIA_CDRW_80)
       boundaries = None
       capacity = CdWriter._calculateCapacity(media, boundaries)
       self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((700.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 700 MB minus lead-in
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual(None, capacity.boundaries)
 
    def testCapacity_005(self):
       """
       Test _calculateCapacity for boundaries of (0, 1) and MEDIA_CDR_74.
       """
+      expectedUsed = (1*2048.0)  # 1 sector
+      expectedAvailable = MB650-SLEAD-expectedUsed # 650 MB, minus session lead-in, minus 1 sector
       media = MediaDefinition(MEDIA_CDR_74)
       boundaries = (0, 1)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((650.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((0, 1), capacity.boundaries)
 
    def testCapacity_006(self):
       """
       Test _calculateCapacity for boundaries of (0, 1) and MEDIA_CDRW_74.
       """
+      expectedUsed = (1*2048.0)                    # 1 sector
+      expectedAvailable = MB650-SLEAD-expectedUsed # 650 MB, minus session lead-in, minus 1 sector
       media = MediaDefinition(MEDIA_CDRW_74)
       boundaries = (0, 1)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((650.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((0, 1), capacity.boundaries)
 
    def testCapacity_007(self):
       """
       Test _calculateCapacity for boundaries of (0, 1) and MEDIA_CDR_80.
       """
+      expectedUsed = (1*2048.0)                    # 1 sector
+      expectedAvailable = MB700-SLEAD-expectedUsed # 700 MB, minus session lead-in, minus 1 sector
       media = MediaDefinition(MEDIA_CDR_80)
       boundaries = (0, 1)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((700.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 700 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable) # 700 MB - lead-in - 1 sector
       self.failUnlessEqual((0, 1), capacity.boundaries)
 
    def testCapacity_008(self):
       """
       Test _calculateCapacity for boundaries of (0, 1) and MEDIA_CDRW_80.
       """
+      expectedUsed = (1*2048.0)                    # 1 sector
+      expectedAvailable = MB700-SLEAD-expectedUsed # 700 MB, minus session lead-in, minus 1 sector
       media = MediaDefinition(MEDIA_CDRW_80)
       boundaries = (0, 1)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((700.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 700 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((0, 1), capacity.boundaries)
 
    def testCapacity_009(self):
       """
       Test _calculateCapacity for boundaries of (0, 999) and MEDIA_CDR_74.
       """
+      expectedUsed = (999*2048.0)                  # 999 sectors
+      expectedAvailable = MB650-SLEAD-expectedUsed # 650 MB, minus session lead-in, minus 999 sectors
       media = MediaDefinition(MEDIA_CDR_74)
       boundaries = (0, 999)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((650.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((0,999), capacity.boundaries)
 
    def testCapacity_010(self):
       """
       Test _calculateCapacity for boundaries of (0, 999) and MEDIA_CDRW_74.
       """
+      expectedUsed = (999*2048.0)                  # 999 sectors
+      expectedAvailable = MB650-SLEAD-expectedUsed # 650 MB, minus session lead-in, minus 999 sectors
       media = MediaDefinition(MEDIA_CDRW_74)
       boundaries = (0, 999)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((650.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((0, 999), capacity.boundaries)
 
    def testCapacity_011(self):
       """
       Test _calculateCapacity for boundaries of (0, 999) and MEDIA_CDR_80.
       """
+      expectedUsed = (999*2048.0)                  # 999 sectors
+      expectedAvailable = MB700-SLEAD-expectedUsed # 700 MB, minus session lead-in, minus 999 sectors
       media = MediaDefinition(MEDIA_CDR_80)
       boundaries = (0, 999)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((700.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 700 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((0, 999), capacity.boundaries)
 
    def testCapacity_012(self):
       """
       Test _calculateCapacity for boundaries of (0, 999) and MEDIA_CDRW_80.
       """
+      expectedUsed = (999*2048.0)                  # 999 sectors
+      expectedAvailable = MB700-SLEAD-expectedUsed # 700 MB, minus session lead-in, minus 999 sectors
       media = MediaDefinition(MEDIA_CDRW_80)
       boundaries = (0, 999)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual(0, capacity.bytesUsed)
-      self.failUnlessEqual((700.0*1024.0*1024.0)-(11400*2048), capacity.bytesAvailable)    # 700 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((0, 999), capacity.boundaries)
 
    def testCapacity_013(self):
       """
       Test _calculateCapacity for boundaries of (500, 1000) and MEDIA_CDR_74.
       """
+      expectedUsed = (1000*2048.0)                 # 1000 sectors
+      expectedAvailable = MB650-SLEAD-expectedUsed # 650 MB, minus session lead-in, minus 1000 sectors
       media = MediaDefinition(MEDIA_CDR_74)
       boundaries = (500, 1000)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual((1000.0*2048.0), capacity.bytesUsed)
-      self.failUnlessEqual((650.0*1024.0*1024.0)-(1000*2048)-(6900*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((500, 1000), capacity.boundaries)
 
    def testCapacity_014(self):
       """
       Test _calculateCapacity for boundaries of (500, 1000) and MEDIA_CDRW_74.
       """
+      expectedUsed = (1000*2048.0)                 # 1000 sectors
+      expectedAvailable = MB650-SLEAD-expectedUsed # 650 MB, minus session lead-in, minus 1000 sectors
       media = MediaDefinition(MEDIA_CDRW_74)
       boundaries = (500, 1000)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual((1000.0*2048.0), capacity.bytesUsed)
-      self.failUnlessEqual((650.0*1024.0*1024.0)-(1000*2048)-(6900*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((500, 1000), capacity.boundaries)
 
    def testCapacity_015(self):
       """
       Test _calculateCapacity for boundaries of (500, 1000) and MEDIA_CDR_80.
       """
+      expectedUsed = (1000*2048.0)                 # 1000 sectors
+      expectedAvailable = MB700-SLEAD-expectedUsed # 700 MB, minus session lead-in, minus 1000 sectors
       media = MediaDefinition(MEDIA_CDR_80)
       boundaries = (500, 1000)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual((1000.0*2048.0), capacity.bytesUsed)
-      self.failUnlessEqual((700.0*1024.0*1024.0)-(1000*2048)-(6900*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
       self.failUnlessEqual((500, 1000), capacity.boundaries)
 
    def testCapacity_016(self):
       """
       Test _calculateCapacity for boundaries of (500, 1000) and MEDIA_CDRW_80.
       """
+      expectedUsed = (1000*2048.0)                 # 1000 sectors
+      expectedAvailable = MB700-SLEAD-expectedUsed # 700 MB, minus session lead-in, minus 1000 sectors
       media = MediaDefinition(MEDIA_CDRW_80)
       boundaries = (500, 1000)
       capacity = CdWriter._calculateCapacity(media, boundaries)
-      self.failUnlessEqual((1000.0*2048.0), capacity.bytesUsed)
-      self.failUnlessEqual((700.0*1024.0*1024.0)-(1000*2048)-(6900*2048), capacity.bytesAvailable)    # 650 MB minus lead-in
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)    # 650 MB minus lead-in
       self.failUnlessEqual((500, 1000), capacity.boundaries)
 
    def testCapacity_017(self):
@@ -791,6 +829,34 @@ class TestCdWriter(unittest.TestCase):
          writer._getBoundaries(entireDisc=False, useMulti=True)
       else:
          self.failUnlessRaises(IOError, writer._getBoundaries, entireDisc=False, useMulti=True)
+
+   def testCapacity_025(self):
+      """
+      Test _calculateCapacity for boundaries of (321342, 330042) and MEDIA_CDRW_74.
+      This was a bug fixed for v2.1.2.
+      """
+      expectedUsed = (330042*2048.0)   # 330042 sectors
+      expectedAvailable = 0            # nothing should be available
+      media = MediaDefinition(MEDIA_CDRW_74)
+      boundaries = (321342, 330042)
+      capacity = CdWriter._calculateCapacity(media, boundaries)
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
+      self.failUnlessEqual((321342, 330042), capacity.boundaries)
+
+   def testCapacity_026(self):
+      """
+      Test _calculateCapacity for boundaries of (0,330042) and MEDIA_CDRW_74.
+      This was a bug fixed for v2.1.3.
+      """
+      expectedUsed = (330042*2048.0)   # 330042 sectors
+      expectedAvailable = 0            # nothing should be available
+      media = MediaDefinition(MEDIA_CDRW_74)
+      boundaries = (0, 330042)
+      capacity = CdWriter._calculateCapacity(media, boundaries)
+      self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
+      self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
+      self.failUnlessEqual((0, 330042), capacity.boundaries)
 
 
    #########################################

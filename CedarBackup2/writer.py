@@ -62,7 +62,8 @@ import re
 import logging
 
 # Cedar Backup modules
-from CedarBackup2.util import executeCommand, convertSize, UNIT_SECTORS, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, encodePath
+from CedarBackup2.util import executeCommand, convertSize, displayBytes, encodePath
+from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES
 
 
 ########################################################################
@@ -603,17 +604,22 @@ class CdWriter(object):
       @raise IOError: If the media could not be read for some reason.
       """
       if not self._deviceSupportsMulti:
+         logger.debug("Device does not support multisession discs; returning boundaries None.")
          return None
       elif not useMulti:
+         logger.debug("Use multisession flag is False; returning boundaries None.")
          return None
       elif entireDisc:
+         logger.debug("Entire disc flag is True; returning boundaries None.")
          return None
       else:
          args = CdWriter._buildBoundariesArgs(self._scsiId)
          (result, output) = executeCommand(CDRECORD_CMD, args, returnOutput=True, ignoreStderr=True)
          if result != 0:
             raise IOError("Error (%d) executing cdrecord command to get capacity." % result)
-         return CdWriter._parseBoundariesOutput(output)
+         boundaries = CdWriter._parseBoundariesOutput(output)
+         logger.debug("Returning disc boundaries (%d, %d)." % (boundaries[0], boundaries[1]))
+         return boundaries
 
    def _calculateCapacity(media, boundaries):
       """
@@ -629,16 +635,19 @@ class CdWriter(object):
 
       @return: C{MediaCapacity} object describing the capacity of the media.
       """
-      if boundaries is None or boundaries[0] == 0:
+      if boundaries is None or boundaries[1] == 0:
+         logger.debug("Capacity calculations are based on a complete disc rewrite.")
          sectorsAvailable = media.capacity - media.initialLeadIn
          if sectorsAvailable < 0: sectorsAvailable = 0
          bytesUsed = 0
          bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
       else:
+         logger.debug("Capacity calculations are based on a new ISO session.")
          sectorsAvailable = media.capacity - boundaries[1] - media.leadIn
          if sectorsAvailable < 0: sectorsAvailable = 0
          bytesUsed = convertSize(boundaries[1], UNIT_SECTORS, UNIT_BYTES)
          bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
+      logger.debug("Used [%s], available [%s]." % (displayBytes(bytesUsed), displayBytes(bytesAvailable)))
       return MediaCapacity(bytesUsed, bytesAvailable, boundaries)
    _calculateCapacity = staticmethod(_calculateCapacity)
 

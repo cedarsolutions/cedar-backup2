@@ -932,7 +932,6 @@ def _writeImage(config, entireDisc, stagingDirs):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there is a problem writing the image to disc.
    """
-   logger.debug("entireDisc: %s" % entireDisc)
    writer = _getWriter(config)
    capacity = writer.retrieveCapacity(entireDisc=entireDisc)
    logger.debug("Media capacity: %s" % displayBytes(capacity.bytesAvailable))
