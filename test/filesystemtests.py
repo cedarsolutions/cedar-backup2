@@ -107,9 +107,9 @@ NOMATCH_PATH      = "something"     # This file should never match something we 
 NOMATCH_PATTERN   = "pattern"       # This pattern should never match something we put in a file list 
 
 
-####################
+#######################################################################
 # Utility functions
-####################
+#######################################################################
 
 def findResources():
    """Returns a dictionary of locations for various resources."""

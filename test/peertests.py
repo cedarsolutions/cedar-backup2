@@ -58,7 +58,7 @@ Code Coverage
    RemotePeer, we need a "remote" host that we can rcp to and from.  We want to
    fall back on using localhost and the current user, but that might not be
    safe or appropriate.  The compromise is that many of the remote peer tests
-   will only be run if PEERTESTS_REMOTE is set to "Y" in the environment.
+   will only be run if PEERTESTS_FULL is set to "Y" in the environment.
 
 Naming Conventions
 ==================
@@ -106,9 +106,9 @@ NONEXISTENT_USER = "unittestuser"                     # This user name should ne
 NONEXISTENT_CMD  = "/bogus/~~~ZZZZ/bad/not/there"     # This command should never exist in the filesystem
 
 
-####################
+#######################################################################
 # Utility functions
-####################
+#######################################################################
 
 def findResources():
    """Returns a dictionary of locations for various resources."""
@@ -153,10 +153,10 @@ def removedir(tree):
             os.rmdir(path)
    os.rmdir(tree)
 
-def remoteExcluded():
-   """Returns true/false depending on whether remote tests are excluded."""
-   if "PEERTESTS_REMOTE" in os.environ:
-      return not os.environ["PEERTESTS_REMOTE"] == "Y"
+def runAllTests():
+   """Returns true/false depending on whether the full test suite should be run."""
+   if "PEERTESTS_FULL" in os.environ:
+      return os.environ["PEERTESTS_FULL"] == "Y"
    else:
       return False
 
@@ -1383,15 +1383,15 @@ class TestRemotePeer(unittest.TestCase):
 
 def suite():
    """Returns a suite containing all the test cases in this module."""
-   if remoteExcluded():
+   if runAllTests():
       return unittest.TestSuite((
                                  unittest.makeSuite(TestLocalPeer, 'test'),
-                                 unittest.makeSuite(TestRemotePeer, 'testBasic'), 
+                                 unittest.makeSuite(TestRemotePeer, 'test'), 
                                ))
    else:
       return unittest.TestSuite((
                                  unittest.makeSuite(TestLocalPeer, 'test'),
-                                 unittest.makeSuite(TestRemotePeer, 'test'), 
+                                 unittest.makeSuite(TestRemotePeer, 'testBasic'), 
                                ))
 
 
