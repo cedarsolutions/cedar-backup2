@@ -95,6 +95,7 @@ Full vs. Reduced Tests
 
 import sys
 import os
+import sha
 import time
 import unittest
 import tempfile
@@ -12760,9 +12761,9 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
 
-   ###########################
+   #########################
    # Test removeUnchanged()
-   ###########################
+   #########################
          
    def testRemoveUnchanged_001(self):
       """
@@ -13136,6 +13137,22 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+
+
+   #########################
+   # Test _generateDigest()
+   #########################
+         
+   def testGenerateDigest_001(self):
+      """
+      Test that _generateDigest gives back same result as the slower simplistic
+      implementation for a set of files (just using all of the resource files).
+      """
+      for key in self.resources.keys():
+         path = self.resources[key]
+         digest1 = sha.new(open(path).read()).hexdigest()
+         digest2 = BackupFileList._generateDigest(path)
+         self.failUnlessEqual(digest1, digest2, "Digest for %s varies: [%s] vs [%s]." % (path, digest1, digest2))
 
 
 ##########################

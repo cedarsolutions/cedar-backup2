@@ -732,10 +732,46 @@ class BackupFileList(FilesystemList):
    def _generateDigest(path):
       """
       Generates an SHA digest for a given file on disk.
+
+      The original code for this function used this simplistic implementation,
+      which requires reading the entire file into memory at once in order to
+      generate a digest value::
+
+         sha.new(open(path).read()).hexdigest()
+
+      Not surprisingly, this isn't an optimal solution.  The U{Simple file
+      hashing <http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/259109>}
+      Python Cookbook recipe describes how to incrementally generate a hash
+      value by reading in chunks of data rather than reading the file all at
+      once.  The recipe relies on the the C{update()} method of the various
+      Python hashing algorithms.
+
+      In my tests using a 110 MB file on CD, the original implementation
+      requires 111 seconds while this implementation requires only 40-45
+      seconds, which is a pretty substantial speed-up.  
+
+      Practice shows that reading in around 4kB (4096 bytes) at a time yields
+      the best performance.  Smaller reads are quite a bit slower, and larger
+      reads don't make much of a difference.  The 4kB number makes me a little
+      suspicious, and I think it might be related to the size of a filesystem
+      read at the hardware level.  However, I've decided to just hardcode 4096
+      until I have evidence that shows it's worthwhile making the read size
+      configurable.
+
       @param path: Path to generate digest for.
+
       @return: ASCII-safe SHA digest for the file.
+      @raise OSError: If the file cannot be opened.
       """
-      return sha.new(open(path).read()).hexdigest()
+      s = sha.new()
+      f = open(path)
+      readBytes = 4096  # see notes above
+      while(readBytes > 0):
+         readString = f.read(readBytes)
+         s.update(readString)
+         readBytes = len(readString)
+      f.close()
+      return s.hexdigest()
    _generateDigest = staticmethod(_generateDigest)
 
    def generateFitted(self, capacity, algorithm="worst_fit"):
