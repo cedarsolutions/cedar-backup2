@@ -159,13 +159,6 @@ def main():
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."
 
-   # Import psycho if possible
-   try:
-      import psyco
-      psyco.full()
-      print "*** Note: using pyscho for speedup, since it's available."
-   except: pass
-
    # Create and run the test suite
    print ""
    suite = unittest.TestSuite((

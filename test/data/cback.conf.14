@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Document containing only a reference section, containing all required and optional fields. -->
+<!-- Document containing only a purge section, containing all required and optional fields. -->
 <cb_config>
    <purge>
       <dir>
