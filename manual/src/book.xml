@@ -11,11 +11,16 @@
 # Copyright (c) 2005 Kenneth J. Pronovici.
 # All rights reserved.
 #
-# This work is licensed under the Creative Commons Attribution-
-# ShareAlike License. To view a copy of this license, visit
-# http://creativecommons.org/licenses/by-sa/2.0/
-# or send a letter to Creative Commons, 559 Nathan Abbott Way,
-# Stanford, California 94305, USA.
+# This work is free; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License, Version 2,
+# as published by the Free Software Foundation.
+#
+# This work is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Copies of the GNU General Public License are available from
+# the Free Software Foundation website, http://www.gnu.org/.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -67,11 +72,33 @@
 
       <legalnotice>
          <para>
-            This work is licensed under the Creative Commons Attribution-ShareAlike License. 
-            To view a copy of this license, visit
-            <systemitem class="url">http://creativecommons.org/licenses/by-sa/2.0/</systemitem>
-            or send a letter to Creative Commons, 559 Nathan Abbott Way,
-            Stanford, California 94305, USA.
+            This work is free; you can redistribute it and/or modify it under
+            the terms of the GNU General Public License (the "GPL"), Version 2,
+            as published by the Free Software Foundation.
+         </para>
+
+         <para>
+            For the purposes of the GPL, the "preferred form of modification"
+            for this work is the original Docbook XML text files.  If you
+            choose to distribute this work in a compiled form (i.e. if you
+            distribute HTML, PDF or Postscript documents based on the original
+            Docbook XML text files), you must also consider image files to be
+            "source code" if those images are required in order to construct a
+            complete and readable compiled version of the work.
+         </para>
+
+         <para>
+            This work is distributed in the hope that it will be useful,
+            but WITHOUT ANY WARRANTY; without even the implied warranty of
+            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+         </para>
+
+         <para>
+            Copies of the GNU General Public License are available from
+            the Free Software Foundation website,
+            <systemitem class="url">http://www.gnu.org/</systemitem>.
+            You may also write the Free Software Foundation, Inc., 59 Temple
+            Place, Suite 330, Boston, MA 02111-1307 USA.
          </para>
       </legalnotice>
 
