@@ -14,6 +14,10 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+* DAMMIT!  The 'all' action is only supposed to execute those actions which have been 
+  configured in the config file.  How do we account for that?  Maybe actions just silently
+  (with an INFO log) don't do anything if no configuration exists for them?  What makes
+  sense?
 * Test _ActionSet and _ActionItem functionality, hopefully in a unit test of some sort
 * Change sort order of parameters, classes within modules, etc. where needed in Epydoc
 * Implement "safe overwrite" functionality from aborted 2.x branch into CdWriter - shouldn't be too difficult.
