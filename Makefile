@@ -60,7 +60,7 @@ clean: docclean distribclean
 	-@find . -name "*.pyc" | xargs rm -f
 
 test:
-	-@$(PYTHON) util/unittest.py
+	@$(PYTHON) util/unittest.py
 
 
 ##################################

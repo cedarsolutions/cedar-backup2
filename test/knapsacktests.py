@@ -29,7 +29,7 @@
 # Language : Python (>= 2.3)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Tests filesystem-related objects.
+# Purpose  : Tests knapsack functionality.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # This file was created with a width of 132 characters, and NO tabs.
@@ -39,7 +39,7 @@
 ########################################################################
 
 """
-Unit tests for CedarBackup2/filesystem.py.
+Unit tests for CedarBackup2/knapsack.py.
 
 Code Structure
 ==============
@@ -53,18 +53,6 @@ Code Structure
    and each test will be annotated in the method documentation.  This is more
    like the way I write JUnit tests, and I think it should will be just as easy
    to follow.
-
-Code Coverage
-=============
-
-   There are individual tests for each of the objects implemented in
-   filesystem.py: FilesystemList, BackupFileList and PurgeItemList.
-   BackupFileList and PurgeItemList inherit from FilesystemList, and
-   FilesystemList itself inherits from the standard Python list object.  For
-   the most part, I won't spend time testing inherited functionality,
-   especially if it's already been tested.  However, there are some tests of
-   the base list functionality just to ensure that the inheritence has been
-   constructed properly.
 
 Debugging these Tests
 =====================
@@ -92,43 +80,9 @@ Debugging these Tests
 
 # Import standard modules
 import sys
-try:
-   import os
-   import unittest
-except ImportError, e:
-    print "Failed to import standard modules: %s" % e
-    print "Please try setting the PYTHONPATH environment variable."
-    sys.exit(1)
-
-# Try to find the right CedarBackup2 module.  
-# We want to make sure the tests use the modules in the current source
-# tree, not any versions previously-installed elsewhere, if possible.
-try:
-   if os.path.exists(os.path.join(".", "CedarBackup2", "filesystem.py")):
-      sys.path.insert(0, ".")
-   elif os.path.basename(os.getcwd()) == "unittest" and os.path.exists(os.path.join("..", "CedarBackup2", "filesystem.py")):
-      sys.path.insert(0, "..")
-   else:
-      print "WARNING: CedarBackup2 modules were not found in the expected"
-      print "location.  If the import succeeds, you may be using an"
-      print "unexpected version of CedarBackup2."
-      print ""
-   from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemList
-except ImportError, e:
-   print "Failed to import CedarBackup2 modules: %s" % e
-   print "You must either run the unit tests from the CedarBackup2 source"
-   print "tree, or properly set the PYTHONPATH enviroment variable."
-   sys.exit(1)
-
-# Check the Python version.  We require 2.3 or greater.
-try:
-   if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 3]:
-      print "Python version 2.3 or greater required, sorry."
-      sys.exit(1)
-except:
-   # sys.version_info isn't available before 2.0
-   print "Python version 2.3 or greater required, sorry."
-   sys.exit(1)
+import os
+import unittest
+import CedarBackup2.knapsack
 
 
 #######################################################################
@@ -161,105 +115,13 @@ def findData():
 # Test Case Classes
 #######################################################################
 
-###########################
-# TestFilesystemList class
-###########################
+#####################
+# TestKnapsack class
+#####################
 
-class TestFilesystemList(unittest.TestCase):
+class TestKnapsack(unittest.TestCase):
 
-   """Tests for the FilesystemList object."""
-
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.data = findData()
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      pass
-
-
-   #####################
-   # Tests for whatever
-   #####################
-         
-   def test_1_01(self):
-      """
-      Test 1.01.
-      XXXXX
-      """
-      pass
-
-
-   #####################
-   # Tests for whatever
-   #####################
-         
-   def test_2_01(self):
-      """
-      Test 2.01.
-      XXXXX
-      """
-      pass
-
-
-###########################
-# TestBackupFileList class
-###########################
-
-class TestBackupFileList(unittest.TestCase):
-
-   """Tests for the BackupFileList object."""
-
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.data = findData()
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      pass
-
-
-   #####################
-   # Tests for whatever
-   #####################
-         
-   def test_1_01(self):
-      """
-      Test 1.01.
-      XXXXX
-      """
-      pass
-
-
-   #####################
-   # Tests for whatever
-   #####################
-         
-   def test_2_01(self):
-      """
-      Test 2.01.
-      XXXXX
-      """
-      pass
-
-
-##########################
-# TestPurgeItemList class
-##########################
-
-class TestPurgeItemList(unittest.TestCase):
-
-   """Tests for the PurgeItemList object."""
+   """Tests for the various knapsack functions."""
 
    ################
    # Setup methods
@@ -305,7 +167,7 @@ class TestPurgeItemList(unittest.TestCase):
 
 def suite():
    """Returns a suite containing all the test cases in this module."""
-   return(unittest.makeSuite((TestFilesystemList, TestBackupFileList, TestPurgeItemList, )))
+   return unittest.TestSuite((unittest.makeSuite(TestKnapsack, 'test')))
 
 
 ########################################################################
@@ -314,11 +176,5 @@ def suite():
 
 # When this module is executed from the command-line, run its tests
 if __name__ == '__main__':
-   print "\nTesting CedarBackup2/filesystem.py."
-   try:
-      import psyco
-      psyco.full()
-      print "Note: using pyscho for speedup, since it's available."
-   except: pass
    unittest.main()
 
