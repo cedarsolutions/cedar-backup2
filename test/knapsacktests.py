@@ -41,20 +41,30 @@
 """
 Unit tests for CedarBackup2/knapsack.py.
 
-Python unittest conventions usually have tests named something like
-testListInsert() or similar.  This makes sense, but with the kind of tests I'm
-doing, I don't want to end up with huge descriptive function names.  It's
-klunky.
+Code Coverage
+=============
 
-Instead, functions will be named according to their test plan item number, and
-each test will be annotated in the method documentation.  This is more like the
-way I write JUnit tests, and I think it should will be just as easy to follow.
+   This module contains individual tests for each of the public functions
+   implemented in knapsack.py: C{firstFit()}, C{bestFit()}, C{worstFit()} and
+   C{alternateFit()}.
 
-Note that the tests for each function are pretty much identical and so there's
-pretty much code duplication.  In production code, I would argue that this
-implies some refactoring is needed.  In here, however, I prefer having lots of
-individual test cases even if there is duplication, because I think this makes
-it easier to judge the extent of a problem when one exists.
+   Note that the tests for each function are pretty much identical and so
+   there's pretty much code duplication.  In production code, I would argue
+   that this implies some refactoring is needed.  In here, however, I prefer
+   having lots of individual test cases even if there is duplication, because I
+   think this makes it easier to judge the extent of a problem when one exists.
+
+Naming Conventions
+==================
+
+   I prefer to avoid large unit tests which validate more than one piece of
+   functionality, and I prefer to avoid using overly descriptive (read: long)
+   test names, as well.  Instead, I use lots of very small tests that each
+   validate one specific thing.  These small tests are then named with an index
+   number, yielding something like C{testAddDir_001} or C{testValidate_010}.
+   Each method has a docstring describing what it's supposed to accomplish.  I
+   feel that this makes it easier to judge how important a given failure is,
+   and also makes it somewhat easier to diagnose and fix individual problems.
 
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -144,9 +154,8 @@ class TestKnapsack(unittest.TestCase):
    # Tests for firstFit() function
    ################################
          
-   def test_1_01(self):
+   def testFirstFit_001(self):
       """
-      Test 1.01.
       Test firstFit() behavior for an empty items dictionary, zero capacity.
       """
       items = buildItemDict(ITEMS_01)
@@ -154,9 +163,8 @@ class TestKnapsack(unittest.TestCase):
       result = firstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_1_02(self):
+   def testFirstFit_002(self):
       """
-      Test 1.02.
       Test firstFit() behavior for an empty items dictionary, non-zero capacity.
       """
       items = buildItemDict(ITEMS_01)
@@ -164,9 +172,8 @@ class TestKnapsack(unittest.TestCase):
       result = firstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_1_03(self):
+   def testFirstFit_003(self):
       """
-      Test 1.03.
       Test firstFit() behavior for an non-empty items dictionary, zero capacity.
       """
       items = buildItemDict(ITEMS_03)
@@ -184,9 +191,8 @@ class TestKnapsack(unittest.TestCase):
       result = firstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_1_04(self):
+   def testFirstFit_004(self):
       """
-      Test 1.04.
       Test firstFit() behavior for non-empty items dictionary with zero-sized items, zero capacity.
       """
       items = buildItemDict(ITEMS_03)
@@ -194,9 +200,8 @@ class TestKnapsack(unittest.TestCase):
       result = firstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_1_05(self):
+   def testFirstFit_005(self):
       """
-      Test 1.05.
       Test firstFit() behavior for items dictionary where only one item fits.
       """
       items = buildItemDict(ITEMS_05)
@@ -241,9 +246,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(1, len(result[0]))
       self.failUnlessEqual(100000, result[1])
 
-   def test_1_06(self):
+   def testFirstFit_006(self):
       """
-      Test 1.06.
       Test firstFit() behavior for items dictionary where only 25% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -316,9 +320,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(2, len(result[0]))
       self.failUnlessEqual(2000, result[1])
 
-   def test_1_07(self):
+   def testFirstFit_007(self):
       """
-      Test 1.07.
       Test firstFit() behavior for items dictionary where only 50% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -391,9 +394,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(4000, result[1])
 
-   def test_1_08(self):
+   def testFirstFit_008(self):
       """
-      Test 1.08.
       Test firstFit() behavior for items dictionary where only 75% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -466,9 +468,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(6, len(result[0]))
       self.failUnlessEqual(6000, result[1])
 
-   def test_1_09(self):
+   def testFirstFit_009(self):
       """
-      Test 1.09.
       Test firstFit() behavior for items dictionary where all items individually
       exceed the capacity.
       """
@@ -497,9 +498,8 @@ class TestKnapsack(unittest.TestCase):
       result = firstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_1_10(self):
+   def testFirstFit_010(self):
       """
-      Test 1.10.
       Test firstFit() behavior for items dictionary where first half of items
       individually exceed capacity and remainder fit.
       """
@@ -510,9 +510,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(111, result[1])
 
-   def test_1_11(self):
+   def testFirstFit_011(self):
       """
-      Test 1.11.
       Test firstFit() behavior for items dictionary where middle half of items
       individually exceed capacity and remainder fit.
       """
@@ -544,9 +543,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(4000, result[1])
 
-   def test_1_12(self):
+   def testFirstFit_012(self):
       """
-      Test 1.12.
       Test firstFit() behavior for items dictionary where second half of items
       individually exceed capacity and remainder fit.
       """
@@ -557,9 +555,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(111, result[1])
 
-   def test_1_13(self):
+   def testFirstFit_013(self):
       """
-      Test 1.10.
       Test firstFit() behavior for items dictionary where first half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -569,9 +566,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_1_14(self):
+   def testFirstFit_014(self):
       """
-      Test 1.11.
       Test firstFit() behavior for items dictionary where middle half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -599,9 +595,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_1_15(self):
+   def testFirstFit_015(self):
       """
-      Test 1.12.
       Test firstFit() behavior for items dictionary where second half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -611,9 +606,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_1_16(self):
+   def testFirstFit_016(self):
       """
-      Test 1.16.
       Test firstFit() behavior for items dictionary where all items fit.
       """
       items = buildItemDict(ITEMS_02)
@@ -740,9 +734,8 @@ class TestKnapsack(unittest.TestCase):
    # Tests for bestFit() function
    ###############################
 
-   def test_2_01(self):
+   def testBestFit_001(self):
       """
-      Test 1.01.
       Test bestFit() behavior for an empty items dictionary, zero capacity.
       """
       items = buildItemDict(ITEMS_01)
@@ -750,9 +743,8 @@ class TestKnapsack(unittest.TestCase):
       result = bestFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_2_02(self):
+   def testBestFit_002(self):
       """
-      Test 1.02.
       Test bestFit() behavior for an empty items dictionary, non-zero capacity.
       """
       items = buildItemDict(ITEMS_01)
@@ -760,9 +752,8 @@ class TestKnapsack(unittest.TestCase):
       result = bestFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_2_03(self):
+   def testBestFit_003(self):
       """
-      Test 1.03.
       Test bestFit() behavior for an non-empty items dictionary, zero capacity.
       """
       items = buildItemDict(ITEMS_03)
@@ -780,9 +771,8 @@ class TestKnapsack(unittest.TestCase):
       result = bestFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_2_04(self):
+   def testBestFit_004(self):
       """
-      Test 1.04.
       Test bestFit() behavior for non-empty items dictionary with zero-sized items, zero capacity.
       """
       items = buildItemDict(ITEMS_03)
@@ -790,9 +780,8 @@ class TestKnapsack(unittest.TestCase):
       result = bestFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_2_05(self):
+   def testBestFit_005(self):
       """
-      Test 1.05.
       Test bestFit() behavior for items dictionary where only one item fits.
       """
       items = buildItemDict(ITEMS_05)
@@ -837,9 +826,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(1, len(result[0]))
       self.failUnlessEqual(100000, result[1])
 
-   def test_2_06(self):
+   def testBestFit_006(self):
       """
-      Test 1.06.
       Test bestFit() behavior for items dictionary where only 25% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -912,9 +900,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(2, len(result[0]))
       self.failUnlessEqual(2000, result[1])
 
-   def test_2_07(self):
+   def testBestFit_007(self):
       """
-      Test 1.07.
       Test bestFit() behavior for items dictionary where only 50% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -987,9 +974,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(4000, result[1])
 
-   def test_2_08(self):
+   def testBestFit_008(self):
       """
-      Test 1.08.
       Test bestFit() behavior for items dictionary where only 75% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -1062,9 +1048,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(6, len(result[0]))
       self.failUnlessEqual(6000, result[1])
 
-   def test_2_09(self):
+   def testBestFit_009(self):
       """
-      Test 1.09.
       Test bestFit() behavior for items dictionary where all items individually
       exceed the capacity.
       """
@@ -1093,9 +1078,8 @@ class TestKnapsack(unittest.TestCase):
       result = bestFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_2_10(self):
+   def testBestFit_010(self):
       """
-      Test 1.10.
       Test bestFit() behavior for items dictionary where first half of items
       individually exceed capacity and remainder fit.
       """
@@ -1106,9 +1090,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(111, result[1])
 
-   def test_2_11(self):
+   def testBestFit_011(self):
       """
-      Test 1.11.
       Test bestFit() behavior for items dictionary where middle half of items
       individually exceed capacity and remainder fit.
       """
@@ -1140,9 +1123,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(4000, result[1])
 
-   def test_2_12(self):
+   def testBestFit_012(self):
       """
-      Test 1.12.
       Test bestFit() behavior for items dictionary where second half of items
       individually exceed capacity and remainder fit.
       """
@@ -1153,9 +1135,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(111, result[1])
 
-   def test_2_13(self):
+   def testBestFit_013(self):
       """
-      Test 1.10.
       Test bestFit() behavior for items dictionary where first half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -1165,9 +1146,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_2_14(self):
+   def testBestFit_014(self):
       """
-      Test 1.11.
       Test bestFit() behavior for items dictionary where middle half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -1195,9 +1175,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_2_15(self):
+   def testBestFit_015(self):
       """
-      Test 1.12.
       Test bestFit() behavior for items dictionary where second half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -1207,9 +1186,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_2_16(self):
+   def testBestFit_016(self):
       """
-      Test 1.16.
       Test bestFit() behavior for items dictionary where all items fit.
       """
       items = buildItemDict(ITEMS_02)
@@ -1336,9 +1314,8 @@ class TestKnapsack(unittest.TestCase):
    # Tests for worstFit() function
    ################################
 
-   def test_3_01(self):
+   def testWorstFit_001(self):
       """
-      Test 1.01.
       Test worstFit() behavior for an empty items dictionary, zero capacity.
       """
       items = buildItemDict(ITEMS_01)
@@ -1346,9 +1323,8 @@ class TestKnapsack(unittest.TestCase):
       result = worstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_3_02(self):
+   def testWorstFit_002(self):
       """
-      Test 1.02.
       Test worstFit() behavior for an empty items dictionary, non-zero capacity.
       """
       items = buildItemDict(ITEMS_01)
@@ -1356,9 +1332,8 @@ class TestKnapsack(unittest.TestCase):
       result = worstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_3_03(self):
+   def testWorstFit_003(self):
       """
-      Test 1.03.
       Test worstFit() behavior for an non-empty items dictionary, zero capacity.
       """
       items = buildItemDict(ITEMS_03)
@@ -1376,9 +1351,8 @@ class TestKnapsack(unittest.TestCase):
       result = worstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_3_04(self):
+   def testWorstFit_004(self):
       """
-      Test 1.04.
       Test worstFit() behavior for non-empty items dictionary with zero-sized items, zero capacity.
       """
       items = buildItemDict(ITEMS_03)
@@ -1386,9 +1360,8 @@ class TestKnapsack(unittest.TestCase):
       result = worstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_3_05(self):
+   def testWorstFit_005(self):
       """
-      Test 1.05.
       Test worstFit() behavior for items dictionary where only one item fits.
       """
       items = buildItemDict(ITEMS_05)
@@ -1433,9 +1406,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(1, len(result[0]))
       self.failUnlessEqual(100000, result[1])
 
-   def test_3_06(self):
+   def testWorstFit_006(self):
       """
-      Test 1.06.
       Test worstFit() behavior for items dictionary where only 25% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -1508,9 +1480,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(2, len(result[0]))
       self.failUnlessEqual(2000, result[1])
 
-   def test_3_07(self):
+   def testWorstFit_007(self):
       """
-      Test 1.07.
       Test worstFit() behavior for items dictionary where only 50% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -1583,9 +1554,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(4000, result[1])
 
-   def test_3_08(self):
+   def testWorstFit_008(self):
       """
-      Test 1.08.
       Test worstFit() behavior for items dictionary where only 75% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -1658,9 +1628,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(6, len(result[0]))
       self.failUnlessEqual(6000, result[1])
 
-   def test_3_09(self):
+   def testWorstFit_009(self):
       """
-      Test 1.09.
       Test worstFit() behavior for items dictionary where all items individually
       exceed the capacity.
       """
@@ -1689,9 +1658,8 @@ class TestKnapsack(unittest.TestCase):
       result = worstFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_3_10(self):
+   def testWorstFit_010(self):
       """
-      Test 1.10.
       Test worstFit() behavior for items dictionary where first half of items
       individually exceed capacity and remainder fit.
       """
@@ -1702,9 +1670,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(111, result[1])
 
-   def test_3_11(self):
+   def testWorstFit_011(self):
       """
-      Test 1.11.
       Test worstFit() behavior for items dictionary where middle half of items
       individually exceed capacity and remainder fit.
       """
@@ -1736,9 +1703,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(4000, result[1])
 
-   def test_3_12(self):
+   def testWorstFit_012(self):
       """
-      Test 1.12.
       Test worstFit() behavior for items dictionary where second half of items
       individually exceed capacity and remainder fit.
       """
@@ -1749,9 +1715,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(111, result[1])
 
-   def test_3_13(self):
+   def testWorstFit_013(self):
       """
-      Test 1.10.
       Test worstFit() behavior for items dictionary where first half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -1761,9 +1726,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_3_14(self):
+   def testWorstFit_014(self):
       """
-      Test 1.11.
       Test worstFit() behavior for items dictionary where middle half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -1791,9 +1755,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_3_15(self):
+   def testWorstFit_015(self):
       """
-      Test 1.12.
       Test worstFit() behavior for items dictionary where second half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -1803,9 +1766,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_3_16(self):
+   def testWorstFit_016(self):
       """
-      Test 1.16.
       Test worstFit() behavior for items dictionary where all items fit.
       """
       items = buildItemDict(ITEMS_02)
@@ -1932,9 +1894,8 @@ class TestKnapsack(unittest.TestCase):
    # Tests for alternateFit() function
    ####################################
 
-   def test_4_01(self):
+   def testAlternateFit_001(self):
       """
-      Test 1.01.
       Test alternateFit() behavior for an empty items dictionary, zero capacity.
       """
       items = buildItemDict(ITEMS_01)
@@ -1942,9 +1903,8 @@ class TestKnapsack(unittest.TestCase):
       result = alternateFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_4_02(self):
+   def testAlternateFit_002(self):
       """
-      Test 1.02.
       Test alternateFit() behavior for an empty items dictionary, non-zero capacity.
       """
       items = buildItemDict(ITEMS_01)
@@ -1952,9 +1912,8 @@ class TestKnapsack(unittest.TestCase):
       result = alternateFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_4_03(self):
+   def testAlternateFit_003(self):
       """
-      Test 1.03.
       Test alternateFit() behavior for an non-empty items dictionary, zero capacity.
       """
       items = buildItemDict(ITEMS_03)
@@ -1972,9 +1931,8 @@ class TestKnapsack(unittest.TestCase):
       result = alternateFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_4_04(self):
+   def testAlternateFit_004(self):
       """
-      Test 1.04.
       Test alternateFit() behavior for non-empty items dictionary with zero-sized items, zero capacity.
       """
       items = buildItemDict(ITEMS_03)
@@ -1982,9 +1940,8 @@ class TestKnapsack(unittest.TestCase):
       result = alternateFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_4_05(self):
+   def testAlternateFit_005(self):
       """
-      Test 1.05.
       Test alternateFit() behavior for items dictionary where only one item fits.
       """
       items = buildItemDict(ITEMS_05)
@@ -2029,9 +1986,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(1, len(result[0]))
       self.failUnlessEqual(100000, result[1])
 
-   def test_4_06(self):
+   def testAlternateFit_006(self):
       """
-      Test 1.06.
       Test alternateFit() behavior for items dictionary where only 25% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -2104,9 +2060,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(2, len(result[0]))
       self.failUnlessEqual(2000, result[1])
 
-   def test_4_07(self):
+   def testAlternateFit_007(self):
       """
-      Test 1.07.
       Test alternateFit() behavior for items dictionary where only 50% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -2179,9 +2134,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(4000, result[1])
 
-   def test_4_08(self):
+   def testAlternateFit_008(self):
       """
-      Test 1.08.
       Test alternateFit() behavior for items dictionary where only 75% of items fit.
       """
       items = buildItemDict(ITEMS_05)
@@ -2254,9 +2208,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(6, len(result[0]))
       self.failUnlessEqual(6000, result[1])
 
-   def test_4_09(self):
+   def testAlternateFit_009(self):
       """
-      Test 1.09.
       Test alternateFit() behavior for items dictionary where all items individually
       exceed the capacity.
       """
@@ -2285,9 +2238,8 @@ class TestKnapsack(unittest.TestCase):
       result = alternateFit(items, capacity)
       self.failUnlessEqual(([], 0), result)
 
-   def test_4_10(self):
+   def testAlternateFit_010(self):
       """
-      Test 1.10.
       Test alternateFit() behavior for items dictionary where first half of items
       individually exceed capacity and remainder fit.
       """
@@ -2298,9 +2250,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(111, result[1])
 
-   def test_4_11(self):
+   def testAlternateFit_011(self):
       """
-      Test 1.11.
       Test alternateFit() behavior for items dictionary where middle half of items
       individually exceed capacity and remainder fit.
       """
@@ -2332,9 +2283,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(4000, result[1])
 
-   def test_4_12(self):
+   def testAlternateFit_012(self):
       """
-      Test 1.12.
       Test alternateFit() behavior for items dictionary where second half of items
       individually exceed capacity and remainder fit.
       """
@@ -2345,9 +2295,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(4, len(result[0]))
       self.failUnlessEqual(111, result[1])
 
-   def test_4_13(self):
+   def testAlternateFit_013(self):
       """
-      Test 1.10.
       Test alternateFit() behavior for items dictionary where first half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -2357,9 +2306,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_4_14(self):
+   def testAlternateFit_014(self):
       """
-      Test 1.11.
       Test alternateFit() behavior for items dictionary where middle half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -2387,9 +2335,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_4_15(self):
+   def testAlternateFit_015(self):
       """
-      Test 1.12.
       Test alternateFit() behavior for items dictionary where second half of items
       individually exceed capacity and only some of remainder fit.
       """
@@ -2399,9 +2346,8 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnless(len(result[0]) < 4, "%s < 4" % len(result[0]))
 
-   def test_4_16(self):
+   def testAlternateFit_016(self):
       """
-      Test 1.16.
       Test alternateFit() behavior for items dictionary where all items fit.
       """
       items = buildItemDict(ITEMS_02)
