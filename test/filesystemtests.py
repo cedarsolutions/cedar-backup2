@@ -95,6 +95,7 @@ Full vs. Reduced Tests
 
 import sys
 import os
+import time
 import unittest
 import tempfile
 import tarfile
@@ -113,6 +114,16 @@ RESOURCES = [ "tree1.tar.gz", "tree2.tar.gz", "tree3.tar.gz", "tree4.tar.gz", "t
 INVALID_FILE      = "bogus"         # This file name should never exist
 NOMATCH_PATH      = "/something"    # This file should never match something we put in a file list 
 NOMATCH_PATTERN   = "pattern"       # This pattern should never match something we put in a file list 
+
+AGE_1_HOUR        = 1*60*60         # in seconds
+AGE_2_HOURS       = 2*60*60         # in seconds
+AGE_12_HOURS      = 12*60*60        # in seconds
+AGE_23_HOURS      = 23*60*60        # in seconds
+AGE_24_HOURS      = 24*60*60        # in seconds
+AGE_25_HOURS      = 25*60*60        # in seconds
+AGE_47_HOURS      = 47*60*60        # in seconds
+AGE_48_HOURS      = 48*60*60        # in seconds
+AGE_49_HOURS      = 49*60*60        # in seconds
 
 
 #######################################################################
@@ -161,6 +172,17 @@ def removedir(tree):
          elif os.path.isdir(path):
             os.rmdir(path)
    os.rmdir(tree)
+
+def changeFileAge(file, subtract=None):
+   """
+   Changes a file age using the C{os.utime} function.
+   @param subtract: Number of seconds to subtract from the current time.
+   """
+   if subtract is None:
+      os.utime(file, None)
+   else:
+      newTime = time.time() - subtract
+      os.utime(file, (newTime, newTime))
 
 
 #######################################################################
@@ -12851,6 +12873,1075 @@ class TestPurgeItemList(unittest.TestCase):
       """Builds a complete search path from a list of components."""
       components.insert(0, self.tmpdir)
       return buildPath(components)
+
+
+   ####################
+   # Test removeAged()
+   ####################
+
+   def testRemoveYoungFiles_001(self):
+      """
+      Test on an empty list, daysOld < 0.
+      """
+      daysOld = -1
+      purgeList = PurgeItemList()
+      self.failUnlessRaises(ValueError, purgeList.removeYoungFiles, daysOld)
+
+   def testRemoveYoungFiles_002(self):
+      """
+      Test on a non-empty list, daysOld < 0.
+      """
+      daysOld = -1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addDir(self.buildPath([ "tree1", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      self.failUnlessRaises(ValueError, purgeList.removeYoungFiles, daysOld)
+
+   def testRemoveYoungFiles_003(self):
+      """
+      Test on an empty list, daysOld = 0
+      """
+      daysOld = 0
+      purgeList = PurgeItemList()
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_004(self):
+      """
+      Test on a non-empty list containing only directories, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree2")
+      purgeList = PurgeItemList()
+      purgeList.addDir(self.buildPath([ "tree2", ]))
+      purgeList.addDir(self.buildPath([ "tree2", "dir001", ]))
+      purgeList.addDir(self.buildPath([ "tree2", "dir002", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree2", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree2", "dir001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree2", "dir002", ]) in purgeList)
+
+   def testRemoveYoungFiles_005(self):
+      """
+      Test on a non-empty list containing only links, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree9")
+      purgeList = PurgeItemList()
+      purgeList.addDir(self.buildPath([ "tree9", "link001", ]))
+      purgeList.addDir(self.buildPath([ "tree9", "dir002", "link001", ]))
+      purgeList.addFile(self.buildPath([ "tree9", "dir002", "link004", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in purgeList)
+
+   def testRemoveYoungFiles_006(self):
+      """
+      Test on a non-empty list containing only non-existent files, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.append(self.buildPath([ "tree1", "stuff001", ]))     # append, since it doesn't exist on disk
+      purgeList.append(self.buildPath([ "tree1", "stuff002", ]))     # append, since it doesn't exist on disk
+      purgeList.append(self.buildPath([ "tree1", "stuff003", ]))     # append, since it doesn't exist on disk
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree1", "stuff001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "stuff002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "stuff003", ]) in purgeList)
+
+   def testRemoveYoungFiles_007(self):
+      """
+      Test on a non-empty list containing existing files "touched" to current time, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]))
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_008(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 1 hour old, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_1_HOUR)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_1_HOUR)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_009(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 2 hours old, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_2_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_2_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_010(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 12 hours old, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_12_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_12_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_011(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 23 hours old, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_23_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_23_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_012(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 24 hours old, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_24_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_24_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_013(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 25 hours old, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_25_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_25_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_014(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 47 hours old, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_47_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_47_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_015(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 48 hours old, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_48_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_48_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_016(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 49 hours old, daysOld = 0.
+      """
+      daysOld = 0
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_49_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_49_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file003", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_017(self):
+      """
+      Test on an empty list, daysOld = 1
+      """
+      daysOld = 1
+      purgeList = PurgeItemList()
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_018(self):
+      """
+      Test on a non-empty list containing only directories, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree2")
+      purgeList = PurgeItemList()
+      purgeList.addDir(self.buildPath([ "tree2", ]))
+      purgeList.addDir(self.buildPath([ "tree2", "dir001", ]))
+      purgeList.addDir(self.buildPath([ "tree2", "dir002", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree2", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree2", "dir001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree2", "dir002", ]) in purgeList)
+
+   def testRemoveYoungFiles_019(self):
+      """
+      Test on a non-empty list containing only links, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree9")
+      purgeList = PurgeItemList()
+      purgeList.addDir(self.buildPath([ "tree9", "link001", ]))
+      purgeList.addDir(self.buildPath([ "tree9", "dir002", "link001", ]))
+      purgeList.addFile(self.buildPath([ "tree9", "dir002", "link004", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in purgeList)
+
+   def testRemoveYoungFiles_020(self):
+      """
+      Test on a non-empty list containing only non-existent files, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.append(self.buildPath([ "tree1", "stuff001", ]))     # append, since it doesn't exist on disk
+      purgeList.append(self.buildPath([ "tree1", "stuff002", ]))     # append, since it doesn't exist on disk
+      purgeList.append(self.buildPath([ "tree1", "stuff003", ]))     # append, since it doesn't exist on disk
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree1", "stuff001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "stuff002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "stuff003", ]) in purgeList)
+
+   def testRemoveYoungFiles_021(self):
+      """
+      Test on a non-empty list containing existing files "touched" to current time, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]))
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_022(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 1 hour old, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_1_HOUR)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_1_HOUR)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_023(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 2 hours old, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_2_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_2_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_024(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 12 hours old, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_12_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_12_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_025(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 23 hours old, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_23_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_23_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_026(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 24 hours old, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_24_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_24_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(2, count)
+      self.failUnless(2, len(purgeList))
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_027(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 25 hours old, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_25_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_25_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(2, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_028(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 47 hours old, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_47_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_47_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(2, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_029(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 48 hours old, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_48_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_48_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(2, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_030(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 49 hours old, daysOld = 1.
+      """
+      daysOld = 1
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_49_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_49_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(2, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_031(self):
+      """
+      Test on an empty list, daysOld = 2
+      """
+      daysOld = 2
+      purgeList = PurgeItemList()
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_032(self):
+      """
+      Test on a non-empty list containing only directories, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree2")
+      purgeList = PurgeItemList()
+      purgeList.addDir(self.buildPath([ "tree2", ]))
+      purgeList.addDir(self.buildPath([ "tree2", "dir001", ]))
+      purgeList.addDir(self.buildPath([ "tree2", "dir002", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree2", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree2", "dir001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree2", "dir002", ]) in purgeList)
+
+   def testRemoveYoungFiles_033(self):
+      """
+      Test on a non-empty list containing only links, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree9")
+      purgeList = PurgeItemList()
+      purgeList.addDir(self.buildPath([ "tree9", "link001", ]))
+      purgeList.addDir(self.buildPath([ "tree9", "dir002", "link001", ]))
+      purgeList.addFile(self.buildPath([ "tree9", "dir002", "link004", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in purgeList)
+
+   def testRemoveYoungFiles_034(self):
+      """
+      Test on a non-empty list containing only non-existent files, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.append(self.buildPath([ "tree1", "stuff001", ]))     # append, since it doesn't exist on disk
+      purgeList.append(self.buildPath([ "tree1", "stuff002", ]))     # append, since it doesn't exist on disk
+      purgeList.append(self.buildPath([ "tree1", "stuff003", ]))     # append, since it doesn't exist on disk
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree1", "stuff001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "stuff002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "stuff003", ]) in purgeList)
+
+   def testRemoveYoungFiles_035(self):
+      """
+      Test on a non-empty list containing existing files "touched" to current time, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]))
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_036(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 1 hour old, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_1_HOUR)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_1_HOUR)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_037(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 2 hours old, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_2_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_2_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_038(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 12 hours old, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_12_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_12_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_039(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 23 hours old, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_23_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_23_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_040(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 24 hours old, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_24_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_24_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_041(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 25 hours old, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_25_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_25_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_042(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 47 hours old, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_47_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_47_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_043(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 48 hours old, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_48_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_48_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(2, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_044(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 49 hours old, daysOld = 2.
+      """
+      daysOld = 2
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_49_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_49_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(2, count)
+      self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
+
+   def testRemoveYoungFiles_045(self):
+      """
+      Test on an empty list, daysOld = 3
+      """
+      daysOld = 3
+      purgeList = PurgeItemList()
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_046(self):
+      """
+      Test on a non-empty list containing only directories, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree2")
+      purgeList = PurgeItemList()
+      purgeList.addDir(self.buildPath([ "tree2", ]))
+      purgeList.addDir(self.buildPath([ "tree2", "dir001", ]))
+      purgeList.addDir(self.buildPath([ "tree2", "dir002", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree2", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree2", "dir001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree2", "dir002", ]) in purgeList)
+
+   def testRemoveYoungFiles_047(self):
+      """
+      Test on a non-empty list containing only links, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree9")
+      purgeList = PurgeItemList()
+      purgeList.addDir(self.buildPath([ "tree9", "link001", ]))
+      purgeList.addDir(self.buildPath([ "tree9", "dir002", "link001", ]))
+      purgeList.addFile(self.buildPath([ "tree9", "dir002", "link004", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in purgeList)
+
+   def testRemoveYoungFiles_048(self):
+      """
+      Test on a non-empty list containing only non-existent files, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.append(self.buildPath([ "tree1", "stuff001", ]))     # append, since it doesn't exist on disk
+      purgeList.append(self.buildPath([ "tree1", "stuff002", ]))     # append, since it doesn't exist on disk
+      purgeList.append(self.buildPath([ "tree1", "stuff003", ]))     # append, since it doesn't exist on disk
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(3, len(purgeList))
+      self.failUnless(self.buildPath([ "tree1", "stuff001", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "stuff002", ]) in purgeList)
+      self.failUnless(self.buildPath([ "tree1", "stuff003", ]) in purgeList)
+
+   def testRemoveYoungFiles_049(self):
+      """
+      Test on a non-empty list containing existing files "touched" to current time, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]))
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]))
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_050(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 1 hour old, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_1_HOUR)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_1_HOUR)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_051(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 2 hours old, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_2_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_2_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_052(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 12 hours old, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_12_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_12_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_053(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 23 hours old, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_23_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_23_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_054(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 24 hours old, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_24_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_24_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_055(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 25 hours old, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_25_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_25_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_056(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 47 hours old, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_47_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_47_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_057(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 48 hours old, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_48_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_48_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
+
+   def testRemoveYoungFiles_058(self):
+      """
+      Test on a non-empty list containing existing files "touched" to being 49 hours old, daysOld = 3.
+      """
+      daysOld = 3
+      self.extractTar("tree1")
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree1", "file001", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file002", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file003", ]))
+      purgeList.addFile(self.buildPath([ "tree1", "file004", ]))
+      changeFileAge(self.buildPath([ "tree1", "file001", ]), AGE_49_HOURS)
+      changeFileAge(self.buildPath([ "tree1", "file002", ]))
+      changeFileAge(self.buildPath([ "tree1", "file003", ]))
+      changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_49_HOURS)
+      count = purgeList.removeYoungFiles(daysOld)
+      self.failUnlessEqual(4, count)
+      self.failUnlessEqual([], purgeList)
 
 
    ####################

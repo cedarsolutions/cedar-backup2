@@ -40,15 +40,21 @@
 """
 Provides general-purpose utilities. 
 
-@sort: AbsolutePathList, ObjectTypeList, convertSize, getUidGid, executeCommand, 
+@sort: AbsolutePathList, ObjectTypeList, convertSize, 
+       getUidGid, executeCommand, calculateFileAge,
        ISO_SECTOR_SIZE, BYTES_PER_KBYTE, KBYTES_PER_MBYTE, BYTES_PER_MBYTE,
-       BYTES_PER_SECTOR, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
+       BYTES_PER_SECTOR, SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, 
+       SECONDS_PER_DAY, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
 
 @var ISO_SECTOR_SIZE: Size of an ISO image sector, in bytes.
 @var BYTES_PER_KBYTE: Number of bytes (B) per kilobyte (kB).
 @var KBYTES_PER_MBYTE: Number of kilobytes (kB) per megabyte (MB).
 @var BYTES_PER_MBYTE: Number of bytes (B) per megabyte (MB).
 @var BYTES_PER_SECTOR: Number of bytes (B) per ISO sector.
+@var SECONDS_PER_MINUTE: Number of seconds per minute.
+@var MINUTES_PER_HOUR: Number of minutes per hour.
+@var HOURS_PER_DAY: Number of hours per day.
+@var SECONDS_PER_DAY: Number of seconds per day.
 @var UNIT_BYTES: Constant representing the byte (B) unit for conversion.
 @var UNIT_KBYTES: Constant representing the kilobyte (kB) unit for conversion.
 @var UNIT_MBYTES: Constant representing the megabyte (MB) unit for conversion.
@@ -63,6 +69,7 @@ Provides general-purpose utilities.
 ########################################################################
 
 import os
+import time
 import popen2
 import logging
 import pwd
@@ -75,17 +82,22 @@ import grp
 
 logger = logging.getLogger("CedarBackup2.util")
 
-ISO_SECTOR_SIZE = 2048.0   # in bytes
+ISO_SECTOR_SIZE    = 2048.0   # in bytes
 
-BYTES_PER_KBYTE = 1024.0
-KBYTES_PER_MBYTE = 1024.0
-BYTES_PER_MBYTE = BYTES_PER_KBYTE * KBYTES_PER_MBYTE
-BYTES_PER_SECTOR = ISO_SECTOR_SIZE
+BYTES_PER_KBYTE    = 1024.0
+KBYTES_PER_MBYTE   = 1024.0
+BYTES_PER_MBYTE    = BYTES_PER_KBYTE * KBYTES_PER_MBYTE
+BYTES_PER_SECTOR   = ISO_SECTOR_SIZE
 
-UNIT_BYTES  = 0
-UNIT_KBYTES = 1
-UNIT_MBYTES = 2
-UNIT_SECTORS = 3
+SECONDS_PER_MINUTE = 60
+MINUTES_PER_HOUR   = 60
+HOURS_PER_DAY      = 24
+SECONDS_PER_DAY    = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY
+
+UNIT_BYTES         = 0
+UNIT_KBYTES        = 1
+UNIT_MBYTES        = 2
+UNIT_SECTORS       = 3
 
 
 ########################################################################
@@ -343,4 +355,28 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False):
       return (pipe.wait(), output)
    else:
       return (pipe.wait(), None)
+
+
+##############################
+# calculateFileAge() function
+##############################
+
+def calculateFileAge(file):
+   """
+   Calculates the age (in days) of a file.
+
+   The "age" of a file is the amount of time since the file was last used, per
+   the most recent of the file's C{st_atime} and C{st_mtime} values.
+
+   Technically, we only intend this function to work with files, but it will
+   probably work with anything on the filesystem.
+
+   @return: Age of the file in days.
+   @raise OSError: If the file doesn't exist.
+   """
+   currentTime = int(time.time())
+   fileStats = os.stat(file)
+   lastUse = max(fileStats.st_atime, fileStats.st_mtime)  # "most recent" is "largest" 
+   ageInDays = (currentTime - lastUse) / SECONDS_PER_DAY
+   return ageInDays
 

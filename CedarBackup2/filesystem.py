@@ -57,7 +57,7 @@ import tarfile
 
 # Cedar Backup modules
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
-from CedarBackup2.util import AbsolutePathList, ObjectTypeList
+from CedarBackup2.util import AbsolutePathList, ObjectTypeList, calculateFileAge
 
 
 ########################################################################
@@ -861,8 +861,9 @@ class PurgeItemList(FilesystemList):
 
    A PurgeItemList is a L{FilesystemList} containing a list of files and
    directories to be purged.  On top of the generic functionality provided by
-   L{FilesystemList}, this class adds functionality to purge the items in the
-   list.
+   L{FilesystemList}, this class adds functionality to remove items that are
+   too young to be purged, and to actually remove each item in the list from
+   the filesystem.
    """
 
    ##############
@@ -877,6 +878,47 @@ class PurgeItemList(FilesystemList):
    ##################
    # Utility methods
    ##################
+
+   def removeYoungFiles(self, daysOld):
+      """
+      Removes from the list files younger than a certain age (in days).
+
+      Any file whose "age" in days is less than (C{<}) the value of the
+      C{daysOld} parameter will be removed from the list so that it will not be
+      purged later when L{purgeItems} is called.  Directories and soft links
+      will be ignored.  
+
+      The "age" of a file is the amount of time since the file was last used,
+      per the most recent of the file's C{st_atime} and C{st_mtime} values.
+
+      @note: Some people find the "sense" of this method confusing or
+      "backwards".  Keep in mind that this method is used to remove items
+      I{from the list}, not from the filesystem!  It removes from the list
+      those items that you would I{not} want to purge because they are too
+      young.  As an example, passing in C{daysOld} of zero (0) would remove
+      from the list no files, which would result in purging all of the files
+      later.  I would be happy to make a synonym of this method with an
+      easier-to-understand "sense", if someone can suggest one.
+
+      @param daysOld: Minimum age of files that are to be kept in the list.
+      @type daysOld: Integer value >= 0.
+
+      @return: Number of entries removed
+      """
+      removed = 0
+      daysOld = int(daysOld) 
+      if daysOld < 0:
+         raise ValueError("Days old value must be an integer >= 0.")
+      for entry in self[:]:
+         if os.path.isfile(entry) and not os.path.islink(entry):
+            try:
+               age = calculateFileAge(entry)
+               if age < daysOld:
+                  removed += 1
+                  self.remove(entry)
+            except OSError:
+               pass
+      return removed
 
    def purgeItems(self):
       """
