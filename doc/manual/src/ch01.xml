@@ -1,15 +1,90 @@
+<!--
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#              C E D A R
+#          S O L U T I O N S       "Software done right."
+#           S O F T W A R E
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Copyright (c) 2005 Kenneth J. Pronovici.
+# All rights reserved.
+#
+# This work is licensed under the Creative Commons Attribution-
+# ShareAlike License. To view a copy of this license, visit
+# http://creativecommons.org/licenses/by-sa/2.0/
+# or send a letter to Creative Commons, 559 Nathan Abbott Way,
+# Stanford, California 94305, USA.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Author   : Kenneth J. Pronovici <pronovic@ieee.org>
+# Language : O'Reilly DocBook Lite XML DTD
+# Project  : Cedar Backup, release 2
+# Revision : $Id$
+# Purpose  : Cedar Backup Software Manual, Chapter 1
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+-->
+
 <chapter id="cedar-ch-1">
 
    <title>Introduction</title>
 
-   <simplesect>
 
-      <para>
-         This chapter provides some background about how Cedar Backup came to
-         be, its history, some general information about how it works, etc.
-      </para>
+   <!-- ################################################################# -->
+   <!-- ########################  LEADER  ############################### -->
+   <!-- ################################################################# -->
+
+   <simplesect>
+    
+      <comment>Reference: http://en.wikiquote.org/wiki/Linus_Torvalds</comment>
+      <comment>Reference: http://groups-beta.google.com/group/linux.dev.kernel/msg/76ae734d543e396d</comment>
+
+      <blockquote>
+         <para>
+            <quote>Only wimps use tape backup: real men just upload their
+            important stuff on ftp, and let the rest of the world mirror
+            it.</quote>&mdash; Linus Torvalds, at the release of Linux 
+            2.0.8 in July of 1996.
+          </para>
+      </blockquote>
 
    </simplesect>
+
+
+   <!-- ################################################################# -->
+   <!-- ######################## SECTION 1 ############################## -->
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-ch-1-sect-1">
+
+      <title>What is Cedar Backup?</title>
+
+      <para>
+         Cedar Backup is a Python package that supports secure backups of files
+         on local and remote hosts to CD-R or CD-RW media.  The package is
+         focused around weekly backups to a single disc, with the expectation
+         that the disc will be changed or overwritten at the beginning of each
+         week.  If your hardware is new enough, the script can write
+         multisession discs, allowing you to add to a disc in a daily fashion.
+         Directories are backed up using tar and may be compressed using gzip
+         or bzip2.
+      </para>
+
+      <para>
+         There are many different backup software implementations out there in
+         the free-and open-source world. Cedar Backup aims to fill a niche: it
+         aims to be a good fit for people who need to back up a limited amount
+         important data to CD-R or CD-RW on a regular basis. Cedar Backup isn't
+         for you if you want to back up your MP3 collection every night, or if
+         you want to back up a few hundred machines. However, if you administer 
+         a small set machines, and you want to run daily incremental backups
+         for things like system configuration, current email, small web sites,
+         or a CVS repository, then Cedar Backup is probably worth investigating.
+      </para>
+
+   </sect1>
 
 </chapter>
 
