@@ -737,7 +737,7 @@ def executeAction(configPath, options, config):
    if local.subversion.repositories is not None:
       for repository in local.subversion.repositories:
          logger.debug("Working with repository [%s]." % repository.repositoryPath)
-         if repository.type == "BDB":
+         if repository.repositoryType == "BDB":
             collectMode = _getCollectMode(local, repository)
             compressMode = _getCompressMode(local, repository)
             revisionPath = _getRevisionPath(config, repository)
@@ -837,9 +837,13 @@ def _backupBDBRepository(config, repositoryPath, backupPath, revisionPath, fullB
    else:
       if fullBackup:
          startRevision = 0
+         endRevision = getYoungestRevision(repositoryPath)
       else:
          startRevision = _loadLastRevision(revisionPath) + 1
-      endRevision = getYoungestRevision(repositoryPath)
+         endRevision = getYoungestRevision(repositoryPath)
+         if startRevision > endRevision:
+            logger.info("No need to back up repository [%s]; no new revisions." % repositoryPath)
+            return
       logger.debug("Using incremental backup, revision: (%d, %d)." % (startRevision, endRevision))
    outputFile = _getOutputFile(backupPath, compressMode)
    try:
@@ -963,10 +967,11 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
       raise ValueError("End revision must be >= 0.")
    if startRevision > endRevision:
       raise ValueError("Start revision must be <= end revision.")
-   args = [ "dump", "-r%s:%s" % (startRevision, endRevision), "--incremental", repositoryPath, ]
-   result = executeCommand(SVNADMIN_COMMAND, args, returnOutput=False, ignoreStderr=True, outputFile=backupFile)[0]
+   args = [ "dump", "--quiet", "-r%s:%s" % (startRevision, endRevision), "--incremental", repositoryPath, ]
+   result = executeCommand(SVNADMIN_COMMAND, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
    if result != 0:
       raise IOError("Error [%d] executing Subversion dump for repository [%s]." % repositoryPath)
+   logger.debug("Completed dumping subversion repository [%s]." % repositoryPath)
 
 
 #################################

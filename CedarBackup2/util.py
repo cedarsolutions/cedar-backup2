@@ -574,7 +574,7 @@ def splitCommandLine(commandLine):
 # executeCommand() function
 ############################
 
-def executeCommand(command, args, returnOutput=False, ignoreStderr=False, outputFile=None):
+def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotLog=False, outputFile=None):
    """
    Executes a shell command, hopefully in a safe way (UNIX-specific).
 
@@ -603,6 +603,12 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, output
    included in the output.  This is implemented by using L{popen2.Popen4} in
    the normal case and L{popen2.Popen3} if C{stderr} is to be ignored.
 
+   The C{doNotLog} parameter exists so that callers can force the function
+   to not log command output to the debug log.  Normally, you would want to
+   log.  However, if you're using this function to write huge output files
+   (i.e. database backups written to stdout) then you might want to avoid
+   putting all that information into the debug log.
+
    The C{outputFile} parameter exists to make it easier for a caller to push
    output into a file, i.e. as a substitute for redirection to a file.  If this
    value is passed in, each time a line of output is generated, it will be
@@ -630,12 +636,17 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, output
    @param returnOutput: Indicates whether to return the output of the command
    @type returnOutput: Boolean C{True} or C{False}
 
+   @param doNotLog: Indicates that output should not be logged.
+   @type doNotLog: Boolean C{True} or C{False}
+
    @param outputFile: File object that all output should be written to.
    Type outputFile: File object as returned from C{open()} or C{file()}.
 
    @return: Tuple of C{(result, output)} as described above.
    """
    logger.debug("Executing command %s with args %s." % (command, args))
+   if doNotLog:
+      logger.debug("Note: output will not be logged, per the doNotLog flag.")
    output = []
    fields = command[:]        # make sure to copy it so we don't destroy it
    fields.extend(args)
@@ -649,8 +660,11 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, output
       if not line: break
       if returnOutput: output.append(line)
       if outputFile is not None: outputFile.write(line)
-      outputLogger.info(line[:-1])  # this way the log will (hopefully) get updated in realtime
-   if outputFile is not None: outputFile.flush()
+      if not doNotLog: outputLogger.info(line[:-1])  # this way the log will (hopefully) get updated in realtime
+   if outputFile is not None: 
+      try: # note, not every file-like object can be flushed
+         outputFile.flush()
+      except: pass
    if returnOutput:
       return (pipe.wait(), output)
    else:
