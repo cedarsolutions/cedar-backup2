@@ -66,7 +66,6 @@ it easier to judge the extent of a problem when one exists.
 
 # Import standard modules
 import sys
-import os
 import unittest
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 

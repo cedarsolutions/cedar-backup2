@@ -85,7 +85,13 @@ def firstFit(items, capacity):
    because it doesn't require any sorting.
 
    The "size" values in the items and capacity arguments must be comparable,
-   but they are unitless from the perspective of this function.
+   but they are unitless from the perspective of this function.  Zero-sized
+   items and capacity are considered degenerate cases.  If capacity is zero,
+   no items fit, period, even if the items list contains zero-sized items.
+
+   The dictionary is indexed by its key, and then includes its key.  This
+   seems kind of strange on first glance.  It works this way to facilitate 
+   easy sorting of the list on key if needed.
 
    The function assumes that the list of items may be used destructively, if
    needed.  This avoids the overhead of having the function make a copy of the
@@ -143,7 +149,13 @@ def bestFit(items, capacity):
    alternate-fit algorithms.
 
    The "size" values in the items and capacity arguments must be comparable,
-   but they are unitless from the perspective of this function.
+   but they are unitless from the perspective of this function.  Zero-sized
+   items and capacity are considered degenerate cases.  If capacity is zero,
+   no items fit, period, even if the items list contains zero-sized items.
+
+   The dictionary is indexed by its key, and then includes its key.  This
+   seems kind of strange on first glance.  It works this way to facilitate 
+   easy sorting of the list on key if needed.
 
    The function assumes that the list of items may be used destructively, if
    needed.  This avoids the overhead of having the function make a copy of the
@@ -206,7 +218,13 @@ def worstFit(items, capacity):
    to look at more items before completing.
 
    The "size" values in the items and capacity arguments must be comparable,
-   but they are unitless from the perspective of this function.
+   but they are unitless from the perspective of this function.  Zero-sized
+   items and capacity are considered degenerate cases.  If capacity is zero,
+   no items fit, period, even if the items list contains zero-sized items.
+
+   The dictionary is indexed by its key, and then includes its key.  This
+   seems kind of strange on first glance.  It works this way to facilitate 
+   easy sorting of the list on key if needed.
 
    The function assumes that the list of items may be used destructively, if
    needed.  This avoids the overhead of having the function make a copy of the
@@ -271,7 +289,13 @@ def alternateFit(items, capacity):
    fewer items.
 
    The "size" values in the items and capacity arguments must be comparable,
-   but they are unitless from the perspective of this function.
+   but they are unitless from the perspective of this function.  Zero-sized
+   items and capacity are considered degenerate cases.  If capacity is zero,
+   no items fit, period, even if the items list contains zero-sized items.
+
+   The dictionary is indexed by its key, and then includes its key.  This
+   seems kind of strange on first glance.  It works this way to facilitate 
+   easy sorting of the list on key if needed.
 
    The function assumes that the list of items may be used destructively, if
    needed.  This avoids the overhead of having the function make a copy of the

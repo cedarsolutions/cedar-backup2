@@ -504,7 +504,7 @@ class BackupFileList(FilesystemList):
       elif algorithm == "alternate_fit": return alternateFit(sizeMap, capacity)[0]
       else: raise ValueError("Algorithm [%s] is invalid." % algorithm);
 
-   def generateTarfile(self, path, mode='tar'):
+   def generateTarfile(self, path, mode='tar', ignore=False):
       """
       Creates a tar file containing the files in the list.
 
@@ -517,19 +517,33 @@ class BackupFileList(FilesystemList):
       the extra functionality out-weighs the disadvantage of not being
       "standard".
 
-      Currently, the whole method call fails if there are problems adding any
-      of the files to the archive (although the tar file may actually be
-      created on disk even if there is a failure).  If an exception is thrown,
-      callers are advised that they might want to call L{verify()} and then
-      attempt to extract the tar file a second time, since the most common
-      cause of failures is a missing file (a file that existed when the list
-      was built, but is gone again by the time the tar file is built).
+      By default, the whole method call fails if there are problems adding any
+      of the files to the archive, resulting in an exception.  Under these
+      circumstances, callers are advised that they might want to call
+      L{verify()} and then attempt to extract the tar file a second time, since
+      the most common cause of failures is a missing file (a file that existed
+      when the list was built, but is gone again by the time the tar file is
+      built).  
+
+      If you want to, you can pass in C{ignore=True}, and the method will
+      ignore errors encountered when adding individual files to the archive
+      (but not errors opening and closing the archive itself).
+
+      We'll always attempt to remove the tarfile from disk if an exception will
+      be thrown.
+
+      @note: No validation is done as to whether the entries in the list are
+      files, since only files should be in an object like this.  However, to be
+      safe, everything is explicitly added to the tar archive non-recursively.
 
       @param path: Path of tar file to create on disk
       @type path: String representing a path on disk
 
       @param mode: Tar creation mode
       @type mode: One of either C{'tar'}, C{'targz'} or C{'tarbz2'}
+
+      @param ignore: Indicates whether to ignore certain errors.
+      @type ignore: Boolean
 
       @raise ValueError: If mode is not valid
       @raise TarError: If there is a problem creating the tar file
@@ -538,10 +552,22 @@ class BackupFileList(FilesystemList):
       elif(mode == 'targz'): tarmode = "w:gz"
       elif(mode == 'tarbz2'): tarmode = "w:bz2"
       else: raise ValueError("Mode [%s] is not valid." % mode)
-      tar = tarfile.open(path, tarmode)
-      for entry in self:
-         tar.add(entry, recursive=False)
-      tar.close()
+
+      try:
+         tar = tarfile.open(path, tarmode)
+         for entry in self:
+            try:
+               tar.add(entry, recursive=False)
+            except tarfile.TarError:
+               if not ignore:
+                  raise
+               logger.info("Unable to add file [%s]; going on anyway.")
+         tar.close()
+      except tarfile.TarError:
+         if os.path.exists(path): 
+            try: os.remove(path) 
+            except: pass
+         raise
 
 
 ########################################################################
