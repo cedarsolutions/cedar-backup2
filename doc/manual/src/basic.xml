@@ -42,7 +42,7 @@
          executable (a Python script).  The Python package provides both
          application-specific code and general utilities which can be used by
          programs other than Cedar Backup.  It also includes modules that will
-         be of use to third parties which who like to extend Cedar Backup or
+         be of use to third parties who might like to extend Cedar Backup or
          provide related functionality.
       </para>
 
@@ -64,8 +64,9 @@
          The <command>cback</command> script is configured using an XML
          configuration file and through some command-line options.  The
          configuration file is normally stored in
-         <filename>/etc/cback.conf</filename>, but can be overridden at
-         runtime.
+         <filename>/etc/cback.conf</filename>, but can be overridden at runtime
+         (see <xref linkend="cedar-config"/> for more information on the configuration
+         file itself).
       </para>
 
    </sect1>
@@ -78,7 +79,7 @@
 
       <para>
          There are two kinds of machines in a Cedar Backup pool.  One machine
-         (the <firsttterm>master</firsttterm>) has a CD-R or CD-RW drive on it
+         (the <firstterm>master</firstterm>) has a CD-R or CD-RW drive on it
          and is where the backup is written to disc.  The others
          (<firstterm>clients</firstterm>) collect data to be written to disc by
          the master.  Collectively, the master and client machines in a pool
@@ -89,8 +90,8 @@
          Cedar Backup has been designed primarily for situations where there is
          a single master and a set of other clients that the master interacts
          with.  However, it will just as easily work for a single machine (a
-         backup pool of one) and in fact more users seem to use it this way
-         than the way it was intended to be used.
+         backup pool of one) and in fact more users seem to use it like this
+         than any other way.
       </para>
 
    </sect1>
@@ -128,12 +129,11 @@
       <para>
          In general, more than one action may be specified on the command-line.
          If more than one action is specified, then actions will be taken in a
-         sensible order (generally <term>collect</term>, followed by
-         <term>stage</term>, followed by <term>store</term>, followed by
-         <term>purge</term>).   A special <firstterm>all</firstterm> action is
-         also allowed, which implies all of the standard actions in the same
-         sensible order.
-      <para>
+         sensible order (generally collect, followed by stage, followed by
+         store, followed by purge).   A special <firstterm>all</firstterm>
+         action is also allowed, which implies all of the standard actions in
+         the same sensible order.
+      </para>
 
       <para>
          The <command>cback</command> command also supports several actions
@@ -143,19 +143,21 @@
          All of the various actions are discussed further below.
       </para>
 
-      <para>
-         See <xref linkend="cedar-config"/> for more information on how a
-         backup run is configured.
-      </para>
+      <note>
+         <para>
+            See <xref linkend="cedar-config"/> for more information on how a
+            backup run is configured.
+         </para>
+      </note>
 
       <!-- ################################################################# -->
 
       <sect2 id="cedar-basic-process-collect">
          
-         <title>The <term>collect</term> Action</title>
+         <title>The Collect Action</title>
 
          <para>
-            The <term>collect</term> action is the first action to be executed
+            The collect action is the first action to be executed
             as part of a standard backup run.  It executes on a client peer node.
             Based on configuration, this action traverses the client's
             filesystem and gathers files to be backed up.  Each configured
@@ -182,14 +184,11 @@
             Collect configuration also allows for a variety of ways to filter
             files and directories out of the backup.  For instance,
             administrators can configure an <firstterm>ignore indicator
-            file</firstterm> (analagous to <filename>.cvsignore</filename>) or
-            specify absolute paths to be excluded or even filename patterns to
-            be excluded (in terms of Python regular expressions).
-         </para>
-
-         <para>
-            See <xref linkend="cedar-config-collect"/> for more information on
-            how the <term>collect</term> action is configured.
+            file</firstterm> 
+            <footnote><para>Analagous to <filename>.cvsignore</filename> in CVS</para></footnote> 
+            or specify absolute paths or filename patterns 
+            <footnote><para>In terms of Python regular expressions</para></footnote>
+            to be excluded.
          </para>
 
       </sect2>
@@ -198,10 +197,10 @@
 
       <sect2 id="cedar-basic-process-stage">
          
-         <title>The <term>stage</term> Action</title>
+         <title>The Stage Action</title>
 
          <para>
-            The <term>stage</term> action is the second action to be executed
+            The stage action is the second action to be executed
             as part of a standard backup run.  It executes on a master peer
             node.  The master machine works down the list of clients in its
             backup pool and stages (copies) the collected backup files from
@@ -212,7 +211,7 @@
             Local and remote client peers are treated differently.  Local peer
             collect directories are assumed to be accessible via normal copy
             commands (i.e. on a mounted filesystem) while remote peer collect
-            directories are accessed via an <firstterm>RSH</firstterm>&dash;compatible 
+            directories are accessed via an <firstterm>RSH-compatible</firstterm>
             command such as <command>ssh</command>.
          </para>
 
@@ -223,26 +222,22 @@
             running.
          </para>
 
-         <para>
-            See <xref linkend="cedar-config-stage"/> for more information on
-            how the <term>stage</term> action is configured.
-         </para>
-
       </sect2>
 
       <!-- ################################################################# -->
 
       <sect2 id="cedar-basic-process-store">
          
-         <title>The <term>store</term> Action</title>
+         <title>The Store Action</title>
 
          <para>
-            The <term>store</term> action is the third action to be executed
-            as part of a standard backup run.  It executes on a master peer
-            node.  The master machine determines the current staging directory
-            and writes that staging directory to disc.  After the directory
-            has been written to disc, its contents can be optionally validated
-            to ensure that the write was successful.
+            The store action is the third action to be executed as part of a
+            standard backup run.  It executes on a master peer node.  The
+            master machine determines the location of the current staging
+            directory, and then writes the contents that staging directory to
+            disc.  After the contents of the directory have been written to
+            disc, an optional validation step ensures that the write was
+            successful.
          </para>
 
          <para>
@@ -255,19 +250,12 @@
          </para>
          
          <para>
-            The <term>store</term> action also supports several options which
-            modify its behavior.  If enabled, the <firstterm>safe
-            overwrite</firstterm> option forces the <term>action</term> to
-            attempt to ensure that any disc in the drive is either blank or a
-            previously-used Cedar Backup disc.  The <firstterm>capacity
-            mode</firstterm> option drives exception behavior if disc capacity
-            is exceeded.  See 
-         </para>
-
-         <para>
-            See <xref linkend="cedar-config-stage"/> for more information on
-            how the <term>store</term> action is configured, and for
-            information about what kinds of hardware and media are supported.
+            The store action also supports several options which modify its
+            behavior.  If enabled, the <firstterm>safe overwrite</firstterm>
+            option forces an attempt to ensure that any disc in the drive is
+            either blank or a previously-used Cedar Backup disc.  The
+            <firstterm>capacity mode</firstterm> option drives exception
+            behavior if disc capacity is exceeded. 
          </para>
 
       </sect2>
@@ -276,10 +264,10 @@
 
       <sect2 id="cedar-basic-process-purge">
          
-         <title>The <term>purge</term> Action</title>
+         <title>The Purge Action</title>
 
          <para>
-            The <term>purge</term> action is the fourth and final action to be
+            The purge action is the fourth and final action to be
             executed as part of a standard backup run.  It executes both on the
             master peer node and on the various client peer nodes.
             Configuration specifies how long to retain files in certain
@@ -297,48 +285,41 @@
             to configuration.
          </para>
 
-         <para>
-            See <xref linkend="cedar-config-purge"/> for more information on
-            how the <term>purge</term> action is configured.
-         </para>
-
       </sect2>
 
       <!-- ################################################################# -->
 
       <sect2 id="cedar-basic-process-all">
          
-         <title>The <term>all</term> Action</title>
+         <title>The All Action</title>
 
          <para>
-            The <term>all</term> action is a pseudo-action which causes all of
+            The all action is a pseudo-action which causes all of
             the actions in a standard backup run to be executed together in
             a sensible order.  It cannot be combined with any other actions on
             the command line.
          </para>
 
          <para>
-            The <term>all</term> action first determines which actions from
-            among the standard actions are listed in configuration.  Any
-            configured actions are then executed in a sensible order, typically
-            <term>collect</term>, followed by <term>stage</term>, followed by
-            <term>store</term>, followed by <term>purge</term>.
+            The all action first determines which actions from among the
+            standard actions are listed in configuration.  Any configured
+            actions are then executed in a sensible order, typically collect,
+            followed by stage, followed by store, followed by purge.
          </para>
 
          <para>
-            The <term>all</term> action does not have any configuration of its
+            The all action does not have any configuration of its
             own.  Instead, it relies on the individual configuration sections
             for all of the other actions.  See <xref linkend="cedar-config"/>
             for more information.
          </para>
 
          <para>
-            Extensions can also be configured to be executed as part of the
-            <term>all</term> action.  See 
-            <xref linkend="cedar-basic-extensions"/> 
-            for a discussion of extensions, and see 
-            <xref linkend="cedar-config-extensions"/> for more
-            information on how extensions are configured.
+            Extensions can also be configured to be executed as part of the all
+            action.  See <xref linkend="cedar-basic-extensions"/> (below) for a
+            discussion of extensions, and see 
+            <xref linkend="cedar-config-extensions"/> in <xref linkend="cedar-config"/> 
+            for more information on how extensions are configured.
          </para>
 
       </sect2>
@@ -347,16 +328,16 @@
 
       <sect2 id="cedar-basic-process-validate">
          
-         <title>The <term>validate</term> Action</title>
+         <title>The Validate Action</title>
 
          <para>
-            The <term>validate</term> action is used to validate configuration
+            The validate action is used to validate configuration
             on a particular peer node, either master or client.   It cannot be
             combined with any other actions on the command line.
          </para>
 
          <para>
-            The <term>validate</term> action checks that the configuration file
+            The validate action checks that the configuration file
             can be found, that the configuration file is valid, and that
             certain portions of the configuration file make sense.
          </para>
@@ -367,16 +348,16 @@
 
       <sect2 id="cedar-basic-process-rebuild">
          
-         <title>The <term>rebuild</term> Action</title>
+         <title>The Rebuild Action</title>
 
          <para>
-            The <term>rebuild</term> action is an exception-handling action
+            The rebuild action is an exception-handling action
             that is executed independently of any standard backup run.  It cannot
             be combined with any other actions on the command line.
          </para>
 
          <para>
-            The <term>rebuild</term> action attempts to rebuild <quote>this
+            The rebuild action attempts to rebuild <quote>this
             week's</quote> disc from any remaining unpurged stage directories.
             Typically, it would be used to make a copy of a backup or to
             replace media that was damaged or lost, or perhaps to switch to new
@@ -384,7 +365,7 @@
          </para>
 
          <para>
-            To decide what data to write to disc again, the <term>rebuild</term> 
+            To decide what data to write to disc again, the rebuild 
             action looks back and finds the previous starting day of week and
             its date.  Working from there, it finds any remaining staging
             directories between that date and the current date.  If any staging
@@ -393,11 +374,8 @@
          </para>
 
          <para>
-            The <term>rebuild</term> action does not hav any configuration of
-            its own.  Instead, it mostly relies configuration for the
-            <term>store</term> action.  See <xref
-            linkend="cedar-config-store"/> for more information on how the
-            <term>store</term> action is configured.
+            The rebuild action does not have any configuration of its own.
+            Instead, it mostly relies configuration for the store action.  
          </para>
 
       </sect2>
@@ -423,9 +401,8 @@
          Prior to Cedar Backup 2.0, any such integration would have been
          completely independent of Cedar Backup itself.  The
          <quote>external</quote> backup functionality would have to maintain
-         its own configuration and would have had to parse the Cedar Backup
-         configuration file independently (i.e. to determine the path to the
-         collect directory or something similiar).  
+         its own configuration and would not have had access to any Cedar
+         Backup configuration.
       </para>
 
       <para>
@@ -433,16 +410,17 @@
          <firstterm>extensions</firstterm> to the backup process.   A process
          extension is an action that isn't part of the standard backup process,
          (i.e. not collect, stage, store or purge) but gets executed as part of
-         that backup process when properly configured.
+         the backup process when properly configured.
       </para>
 
       <para>
          Extension authors implement an <quote>action process</quote> function
          with a certain interface, and are allowed to add their own sections to
          the Cedar Backup configuration file, so that all backup configuration
-         can be centralized.  Then, their function is associated with an action
-         name (i.e. <quote>subversion</quote>) which can be executed from the
-         <command>cback</command> command line like any other action.
+         can be centralized.  Then, the action process function is associated
+         with an action name (i.e. <quote>subversion</quote>) which can be
+         executed from the <command>cback</command> command line like any other
+         action.
       </para>
 
       <para>
@@ -452,16 +430,19 @@
          general-purpose extensions will be accepted into the official
          codebase, and we already have plans for a Subversion extension, a
          MySQL extension, and an extension for collecting important system
-         information (fdisk info, etc.) to accompany a backup.
+         information (<command>fdisk</command>information, etc.) to accompany a
+         backup.
       </para>
 
-      <para>
-         See <xref linkend="cedar-config-extensions"/> for more information on
-         how extensions are configured.  Also, developers may be interested in
-         <xref linkend="cedar-devel-extensions"/> and
-         <xref linkend="cedar-appendix-b"/>, which specifies the extension
-         architecture interface.
-      </para>
+      <note>
+         <para>
+            See <xref linkend="cedar-config"/> for more information on how
+            extensions are configured.  Also, developers may be interested in
+            the extensions section in <xref linkend="cedar-devel"/> and in
+            <xref linkend="cedar-appendixb"/>, which specifies the extension
+            architecture interface.
+         </para>
+      </note>
 
    </sect1>
 

@@ -22,7 +22,7 @@
 # Language : O'Reilly DocBook Lite XML DTD
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Cedar Backup software manual, Installation chapter.
+# Purpose  : Cedar Backup software manual, Introduction chapter.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 -->
@@ -35,8 +35,8 @@
 
    <simplesect>
     
-      <comment>Reference: http://en.wikiquote.org/wiki/Linus_Torvalds</comment>
-      <comment>Reference: http://groups-beta.google.com/group/linux.dev.kernel/msg/76ae734d543e396d</comment>
+      <!-- Reference: http://en.wikiquote.org/wiki/Linus_Torvalds -->
+      <!-- Reference: http://groups-beta.google.com/group/linux.dev.kernel/msg/76ae734d543e396d -->
 
       <blockquote>
          <para>
@@ -60,10 +60,10 @@
          on local and remote hosts to CD-R or CD-RW media.  The package is
          focused around weekly backups to a single disc, with the expectation
          that the disc will be changed or overwritten at the beginning of each
-         week.  If your hardware is new enough, the script can write
+         week.  If your hardware is new enough, Cedar Backup can write
          multisession discs, allowing you to add to a disc in a daily fashion.
-         Directories are backed up using tar and may be compressed using gzip
-         or bzip2.
+         Directories are backed up using <command>tar</command> and may be
+         compressed using <command>gzip</command> or <command>bzip2</command>.
       </para>
 
       <para>
@@ -108,8 +108,10 @@
       <para>
          Because I had become fed up with the prospect of maintaining a large
          volume of Perl code, I decided to abandon that language in favor of
-         Python.  At the time, I chose Python mostly because I was interested
-         in learning it, but in retrospect it turned out to be a very good
+         Python <footnote><para>See <ulink url="http://www.python.org/">Python's 
+         homepage</ulink> for more information.</para></footnote>.
+         At the time, I chose Python mostly because I was interested in
+         learning it, but in retrospect it turned out to be a very good
          decision.  Python has almost all of the strengths of Perl, but few of
          its inherent weaknesses (primarily, Python code often ends up being
          much more readable than Perl code).
@@ -117,33 +119,41 @@
 
       <para>
          Around this same time, skyjammer.com and cedar-solutions.com were
-         converted to run Debian (potato) and I entered the Debian new
-         maintainer queue, so I also made it a goal to implement Debian
-         packages along with a Python source distribution for the new release.
+         converted to run Debian GNU/Linux (potato) 
+         <footnote><para>Debian's stable releases are named after characters
+         in the Toy Story movie.</para></footnote>
+         and I entered the Debian new maintainer queue, so I also made it a
+         goal to implement Debian packages along with a Python source
+         distribution for the new release.
       </para>
 
       <para>
          Version 1.0 of <application>Cedar Backup</application> was released in
          June of 2002.  We immediately began using it to back up skyjammer.com
-         and cedar-solutions.com, where it proved itself much more stable than
-         the original code tree (it has been essentially trouble-free since).
-         Along the way, Cedar Backup picked up a handful of other users who
-         have occassionally reported bugs or requested minor enhancements.  
+         and cedar-solutions.com, where it proved to be much more stable than
+         the original code tree.  Along the way, Cedar Backup picked up a
+         handful of other users who have occassionally reported bugs or
+         requested minor enhancements.  
       </para>
 
       <para>
          In the meantime, I continued to improve as a Python programmer and
          also started doing a significant amount of professional development in
-         Java.  It became obvious that the internal structure of
-         <application>Cedar Backup</application> 1.0, while much better than
+         Java.  It soon became obvious that the internal structure of
+         <application>Cedar Backup</application> 1.0, while still much better than
          <application>kbackup</application>, still left something to be
          desired.  In November of 2003, I began an aborted attempt at cleaning
          up the codebase.  I converted all of the internal documentation to use
-         Epydoc, and updated the code to use the newly-released Python logging
-         package.   However, I was still unsatisfied with the internal
-         architecture of the code, which did not lend itself to automated
-         regression testing and hence restricted my ability to safely enhance
-         the code.
+         Epydoc <footnote><para>Epydoc is a Python code documentation tool.  
+         See <ulink url="http://epydoc.sourceforge.net/">Epydoc's SourceForge site</ulink> 
+         for more information.</para></footnote>, 
+         and updated the code to use the newly-released Python logging package
+         <footnote><para>See the
+         <ulink url="http://docs.python.org/lib/module-logging.html">Python library documentation</ulink>
+         for more information.</para></footnote>.
+         However, I was still unsatisfied with the internal architecture of the
+         code, which did not lend itself to automated regression testing and
+         hence restricted my ability to safely enhance the code.
       </para>
 
       <para>
@@ -152,13 +162,16 @@
          everything I had learned in the meantime from other Java and Python
          development.  I structured the code to take advantage of Python's
          unique ability to blend procedural code with object-oriented code, and
-         I made unit testing a primary requirement.  The result is the 2.0
+         I made automated unit testing a primary requirement.  The result is the 2.0
          release, which is cleaner, more compact, better focused, and better
          documented than any release before it.  Utility code is less
          application-specific, and is now usable as a general-purpose library.
          The 2.0 release also includes a complete regression test suite of over
-         1500 tests, which will help to ensure that quality is maintained as
-         development continues into the future.
+         1500 tests <footnote><para>Implemented using Python's unit test
+         framework.  See the 
+         <ulink url="http://docs.python.org/lib/module-unittest.html">Python library documentation</ulink>
+         for more information.</para></footnote>, which will help to ensure that quality
+         is maintained as development continues into the future.
       </para>
 
    </sect1>
