@@ -75,8 +75,12 @@ Full vs. Reduced Tests
 # Import modules and do runtime validations
 ########################################################################
 
+import os
 import unittest
+import tempfile
 from os.path import isdir
+
+from CedarBackup2.testutil import removedir
 from CedarBackup2.util import executeCommand, getFunctionReference, encodePath, UnorderedList
 
 
@@ -354,15 +358,32 @@ class TestFunctions(unittest.TestCase):
 
    """Tests for the various public functions."""
 
+
    ################
    # Setup methods
    ################
 
    def setUp(self):
-      pass
+      try:
+         self.tmpdir = tempfile.mkdtemp()
+      except Exception, e:
+         self.fail(e)
 
    def tearDown(self):
-      pass
+      removedir(self.tmpdir)
+
+
+   ##################
+   # Utility methods
+   ##################
+
+   def getTempfile(self):
+      """Gets a path to a temporary file on disk."""
+      (fd, name) = tempfile.mkstemp(dir=self.tmpdir)
+      try:
+         close(fd)
+      except: pass
+      return name
 
 
    ##############################
@@ -1066,6 +1087,162 @@ class TestFunctions(unittest.TestCase):
       args=[]
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failIfEqual(0, result)
+      self.failUnlessEqual(2, len(output))
+      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("second\n", output[1])
+
+   def testExecuteCommand_058(self):
+      """
+      Execute a command that should succeed, no arguments, returnOutput=False, using outputFile.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: echo
+      """
+      command=["echo", ]
+      args=[]
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+      self.failUnless(os.path.exists(filename))
+      output = open(filename).readlines()
+
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("\n", output[0])
+
+   def testExecuteCommand_059(self):
+      """
+      Execute a command that should succeed, one argument, returnOutput=False, using outputFile.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -V
+      """
+      command=["python", "-V"]
+      args=[]
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+      self.failUnless(os.path.exists(filename))
+      output = open(filename).readlines()
+
+      self.failUnlessEqual(1, len(output))
+      self.failUnless(output[0].startswith("Python"))
+
+   def testExecuteCommand_060(self):
+      """
+      Execute a command that should succeed, two arguments, returnOutput=False, using outputFile.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print ''; sys.exit(0)"
+      """
+      command=["python", "-c", "import sys; print ''; sys.exit(0)", ]
+      args=[]
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+      self.failUnless(os.path.exists(filename))
+      output = open(filename).readlines()
+
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("\n", output[0])
+
+   def testExecuteCommand_061(self):
+      """
+      Execute a command that should succeed, three arguments, returnOutput=False, using outputFile.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print '%s' % (sys.argv[1]); sys.exit(0)" first
+      """
+      command=["python", "-c", "import sys; print '%s' % (sys.argv[1]); sys.exit(0)", "first", ]
+      args=[]
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+      self.failUnless(os.path.exists(filename))
+      output = open(filename).readlines()
+
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("first\n", output[0])
+
+   def testExecuteCommand_062(self):
+      """
+      Execute a command that should succeed, four arguments, returnOutput=False, using outputFile.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(0)" first second
+      """
+      command=["python", "-c", "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(0)", "first", "second", ]
+      args=[]
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+      self.failUnless(os.path.exists(filename))
+      output = open(filename).readlines()
+
+      self.failUnlessEqual(2, len(output))
+      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("second\n", output[1])
+
+   def testExecuteCommand_063(self):
+      """
+      Execute a command that should fail, returnOutput=False, using outputFile.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print ''; sys.exit(1)"
+      """
+      command=["python", "-c", "import sys; print ''; sys.exit(1)", ]
+      args=[]
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failIfEqual(0, result)
+      self.failUnless(os.path.exists(filename))
+      output = open(filename).readlines()
+
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("\n", output[0])
+
+   def testExecuteCommand_064(self):
+      """
+      Execute a command that should fail, more arguments, returnOutput=False, using outputFile.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(1)" first second
+      """
+      command=["python", "-c", "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(1)", "first", "second", ]
+      args=[]
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failIfEqual(0, result)
+      self.failUnless(os.path.exists(filename))
+      output = open(filename).readlines()
+
       self.failUnlessEqual(2, len(output))
       self.failUnlessEqual("first\n", output[0])
       self.failUnlessEqual("second\n", output[1])

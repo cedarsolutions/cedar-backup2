@@ -556,7 +556,7 @@ def splitCommandLine(commandLine):
 # executeCommand() function
 ############################
 
-def executeCommand(command, args, returnOutput=False, ignoreStderr=False):
+def executeCommand(command, args, returnOutput=False, ignoreStderr=False, outputFile=None):
    """
    Executes a shell command, hopefully in a safe way (UNIX-specific).
 
@@ -585,6 +585,13 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False):
    included in the output.  This is implemented by using L{popen2.Popen4} in
    the normal case and L{popen2.Popen3} if C{stderr} is to be ignored.
 
+   The C{outputFile} parameter exists to make it easier for a caller to push
+   output into a file, i.e. as a substitute for redirection to a file.  If this
+   value is passed in, each time a line of output is generated, it will be
+   written to the file using C{outputFile.write()}.  At the end, the file
+   descriptor will be flushed using C{outputFile.flush()}.  The caller
+   maintains responsibility for closing the file object appropriately.
+
    @note: I know that it's a bit confusing that the command and the arguments
    are both lists.  I could have just required the caller to pass in one big
    list.  However, I think it makes some sense to keep the command (the
@@ -605,6 +612,9 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False):
    @param returnOutput: Indicates whether to return the output of the command
    @type returnOutput: Boolean C{True} or C{False}
 
+   @param outputFile: File object that all output should be written to.
+   Type outputFile: File object as returned from C{open()} or C{file()}.
+
    @return: Tuple of C{(result, output)} as described above.
    """
    logger.debug("Executing command %s with args %s." % (command, args))
@@ -620,7 +630,9 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False):
       line = pipe.fromchild.readline()
       if not line: break
       if returnOutput: output.append(line)
+      if outputFile is not None: outputFile.write(line)
       outputLogger.info(line[:-1])  # this way the log will (hopefully) get updated in realtime
+   if outputFile is not None: outputFile.flush()
    if returnOutput:
       return (pipe.wait(), output)
    else:
