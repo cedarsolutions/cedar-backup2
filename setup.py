@@ -16,7 +16,6 @@
 # Purpose  : Python distutils setup script
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# This file was created with a width of 132 characters, and NO tabs.
 
 ########################################################################
 # Imported modules
