@@ -59,8 +59,6 @@ Each repository can be backed using the same collect modes allowed for
 filesystems in the standard Cedar Backup collect action: weekly, daily,
 incremental.  
 
-@var VALID_COMPRESS_MODES: List of valid compression modes.
-
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -85,8 +83,10 @@ from xml.dom.minidom import parseString
 from xml.dom.ext import PrettyPrint
 
 # Cedar Backup modules
-from CedarBackup2.config import Config, VALID_COLLECT_MODES
-from CedarBackup2.action import isStart, buildNormalizedPath
+from CedarBackup2.config import addContainerNode, addStringNode
+from CedarBackup2.config import readChildren, readFirstChild, readString
+from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
+from CedarBackup2.action import isStartOfWeek, buildNormalizedPath
 from CedarBackup2.util import executeCommand, ObjectTypeList, encodePath, changeOwnership
 
 
@@ -100,8 +100,6 @@ SVNLOOK_COMMAND      = [ "svnlook", ]
 SVNADMIN_COMMAND     = [ "svnadmin", ]
 
 REVISION_PATH_EXTENSION = "svnlast"
-
-VALID_COMPRESS_MODES = [ "none", "gzip", "bzip2", ]
 
 
 ########################################################################
@@ -580,9 +578,9 @@ class LocalConfig(object):
       @param parentNode: Parent that the section should be appended to.
       """
       if self.subversion is not None:
-         sectionNode = Config.addContainerNode(xmlDom, parentNode, "subversion")
-         Config.addStringNode(xmlDom, sectionNode, "collect_mode", self.subversion.collectMode)
-         Config.addStringNode(xmlDom, sectionNode, "compress_mode", self.subversion.compressMode)
+         sectionNode = addContainerNode(xmlDom, parentNode, "subversion")
+         addStringNode(xmlDom, sectionNode, "collect_mode", self.subversion.collectMode)
+         addStringNode(xmlDom, sectionNode, "compress_mode", self.subversion.compressMode)
          if self.subversion.repositories is not None:
             for repository in self.subversion.repositories:
                LocalConfig._addRepository(xmlDom, sectionNode, repository)
@@ -601,7 +599,7 @@ class LocalConfig(object):
       """
       try:
          xmlDom = PyExpat.Reader().fromString(xmlData)
-         parent = Config.readFirstChild(xmlDom, "cb_config")
+         parent = readFirstChild(xmlDom, "cb_config")
          self._subversion = LocalConfig._parseSubversion(parent)
       except (IOError, ExpatError), e:
          raise ValueError("Unable to parse XML document: %s" % e)
@@ -628,11 +626,11 @@ class LocalConfig(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       subversion = None
-      section = Config.readFirstChild(parent, "subversion")
+      section = readFirstChild(parent, "subversion")
       if section is not None:
          subversion = SubversionConfig()
-         subversion.collectMode = Config.readString(section, "collect_mode")
-         subversion.compressMode = Config.readString(section, "compress_mode")
+         subversion.collectMode = readString(section, "collect_mode")
+         subversion.compressMode = readString(section, "compress_mode")
          subversion.repositories = LocalConfig._parseRepositories(section)
       return subversion
    _parseSubversion = staticmethod(_parseSubversion)
@@ -659,14 +657,14 @@ class LocalConfig(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       lst = []
-      for entry in Config.readChildren(parent, "repository"):
+      for entry in readChildren(parent, "repository"):
          if entry.nodeType == Node.ELEMENT_NODE:
-            repositoryType = Config.readString(entry, "type")
+            repositoryType = readString(entry, "type")
             if repositoryType in [ None, "BDB", ]:    # BDB is the default type 
                repository = BDBRepository()
-               repository.repositoryPath = Config.readString(entry, "abs_path")
-               repository.collectMode = Config.readString(entry, "collect_mode")
-               repository.compressMode = Config.readString(entry, "compress_mode")
+               repository.repositoryPath = readString(entry, "abs_path")
+               repository.collectMode = readString(entry, "collect_mode")
+               repository.compressMode = readString(entry, "compress_mode")
                lst.append(repository)
             else:
                logger.warn("Warning: Ignoring Subversion repository with unknown type [%s]." % repositoryType)
@@ -697,11 +695,11 @@ class LocalConfig(object):
       @param repository: Repository to be added to the document.
       """
       if repository is not None:
-         sectionNode = Config.addContainerNode(xmlDom, parentNode, "repository")
-         Config.addStringNode(xmlDom, sectionNode, "type", repository.repositoryType)
-         Config.addStringNode(xmlDom, sectionNode, "abs_path", repository.repositoryPath)
-         Config.addStringNode(xmlDom, sectionNode, "collect_mode", repository.collectMode)
-         Config.addStringNode(xmlDom, sectionNode, "compress_mode", repository.compressMode)
+         sectionNode = addContainerNode(xmlDom, parentNode, "repository")
+         addStringNode(xmlDom, sectionNode, "type", repository.repositoryType)
+         addStringNode(xmlDom, sectionNode, "abs_path", repository.repositoryPath)
+         addStringNode(xmlDom, sectionNode, "collect_mode", repository.collectMode)
+         addStringNode(xmlDom, sectionNode, "compress_mode", repository.compressMode)
    _addRepository = staticmethod(_addRepository)
 
 
@@ -733,7 +731,7 @@ def executeAction(configPath, options, config):
    if config.options is None or config.collect is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
-   todayIsStart = isStart(config.options.startingDay)
+   todayIsStart = isStartOfWeek(config.options.startingDay)
    fullBackup = options.full or todayIsStart
    logger.debug("Full backup flag is [%s]" % fullBackup)
    if local.subversion.repositories is not None:
@@ -759,7 +757,6 @@ def _getCollectMode(local, repository):
    """
    Gets the collect mode that should be used for a repository.
    Use repository's if possible, otherwise take from subversion section.
-   @param config: LocalConfig object.
    @param repository: BDBRepository object.
    @return: Collect mode to use.
    """
@@ -806,7 +803,7 @@ def _getBackupPath(config, repository, compressMode):
    @param compressMode: Compress mode to use for this repository.
    @return: Absolute path to the backup file associated with the repository.
    """
-   filename = buildNormalizedPath(repository.repositoryPath)
+   filename = "svndump-%s.txt" % buildNormalizedPath(repository.repositoryPath)
    if compressMode == 'gzip':
       filename = "%s.gz" % filename
    elif compressMode == 'bzip2':

@@ -107,7 +107,6 @@ Full vs. Reduced Tests
 # System modules
 import unittest
 from bz2 import BZ2File
-import tempfile
 import os
 from StringIO import StringIO
 
@@ -117,7 +116,7 @@ from xml.dom.ext import PrettyPrint
 
 # Cedar Backup modules
 from CedarBackup2.testutil import findResources, buildPath, removedir, failUnlessAssignRaises
-from CedarBackup2.extend.mysql import LocalConfig, MysqlConfig, _buildDumpArgs, _getOutputFile
+from CedarBackup2.extend.mysql import LocalConfig, MysqlConfig, _getOutputFile
 
 
 #######################################################################
@@ -173,6 +172,7 @@ class TestMysqlConfig(unittest.TestCase):
       mysql = MysqlConfig()
       self.failUnlessEqual(None, mysql.user)
       self.failUnlessEqual(None, mysql.password)
+      self.failUnlessEqual(None, mysql.compressMode)
       self.failUnlessEqual(False, mysql.all)
       self.failUnlessEqual(None, mysql.databases)
 
@@ -180,9 +180,10 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test constructor with all values filled in, with valid values, databases=None.
       """
-      mysql = MysqlConfig("user", "password", False, None)
+      mysql = MysqlConfig("user", "password", "none", False, None)
       self.failUnlessEqual("user", mysql.user)
       self.failUnlessEqual("password", mysql.password)
+      self.failUnlessEqual("none", mysql.compressMode)
       self.failUnlessEqual(False, mysql.all)
       self.failUnlessEqual(None, mysql.databases)
 
@@ -190,9 +191,10 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test constructor with all values filled in, with valid values, no databases.
       """
-      mysql = MysqlConfig("user", "password", True, [])
+      mysql = MysqlConfig("user", "password", "none", True, [])
       self.failUnlessEqual("user", mysql.user)
       self.failUnlessEqual("password", mysql.password)
+      self.failUnlessEqual("none", mysql.compressMode)
       self.failUnlessEqual(True, mysql.all)
       self.failUnlessEqual([], mysql.databases)
 
@@ -200,9 +202,10 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test constructor with all values filled in, with valid values, with one database.
       """
-      mysql = MysqlConfig("user", "password", True,  [ "one", ])
+      mysql = MysqlConfig("user", "password", "gzip", True,  [ "one", ])
       self.failUnlessEqual("user", mysql.user)
       self.failUnlessEqual("password", mysql.password)
+      self.failUnlessEqual("gzip", mysql.compressMode)
       self.failUnlessEqual(True, mysql.all)
       self.failUnlessEqual([ "one", ], mysql.databases)
 
@@ -210,9 +213,10 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test constructor with all values filled in, with valid values, with multiple databases.
       """
-      mysql = MysqlConfig("user", "password", True, [ "one", "two", ])
+      mysql = MysqlConfig("user", "password", "bzip2", True, [ "one", "two", ])
       self.failUnlessEqual("user", mysql.user)
       self.failUnlessEqual("password", mysql.password)
+      self.failUnlessEqual("bzip2", mysql.compressMode)
       self.failUnlessEqual(True, mysql.all)
       self.failUnlessEqual([ "one", "two", ], mysql.databases)
 
@@ -272,6 +276,46 @@ class TestMysqlConfig(unittest.TestCase):
 
    def testConstructor_012(self):
       """
+      Test assignment of compressMode attribute, None value.
+      """
+      mysql = MysqlConfig(compressMode="none")
+      self.failUnlessEqual("none", mysql.compressMode)
+      mysql.compressMode = None
+      self.failUnlessEqual(None, mysql.compressMode)
+
+   def testConstructor_013(self):
+      """
+      Test assignment of compressMode attribute, valid value.
+      """
+      mysql = MysqlConfig()
+      self.failUnlessEqual(None, mysql.compressMode)
+      mysql.compressMode = "none"
+      self.failUnlessEqual("none", mysql.compressMode)
+      mysql.compressMode = "gzip"
+      self.failUnlessEqual("gzip", mysql.compressMode)
+      mysql.compressMode = "bzip2"
+      self.failUnlessEqual("bzip2", mysql.compressMode)
+
+   def testConstructor_014(self):
+      """
+      Test assignment of compressMode attribute, invalid value (empty).
+      """
+      mysql = MysqlConfig()
+      self.failUnlessEqual(None, mysql.compressMode)
+      self.failUnlessAssignRaises(ValueError, mysql, "compressMode", "")
+      self.failUnlessEqual(None, mysql.compressMode)
+
+   def testConstructor_015(self):
+      """
+      Test assignment of compressMode attribute, invalid value (not in list).
+      """
+      mysql = MysqlConfig()
+      self.failUnlessEqual(None, mysql.compressMode)
+      self.failUnlessAssignRaises(ValueError, mysql, "compressMode", "bogus")
+      self.failUnlessEqual(None, mysql.compressMode)
+
+   def testConstructor_016(self):
+      """
       Test assignment of all attribute, None value.
       """
       mysql = MysqlConfig(all=True)
@@ -279,7 +323,7 @@ class TestMysqlConfig(unittest.TestCase):
       mysql.all = None
       self.failUnlessEqual(False, mysql.all)
 
-   def testConstructor_013(self):
+   def testConstructor_017(self):
       """
       Test assignment of all attribute, valid value (real boolean).
       """
@@ -290,7 +334,7 @@ class TestMysqlConfig(unittest.TestCase):
       mysql.all = False
       self.failUnlessEqual(False, mysql.all)
 
-   def testConstructor_014(self):
+   def testConstructor_018(self):
       """
       Test assignment of all attribute, valid value (expression).
       """
@@ -307,7 +351,7 @@ class TestMysqlConfig(unittest.TestCase):
       mysql.all = 3
       self.failUnlessEqual(True, mysql.all)
 
-   def testConstructor_015(self):
+   def testConstructor_019(self):
       """
       Test assignment of databases attribute, None value.
       """
@@ -316,7 +360,7 @@ class TestMysqlConfig(unittest.TestCase):
       mysql.databases = None
       self.failUnlessEqual(None, mysql.databases)
 
-   def testConstructor_016(self):
+   def testConstructor_020(self):
       """
       Test assignment of databases attribute, [] value.
       """
@@ -325,7 +369,7 @@ class TestMysqlConfig(unittest.TestCase):
       mysql.databases = []
       self.failUnlessEqual([], mysql.databases)
 
-   def testConstructor_017(self):
+   def testConstructor_021(self):
       """
       Test assignment of databases attribute, single valid entry.
       """
@@ -336,7 +380,7 @@ class TestMysqlConfig(unittest.TestCase):
       mysql.databases.append("/stuff")
       self.failUnlessEqual(["/whatever", "/stuff", ], mysql.databases)
 
-   def testConstructor_018(self):
+   def testConstructor_022(self):
       """
       Test assignment of databases attribute, multiple valid entries.
       """
@@ -347,7 +391,7 @@ class TestMysqlConfig(unittest.TestCase):
       mysql.databases.append("/etc/X11")
       self.failUnlessEqual(["/whatever", "/stuff", "/etc/X11", ], mysql.databases)
 
-   def testConstructor_019(self):
+   def testConstructor_023(self):
       """
       Test assignment of databases attribute, single invalid entry (empty).
       """
@@ -356,7 +400,7 @@ class TestMysqlConfig(unittest.TestCase):
       self.failUnlessAssignRaises(ValueError, mysql, "databases", ["", ])
       self.failUnlessEqual(None, mysql.databases)
 
-   def testConstructor_021(self):
+   def testConstructor_024(self):
       """
       Test assignment of databases attribute, mixed valid and invalid entries.
       """
@@ -388,8 +432,8 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None, list None.
       """
-      mysql1 = MysqlConfig("user", "password", True, None)
-      mysql2 = MysqlConfig("user", "password", True, None)
+      mysql1 = MysqlConfig("user", "password", "gzip", True, None)
+      mysql2 = MysqlConfig("user", "password", "gzip", True, None)
       self.failUnlessEqual(mysql1, mysql2)
       self.failUnless(mysql1 == mysql2)
       self.failUnless(not mysql1 < mysql2)
@@ -402,8 +446,8 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None, list empty.
       """
-      mysql1 = MysqlConfig("user", "password", True, [])
-      mysql2 = MysqlConfig("user", "password", True, [])
+      mysql1 = MysqlConfig("user", "password", "bzip2", True, [])
+      mysql2 = MysqlConfig("user", "password", "bzip2", True, [])
       self.failUnlessEqual(mysql1, mysql2)
       self.failUnless(mysql1 == mysql2)
       self.failUnless(not mysql1 < mysql2)
@@ -416,8 +460,8 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None, list non-empty.
       """
-      mysql1 = MysqlConfig("user", "password", True, [ "whatever", ])
-      mysql2 = MysqlConfig("user", "password", True, [ "whatever", ])
+      mysql1 = MysqlConfig("user", "password", "none", True, [ "whatever", ])
+      mysql2 = MysqlConfig("user", "password", "none", True, [ "whatever", ])
       self.failUnlessEqual(mysql1, mysql2)
       self.failUnless(mysql1 == mysql2)
       self.failUnless(not mysql1 < mysql2)
@@ -444,8 +488,8 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, user differs.
       """
-      mysql1 = MysqlConfig("user1", "password", True, [ "whatever", ])
-      mysql2 = MysqlConfig("user2", "password", True, [ "whatever", ])
+      mysql1 = MysqlConfig("user1", "password", "gzip", True, [ "whatever", ])
+      mysql2 = MysqlConfig("user2", "password", "gzip", True, [ "whatever", ])
       self.failIfEqual(mysql1, mysql2)
       self.failUnless(not mysql1 == mysql2)
       self.failUnless(mysql1 < mysql2)
@@ -472,8 +516,8 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, password differs.
       """
-      mysql1 = MysqlConfig("user", "password1", True, [ "whatever", ])
-      mysql2 = MysqlConfig("user", "password2", True, [ "whatever", ])
+      mysql1 = MysqlConfig("user", "password1", "gzip", True, [ "whatever", ])
+      mysql2 = MysqlConfig("user", "password2", "gzip", True, [ "whatever", ])
       self.failIfEqual(mysql1, mysql2)
       self.failUnless(not mysql1 == mysql2)
       self.failUnless(mysql1 < mysql2)
@@ -483,6 +527,34 @@ class TestMysqlConfig(unittest.TestCase):
       self.failUnless(mysql1 != mysql2)
 
    def testComparison_009(self):
+      """
+      Test comparison of two differing objects, compressMode differs (one None).
+      """
+      mysql1 = MysqlConfig()
+      mysql2 = MysqlConfig(compressMode="gzip")
+      self.failIfEqual(mysql1, mysql2)
+      self.failUnless(not mysql1 == mysql2)
+      self.failUnless(mysql1 < mysql2)
+      self.failUnless(mysql1 <= mysql2)
+      self.failUnless(not mysql1 > mysql2)
+      self.failUnless(not mysql1 >= mysql2)
+      self.failUnless(mysql1 != mysql2)
+
+   def testComparison_010(self):
+      """
+      Test comparison of two differing objects, compressMode differs.
+      """
+      mysql1 = MysqlConfig("user", "password", "bzip2", True, [ "whatever", ])
+      mysql2 = MysqlConfig("user", "password", "gzip", True, [ "whatever", ])
+      self.failIfEqual(mysql1, mysql2)
+      self.failUnless(not mysql1 == mysql2)
+      self.failUnless(mysql1 < mysql2)
+      self.failUnless(mysql1 <= mysql2)
+      self.failUnless(not mysql1 > mysql2)
+      self.failUnless(not mysql1 >= mysql2)
+      self.failUnless(mysql1 != mysql2)
+
+   def testComparison_011(self):
       """
       Test comparison of two differing objects, all differs (one None).
       """
@@ -496,12 +568,12 @@ class TestMysqlConfig(unittest.TestCase):
       self.failUnless(not mysql1 >= mysql2)
       self.failUnless(mysql1 != mysql2)
 
-   def testComparison_010(self):
+   def testComparison_012(self):
       """
       Test comparison of two differing objects, all differs.
       """
-      mysql1 = MysqlConfig("user", "password", False, [ "whatever", ])
-      mysql2 = MysqlConfig("user", "password", True, [ "whatever", ])
+      mysql1 = MysqlConfig("user", "password", "gzip", False, [ "whatever", ])
+      mysql2 = MysqlConfig("user", "password", "gzip", True, [ "whatever", ])
       self.failIfEqual(mysql1, mysql2)
       self.failUnless(not mysql1 == mysql2)
       self.failUnless(mysql1 < mysql2)
@@ -542,8 +614,8 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, databases differs (one empty, one not empty).
       """
-      mysql1 = MysqlConfig("user", "password", True, [ ])
-      mysql2 = MysqlConfig("user", "password", True, [ "whatever", ])
+      mysql1 = MysqlConfig("user", "password", "gzip", True, [ ])
+      mysql2 = MysqlConfig("user", "password", "gzip", True, [ "whatever", ])
       self.failIfEqual(mysql1, mysql2)
       self.failUnless(not mysql1 == mysql2)
       self.failUnless(mysql1 < mysql2)
@@ -556,8 +628,8 @@ class TestMysqlConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, databases differs (both not empty).
       """
-      mysql1 = MysqlConfig("user", "password", True, [ "whatever", ])
-      mysql2 = MysqlConfig("user", "password", True, [ "whatever", "bogus", ])
+      mysql1 = MysqlConfig("user", "password", "gzip", True, [ "whatever", ])
+      mysql2 = MysqlConfig("user", "password", "gzip", True, [ "whatever", "bogus", ])
       self.failIfEqual(mysql1, mysql2)
       self.failUnless(not mysql1 == mysql2)
       self.failUnless(not mysql1 < mysql2)     # note: different than standard due to unsorted list
@@ -782,7 +854,7 @@ class TestLocalConfig(unittest.TestCase):
       Test validate on a non-empty mysql section, all=True, databases=None.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", True, None)
+      config.mysql = MysqlConfig("user", "password", "gzip", True, None)
       config.validate()
 
    def testValidate_004(self):
@@ -790,7 +862,7 @@ class TestLocalConfig(unittest.TestCase):
       Test validate on a non-empty mysql section, all=True, empty databases.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", True, [])
+      config.mysql = MysqlConfig("user", "password", "none", True, [])
       config.validate()
 
    def testValidate_005(self):
@@ -798,7 +870,7 @@ class TestLocalConfig(unittest.TestCase):
       Test validate on a non-empty mysql section, all=True, non-empty databases.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", True, ["whatever", ])
+      config.mysql = MysqlConfig("user", "password", "bzip2", True, ["whatever", ])
       self.failUnlessRaises(ValueError, config.validate)
 
    def testValidate_006(self):
@@ -806,7 +878,7 @@ class TestLocalConfig(unittest.TestCase):
       Test validate on a non-empty mysql section, all=False, databases=None.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", False, None)
+      config.mysql = MysqlConfig("user", "password", "gzip", False, None)
       self.failUnlessRaises(ValueError, config.validate)
 
    def testValidate_007(self):
@@ -814,7 +886,7 @@ class TestLocalConfig(unittest.TestCase):
       Test validate on a non-empty mysql section, all=False, empty databases.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", False, [])
+      config.mysql = MysqlConfig("user", "password", "bzip2", False, [])
       self.failUnlessRaises(ValueError, config.validate)
 
    def testValidate_008(self):
@@ -822,7 +894,7 @@ class TestLocalConfig(unittest.TestCase):
       Test validate on a non-empty mysql section, all=False, non-empty databases.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", False, ["whatever", ])
+      config.mysql = MysqlConfig("user", "password", "gzip", False, ["whatever", ])
       config.validate()
 
 
@@ -853,11 +925,13 @@ class TestLocalConfig(unittest.TestCase):
       self.failIfEqual(None, config.mysql)
       self.failUnlessEqual("user", config.mysql.user)
       self.failUnlessEqual("password", config.mysql.password)
+      self.failUnlessEqual("none", config.mysql.compressMode)
       self.failUnlessEqual(True, config.mysql.all)
       self.failUnlessEqual(None, config.mysql.databases)
       config = LocalConfig(xmlData=contents, validate=False)
       self.failUnlessEqual("user", config.mysql.user)
       self.failUnlessEqual("password", config.mysql.password)
+      self.failUnlessEqual("none", config.mysql.compressMode)
       self.failIfEqual(None, config.mysql.password)
       self.failUnlessEqual(True, config.mysql.all)
       self.failUnlessEqual(None, config.mysql.databases)
@@ -872,12 +946,14 @@ class TestLocalConfig(unittest.TestCase):
       self.failIfEqual(None, config.mysql)
       self.failUnlessEqual("user", config.mysql.user)
       self.failUnlessEqual("password", config.mysql.password)
+      self.failUnlessEqual("gzip", config.mysql.compressMode)
       self.failUnlessEqual(False, config.mysql.all)
       self.failUnlessEqual(["database", ], config.mysql.databases)
       config = LocalConfig(xmlData=contents, validate=False)
       self.failIfEqual(None, config.mysql)
       self.failUnlessEqual("user", config.mysql.user)
       self.failUnlessEqual("password", config.mysql.password)
+      self.failUnlessEqual("gzip", config.mysql.compressMode)
       self.failUnlessEqual(False, config.mysql.all)
       self.failUnlessEqual(["database", ], config.mysql.databases)
 
@@ -891,12 +967,14 @@ class TestLocalConfig(unittest.TestCase):
       self.failIfEqual(None, config.mysql)
       self.failUnlessEqual("user", config.mysql.user)
       self.failUnlessEqual("password", config.mysql.password)
+      self.failUnlessEqual("bzip2", config.mysql.compressMode)
       self.failUnlessEqual(False, config.mysql.all)
       self.failUnlessEqual(["database1", "database2", ], config.mysql.databases)
       config = LocalConfig(xmlData=contents, validate=False)
       self.failIfEqual(None, config.mysql)
       self.failUnlessEqual("user", config.mysql.user)
       self.failUnlessEqual("password", config.mysql.password)
+      self.failUnlessEqual("bzip2", config.mysql.compressMode)
       self.failUnlessEqual(False, config.mysql.all)
       self.failUnlessEqual(["database1", "database2", ], config.mysql.databases)
 
@@ -917,7 +995,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with no databases, all other values filled in, all=True.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", True, None)
+      config.mysql = MysqlConfig("user", "password", "none", True, None)
       self.validateAddConfig(config)
 
    def testAddConfig_004(self):
@@ -925,7 +1003,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with no databases, all other values filled in, all=False.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", False, None)
+      config.mysql = MysqlConfig("user", "password", "gzip", False, None)
       self.validateAddConfig(config)
 
    def testAddConfig_005(self):
@@ -933,7 +1011,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with single database, all other values filled in, all=True.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", True, [ "database", ])
+      config.mysql = MysqlConfig("user", "password", "bzip2", True, [ "database", ])
       self.validateAddConfig(config)
 
    def testAddConfig_006(self):
@@ -941,7 +1019,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with single database, all other values filled in, all=False.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", False, [ "database", ])
+      config.mysql = MysqlConfig("user", "password", "none", False, [ "database", ])
       self.validateAddConfig(config)
 
    def testAddConfig_007(self):
@@ -949,7 +1027,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with multiple databases, all other values filled in, all=True.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", True, [ "database1", "database2", ])
+      config.mysql = MysqlConfig("user", "password", "bzip2", True, [ "database1", "database2", ])
       self.validateAddConfig(config)
 
    def testAddConfig_008(self):
@@ -957,151 +1035,8 @@ class TestLocalConfig(unittest.TestCase):
       Test with multiple databases, all other values filled in, all=False.
       """
       config = LocalConfig()
-      config.mysql = MysqlConfig("user", "password", True, [ "database1", "database2", ])
+      config.mysql = MysqlConfig("user", "password", "gzip", True, [ "database1", "database2", ])
       self.validateAddConfig(config)
-
-
-######################
-# TestFunctions class
-######################
-
-class TestFunctions(unittest.TestCase):
-
-   """Tests for the public functions class."""
-
-
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
-
-   ##################
-   # Utility methods
-   ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
-
-
-   ########################
-   # Test _buildDumpArgs()
-   ########################
-
-   def testBuildDumpArgs_001(self):
-      """
-      Test with a missing username.
-      """
-      self.failUnlessRaises(ValueError, _buildDumpArgs, None, "password", None)
-
-   def testBuildDumpArgs_002(self):
-      """
-      Test with a missing password.
-      """
-      self.failUnlessRaises(ValueError, _buildDumpArgs, "user", None, None)
-
-   def testBuildDumpArgs_003(self):
-      """
-      Test with a no database.
-      """
-      expected = [ "--all-databases", "-all", "--flush-logs", "--opt", "--user=stuff", "--password=other", ]
-      args = _buildDumpArgs("stuff", "other", None)
-      self.failUnlessEqual(expected, args)
-
-   def testBuildDumpArgs_004(self):
-      """
-      Test with an indicated database.
-      """
-      expected = [ "--databases", "-all", "--flush-logs", "--opt", "--user=one", "--password=two", "db1", ]
-      args = _buildDumpArgs("one", "two", "db1")
-      self.failUnlessEqual(expected, args)
-
-
-   ########################
-   # Test _getOutputFile()
-   ########################
-
-   def testGetOutputFile_001(self):
-      """
-      Test with no database name, compress=True.
-      """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database=None, compress=True)
-      self.failUnlessEqual(self.buildPath(["mysqldump.txt.bz2"]), filename)
-      outputFile.write("Hello, world.\n")
-      outputFile.close()
-      realContents = BZ2File(filename=filename, mode="r").readlines()
-      self.failUnlessEqual(1, len(realContents))
-      self.failUnlessEqual("Hello, world.\n", realContents[0])
-
-   def testGetOutputFile_002(self):
-      """
-      Test with no database name, compress=False.
-      """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database=None, compress=False)
-      self.failUnlessEqual(self.buildPath(["mysqldump.txt"]), filename)
-      outputFile.write("Hello, world.\n")
-      outputFile.close()
-      realContents = open(filename, "r").readlines()
-      self.failUnlessEqual(1, len(realContents))
-      self.failUnlessEqual("Hello, world.\n", realContents[0])
-
-   def testGetOutputFile_003(self):
-      """
-      Test with a simple database name, compress=True.
-      """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database="database", compress=True)
-      self.failUnlessEqual(self.buildPath(["mysqldump-database.txt.bz2"]), filename)
-      outputFile.write("Hello, world.\n")
-      outputFile.close()
-      realContents = BZ2File(filename=filename, mode="r").readlines()
-      self.failUnlessEqual(1, len(realContents))
-      self.failUnlessEqual("Hello, world.\n", realContents[0])
-
-   def testGetOutputFile_004(self):
-      """
-      Test with a simple database name, compress=False.
-      """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database="database", compress=False)
-      self.failUnlessEqual(self.buildPath(["mysqldump-database.txt"]), filename)
-      outputFile.write("Hello, world.\n")
-      outputFile.close()
-      realContents = open(filename, "r").readlines()
-      self.failUnlessEqual(1, len(realContents))
-      self.failUnlessEqual("Hello, world.\n", realContents[0])
-
-   def testGetOutputFile_005(self):
-      """
-      Test with a database name containing spaces, compress=True.
-      """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database="name with spaces", compress=True)
-      self.failUnlessEqual(self.buildPath(["mysqldump-name with spaces.txt.bz2"]), filename)
-      outputFile.write("Hello, world.\n")
-      outputFile.close()
-      realContents = BZ2File(filename=filename, mode="r").readlines()
-      self.failUnlessEqual(1, len(realContents))
-      self.failUnlessEqual("Hello, world.\n", realContents[0])
-
-   def testGetOutputFile_006(self):
-      """
-      Test with a database name containing spaces, compress=False.
-      """
-      (outputFile, filename) = _getOutputFile(targetDir=self.tmpdir, database="name with spaces", compress=False)
-      self.failUnlessEqual(self.buildPath(["mysqldump-name with spaces.txt"]), filename)
-      outputFile.write("Hello, world.\n")
-      outputFile.close()
-      realContents = open(filename, "r").readlines()
-      self.failUnlessEqual(1, len(realContents))
-      self.failUnlessEqual("Hello, world.\n", realContents[0])
 
 
 #######################################################################
@@ -1113,7 +1048,6 @@ def suite():
    return unittest.TestSuite((
                               unittest.makeSuite(TestMysqlConfig, 'test'), 
                               unittest.makeSuite(TestLocalConfig, 'test'), 
-                              unittest.makeSuite(TestFunctions, 'test'), 
                             ))
 
 

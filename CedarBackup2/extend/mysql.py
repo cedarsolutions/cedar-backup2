@@ -77,6 +77,7 @@ through a pipe, which is a real pain.
 # System modules
 import os
 import logging
+from gzip import GzipFile
 from bz2 import BZ2File
 
 # XML-related modules
@@ -89,7 +90,9 @@ from xml.dom.minidom import parseString
 from xml.dom.ext import PrettyPrint
 
 # Cedar Backup modules
-from CedarBackup2.config import Config
+from CedarBackup2.config import addContainerNode, addStringNode, addBooleanNode
+from CedarBackup2.config import readChildren, readFirstChild, readString, readStringList, readBoolean
+from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
 from CedarBackup2.util import executeCommand, ObjectTypeList, changeOwnership
 
 
@@ -115,6 +118,7 @@ class MysqlConfig(object):
    The following restrictions exist on data in this class:
 
       - The user and password must always be filled in
+      - The compress mode must be one of the values in L{VALID_COMPRESS_MODES}.
       - The 'all' flag must be 'Y' if no databases are defined.
       - The 'all' flag must be 'N' if any databases are defined.
       - Any values in the databases list must be strings.
@@ -122,21 +126,24 @@ class MysqlConfig(object):
    @sort: __init__, __repr__, __str__, __cmp__, user, password, all, databases
    """
 
-   def __init__(self, user=None, password=None, all=None, databases=None):
+   def __init__(self, user=None, password=None, compressMode=None, all=None, databases=None):
       """
       Constructor for the C{MysqlConfig} class.
       
       @param user: User to execute backup as.
       @param password: Password associated with user.
+      @param compressMode: Compress mode for backed-up files.
       @param all: Indicates whether to back up all databases.
       @param databases: List of databases to back up.
       """
       self._user = None
       self._password = None
+      self._compressMode = None
       self._all = None
       self._databases = None
       self.user = user
       self.password = password
+      self.compressMode = compressMode
       self.all = all
       self.databases = databases
 
@@ -167,6 +174,11 @@ class MysqlConfig(object):
             return 1
       if self._password != other._password:
          if self._password < other._password:
+            return -1
+         else:
+            return 1
+      if self._compressMode != other._compressMode:
+         if self._compressMode < other._compressMode:
             return -1
          else:
             return 1
@@ -212,6 +224,23 @@ class MysqlConfig(object):
       """
       return self._password
 
+   def _setCompressMode(self, value):
+      """
+      Property target used to set the compress mode.
+      If not C{None}, the mode must be one of the values in L{VALID_COMPRESS_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_COMPRESS_MODES:
+            raise ValueError("Compress mode must be one of %s." % VALID_COMPRESS_MODES)
+      self._compressMode = value
+
+   def _getCompressMode(self):
+      """
+      Property target used to get the compress mode.
+      """
+      return self._compressMode 
+
    def _setAll(self, value):
       """
       Property target used to set the 'all' flag.
@@ -256,6 +285,7 @@ class MysqlConfig(object):
 
    user = property(_getUser, _setUser, None, "User to execute backup as.")
    password = property(_getPassword, _setPassword, None, "Password associated with user.")
+   compressMode = property(_getCompressMode, _setCompressMode, None, "Compress mode to be used for backed-up files.")
    all = property(_getAll, _setAll, None, "Indicates whether to back up all databases.")
    databases = property(_getDatabases, _setDatabases, None, "List of databases to back up.")
 
@@ -382,7 +412,7 @@ class LocalConfig(object):
       """
       Validates configuration represented by the object.
 
-      Basically, the user and password must be filled in, and then if the 'all'
+      The user, password and compress mode must be filled in.  Then, if the 'all'
       flag I{is} set, no databases are allowed, and if the 'all' flag is I{not}
       set, at least one database is required.
 
@@ -394,6 +424,8 @@ class LocalConfig(object):
          raise ValueError("Mysql user value is required.")
       if self.mysql.password is None:
          raise ValueError("Mysql password value is required.")
+      if self.mysql.compressMode is None:
+         raise ValueError("Compress mode value is required.")
       if self.mysql.all:
          if self.mysql.databases is not None and self.mysql.databases != []:
             raise ValueError("Databases cannot be specified if 'all' flag is set.")
@@ -412,6 +444,7 @@ class LocalConfig(object):
 
          user           //cb_config/mysql/user
          password       //cb_config/mysql/password
+         compressMode   //cb_config/mysql/compress_mode
          all            //cb_config/mysql/all
 
       We also add groups of the following items, one list element per
@@ -423,13 +456,14 @@ class LocalConfig(object):
       @param parentNode: Parent that the section should be appended to.
       """
       if self.mysql is not None:
-         sectionNode = Config.addContainerNode(xmlDom, parentNode, "mysql")
-         Config.addStringNode(xmlDom, sectionNode, "user", self.mysql.user)
-         Config.addStringNode(xmlDom, sectionNode, "password", self.mysql.password)
-         Config.addBooleanNode(xmlDom, sectionNode, "all", self.mysql.all)
+         sectionNode = addContainerNode(xmlDom, parentNode, "mysql")
+         addStringNode(xmlDom, sectionNode, "user", self.mysql.user)
+         addStringNode(xmlDom, sectionNode, "password", self.mysql.password)
+         addStringNode(xmlDom, sectionNode, "compress_mode", self.mysql.compressMode)
+         addBooleanNode(xmlDom, sectionNode, "all", self.mysql.all)
          if self.mysql.databases is not None:
             for database in self.mysql.databases:
-               Config.addStringNode(xmlDom, sectionNode, "database", database)
+               addStringNode(xmlDom, sectionNode, "database", database)
 
    def _parseXmlData(self, xmlData):
       """
@@ -445,7 +479,7 @@ class LocalConfig(object):
       """
       try:
          xmlDom = PyExpat.Reader().fromString(xmlData)
-         parent = Config.readFirstChild(xmlDom, "cb_config")
+         parent = readFirstChild(xmlDom, "cb_config")
          self._mysql = LocalConfig._parseMysql(parent)
       except (IOError, ExpatError), e:
          raise ValueError("Unable to parse XML document: %s" % e)
@@ -458,6 +492,7 @@ class LocalConfig(object):
 
          user           //cb_config/mysql/user
          password       //cb_config/mysql/password
+         compressMode   //cb_config/mysql/compress_mode
          all            //cb_config/mysql/all
 
       We also read groups of the following item, one list element per
@@ -471,13 +506,14 @@ class LocalConfig(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       mysql = None
-      section = Config.readFirstChild(parent, "mysql")
+      section = readFirstChild(parent, "mysql")
       if section is not None:
          mysql = MysqlConfig()
-         mysql.user = Config.readString(section, "user")
-         mysql.password = Config.readString(section, "password")
-         mysql.all = Config.readBoolean(section, "all")
-         mysql.databases = Config.readStringList(section, "database")
+         mysql.user = readString(section, "user")
+         mysql.password = readString(section, "password")
+         mysql.compressMode = readString(section, "compress_mode")
+         mysql.all = readBoolean(section, "all")
+         mysql.databases = readStringList(section, "database")
       return mysql
    _parseMysql = staticmethod(_parseMysql)
 
@@ -512,21 +548,17 @@ def executeAction(configPath, options, config):
    local = LocalConfig(xmlPath=configPath)
    if local.mysql.all:
       logger.info("Backing up all databases.")
-      _backupDatabase(config.collect.collectDir, 
-                      local.mysql.user, local.mysql.password, 
-                      config.options.backupUser, config.options.backupGroup,
-                      None)
+      _backupDatabase(config.collect.collectDir, local.mysql.compressMode, local.mysql.user, local.mysql.password, 
+                      config.options.backupUser, config.options.backupGroup, None)
    else:
       logger.debug("Backing up %d individual databases." % len(local.mysql.databases))
       for database in local.mysql.databases:
          logger.info("Backing up database [%s]." % database)
-         _backupDatabase(config.collect.collectDir, 
-                         local.mysql.user, local.mysql.password, 
-                         config.options.backupUser, config.options.backupGroup,
-                         database)
+         _backupDatabase(config.collect.collectDir, local.mysql.compressMode, local.mysql.user, local.mysql.password, 
+                         config.options.backupUser, config.options.backupGroup, database)
    logger.info("Executed the MySQL extended action successfully.")
 
-def _backupDatabase(targetDir, user, password, backupUser, backupGroup, database=None, compress=True):
+def _backupDatabase(targetDir, compressMode, user, password, backupUser, backupGroup, database=None):
    """
    Backs up an individual MySQL database, or all databases.
 
@@ -534,6 +566,7 @@ def _backupDatabase(targetDir, user, password, backupUser, backupGroup, database
    like figuring out a filename, etc.
 
    @param targetDir:  Directory into which backups should be written.
+   @param compressMode: Compress mode to be used for backed-up files.
    @param user: User to use for connecting to the database.
    @param password: Password associated with user.
    @param backupUser: User to own resulting file.
@@ -545,7 +578,7 @@ def _backupDatabase(targetDir, user, password, backupUser, backupGroup, database
    @raise ValueError: If some value is missing or invalid.
    @raise IOError: If there is a problem executing the MySQL dump.
    """
-   (outputFile, filename) = _getOutputFile(targetDir, database, compress)
+   (outputFile, filename) = _getOutputFile(targetDir, database, compressMode)
    try:
       backupDatabase(user, password, outputFile, database)
    finally:
@@ -554,7 +587,7 @@ def _backupDatabase(targetDir, user, password, backupUser, backupGroup, database
       raise IOError("Dump file [%s] does not seem to exist after backup completed." % filename)
    changeOwnership(filename, backupUser, backupGroup)
 
-def _getOutputFile(targetDir, database, compress=True):
+def _getOutputFile(targetDir, database, compressMode):
    """
    Opens the output file used for saving the MySQL dump.
 
@@ -563,7 +596,7 @@ def _getOutputFile(targetDir, database, compress=True):
 
    @param targetDir: Target directory to write file in.
    @param database: Name of the database (if any)
-   @param compress: Indicates whether to write compressed output.
+   @param compressMode: Compress mode to be used for backed-up files.
 
    @return: Tuple of (Output file object, filename)
    """
@@ -571,13 +604,15 @@ def _getOutputFile(targetDir, database, compress=True):
       filename = os.path.join(targetDir, "mysqldump.txt")
    else:
       filename = os.path.join(targetDir, "mysqldump-%s.txt" % database)
-   if compress:
+   if compressMode == "gzip":
+      filename = "%s.gz" % filename
+      outputFile = GzipFile(filename, "w")
+   elif compressMode == "bzip2":
       filename = "%s.bz2" % filename
-   logger.debug("MySQL dump file will be [%s]." % filename)
-   if compress:
       outputFile = BZ2File(filename, "w")
    else:
       outputFile = open(filename, "w")
+   logger.debug("MySQL dump file will be [%s]." % filename)
    return (outputFile, filename)
 
 
@@ -616,25 +651,6 @@ def backupDatabase(user, password, backupFile, database=None):
    @raise ValueError: If some value is missing or invalid.
    @raise IOError: If there is a problem executing the MySQL dump.
    """
-   args = _buildDumpArgs(user, password, database)
-   result = executeCommand(MYSQLDUMP_COMMAND, args, returnOutput=False, ignoreStderr=True, outputFile=backupFile)[0]
-   if result != 0:
-      if database is None:
-         raise IOError("Error [%d] executing MySQL database dump for all databases.")
-      else:
-         raise IOError("Error [%d] executing MySQL database dump for database [%s]." % database)
-
-def _buildDumpArgs(user, password, database):
-   """
-   Builds list of arguments to be passed to the C{mysqldump} command.
-
-   @param user: User to use for connecting to the database.
-   @param password: Password associated with user.
-   @param database: Name of database, or C{None} for all databases.
-
-   @return: List of arguments to pass to C{mysqldump}.
-   @raise ValueError: If some value is missing or invalid.
-   """
    if user is None or password is None:
       raise ValueError("User and password are required.")
    args = [ "-all", "--flush-logs", "--opt", "--user=%s" % user, "--password=%s" % password, ]
@@ -643,5 +659,10 @@ def _buildDumpArgs(user, password, database):
    else:
       args.insert(0, "--databases")
       args.append(database)
-   return args
+   result = executeCommand(MYSQLDUMP_COMMAND, args, returnOutput=False, ignoreStderr=True, outputFile=backupFile)[0]
+   if result != 0:
+      if database is None:
+         raise IOError("Error [%d] executing MySQL database dump for all databases.")
+      else:
+         raise IOError("Error [%d] executing MySQL database dump for database [%s]." % database)
 
