@@ -206,7 +206,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Appendix A, <emphasis><xref linkend="cedar-appendix-a"/></emphasis></term>
+            <term>Appendix A, <emphasis><xref linkend="cedar-appendixa"/></emphasis></term>
             <listitem>
                <para>
                   Covers the major differences between the current Cedar Backup
@@ -219,7 +219,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Appendix B, <emphasis><xref linkend="cedar-appendix-b"/></emphasis></term>
+            <term>Appendix B, <emphasis><xref linkend="cedar-appendixb"/></emphasis></term>
             <listitem>
                <para>
                   Specifies the Cedar Backup extension architecture interface,
