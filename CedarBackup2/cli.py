@@ -70,7 +70,7 @@ Backwards Compatibility
 @var COMBINE_ACTIONS: List of actions which can be combined with other actions.
 @var NONCOMBINE_ACTIONS: List of actions which cannot be combined with other actions.
 
-@sort: Options, DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, 
+@sort: cli, Options, DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, 
        DEFAULT_MODE, VALID_ACTIONS, COMBINE_ACTIONS, NONCOMBINE_ACTIONS
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
@@ -88,9 +88,9 @@ import getopt
 
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
-from CedarBackup2.util import RestrictedContentList, splitCommandLine, getUidGid
+from CedarBackup2.util import RestrictedContentList, splitCommandLine, getFunctionReference, getUidGid
 from CedarBackup2.config import Config
-from CedarBackup2.process import executeCollect, executeStage, executeStore, executePurge, executeRebuild
+from CedarBackup2.action import executeCollect, executeStage, executeStore, executePurge, executeRebuild, executeValidate
 
 
 ########################################################################
@@ -109,6 +109,11 @@ DEFAULT_CONFIG     = "/etc/cback.conf"
 DEFAULT_LOGFILE    = "/var/log/cback.log"
 DEFAULT_OWNERSHIP  = [ "root", "adm", ]
 DEFAULT_MODE       = 0640
+
+COLLECT_INDEX      = 100
+STAGE_INDEX        = 200
+STORE_INDEX        = 300
+PURGE_INDEX        = 400
 
 VALID_ACTIONS      = [ "collect", "stage", "store", "purge", "rebuild", "validate", "all", ]
 COMBINE_ACTIONS    = [ "collect", "stage", "store", "purge", ]
@@ -136,6 +141,20 @@ def cli():
    of the argument processing for the script, and then sets about executing the
    indicated actions.
 
+   As a general rule, only the actions indicated on the command line will be
+   executed.   We will accept any of the standard actions and any of the
+   configured extended actions (which makes action list verification a two-
+   step process).
+
+   The C{'all'} action has a special meaning.  Normally, it means that the
+   standard set of actions (collect, stage, store, purge) will all be executed,
+   in that order.  However, if there are extended actions, then those extended
+   actions which have a configured index will be slotted into the normal
+   sequence of execution (where the standard actions have indices
+   C{COLLECT_INDEX}, C{STAGE_INDEX}, C{STORE_INDEX} and C{PURGE_INDEX},
+   respectively).  Extended actions with no index will be ignored as part of
+   the C{'all'} action.
+
    Raised exceptions always result in an immediate return.  Otherwise, we
    generally return when all specified actions have been completed.  Actions
    are ignored if the help, version or validate flags are set.
@@ -146,11 +165,15 @@ def cli():
       - C{2}: Error processing command-line arguments
       - C{3}: Error configuring logging
       - C{4}: Error parsing indicated configuration file
-      - C{5}: Error executing backup
+      - C{5}: Error executing backup or understanding requested actions
 
    @note: This function contains a good amount of logging at the INFO level,
    because this is the right place to document high-level flow of control (i.e.
    what the command-line options were, what config file was being used, etc.)
+   
+   @note: We assume that anything that I{must} be seen on the screen is logged
+   at the ERROR level.  Errors that occur before logging can be configured are
+   written to C{sys.stderr}.
 
    @return: Error code as described above.
    """
@@ -165,6 +188,7 @@ def cli():
 
    try:
       options = Options(argumentList=sys.argv[1:])
+      logger.info("Specified command-line actions: " % options.actions)
    except Exception, e:
       _usage()
       sys.stderr.write(" *** Error: %s\n" % e)
@@ -202,33 +226,9 @@ def cli():
       logger.info("Cedar Backup run completed with status 4.")
       return 4
 
-   if 'validate' in options.actions:
-      if not options.quiet:
-         print "Configuration is valid."
-      logger.debug("Exiting early because only configuration validation was requested.")
-      logger.info("Cedar Backup run completed with status 0.")
-      return 0
-
-   logger.info("Specified actions: %s" % options.actions)
-
    try:
-      if 'rebuild' in options.actions:
-         executeRebuild(config)
-      elif 'all' in options.actions:
-         logger.debug("Since 'all' action was specified, we will execute collect, stage, store and purge.")
-         executeCollect(config, options.full)
-         executeStage(config)
-         executeStore(config, options.full)
-         executePurge(config)
-      else:
-         if 'collect' in options.actions:
-            executeCollect(config, options.full)
-         if 'stage' in options.actions:
-            executeStage(config)
-         if 'store' in options.actions:
-            executeStore(config, options.full)
-         if 'purge' in options.actions:
-            executePurge(config)
+      actionSet = _ActionSet(options.actions, config.extensions)
+      actionSet.executeActions(options, config)
    except Exception, e:
       logger.error("Error executing backup: %s" % e)
       logger.info("Cedar Backup run completed with status 5.")
@@ -236,6 +236,204 @@ def cli():
 
    logger.info("Cedar Backup run completed with status 0.")
    return 0
+
+
+########################################################################
+# Action-related class definition
+########################################################################
+
+####################
+# _ActionItem class
+####################
+
+class _ActionItem(object):
+
+   """
+   Class representing a single action to be executed.
+
+   This class represents a single action to be executed, and understands how to
+   execute those actions.   
+
+   Standard actions ("built-in" actions like collect, stage, etc.) are
+   instantiated in terms of a direct function reference, i.e.  to
+   C{executeCollect}.  Extended actions are instantiated in terms of an
+   C{ExtendedAction} object taken from configuration.
+
+   The two different actions are executed directly.  In the case of standard
+   actions, the function reference is called directly.  In the case of extended
+   actions, a function reference is first derived (using
+   L{getFunctionReference}) and then called.
+
+   @note: The comparison operators for this class have been implemented to only
+   compare based on the index value, and ignore all other values.  This is so
+   that the action set list can be easily sorted by index.
+
+   @sort: __init__, index, module, function 
+   """
+
+   def __init__(self, index, function=None, extension=None):
+      """
+      Default constructor.
+      @param index: Index of the item (or C{None}).
+      @param function: Reference to function associated with item.
+      @param extension: C{ExtendedAction} object associated with item.
+      """
+      self.index = index
+      self.function = function
+      self.extension = extension
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      The only thing we compare is the item's index.  
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self.index != other.index:
+         if self.index < other.index:
+            return -1
+         else:
+            return 1 
+      return 0
+
+   def executeAction(self, options, config):
+      """
+      Executes the action associated with an item.
+
+      See class notes for more details on how the action is executed.
+
+      @param options: Command-line options to be passed to action.
+      @param config: Parsed configuration to be passed to action.
+
+      @raise Exception: If there is a problem executing the action.
+      """
+      if self.function is not None:
+         self.function(options, config)
+      else:
+         function = getFunctionReference(self.extension.module, self.extension.function)
+         function(options, config)
+
+
+###################
+# _ActionSet class
+###################
+
+class _ActionSet(object):
+
+   """
+   Class representing a set of actions to be executed.
+
+   This class does two different things.  First, it ensures that the actions
+   specified on the command-line are sensible.  The command-line can only list
+   either standard actions or extended actions specified in configuration.
+   Also, certain actions (in L{NONCOMBINE_ACTIONS}) cannot be combined with
+   other actions.  
+
+   Second, it enforces an execution order on the specified actions.  This only
+   really matters for the 'all' action, where we have to properly sort the
+   extended actions into the existing standard actions (if they are indexed).
+
+   @sort: __init__, executeActions
+   """
+
+   def __init__(self, actions, extensions):
+      """
+      Constructor for the C{_ActionSet} class.
+
+      @param actions: Names of actions specified on the command-line.
+      @param extensions: Extended actions specified in configuration.
+
+      @raise ValueError: If one of the specified actions is invalid.
+      """
+      extensionDict = {}
+      for extension in extensions:
+         extensionDict[extension.name] = extension
+      _ActionSet._validateActions(actions, extensionDict.keys())
+      self.actionSet = _ActionSet._buildActionSet(actions, extensionDict)
+
+   def _validateActions(actions, extensionNames):
+      """
+      Validate that the set of specified actions is sensible.
+
+      Any specified action must either be a standard action or must be among
+      the extended actions defined in configuration.  The actions from within
+      L{NONCOMBINE_ACTIONS} may not be combined with other actions.
+
+      @param actions: Names of actions specified on the command-line.
+      @param extensionNames: Names of extensions specified in configuration.
+
+      @raise ValueError: If one or more configured actions are not valid.
+      """
+      for action in actions:
+         if action not in VALID_ACTIONS and action not in extensionNames:
+            raise ValueError("Action '%s' is not a valid action or extended action." % action)
+      for action in NONCOMBINE_ACTIONS:
+         if action in actions and actions != [ action, ]:
+            raise ValueError("Action '%s' may not be combined with other actions." % action)
+   _validateActions = staticmethod(_validateActions)
+
+   def _buildActionSet(actions, extensionDict):
+      """
+      Build set of actions to be executed.
+
+      The set of actions is built in the proper order, so C{executeActions}
+      spin through the set without thinking about it.  Every item in the set is
+      an C{_ActionItem}.
+
+      If the action is 'all', then we first put into the list all of the
+      standard actions (collect, stage, store, purge) and then we put into the
+      list any extended action that has an index associated with it.  When the
+      complete list is built, it's then sorted by index, yielding a list in the
+      proper order per configuration.  Since the 'all' action can't be combined
+      with anything else, this is safe.
+
+      @param actions: Names of actions specified on the command-line.
+      @param extensionDict: Dictionary mapping extension name to C{ExtendedAction} object.
+
+      @return: Set of action items in proper order.
+      """
+      actionSet = []
+      for action in actions:
+         if extensionDict.has_key(action):
+            actionSet.append(_ActionItem(None, extension=extensionDict[action]))
+         elif action == 'collect':
+            actionSet.append(_ActionItem(None, function=executeCollect))
+         elif action == 'stage':
+            actionSet.append(_ActionItem(None, function=executeStage))
+         elif action == 'store':
+            actionSet.append(_ActionItem(None, function=executeStore))
+         elif action == 'purge':
+            actionSet.append(_ActionItem(None, function=executePurge))
+         elif action == 'rebuild':
+            actionSet.append(_ActionItem(None, function=executeRebuild))
+         elif action == 'validate':
+            actionSet.append(_ActionItem(None, function=executeValidate))
+         elif action == 'all':
+            actionSet.append(_ActionItem(COLLECT_INDEX, function=executeCollect))
+            actionSet.append(_ActionItem(STAGE_INDEX, function=executeStage))
+            actionSet.append(_ActionItem(STORE_INDEX, function=executeStore))
+            actionSet.append(_ActionItem(PURGE_INDEX, function=executePurge))
+            for name in extensionDict.keys():
+               extension = extensionDict[name]
+               if extension.index is not None:
+                  actionSet.append(_ActionItem(extension.index, extension=extension))
+            actionSet.sort()  # sort the actions in order by index
+      return actionSet
+   _buildActionSet = staticmethod(_buildActionSet)
+
+   def executeActions(self, options, config):
+      """
+      Executes all actions and extended actions, in the proper order.
+
+      @param options: Command-line options to be passed to action functions.
+      @param config: Parsed configuration to be passed to action functions.
+
+      @raise Exception: If there is a problem executing the actions.
+      """
+      for actionItem in self.actionSet:
+         actionItem.executeAction(options, config)
 
 
 #######################################################################
@@ -279,11 +477,14 @@ def _usage(fd=sys.stderr):
    fd.write("   rebuild        Rebuild \"this week's\" disc if possible\n")
    fd.write("   validate       Validate configuration only\n")
    fd.write("\n")
+   fd.write(" You may also specify extended actions that have been defined in\n")
+   fd.write(" configuration.")
+   fd.write("\n")
    fd.write(" You must specify at least one action to take.  More than one of\n")
-   fd.write(" the \"collect\", \"stage\", \"store\" or \"purge\" actions may be \n")
-   fd.write(" specified in any arbitrary order; they will be executed in a \n")
-   fd.write(" sensible order.  The \"all\", \"rebuild\" or \"validate\" \n")
-   fd.write(" actions may not be combined with other actions.\n")
+   fd.write(" the \"collect\", \"stage\", \"store\" or \"purge\" actions and/or\n")
+   fd.write(" extended actions may be specified in any arbitrary order; they\n")
+   fd.write(" will be executed in a sensible order.  The \"all\", \"rebuild\"\n")
+   fd.write(" or \"validate\" actions may not be combined with other actions.\n")
    fd.write("\n")
 
 
@@ -880,8 +1081,7 @@ class Options(object):
    def _setActions(self, value):
       """
       Property target used to set the actions list.
-      This list is maintained as unordered for the purposes of comparison.
-      If not C{None}, the action list must contain only values in L{VALID_ACTIONS}.
+      We don't restrict the contents of actions.  They're validated somewhere else.
       @raise ValueError: If the value is not valid.
       """
       if value is None:
@@ -889,7 +1089,7 @@ class Options(object):
       else:
          try:
             saved = self._actions
-            self._actions = RestrictedContentList(VALID_ACTIONS, "Options.VALID_ACTIONS")
+            self._actions = []
             self._actions.extend(value)
          except Exception, e:
             self._actions = saved
@@ -924,12 +1124,9 @@ class Options(object):
       Validates command-line options represented by the object.
 
       Unless C{--help} or C{--version} are supplied, at least one action must
-      be specified.  Actions from among L{COMBINE_ACTIONS} may be combined in
-      any arbitrary order.  The actions from within L{NONCOMBINE_ACTIONS} may
-      not be combined with other actions.
-
-      Other validations (as for allowed values for particular options) will be
-      taken care of at assignment time by the properties functionality.
+      be specified.  Other validations (as for allowed values for particular
+      options) will be taken care of at assignment time by the properties
+      functionality.
 
       @note: The command line format is specified by the L{_usage} function.
       Call L{_usage} to see a usage statement for the cback script.
@@ -939,9 +1136,6 @@ class Options(object):
       if not self.help and not self.version:
          if self.actions is None or len(self.actions) == 0:
             raise ValueError("At least one action must be specified.")
-      for action in NONCOMBINE_ACTIONS:
-         if action in self.actions and self.actions != [ action, ]:
-            raise ValueError("Action '%s' may not be combined with other actions." % action)
 
    def buildArgumentList(self, validate=True):
       """
