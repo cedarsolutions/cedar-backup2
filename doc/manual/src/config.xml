@@ -31,24 +31,1379 @@
 
    <title>Configuration</title>
 
-   <sect1 id="cedar-config-collect">
-   <title/>
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-overview">
+
+      <title>Overview</title>
+
+      <para>
+         The process of configuring Cedar Backup package is a unfortunately
+         somewhat complicated.  The good news is that once you get through the
+         initial configuration process, you'll hardly ever have to change
+         anything. Even better, the most typical kinds of changes (i.e. adding
+         and removing directories from a backup) are easy.
+      </para>
+
+      <para>
+         First, familiarize yourself with the concepts in 
+         <xref linkend="cedar-basic"/>.  In particular, be sure that you understand
+         the differences between a master and a client.  (If you only have one
+         machine, then your machine will act as both a master and a client,
+         and we'll refer to your setup as a <firstterm>pool of one</firstterm>.)
+         Then, install Cedar Backup per the instructions in 
+         <xref linkend="cedar-install"/>.
+      </para>
+
+      <para>
+         Once everything has been installed, you are ready to begin configuring
+         Cedar Backup.  Look over <xref linkend="cedar-config-commandline"/> to
+         become familiar with the command line interface.  Then, look over
+         <xref linkend="cedar-config-configfile"/> and create a configuration
+         file for each machine in your backup pool.  To start with, create a
+         very simple configuration file, and then plan to expand it later.
+         Decide now whether you will store the configuration file in the
+         standard place (<filename>/etc/cback.conf</filename>) or in some other
+         location.
+      </para>
+
+      <para>
+         After you have all of the configuration files in place, configure each
+         of your machines, following the instructions in the appropriate
+         section below (for master, client or pool of one).  Since the master
+         and client(s) must communicate using SSH, you won't be able to fully
+         configure the master without configuring each client and vice-versa.
+         The instructions are clear on what needs to be done.
+      </para>
+
+      <sidebar>
+
+         <title>Which Linux Distribution?</title>
+
+         <para>
+            Cedar Backup has been designed for use on all Linux systems.
+            However, since it was developed on a Debian system, and because I
+            am a Debian developer, the packaging is prettier and the setup is
+            somewhat simpler on a Debian system than on a system where you
+            install from source.  
+         </para>
+
+         <para>
+            The configuration instructions below have been generalized so they
+            should work well regardless of what distribution you are running
+            (i.e. RedHat, Gentoo, etc.).  If instructions vary for a particular
+            distribution, you will find a note related to that distribution.
+         </para>
+
+         <para>
+            I am always open to adding more distribution-specific hints and
+            notes, so write me if you find problems with these instructions.
+         </para>
+
+      </sidebar>
    </sect1>
 
-   <sect1 id="cedar-config-stage">
-   <title/>
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-commandline">
+         
+      <title>Command Line Interface</title>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-commandline-syntax">
+
+         <title>Syntax</title>
+
+         <para>
+            The Cedar Backup command-line interface is implemented in the <command>cback</command>
+            script.  The <command>cback</command> script has the following syntax:
+         </para>
+
+         <screen>
+ Usage: cback [switches] action(s)
+
+ The following switches are accepted:
+
+   -h, --help     Display this usage/help listing
+   -V, --version  Display version information
+   -b, --verbose  Print verbose output as well as logging to disk
+   -q, --quiet    Run quietly (display no output to the screen)
+   -c, --config   Path to config file (default: /etc/cback.conf)
+   -f, --full     Perform a full backup, regardless of configuration
+   -l, --logfile  Path to logfile (default: /var/log/cback.log)
+   -o, --owner    Logfile ownership, user:group (default: root:adm)
+   -m, --mode     Octal logfile permissions mode (default: 640)
+   -O, --output   Record some sub-command (i.e. tar) output to the log
+   -d, --debug    Write debugging information to the log (implies --output)
+
+ The following actions may be specified:
+
+   all            Take all normal actions (collect, stage, store, purge)
+   collect        Take the collect action
+   stage          Take the stage action
+   store          Take the store action
+   purge          Take the purge action
+   rebuild        Rebuild "this week's" disc if possible
+   validate       Validate configuration only
+
+ You may also specify extended actions that have been defined in
+ configuration.
+
+ You must specify at least one action to take.  More than one of
+ the "collect", "stage", "store" or "purge" actions and/or
+ extended actions may be specified in any arbitrary order; they
+ will be executed in a sensible order.  The "all", "rebuild"
+ or "validate" actions may not be combined with other actions.
+         </screen>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-commandline-actions">
+
+         <title>Actions</title>
+
+         <para>
+            You can find more information about the various actions in 
+            <xref linkend="cedar-basic-process"/>.  In general, you may specify
+            any combination of the <literal>collect</literal>,
+            <literal>stage</literal>, <literal>store</literal> or
+            <literal>purge</literal> actions, and the specified actions will be
+            executed in a sensible order.  Or, you can specify one of the
+            <literal>all</literal>, <literal>rebuild</literal> or
+            <literal>validate</literal> actions (but these actions may not
+            be combined with other actions).
+         </para>
+         
+         <para>
+            If you have configured any Cedar Backup extensions, then the
+            actions associated with those extensions may also be specified on
+            the command line.  If you specify any other actions along with an
+            extended action, the actions will be executed in a sensible order
+            per configuration.  Configuration also controls whether the
+            <literal>all</literal> action executes any extended actions.  For
+            more information on extensions, see 
+            <xref linkend="cedar-config-configfile-extensions"/>.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-commandline-options">
+
+         <title>Options</title>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><option>-h</option>, <option>--help</option></term>
+               <listitem>
+                  <para>Display usage/help listing.</para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-V</option>, <option>--version</option></term>
+               <listitem>
+                  <para>Display version information.</para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-b</option>, <option>--verbose</option></term>
+               <listitem>
+                  <para>
+                     Print verbose output to the screen as well writing to the
+                     logfile.  When this option is enabled, most information
+                     that would normally be written to the logfile will also be
+                     written to the screen.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-q</option>, <option>--quiet</option></term>
+               <listitem>
+                  <para>Run quietly (display no output to the screen).</para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-c</option>, <option>--config</option></term>
+               <listitem>
+                  <para>
+                     Specify the path to an alternate configuration file.
+                     The default configuration file is <filename>/etc/cback.conf</filename>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-f</option>, <option>--full</option></term>
+               <listitem>
+                  <para>
+                    Perform a full backup, regardless of configuration.  For
+                    the collect action, this means that any existing informa-
+                    tion related to incremental backups will be ignored and
+                    rewritten; for the store action, this means that a new disc
+                    will be started.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-l</option>, <option>--logfile</option></term>
+               <listitem>
+                  <para>
+                     Specify the path to an alternate logfile.  The default
+                     logfile file is <filename>/var/log/cback.log</filename>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-o</option>, <option>--owner</option></term>
+               <listitem>
+                  <para>
+                    Specify the ownership of the logfile, in the form
+                    <literal>user:group</literal>.  The default ownership is
+                    <literal>root:adm</literal>, to match the Debian standard
+                    for most logfiles. This value will only be used when
+                    creating a new logfile.  If the logfile already exists when
+                    the <command>cback</command> script is executed, it will
+                    retain its existing ownership and mode. Only user and group
+                    names may be used, not numeric uid and gid values.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-m</option>, <option>--mode</option></term>
+               <listitem>
+                  <para>
+                    Specify  the  permissions  for  the logfile, using the
+                    numeric mode as in chmod(1).  The default mode is
+                    <literal>0640</literal> (<literallayout>-rw-r-----</literallayout>).
+                    This value will only be used when creating a new logfile.
+                    If the logfile already exists when the
+                    <command>cback</command> script is executed, it will retain
+                    its existing ownership and mode.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-O</option>, <option>--output</option></term>
+               <listitem>
+                  <para>
+                     Record some sub-command output to the logfile.  When this
+                     option is enabled, all output from system commands will be
+                     logged.  This might be useful for debugging or just for
+                     reference.  Cedar Backup uses system commands mostly for
+                     dealing with the CD recorder and its media.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-d</option>, <option>--debug</option></term>
+               <listitem>
+                  <para>
+                     Write debugging information to the logfile.  This option
+                     produces a high volume of output, and would generally only
+                     be needed when debugging a problem.  This option implies
+                     the <option>--output</option> option, as well.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+      </sect2>
+
    </sect1>
 
-   <sect1 id="cedar-config-store">
-   <title/>
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-configfile">
+         
+      <title>Configuration File Format</title>
+
+      <sect2 id="cedar-config-configfile-collect">
+      <title/>
+      </sect2>
+
+      <sect2 id="cedar-config-configfile-stage">
+      <title/>
+      </sect2>
+
+      <sect2 id="cedar-config-configfile-store">
+      <title/>
+      </sect2>
+
+      <sect2 id="cedar-config-configfile-purge">
+      <title/>
+      </sect2>
+
+      <sect2 id="cedar-config-configfile-extensions">
+      <title/>
+      </sect2>
+
    </sect1>
 
-   <sect1 id="cedar-config-purge">
-   <title/>
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-poolofone">
+         
+      <title>Setting up a Pool of One</title>
+
+      <para>
+         Cedar Backup has been designed primarily for situations where there is
+         a single master and a set of other clients that the master interacts
+         with.  However, it will just as easily work for a single machine (a
+         backup pool of one).
+      </para>
+
+      <para>
+         Once you complete all of these configuration steps, your backups will
+         run as scheduled out of cron. Any errors that occur will be reported
+         in daily emails to your root user (or whichever other user receives
+         root's email). If you don't receive any emails, then you know your
+         backup worked.
+      </para>
+
+      <para>
+         Note: all of these configuration steps should be run as the root user,
+         unless otherwise indicated.
+      </para>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 1: Make sure email works.</title>
+
+         <para>
+            Cedar Backup relies on email for problem notification.  This
+            notification works through the magic of cron.  Cron will email any
+            output from each job it executes to the user associated with the
+            job.  Since by default Cedar Backup only writes output to the
+            terminal if errors occur, this neatly ensures that notification
+            emails will only be sent out if errors occur.
+         </para>
+            
+         <para>
+            In order to receive problem notifications, you must make sure that
+            email works for the user which is running the Cedar Backup cron
+            jobs (typically root).  Refer to your distribution's documentation
+            for information on how to configure email on your system.  Note
+            that you may prefer to configure root's email to forward to some
+            other user, so you do not need to check the root user's mail in
+            order to see Cedar Backup errors.
+         </para>
+            
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 2: Configure your CD-R or CD-RW drive.</title>
+
+         <para>
+            Your CD-R or CD-RW drive must either be a SCSI device or must be
+            configured to act like a Linux SCSI device.
+            <footnote><para>For more information on how to configure your
+            CD-R/CD-RW device, see the 
+            <ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO">Linux CDROM HOWTO</ulink>.
+            </para></footnote> 
+            Regardless of what kind of drive you have, make sure you know its
+            SCSI address (in the form <literal>scsibus, target, lun</literal>)
+            and its device name (i.e. <literal>/dev/cdrw</literal>).  The SCSI
+            address will be used to write to media, and the device name will be
+            used when Cedar Backup needs to mount the media (for instance, when
+            a validation check must be run).
+         </para>
+
+         <para>
+            If you have an IDE drive rather than a SCSI drive and are using the
+            IDE-to-SCSI interface (which is the norm for most IDE drives under
+            Linux), then be prepared to enter the simulated SCSI device address,
+            which is often <literal>0,0,0</literal>.  Newer Linux kernels
+            (2.6.x) can also be compiled with support for other kinds of CD drive
+            interfaces.  If
+            you have configured your CD drive to use <firstterm>ATA</firstterm>
+            <footnote><para>See the
+            <ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html">Linux ATA RAID HOWTO</ulink>.
+            </para></footnote>
+            or <firstterm>ATAPI</firstterm>, 
+            <footnote><para>
+            As of kernel 2.6, you can use ATAPI directly, without SCSI emulation,
+            by prepending <literal>ATAPI:</literal> to the device address.
+            </para></footnote>
+            then include this prefix in your
+            simulated device address, i.e. <literal>ATA:0,0,0</literal> or
+            <literal>ATAPI:0,0,0</literal>.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 3: Configure your backup user.</title>
+
+         <para>
+             Choose a user to be used for backups. Some Linux distributions may
+             come with a <quote>ready made</quote> backup user. For other
+             distributions, you may have to create a user yourself. You may
+             choose any id you like, but a descriptive name such as
+             <literal>backup</literal> or <literal>cback</literal> is a good
+             choice.  See your distribution's documentation for information on
+             how to add a user.
+         </para>
+
+         <note>
+            <para>
+               Standard Debian systems come with a user named
+               <literal>backup</literal>.  You may choose to stay with this
+               user or create another one.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 4: Create your backup tree.</title>
+
+         <para>
+            Cedar Backup requires a backup directory tree on disk. This
+            directory tree must be roughly three times as big as the amount of
+            data that will be backed up on a nightly basis, to allow for the
+            data to be collected, staged, and then placed into an ISO CD-ROM
+            image on disk. (This is one disadvantage to using Cedar Backup in
+            single-machine pools, but in this day of really large hard drives,
+            it might not be an issue.) Note that if you elect not to purge the
+            staging directory every night, you will need even more space.
+         </para>
+
+         <para>
+            You should create a collect directory, a staging directory and a
+            working (temporary) directory. One recommended layout is this:
+         </para>
+
+         <programlisting>
+/opt/
+     backup/
+            collect/
+            stage/
+            tmp/
+         </programlisting>
+
+         <para>
+            If you will be backing up sensitive information (i.e. password
+            files), it is recommended that these directories be owned by the
+            backup user (whatever you named it), with permissions
+            <literal>700</literal>. 
+         </para>
+
+         <note>
+            <para>
+               You don't have to use <filename>/opt</filename> as the root of your
+               directory structure.  Use anything you would like.  I use
+               <filename>/opt</filename> because it is my <quote>dumping
+               ground</quote> for filesystems that Debian does not manage.
+            </para>
+
+            <para>
+               Some users have requested that the Debian packages set up a more
+               <quote>standard</quote> location for backups right out-of-the-box.  I have
+               resisted doing this because it's difficult to choose an
+               appropriate backup location from within the package.  If you
+               would prefer, you can create the backup directory structure
+               within some existing Debian directory such as
+               <filename>/var/backups</filename>. 
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 5: Modify the backup cron jobs.</title>
+
+         <para>
+            There are four parts to a Cedar Backup run: collect, stage, store
+            and purge. The usual way of setting off these steps is through a
+            cron job.  For more information on using cron, see the manpage for
+            crontab(5).
+         </para>
+
+         <para>
+            Backing up large directories and creating ISO CD-ROM images can be
+            intensive operations, and could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            go occur every day, but it is possible to configure cron to 
+            execute the backup only one day per week, or three days per week,
+            etc.
+         </para>
+
+         <para>
+            Since Cedar Backup should be run as root, one way to configure the
+            cron job is to add a line like this to your
+            <filename>/etc/crontab</filename> file:
+         </para>
+
+         <programlisting>
+30 00 * * * root  cback all
+         </programlisting>
+                          
+         <para>
+            Or, you can create an executable script containing just these lines
+            and place that file in the <filename>/etc/cron.daily</filename>
+            directory:
+         </para>
+
+         <programlisting>
+#/bin/sh
+cback all
+         </programlisting>
+
+         <note>
+            <para>
+               On a Debian system, execution of daily backups is controlled by
+               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <quote>Single machine (pool of
+               one)</quote> entry in the file, and change the line so that the
+               backup goes off when you want it to.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 6: Create the Cedar Backup configuration file.</title>
+
+         <para>
+            Following the instructions in <xref linkend="cedar-config-configfile"/>, 
+            create a configuration file for your machine.  Since you are
+            working with a pool of one, you must configure all four
+            action-specific sections: collect, stage, store and purge.
+         </para>
+            
+         <para>
+            The usual location for the Cedar Backup config file is
+            <filename>/etc/cback.conf</filename>.  If you change the location,
+            make sure you edit your cronjobs (step 5) to point the
+            <command>cback</command> script at the correct config file (using
+            the <option>--config</option> option).
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 7: Validate the Cedar Backup configuration file.</title>
+
+         <para>
+            Use the command <command>cback validate</command> to validate your
+            configuration file. This command checks that the configuration file
+            can be found and parsed, and also checks for typical configuration
+            problems, such as invalid CD-R/CD-RW device entries.
+         </para>
+
+         <para>
+            Note: the most common cause of configuration problems is in not
+            closing XML tags properly. Any XML tag that is
+            <quote>opened</quote> must be <quote>closed</quote> appropriately.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+         <title>Step 8: Test your backup.</title>
+
+         <para>
+            Place a valid CD-R or CD-RW disc in your drive, and then use the
+            command <command>cback --full all</command>.  If the command
+            completes with no output, then the backup was run successfully.
+         </para>
+
+         <para>
+            Just to be sure that everything worked properly, check the logfile
+            (<filename>/var/log/cback.log</filename>) for errors and also mount
+            the CD-R or CD-RW disc to be sure it can be read.
+         </para>
+
+         <para>
+            <emphasis>If Cedar Backup ever completes <quote>normally</quote>
+            but the disc that is created is not usable, please report this as a
+            bug.
+            <footnote><para>See the Cedar Solutions 
+            <ulink url="http://cedar-solutions.com/bugzilla/">Bug Tracking
+            System</ulink>.</para></footnote> 
+            To be safe, always enable the consistency check option in the
+            store configuration section.</emphasis>
+         </para>
+
+      </sect2>
+
    </sect1>
 
-   <sect1 id="cedar-config-extensions">
-   <title/>
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-client">
+         
+      <title>Setting up a Client Peer Node</title>
+
+      <para>
+         Cedar Backup has been designed to backup entire <quote>pools</quote>
+         of machines.  In any given pool, there is one master and some number
+         of clients.  Most of the work takes place on the master, so
+         configuring a client is a little simpler than configuring a master.
+      </para>
+
+      <para>
+         Backups are designed to take place over an RSH or SSH connection.
+         Because RSH is generally considered insecure, you are encouraged to
+         use SSH rather than RSH. This document will only describe how to
+         configure Cedar Backup to use SSH; if you want to use RSH, you're on
+         your own. 
+      </para>
+
+      <para>
+         Once you complete all of these configuration steps, your backups will
+         run as scheduled out of cron. Any errors that occur will be reported
+         in daily emails to your root user (or whichever other user receives
+         root's email). If you don't receive any emails, then you know your
+         backup worked.
+      </para>
+
+      <para>
+         Note: all of these configuration steps should be run as the root user,
+         unless otherwise indicated.
+      </para>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 1: Make sure email works.</title>
+
+         <para>
+            Cedar Backup relies on email for problem notification.  This
+            notification works through the magic of cron.  Cron will email any
+            output from each job it executes to the user associated with the
+            job.  Since by default Cedar Backup only writes output to the
+            terminal if errors occur, this neatly ensures that notification
+            emails will only be sent out if errors occur.
+         </para>
+            
+         <para>
+            In order to receive problem notifications, you must make sure that
+            email works for the user which is running the Cedar Backup cron
+            jobs (typically root).  Refer to your distribution's documentation
+            for information on how to configure email on your system.  Note
+            that you may prefer to configure root's email to forward to some
+            other user, so you do not need to check the root user's mail in
+            order to see Cedar Backup errors.
+         </para>
+            
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 2: Configure the master in your backup pool.</title>
+
+         <para>
+            You will not be able to complete the client configuration until at
+            least step 3 of the master's configuration has been completed. In
+            particular, you will need to know the master's public SSH identity
+            to fully configure a client.
+         </para>
+
+         <para>
+            To find the master's public SSH identity, log in as the backup
+            user on the master and <command>cat</command> the public identity
+            file <filename>~/.ssh/id_rsa.pub</filename>:
+         </para>
+
+         <programlisting>
+user@machine> cat ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEA0vOKjlfwohPg1oPRdrmwHk75l3mI9Tb/WRZfVnu2Pw69uyphM9wBLRo6QfOC2T8vZCB8o/ZIgtAM3tkM0UgQHxKBXAZ+H36TOgg7BcI20I93iGtzpsMA/uXQy8kHHgZooYqQ9pw+ZduXgmPcAAv2b5eTm07wRqFt/U84k6bhTzs= user@machine
+         </programlisting>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 3: Configure your backup user.</title>
+
+         <para>
+             Choose a user to be used for backups. Some Linux distributions may
+             come with a "ready made" backup user. For other distributions, you
+             may have to create a user yourself. You may choose any id you
+             like, but a descriptive name such as <literal>backup</literal> or
+             <literal>cback</literal> is a good choice.  See your
+             distribution's documentation for information on how to add a user.
+         </para>
+
+         <note>
+            <para>
+               Standard Debian systems come with a user named
+               <literal>backup</literal>.  You may choose to stay with this
+               user or create another one.
+            </para>
+         </note>
+
+         <para>
+             Once you have created your backup user, you must create an SSH
+             keypair for it. Log in as your backup user, and then run the
+             command <command>ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa</command>:
+         </para>
+
+         <programlisting>
+user@machine> ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+Generating public/private rsa key pair.
+Created directory '/home/user/.ssh'.
+Your identification has been saved in /home/user/.ssh/id_rsa.
+Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+The key fingerprint is:
+11:3e:ad:72:95:fe:96:dc:1e:3b:f4:cc:2c:ff:15:9e user@machine
+         </programlisting>
+
+         <para>
+            The default permissions for this directory should be fine.
+            However, if the directory existed before you ran
+            <command>ssh-keygen</command>, then you may need to modify the
+            permissions.  Make sure that the <filename>~/.ssh</filename>
+            directory is readable only by the backup user (i.e. mode
+            <literal>700</literal>), that the
+            <filename>~/.ssh/id_rsa</filename> file is only readable and
+            writable by the backup user (i.e. mode <literal>600</literal>) and
+            that the <filename>~/.ssh/id_rsa.pub</filename> file is writable
+            only by the backup user (i.e. mode <literal>600</literal> or mode
+            <literal>644</literal>).
+         </para>
+
+         <para>
+            Finally, take the master's public SSH identity (which you found in
+            step 2) and cut-and-paste it into the file
+            <filename>~/.ssh/authorized_keys</filename>.  Make sure the
+            identity value is pasted into the file <emphasis>all on one
+            line</emphasis>, and that the <filename>authorized_keys</filename>
+            file is owned by your backup user and has permissions
+            <literal>600</literal>.
+         </para>
+         
+         <para>
+            If you have other preferences or standard ways of setting up your
+            users' SSH configuration (i.e. different key type, etc.), feel free
+            to do things your way.  The important part is that the master must
+            be able to SSH into a client <emphasis>with no password entry
+            required</emphasis>.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 4: Create your backup tree.</title>
+
+         <para>
+            Cedar Backup requires a backup directory tree on disk. This
+            directory tree must be roughly as big as the amount of data that
+            will be backed up on a nightly basis (more if you elect not to
+            purge it all every night).
+         </para>
+
+         <para>
+            You should create a collect directory and a working (temporary)
+            directory. One recommended layout is this:
+         </para>
+
+         <programlisting>
+/opt/
+     backup/
+            collect/
+            tmp/
+         </programlisting>
+
+         <para>
+            If you will be backing up sensitive information (i.e. password
+            files), it is recommended that these directories be owned by the
+            backup user (whatever you named it), with permissions
+            <literal>700</literal>. 
+         </para>
+
+         <note>
+            <para>
+               You don't have to use <filename>/opt</filename> as the root of your
+               directory structure.  Use anything you would like.  I use
+               <filename>/opt</filename> because it is my <quote>dumping
+               ground</quote> for filesystems that Debian does not manage.
+            </para>
+
+            <para>
+               Some users have requested that the Debian packages set up a more
+               "standard" location for backups right out-of-the-box.  I have
+               resisted doing this because it's difficult to choose an
+               appropriate backup location from within the package.  If you
+               would prefer, you can create the backup directory structure
+               within some existing Debian directory such as
+               <filename>/var/backups</filename>. 
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 5: Modify the backup cron jobs.</title>
+
+         <para>
+            There are two parts to a Cedar Backup run on a client: collect
+            and purge. The usual way of setting off these steps is through a
+            cron job.  For more information on using cron, see the manpage for
+            crontab(5).
+         </para>
+
+         <para>
+            Backing up large directories could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            go occur every day, but it is possible to configure cron to 
+            execute the backup only one day per week, or three days per week,
+            etc.
+         </para>
+
+         <para>
+            Since Cedar Backup should be run as root, you should add a set of
+            lines like this to your <filename>/etc/crontab</filename> file:
+         </para>
+
+         <programlisting>
+30 00 * * * root  cback collect
+30 06 * * * root  cback purge
+         </programlisting>
+                          
+         <para>
+            You will need to coordinate the collect and purge actions on the
+            client so that the collect action completes before the master
+            attempts to stage, and so that the purge action does not begin
+            until after the master has completed staging.  Usually, allowing an
+            hour or two between steps should be sufficient.
+         </para>
+
+         <note>
+            <para>
+               On a Debian system, execution of daily backups is controlled by
+               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <quote>Client machine</quote>
+               entries in the file, and change the lines so that the backup
+               goes off when you want it to.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 6: Create the Cedar Backup configuration file.</title>
+
+         <para>
+            Following the instructions in <xref
+            linkend="cedar-config-configfile"/>, create a configuration file
+            for your machine.  Since you are working with a client, you must
+               configure all action-specific sections for the collect and purge
+               actions.
+         </para>
+            
+         <para>
+            The usual location for the Cedar Backup config file is
+            <filename>/etc/cback.conf</filename>.  If you change the location,
+            make sure you edit your cronjobs (step 5) to point the
+            <command>cback</command> script at the correct config file (using
+            the <option>--config</option> option).
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 7: Validate the Cedar Backup configuration file.</title>
+
+         <para>
+            Use the command <command>cback validate</command> to validate your
+            configuration file. This command checks that the configuration file
+            can be found and parsed, and also checks for typical configuration
+            problems.  This command <emphasis>only</emphasis> validates
+            configuration on the one client, not the master or any other
+            clients in a pool.
+         </para>
+
+         <para>
+            Note: the most common cause of configuration problems is in not
+            closing XML tags properly. Any XML tag that is
+            <quote>opened</quote> must be <quote>closed</quote> appropriately.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 8: Test your backup.</title>
+
+         <para>
+            Use the command <command>cback --full collect purge</command>.  If the 
+            command completes with no output, then the backup was run successfully.
+            Just to be sure that everything worked properly, check the logfile 
+            (<filename>/var/log/cback.log</filename>) for errors.
+         </para>
+
+      </sect2>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-master">
+         
+      <title>Setting up a Master Peer Node</title>
+
+      <para>
+         Cedar Backup has been designed to backup entire <quote>pools</quote>
+         of machines.  In any given pool, there is one master and some number
+         of clients.  Most of the work takes place on the master, so
+         configuring a master is somewhat more complicated than configuring a
+         client.
+      </para>
+
+      <para>
+         Backups are designed to take place over an RSH or SSH connection.
+         Because RSH is generally considered insecure, you are encouraged to
+         use SSH rather than RSH. This document will only describe how to
+         configure Cedar Backup to use SSH; if you want to use RSH, you're on
+         your own. 
+      </para>
+
+      <para>
+         Once you complete all of these configuration steps, your backups will
+         run as scheduled out of cron. Any errors that occur will be reported
+         in daily emails to your root user (or whichever other user receives
+         root's email). If you don't receive any emails, then you know your
+         backup worked.
+      </para>
+
+      <para>
+         Note: all of these configuration steps should be run as the root user,
+         unless otherwise indicated.
+      </para>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 1: Make sure email works.</title>
+
+         <para>
+            Cedar Backup relies on email for problem notification.  This
+            notification works through the magic of cron.  Cron will email any
+            output from each job it executes to the user associated with the
+            job.  Since by default Cedar Backup only writes output to the
+            terminal if errors occur, this neatly ensures that notification
+            emails will only be sent out if errors occur.
+         </para>
+            
+         <para>
+            In order to receive problem notifications, you must make sure that
+            email works for the user which is running the Cedar Backup cron
+            jobs (typically root).  Refer to your distribution's documentation
+            for information on how to configure email on your system.  Note
+            that you may prefer to configure root's email to forward to some
+            other user, so you do not need to check the root user's mail in
+            order to see Cedar Backup errors.
+         </para>
+            
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 2: Configure your CD-R or CD-RW drive.</title>
+
+         <para>
+            Your CD-R or CD-RW drive must either be a SCSI device or must be
+            configured to act like a Linux SCSI device.
+            <footnote><para>For more information on how to configure your
+            CD-R/CD-RW device, see the 
+            <ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO">Linux CDROM HOWTO</ulink>.
+            </para></footnote> 
+            Regardless of what kind of drive you have, make sure you know its
+            SCSI address (in the form <literal>scsibus, target, lun</literal>)
+            and its device name (i.e. <literal>/dev/cdrw</literal>).  The SCSI
+            address will be used to write to media, and the device name will be
+            used when Cedar Backup needs to mount the media (for instance, when
+            a validation check must be run).
+         </para>
+
+         <para>
+            If you have an IDE drive rather than a SCSI drive and are using the
+            IDE-to-SCSI interface (which is the norm for most IDE drives under
+            Linux), then be prepared to enter the simulated SCSI device address,
+            which is often <literal>0,0,0</literal>.  Newer Linux kernels
+            (2.6.x) can also be compiled with support for other kinds of CD drive
+            interfaces.  If
+            you have configured your CD drive to use <firstterm>ATA</firstterm>
+            <footnote><para>See the
+            <ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html">Linux ATA RAID HOWTO</ulink>.
+            </para></footnote>
+            or <firstterm>ATAPI</firstterm>, 
+            <footnote><para>
+            As of kernel 2.6, you can use ATAPI directly, without SCSI emulation,
+            by prepending <literal>ATAPI:</literal> to the device address.
+            </para></footnote>
+            then include this prefix in your
+            simulated device address, i.e. <literal>ATA:0,0,0</literal> or
+            <literal>ATAPI:0,0,0</literal>.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 3: Configure your backup user.</title>
+
+         <para>
+             Choose a user to be used for backups. Some Linux distributions may
+             come with a <quote>ready made</quote> backup user. For other
+             distributions, you may have to create a user yourself. You may
+             choose any id you like, but a descriptive name such as
+             <literal>backup</literal> or <literal>cback</literal> is a good
+             choice.  See your distribution's documentation for information on
+             how to add a user.
+         </para>
+
+         <note>
+            <para>
+               Standard Debian systems come with a user named
+               <literal>backup</literal>.  You may choose to stay with this
+               user or create another one.
+            </para>
+         </note>
+
+         <para>
+             Once you have created your backup user, you must create an SSH
+             keypair for it. Log in as your backup user, and then run the
+             command <command>ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa</command>:
+         </para>
+
+         <programlisting>
+user@machine> ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+Generating public/private rsa key pair.
+Created directory '/home/user/.ssh'.
+Your identification has been saved in /home/user/.ssh/id_rsa.
+Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+The key fingerprint is:
+11:3e:ad:72:95:fe:96:dc:1e:3b:f4:cc:2c:ff:15:9e user@machine
+         </programlisting>
+
+         <para>
+            The default permissions for this directory should be fine.
+            However, if the directory existed before you ran
+            <command>ssh-keygen</command>, then you may need to modify the
+            permissions.  Make sure that the <filename>~/.ssh</filename>
+            directory is readable only by the backup user (i.e. mode
+            <literal>700</literal>), that the
+            <filename>~/.ssh/id_rsa</filename> file is only readable and
+            writable by the backup user (i.e. mode <literal>600</literal>) and
+            that the <filename>~/.ssh/id_rsa.pub</filename> file is writable
+            only by the backup user (i.e. mode <literal>600</literal> or mode
+            <literal>644</literal>).
+         </para>
+         
+         <para>
+            If you have other preferences or standard ways of setting up your
+            users' SSH configuration (i.e. different key type, etc.), feel free
+            to do things your way.  The important part is that the master must
+            be able to SSH into a client <emphasis>with no password entry
+            required</emphasis>.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 4: Create your backup tree.</title>
+
+         <para>
+            Cedar Backup requires a backup directory tree on disk. This
+            directory tree must be roughly large enough hold twice as much data
+            as will be backed up from the entire pool on a given night, plus
+            space for whatever is collected on the master itself. This will
+            allow for all three operations - collect, stage and store - to have
+            enough space to complete. Note that if you elect not to purge the
+            staging directory every night, you will need even more space.
+         </para>
+
+         <para>
+            You should create a collect directory, a staging directory and a
+            working (temporary) directory. One recommended layout is this:
+         </para>
+
+         <programlisting>
+/opt/
+     backup/
+            collect/
+            stage/
+            tmp/
+         </programlisting>
+
+         <para>
+            If you will be backing up sensitive information (i.e. password
+            files), it is recommended that these directories be owned by the
+            backup user (whatever you named it), with permissions
+            <literal>700</literal>. 
+         </para>
+
+         <para>
+            You don't have to use <filename>/opt</filename> as the root of your
+            directory structure.  Use anything you would like.  I use
+            <filename>/opt</filename> because it is my <quote>dumping
+            ground</quote> for filesystems that Debian does not manage.
+         </para>
+
+         <note>
+            <para>
+               Some users have requested that the Debian packages set up a more
+               <quote>standard</quote> location for backups right
+               out-of-the-box.  I have resisted doing this because it's
+               difficult to choose an appropriate backup location from within
+               the package.  If you would prefer, you can create the backup
+               directory structure within some existing Debian directory such
+               as <filename>/var/backups</filename>. 
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 5: Modify the backup cron jobs.</title>
+
+         <para>
+            There are four parts to a Cedar Backup run: collect, stage, store
+            and purge. The usual way of setting off these steps is through a
+            cron job.  For more information on using cron, see the manpage for
+            crontab(5).
+         </para>
+
+         <para>
+            Backing up large directories and creating ISO CD-ROM images can be
+            intensive operations, and could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            go occur every day, but it is possible to configure cron to 
+            execute the backup only one day per week, or three days per week,
+            etc.
+         </para>
+
+         <para>
+            Since Cedar Backup should be run as root, you should add a set of
+            lines like this to your <filename>/etc/crontab</filename> file:
+         </para>
+
+         <programlisting>
+30 00 * * * root  cback collect
+30 02 * * * root  cback stage
+30 04 * * * root  cback store
+30 06 * * * root  cback purge
+         </programlisting>
+                          
+         <para>
+            You will need to coordinate the collect and purge actions on
+            clients so that their collect actions complete before the master
+            attempts to stage, and so that their purge actions do not begin
+            until after the master has completed staging.  Usually, allowing
+            an hour or two between steps should be sufficient.
+         </para>
+
+         <note>
+            <para>
+               On a Debian system, execution of daily backups is controlled by
+               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <quote>Master machine</quote>
+               entries in the file, and change the lines so that the backup
+               goes off when you want it to.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 6: Create the Cedar Backup configuration file.</title>
+
+         <para>
+            Following the instructions in <xref linkend="cedar-config-configfile"/>, 
+            create a configuration file for your machine.  Since you are
+            working with a master machine which presumably also doubles as a
+            client, you must configure all four action-specific sections:
+            collect, stage, store and purge.
+         </para>
+            
+         <para>
+            The usual location for the Cedar Backup config file is
+            <filename>/etc/cback.conf</filename>.  If you change the location,
+            make sure you edit your cronjobs (step 5) to point the
+            <command>cback</command> script at the correct config file (using
+            the <option>--config</option> option).
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 7: Validate the Cedar Backup configuration file.</title>
+
+         <para>
+            Use the command <command>cback validate</command> to validate your
+            configuration file. This command checks that the configuration file
+            can be found and parsed, and also checks for typical configuration
+            problems, such as invalid CD-R/CD-RW device entries.  This command
+            <emphasis>only</emphasis> validates configuration on the master,
+            not any clients that the master might be configured to connect to.
+         </para>
+
+         <para>
+            Note: the most common cause of configuration problems is in not
+            closing XML tags properly. Any XML tag that is
+            <quote>opened</quote> must be <quote>closed</quote> appropriately.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 8: Test connectivity to client machines.</title>
+
+         <para>
+            This step must wait until after your client machines have been at
+            least partly configured. Once the backup user(s) have been
+            configured on the client machine(s) in a pool, attempt an SSH
+            connection to each client. 
+         </para>
+            
+         <para>
+            Log in as the backup user on the master, and then use the command
+            <command>ssh user@machine</command> where
+            <replaceable>user</replaceable> is replaced with the name of backup
+            user <emphasis>on the client machine</emphasis>, and
+            <replaceable>machine</replaceable> is replaced with the name of the
+            client machine.
+         </para>
+
+         <para>
+            If you are able to log in successfully without entering a password,
+            then things have been configured properly. Otherwise, double-check
+            that you followed the user setup instructions for the master and
+            the clients.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+         <title>Step 9: Test your backup.</title>
+
+         <para>
+             Make sure that you have configured all of the clients in your
+             backup pool. On all of the clients, execute <command>cback --full
+             collect</command>.  (You will probably have already tested this
+             command on each of the clients, so it should succeed.)
+         </para>
+
+         <para>
+            When all of the client backups have completed, place a valid CD-R
+            or CD-RW disc in your drive, and then use the command
+            <command>cback --full all</command>.  If the command completes with
+            no output, then the backup was run successfully. 
+         </para>
+
+         <para>
+            Just to be sure that everything worked properly, check the logfile
+            (<filename>/var/log/cback.log</filename>) on the master and each of
+            the clients, and also mount the CD-R or CD-RW disc on the master to
+            be sure it can be read.
+         </para>
+
+         <para>
+            You may also want to run <command>cback purge</command> on the
+            master and each client once you have finished validating that
+            everything worked.
+         </para>
+
+         <para>
+            <emphasis>If Cedar Backup ever completes <quote>normally</quote>
+            but the disc that is created is not usable, please report this as a
+            bug.
+            <footnote><para>See the Cedar Solutions 
+            <ulink url="http://cedar-solutions.com/bugzilla/">Bug Tracking
+            System</ulink>.</para></footnote> 
+            To be safe, always enable the consistency check option in the
+            store configuration section.</emphasis>
+         </para>
+
+      </sect2>
+
    </sect1>
 
 </chapter>

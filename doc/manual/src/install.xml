@@ -203,12 +203,12 @@ $ apt-get install cedar-backup2
          </para>
 
          <itemizedlist>
-            <listitem><command>mkisofs</command></listitem>
-            <listitem><command>cdrecord</command></listitem>
-            <listitem><command>eject</command></listitem>
-            <listitem><command>mount</command></listitem>
-            <listitem><command>unmount</command></listitem>
-            <listitem><command>volname</command></listitem>
+            <listitem><para><command>mkisofs</command></para></listitem>
+            <listitem><para><command>cdrecord</command></para></listitem>
+            <listitem><para><command>eject</command></para></listitem>
+            <listitem><para><command>mount</command></para></listitem>
+            <listitem><para><command>unmount</command></para></listitem>
+            <listitem><para><command>volname</command></para></listitem>
          </itemizedlist>
 
       </sect2>
