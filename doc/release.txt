@@ -1,6 +1,6 @@
 I am pleased to announce the release of Cedar Backup v2.0.
 
-This release has been more than a year in the works.  During this time, my
+This release has been more than a year in the works.  During this time, the
 main focus was to clean up the codebase and the documentation, making the
 whole project easier to read, maintain, debug and enhance.  Another major
 priority was validation, and the new implementation relies heavily on
@@ -8,14 +8,20 @@ automated regression testing.  Existing enhancement requests took a back
 seat to this cleanup effort, but are planned for future releases.
 
 The old v1.0 code tree will still be maintained for security support and
-major bug fixes, but all new development will take place on the v2.0
-code tree.
+major bug fixes, but all new development will take place on the v2.0 code
+tree.  
+
+The new Debian package is called cedar-backup2 rather than cedar-backup.
+The old and new packages cannot be installed at the same time, but you can
+fall back to your existing cedar-backup package if you have problems with
+the new cedar-backup2 package.
 
 This should be considered a high-quality beta release.  It has been through
 testing on my personal systems (all running various Debian releases), but
-could still harbour unknown bugs.  If you find bugs in this release, you
-should file them in the Cedar Solutions bug tracking system or with the
-cedar-backup-users mailing list.
+could still harbour unknown bugs.  
+
+If you have time, please report back to the cedar-backup-users mailing list
+about your experience with this new version, good or bad.
 
 
 DOWNLOAD
@@ -26,13 +32,13 @@ Solutions website:
    http://cedar-solutions.com/software/cedar-backup
 
 Cedar Solutions provides binary packages for Debian 'sarge' and 'woody';
-and source packages for other Linux platforms.
+and source packages for other Linux platforms.  
 
 
 DOCUMENTATION
 
-The newly-rewritten Cedar Solutions Software Manual can be found on the
-Cedar Solutions website:
+The newly-rewritten Cedar Backup Software Manual can be found on the Cedar
+Solutions website:
    
    Single-page HTML: 
          http://cedar-solutions.com/cedar-backup/manual/manual.html
@@ -50,17 +56,6 @@ Most users will want to look at the multiple-page HTML version.  Users who
 wish to print the software manual should use the PDF version.
 
 
-WHAT IS CEDAR BACKUP?
-
-Cedar Backup is a Python package that supports secure backups of files
-on local and remote hosts to CD-R or CD-RW media.  The package is
-focused around weekly backups to a single disc, with the expectation
-that the disc will be changed or overwritten at the beginning of each
-week.  If your hardware is new enough, the script can write multisession
-discs, allowing you to add to a disc in a daily fashion.   Directories
-are backed up using tar and may be compressed using gzip or bzip2.
-
-
 MAJOR IMPROVEMENTS IN THIS RELEASE
 
 The v2.0 release represents a ground-up rewrite of the Cedar Backup
@@ -69,9 +64,10 @@ changes, enhancements and improvements:
 
 - Code is better structured, with a sensible mix of classes and functions.
 - Documentation has been completely rewritten from scratch in DocBook Lite.
-- Most lower-level code is intended to be general-purpose "library" code.
 - Unicode filenames are now natively supported without Python site changes.
 - The runtime 'validate' action now checks for many more config problems.
+- There are no longer any restrictions related to backups spanning midnite.
+- Most lower-level code is intended to be general-purpose "library" code.
 - Configuration is standardized in a common class, so 3rd parties can use it.
 - Collect and stage configuration now support various additional options.
 - Package now supports 3rd-party backup actions via an extension mechanism.
@@ -82,7 +78,7 @@ changes, enhancements and improvements:
 - Internal use of pipes should now be more robust and less prone to problems.
 
 
-USER VISIBLE CHANGES IN THIS RELEASE 
+USER-VISIBLE CHANGES IN THIS RELEASE 
 
 Cedar Backup v2.0 requires Python 2.3 or better.  Cedar Backup v1.0 only
 required Python 2.2.
@@ -101,4 +97,16 @@ line with switches, i.e. --collect.  This is not considered a good
 practice, so v2.0 instead accepts actions as plain arguments specified
 after all switches.  For instance, the v1.0 command "cback --full
 --collect" is coverted to "cback --full collect" in v2.0.
+
+
+WHAT IS CEDAR BACKUP?
+
+Cedar Backup is a Python package that supports secure backups of files
+on local and remote hosts to CD-R or CD-RW media.  The package is
+focused around weekly backups to a single disc, with the expectation
+that the disc will be changed or overwritten at the beginning of each
+week.  If your hardware is new enough, the script can write multisession
+discs, allowing you to add to a disc in a daily fashion.   Directories
+are backed up using tar and may be compressed using gzip or bzip2.
+
 

@@ -30,8 +30,8 @@ backups of files on local and remote hosts to CD-R or CD-RW media.  The script
 is focused around weekly backups to a single disc, with the expectation that
 the disc will be changed or overwritten at the beginning of each week.  If your
 hardware is new enough, the script can write multisession discs, allowing you
-to add to a disc in a daily fashion.  Directories are backed up using GNU
-tar(1) and may be compressed using several different methods.
+to add to a disc in a daily fashion.  Directories are backed up using tar and
+may be compressed using several different methods.
 .PP
 There are two kinds of machines in a Cedar Backup pool.  One machine (the
 \fImaster\fR) has a CD-R or CD-RW drive on it and is where the backup is
@@ -92,10 +92,12 @@ Record some sub-command output to the logfile. When this option is enabled, all
 output from system commands will be logged. This might be useful for debugging
 or just for reference. Cedar Backup uses system commands mostly for dealing
 with the CD recorder and its media.
+.TP
 \fB\-d\fR, \fB\-\-debug\fR
 Write debugging information to the logfile. This option produces a high volume
 of output, and would generally only be needed when debugging a problem. This
 option implies the --output option, as well.
+.TP
 \fB\-s\fR, \fB\-\-stack\fR
 Dump a Python stack trace instead of swallowing exceptions.  This forces Cedar
 Backup to dump the entire Python stack trace associated with an error, rather
@@ -134,6 +136,28 @@ Ensure that configuration is valid, but take no other action.  Validation
 checks that the configuration file can be found and can be parsed, and also
 checks for typical configuration problems, such as directories that are not
 writable or problems with the target SCSI device.
+.SH RETURN VALUES
+.PP
+Cedar Backup returns 0 (zero) upon normal completion, and six other error
+codes related to particular errors. 
+.TP
+\fB1\fR
+The Python interpreter version is < 2.3.
+.TP
+\fB2\fR
+Error processing command-line arguments.
+.TP
+\fB3\fR
+Error configuring logging.
+.TP
+\fB4\fR
+Error parsing indicated configuration file.
+.TP
+\fB5\fR
+Backup was interrupted with a CTRL-C or similar.
+.TP
+\fB6\fR
+Error executing specified backup actions.
 .SH NOTES
 .PP
 The script is designed to run as root, since otherwise it's difficult to back
@@ -185,5 +209,3 @@ Copyright (c) 2004-2005 Kenneth J. Pronovici.
 This is free software; see the source for copying conditions.  There is
 NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.
-.SH "SEE ALSO"
-cback.conf(5), chmod(1)
