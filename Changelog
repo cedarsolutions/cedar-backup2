@@ -2,6 +2,11 @@ Version 2.0.0    unreleased
 
 	* Complete rewrite for 2.0.0 release.
 
+Version 1.12   16 Jan 2005
+
+	* Add support for ATAPI devices, just like ATA (closes: #15).
+	* SCSI id can now be in the form '[ATA:|ATAPI:]scsibus,target,lun'.
+
 Version 1.11	17 Oct 2004
 
 	* Add experimental support for new Linux 2.6 ATA CD devices.
