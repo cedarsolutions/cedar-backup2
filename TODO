@@ -15,7 +15,10 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 * Change sort order of parameters, classes within modules, etc. where needed in Epydoc
-* Implement "safe overwrite" functionality from aborted 2.x branch into CdWriter.
+* Implement "safe overwrite" functionality from aborted 2.x branch into CdWriter - shouldn't be too difficult.
+* Implement overwrite, rebuild and rewrite capacity mode functionality (right now, we just did 'discard' and 'fail')
+* Implement consistency check in store action - it's not even stubbed right now.
+* Maybe change config not to accept these capacity modes?  Then we wouldn't have to log so many errors?
 * Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
 * Write individual action functions (process.py) in terms of other lower-level functionality
 * Implement a cli module (might take this from aborted 2.x branch?) for command-line interface
