@@ -317,8 +317,9 @@
             Extensions can also be configured to be executed as part of the all
             action.  See <xref linkend="cedar-basic-extensions"/> (below) for a
             discussion of extensions, and see 
-            <xref linkend="cedar-config-extensions"/> in <xref linkend="cedar-config"/> 
-            for more information on how extensions are configured.
+            <xref linkend="cedar-config-configfile-extensions"/> in 
+            <xref linkend="cedar-config"/> for more information on how
+            extensions are configured.
          </para>
 
       </sect2>
