@@ -59,8 +59,12 @@ all:
 clean: docclean distribclean 
 	-@find . -name "*.pyc" | xargs rm -f
 
-unittest:
+# This uses the "full" argument to get all tests
 test:
+	@$(PYTHON) util/test.py full
+
+# This leaves off "full" and gets on the tests most end-users would run
+usertest:
 	@$(PYTHON) util/test.py
 
 

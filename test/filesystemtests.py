@@ -77,22 +77,6 @@ Naming Conventions
    accomplish.  I feel that this makes it easier to judge the extent of a
    problem when one exists.
 
-Debugging these Tests
-=====================
-
-   Debugging in here can get be somewhat complicated.  If you have a test::
-
-      def test():
-        try:
-           # stuff
-        finally:
-           # remove files
-
-   you may mysteriously have the 'stuff' fail, and you won't get any exceptions
-   reported to you.  The best thing to do if you get strange situations like
-   this is to move 'stuff' out of the try block and re-run the test - that will
-   usually clear things up.
-
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -113,7 +97,7 @@ from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemLis
 # Module-wide configuration and constants
 #######################################################################
 
-DATA_DIRS = [ './data', './test/data' ]
+DATA_DIRS = [ "./data", "./test/data" ]
 RESOURCES = [ "tree1.tar.gz", "tree2.tar.gz", "tree3.tar.gz", "tree4.tar.gz", "tree5.tar.gz",
               "tree6.tar.gz", "tree7.tar.gz", "tree8.tar.gz", "tree9.tar.gz", "tree10.tar.gz", ]
 
@@ -364,11 +348,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_002(self):
       """
@@ -377,11 +357,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir001"])
       fsList = FilesystemList()
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_003(self):
       """
@@ -397,11 +373,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_004(self):
       """
@@ -421,11 +393,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_006(self):
       """
@@ -435,11 +403,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir001"])
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_007(self):
       """
@@ -457,11 +421,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_008(self):
       """
@@ -482,11 +442,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_010(self):
       """
@@ -496,11 +452,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir001"])
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_011(self):
       """
@@ -518,11 +470,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_012(self):
       """
@@ -543,11 +491,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludeLinks = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_014(self):
       """
@@ -557,11 +501,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir001"])
       fsList = FilesystemList()
       fsList.excludeLinks = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_015(self):
       """
@@ -579,11 +519,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludeLinks = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_016(self):
       """
@@ -605,11 +541,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_018(self):
       """
@@ -619,11 +551,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir001"])
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_019(self):
       """
@@ -641,11 +569,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_020(self):
       """
@@ -667,11 +591,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_022(self):
       """
@@ -681,11 +601,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir001"])
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_023(self):
       """
@@ -703,11 +619,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_024(self):
       """
@@ -729,11 +641,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_026(self):
       """
@@ -743,11 +651,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir001"])
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_027(self):
       """
@@ -765,11 +669,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_028(self):
       """
@@ -791,11 +691,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ] 
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_030(self):
       """
@@ -805,11 +701,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir001"])
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_031(self):
       """
@@ -827,11 +719,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
    def testAddFile_032(self):
       """
@@ -854,11 +742,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree10")
       path = self.buildPath(["tree10", "link001"])
       fsList = FilesystemList()
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addFile, path)
 
 
    ################
@@ -871,11 +755,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_002(self):
       """
@@ -884,11 +764,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_003(self):
       """
@@ -897,11 +773,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -928,11 +800,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_006(self):
       """
@@ -942,11 +810,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_007(self):
       """
@@ -956,11 +820,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -989,11 +849,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_010(self):
       """
@@ -1003,11 +859,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_011(self):
       """
@@ -1017,11 +869,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1050,11 +898,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludeLinks = True
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_014(self):
       """
@@ -1064,11 +908,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludeLinks = True
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_015(self):
       """
@@ -1078,11 +918,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludeLinks = True
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1112,11 +948,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_018(self):
       """
@@ -1126,11 +958,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_019(self):
       """
@@ -1140,11 +968,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1175,11 +999,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_022(self):
       """
@@ -1189,11 +1009,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_023(self):
       """
@@ -1203,11 +1019,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1238,11 +1050,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_026(self):
       """
@@ -1252,11 +1060,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_027(self):
       """
@@ -1266,11 +1070,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1301,11 +1101,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_030(self):
       """
@@ -1315,11 +1111,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
    def testAddDir_031(self):
       """
@@ -1329,11 +1121,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1364,11 +1152,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree10")
       path = self.buildPath(["tree10", "link001"])
       fsList = FilesystemList()
-      try:
-         fsList.addDir(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDir, path)
 
 
    ########################
@@ -1381,11 +1165,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_002(self):
       """
@@ -1394,11 +1174,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_003(self):
       """
@@ -1407,11 +1183,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1482,11 +1254,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_009(self):
       """
@@ -1496,11 +1264,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_010(self):
       """
@@ -1510,11 +1274,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1586,11 +1346,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_016(self):
       """
@@ -1600,11 +1356,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_017(self):
       """
@@ -1614,11 +1366,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1688,11 +1436,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludeLinks = True
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_024(self):
       """
@@ -1702,11 +1446,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludeLinks = True
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_025(self):
       """
@@ -1716,11 +1456,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludeLinks = True
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1795,11 +1531,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_031(self):
       """
@@ -1809,11 +1541,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_032(self):
       """
@@ -1823,11 +1551,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -1898,11 +1622,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_038(self):
       """
@@ -1912,11 +1632,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_039(self):
       """
@@ -1926,11 +1642,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -2010,11 +1722,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_045(self):
       """
@@ -2024,11 +1732,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_046(self):
       """
@@ -2038,11 +1742,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -2114,11 +1814,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath([INVALID_FILE])
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_052(self):
       """
@@ -2128,11 +1824,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "file001"])
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_053(self):
       """
@@ -2142,11 +1834,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
@@ -2991,11 +2679,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree9")
       path = self.buildPath(["tree9", "dir002", "link003", ])
       fsList = FilesystemList()
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_066(self):
       """
@@ -3025,11 +2709,7 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree10")
       path = self.buildPath(["tree10", "link001"])
       fsList = FilesystemList()
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
    def testAddDirContents_068(self):
       """
@@ -8445,11 +8125,7 @@ class TestFilesystemList(unittest.TestCase):
       Test with an empty list and a pattern of None.
       """
       fsList = FilesystemList()
-      try:
-         fsList.removeMatch(pattern=None)
-         self.fail("Expected TypeError.")
-      except TypeError: pass
-      except Exception, e: self.fail("Expected TypeError, got: %s" % e)
+      self.failUnlessRaises(TypeError, fsList.removeMatch, pattern=None)
 
    def testRemoveMatch_002(self):
       """
@@ -11410,11 +11086,7 @@ class TestBackupFileList(unittest.TestCase):
       """
       backupList = BackupFileList()
       tarPath = self.buildPath(["file.tar", ])      
-      try:
-         backupList.generateTarfile(tarPath)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, backupList.generateTarfile, tarPath)
       self.failUnless(not os.path.exists(tarPath))
 
    def testGenerateTarfile_002(self):
@@ -11499,11 +11171,7 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
       tarPath = self.buildPath(["file.tar", ])      
-      try:
-         backupList.generateTarfile(tarPath, ignore=False)
-         self.fail("Expected TarError.")
-      except tarfile.TarError: pass
-      except Exception, e: self.fail("Expected TarError, got: %s" % e)
+      self.failUnlessRaises(tarfile.TarError, backupList.generateTarfile, tarPath, ignore=False)
       self.failUnless(not os.path.exists(tarPath))
 
    def testGenerateTarfile_004(self):
@@ -11583,11 +11251,7 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
       tarPath = self.buildPath(["file.tar", ])      
-      try:
-         backupList.generateTarfile(tarPath, mode="bogus")
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, backupList.generateTarfile, tarPath, mode="bogus")
       self.failUnless(not os.path.exists(tarPath))
 
    def testGenerateTarfile_006(self):
@@ -12045,11 +11709,7 @@ class TestPurgeItemList(unittest.TestCase):
       (files, dirs) = purgeList.purgeItems()
       self.failUnlessEqual(7, files)
       self.failUnlessEqual(1, dirs)
-      try:
-         fsList.addDirContents(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      self.failUnlessRaises(ValueError, fsList.addDirContents, path)
       self.failUnless(not os.path.exists(path))
 
    def testPurgeItems_007(self):

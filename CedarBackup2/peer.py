@@ -56,6 +56,7 @@ import shutil
 import popen2
 import tempfile
 import sets
+import re
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
@@ -67,7 +68,7 @@ from CedarBackup2.filesystem import FilesystemList
 
 logger                  = logging.getLogger("CedarBackup2.peer")
 
-DEF_RCP_COMMAND         = "/usr/bin/scp -B"
+DEF_RCP_COMMAND         = [ "/usr/bin/scp", "-B", ]
 DEF_COLLECT_INDICATOR   = "cback.collect"
 DEF_STAGE_INDICATOR     = "cback.stage"
 
@@ -131,15 +132,21 @@ def executeCommand(command, args, returnOutput=False):
    the command.  Output is always logged to the logger.info() target, regardless
    of whether it's returned.
 
+   @note: I know that it's a bit confusing that the command and the arguments
+   are both lists.  I could have just required the caller to pass in one big
+   list.  However, I think it makes some sense to keep the command (the
+   constant part of what we're executing, i.e. "scp -B") separate from its
+   arguments, even if they both end up looking kind of similar.
+
    @note: You cannot redirect output (i.e. 2>&1, 2>/dev/null, etc.) using this
    function.  The redirection string would be passed to the command just like
    any other argument.
 
    @param command: Shell command to execute
-   @type command: String, just the command without any arguments
+   @type command: List of individual arguments that make up the command
 
    @param args: List of arguments to the command
-   @type args: List of individual arguments to the command
+   @type args: List of additional arguments to the command
 
    @param returnOutput: Indicates whether to return the output of the command
    @type returnOutput: Boolean True or False
@@ -148,7 +155,7 @@ def executeCommand(command, args, returnOutput=False):
    """
    logger.debug("Executing command [%s] with args %s." % (command, args))
    output = []
-   fields = [command]
+   fields = command[:]        # make sure to copy it so we don't destroy it
    fields.extend(args)
    pipe = popen2.Popen4(fields)
    pipe.tochild.close()       # we'll never write to it, and this way we don't confuse anything.
@@ -156,7 +163,7 @@ def executeCommand(command, args, returnOutput=False):
       line = pipe.fromchild.readline()
       if not line: break
       if returnOutput: output.append(line)
-      logger.info(line[:-1]) # this way the log will (hopefully) get updated in realtime
+      logger.info(line[:-1])  # this way the log will (hopefully) get updated in realtime
    if returnOutput:
       return (pipe.wait(), output)
    else:
@@ -209,7 +216,7 @@ class LocalPeer(object):
 
       @raise ValueError: If collect directory is not an absolute path
       """
-      if not os.path.isabsdir(collectDir):
+      if not os.path.isabs(collectDir):
          logger.debug("Collect directory [%s] not an absolute path." % collectDir)
          raise ValueError("Collect directory must be an absolute path.")
       self.name = name
@@ -222,6 +229,16 @@ class LocalPeer(object):
       The collect and target directories must both already exist before this
       method is called.  If passed in, ownership and permissions will be
       applied to the files that are copied.
+   
+      @note: The caller is responsible for checking that the indicator exists,
+      if they care.  This function only stages the files within the directory.
+
+      @note: Unlike the local peer version of this method, an I/O error might
+      be raised if the directory is empty.  Since we're using a remote copy
+      method, we just don't have the fine-grained control over our exceptions
+      that's available when we can look directly at the filesystem, and we
+      can't control whether the remote copy method thinks an empty directory is
+      an error.  
 
       @note: If you have user/group as strings, call the getUidGid() function
       to get the associated uid/gid as an ownership tuple.
@@ -237,6 +254,7 @@ class LocalPeer(object):
 
       @raise ValueError: If collect directory is not a directory or does not exist 
       @raise ValueError: If target directory is not a directory, does not exist or is not absolute.
+      @raise IOError: If there were no files to stage (i.e. the directory was empty)
       @raise IOError: If there is an IO error copying a file.
       @raise OSError: If there is an OS error copying or changing permissions on a file
       """
@@ -432,6 +450,16 @@ class RemotePeer(object):
    def __init__(self, name, remoteUser, collectDir, rcpCommand=None):
       """
       Initializes a remote backup peer.
+
+      @note: If provided, the rcp command will eventually be parsed into a list
+      of strings suitable for passing to L{popen2.Popen4}, which is used
+      instead of a simple L{popen} in order to avoid security holes related to
+      shell interpolation.  There is no "standard" way to parse such a command
+      string, and it's actually not an easy problem to solve portably
+      (essentially, we have to emulate the shell argument-processing logic).
+      The code used here internally only respects double quotes (C{"}) for
+      grouping arguments, not single quotes (C{'}).  Make sure you take this
+      into account when building your rcp command.
       
       @param name: Name of the backup peer
       @type name: String, must be a valid DNS hostname
@@ -443,11 +471,11 @@ class RemotePeer(object):
       @type collectDir: String representing an absolute path on the remote peer
 
       @param rcpCommand: An rcp-compatible copy command to use for copying files from the peer
-      @type rcpCommand: String representing a system command
+      @type rcpCommand: String representing a system command including required arguments
 
       @raise ValueError: If collect directory is not an absolute path
       """
-      if not os.path.isabsdir(collectDir):
+      if not os.path.isabs(collectDir):
          raise ValueError("Collect directory must be an absolute path.")
       self.name = name
       self.remoteUser = remoteUser
@@ -455,7 +483,10 @@ class RemotePeer(object):
       if rcpCommand is None:
          self.rcpCommand = DEF_RCP_COMMAND
       else:
-         self.rcpCommand = rcpCommand
+         # I found this in Google Groups and tweaked it for my use
+         fields = re.findall('[^ "]+|"[^"]+"', rcpCommand)
+         fields = map(lambda field: field.replace('"', ''), fields)
+         self.rcpCommand = fields
 
    def stagePeer(self, targetDir, ownership=None, permissions=None):
       """
@@ -542,12 +573,6 @@ class RemotePeer(object):
 
       @param stageIndicator: Name of the indicator file to write
       @type stageIndicator: String representing name of a file in the collect directory
-
-      @param ownership: Owner and group that the indicator file should have
-      @type ownership: Tuple of numeric ids (uid, gid)
-
-      @param permissions: Permissions that the indicator file should have
-      @type permissions: UNIX permissions mode, typically specified in octal (i.e. 0640).
 
       @raise ValueError: If collect directory is not a directory or does not exist 
       @raise IOError: If there is an IO error creating the file.
