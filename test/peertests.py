@@ -347,27 +347,29 @@ class TestLocalPeer(unittest.TestCase):
       """
       Attempt to write stage indicator with non-writable collect directory.
       """
-      name = "peer1"
-      collectDir = self.buildPath(["collect", ])
-      os.mkdir(collectDir)
-      self.failUnless(os.path.exists(collectDir))
-      os.chmod(collectDir, 0500)    # read-only for user
-      peer = LocalPeer(name, collectDir)
-      self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
-      os.chmod(collectDir, 0777)    # so we can remove it safely
+      if os.geteuid() != 0:  # root doesn't get this error
+         name = "peer1"
+         collectDir = self.buildPath(["collect", ])
+         os.mkdir(collectDir)
+         self.failUnless(os.path.exists(collectDir))
+         os.chmod(collectDir, 0500)    # read-only for user
+         peer = LocalPeer(name, collectDir)
+         self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
+         os.chmod(collectDir, 0777)    # so we can remove it safely
 
    def testWriteStageIndicator_003(self):
       """
       Attempt to write stage indicator with non-writable collect directory, custom name.
       """
-      name = "peer1"
-      collectDir = self.buildPath(["collect", ])
-      os.mkdir(collectDir)
-      self.failUnless(os.path.exists(collectDir))
-      os.chmod(collectDir, 0500)    # read-only for user
-      peer = LocalPeer(name, collectDir)
-      self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator, stageIndicator="something")
-      os.chmod(collectDir, 0777)    # so we can remove it safely
+      if os.geteuid() != 0:  # root doesn't get this error
+         name = "peer1"
+         collectDir = self.buildPath(["collect", ])
+         os.mkdir(collectDir)
+         self.failUnless(os.path.exists(collectDir))
+         os.chmod(collectDir, 0500)    # read-only for user
+         peer = LocalPeer(name, collectDir)
+         self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator, stageIndicator="something")
+         os.chmod(collectDir, 0777)    # so we can remove it safely
 
    def testWriteStageIndicator_004(self):
       """
@@ -486,18 +488,19 @@ class TestLocalPeer(unittest.TestCase):
       """
       Attempt to stage files with non-writable target directory.
       """
-      self.extractTar("tree1")
-      name = "peer1"
-      collectDir = self.buildPath(["tree1"])
-      targetDir = self.buildPath(["target", ])
-      os.mkdir(targetDir)
-      self.failUnless(os.path.exists(collectDir))
-      self.failUnless(os.path.exists(targetDir))
-      os.chmod(targetDir, 0500)    # read-only for user
-      peer = LocalPeer(name, collectDir)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
-      os.chmod(targetDir, 0777)    # so we can remove it safely
-      self.failUnlessEqual(0, len(os.listdir(targetDir)))
+      if os.geteuid() != 0:  # root doesn't get this error
+         self.extractTar("tree1")
+         name = "peer1"
+         collectDir = self.buildPath(["tree1"])
+         targetDir = self.buildPath(["target", ])
+         os.mkdir(targetDir)
+         self.failUnless(os.path.exists(collectDir))
+         self.failUnless(os.path.exists(targetDir))
+         os.chmod(targetDir, 0500)    # read-only for user
+         peer = LocalPeer(name, collectDir)
+         self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+         os.chmod(targetDir, 0777)    # so we can remove it safely
+         self.failUnlessEqual(0, len(os.listdir(targetDir)))
 
    def testStagePeer_006(self):
       """
