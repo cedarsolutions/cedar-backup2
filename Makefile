@@ -100,7 +100,6 @@ docsclean: docclean
 epydoc: interface-doc
 interface: interface-doc
 book: manual
-manual: manual-doc
 
 doc: interface-doc manual-doc
 
@@ -109,6 +108,9 @@ interface-doc: $(INTERFACE_DIR)
 
 manual-doc: $(MANUAL_DIR)
 	-@$(CD) $(MANUAL_SRC) && $(MAKE) install
+
+manual: 
+	-@$(CD) $(MANUAL_SRC) && $(MAKE) manual-chunk && $(MAKE) install-manual-chunk
 
 validate: 
 	-@$(VALIDATE) $(MANUAL_SRC)/src/book.xml

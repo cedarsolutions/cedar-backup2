@@ -17,12 +17,22 @@
 * DAMMIT!  The 'all' action is only supposed to execute those actions which have been 
   configured in the config file.  How do we account for that?  Maybe actions just silently
   (with an INFO log) don't do anything if no configuration exists for them?  What makes
-  sense?
+  sense?  
 * I don't think that extended actions should ever get executed as part of all - or we 
   should add a value indicating whether they should.  The reason is, we always need the
   ordering value even when all isn't specified - so we can figure out what order to
   execute a set of combined actions in.  (i.e. collect, stage, subversion would likely
   be executed collect, then subversion, then stage to make sense.
+* The extensions index has to be required - we've documented this in configuration.
+* The docs should probably list SSH as being required, even though technically that
+  should be obvious when they list the command in the config file.
+* The basic docs should discuss device types and media types, so we can refer to them
+later in the configuration docs.
+* get notes out of old install doc (like when to purge) and get them into the configuration
+section.  There's no other good place to put them.
+* I'm just going to ignore the capacity mode - config will still support it, but I
+  won't doument it, and won't implement anything around it.  We can do it later (and
+  put some sort of to-do in here when we decide what to do).
 * Test _ActionSet and _ActionItem functionality, hopefully in a unit test of some sort
 * Change sort order of parameters, classes within modules, etc. where needed in Epydoc
 * Implement "safe overwrite" functionality from aborted 2.x branch into CdWriter - shouldn't be too difficult.
