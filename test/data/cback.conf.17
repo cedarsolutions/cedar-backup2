@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- Document containing only an extensions section, containing all required and optional fields. -->
+<cb_config>
+   <extensions>
+      <action>
+         <name>example</name>
+         <module>something.whatever</module>
+         <function>example</function>
+         <index>102</index>
+      </action>
+      <action>
+         <name>bogus</name>
+         <module>module</module>
+         <function>something</function>
+      </action>
+   </extensions>
+</cb_config>

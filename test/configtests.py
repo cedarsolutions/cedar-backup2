@@ -103,7 +103,7 @@ Full vs. Reduced Tests
 import os
 import unittest
 import tempfile
-from CedarBackup2.testutil import findResources, buildPath, removedir, failUnlessAssignRaises
+from CedarBackup2.testutil import findResources, removedir, failUnlessAssignRaises
 from CedarBackup2.config import ExtendedAction, CollectDir, PurgeDir, LocalPeer, RemotePeer
 from CedarBackup2.config import ReferenceConfig, ExtensionsConfig, OptionsConfig
 from CedarBackup2.config import CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config
@@ -114,14 +114,365 @@ from CedarBackup2.config import CollectConfig, StageConfig, StoreConfig, PurgeCo
 #######################################################################
 
 DATA_DIRS = [ "./data", "./test/data", ]
-RESOURCES = [ "cback.conf.1", "cback.conf.2", "cback.conf.3", "cback.conf.4", "cback.conf.5", 
-              "cback.conf.6", "cback.conf.7", "cback.conf.8", "cback.conf.9", "cback.conf.10", 
-              "cback.conf.11", "cback.conf.12", "cback.conf.13", "cback.conf.14", "cback.conf.15", ]
+RESOURCES = [ "cback.conf.1", "cback.conf.2", "cback.conf.3", "cback.conf.4", 
+              "cback.conf.5", "cback.conf.6", "cback.conf.7", "cback.conf.8", 
+              "cback.conf.9", "cback.conf.10", "cback.conf.11", "cback.conf.12", 
+              "cback.conf.13", "cback.conf.14", "cback.conf.15", "cback.conf.16", 
+              "cback.conf.17", ]
 
 
 #######################################################################
 # Test Case Classes
 #######################################################################
+
+###########################
+# TestExtendedAction class
+###########################
+
+class TestExtendedAction(unittest.TestCase):
+
+   """Tests for the ExtendedAction class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = ExtendedAction()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.name)
+      self.failUnlessEqual(None, action.module)
+      self.failUnlessEqual(None, action.function)
+      self.failUnlessEqual(None, action.index)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values.
+      """
+      action = ExtendedAction("one", "two", "three", 4)
+      self.failUnlessEqual("one", action.name)
+      self.failUnlessEqual("two", action.module)
+      self.failUnlessEqual("three", action.function)
+      self.failUnlessEqual(4, action.index)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of name attribute, None value.
+      """
+      action = ExtendedAction(name="name")
+      self.failUnlessEqual("name", action.name)
+      action.name = None
+      self.failUnlessEqual(None, action.name)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of name attribute, valid value.
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.name)
+      action.name = "name"
+      self.failUnlessEqual("name", action.name)
+      action.name = "9"
+      self.failUnlessEqual("9", action.name)
+      action.name = "name99name"
+      self.failUnlessEqual("name99name", action.name)
+      action.name = "12action"
+      self.failUnlessEqual("12action", action.name)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of name attribute, invalid value (empty).
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.name)
+      self.failUnlessAssignRaises(ValueError, action, "name", "")
+      self.failUnlessEqual(None, action.name)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of name attribute, invalid value (does not match valid pattern).
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.name)
+      self.failUnlessAssignRaises(ValueError, action, "name", "Something")
+      self.failUnlessEqual(None, action.name)
+      self.failUnlessAssignRaises(ValueError, action, "name", "what_ever")
+      self.failUnlessEqual(None, action.name)
+      self.failUnlessAssignRaises(ValueError, action, "name", "_BOGUS")
+      self.failUnlessEqual(None, action.name)
+      self.failUnlessAssignRaises(ValueError, action, "name", "stuff-here")
+      self.failUnlessEqual(None, action.name)
+      self.failUnlessAssignRaises(ValueError, action, "name", "/more/stuff")
+      self.failUnlessEqual(None, action.name)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of module attribute, None value.
+      """
+      action = ExtendedAction(module="module")
+      self.failUnlessEqual("module", action.module)
+      action.module = None
+      self.failUnlessEqual(None, action.module)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of module attribute, valid value.
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.module)
+      action.module = "module"
+      self.failUnlessEqual("module", action.module)
+      action.module = "stuff"
+      self.failUnlessEqual("stuff", action.module)
+      action.module = "stuff.something"
+      self.failUnlessEqual("stuff.something", action.module)
+      action.module = "_identifier.__another.one_more__"
+      self.failUnlessEqual("_identifier.__another.one_more__", action.module)
+
+   def testConstructor_009(self):
+      """
+      Test assignment of module attribute, invalid value (empty).
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.module)
+      self.failUnlessAssignRaises(ValueError, action, "module", "")
+      self.failUnlessEqual(None, action.module)
+
+   def testConstructor_010(self):
+      """
+      Test assignment of module attribute, invalid value (does not match valid pattern).
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.module)
+      self.failUnlessAssignRaises(ValueError, action, "module", "9something")
+      self.failUnlessEqual(None, action.module)
+      self.failUnlessAssignRaises(ValueError, action, "module", "_bogus.")
+      self.failUnlessEqual(None, action.module)
+      self.failUnlessAssignRaises(ValueError, action, "module", "-bogus")
+      self.failUnlessEqual(None, action.module)
+      self.failUnlessAssignRaises(ValueError, action, "module", "/BOGUS")
+      self.failUnlessEqual(None, action.module)
+      self.failUnlessAssignRaises(ValueError, action, "module", "really._really__.___really.long.bad.path.")
+      self.failUnlessEqual(None, action.module)
+      self.failUnlessAssignRaises(ValueError, action, "module", ".really._really__.___really.long.bad.path")
+      self.failUnlessEqual(None, action.module)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of function attribute, None value.
+      """
+      action = ExtendedAction(function="function")
+      self.failUnlessEqual("function", action.function)
+      action.function = None
+      self.failUnlessEqual(None, action.function)
+
+   def testConstructor_012(self):
+      """
+      Test assignment of function attribute, valid value.
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.function)
+      action.function = "function"
+      self.failUnlessEqual("function", action.function)
+      action.function = "_stuff"
+      self.failUnlessEqual("_stuff", action.function)
+      action.function = "moreStuff9"
+      self.failUnlessEqual("moreStuff9", action.function)
+      action.function = "__identifier__"
+      self.failUnlessEqual("__identifier__", action.function)
+
+   def testConstructor_013(self):
+      """
+      Test assignment of function attribute, invalid value (empty).
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.function)
+      self.failUnlessAssignRaises(ValueError, action, "function", "")
+      self.failUnlessEqual(None, action.function)
+
+   def testConstructor_014(self):
+      """
+      Test assignment of function attribute, invalid value (does not match valid pattern).
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.function)
+      self.failUnlessAssignRaises(ValueError, action, "function", "9something")
+      self.failUnlessEqual(None, action.function)
+      self.failUnlessAssignRaises(ValueError, action, "function", "one.two")
+      self.failUnlessEqual(None, action.function)
+      self.failUnlessAssignRaises(ValueError, action, "function", "-bogus")
+      self.failUnlessEqual(None, action.function)
+      self.failUnlessAssignRaises(ValueError, action, "function", "/BOGUS")
+      self.failUnlessEqual(None, action.function)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      action1 = ExtendedAction()
+      action2 = ExtendedAction()
+      self.failUnlessEqual(action1, action2)
+      self.failUnless(action1 == action2)
+      self.failUnless(not action1 < action2)
+      self.failUnless(action1 <= action2)
+      self.failUnless(not action1 > action2)
+      self.failUnless(action1 >= action2)
+      self.failUnless(not action1 != action2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      action1 = ExtendedAction("one", "two", "three", 4)
+      action2 = ExtendedAction("one", "two", "three", 4)
+      self.failUnless(action1 == action2)
+      self.failUnless(not action1 < action2)
+      self.failUnless(action1 <= action2)
+      self.failUnless(not action1 > action2)
+      self.failUnless(action1 >= action2)
+      self.failUnless(not action1 != action2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two differing objects, name differs (one None).
+      """
+      action1 = ExtendedAction(name="name")
+      action2 = ExtendedAction()
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(not action1 < action2)
+      self.failUnless(not action1 <= action2)
+      self.failUnless(action1 > action2)
+      self.failUnless(action1 >= action2)
+      self.failUnless(action1 != action2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two differing objects, name differs.
+      """
+      action1 = ExtendedAction("name2", "two", "three", 4)
+      action2 = ExtendedAction("name1", "two", "three", 4)
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(not action1 < action2)
+      self.failUnless(not action1 <= action2)
+      self.failUnless(action1 > action2)
+      self.failUnless(action1 >= action2)
+      self.failUnless(action1 != action2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two differing objects, module differs (one None).
+      """
+      action1 = ExtendedAction(module="whatever")
+      action2 = ExtendedAction()
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(not action1 < action2)
+      self.failUnless(not action1 <= action2)
+      self.failUnless(action1 > action2)
+      self.failUnless(action1 >= action2)
+      self.failUnless(action1 != action2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two differing objects, module differs.
+      """
+      action1 = ExtendedAction("one", "MODULE", "three", 4)
+      action2 = ExtendedAction("one", "two", "three", 4)
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(action1 < action2)
+      self.failUnless(action1 <= action2)
+      self.failUnless(not action1 > action2)
+      self.failUnless(not action1 >= action2)
+      self.failUnless(action1 != action2)
+
+   def testComparison_007(self):
+      """
+      Test comparison of two differing objects, function differs (one None).
+      """
+      action1 = ExtendedAction(function="func1")
+      action2 = ExtendedAction()
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(not action1 < action2)
+      self.failUnless(not action1 <= action2)
+      self.failUnless(action1 > action2)
+      self.failUnless(action1 >= action2)
+      self.failUnless(action1 != action2)
+
+   def testComparison_008(self):
+      """
+      Test comparison of two differing objects, function differs.
+      """
+      action1 = ExtendedAction("one", "two", "func1", 4)
+      action2 = ExtendedAction("one", "two", "func2", 4)
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(action1 < action2)
+      self.failUnless(action1 <= action2)
+      self.failUnless(not action1 > action2)
+      self.failUnless(not action1 >= action2)
+      self.failUnless(action1 != action2)
+
+   def testComparison_009(self):
+      """
+      Test comparison of two differing objects, index differs (one None).
+      """
+      action1 = ExtendedAction()
+      action2 = ExtendedAction(index=42)
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(action1 < action2)
+      self.failUnless(action1 <= action2)
+      self.failUnless(not action1 > action2)
+      self.failUnless(not action1 >= action2)
+      self.failUnless(action1 != action2)
+
+   def testComparison_010(self):
+      """
+      Test comparison of two differing objects, index differs.
+      """
+      action1 = ExtendedAction("one", "two", "three", 99)
+      action2 = ExtendedAction("one", "two", "three", 12)
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(not action1 < action2)
+      self.failUnless(not action1 <= action2)
+      self.failUnless(action1 > action2)
+      self.failUnless(action1 >= action2)
+      self.failUnless(action1 != action2)
+
 
 #######################
 # TestCollectDir class
@@ -131,29 +482,9 @@ class TestCollectDir(unittest.TestCase):
 
    """Tests for the CollectDir class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
-
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -846,29 +1177,9 @@ class TestPurgeDir(unittest.TestCase):
 
    """Tests for the PurgeDir class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
-
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -1095,29 +1406,9 @@ class TestLocalPeer(unittest.TestCase):
 
    """Tests for the LocalPeer class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
-
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -1317,29 +1608,9 @@ class TestRemotePeer(unittest.TestCase):
 
    """Tests for the RemotePeer class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
-
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -1653,29 +1924,10 @@ class TestReferenceConfig(unittest.TestCase):
 
    """Tests for the ReferenceConfig class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
 
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -2028,6 +2280,227 @@ class TestReferenceConfig(unittest.TestCase):
       self.failUnless(reference1 != reference2)
 
 
+#############################
+# TestExtensionsConfig class
+#############################
+
+class TestExtensionsConfig(unittest.TestCase):
+
+   """Tests for the ExtensionsConfig class."""
+
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = ExtensionsConfig()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.actions)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values (empty list).
+      """
+      extensions = ExtensionsConfig([])
+      self.failUnlessEqual([], extensions.actions)
+
+   def testConstructor_003(self):
+      """
+      Test constructor with all values filled in, with valid values (non-empty list).
+      """
+      extensions = ExtensionsConfig([ExtendedAction(), ])
+      self.failUnlessEqual([ExtendedAction(), ], extensions.actions)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of actions attribute, None value.
+      """
+      extensions = ExtensionsConfig([])
+      self.failUnlessEqual([], extensions.actions)
+      extensions.actions = None
+      self.failUnlessEqual(None, extensions.actions)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of actions attribute, [] value.
+      """
+      extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.actions)
+      extensions.actions = []
+      self.failUnlessEqual([], extensions.actions)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of actions attribute, single valid entry.
+      """
+      extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.actions)
+      extensions.actions = [ExtendedAction(), ]
+      self.failUnlessEqual([ExtendedAction(), ], extensions.actions)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of actions attribute, multiple valid entries.
+      """
+      extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.actions)
+      extensions.actions = [ExtendedAction("a", "b", "c", 1), ExtendedAction("d", "e", "f", 2), ]
+      self.failUnlessEqual([ExtendedAction("a", "b", "c", 1), ExtendedAction("d", "e", "f", 2), ], extensions.actions)
+
+   def testConstructor_009(self):
+      """
+      Test assignment of actions attribute, single invalid entry (not an
+      ExtendedAction).
+      """
+      extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.actions)
+      self.failUnlessAssignRaises(ValueError, extensions, "actions", [ RemotePeer(), ])
+      self.failUnlessEqual(None, extensions.actions)
+
+   def testConstructor_010(self):
+      """
+      Test assignment of actions attribute, mixed valid and invalid entries.
+      """
+      extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.actions)
+      self.failUnlessAssignRaises(ValueError, extensions, "actions", [ ExtendedAction(), RemotePeer(), ])
+      self.failUnlessEqual(None, extensions.actions)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      extensions1 = ExtensionsConfig()
+      extensions2 = ExtensionsConfig()
+      self.failUnlessEqual(extensions1, extensions2)
+      self.failUnless(extensions1 == extensions2)
+      self.failUnless(not extensions1 < extensions2)
+      self.failUnless(extensions1 <= extensions2)
+      self.failUnless(not extensions1 > extensions2)
+      self.failUnless(extensions1 >= extensions2)
+      self.failUnless(not extensions1 != extensions2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None (empty
+      lists).
+      """
+      extensions1 = ExtensionsConfig([])
+      extensions2 = ExtensionsConfig([])
+      self.failUnlessEqual(extensions1, extensions2)
+      self.failUnless(extensions1 == extensions2)
+      self.failUnless(not extensions1 < extensions2)
+      self.failUnless(extensions1 <= extensions2)
+      self.failUnless(not extensions1 > extensions2)
+      self.failUnless(extensions1 >= extensions2)
+      self.failUnless(not extensions1 != extensions2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two identical objects, all attributes non-None
+      (non-empty lists).
+      """
+      extensions1 = ExtensionsConfig([ExtendedAction(), ])
+      extensions2 = ExtensionsConfig([ExtendedAction(), ])
+      self.failUnlessEqual(extensions1, extensions2)
+      self.failUnless(extensions1 == extensions2)
+      self.failUnless(not extensions1 < extensions2)
+      self.failUnless(extensions1 <= extensions2)
+      self.failUnless(not extensions1 > extensions2)
+      self.failUnless(extensions1 >= extensions2)
+      self.failUnless(not extensions1 != extensions2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two differing objects, actions differs (one None,
+      one empty).
+      """
+      extensions1 = ExtensionsConfig(None)
+      extensions2 = ExtensionsConfig([])
+      self.failIfEqual(extensions1, extensions2)
+      self.failUnless(not extensions1 == extensions2)
+      self.failUnless(extensions1 < extensions2)
+      self.failUnless(extensions1 <= extensions2)
+      self.failUnless(not extensions1 > extensions2)
+      self.failUnless(not extensions1 >= extensions2)
+      self.failUnless(extensions1 != extensions2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two differing objects, actions differs (one None,
+      one not empty).
+      """
+      extensions1 = ExtensionsConfig(None)
+      extensions2 = ExtensionsConfig([ExtendedAction(), ])
+      self.failIfEqual(extensions1, extensions2)
+      self.failUnless(not extensions1 == extensions2)
+      self.failUnless(extensions1 < extensions2)
+      self.failUnless(extensions1 <= extensions2)
+      self.failUnless(not extensions1 > extensions2)
+      self.failUnless(not extensions1 >= extensions2)
+      self.failUnless(extensions1 != extensions2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two differing objects, actions differs (one empty,
+      one not empty).
+      """
+      extensions1 = ExtensionsConfig([])
+      extensions2 = ExtensionsConfig([ExtendedAction(), ])
+      self.failIfEqual(extensions1, extensions2)
+      self.failUnless(not extensions1 == extensions2)
+      self.failUnless(extensions1 < extensions2)
+      self.failUnless(extensions1 <= extensions2)
+      self.failUnless(not extensions1 > extensions2)
+      self.failUnless(not extensions1 >= extensions2)
+      self.failUnless(extensions1 != extensions2)
+
+   def testComparison_007(self):
+      """
+      Test comparison of two differing objects, actions differs (both not
+      empty).
+      """
+      extensions1 = ExtensionsConfig([ExtendedAction(name="one"), ])
+      extensions2 = ExtensionsConfig([ExtendedAction(name="two"), ])
+      self.failIfEqual(extensions1, extensions2)
+      self.failUnless(not extensions1 == extensions2)
+      self.failUnless(extensions1 < extensions2)
+      self.failUnless(extensions1 <= extensions2)
+      self.failUnless(not extensions1 > extensions2)
+      self.failUnless(not extensions1 >= extensions2)
+      self.failUnless(extensions1 != extensions2)
+
+
 ##########################
 # TestOptionsConfig class
 ##########################
@@ -2036,29 +2509,9 @@ class TestOptionsConfig(unittest.TestCase):
 
    """Tests for the OptionsConfig class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
-
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -2451,29 +2904,9 @@ class TestCollectConfig(unittest.TestCase):
 
    """Tests for the CollectConfig class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
-
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -2858,145 +3291,321 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      pass
+      collect1 = CollectConfig()
+      collect2 = CollectConfig()
+      self.failUnlessEqual(collect1, collect2)
+      self.failUnless(collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(not collect1 != collect2)
 
    def testComparison_002(self):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failUnlessEqual(collect1, collect2)
+      self.failUnless(collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(not collect1 != collect2)
 
    def testComparison_003(self):
       """
       Test comparison of two differing objects, targetDir differs (one None).
       """
-      pass
+      collect1 = CollectConfig(None, "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target2", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_004(self):
       """
       Test comparison of two differing objects, targetDir differs.
       """
-      pass
+      collect1 = CollectConfig("/target1", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target2", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_005(self):
       """
       Test comparison of two differing objects, collectMode differs (one None).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", None, "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_006(self):
       """
       Test comparison of two differing objects, collectMode differs.
       """
-      pass
+      collect1 = CollectConfig("/target", "daily", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_007(self):
       """
       Test comparison of two differing objects, archiveMode differs (one None).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", None, "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_008(self):
       """
       Test comparison of two differing objects, archiveMode differs.
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "targz", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tarbz2", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_009(self):
       """
       Test comparison of two differing objects, ignoreFile differs (one None).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", None, ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_010(self):
       """
       Test comparison of two differing objects, ignoreFile differs.
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore1", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore2", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_011(self):
       """
       Test comparison of two differing objects, absoluteExcludePaths differs
       (one None, one empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", None, ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", [], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_012(self):
       """
       Test comparison of two differing objects, absoluteExcludePaths differs
       (one None, one not empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", None, ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_013(self):
       """
       Test comparison of two differing objects, absoluteExcludePaths differs
       (one empty, one not empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", [], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_014(self):
       """
       Test comparison of two differing objects, absoluteExcludePaths differs
       (both not empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", "/path2", ], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_015(self):
       """
       Test comparison of two differing objects, excludePatterns differs (one
       None, one empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], None, [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], [], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_016(self):
       """
       Test comparison of two differing objects, excludePatterns differs (one
       None, one not empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], None, [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_017(self):
       """
       Test comparison of two differing objects, excludePatterns differs (one
       empty, one not empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], [], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_018(self):
       """
       Test comparison of two differing objects, excludePatterns differs (both
       not empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern", "bogus", ], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_019(self):
       """
       Test comparison of two differing objects, collectDirs differs (one
       None, one empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], None)
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_020(self):
       """
       Test comparison of two differing objects, collectDirs differs (one
       None, one not empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], None)
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(collect1 < collect2)
+      self.failUnless(collect1 <= collect2)
+      self.failUnless(not collect1 > collect2)
+      self.failUnless(not collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_021(self):
       """
       Test comparison of two differing objects, collectDirs differs (one
       empty, one not empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
    def testComparison_022(self):
       """
       Test comparison of two differing objects, collectDirs differs (both
       not empty).
       """
-      pass
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(), CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failIfEqual(collect1, collect2)
+      self.failUnless(not collect1 == collect2)
+      self.failUnless(not collect1 < collect2)
+      self.failUnless(not collect1 <= collect2)
+      self.failUnless(collect1 > collect2)
+      self.failUnless(collect1 >= collect2)
+      self.failUnless(collect1 != collect2)
 
 
 ########################
@@ -3007,29 +3616,9 @@ class TestStageConfig(unittest.TestCase):
 
    """Tests for the StageConfig class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
-
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -3454,29 +4043,9 @@ class TestStoreConfig(unittest.TestCase):
 
    """Tests for the StoreConfig class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
-
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -4121,29 +4690,10 @@ class TestPurgeConfig(unittest.TestCase):
 
    """Tests for the PurgeConfig class."""
 
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      removedir(self.tmpdir)
-
 
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -4367,23 +4917,17 @@ class TestConfig(unittest.TestCase):
 
    def setUp(self):
       try:
-         self.tmpdir = tempfile.mkdtemp()
          self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
    def tearDown(self):
-      removedir(self.tmpdir)
+      pass
 
 
    ##################
    # Utility methods
    ##################
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
@@ -4413,6 +4957,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config(validate=False)
       self.failUnlessEqual(None, config.reference)
+      self.failUnlessEqual(None, config.extensions)
       self.failUnlessEqual(None, config.options)
       self.failUnlessEqual(None, config.collect)
       self.failUnlessEqual(None, config.stage)
@@ -4425,6 +4970,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config(validate=True)
       self.failUnlessEqual(None, config.reference)
+      self.failUnlessEqual(None, config.extensions)
       self.failUnlessEqual(None, config.options)
       self.failUnlessEqual(None, config.collect)
       self.failUnlessEqual(None, config.stage)
@@ -4447,6 +4993,7 @@ class TestConfig(unittest.TestCase):
       contents = open(path).read()
       config = Config(xmlData=contents, validate=False)
       self.failUnlessEqual(None, config.reference)
+      self.failUnlessEqual(None, config.extensions)
       self.failUnlessEqual(None, config.options)
       self.failUnlessEqual(None, config.collect)
       self.failUnlessEqual(None, config.stage)
@@ -4460,6 +5007,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.2"]
       config = Config(xmlPath=path, validate=False)
       self.failUnlessEqual(None, config.reference)
+      self.failUnlessEqual(None, config.extensions)
       self.failUnlessEqual(None, config.options)
       self.failUnlessEqual(None, config.collect)
       self.failUnlessEqual(None, config.stage)
@@ -4491,13 +5039,36 @@ class TestConfig(unittest.TestCase):
 
    def testConstructor_009(self):
       """
+      Test assignment of extensions attribute, None value.
+      """
+      config = Config()
+      config.extensions = None
+      self.failUnlessEqual(None, config.extensions)
+
+   def testConstructor_010(self):
+      """
+      Test assignment of extensions attribute, valid value.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      self.failUnlessEqual(ExtensionsConfig(), config.extensions)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of extensions attribute, invalid value (not ExtensionsConfig).
+      """
+      config = Config()
+      self.failUnlessAssignRaises(ValueError, config, "extensions", CollectDir())
+
+   def testConstructor_012(self):
+      """
       Test assignment of options attribute, None value.
       """
       config = Config()
       config.options = None
       self.failUnlessEqual(None, config.options)
 
-   def testConstructor_010(self):
+   def testConstructor_013(self):
       """
       Test assignment of options attribute, valid value.
       """
@@ -4505,14 +5076,14 @@ class TestConfig(unittest.TestCase):
       config.options = OptionsConfig()
       self.failUnlessEqual(OptionsConfig(), config.options)
 
-   def testConstructor_011(self):
+   def testConstructor_014(self):
       """
       Test assignment of options attribute, invalid value (not OptionsConfig).
       """
       config = Config()
       self.failUnlessAssignRaises(ValueError, config, "options", CollectDir())
 
-   def testConstructor_012(self):
+   def testConstructor_015(self):
       """
       Test assignment of collect attribute, None value.
       """
@@ -4520,7 +5091,7 @@ class TestConfig(unittest.TestCase):
       config.collect = None
       self.failUnlessEqual(None, config.collect)
 
-   def testConstructor_013(self):
+   def testConstructor_016(self):
       """
       Test assignment of collect attribute, valid value.
       """
@@ -4528,14 +5099,14 @@ class TestConfig(unittest.TestCase):
       config.collect = CollectConfig()
       self.failUnlessEqual(CollectConfig(), config.collect)
 
-   def testConstructor_014(self):
+   def testConstructor_017(self):
       """
       Test assignment of collect attribute, invalid value (not CollectConfig).
       """
       config = Config()
       self.failUnlessAssignRaises(ValueError, config, "collect", CollectDir())
 
-   def testConstructor_015(self):
+   def testConstructor_018(self):
       """
       Test assignment of stage attribute, None value.
       """
@@ -4543,7 +5114,7 @@ class TestConfig(unittest.TestCase):
       config.stage = None
       self.failUnlessEqual(None, config.stage)
 
-   def testConstructor_016(self):
+   def testConstructor_019(self):
       """
       Test assignment of stage attribute, valid value.
       """
@@ -4551,14 +5122,14 @@ class TestConfig(unittest.TestCase):
       config.stage = StageConfig()
       self.failUnlessEqual(StageConfig(), config.stage)
 
-   def testConstructor_017(self):
+   def testConstructor_020(self):
       """
       Test assignment of stage attribute, invalid value (not StageConfig).
       """
       config = Config()
       self.failUnlessAssignRaises(ValueError, config, "stage", CollectDir())
 
-   def testConstructor_018(self):
+   def testConstructor_021(self):
       """
       Test assignment of store attribute, None value.
       """
@@ -4566,7 +5137,7 @@ class TestConfig(unittest.TestCase):
       config.store = None
       self.failUnlessEqual(None, config.store)
 
-   def testConstructor_019(self):
+   def testConstructor_022(self):
       """
       Test assignment of store attribute, valid value.
       """
@@ -4574,14 +5145,14 @@ class TestConfig(unittest.TestCase):
       config.store = StoreConfig()
       self.failUnlessEqual(StoreConfig(), config.store)
 
-   def testConstructor_020(self):
+   def testConstructor_023(self):
       """
       Test assignment of store attribute, invalid value (not StoreConfig).
       """
       config = Config()
       self.failUnlessAssignRaises(ValueError, config, "store", CollectDir())
 
-   def testConstructor_021(self):
+   def testConstructor_024(self):
       """
       Test assignment of purge attribute, None value.
       """
@@ -4589,7 +5160,7 @@ class TestConfig(unittest.TestCase):
       config.purge = None
       self.failUnlessEqual(None, config.purge)
 
-   def testConstructor_022(self):
+   def testConstructor_025(self):
       """
       Test assignment of purge attribute, valid value.
       """
@@ -4597,7 +5168,7 @@ class TestConfig(unittest.TestCase):
       config.purge = PurgeConfig()
       self.failUnlessEqual(PurgeConfig(), config.purge)
 
-   def testConstructor_023(self):
+   def testConstructor_026(self):
       """
       Test assignment of purge attribute, invalid value (not PurgeConfig).
       """
@@ -4629,6 +5200,7 @@ class TestConfig(unittest.TestCase):
       """
       config1 = Config()
       config1.reference = ReferenceConfig()
+      config1.extensions = ExtensionsConfig()
       config1.options = OptionsConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig()
@@ -4637,6 +5209,7 @@ class TestConfig(unittest.TestCase):
 
       config2 = Config()
       config2.reference = ReferenceConfig()
+      config2.extensions = ExtensionsConfig()
       config2.options = OptionsConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
@@ -4696,6 +5269,111 @@ class TestConfig(unittest.TestCase):
 
    def testComparison_005(self):
       """
+      Test comparison of two differing objects, extensions differs (one None).
+      """
+      config1 = Config()
+      config2 = Config()
+      config2.extensions = ExtensionsConfig()
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two differing objects, extensions differs (one list empty, one None).
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.extensions = ExtensionsConfig(None)
+      config1.options = OptionsConfig()
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig()
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      config2.extensions = ExtensionsConfig([])
+      config2.options = OptionsConfig()
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig()
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig()
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_007(self):
+      """
+      Test comparison of two differing objects, extensions differs (one list empty, one not empty).
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.extensions = ExtensionsConfig([])
+      config1.options = OptionsConfig()
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig()
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      config2.extensions = ExtensionsConfig([ExtendedAction("one", "two", "three"), ])
+      config2.options = OptionsConfig()
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig()
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig()
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_008(self):
+      """
+      Test comparison of two differing objects, extensions differs (both lists not empty).
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.extensions = ExtensionsConfig([ExtendedAction("one", "two", "three"), ])
+      config1.options = OptionsConfig()
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig()
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config1.reference = ReferenceConfig()
+      config1.extensions = ExtensionsConfig([ExtendedAction("one", "two", "four"), ])
+      config2.options = OptionsConfig()
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig()
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig()
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(not config1 < config2)
+      self.failUnless(not config1 <= config2)
+      self.failUnless(config1 > config2)
+      self.failUnless(config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_009(self):
+      """
       Test comparison of two differing objects, options differs (one None).
       """
       config1 = Config()
@@ -4709,7 +5387,7 @@ class TestConfig(unittest.TestCase):
       self.failUnless(not config1 >= config2)
       self.failUnless(config1 != config2)
 
-   def testComparison_006(self):
+   def testComparison_010(self):
       """
       Test comparison of two differing objects, options differs.
       """
@@ -4737,7 +5415,7 @@ class TestConfig(unittest.TestCase):
       self.failUnless(config1 >= config2)
       self.failUnless(config1 != config2)
 
-   def testComparison_007(self):
+   def testComparison_011(self):
       """
       Test comparison of two differing objects, collect differs (one None).
       """
@@ -4752,7 +5430,7 @@ class TestConfig(unittest.TestCase):
       self.failUnless(not config1 >= config2)
       self.failUnless(config1 != config2)
 
-   def testComparison_008(self):
+   def testComparison_012(self):
       """
       Test comparison of two differing objects, collect differs.
       """
@@ -4780,7 +5458,7 @@ class TestConfig(unittest.TestCase):
       self.failUnless(not config1 >= config2)
       self.failUnless(config1 != config2)
 
-   def testComparison_009(self):
+   def testComparison_013(self):
       """
       Test comparison of two differing objects, stage differs (one None).
       """
@@ -4795,7 +5473,7 @@ class TestConfig(unittest.TestCase):
       self.failUnless(not config1 >= config2)
       self.failUnless(config1 != config2)
 
-   def testComparison_010(self):
+   def testComparison_014(self):
       """
       Test comparison of two differing objects, stage differs.
       """
@@ -4823,7 +5501,7 @@ class TestConfig(unittest.TestCase):
       self.failUnless(not config1 >= config2)
       self.failUnless(config1 != config2)
 
-   def testComparison_011(self):
+   def testComparison_015(self):
       """
       Test comparison of two differing objects, store differs (one None).
       """
@@ -4838,7 +5516,7 @@ class TestConfig(unittest.TestCase):
       self.failUnless(not config1 >= config2)
       self.failUnless(config1 != config2)
 
-   def testComparison_012(self):
+   def testComparison_016(self):
       """
       Test comparison of two differing objects, store differs.
       """
@@ -4866,7 +5544,7 @@ class TestConfig(unittest.TestCase):
       self.failUnless(config1 >= config2)
       self.failUnless(config1 != config2)
 
-   def testComparison_013(self):
+   def testComparison_017(self):
       """
       Test comparison of two differing objects, purge differs (one None).
       """
@@ -4881,7 +5559,7 @@ class TestConfig(unittest.TestCase):
       self.failUnless(not config1 >= config2)
       self.failUnless(config1 != config2)
 
-   def testComparison_014(self):
+   def testComparison_018(self):
       """
       Test comparison of two differing objects, purge differs.
       """
@@ -4932,13 +5610,110 @@ class TestConfig(unittest.TestCase):
 
    def testValidate_003(self):
       """
+      Test validate on an empty extensions section, with a None list.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = None
+      config._validateExtensions()
+
+   def testValidate_004(self):
+      """
+      Test validate on an empty extensions section, with [] for the list.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = []
+      config._validateExtensions()
+
+   def testValidate_005(self):
+      """
+      Test validate on an a extensions section, with one empty extended action.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = [ExtendedAction(), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+   def testValidate_006(self):
+      """
+      Test validate on an a extensions section, with one extended action that
+      has only a name.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = [ExtendedAction(name="name"), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+   def testValidate_007(self):
+      """
+      Test validate on an a extensions section, with one extended action that
+      has only a module.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = [ExtendedAction(module="module"), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+   def testValidate_008(self):
+      """
+      Test validate on an a extensions section, with one extended action that
+      has only a function.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = [ExtendedAction(function="function"), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+   def testValidate_009(self):
+      """
+      Test validate on an a extensions section, with one extended action that
+      has only an index.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = [ExtendedAction(index=12), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+   def testValidate_010(self):
+      """
+      Test validate on an a extensions section, with one extended action that
+      makes sense, no index.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = [ ExtendedAction("one", "two", "three") ]
+      config._validateExtensions()
+
+   def testValidate_011(self):
+      """
+      Test validate on an a extensions section, with one extended action that
+      makes sense, with an index.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = [ ExtendedAction("one", "two", "three", 4) ]
+      config._validateExtensions()
+
+   def testValidate_012(self):
+      """
+      Test validate on an a extensions section, with several extended actions
+      that make sense.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", 1), ExtendedAction("e", "f", "g") ]
+      config._validateExtensions()
+
+   def testValidate_013(self):
+      """
       Test validate on an empty options section.
       """
       config = Config()
       config.options = OptionsConfig()
       self.failUnlessRaises(ValueError, config._validateOptions)
 
-   def testValidate_004(self):
+   def testValidate_014(self):
       """
       Test validate on a non-empty options section, with everything filled in.
       """
@@ -4946,7 +5721,7 @@ class TestConfig(unittest.TestCase):
       config.options = OptionsConfig("monday", "/whatever", "user", "group", "command")
       config._validateOptions()
 
-   def testValidate_005(self):
+   def testValidate_015(self):
       """
       Test validate on a non-empty options section, with individual items missing.
       """
@@ -4969,7 +5744,7 @@ class TestConfig(unittest.TestCase):
       config.options.rcpCommand = None
       self.failUnlessRaises(ValueError, config._validateOptions)
 
-   def testValidate_006(self):
+   def testValidate_016(self):
       """
       Test validate on an empty collect section.
       """
@@ -4977,7 +5752,7 @@ class TestConfig(unittest.TestCase):
       config.collect = CollectConfig()
       self.failUnlessRaises(ValueError, config._validateCollect)
 
-   def testValidate_007(self):
+   def testValidate_017(self):
       """
       Test validate on collect section containing only targetDir.
       """
@@ -4986,7 +5761,7 @@ class TestConfig(unittest.TestCase):
       config.collect.targetDir = "/whatever"
       self.failUnlessRaises(ValueError, config._validateCollect)
 
-   def testValidate_008(self):
+   def testValidate_018(self):
       """
       Test validate on collect section containing only targetDir and one
       collectDirs entry that is empty.
@@ -4997,7 +5772,7 @@ class TestConfig(unittest.TestCase):
       config.collect.collectDirs = [ CollectDir(), ]
       self.failUnlessRaises(ValueError, config._validateCollect)
 
-   def testValidate_009(self):
+   def testValidate_019(self):
       """
       Test validate on collect section containing only targetDir and one
       collectDirs entry with only a path.
@@ -5008,7 +5783,7 @@ class TestConfig(unittest.TestCase):
       config.collect.collectDirs = [ CollectDir(absolutePath="/stuff"), ]
       self.failUnlessRaises(ValueError, config._validateCollect)
 
-   def testValidate_010(self):
+   def testValidate_020(self):
       """
       Test validate on collect section containing only targetDir and one
       collectDirs entry with path, collect mode, archive mode and ignore file.
@@ -5019,7 +5794,7 @@ class TestConfig(unittest.TestCase):
       config.collect.collectDirs = [ CollectDir(absolutePath="/stuff", collectMode="incr", archiveMode="tar", ignoreFile="i"), ]
       config._validateCollect()
 
-   def testValidate_011(self):
+   def testValidate_021(self):
       """
       Test validate on collect section containing targetDir, collect mode,
       archive mode and ignore file, and one collectDirs entry with only a path.
@@ -5033,7 +5808,7 @@ class TestConfig(unittest.TestCase):
       config.collect.collectDirs = [ CollectDir(absolutePath="/stuff"), ]
       config._validateCollect()
 
-   def testValidate_012(self):
+   def testValidate_022(self):
       """
       Test validate on collect section containing targetDir, but with collect mode,
       archive mode and ignore file mixed between main section and directories.
@@ -5050,7 +5825,7 @@ class TestConfig(unittest.TestCase):
       config.collect.collectDirs[-1].collectMode="daily"
       config._validateCollect()
 
-   def testValidate_013(self):
+   def testValidate_023(self):
       """
       Test validate on an empty stage section.
       """
@@ -5058,7 +5833,7 @@ class TestConfig(unittest.TestCase):
       config.stage = StageConfig()
       self.failUnlessRaises(ValueError, config._validateStage)
 
-   def testValidate_014(self):
+   def testValidate_024(self):
       """
       Test validate on stage section containing only targetDir and None for the
       lists.
@@ -5070,7 +5845,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers = None
       self.failUnlessRaises(ValueError, config._validateStage)
 
-   def testValidate_015(self):
+   def testValidate_025(self):
       """
       Test validate on stage section containing only targetDir and [] for the
       lists.
@@ -5082,7 +5857,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers = []
       self.failUnlessRaises(ValueError, config._validateStage)
 
-   def testValidate_016(self):
+   def testValidate_026(self):
       """
       Test validate on stage section containing targetDir and one local peer
       that is empty.
@@ -5093,7 +5868,7 @@ class TestConfig(unittest.TestCase):
       config.stage.localPeers = [LocalPeer(), ]
       self.failUnlessRaises(ValueError, config._validateStage)
 
-   def testValidate_017(self):
+   def testValidate_027(self):
       """
       Test validate on stage section containing targetDir and one local peer
       with only a name.
@@ -5104,7 +5879,7 @@ class TestConfig(unittest.TestCase):
       config.stage.localPeers = [LocalPeer(name="name"), ]
       self.failUnlessRaises(ValueError, config._validateStage)
 
-   def testValidate_018(self):
+   def testValidate_028(self):
       """
       Test validate on stage section containing targetDir and one local peer
       with a name and path, None for remote list.
@@ -5116,7 +5891,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers = None
       config._validateStage()
 
-   def testValidate_019(self):
+   def testValidate_029(self):
       """
       Test validate on stage section containing targetDir and one local peer
       with a name and path, [] for remote list.
@@ -5128,7 +5903,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers = []
       config._validateStage()
 
-   def testValidate_020(self):
+   def testValidate_030(self):
       """
       Test validate on stage section containing targetDir and one remote peer
       that is empty.
@@ -5139,7 +5914,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers = [RemotePeer(), ]
       self.failUnlessRaises(ValueError, config._validateStage)
 
-   def testValidate_021(self):
+   def testValidate_031(self):
       """
       Test validate on stage section containing targetDir and one remote peer
       with only a name.
@@ -5150,7 +5925,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers = [RemotePeer(name="blech"), ]
       self.failUnlessRaises(ValueError, config._validateStage)
 
-   def testValidate_022(self):
+   def testValidate_032(self):
       """
       Test validate on stage section containing targetDir and one remote peer
       with a name and path, None for local list.
@@ -5169,7 +5944,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers[-1].rcpCommand = "command"
       config._validateStage()
 
-   def testValidate_023(self):
+   def testValidate_033(self):
       """
       Test validate on stage section containing targetDir and one remote peer
       with a name and path, [] for local list.
@@ -5188,7 +5963,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers[-1].rcpCommand = "command"
       config._validateStage()
 
-   def testValidate_024(self):
+   def testValidate_034(self):
       """
       Test validate on stage section containing targetDir and one remote and
       one local peer.
@@ -5207,7 +5982,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers[-1].rcpCommand = "command"
       config._validateStage()
 
-   def testValidate_025(self):
+   def testValidate_035(self):
       """
       Test validate on stage section containing targetDir multiple remote and
       local peers.
@@ -5229,7 +6004,7 @@ class TestConfig(unittest.TestCase):
       config.stage.remotePeers[0].rcpCommand = "command"
       config._validateStage()
 
-   def testValidate_026(self):
+   def testValidate_036(self):
       """
       Test validate on an empty store section.
       """
@@ -5237,7 +6012,7 @@ class TestConfig(unittest.TestCase):
       config.store = StoreConfig()
       self.failUnlessRaises(ValueError, config._validateStore)
 
-   def testValidate_027(self):
+   def testValidate_037(self):
       """
       Test validate on store section with everything filled in.
       """
@@ -5254,7 +6029,7 @@ class TestConfig(unittest.TestCase):
       config.store.capacityMode = "overwrite"
       config._validateStore()
 
-   def testValidate_028(self):
+   def testValidate_038(self):
       """
       Test validate on store section missing one each of required fields.
       """
@@ -5303,7 +6078,7 @@ class TestConfig(unittest.TestCase):
       config.store.capacityMode = "overwrite"
       self.failUnlessRaises(ValueError, config._validateStore)
 
-   def testValidate_029(self):
+   def testValidate_039(self):
       """
       Test validate on store section missing one each of device type, drive
       speed and capacity mode and the booleans.
@@ -5375,7 +6150,7 @@ class TestConfig(unittest.TestCase):
       config.store.capacityMode = "overwrite"
       config._validateStore()
 
-   def testValidate_030(self):
+   def testValidate_040(self):
       """
       Test validate on an empty purge section, with a None list.
       """
@@ -5384,7 +6159,7 @@ class TestConfig(unittest.TestCase):
       config.purge.purgeDirs = None
       config._validatePurge()
 
-   def testValidate_031(self):
+   def testValidate_041(self):
       """
       Test validate on an empty purge section, with [] for the list.
       """
@@ -5393,7 +6168,7 @@ class TestConfig(unittest.TestCase):
       config.purge.purgeDirs = []
       config._validatePurge()
 
-   def testValidate_032(self):
+   def testValidate_042(self):
       """
       Test validate on an a purge section, with one empty purge dir.
       """
@@ -5402,7 +6177,7 @@ class TestConfig(unittest.TestCase):
       config.purge.purgeDirs = [PurgeDir(), ]
       self.failUnlessRaises(ValueError, config._validatePurge)
 
-   def testValidate_033(self):
+   def testValidate_043(self):
       """
       Test validate on an a purge section, with one purge dir that has only a
       path.
@@ -5412,7 +6187,7 @@ class TestConfig(unittest.TestCase):
       config.purge.purgeDirs = [PurgeDir(absolutePath="/whatever"), ]
       self.failUnlessRaises(ValueError, config._validatePurge)
 
-   def testValidate_034(self):
+   def testValidate_044(self):
       """
       Test validate on an a purge section, with one purge dir that has only
       retain days.
@@ -5422,7 +6197,7 @@ class TestConfig(unittest.TestCase):
       config.purge.purgeDirs = [PurgeDir(retainDays=3), ]
       self.failUnlessRaises(ValueError, config._validatePurge)
 
-   def testValidate_035(self):
+   def testValidate_045(self):
       """
       Test validate on an a purge section, with one purge dir that makes sense.
       """
@@ -5431,7 +6206,7 @@ class TestConfig(unittest.TestCase):
       config.purge.purgeDirs = [ PurgeDir(absolutePath="/whatever", retainDays=4), ]
       config._validatePurge()
 
-   def testValidate_036(self):
+   def testValidate_046(self):
       """
       Test validate on an a purge section, with several purge dirs that make
       sense.
@@ -5502,6 +6277,49 @@ class TestConfig(unittest.TestCase):
 
    def testParse_007(self):
       """
+      Parse config document containing only a extensions section, containing
+      only required fields, validate=False.
+      """
+      path = self.resources["cback.conf.16"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.extensions = ExtensionsConfig()
+      expected.extensions.actions = []
+      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", None))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_008(self):
+      """
+      Parse config document containing only a extensions section, containing
+      only required fields, validate=True.
+      """
+      path = self.resources["cback.conf.16"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_009(self):
+      """
+      Parse config document containing only a extensions section, containing all
+      required and optional fields, validate=False.
+      """
+      path = self.resources["cback.conf.17"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.extensions = ExtensionsConfig()
+      expected.extensions.actions = []
+      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
+      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", None))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_010(self):
+      """
+      Parse config document containing only a extensions section, containing all
+      required and optional fields, validate=True.
+      """
+      path = self.resources["cback.conf.17"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_011(self):
+      """
       Parse config document containing only an options section, containing only
       required fields, validate=False.
       """
@@ -5511,7 +6329,7 @@ class TestConfig(unittest.TestCase):
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
       self.failUnlessEqual(expected, config)
 
-   def testParse_008(self):
+   def testParse_012(self):
       """
       Parse config document containing only an options section, containing only
       required fields, validate=True.
@@ -5519,7 +6337,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.5"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_009(self):
+   def testParse_013(self):
       """
       Parse config document containing only an options section, containing
       required and optional fields, validate=False.
@@ -5530,7 +6348,7 @@ class TestConfig(unittest.TestCase):
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
       self.failUnlessEqual(expected, config)
 
-   def testParse_010(self):
+   def testParse_014(self):
       """
       Parse config document containing only an options section, containing
       required and optional fields, validate=True.
@@ -5538,7 +6356,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.6"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_011(self):
+   def testParse_015(self):
       """
       Parse config document containing only a collect section, containing only
       required fields, validate=False.
@@ -5550,7 +6368,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs = [CollectDir(absolutePath="/etc"), ]
       self.failUnlessEqual(expected, config)
 
-   def testParse_012(self):
+   def testParse_016(self):
       """
       Parse config document containing only a collect section, containing only
       required fields, validate=True.
@@ -5558,7 +6376,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.7"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_013(self):
+   def testParse_017(self):
       """
       Parse config document containing only a collect section, containing
       required and optional fields, validate=False.
@@ -5580,7 +6398,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs.append(collectDir)
       self.failUnlessEqual(expected, config)
 
-   def testParse_014(self):
+   def testParse_018(self):
       """
       Parse config document containing only a collect section, containing
       required and optional fields, validate=True.
@@ -5588,7 +6406,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.8"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_015(self):
+   def testParse_019(self):
       """
       Parse config document containing only a stage section, containing only
       required fields, validate=False.
@@ -5602,7 +6420,7 @@ class TestConfig(unittest.TestCase):
       expected.stage.remotePeers = [ RemotePeer("machine2", "/opt/backup/collect"), ]
       self.failUnlessEqual(expected, config)
 
-   def testParse_016(self):
+   def testParse_020(self):
       """
       Parse config document containing only a stage section, containing only
       required fields, validate=True.
@@ -5610,7 +6428,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.9"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_017(self):
+   def testParse_021(self):
       """
       Parse config document containing only a stage section, containing all
       required and optional fields, validate=False.
@@ -5628,7 +6446,7 @@ class TestConfig(unittest.TestCase):
       expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       self.failUnlessEqual(expected, config)
 
-   def testParse_018(self):
+   def testParse_022(self):
       """
       Parse config document containing only a stage section, containing all
       required and optional fields, validate=True.
@@ -5636,7 +6454,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.10"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_019(self):
+   def testParse_023(self):
       """
       Parse config document containing only a store section, containing only
       required fields, validate=False.
@@ -5647,7 +6465,7 @@ class TestConfig(unittest.TestCase):
       expected.store = StoreConfig("/opt/backup/staging", mediaType="cdrw-74", devicePath="/dev/cdrw", deviceScsiId="0,0,0")
       self.failUnlessEqual(expected, config)
 
-   def testParse_020(self):
+   def testParse_024(self):
       """
       Parse config document containing only a store section, containing only
       required fields, validate=True.
@@ -5655,7 +6473,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.11"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_021(self):
+   def testParse_025(self):
       """
       Parse config document containing only a store section, containing all
       required and optional fields, validate=False.
@@ -5675,7 +6493,7 @@ class TestConfig(unittest.TestCase):
       expected.store.capacityMode = "fail"
       self.failUnlessEqual(expected, config)
 
-   def testParse_022(self):
+   def testParse_026(self):
       """
       Parse config document containing only a store section, containing all
       required and optional fields, validate=True.
@@ -5683,7 +6501,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.12"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_023(self):
+   def testParse_027(self):
       """
       Parse config document containing only a purge section, containing only
       required fields, validate=False.
@@ -5695,7 +6513,7 @@ class TestConfig(unittest.TestCase):
       expected.purge.purgeDirs = [PurgeDir("/opt/backup/stage", 5), ]
       self.failUnlessEqual(expected, config)
 
-   def testParse_024(self):
+   def testParse_028(self):
       """
       Parse config document containing only a purge section, containing only
       required fields, validate=True.
@@ -5703,7 +6521,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.13"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_025(self):
+   def testParse_029(self):
       """
       Parse config document containing only a purge section, containing all
       required and optional fields, validate=False.
@@ -5718,7 +6536,7 @@ class TestConfig(unittest.TestCase):
       expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
       self.failUnlessEqual(expected, config)
 
-   def testParse_026(self):
+   def testParse_030(self):
       """
       Parse config document containing only a purge section, containing all
       required and optional fields, validate=True.
@@ -5726,7 +6544,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.14"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_027(self):
+   def testParse_031(self):
       """
       Parse complete document containing all required and optional fields,
       validate=False.
@@ -5777,7 +6595,7 @@ class TestConfig(unittest.TestCase):
       expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
       self.failUnlessEqual(expected, config)
 
-   def testParse_028(self):
+   def testParse_032(self):
       """
       Parse complete document containing all required and optional fields,
       validate=True.
@@ -5828,7 +6646,7 @@ class TestConfig(unittest.TestCase):
       expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
       self.failUnlessEqual(expected, config)
 
-   def testParse_029(self):
+   def testParse_033(self):
       """
       Parse a sample from Cedar Backup v1.x, which must still be valid,
       validate=False.
@@ -5865,7 +6683,7 @@ class TestConfig(unittest.TestCase):
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
       self.failUnlessEqual(expected, config)
 
-   def testParse_030(self):
+   def testParse_034(self):
       """
       Parse a sample from Cedar Backup v1.x, which must still be valid,
       validate=True.
@@ -5945,13 +6763,82 @@ class TestConfig(unittest.TestCase):
 
    def testExtractXml_005(self):
       """
+      Extract document containing only a valid extensions section, empty list,
+      validate=True.
+      """
+      before = Config()
+      before.extensions = ExtensionsConfig()
+      before.extensions.actions = []
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_006(self):
+      """
+      Extract document containing only a valid extensions section,
+      validate=True.
+      """
+      before = Config()
+      before.extensions = ExtensionsConfig()
+      before.extensions.actions = []
+      before.extensions.actions.append(ExtendedAction("name", "module", "function"))
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_007(self):
+      """
+      Extract document containing only a valid extensions section, empty list,
+      validate=False.
+      """
+      before = Config()
+      before.extensions = ExtensionsConfig()
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_008(self):
+      """
+      Extract document containing only a valid extensions section,
+      validate=False.
+      """
+      before = Config()
+      before.extensions = ExtensionsConfig()
+      before.extensions.actions = []
+      before.extensions.actions.append(ExtendedAction("name", "module", "function"))
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_009(self):
+      """
+      Extract document containing only an invalid extensions section,
+      validate=True.
+      """
+      before = Config()
+      before.extensions = ExtensionsConfig()
+      before.extensions.actions = []
+      before.extensions.actions.append(ExtendedAction("name", "module", None, None))
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_010(self):
+      """
+      Extract document containing only an invalid extensions section,
+      validate=False.
+      """
+      before = Config()
+      before.extensions = ExtensionsConfig()
+      before.extensions.actions = []
+      before.extensions.actions.append(ExtendedAction("name", "module", None, None))
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_011(self):
+      """
       Extract document containing only a valid options section, validate=True.
       """
       before = Config()
       before.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B")
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_006(self):
+   def testExtractXml_012(self):
       """
       Extract document containing only a valid options section, validate=False.
       """
@@ -5961,7 +6848,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_007(self):
+   def testExtractXml_013(self):
       """
       Extract document containing only an invalid options section,
       validate=True.
@@ -5970,7 +6857,7 @@ class TestConfig(unittest.TestCase):
       before.options = OptionsConfig()
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_008(self):
+   def testExtractXml_014(self):
       """
       Extract document containing only an invalid options section,
       validate=False.
@@ -5981,7 +6868,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_009(self):
+   def testExtractXml_015(self):
       """
       Extract document containing only a valid collect section, empty lists,
       validate=True.
@@ -5994,7 +6881,7 @@ class TestConfig(unittest.TestCase):
       before.collect.collectDirs = [CollectDir("/etc", collectMode="daily"), ]
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_010(self):
+   def testExtractXml_016(self):
       """
       Extract document containing only a valid collect section, empty lists,
       validate=False.
@@ -6009,7 +6896,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_011(self):
+   def testExtractXml_017(self):
       """
       Extract document containing only a valid collect section, non-empty
       lists, validate=True.
@@ -6024,7 +6911,7 @@ class TestConfig(unittest.TestCase):
       before.collect.collectDirs = [CollectDir("/etc", collectMode="daily"), ]
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_012(self):
+   def testExtractXml_018(self):
       """
       Extract document containing only a valid collect section, non-empty
       lists, validate=False.
@@ -6041,7 +6928,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_013(self):
+   def testExtractXml_019(self):
       """
       Extract document containing only an invalid collect section,
       validate=True.
@@ -6050,7 +6937,7 @@ class TestConfig(unittest.TestCase):
       before.collect = CollectConfig()
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_014(self):
+   def testExtractXml_020(self):
       """
       Extract document containing only an invalid collect section,
       validate=False.
@@ -6061,7 +6948,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_015(self):
+   def testExtractXml_021(self):
       """
       Extract document containing only a valid stage section, one empty list,
       validate=True.
@@ -6073,7 +6960,7 @@ class TestConfig(unittest.TestCase):
       before.stage.remotePeers = None
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_016(self):
+   def testExtractXml_022(self):
       """
       Extract document containing only a valid stage section, empty lists,
       validate=False.
@@ -6087,7 +6974,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_017(self):
+   def testExtractXml_023(self):
       """
       Extract document containing only a valid stage section, non-empty lists,
       validate=True.
@@ -6099,7 +6986,7 @@ class TestConfig(unittest.TestCase):
       before.stage.remotePeers = [RemotePeer("machine2", "/opt/backup/collect", remoteUser="backup"), ]
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_018(self):
+   def testExtractXml_024(self):
       """
       Extract document containing only a valid stage section, non-empty lists,
       validate=False.
@@ -6113,7 +7000,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_019(self):
+   def testExtractXml_025(self):
       """
       Extract document containing only an invalid stage section, validate=True.
       """
@@ -6121,7 +7008,7 @@ class TestConfig(unittest.TestCase):
       before.stage = StageConfig()
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_020(self):
+   def testExtractXml_026(self):
       """
       Extract document containing only an invalid stage section,
       validate=False.
@@ -6132,7 +7019,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_021(self):
+   def testExtractXml_027(self):
       """
       Extract document containing only a valid store section, validate=True.
       """
@@ -6146,7 +7033,7 @@ class TestConfig(unittest.TestCase):
       before.store.checkData = True
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_022(self):
+   def testExtractXml_028(self):
       """
       Extract document containing only a valid store section, validate=False.
       """
@@ -6162,7 +7049,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_023(self):
+   def testExtractXml_029(self):
       """
       Extract document containing only an invalid store section, validate=True.
       """
@@ -6170,7 +7057,7 @@ class TestConfig(unittest.TestCase):
       before.store = StoreConfig()
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_024(self):
+   def testExtractXml_030(self):
       """
       Extract document containing only an invalid store section,
       validate=False.
@@ -6181,7 +7068,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_025(self):
+   def testExtractXml_031(self):
       """
       Extract document containing only a valid purge section, empty list,
       validate=True.
@@ -6190,7 +7077,7 @@ class TestConfig(unittest.TestCase):
       before.purge = PurgeConfig()
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_026(self):
+   def testExtractXml_032(self):
       """
       Extract document containing only a valid purge section, empty list,
       validate=False.
@@ -6201,7 +7088,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_027(self):
+   def testExtractXml_033(self):
       """
       Extract document containing only a valid purge section, non-empty list,
       validate=True.
@@ -6212,7 +7099,7 @@ class TestConfig(unittest.TestCase):
       before.purge.purgeDirs.append(PurgeDir(absolutePath="/whatever", retainDays=3))
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_028(self):
+   def testExtractXml_034(self):
       """
       Extract document containing only a valid purge section, non-empty list,
       validate=False.
@@ -6225,7 +7112,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtractXml_029(self):
+   def testExtractXml_035(self):
       """
       Extract document containing only an invalid purge section, validate=True.
       """
@@ -6235,7 +7122,7 @@ class TestConfig(unittest.TestCase):
       before.purge.purgeDirs.append(PurgeDir(absolutePath="/whatever"))
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
-   def testExtractXml_030(self):
+   def testExtractXml_036(self):
       """
       Extract document containing only an invalid purge section,
       validate=False.
@@ -6248,7 +7135,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtract_031(self):
+   def testExtractXml_037(self):
       """
       Extract complete document containing all required and optional fields,
       validate=False.
@@ -6259,7 +7146,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtract_032(self):
+   def testExtractXml_038(self):
       """
       Extract complete document containing all required and optional fields,
       validate=True.
@@ -6270,7 +7157,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=True)
       self.failUnlessEqual(before, after)
 
-   def testExtract_033(self):
+   def testExtractXml_039(self):
       """
       Extract a sample from Cedar Backup v1.x, which must still be valid,
       validate=False.
@@ -6281,7 +7168,7 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
-   def testExtract_034(self):
+   def testExtractXml_040(self):
       """
       Extract a sample from Cedar Backup v1.x, which must still be valid,
       validate=True.
@@ -6300,11 +7187,13 @@ class TestConfig(unittest.TestCase):
 def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
+                              unittest.makeSuite(TestExtendedAction, 'test'), 
                               unittest.makeSuite(TestCollectDir, 'test'), 
                               unittest.makeSuite(TestPurgeDir, 'test'), 
                               unittest.makeSuite(TestLocalPeer, 'test'), 
                               unittest.makeSuite(TestRemotePeer, 'test'), 
                               unittest.makeSuite(TestReferenceConfig, 'test'), 
+                              unittest.makeSuite(TestExtensionsConfig, 'test'), 
                               unittest.makeSuite(TestOptionsConfig, 'test'), 
                               unittest.makeSuite(TestCollectConfig, 'test'), 
                               unittest.makeSuite(TestStageConfig, 'test'), 

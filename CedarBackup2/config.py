@@ -285,6 +285,190 @@ VALID_BOOLEAN_VALUES  = TRUE_BOOLEAN_VALUES + FALSE_BOOLEAN_VALUES
 
 
 ########################################################################
+# ExtendedAction class definition
+########################################################################
+
+class ExtendedAction(object):
+
+   """
+   Class representing an extended action.
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   Essentially, an extended action needs to allow the following to happen::
+
+      exec("from %s import %s" % (module, function))
+      exec("%s(action, configPath")" % function)
+
+   The following restrictions exist on data in this class:
+
+      - The action name must be a non-empty string consisting of lower-case letters and digits.
+      - The module must be a non-empty string and a valid Python identifier.
+      - The function must be an on-empty string and a valid Python identifier.
+      - The index must be a positive integer.
+
+   @sort: __init__, __repr__, __str__, __cmp__, action, module, function, index
+   """
+
+   def __init__(self, name=None, module=None, function=None, index=None):
+      """
+      Constructor for the C{ExtendedAction} class.
+
+      @param name: Name of the extended action
+      @param module: Name of the module containing the extended action function
+      @param function: Name of the extended action function
+      @param index: Index of action, for execution ordering
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      self._name = None
+      self._module = None
+      self._function = None
+      self._index = None
+      self.name = name
+      self.module = module
+      self.function = function
+      self.index = index
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "ExtendedAction(%s, %s, %s, %s)" % (self.name, self.module, self.function, self.index)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._name != other._name:
+         if self._name < other._name:
+            return -1
+         else:
+            return 1
+      if self._module != other._module: 
+         if self._module < other._module: 
+            return -1
+         else:
+            return 1
+      if self._function != other._function:
+         if self._function < other._function:
+            return -1
+         else:
+            return 1
+      if self._index != other._index:
+         if self._index < other._index:
+            return -1
+         else:
+            return 1
+      return 0
+
+   def _setName(self, value):
+      """
+      Property target used to set the action name.
+      The value must be a non-empty string if it is not C{None}.
+      It must also consist only of lower-case letters and digits.
+      @raise ValueError: If the value is an empty string.
+      """
+      pattern = re.compile(r"^[a-z0-9]*$")
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The action name must be a non-empty string.")
+         if not pattern.search(value):
+            raise ValueError("The action name must consist of only lower-case letters and digits.")
+      self._name = value
+
+   def _getName(self):
+      """
+      Property target used to get the action name.
+      """
+      return self._name
+
+   def _setModule(self, value):
+      """
+      Property target used to set the module name.
+      The value must be a non-empty string if it is not C{None}.
+      It must also be a valid Python identifier.
+      @raise ValueError: If the value is an empty string.
+      """
+      pattern = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$")
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The module name must be a non-empty string.")
+         if not pattern.search(value):
+            raise ValueError("The module name must be a valid Python identifier.")
+      self._module = value
+
+   def _getModule(self):
+      """
+      Property target used to get the module name.
+      """
+      return self._module
+
+   def _setFunction(self, value):
+      """
+      Property target used to set the function name.
+      The value must be a non-empty string if it is not C{None}.
+      It must also be a valid Python identifier.
+      @raise ValueError: If the value is an empty string.
+      """
+      pattern = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The function name must be a non-empty string.")
+         if not pattern.search(value):
+            raise ValueError("The function name must be a valid Python identifier.")
+      self._function = value
+
+   def _getFunction(self):
+      """
+      Property target used to get the function name.
+      """
+      return self._function
+
+   def _setIndex(self, value):
+      """
+      Property target used to set the action index.
+      The value must be an integer >= 0.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is None:
+         self._index = None
+      else:
+         try:
+            value = int(value)
+         except TypeError:
+            raise ValueError("Action index value must be an integer >= 0.")
+         if value < 0:
+            raise ValueError("Action index value must be an integer >= 0.")
+         self._index = value
+
+   def _getIndex(self):
+      """
+      Property target used to get the action index.
+      """
+      return self._index
+
+   name = property(_getName, _setName, None, "Name of the extended action.")
+   module = property(_getModule, _setModule, None, "Name of the module containing the extended action function.")
+   function = property(_getFunction, _setFunction, None, "Name of the extended action function.")
+   index = property(_getIndex, _setIndex, None, "Index of action, for execution ordering.")
+
+
+########################################################################
 # CollectDir class definition
 ########################################################################
 
@@ -936,190 +1120,6 @@ class RemotePeer(object):
    collectDir = property(_getCollectDir, _setCollectDir, None, "Collect directory to stage files from on peer.")
    remoteUser = property(_getRemoteUser, _setRemoteUser, None, "Name of backup user on remote peer.")
    rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "Overridden rcp-compatible copy command for peer.")
-
-
-########################################################################
-# ExtendedAction class definition
-########################################################################
-
-class ExtendedAction(object):
-
-   """
-   Class representing an extended action.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
-
-   Essentially, an extended action needs to allow the following to happen::
-
-      exec("from %s import %s" % (module, function))
-      exec("%s(action, configPath")" % function)
-
-   The following restrictions exist on data in this class:
-
-      - The action name must be a non-empty string consisting of lower-case letters and digits.
-      - The module must be a non-empty string and a valid Python identifier.
-      - The function must be an on-empty string and a valid Python identifier.
-      - The index must be a positive integer.
-
-   @sort: __init__, __repr__, __str__, __cmp__, action, module, function, index
-   """
-
-   def __init__(self, name=None, module=None, function=None, index=None):
-      """
-      Constructor for the C{ExtendedAction} class.
-
-      @param name: Name of the extended action
-      @param module: Name of the module containing the extended action function
-      @param function: Name of the extended action function
-      @param index: Index of action, for execution ordering
-
-      @raise ValueError: If one of the values is invalid.
-      """
-      self._name = None
-      self._module = None
-      self._function = None
-      self._index = None
-      self.name = name
-      self.module = module
-      self.function = function
-      self.index = index
-
-   def __repr__(self):
-      """
-      Official string representation for class instance.
-      """
-      return "ExtendedAction(%s, %s, %s, %s)" % (self.name, self.module, self.function, self.index)
-
-   def __str__(self):
-      """
-      Informal string representation for class instance.
-      """
-      return self.__repr__()
-
-   def __cmp__(self, other):
-      """
-      Definition of equals operator for this class.
-      @param other: Other object to compare to.
-      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
-      """
-      if other is None:
-         return 1
-      if self._name != other._name:
-         if self._name < other._name:
-            return -1
-         else:
-            return 1
-      if self._module != other._module: 
-         if self._module < other._module: 
-            return -1
-         else:
-            return 1
-      if self._function != other._function:
-         if self._function < other._function:
-            return -1
-         else:
-            return 1
-      if self._index != other._index:
-         if self._index < other._index:
-            return -1
-         else:
-            return 1
-      return 0
-
-   def _setName(self, value):
-      """
-      Property target used to set the action name.
-      The value must be a non-empty string if it is not C{None}.
-      It must also consist only of lower-case letters and digits.
-      @raise ValueError: If the value is an empty string.
-      """
-      pattern = re.compile(r"^[A-Za-z0-9]*$")
-      if value is not None:
-         if len(value) < 1:
-            raise ValueError("The action name must be a non-empty string.")
-         if not pattern.search(value):
-            raise ValueError("The action name must consist of only lower-case letters and digits.")
-      self._name = value
-
-   def _getName(self):
-      """
-      Property target used to get the action name.
-      """
-      return self._name
-
-   def _setModule(self, value):
-      """
-      Property target used to set the module name.
-      The value must be a non-empty string if it is not C{None}.
-      It must also be a valid Python identifier.
-      @raise ValueError: If the value is an empty string.
-      """
-      pattern = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$")
-      if value is not None:
-         if len(value) < 1:
-            raise ValueError("The module name must be a non-empty string.")
-         if not pattern.search(value):
-            raise ValueError("The module name must be a valid Python identifier.")
-      self._module = value
-
-   def _getModule(self):
-      """
-      Property target used to get the module name.
-      """
-      return self._module
-
-   def _setFunction(self, value):
-      """
-      Property target used to set the function name.
-      The value must be a non-empty string if it is not C{None}.
-      It must also be a valid Python identifier.
-      @raise ValueError: If the value is an empty string.
-      """
-      pattern = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
-      if value is not None:
-         if len(value) < 1:
-            raise ValueError("The function name must be a non-empty string.")
-         if not pattern.search(value):
-            raise ValueError("The function name must be a valid Python identifier.")
-      self._function = value
-
-   def _getFunction(self):
-      """
-      Property target used to get the function name.
-      """
-      return self._function
-
-   def _setIndex(self, value):
-      """
-      Property target used to set the action index.
-      The value must be an integer >= 0.
-      @raise ValueError: If the value is not valid.
-      """
-      if value is None:
-         self._index = None
-      else:
-         try:
-            value = int(value)
-         except TypeError:
-            raise ValueError("Action index value must be an integer >= 0.")
-         if value < 0:
-            raise ValueError("Action index value must be an integer >= 0.")
-         self._index = value
-
-   def _getIndex(self):
-      """
-      Property target used to get the action index.
-      """
-      return self._index
-
-   name = property(_getName, _setName, None, "Name of the extended action.")
-   module = property(_getModule, _setModule, None, "Name of the module containing the extended action function.")
-   function = property(_getFunction, _setFunction, None, "Name of the extended action function.")
-   index = property(_getIndex, _setIndex, None, "Index of action, for execution ordering.")
 
 
 ########################################################################
@@ -2705,6 +2705,12 @@ class Config(object):
       method will be called (with its default arguments) against the
       configuration before extracting the XML.  If configuration is not valid,
       then an XML document will not be extracted.
+   
+      @note: This function is not particularly fast.  This is most noticable
+      when running the regression tests, where the 30 or so extract-related
+      tests take nearly 6 seconds on my Duron 850 (over half the total
+      config-related test time).  However, I think the performance is adequate
+      for our purposes.
 
       @note: It is strongly suggested that the C{validate} option always be set
       to C{True} (the default) unless there is a specific need to write an
@@ -2789,6 +2795,12 @@ class Config(object):
       validation as to whether required elements actually exist unless we have
       to to make sense of the document (instead, that's the job of the
       L{validate} method).
+
+      @note: This function is not particularly fast.  This is most noticable
+      when running the regression tests, where the 30 or so parse- related
+      tests take nearly 5 seconds on my Duron 850 (nearly half the total
+      config-related test time).  However, I think the performance is adequate
+      for our purposes.
 
       @param xmlData: XML data to be parsed
       @type xmlData: String data
@@ -3036,7 +3048,7 @@ class Config(object):
       @return: List of extended actions.
       @raise ValueError: If the data at the location can't be read
       """
-      actions = []
+      lst = []
       for entry in Config._readChildren(parent, "action"):
          if entry.nodeType == Node.ELEMENT_NODE:
             action = ExtendedAction()
@@ -3044,10 +3056,10 @@ class Config(object):
             action.module = Config._readString(entry, "module")
             action.function = Config._readString(entry, "function")
             action.index = Config._readString(entry, "index")
-            actions.append(action);
-      if actions == []:
-         actions = None
-      return actions
+            lst.append(action);
+      if lst == []:
+         lst = None
+      return lst
    _parseExtendedActions = staticmethod(_parseExtendedActions)
 
    def _parseExclusions(parent):
