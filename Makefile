@@ -50,11 +50,11 @@ URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $
 
 DOC_DIR           = ./doc
 DIST_DIR          = ./build
+MANUAL_SRC        = ./manual
 SDIST_DIR         = $(DIST_DIR)/sdist
-MANUAL_SRC        = $(DOC_DIR)/manual
-INTERFACE_DIR     = $(DOC_DIR)/cedar-backup2/interface
-INTERFACE_TEMPDIR = $(DOC_DIR)/cedar-backup2/interface/tmp
-MANUAL_DIR        = $(DOC_DIR)/cedar-backup2/manual
+INTERFACE_DIR     = $(DOC_DIR)/interface
+INTERFACE_TEMPDIR = $(DOC_DIR)/interface/tmp
+MANUAL_DIR        = $(DOC_DIR)/manual
 
 
 ###################
