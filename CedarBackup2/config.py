@@ -2324,7 +2324,7 @@ class Config(object):
       if Config._nodeExists(xmlDom, "//cb_config/collect"):
          collect = CollectConfig()
          collect.targetDir = Config._readString(xmlDom, "//cb_config/collect/collect_dir")
-         collect.collectMode = Config._readString(xmlDom, "//cb_config/collect/mode")
+         collect.collectMode = Config._readString(xmlDom, "//cb_config/collect/collect_mode")
          collect.archiveMode = Config._readString(xmlDom, "//cb_config/collect/archive_mode")
          collect.ignoreFile = Config._readString(xmlDom, "//cb_config/collect/ignore_file")
          collect.absoluteExcludePaths = Config._readList(xmlDom, "//cb_config/collect/exclude/abs_path", Config._readString)
@@ -2428,9 +2428,14 @@ class Config(object):
       We read the following individual fields::
 
          absolutePath            <baseExpr>/abs_path
-         collectMode             <baseExpr>/mode
+         collectMode             <baseExpr>/mode I{or} <baseExpr>/collect_mode
          archiveMode             <baseExpr>/archive_mode
          ignoreFile              <baseExpr>/ignore_file
+
+      The collect mode is a special case.  Just a C{mode} tag is accepted for
+      backwards compatibility, but we prefer C{collect_mode} for consistency
+      with the rest of the config file and to avoid confusion with the archive
+      mode.  If both are provided, only C{mode} will be used.
 
       We also read groups of the following items, one list element per
       item::
@@ -2449,7 +2454,10 @@ class Config(object):
       if Config._nodeExists(xmlDom, baseExpr):
          collectDir = CollectDir()
          collectDir.absolutePath = Config._readString(xmlDom, "%s/abs_path" % baseExpr)
-         collectDir.collectMode = Config._readString(xmlDom, "%s/mode" % baseExpr)
+         if Config._nodeExxists(xmlDom, "%s/mode" % baseExpr):
+            collectDir.collectMode = Config._readString(xmlDom, "%s/mode" % baseExpr)
+         else:
+            collectDir.collectMode = Config._readString(xmlDom, "%s/collect_mode" % baseExpr)
          collectDir.archiveMode = Config._readString(xmlDom, "%s/archive_mode" % baseExpr)
          collectDir.ignoreFile = Config._readString(xmlDom, "%s/ignore_file" % baseExpr)
          collectDir.absoluteExcludePaths = Config._readList(xmlDom, "%s/exclude/abs_path" % baseExpr, Config._readString)
@@ -2870,9 +2878,13 @@ class Config(object):
       We add the following fields to the document::
 
          absolutePath            dir/abs_path
-         collectMode             dir/mode
+         collectMode             dir/collect_mode
          archiveMode             dir/archive_mode
          ignoreFile              dir/ignore_file
+   
+      Note that an original XML document might have listed the collect mode
+      using the C{mode} tag, since we accept both C{collect_mode} and C{mode}.
+      However, here we'll only emit the preferred C{collect_mode} tag.
 
       We also add groups of the following items, one list element per item::
 
@@ -2893,7 +2905,7 @@ class Config(object):
       if collectDir is not None:
          sectionNode = Config._addContainerNode(xmlDom, parentNode, "dir")
          Config._addStringNode(xmlDom, sectionNode, "abs_path", collectDir.absolutePath)
-         Config._addStringNode(xmlDom, sectionNode, "mode", collectDir.collectMode)
+         Config._addStringNode(xmlDom, sectionNode, "collect_mode", collectDir.collectMode)
          Config._addStringNode(xmlDom, sectionNode, "archive_mode", collectDir.archiveMode)
          Config._addStringNode(xmlDom, sectionNode, "ignore_file", collectDir.ignoreFile)
          excludeNode = Config._addContainerNode(xmlDom, sectionNode, "exclude")
