@@ -671,11 +671,11 @@ def deviceMounted(devicePath):
    @return: True if device is mounted, false otherwise.
    """
    if os.path.exists(MTAB_FILE) and os.access(MTAB_FILE, os.R_OK):
-      devicePath = os.path.realpath(devicePath)
+      realPath = os.path.realpath(devicePath)
       lines = open(MTAB_FILE).readlines()
       for line in lines:
          (mountDevice, mountPoint, remainder) = line.split(None, 2)
-         if mountDevice == devicePath:
+         if mountDevice in [ devicePath, realPath, ]:
             logger.debug("Device [%s] is mounted at [%s]." % (devicePath, mountPoint))
             return True
    return False

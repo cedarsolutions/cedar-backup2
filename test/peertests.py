@@ -512,7 +512,7 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = LocalPeer(name, collectDir)
-      peer.stagePeer(targetDir=targetDir)
+      self.failUnlessRaises(IOError, peer.stagePeer,targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual([], stagedFiles)
 
@@ -529,7 +529,7 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = LocalPeer(name, collectDir)
-      peer.stagePeer(targetDir=targetDir)
+      self.failUnlessRaises(IOError, peer.stagePeer,targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual([], stagedFiles)
 
@@ -680,12 +680,19 @@ class TestRemotePeer(unittest.TestCase):
 
    def testBasic_001(self):
       """
-      Make sure exception is thrown for non-absolute collect directory.
+      Make sure exception is thrown for non-absolute collect or working directory.
       """
       name = REMOTE_HOST
       collectDir = "whatever/something/else/not/absolute"
+      workingDir = "/tmp"
       remoteUser = getLogin()
-      self.failUnlessRaises(ValueError, RemotePeer, name, collectDir, remoteUser)
+      self.failUnlessRaises(ValueError, RemotePeer, name, collectDir, workingDir, remoteUser)
+
+      name = REMOTE_HOST
+      collectDir = "/whatever/something/else/not/absolute"
+      workingDir = "tmp"
+      remoteUser = getLogin()
+      self.failUnlessRaises(ValueError, RemotePeer, name, collectDir, workingDir, remoteUser)
 
    def testBasic_002(self):
       """
@@ -693,11 +700,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = "/absolute/path/name"
+      workingDir = "/tmp"
       remoteUser = getLogin()
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessEqual(name, peer.name)
       self.failUnlessEqual(collectDir, peer.collectDir)
+      self.failUnlessEqual(workingDir, peer.workingDir)
       self.failUnlessEqual(remoteUser, peer.remoteUser)
+      self.failUnlessEqual(None, peer.localUser)
       self.failUnlessEqual(None, peer.rcpCommand)
       self.failUnlessEqual(DEF_RCP_COMMAND, peer._rcpCommandList)
 
@@ -708,11 +718,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = "/absolute/path/to/ a large directory"
+      workingDir = "/tmp"
       remoteUser = getLogin()
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessEqual(name, peer.name)
       self.failUnlessEqual(collectDir, peer.collectDir)
+      self.failUnlessEqual(workingDir, peer.workingDir)
       self.failUnlessEqual(remoteUser, peer.remoteUser)
+      self.failUnlessEqual(None, peer.localUser)
       self.failUnlessEqual(None, peer.rcpCommand)
       self.failUnlessEqual(DEF_RCP_COMMAND, peer._rcpCommandList)
 
@@ -722,14 +735,35 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = "/absolute/path/name"
+      workingDir = "/tmp"
       remoteUser = getLogin()
       rcpCommand = "rcp -one --two three \"four five\" 'six seven' eight"
-      peer = RemotePeer(name, collectDir, remoteUser, rcpCommand)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand)
       self.failUnlessEqual(name, peer.name)
       self.failUnlessEqual(collectDir, peer.collectDir)
+      self.failUnlessEqual(workingDir, peer.workingDir)
       self.failUnlessEqual(remoteUser, peer.remoteUser)
+      self.failUnlessEqual(None, peer.localUser)
       self.failUnlessEqual(rcpCommand, peer.rcpCommand)
       self.failUnlessEqual(["rcp", "-one", "--two", "three", "four five", "'six", "seven'", "eight", ], peer._rcpCommandList)
+
+   def testBasic_005(self):
+      """
+      Make sure attributes are set properly for valid constructor input, custom local user command.
+      """
+      name = REMOTE_HOST
+      collectDir = "/absolute/path/to/ a large directory"
+      workingDir = "/tmp"
+      remoteUser = getLogin()
+      localUser = "pronovic"
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, localUser=localUser)
+      self.failUnlessEqual(name, peer.name)
+      self.failUnlessEqual(collectDir, peer.collectDir)
+      self.failUnlessEqual(workingDir, peer.workingDir)
+      self.failUnlessEqual(remoteUser, peer.remoteUser)
+      self.failUnlessEqual(localUser, peer.localUser)
+      self.failUnlessEqual(None, peer.rcpCommand)
+      self.failUnlessEqual(DEF_RCP_COMMAND, peer._rcpCommandList)
 
 
    ###############################
@@ -742,10 +776,11 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = NONEXISTENT_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       remoteUser = getLogin()
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -755,10 +790,11 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       remoteUser = NONEXISTENT_USER
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -768,11 +804,12 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       remoteUser = getLogin()
       rcpCommand = NONEXISTENT_CMD
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
-      peer = RemotePeer(name, collectDir, remoteUser, rcpCommand)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -782,9 +819,10 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       remoteUser = getLogin()
       self.failUnless(not os.path.exists(collectDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -794,11 +832,12 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       os.chmod(collectDir, 0200)    # user can't read his own directory
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
       os.chmod(collectDir, 0777)    # so we can remove it safely
@@ -809,12 +848,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       collectIndicator = self.buildPath(["collect", DEF_COLLECT_INDICATOR, ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(collectIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -824,12 +864,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       collectIndicator = self.buildPath(["collect", NONEXISTENT_FILE, ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(collectIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -840,12 +881,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect directory path", ])
+      workingDir = "/tmp"
       collectIndicator = self.buildPath(["collect directory path", DEF_COLLECT_INDICATOR, ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(collectIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -856,12 +898,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["  you collect here   ", ])
+      workingDir = "/tmp"
       collectIndicator = self.buildPath(["  you collect here   ", NONEXISTENT_FILE, ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(collectIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -871,13 +914,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       collectIndicator = self.buildPath(["collect", DEF_COLLECT_INDICATOR, ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       open(collectIndicator, "w").write("")     # touch the file
       self.failUnless(os.path.exists(collectIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(True, result)
 
@@ -887,13 +931,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       collectIndicator = self.buildPath(["collect", "whatever", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       open(collectIndicator, "w").write("")     # touch the file
       self.failUnless(os.path.exists(collectIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator(collectIndicator="whatever")
       self.failUnlessEqual(True, result)
 
@@ -904,13 +949,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect NOT", ])
+      workingDir = "/tmp"
       collectIndicator = self.buildPath(["collect NOT", DEF_COLLECT_INDICATOR, ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       open(collectIndicator, "w").write("")     # touch the file
       self.failUnless(os.path.exists(collectIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(True, result)
 
@@ -922,13 +968,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath([" from here collect!", ])
+      workingDir = "/tmp"
       collectIndicator = self.buildPath([" from here collect!", "whatever, dude", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       open(collectIndicator, "w").write("")     # touch the file
       self.failUnless(os.path.exists(collectIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       result = peer.checkCollectIndicator(collectIndicator="whatever, dude")
       self.failUnlessEqual(True, result)
 
@@ -943,10 +990,11 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = NONEXISTENT_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       remoteUser = getLogin()
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
 
    def testWriteStageIndicator_002(self):
@@ -955,10 +1003,11 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       remoteUser = NONEXISTENT_USER
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
 
    def testWriteStageIndicator_003(self):
@@ -967,11 +1016,12 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       remoteUser = getLogin()
       rcpCommand = NONEXISTENT_CMD
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
-      peer = RemotePeer(name, collectDir, remoteUser, rcpCommand)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand)
       self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
 
    def testWriteStageIndicator_004(self):
@@ -980,9 +1030,10 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       remoteUser = getLogin()
       self.failUnless(not os.path.exists(collectDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises(ValueError, peer.writeStageIndicator)
 
    def testWriteStageIndicator_005(self):
@@ -991,13 +1042,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       stageIndicator = self.buildPath(["collect", DEF_STAGE_INDICATOR, ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(stageIndicator))
       os.chmod(collectDir, 0400)    # read-only for user
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
       self.failUnless(not os.path.exists(stageIndicator))
       os.chmod(collectDir, 0777)    # so we can remove it safely
@@ -1008,12 +1060,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       stageIndicator = self.buildPath(["collect", DEF_STAGE_INDICATOR, ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(stageIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       peer.writeStageIndicator()
       self.failUnless(os.path.exists(stageIndicator))
 
@@ -1023,12 +1076,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       stageIndicator = self.buildPath(["collect", "newname", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(stageIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       peer.writeStageIndicator(stageIndicator="newname")
       self.failUnless(os.path.exists(stageIndicator))
 
@@ -1039,12 +1093,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["with spaces collect", ])
+      workingDir = "/tmp"
       stageIndicator = self.buildPath(["with spaces collect", DEF_STAGE_INDICATOR, ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(stageIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       peer.writeStageIndicator()
       self.failUnless(os.path.exists(stageIndicator))
 
@@ -1055,12 +1110,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect, soon", ])
+      workingDir = "/tmp"
       stageIndicator = self.buildPath(["collect, soon", "new name with spaces", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(stageIndicator))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       peer.writeStageIndicator(stageIndicator="new name with spaces")
       self.failUnless(os.path.exists(stageIndicator))
 
@@ -1075,13 +1131,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = NONEXISTENT_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_002(self):
@@ -1090,13 +1147,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = NONEXISTENT_USER
       os.mkdir(collectDir)
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_003(self):
@@ -1105,6 +1163,7 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       rcpCommand = NONEXISTENT_CMD
@@ -1112,7 +1171,7 @@ class TestRemotePeer(unittest.TestCase):
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
-      peer = RemotePeer(name, collectDir, remoteUser, rcpCommand)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand)
       self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_004(self):
@@ -1121,12 +1180,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       os.mkdir(targetDir)
       self.failUnless(not os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_005(self):
@@ -1135,6 +1195,7 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
@@ -1142,7 +1203,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       os.chmod(collectDir, 0200)    # user can't read his own directory
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
       os.chmod(collectDir, 0777)    # so we can remove it safely
 
@@ -1152,10 +1213,11 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = "non/absolute/target"
       remoteUser = getLogin()
       self.failUnless(not os.path.exists(collectDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises(ValueError, peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_007(self):
@@ -1164,12 +1226,13 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(not os.path.exists(targetDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises(ValueError, peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_008(self):
@@ -1178,6 +1241,7 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
@@ -1185,7 +1249,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       os.chmod(targetDir, 0400)    # read-only for user
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
       os.chmod(collectDir, 0777)    # so we can remove it safely
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
@@ -1197,13 +1261,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual([], stagedFiles)
@@ -1216,13 +1281,14 @@ class TestRemotePeer(unittest.TestCase):
       """
       name = REMOTE_HOST
       collectDir = self.buildPath(["collect", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target DIR", ])
       remoteUser = getLogin()
       os.mkdir(collectDir)
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual([], stagedFiles)
@@ -1234,13 +1300,14 @@ class TestRemotePeer(unittest.TestCase):
       self.extractTar("tree1")
       name = REMOTE_HOST
       collectDir = self.buildPath(["tree1", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       peer.stagePeer(targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(7, len(stagedFiles))
@@ -1260,13 +1327,14 @@ class TestRemotePeer(unittest.TestCase):
       self.extractTar("tree1")
       name = REMOTE_HOST
       collectDir = self.buildPath(["tree1", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["write the target here, now!", ])
       remoteUser = getLogin()
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       peer.stagePeer(targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(7, len(stagedFiles))
@@ -1286,13 +1354,14 @@ class TestRemotePeer(unittest.TestCase):
       self.extractTar("tree9")
       name = REMOTE_HOST
       collectDir = self.buildPath(["tree9", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(2, len(stagedFiles))
@@ -1306,13 +1375,14 @@ class TestRemotePeer(unittest.TestCase):
       self.extractTar("tree1")
       name = REMOTE_HOST
       collectDir = self.buildPath(["tree1", ])
+      workingDir = "/tmp"
       targetDir = self.buildPath(["target", ])
       remoteUser = getLogin()
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
-      peer = RemotePeer(name, collectDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
       if getMaskAsMode() == 0400:
          permissions = 0642   # arbitrary, but different than umask would give
       else:
@@ -1352,6 +1422,7 @@ def suite():
                                  unittest.makeSuite(TestLocalPeer, 'test'),
                                  unittest.makeSuite(TestRemotePeer, 'testBasic'), 
                                ))
+
 
 ########################################################################
 # Module entry point

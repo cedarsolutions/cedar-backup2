@@ -16,8 +16,9 @@
 
 ITEMS TO TEST
 
-* Test stage process
-* Test store procss
+* Test store process for non-first day of week
+* Test store process where disc would be filled
+* Test rebuild process on first day of week
 * Build some unit tests for generic action-related code
 
 BUGS TO FIX
@@ -26,8 +27,8 @@ BUGS TO FIX
 TESTS TO ADD
 
 * Create tests for new localUser functionality in creating remote peer.
-* Create tests for new working dir on remote peer
 * Create tests for creating tarfile with extremely long names (> 100 for link, > 256 for file)
+* Refactor out consistency check code and test it?
 * Create tests for number of files copied with stagePeer() - I added this functionality.
 
 
