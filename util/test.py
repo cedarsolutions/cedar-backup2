@@ -73,11 +73,13 @@ directory.)
 
 Finally, this script might be used people who won't have an environment that
 allows running all of the tests, especially certain tests related to remote
-connectivity.  Most people should run the script with no arguments.  This will
-result in a "reduced feature set" test suite that with no surprising system or
-network dependencies.  People who understand what they're doing can put "full"
-as one of the arguments on the command-line, and they'll get all of the
-available tests.
+connectivity, loopback filesystems, etc.  Most people should run the script
+with no arguments.  This will result in a "reduced feature set" test suite with
+no surprising system, kernel or network dependencies.  People who understand
+what they're doing can put "full" as one of the arguments on the command-line,
+and they'll get all of the available tests (or they can dig further and
+explicitly set certain environment variables to get more precise control over
+what will be tested).
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -133,10 +135,11 @@ def main():
          print "the expected location.  If the import succeeds, you may be"
          print "using an unexpected version of the test suite."
          print ""
+      import test.utiltests as utiltests
       import test.knapsacktests as knapsacktests
       import test.filesystemtests as filesystemtests
       import test.peertests as peertests
-      import test.utiltests as utiltests
+      import test.imagetests as imagetests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -145,9 +148,11 @@ def main():
 
    # Set flags in the environment to control tests
    if "full" in sys.argv:
-      os.environ["PEERTESTS_REMOTE"] = "Y"
+      os.environ["PEERTESTS_FULL"] = "Y"
+      os.environ["IMAGETESTS_FULL"] = "Y"
    else:
-      os.environ["PEERTESTS_REMOTE"] = "N"
+      os.environ["PEERTESTS_FULL"] = "N"
+      os.environ["IMAGETESTS_FULL"] = "N"
 
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."
@@ -166,6 +171,7 @@ def main():
                                knapsacktests.suite(), 
                                filesystemtests.suite(),
                                peertests.suite(),
+                               imagetests.suite(),
                               ))
    unittest.TextTestRunner(verbosity=1).run(suite)
    print ""
