@@ -106,12 +106,10 @@ class IsoImage(object):
    ===================================================
 
       Although this class is implemented in terms of the C{mkisofs} program,
-      its "image contents" semantics are slightly different than the original
+      its standard "image contents" semantics are slightly different than the original
       C{mkisofs} semantics.  The difference is that files and directories are
       added to the image with some additional information about their source
-      directory kept intact.  I feel that this behavior (described in more
-      detail below) is more consistent than the original C{mkisofs} behavior.
-      However, to be fair, it is not quite as flexible.
+      directory kept intact.  
 
       As an example, suppose you add the file C{/etc/profile} to your image and
       you do not configure a graft point.  The file C{/profile} will be created
@@ -126,9 +124,13 @@ class IsoImage(object):
       from above, let's assume you set a graft point of C{base} when adding
       C{/etc/profile} and C{/etc/X11} to your image.  In this case, the file
       C{/base/profile} and the directory C{/base/X11} would be added to the
-      image.  Again, this behavior differs somewhat from the original
-      C{mkisofs} behavior.  It is arguably more "consistent", but is probably
-      less flexible in a general sense.
+      image.  
+
+      I feel that this behavior is more consistent than the original C{mkisofs}
+      behavior.  However, to be fair, it is not quite as flexible, and some
+      users might not like it.  For this reason, the C{contentsOnly} parameter
+      to the L{addEntry} method can be used to revert to the original behavior
+      if desired.
 
    @sort: __init__, addEntry, getEstimatedSize, _getEstimatedSize, writeImage, pruneImage
           _pruneImage, _calculateSizes, _buildEntries, _expandEntries, _buildDirEntries
@@ -364,7 +366,7 @@ class IsoImage(object):
    # General public methods
    #########################
 
-   def addEntry(self, path, graftPoint=None, override=False):
+   def addEntry(self, path, graftPoint=None, override=False, contentsOnly=False):
       """
       Adds an individual file or directory into the ISO image.
 
@@ -372,6 +374,10 @@ class IsoImage(object):
       entry will be placed into the image at the root directory, but this
       behavior can be overridden using the C{graftPoint} parameter or instance
       variable.
+
+      You can use the C{contentsOnly} behavior to revert to the "original"
+      C{mkisofs} behavior for adding directories, which is to add only the
+      items within the directory, and not the directory itself.
 
       @note: An exception will be thrown if the path has already been added to
       the image, unless the C{override} parameter is set to C{True}.
@@ -395,6 +401,12 @@ class IsoImage(object):
       @param graftPoint: Graft point to be used when adding this entry
       @type graftPoint: String representing a graft point path, as described above
 
+      @param override: Override an existing entry with the same path.
+      @type override: Boolean true/false
+
+      @param contentsOnly: Add directory contents only (standard C{mkisofs} behavior).
+      @type contentsOnly: Boolean true/false
+
       @raise ValueError: If path is not a file or directory, or does not exist.
       @raise ValueError: If the path has already been added, and override is not set.
       """
@@ -405,11 +417,20 @@ class IsoImage(object):
          raise ValueError("Path must not be a link.") 
       if os.path.isdir(path):
          if graftPoint is not None:
-            self.entries[path] = os.path.join(graftPoint, os.path.basename(path))
+            if contentsOnly:
+               self.entries[path] = graftPoint
+            else:
+               self.entries[path] = os.path.join(graftPoint, os.path.basename(path))
          elif self.graftPoint is not None: 
-            self.entries[path] = os.path.join(self.graftPoint, os.path.basename(path))
+            if contentsOnly:
+               self.entries[path] = self.graftPoint
+            else:
+               self.entries[path] = os.path.join(self.graftPoint, os.path.basename(path))
          else:
-            self.entries[path] = os.path.basename(path)
+            if contentsOnly:
+               self.entries[path] = None
+            else:
+               self.entries[path] = os.path.basename(path)
       elif os.path.isfile(path):
          if graftPoint is not None:
             self.entries[path] = graftPoint

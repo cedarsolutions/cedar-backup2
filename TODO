@@ -17,8 +17,4 @@
 * Change sort order of parameters, classes within modules, etc. where needed in Epydoc
 * Implement a removeUnchanged() method on the backup files list, taking same as its digest output
 * Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
-* PurgeItemList needs to match up better with requirements of purge stage (i.e. way to purge files of a certain age)
-* We maybe do want the default mkisofs "add a dir means add just its contents" behavior?  Maybe with a switch?
-* Decide whether some other classes can benefit from the property() functionality (MediaCapacity, for instance, could be
-  changed to only allow get and could validate that we have a tuple of integers, etc.; MediaDescription could be changed to
-  only allow access to its elements, etc., etc.)
+* PurgeItemList needs to match up better with requirements of purge action (i.e. way to purge files of a certain age)

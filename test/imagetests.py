@@ -935,7 +935,7 @@ class TestIsoImage(unittest.TestCase):
       isoImage = IsoImage(graftPoint="p")
       self.failUnlessEqual({}, isoImage.entries)
       isoImage.addEntry(dir1)
-      self.failUnlessEqual({ dir1:"p/tree9" }, isoImage.entries)
+      self.failUnlessEqual({ dir1:os.path.join("p", "tree9") }, isoImage.entries)
 
    def testAddEntry_011(self):
       """
@@ -946,20 +946,128 @@ class TestIsoImage(unittest.TestCase):
       isoImage = IsoImage()
       self.failUnlessEqual({}, isoImage.entries)
       isoImage.addEntry(dir1, graftPoint="s")
-      self.failUnlessEqual({ dir1:"s/tree9", }, isoImage.entries)
+      self.failUnlessEqual({ dir1:os.path.join("s", "tree9"), }, isoImage.entries)
 
    def testAddEntry_012(self):
       """
-      Attempt to add a directory, graft point set on the object and methods levels.
+      Attempt to add a file, no graft point set, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      file1 = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file1, contentsOnly=True)
+      self.failUnlessEqual({ file1:None, }, isoImage.entries)
+
+   def testAddEntry_013(self):
+      """
+      Attempt to add a file, graft point set on the object level,
+      contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      file1 = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage(graftPoint="whatever")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file1, contentsOnly=True)
+      self.failUnlessEqual({ file1:"whatever", }, isoImage.entries)
+
+   def testAddEntry_014(self):
+      """
+      Attempt to add a file, graft point set on the method level,
+      contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      file1 = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file1, graftPoint="stuff", contentsOnly=True)
+      self.failUnlessEqual({ file1:"stuff", }, isoImage.entries)
+
+   def testAddEntry_015(self):
+      """
+      Attempt to add a file, graft point set on the object and method levels,
+      contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      file1 = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage(graftPoint="whatever")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file1, graftPoint="stuff", contentsOnly=True)
+      self.failUnlessEqual({ file1:"stuff", }, isoImage.entries)
+
+   def testAddEntry_016(self):
+      """
+      Attempt to add a file, graft point set on the object and method levels,
+      where method value is None (which can't be distinguished from the method
+      value being unset), contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      file1 = self.buildPath([ "tree9", "file001", ])
+      isoImage = IsoImage(graftPoint="whatever")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(file1, graftPoint=None, contentsOnly=True)
+      self.failUnlessEqual({ file1:"whatever", }, isoImage.entries)
+
+   def testAddEntry_017(self):
+      """
+      Attempt to add a directory, no graft point set, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      dir1 = self.buildPath([ "tree9" ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(dir1, contentsOnly=True)
+      self.failUnlessEqual({ dir1:None, }, isoImage.entries)
+
+   def testAddEntry_018(self):
+      """
+      Attempt to add a directory, graft point set on the object level,
+      contentsOnly=True.
       """
       self.extractTar("tree9")
       dir1 = self.buildPath([ "tree9" ])
       isoImage = IsoImage(graftPoint="p")
       self.failUnlessEqual({}, isoImage.entries)
-      isoImage.addEntry(dir1, graftPoint="s")
-      self.failUnlessEqual({ dir1:"s/tree9", }, isoImage.entries)
+      isoImage.addEntry(dir1, contentsOnly=True)
+      self.failUnlessEqual({ dir1:"p" }, isoImage.entries)
 
-   def testAddEntry_013(self):
+   def testAddEntry_019(self):
+      """
+      Attempt to add a directory, graft point set on the method level,
+      contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      dir1 = self.buildPath([ "tree9" ])
+      isoImage = IsoImage()
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(dir1, graftPoint="s", contentsOnly=True)
+      self.failUnlessEqual({ dir1:"s", }, isoImage.entries)
+
+   def testAddEntry_020(self):
+      """
+      Attempt to add a directory, graft point set on the object and methods
+      levels, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      dir1 = self.buildPath([ "tree9" ])
+      isoImage = IsoImage(graftPoint="p")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(dir1, graftPoint="s", contentsOnly=True)
+      self.failUnlessEqual({ dir1:"s", }, isoImage.entries)
+
+   def testAddEntry_021(self):
+      """
+      Attempt to add a directory, graft point set on the object and methods
+      levels, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      dir1 = self.buildPath([ "tree9" ])
+      isoImage = IsoImage(graftPoint="p")
+      self.failUnlessEqual({}, isoImage.entries)
+      isoImage.addEntry(dir1, graftPoint="s", contentsOnly=True)
+      self.failUnlessEqual({ dir1:"s", }, isoImage.entries)
+
+   def testAddEntry_022(self):
       """
       Attempt to add a file that has already been added, override=False.
       """
@@ -972,7 +1080,7 @@ class TestIsoImage(unittest.TestCase):
       self.failUnlessRaises(ValueError, isoImage.addEntry, file1, override=False)
       self.failUnlessEqual({ file1:None, }, isoImage.entries)
 
-   def testAddEntry_014(self):
+   def testAddEntry_023(self):
       """
       Attempt to add a file that has already been added, override=True.
       """
@@ -985,7 +1093,7 @@ class TestIsoImage(unittest.TestCase):
       isoImage.addEntry(file1, override=True)
       self.failUnlessEqual({ file1:None, }, isoImage.entries)
 
-   def testAddEntry_015(self):
+   def testAddEntry_024(self):
       """
       Attempt to add a directory that has already been added, override=False, changing the graft point.
       """
@@ -998,7 +1106,7 @@ class TestIsoImage(unittest.TestCase):
       self.failUnlessRaises(ValueError, isoImage.addEntry, file1, graftPoint="two", override=False)
       self.failUnlessEqual({ file1:"one", }, isoImage.entries)
 
-   def testAddEntry_016(self):
+   def testAddEntry_025(self):
       """
       Attempt to add a directory that has already been added, override=True, changing the graft point.
       """
@@ -1529,6 +1637,332 @@ class TestIsoImage(unittest.TestCase):
       self.failUnless(os.path.join(mountPath, "something", "tree9", "dir002", "link004", ) in fsList)
       self.failUnless(os.path.join(mountPath, "something", "tree9", "dir002", "dir001", ) in fsList)
       self.failUnless(os.path.join(mountPath, "something", "tree9", "dir002", "dir002", ) in fsList)
+
+   def testWriteImage_015(self):
+      """
+      Attempt to write an image containing only an empty directory, no graft
+      point, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir1 = self.buildPath([ "tree9", "dir001", "dir002", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir1, contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(1, len(fsList))
+      self.failUnless(mountPath in fsList)
+
+   def testWriteImage_016(self):
+      """
+      Attempt to write an image containing only an empty directory, with a
+      graft point, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir1 = self.buildPath([ "tree9", "dir001", "dir002", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir1, graftPoint="base", contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(2, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "base") in fsList)
+
+   def testWriteImage_017(self):
+      """
+      Attempt to write an image containing only a non-empty directory, no graft
+      point, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir1 = self.buildPath([ "tree9", "dir002" ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir1, contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(9, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "link003", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "link004", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "dir002", ) in fsList)
+
+   def testWriteImage_018(self):
+      """
+      Attempt to write an image containing only a non-empty directory, with a
+      graft point, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir1 = self.buildPath([ "tree9", "dir002" ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir1, graftPoint=os.path.join("something", "else"), contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(11, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "something", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "else", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "else", "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "else", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "else", "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "else", "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "else", "link003", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "else", "link004", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "else", "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "else", "dir002", ) in fsList)
+
+   def testWriteImage_019(self):
+      """
+      Attempt to write an image containing only a file, no graft point,
+      contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      file1 = self.buildPath([ "tree9", "file001" ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file1, contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(2, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "file001", ) in fsList)
+
+   def testWriteImage_020(self):
+      """
+      Attempt to write an image containing only a file, with a graft point,
+      contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      file1 = self.buildPath([ "tree9", "file001" ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file1, graftPoint="point", contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(3, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "point", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "point", "file001", ) in fsList)
+
+   def testWriteImage_021(self):
+      """
+      Attempt to write an image containing a file and an empty directory, no
+      graft points, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      file1 = self.buildPath([ "tree9", "file001" ])
+      dir1 = self.buildPath([ "tree9", "dir001", "dir002", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file1, contentsOnly=True)
+      isoImage.addEntry(dir1, contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(2, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "file001", ) in fsList)
+
+   def testWriteImage_022(self):
+      """
+      Attempt to write an image containing a file and an empty directory, with
+      graft points, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage(graftPoint="base")
+      file1 = self.buildPath([ "tree9", "file001" ])
+      dir1 = self.buildPath([ "tree9", "dir001", "dir002", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file1, graftPoint="other", contentsOnly=True)
+      isoImage.addEntry(dir1, contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(4, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "other", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "other", "file001", ) in fsList)
+
+   def testWriteImage_023(self):
+      """
+      Attempt to write an image containing a file and a non-empty directory,
+      mixed graft points, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage(graftPoint="base")
+      file1 = self.buildPath([ "tree9", "file001" ])
+      dir1 = self.buildPath([ "tree9", "dir001", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file1, graftPoint=None, contentsOnly=True)
+      isoImage.addEntry(dir1, contentsOnly=True)
+      self.failUnlessRaises(IOError, isoImage.writeImage, imagePath)    # ends up with a duplicate name
+
+   def testWriteImage_024(self):
+      """
+      Attempt to write an image containing several files and a non-empty
+      directory, mixed graft points, contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      file1 = self.buildPath([ "tree9", "file001" ])
+      file2 = self.buildPath([ "tree9", "file002" ])
+      dir1 = self.buildPath([ "tree9", "dir001", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file1, contentsOnly=True)
+      isoImage.addEntry(file2, graftPoint="other", contentsOnly=True)
+      isoImage.addEntry(dir1, graftPoint="base", contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(12, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "base", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "other", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "other", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "link003", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "dir002", ) in fsList)
+
+   def testWriteImage_025(self):
+      """
+      Attempt to write an image which has been pruned, containing several files
+      and a non-empty directory, mixed graft points, contentsOnly=True (results
+      should be identical to test #24 because prune should be non-lossy).
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      file1 = self.buildPath([ "tree9", "file001" ])
+      file2 = self.buildPath([ "tree9", "file002" ])
+      dir1 = self.buildPath([ "tree9", "dir001", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(file1, contentsOnly=True)
+      isoImage.addEntry(file2, graftPoint="other", contentsOnly=True)
+      isoImage.addEntry(dir1, graftPoint="base", contentsOnly=True)
+      isoImage.pruneImage(convertSize(650, UNIT_MBYTES, UNIT_BYTES))     # shouldn't remove any files, but will force expansion
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(12, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "base", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "other", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "other", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "link003", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "base", "dir002", ) in fsList)
+
+   def testWriteImage_026(self):
+      """
+      Attempt to write an image containing a deeply-nested directory,
+      contentsOnly=True.
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir1 = self.buildPath([ "tree9", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir1, graftPoint="something", contentsOnly=True)
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(23, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "something", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "link003", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "dir002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "link003", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "link004", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "dir002", ) in fsList)
+
+   def testWriteImage_027(self):
+      """
+      Attempt to write an image which has been pruned, containing a deeply-
+      nested directory, contentsOnly=True (results should be identical to test
+      #26 because prune should be non-lossy).
+      """
+      self.extractTar("tree9")
+      isoImage = IsoImage()
+      dir1 = self.buildPath([ "tree9", ])
+      imagePath = self.buildPath([ "image.iso", ])
+      isoImage.addEntry(dir1, graftPoint="something", contentsOnly=True)
+      isoImage.pruneImage(convertSize(650, UNIT_MBYTES, UNIT_BYTES))     # shouldn't remove any files, but will force expansion
+      isoImage.writeImage(imagePath)
+      mountPath = self.mountImage(imagePath)
+      fsList = FilesystemList()
+      fsList.addDirContents(mountPath)
+      self.failUnlessEqual(23, len(fsList))
+      self.failUnless(mountPath in fsList)
+      self.failUnless(os.path.join(mountPath, "something", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "link003", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir001", "dir002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "file001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "file002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "link001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "link002", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "link003", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "link004", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "dir001", ) in fsList)
+      self.failUnless(os.path.join(mountPath, "something", "dir002", "dir002", ) in fsList)
 
 
 #######################################################################
