@@ -190,7 +190,7 @@ class TestIsoImage(unittest.TestCase):
       args = [ "mount", "-t", "iso9660", "-o", "loop", imagePath, mountPath, ]
       (result, output) = executeCommand(SUDO_CMD, args, returnOutput=True)
       if result != 0:
-         raise IOError("Error (%d) executing mkisofs command to mount image." % result)
+         raise IOError("Error (%d) executing command to mount image." % result)
       self.mounted = True
       return mountPath
       
@@ -212,7 +212,7 @@ class TestIsoImage(unittest.TestCase):
       args = [ "umount", "-d", "-t", "iso9660", mountPath, ]
       (result, output) = executeCommand(SUDO_CMD, args, returnOutput=True)
       if result != 0:
-         raise IOError("Error (%d) executing mkisofs command to unmount image." % result)
+         raise IOError("Error (%d) executing command to unmount image." % result)
       self.mounted = False
 
 
