@@ -47,7 +47,6 @@ XSLTPROC                 = xsltproc
 ############
 
 INSTALL_DIR              = ../cedar-backup2/manual
-INSTALL_CHUNK_DIR        = $(INSTALL_DIR)/chunk
 
 XSL_DIR                  = ../../util/docbook
 STYLES_CSS               = $(XSL_DIR)/styles.css
@@ -84,9 +83,6 @@ clean:
 $(INSTALL_DIR):
 	$(INSTALL) -d $(INSTALL_DIR)
 
-$(INSTALL_CHUNK_DIR):
-	$(INSTALL) -d $(INSTALL_CHUNK_DIR)
-
 
 ###################
 # HTML build rules
@@ -118,11 +114,11 @@ $(MANUAL_CHUNK_TARGET): $(MANUAL_ALL_SOURCE) $(STYLES_CSS) $(MANUAL_IMAGES)
 	$(CP) $(STYLES_CSS) $(MANUAL_CHUNK_DIR)
 	$(CP) $(MANUAL_IMAGES) $(MANUAL_CHUNK_DIR)/images
 
-install-manual-chunk: $(MANUAL_CHUNK_TARGET) $(INSTALL_CHUNK_DIR)
-	$(INSTALL) -d $(INSTALL_CHUNK_DIR)/images
-	$(INSTALL) $(MANUAL_CHUNK_DIR)/*.html $(INSTALL_CHUNK_DIR)
-	$(INSTALL) $(STYLES_CSS) $(INSTALL_CHUNK_DIR)
-	$(INSTALL) $(MANUAL_IMAGES) $(INSTALL_CHUNK_DIR)/images
+install-manual-chunk: $(MANUAL_CHUNK_TARGET) $(INSTALL_DIR)
+	$(INSTALL) -d $(INSTALL_DIR)/images
+	$(INSTALL) $(MANUAL_CHUNK_DIR)/*.html $(INSTALL_DIR)
+	$(INSTALL) $(STYLES_CSS) $(INSTALL_DIR)
+	$(INSTALL) $(MANUAL_IMAGES) $(INSTALL_DIR)/images
 
 
 ##################

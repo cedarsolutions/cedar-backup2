@@ -160,18 +160,17 @@
          and updated the code to use the newly-released Python logging package
          <footnote><para>See the
          <ulink url="http://docs.python.org/lib/module-logging.html">Python library documentation</ulink>
-         for more information.</para></footnote>.
-         However, I was still unsatisfied with the internal architecture of the
-         code, which among other things did not lend itself to automated
-         regression testing.  I was uncomfortable releasing the code to replace
-         the existing versions without a better testing strategy in place.
+         for more information.</para></footnote> after having a good experience
+         with Java's log4j.  However, I was still not satisfied with the code,
+         which did not lend itself to the kinds of automated regression testing
+         I had become used to when working with junit in my Java code.
       </para>
 
       <para>
          So, rather than releasing the cleaned-up code, I instead began another
          ground-up rewrite in May of 2004.  With this rewrite, I applied
-         everything I had learned from the other Java and Python development I
-         had undertaken over the last few years.  I structured the code to take
+         everything I had learned from other Java and Python projects I had
+         undertaken over the last few years.  I structured the code to take
          advantage of Python's unique ability to blend procedural code with
          object-oriented code, and I made automated unit testing a primary
          requirement.  The result is the 2.0 release, which is cleaner, more
