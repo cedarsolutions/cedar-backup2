@@ -37,6 +37,7 @@ PYCHECKER         = PYTHONVER=2.3 pychecker
 PYTHON            = python2.3
 RM                = rm
 SETUP             = $(PYTHON) ./setup.py
+SUDO              = sudo
 VERSION           = `cat CedarBackup2/release.py | grep VERSION | awk -F\" '{print $$2}'`
 
 
@@ -61,6 +62,7 @@ clean: docclean distribclean
 
 # This uses the "full" argument to get all tests
 test:
+	@$(SUDO) -v
 	@$(PYTHON) util/test.py full
 
 # This leaves off "full" and gets on the tests most end-users would run
@@ -80,7 +82,7 @@ check:
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py
 
 allcheck: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py test/*.py util/*.py
+	-@$(PYCHECKER) --maxlocals 50 --config pycheckrc CedarBackup2/*.py test/*.py util/*.py
 
 
 ################
