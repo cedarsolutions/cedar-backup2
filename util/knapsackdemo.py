@@ -61,7 +61,7 @@ A bigger, nastier test is to build a 650 MB list out of / or /usr.
 """
 
 ########################################################################
-# Imported modules
+# Imported modules and constants
 ########################################################################
 
 import sys
@@ -69,7 +69,10 @@ import os
 import time
 from CedarBackup2.filesystem import BackupFileList
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
-from CedarBackup2.image import BYTES_PER_MBYTE
+
+BYTES_PER_KBYTE = 1024.0
+KBYTES_PER_MBYTE = 1024.0
+BYTES_PER_MBYTE = BYTES_PER_KBYTE * KBYTES_PER_MBYTE
 
 
 ##################
