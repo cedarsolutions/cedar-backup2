@@ -18,6 +18,11 @@
   configured in the config file.  How do we account for that?  Maybe actions just silently
   (with an INFO log) don't do anything if no configuration exists for them?  What makes
   sense?
+* I don't think that extended actions should ever get executed as part of all - or we 
+  should add a value indicating whether they should.  The reason is, we always need the
+  ordering value even when all isn't specified - so we can figure out what order to
+  execute a set of combined actions in.  (i.e. collect, stage, subversion would likely
+  be executed collect, then subversion, then stage to make sense.
 * Test _ActionSet and _ActionItem functionality, hopefully in a unit test of some sort
 * Change sort order of parameters, classes within modules, etc. where needed in Epydoc
 * Implement "safe overwrite" functionality from aborted 2.x branch into CdWriter - shouldn't be too difficult.
