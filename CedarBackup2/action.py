@@ -191,7 +191,7 @@ def _changeOwnership(user, group, path):
 # executeCollect() function
 ############################
 
-def executeCollect(options, config):
+def executeCollect(configPath, options, config):
    """
    Executes the collect backup action.
 
@@ -199,6 +199,9 @@ def executeCollect(options, config):
    indicator to the collect directory, so it's obvious that the collect action
    has completed.  The stage process uses this indicator to decide whether a 
    peer is ready to be staged.
+
+   @param configPath: Path to configuration file on disk.
+   @type configPath: String representing a path on disk.
 
    @param options: Program command-line options.
    @type options: Options object.
@@ -374,7 +377,7 @@ def _writeCollectIndicator(config):
 # executeStage() function
 ##########################
 
-def executeStage(options, config):
+def executeStage(configPath, options, config):
    """
    Executes the stage backup action.
 
@@ -388,6 +391,9 @@ def executeStage(options, config):
    master's stage indicator to decide whehter a directory is ready to be
    stored.  Currently, nothing uses the indicator at each peer, and it exists
    for reference only. 
+
+   @param configPath: Path to configuration file on disk.
+   @type configPath: String representing a path on disk.
 
    @param options: Program command-line options.
    @type options: Options object.
@@ -534,7 +540,7 @@ def _writeStageIndicator(config, dailyDir):
 # executeStore() function
 ##########################
 
-def executeStore(options, config):
+def executeStore(configPath, options, config):
    """
    Executes the store backup action.
 
@@ -542,6 +548,9 @@ def executeStore(options, config):
    the daily staging directory we used, so it's obvious that the store action
    has completed.  This store indicator is used as discussed in the notes for
    L{_getCorrectStoreDir}.
+
+   @param configPath: Path to configuration file on disk.
+   @type configPath: String representing a path on disk.
 
    @param options: Program command-line options.
    @type options: Options object.
@@ -689,9 +698,12 @@ def _createImage(config, entireDisc, storeDir, dateSuffix, writer):
 # executePurge() function
 ##########################
 
-def executePurge(options, config):
+def executePurge(configPath, options, config):
    """
    Executes the purge backup action.
+
+   @param configPath: Path to configuration file on disk.
+   @type configPath: String representing a path on disk.
 
    @param options: Program command-line options.
    @type options: Options object.
@@ -706,13 +718,16 @@ def executePurge(options, config):
 # executeRebuild() function
 ############################
 
-def executeRebuild(options, config):
+def executeRebuild(configPath, options, config):
    """
    Executes the rebuild backup action.
 
    This function exists mainly to recreate a disc that has been "trashed" due
    to media or hardware problems.  Note that the "stage complete" indicator
    isn't checked for this action.
+
+   @param configPath: Path to configuration file on disk.
+   @type configPath: String representing a path on disk.
 
    @param options: Program command-line options.
    @type options: Options object.
@@ -727,13 +742,16 @@ def executeRebuild(options, config):
 # executeValidate() function
 #############################
 
-def executeValidate(options, config):
+def executeValidate(configPath, options, config):
    """
    Executes the validate action.
 
    This is basically a no-op, because once we've gotten here, validation would
    be complete.  It exists for consistency in the way the various actions are
    invoked.
+
+   @param configPath: Path to configuration file on disk.
+   @type configPath: String representing a path on disk.
 
    @param options: Program command-line options.
    @type options: Options object.
