@@ -51,9 +51,6 @@ The composite suite is always run using the TextTestRunner at verbosity level
 1, which prints one dot (".") on the screen for each test run.  This output is
 the same as one would get when using unittest.main() in an individual test.
 
-If possible, I try to run the unit tests using psyco.  It typically gets me a
-net speed-up on processor-intensive operations.
-
 Generally, I'm trying to keep all of the "special" validation logic (i.e. did
 we find the right Python, did we find the right libraries, etc.) in this code
 rather than in the individual unit tests so they're more focused on what to

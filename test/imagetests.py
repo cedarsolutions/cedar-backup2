@@ -98,6 +98,7 @@ import os
 import unittest
 import tempfile
 import tarfile
+from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.image import IsoImage
 from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYTES
@@ -125,49 +126,6 @@ def runAllTests():
    else:
       return False
 
-def findResources():
-   """Returns a dictionary of locations for various resources."""
-   resources = { }
-   for resource in RESOURCES:
-      for resourceDir in DATA_DIRS:
-         path = os.path.join(resourceDir, resource);
-         if os.path.exists(path):
-            resources[resource] = path
-            break
-      else:
-         raise Exception("Unable to find resource [%s]." % resource)
-   return resources
-
-def extractTar(tmpdir, filepath):
-   """Extracts the indicated tar file to self.tmpdir."""
-   tar = tarfile.open(filepath)
-   for tarinfo in tar:
-      tar.extract(tarinfo, tmpdir)
-
-def buildPath(components):
-   """Builds a complete path from a list of components."""
-   path = components[0]
-   for component in components[1:]:
-      path = os.path.join(path, component)
-   return path
-
-def removedir(tree):
-   """Recursively removes an entire directory."""
-   for root, dirs, files in os.walk(tree, topdown=False):
-      for name in files:
-         path = os.path.join(root, name)
-         if os.path.islink(path):
-            os.remove(path)
-         elif os.path.isfile(path):
-            os.remove(path)
-      for name in dirs:
-         path = os.path.join(root, name)
-         if os.path.islink(path):
-            os.remove(path)
-         elif os.path.isdir(path):
-            os.rmdir(path)
-   os.rmdir(tree)
-
 
 #######################################################################
 # Test Case Classes
@@ -189,7 +147,7 @@ class TestIsoImage(unittest.TestCase):
       try:
          self.mounted = False
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 

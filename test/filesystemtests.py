@@ -99,6 +99,7 @@ import time
 import unittest
 import tempfile
 import tarfile
+from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, changeFileAge
 from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemList
 
 
@@ -127,65 +128,6 @@ AGE_49_HOURS      = 49*60*60        # in seconds
 
 
 #######################################################################
-# Utility functions
-#######################################################################
-
-def findResources():
-   """Returns a dictionary of locations for various resources."""
-   resources = { }
-   for resource in RESOURCES:
-      for resourceDir in DATA_DIRS:
-         path = os.path.join(resourceDir, resource);
-         if os.path.exists(path):
-            resources[resource] = path
-            break
-      else:
-         raise Exception("Unable to find resource [%s]." % resource)
-   return resources
-
-def extractTar(tmpdir, filepath):
-   """Extracts the indicated tar file to self.tmpdir."""
-   tar = tarfile.open(filepath)
-   for tarinfo in tar:
-      tar.extract(tarinfo, tmpdir)
-
-def buildPath(components):
-   """Builds a complete path from a list of components."""
-   path = components[0]
-   for component in components[1:]:
-      path = os.path.join(path, component)
-   return path 
-
-def removedir(tree):
-   """Recursively removes an entire directory."""
-   for root, dirs, files in os.walk(tree, topdown=False):
-      for name in files:
-         path = os.path.join(root, name)
-         if os.path.islink(path):
-            os.remove(path)
-         elif os.path.isfile(path):
-            os.remove(path)
-      for name in dirs:
-         path = os.path.join(root, name)
-         if os.path.islink(path):
-            os.remove(path)
-         elif os.path.isdir(path):
-            os.rmdir(path)
-   os.rmdir(tree)
-
-def changeFileAge(file, subtract=None):
-   """
-   Changes a file age using the C{os.utime} function.
-   @param subtract: Number of seconds to subtract from the current time.
-   """
-   if subtract is None:
-      os.utime(file, None)
-   else:
-      newTime = time.time() - subtract
-      os.utime(file, (newTime, newTime))
-
-
-#######################################################################
 # Test Case Classes
 #######################################################################
 
@@ -204,7 +146,7 @@ class TestFilesystemList(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -11156,7 +11098,7 @@ class TestBackupFileList(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -12851,7 +12793,7 @@ class TestPurgeItemList(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 

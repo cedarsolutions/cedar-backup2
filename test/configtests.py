@@ -103,6 +103,7 @@ Full vs. Reduced Tests
 import os
 import unittest
 import tempfile
+from CedarBackup2.testutil import findResources, buildPath, removedir, failUnlessAssignRaises
 from CedarBackup2.config import CollectDir, PurgeDir, LocalPeer, RemotePeer
 from CedarBackup2.config import ReferenceConfig, OptionsConfig, CollectConfig
 from CedarBackup2.config import StageConfig, StoreConfig, PurgeConfig, Config
@@ -116,98 +117,6 @@ DATA_DIRS = [ "./data", "./test/data", ]
 RESOURCES = [ "cback.conf.1", "cback.conf.2", "cback.conf.3", "cback.conf.4", "cback.conf.5", 
               "cback.conf.6", "cback.conf.7", "cback.conf.8", "cback.conf.9", "cback.conf.10", 
               "cback.conf.11", "cback.conf.12", "cback.conf.13", "cback.conf.14", "cback.conf.15", ]
-
-
-#######################################################################
-# Utility functions
-#######################################################################
-
-def findResources():
-   """Returns a dictionary of locations for various resources."""
-   resources = { }
-   for resource in RESOURCES:
-      for resourceDir in DATA_DIRS:
-         path = os.path.join(resourceDir, resource);
-         if os.path.exists(path):
-            resources[resource] = path
-            break
-      else:
-         raise Exception("Unable to find resource [%s]." % resource)
-   return resources
-
-def buildPath(components):
-   """Builds a complete path from a list of components."""
-   path = components[0]
-   for component in components[1:]:
-      path = os.path.join(path, component)
-   return path
-
-def removedir(tree):
-   """Recursively removes an entire directory."""
-   for root, dirs, files in os.walk(tree, topdown=False):
-      for name in files:
-         path = os.path.join(root, name)
-         if os.path.islink(path):
-            os.remove(path)
-         elif os.path.isfile(path):
-            os.remove(path)
-      for name in dirs:
-         path = os.path.join(root, name)
-         if os.path.islink(path):
-            os.remove(path)
-         elif os.path.isdir(path):
-            os.rmdir(path)
-   os.rmdir(tree)
-
-def failUnlessAssignRaises(testCase, exception, object, property, value):
-   """
-   Equivalent of C{failUnlessRaises}, but used for property assignments instead.
-
-   It's nice to be able to use C{failUnlessRaises} to check that a method call
-   raises the exception that you expect.  Unfortunately, this method can't be
-   used to check Python propery assignments, even though these property
-   assignments are actually implemented underneath as methods.  
-
-   This function (which can be easily called by unit test classes) provides an
-   easy way to wrap the assignment checks.  It's not pretty, or as intuitive as
-   the original check it's modeled on, but it does work.
-
-   Let's assume you make this method call:
-
-      testCase.failUnlessAssignRaises(ValueError, collectDir, "absolutePath", absolutePath)
-
-   If you do this, a test case failure will be raised unless the assignment:
-
-      collectDir.absolutePath = absolutePath
-
-   fails with a C{ValueError} exception.  The failure message differentiates
-   between the case where no exception was raised and the case where the wrong
-   exception was raised.
-
-   @note: The C{missed} and C{instead} variables are used rather than directly
-   calling C{testCase.fail} upon noticing a problem because the act of
-   "failure" itself generates an exception that would be caught by the general
-   C{except} clause.
-
-   @param testCase: PyUnit test case object (i.e. self).
-   @param exception: Exception that is expected to be raised.
-   @param object: Object whose property is to be assigned to.
-   @param property: Name of the property, as a string.
-   @param value: Value that is to be assigned to the property.
-
-   @see: L{unittest.TestCase.failUnlessRaises}
-   """
-   missed = False
-   instead = None
-   try:
-      exec "object.%s = value" % property
-      missed = True
-   except exception: pass
-   except Exception, e: instead = e
-   if missed:
-      testCase.fail("Expected assignment to raise %s, but got no exception." % (exception.__name__))
-   if instead is not None:
-      testCase.fail("Expected assignment to raise %s, but got %s instead." % (ValueError, instead.__class__.__name__))
 
 
 #######################################################################
@@ -229,7 +138,7 @@ class TestCollectDir(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -944,7 +853,7 @@ class TestPurgeDir(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -1193,7 +1102,7 @@ class TestLocalPeer(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -1415,7 +1324,7 @@ class TestRemotePeer(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -1751,7 +1660,7 @@ class TestReferenceConfig(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -2134,7 +2043,7 @@ class TestOptionsConfig(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -2549,7 +2458,7 @@ class TestCollectConfig(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -3105,7 +3014,7 @@ class TestStageConfig(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -3552,7 +3461,7 @@ class TestStoreConfig(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -4219,7 +4128,7 @@ class TestPurgeConfig(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -4459,7 +4368,7 @@ class TestConfig(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 

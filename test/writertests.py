@@ -90,7 +90,6 @@ Full vs. Reduced Tests
 
 import os
 import unittest
-
 from CedarBackup2.writer import MediaDefinition, MediaCapacity, CdWriter
 from CedarBackup2.writer import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 
