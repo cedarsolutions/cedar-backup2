@@ -211,15 +211,16 @@ def cli():
    logger.info("Options were: %s" % options)
    logger.info("Logfile is: %s" % logfile)
 
+   if options.config is None:
+      logger.debug("Using default configuration file.")
+      configPath = DEFAULT_CONFIG
+   else:
+      logger.debug("Using user-supplied configuration file.")
+      configPath = options.config
+
    try:
-      if options.config is None:
-         logger.debug("Using default configuration file.")
-         logger.info("Configuration path: %s" % DEFAULT_CONFIG)
-         config = Config(xmlPath=DEFAULT_CONFIG)
-      else:
-         logger.debug("Using user-supplied configuration file.")
-         logger.info("Configuration path: %s" % options.config)
-         config = Config(xmlPath=options.config)
+      logger.info("Configuration path: %s" % configPath)
+      config = Config(xmlPath=configPath)
       logger.info("Configuration is valid.")
    except Exception, e:
       logger.error("Error reading configuration: %s" % e)
@@ -228,7 +229,7 @@ def cli():
 
    try:
       actionSet = _ActionSet(options.actions, config.extensions)
-      actionSet.executeActions(options, config)
+      actionSet.executeActions(configPath, options, config)
    except Exception, e:
       logger.error("Error executing backup: %s" % e)
       logger.info("Cedar Backup run completed with status 5.")
@@ -264,6 +265,10 @@ class _ActionItem(object):
    actions, a function reference is first derived (using
    L{getFunctionReference}) and then called.
 
+   The standard actions will generally use the options and config values.  We
+   also pass in the config path so that extensions modules can re-parse
+   configuration if they want to, to add in extra information.
+
    @note: The comparison operators for this class have been implemented to only
    compare based on the index value, and ignore all other values.  This is so
    that the action set list can be easily sorted by index.
@@ -298,22 +303,23 @@ class _ActionItem(object):
             return 1 
       return 0
 
-   def executeAction(self, options, config):
+   def executeAction(self, configPath, options, config):
       """
       Executes the action associated with an item.
 
       See class notes for more details on how the action is executed.
 
+      @param configPath: Path to configuration file on disk.
       @param options: Command-line options to be passed to action.
       @param config: Parsed configuration to be passed to action.
 
       @raise Exception: If there is a problem executing the action.
       """
       if self.function is not None:
-         self.function(options, config)
+         self.function(configPath, options, config)
       else:
          function = getFunctionReference(self.extension.module, self.extension.function)
-         function(options, config)
+         function(configPath, options, config)
 
 
 ###################
@@ -423,17 +429,22 @@ class _ActionSet(object):
       return actionSet
    _buildActionSet = staticmethod(_buildActionSet)
 
-   def executeActions(self, options, config):
+   def executeActions(self, configPath, options, config):
       """
       Executes all actions and extended actions, in the proper order.
+   
+      The built-in actions will generally use the options and config values.
+      We also pass in the config path so that extensions modules can re-parse
+      configuration if they want to, to add in extra information.
 
+      @param configPath: Path to configuration file on disk.
       @param options: Command-line options to be passed to action functions.
       @param config: Parsed configuration to be passed to action functions.
 
       @raise Exception: If there is a problem executing the actions.
       """
       for actionItem in self.actionSet:
-         actionItem.executeAction(options, config)
+         actionItem.executeAction(configPath, options, config)
 
 
 #######################################################################
