@@ -942,6 +942,10 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
    @note: This function should either be run as root or as the owner of the
    Subversion repository.
 
+   @note: It is apparently I{not} a good idea to interrupt this function.
+   Sometimes, this leaves the repository in a "wedged" state, which requires
+   recovery using C{svnadmin recover}.
+
    @param repositoryPath: Path to Subversion repository to back up
    @type repositoryPath: String path representing Subversion BDB repository on disk.
 
