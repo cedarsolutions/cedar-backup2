@@ -14,49 +14,56 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-* DAMMIT!  The 'all' action is only supposed to execute those actions which have been 
-  configured in the config file.  How do we account for that?  Maybe actions just silently
-  (with an INFO log) don't do anything if no configuration exists for them?  What makes
-  sense?  
-* I don't think that extended actions should ever get executed as part of all - or we 
-  should add a value indicating whether they should.  The reason is, we always need the
-  ordering value even when all isn't specified - so we can figure out what order to
-  execute a set of combined actions in.  (i.e. collect, stage, subversion would likely
-  be executed collect, then subversion, then stage to make sense.
-* The extensions index has to be required - we've documented this in configuration.
-* The docs should probably list SSH as being required, even though technically that
-  should be obvious when they list the command in the config file.
-* The basic docs should discuss device types and media types, so we can refer to them
-later in the configuration docs.
-* get notes out of old install doc (like when to purge) and get them into the configuration
-section.  There's no other good place to put them.
-* I'm just going to ignore the capacity mode - config will still support it, but I
-  won't doument it, and won't implement anything around it.  We can do it later (and
-  put some sort of to-do in here when we decide what to do).
-* Test _ActionSet and _ActionItem functionality, hopefully in a unit test of some sort
-* Change sort order of parameters, classes within modules, etc. where needed in Epydoc
-* Implement "safe overwrite" functionality from aborted 2.x branch into CdWriter - shouldn't be too difficult.
-* Implement overwrite, rebuild and rewrite capacity mode functionality (right now, we just did 'discard' and 'fail')
+MISSING FUNCTIONALITY FOR 2.0
+
+* Implement logic to check (today, yesterday, tomorrow) when storing, so backups work over midnite (bug #1)
 * Implement consistency check in store action - it's not even stubbed right now.
-* Maybe change config not to accept these capacity modes?  Then we wouldn't have to log so many errors?
 * Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
 * Write individual action functions (process.py) in terms of other lower-level functionality
+* Make sure that errors such as failure to connect to peer are reliably indicated outside of log (bug #12)
+* Make validate action report on missing directories and bad permissions (at CLI level and not configuration level). (bug #7)
+* Test _ActionSet and _ActionItem functionality, hopefully in a unit test of some sort
+* Make sure that --full backup always backs up weekly items, even if it isn't the start of the week.
+
+
+ADMINISTRATIVE
+
+* Change sort order of parameters, classes within modules, etc. where needed in Epydoc
 * Do a bunch of sample runs to get the logging level right (difference between "normal" and debug...?)
-* Go back through TODO list from aborted 2.x branch and decide what we will do now, what later, and what never.
-* Go back through bugzilla bugs and make sure they're all taken into account now that entire cli is finished.
+
+
+DOCUMENTATION
+
+* Complete appendix A (differences)
+* Complete appendix B (extension interface)
+* Complete appendix C (dependencies)
+
+* Make sure that sample config file is valid and has sensible, consistent paths in it
 * Create manpages and other instructions either in Docbook or by hand.
 * Rewrite Cedar Backup webpage online, to show new version and link to old version.
+
+* Write a section describing why experimentation between client and server is required (be clearer, anyway)
 
 * Write some sort of "what's new" paragraph for release of 2.0beta1
    - Entire codebase has been rewritten from the ground up using Python 2.3.
    - Cleaner, more pythonic, better structured, sensible mix of classes and functions
-   - Much of the  lower-level is intended to be general-purpose "library" code
+   - Much of the lower-level is intended to be general-purpose "library" code
    - All lower-level functionality is thoroughly regression tested via pyunit (1500+ individual unit tests)
    - Configuration class is standardized, so third-party Python programs can use it.
    - Uses Python's integrated logging for realtime logs, much better than old logs.
    - Uses Python's tar module rather than GNU tar via pipes, for more consistent behavior.
    - Internal use of pipes should now be more robust and less prone to problems.
-   - Support for some new functionality, such as "optimized fit to disc" (???)
    - New concept of extension modules and support for them.
    - Documentation has been completely rewritten
    - Document that we have dropped support for the tarz format (.tar.Z).
+
+
+FUTURE FUNCTIONALITY
+
+* Implement capacity mode functionality, i.e. what to do with a full disc. (bug #6)
+* Implement "safe overwrite" functionality based on disc label, and give users a way to label a disc (bug #5)
+* Prevent two backups from running against the same config file (?)
+* Make incremental backup safer if full is missed, i.e. "expire" incremental stuff after a week? (bug #6)
+* Somehow figure out if a full backup (i.e. disc-restart) has been missed (bug #6)
+
+

@@ -337,9 +337,9 @@ class _ActionSet(object):
    Also, certain actions (in L{NONCOMBINE_ACTIONS}) cannot be combined with
    other actions.  
 
-   Second, it enforces an execution order on the specified actions.  This only
-   really matters for the 'all' action, where we have to properly sort the
-   extended actions into the existing standard actions (if they are indexed).
+   Second, it enforces an execution order on the specified actions.  Any time
+   actions are combined on the command line (either standard actions or
+   extended actions), we must make sure they get executed in a sensible order.
 
    @sort: __init__, executeActions
    """
@@ -385,15 +385,12 @@ class _ActionSet(object):
       Build set of actions to be executed.
 
       The set of actions is built in the proper order, so C{executeActions}
-      spin through the set without thinking about it.  Every item in the set is
-      an C{_ActionItem}.
+      spin through the set without thinking about it.  Since we've already validated
+      that the set of actions is sensible, we don't take any precautions here to
+      make sure things are combined properly.  If the action is listed, it will
+      be "scheduled" for implementation.
 
-      If the action is 'all', then we first put into the list all of the
-      standard actions (collect, stage, store, purge) and then we put into the
-      list any extended action that has an index associated with it.  When the
-      complete list is built, it's then sorted by index, yielding a list in the
-      proper order per configuration.  Since the 'all' action can't be combined
-      with anything else, this is safe.
+      Every item in the action set is an C{_ActionItem}.
 
       @param actions: Names of actions specified on the command-line.
       @param extensionDict: Dictionary mapping extension name to C{ExtendedAction} object.
@@ -421,11 +418,7 @@ class _ActionSet(object):
             actionSet.append(_ActionItem(STAGE_INDEX, function=executeStage))
             actionSet.append(_ActionItem(STORE_INDEX, function=executeStore))
             actionSet.append(_ActionItem(PURGE_INDEX, function=executePurge))
-            for name in extensionDict.keys():
-               extension = extensionDict[name]
-               if extension.index is not None:
-                  actionSet.append(_ActionItem(extension.index, extension=extension))
-            actionSet.sort()  # sort the actions in order by index
+      actionSet.sort()  # sort the actions in order by index
       return actionSet
    _buildActionSet = staticmethod(_buildActionSet)
 

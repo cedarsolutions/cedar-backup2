@@ -1999,12 +1999,12 @@ class StoreConfig(object):
 
    @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
           mediaType, deviceType, devicePath, deviceScsiId, 
-          driveSpeed, checkData, safeOverwrite, capacityMode
+          driveSpeed, checkData
    """
 
    def __init__(self, sourceDir=None, mediaType=None, deviceType=None, 
                 devicePath=None, deviceScsiId=None, driveSpeed=None,
-                checkData=False, safeOverwrite=False, capacityMode=None):
+                checkData=False):
       """
       Constructor for the C{StoreConfig} class.
 
@@ -2015,8 +2015,6 @@ class StoreConfig(object):
       @param deviceScsiId: SCSI id for writer device, i.e. C{[ATA|ATAPI]:scsibus,target,lun}.
       @param driveSpeed: Speed of the drive, i.e. C{2} for 2x drive, etc.
       @param checkData: Indicates whether resulting image should be validated.
-      @param safeOverwrite: Indicates whether safe-overwrite checking is enabled.
-      @param capacityMode: Controls behavior when media runs out of capacity.
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -2027,8 +2025,6 @@ class StoreConfig(object):
       self._deviceScsiId = None
       self._driveSpeed = None
       self._checkData = None
-      self._safeOverwrite = None
-      self._capacityMode = None
       self.sourceDir = sourceDir
       self.mediaType = mediaType
       self.deviceType = deviceType
@@ -2036,8 +2032,6 @@ class StoreConfig(object):
       self.deviceScsiId = deviceScsiId
       self.driveSpeed = driveSpeed
       self.checkData = checkData
-      self.safeOverwrite = safeOverwrite
-      self.capacityMode = capacityMode
 
    def __repr__(self):
       """
@@ -2045,7 +2039,7 @@ class StoreConfig(object):
       """
       return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
                                                                   self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                                  self.checkData, self.safeOverwrite, self.capacityMode)
+                                                                  self.checkData)
 
    def __str__(self):
       """
@@ -2093,16 +2087,6 @@ class StoreConfig(object):
             return 1
       if self._checkData != other._checkData:
          if self._checkData < other._checkData:
-            return -1
-         else:
-            return 1
-      if self._safeOverwrite != other._safeOverwrite:
-         if self._safeOverwrite < other._safeOverwrite:
-            return -1
-         else:
-            return 1
-      if self._capacityMode != other._capacityMode:
-         if self._capacityMode < other._capacityMode:
             return -1
          else:
             return 1
@@ -2226,39 +2210,6 @@ class StoreConfig(object):
       """
       return self._checkData
 
-   def _setSafeOverwrite(self, value):
-      """
-      Property target used to set the safe overwrite flag.
-      No validations, but we normalize the value to C{True} or C{False}.
-      """
-      if value:
-         self._safeOverwrite = True
-      else:
-         self._safeOverwrite = False
-
-   def _getSafeOverwrite(self):
-      """
-      Property target used to get the safe overwrite flag.
-      """
-      return self._safeOverwrite
-
-   def _setCapacityMode(self, value):
-      """
-      Property target used to set the capacity mode.
-      The value must be one of L{VALID_CAPACITY_MODES}.
-      @raise ValueError: If the value is not valid.
-      """
-      if value is not None:
-         if value not in VALID_CAPACITY_MODES:
-            raise ValueError("Capacity mode must be one of %s." % VALID_CAPACITY_MODES)
-      self._capacityMode = value
-
-   def _getCapacityMode(self):
-      """
-      Property target used to get the capacity mode.
-      """
-      return self._capacityMode
-
    sourceDir = property(_getSourceDir, _setSourceDir, None, "Directory whose contents should be written to media.")
    mediaType = property(_getMediaType, _setMediaType, None, "Type of the media (see notes above).")
    deviceType = property(_getDeviceType, _setDeviceType, None, "Type of the device (optional, see notes above).")
@@ -2266,8 +2217,6 @@ class StoreConfig(object):
    deviceScsiId = property(_getDeviceScsiId, _setDeviceScsiId, None, "SCSI id for writer device.")
    driveSpeed = property(_getDriveSpeed, _setDriveSpeed, None, "Speed of the drive.")
    checkData = property(_getCheckData, _setCheckData, None, "Indicates whether resulting image should be validated.")
-   safeOverwrite = property(_getSafeOverwrite, _setSafeOverwrite, None, "Indicates whether safe-overwrite checking is enabled.")
-   capacityMode = property(_getCapacityMode, _setCapacityMode, None, "Controls behavior when media runs out of capacity.")
 
 
 ########################################################################
@@ -2984,8 +2933,6 @@ class Config(object):
          deviceScsiId      //cb_config/store/target_scsi_id
          driveSpeed        //cb_config/store/drive_speed
          checkData         //cb_config/store/check_data
-         safeOverwrite     //cb_config/store/safe_overwrite
-         capacityMode      //cb_config/store/capacity_mode
 
       @param parent: Parent node to search beneath.
 
@@ -3003,8 +2950,6 @@ class Config(object):
          store.deviceScsiId = Config._readString(section,  "target_scsi_id")
          store.driveSpeed = Config._readInteger(section, "drive_speed")
          store.checkData = Config._readBoolean(section, "check_data")
-         store.safeOverwrite = Config._readBoolean(section, "safe_overwrite")
-         store.capacityMode = Config._readString(section,  "capacity_mode")
       return store
    _parseStore = staticmethod(_parseStore)
 
@@ -3421,8 +3366,6 @@ class Config(object):
          deviceScsiId      //cb_config/store/target_scsi_id
          driveSpeed        //cb_config/store/drive_speed
          checkData         //cb_config/store/check_data
-         safeOverwrite     //cb_config/store/safe_overwrite
-         capacityMode      //cb_config/store/capacity_mode
 
       If C{storeConfig} is C{None}, then no container will be added.
 
@@ -3439,8 +3382,6 @@ class Config(object):
          Config._addStringNode(xmlDom, sectionNode, "target_scsi_id", storeConfig.deviceScsiId)
          Config._addIntegerNode(xmlDom, sectionNode, "drive_speed", storeConfig.driveSpeed)
          Config._addBooleanNode(xmlDom, sectionNode, "check_data", storeConfig.checkData)
-         Config._addBooleanNode(xmlDom, sectionNode, "safe_overwrite", storeConfig.safeOverwrite)
-         Config._addStringNode(xmlDom, sectionNode, "capacity_mode", storeConfig.capacityMode)
    _addStore = staticmethod(_addStore)
 
    def _addPurge(xmlDom, parentNode, purgeConfig):
@@ -3686,6 +3627,8 @@ class Config(object):
                   raise ValueError("Each extended action must set a module.")
                if action.function is None:
                   raise ValueError("Each extended action must set a function.")
+               if action.index is None:
+                  raise ValueError("Each extended action must set an index.")
 
    def _validateOptions(self):
       """

@@ -329,12 +329,10 @@
          </para>
 
          <para>
-            Extensions can also be configured to be executed as part of the all
-            action.  See <xref linkend="cedar-basic-extensions"/> (below) for a
-            discussion of extensions, and see 
-            <xref linkend="cedar-config-configfile-extensions"/> in 
-            <xref linkend="cedar-config"/> for more information on how
-            extensions are configured.
+            Extensions cannot be configured to be executed as part of the all
+            action.  If you need to execute an extended action, you must
+            specify the other actions you want to run individually on the
+            command line.
          </para>
 
       </sect2>
@@ -399,6 +397,131 @@
 
    <!-- ################################################################# -->
 
+   <sect1 id="cedar-basic-mediadevice">
+
+      <title>Media and Device Types</title>
+
+      <para>
+         Cedar Backup is focused around writing backups to CD-R or CD-RW media
+         using a standard SCSI or IDE CD writer.  <footnote><para>The device I
+         develop against is a six or seven year old Sony CRX140E 4X CD-RW
+         drive.</para></footnote>
+      </para>
+
+      <para>
+         Cedar Backup currently supports four different kinds of media:
+      </para>
+
+      <variablelist>
+
+         <varlistentry>
+            <term>cdr-74</term>
+            <listitem>
+               <para>74-minute non-rewritable media</para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term>cdrw-74</term>
+            <listitem>
+               <para>74-minute rewritable media</para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term>cdr-80</term>
+            <listitem>
+               <para>80-minute non-rewritable media</para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term>cdrw-80</term>
+            <listitem>
+               <para>80-minute rewritable media</para>
+            </listitem>
+         </varlistentry>
+
+      </variablelist>
+
+      <para>
+         I have chosen to support just these four types of media because they
+         seem to be the most <quote>standard</quote> of the various types
+         commonly sold in the U.S. today (early 2005).  If you regularly use
+         media a media type that is not supported by Cedar Backup, and would
+         like Cedar Backup to support it, send me information about the
+         capacity of the media in megabytes (MB) and whether or not it is
+         rewritable.  
+      </para>
+
+      <para>
+         Future versions of Cedar Backup may support writable DVDs in some
+         form.  <footnote><para>It would just require a new
+         <literal>DvdWriter</literal> class in <filename>writer.py</filename>
+         as well as some minor changes to configuration code.  All
+         writer-related access is through an abstract interface, so once the
+         new writer is implemented, the rest of the code will be able to use it
+         without any changes.</para></footnote> However, this cannot
+         happen unless I can get access to hardware for development and
+         testing, or unless someone else is willing to do research and test
+         code on my behalf.   If you would like to see support for DVDs in
+         Cedar Backup and can offer some help, please write the Cedar Backup
+         Users mailing list.  <footnote><para>See the Cedar Solutions <ulink
+         url="http://cedar-solutions.com/listarchives/"> Mailing Lists</ulink>
+         page for more information.</para></footnote>
+      </para>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-basic-incremental">
+
+      <title>Incremental Backups</title>
+
+      <para>
+         Cedar Backup supports three different kinds of backups for individual
+         collect directories.  These are <firstterm>daily</firstterm>,
+         <firstterm>weekly</firstterm> and <firstterm>incremental</firstterm>.
+         Directories using the daily mode are backed up every day.  Directories
+         using the weekly mode are only backed up on the first day of the week,
+         or when the <option>--full</option> option is used.  Directories
+         using the incremental mode are always backed up on the first day of
+         the week (like a weekly backup) but after that are only backed up if
+         they have changed since the previous backup.
+      </para>
+
+      <para>
+         In Cedar Backup, incremental backups are not based on date, but are
+         instead based a saved-off checksums, one for each backed-up file.
+         When a full backup is run, Cedar Backup gathers a checksum value
+         <footnote><para>The checksum is actually an <firstterm>SHA
+         cryptographic hash</firstterm>.  See this <ulink
+         url="http://en.wikipedia.org/wiki/SHA-1">Wikipedia article</ulink> or
+         the <ulink url="http://www.itl.nist.gov/fipspubs/fip180-1.htm">Secure
+         Hash Standard</ulink> for more information.</para></footnote> for each
+         backed-up file.  The next time an incremental backup is run, Cedar
+         Backup checks its list of file/checksum pairs for each file that might
+         potentially be backed up.  If the file's checksum value does not match
+         the saved-off value, or if the file does not appear in the list of
+         file/checksum pairs, then it will be backed up and a new checksum
+         value will be placed into the list.  Otherwise, the file will be
+         ignored and the checksum value will be left unchanged.
+      </para>
+
+      <para>
+         Cedar Backup stores the file/checksum pairs in <filename>.sha</filename> 
+         files in its working directory, one file per collect directory.  The
+         mappings in these files are reset at the start of the week or when the
+         <option>--full</option> option is used.  Because these files are used
+         for an entire week, you should never purge the working directory more
+         frequently than once per week.
+      </para>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
    <sect1 id="cedar-basic-extensions">
 
       <title>Extensions</title>
@@ -453,8 +576,7 @@
          <para>
             See <xref linkend="cedar-config"/> for more information on how
             extensions are configured.  Also, developers may be interested in
-            the extensions section in <xref linkend="cedar-devel"/> and in
-            <xref linkend="cedar-appendixb"/>.
+            the extensions in <xref linkend="cedar-appendixb"/>.
          </para>
       </note>
 

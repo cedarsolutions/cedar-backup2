@@ -182,10 +182,8 @@
             actions associated with those extensions may also be specified on
             the command line.  If you specify any other actions along with an
             extended action, the actions will be executed in a sensible order
-            per configuration.  Configuration also controls whether the
-            <literal>all</literal> action executes any extended actions.  For
-            more information on extensions, see 
-            <xref linkend="cedar-config-configfile-extensions"/>.
+            per configuration.  The <literal>all</literal> action never
+            executes extended actions, however.
          </para>
 
       </sect2>
@@ -337,11 +335,7 @@
          <ulink url="http://www.xml.com/pub/a/98/10/guide0.html">guide</ulink>
          for a basic introduction to XML.</para></footnote> configuration file,
          usually called <filename>/etc/cback.conf</filename>.  The configuration
-         file has two sections containing general configuration items and then
-         one section for each of the standard actions <footnote><para>See 
-         <xref linkend="cedar-basic-process"/>.</para></footnote>
-         and one section used to configure Cedar Backup extensions.  These
-         sections are: <firstterm>reference</firstterm>,
+         file contains the following sections: <firstterm>reference</firstterm>,
          <firstterm>options</firstterm>, <firstterm>collect</firstterm>,
          <firstterm>stage</firstterm>, <firstterm>store</firstterm>,
          <firstterm>purge</firstterm> and <firstterm>extensions</firstterm>.
@@ -353,8 +347,10 @@
          that, administrators need only configure actions they intend to use.
          For instance, on a client machine, administrators would generally only
          configure the collect and purge sections, while on a master machine
-         they would have to configure all four action-related sections.  The
-         extensions section is always optional and can be omitted unless
+         they would have to configure all four action-related sections.  
+         <footnote><para>See 
+         <xref linkend="cedar-basic-process"/>.</para></footnote>
+         The extensions section is always optional and can be omitted unless
          extensions are in use.
       </para>
 
@@ -1171,9 +1167,9 @@
 
          <para>
             The stage configuration section contains configuration options
-            related the the stage action.  This section contains a variable
-            number of elements, depending on how many peers are in the backup
-            pool.
+            related the the stage action.  The section defines the set of peers
+            in a backup pool, and then also indicates where data from those
+            peers should be staged to.
          </para>
 
          <para>
@@ -1182,7 +1178,7 @@
 
          <programlisting>
 &lt;stage&gt;
-   &lt;staging_dir&gt;/opt/backup/staging&lt;/staging_dir&gt;
+   &lt;staging_dir&gt;/opt/backup/stage&lt;/staging_dir&gt;
    &lt;peer&gt;
       &lt;name&gt;machine1&lt;/name&gt;
       &lt;type&gt;local&lt;/type&gt;
@@ -1465,14 +1461,13 @@
 
          <programlisting>
 &lt;store&gt;
-   &lt;source_dir&gt;/opt/backup/staging&lt;/source_dir&gt;
+   &lt;source_dir&gt;/opt/backup/stage&lt;/source_dir&gt;
    &lt;media_type&gt;cdrw-74&lt;/media_type&gt;
    &lt;device_type&gt;cdwriter&lt;/device_type&gt;
    &lt;target_device&gt;/dev/cdrw&lt;/target_device&gt;
    &lt;target_scsi_id&gt;0,0,0&lt;/target_scsi_id&gt;
    &lt;drive_speed&gt;4&lt;/drive_speed&gt;
    &lt;check_data&gt;Y&lt;/check_data&gt;
-   &lt;safe_overwrite&gt;Y&lt;/safe_overwrite&gt;
 &lt;/store&gt;
          </programlisting>
 
@@ -1637,30 +1632,6 @@
                </listitem>
             </varlistentry>
 
-            <varlistentry>
-               <term><literal>safe_overwrite</literal></term>
-               <listitem>
-                  <para>Indicates whether safe-overwrite checking is enabled.</para>
-                  <para>
-                     When this option is enabled, Cedar Backup will error out
-                     if the media in the drive is not either a blank disc
-                     or a previously-used Cedar Backup disc.  The validation is
-                     done by checking the media's volume name to see if it
-                     matches an expected Cedar Backup value.  Most users won't
-                     care about this, but some users have requested the option
-                     so that they don't destroy other media accidentally left
-                     in their writer.
-                  </para>
-                  <para>
-                     This value is optional.  If it doesn't exist, then
-                     <literal>N</literal> will be assumed.
-                  </para>
-                  <para>
-                     <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
-                  </para>
-               </listitem>
-            </varlistentry>
-
          </variablelist>
 
          <!--
@@ -1668,10 +1639,9 @@
             <title>Backwards Compatibility</title>
 
             <para>
-               Cedar Backup v1.0 did not accept the device type or safe
-               overwrite fields, which is why they are optional.  The behavior
-               based on defaults for these values matches the only available
-               behavior in v1.0.
+               Cedar Backup v1.0 did not accept the device type field, which is
+               why it is optional.  The behavior based on defaults for these
+               values matches the only available behavior in v1.0.
             </para>
 
             <para>
@@ -1699,6 +1669,29 @@
          </para>
 
          <para>
+            Typically, Cedar Backup should be configured to purge collect
+            directories daily (retain days of <literal>0</literal>.  
+         </para>
+
+         <para>
+            If you are tight on space, staging directories can also be purged
+            daily.  However, if you have space to spare, you should consider
+            purging about once per week.  That way, if your backup media is
+            damaged, you will be able to recreate the week's backup using the
+            rebuild action.
+         </para>
+
+         <para>
+            You should also purge the working directory periodically, once
+            every few weeks or once per month.  This way, if any unneeded files
+            are left around, perhaps because a backup was interrupted or
+            because configuration changed, they will eventually be removed.
+            <emphasis>The working directory should not be purged any more
+            frequently than once per week, otherwise you will risk destroying
+            data used for incremental backups.</emphasis>
+         </para>
+
+         <para>
             This is an example purge configuration section:
          </para>
 
@@ -1706,7 +1699,7 @@
 &lt;purge&gt;
    &lt;dir&gt;
       &lt;abs_path&gt;/opt/backup/stage&lt;/abs_path&gt;
-      &lt;retain_days&gt;5&lt;/retain_days&gt;
+      &lt;retain_days&gt;7&lt;/retain_days&gt;
    &lt;/dir&gt;
    &lt;dir&gt;
       &lt;abs_path&gt;/opt/backup/collect&lt;/abs_path&gt;
@@ -2117,12 +2110,13 @@
 
             <para>
                Some users have requested that the Debian packages set up a more
-               <quote>standard</quote> location for backups right out-of-the-box.  I have
-               resisted doing this because it's difficult to choose an
-               appropriate backup location from within the package.  If you
-               would prefer, you can create the backup directory structure
-               within some existing Debian directory such as
-               <filename>/var/backups</filename>. 
+               <quote>standard</quote> location for backups right
+               out-of-the-box.  I have resisted doing this because it's
+               difficult to choose an appropriate backup location from within
+               the package.  If you would prefer, you can create the backup
+               directory structure within some existing Debian directory such
+               as <filename>/var/backups</filename> or
+               <filename>/var/tmp</filename>.
             </para>
          </note>
 
@@ -2236,8 +2230,9 @@ cback all
 
          <para>
             Place a valid CD-R or CD-RW disc in your drive, and then use the
-            command <command>cback --full all</command>.  If the command
-            completes with no output, then the backup was run successfully.
+            command <command>cback --full all</command>.  You should execute
+            this command as root.  If the command completes with no output,
+            then the backup was run successfully.
          </para>
 
          <para>
@@ -2468,7 +2463,8 @@ The key fingerprint is:
                appropriate backup location from within the package.  If you
                would prefer, you can create the backup directory structure
                within some existing Debian directory such as
-               <filename>/var/backups</filename>. 
+               <filename>/var/backups</filename> or
+               <filename>/var/tmp</filename>.
             </para>
          </note>
 
@@ -2812,7 +2808,8 @@ The key fingerprint is:
                difficult to choose an appropriate backup location from within
                the package.  If you would prefer, you can create the backup
                directory structure within some existing Debian directory such
-               as <filename>/var/backups</filename>. 
+               as <filename>/var/backups</filename> or
+               <filename>/var/tmp</filename>.
             </para>
          </note>
 
@@ -2967,8 +2964,9 @@ The key fingerprint is:
          <para>
             When all of the client backups have completed, place a valid CD-R
             or CD-RW disc in your drive, and then use the command
-            <command>cback --full all</command>.  If the command completes with
-            no output, then the backup was run successfully. 
+            <command>cback --full all</command>.  You should execute this
+            command as root.  If the command completes with no output, then the
+            backup was run successfully. 
          </para>
 
          <para>

@@ -668,26 +668,8 @@ def _createImage(config, entireDisc, storeDir, dateSuffix, writer):
    imageSize = image.getEstimatedSize()
    logger.info("Image size will be %.2f bytes." % imageSize)
    if imageSize > capacity.bytesAvailable:
-      logger.info("Image (%.2f bytes) does not fit in available capacity (%.2f bytes)." % (imageSize, capacity.bytesAvailable))
-      if config.store.capacityMode == 'fail':
-         raise IOError("Media does not contain enough capacity to store image.")
-      elif config.store.capacityMode == 'overwrite':
-         logger.error("Capacity mode 'overwrite' is currently not implemented; defaulting to 'fail'.")
-         raise IOError("Media does not contain enough capacity to store image.")
-      elif config.store.capacityMode == 'rebuild':
-         logger.error("Capacity mode 'rebuild' is currently not implemented; defaulting to 'fail'.")
-         raise IOError("Media does not contain enough capacity to store image.")
-      elif config.store.capacityMode == 'rewrite':
-         logger.error("Capacity mode 'rewrite' is currently not implemented; defaulting to 'fail'.")
-         raise IOError("Media does not contain enough capacity to store image.")
-      elif config.store.capacityMode == 'discard':
-         logger.debug("Capacity mode is 'discard', so we will prune to fit if possible.")
-         try:
-            imageSize = image.pruneImage(capacity.bytesAvailable)
-            logger.info("Image was successfully pruned to %.2f bytes, and will now fit." % imageSize)
-         except IOError:
-            logger.error("Capacity mode is 'discard', but we could not prune to fit the capacity.")
-            raise IOError("Media does not contain enough capacity to store image.")
+      logger.error("Image (%.2f bytes) does not fit in available capacity (%.2f bytes)." % (imageSize, capacity.bytesAvailable))
+      raise IOError("Media does not contain enough capacity to store image.")
    (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)
    handle.close()
    image.writeImage(imagePath)

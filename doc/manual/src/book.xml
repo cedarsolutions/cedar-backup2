@@ -35,8 +35,6 @@
 <!ENTITY basic       SYSTEM "basic.xml">
 <!ENTITY install     SYSTEM "install.xml">
 <!ENTITY config      SYSTEM "config.xml">
-<!ENTITY trouble     SYSTEM "trouble.xml">
-<!ENTITY devel       SYSTEM "devel.xml">
 <!ENTITY appendixa   SYSTEM "appendixa.xml">
 <!ENTITY appendixb   SYSTEM "appendixb.xml">
 <!ENTITY appendixc   SYSTEM "appendixc.xml">
@@ -56,6 +54,11 @@
             <surname>Pronovici</surname>
          </author>
       </authorgroup>
+
+      <editor>
+         <firstname>Juliana E.</firstname>
+         <surname>Pronovici</surname>
+      </editor>
 
       <copyright>
          <year>2005</year>
@@ -81,8 +84,6 @@
    &basic;
    &install;
    &config;
-   &trouble;
-   &devel;
    &appendixa;
    &appendixb;
    &appendixc;
