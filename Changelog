@@ -1,3 +1,7 @@
+Version 2.0.1	unreleased 
+
+	* Fixed doc/chack.1 .TH line to give proper manpage section.
+
 Version 2.0.0	26 Feb 2005
 
 	* Complete ground-up rewrite for 2.0.0 release.
