@@ -77,7 +77,8 @@ Full vs. Reduced Tests
 
 # Import standard modules
 import unittest
-from CedarBackup2.util import executeCommand, UnorderedList
+from os.path import isdir
+from CedarBackup2.util import executeCommand, getFunctionReference, UnorderedList
 
 
 #######################################################################
@@ -363,6 +364,29 @@ class TestFunctions(unittest.TestCase):
 
    def tearDown(self):
       pass
+
+
+   ##############################
+   # Test getFunctionReference() 
+   ##############################
+         
+   def testGetFunctionReference_001(self):
+      """
+      Check that the search works within "standard" Python namespace.
+      """
+      module = "os.path"
+      function = "isdir"
+      reference = getFunctionReference(module, function)
+      self.failUnless(isdir is reference)
+
+   def testGetFunctionReference_002(self):
+      """
+      Check that the search works for things within CedarBackup2.
+      """
+      module = "CedarBackup2.util"
+      function = "executeCommand"
+      reference = getFunctionReference(module, function)
+      self.failUnless(executeCommand is reference)
 
 
    ########################
