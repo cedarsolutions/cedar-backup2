@@ -1,0 +1,3118 @@
+<!-- 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#              C E D A R
+#          S O L U T I O N S       "Software done right."
+#           S O F T W A R E
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Copyright (c) 2005 Kenneth J. Pronovici.
+# All rights reserved.
+#
+# This work is licensed under the Creative Commons Attribution-
+# ShareAlike License. To view a copy of this license, visit
+# http://creativecommons.org/licenses/by-sa/2.0/
+# or send a letter to Creative Commons, 559 Nathan Abbott Way,
+# Stanford, California 94305, USA.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Author   : Kenneth J. Pronovici <pronovic@ieee.org>
+# Language : O'Reilly DocBook Lite XML DTD
+# Project  : Cedar Backup, release 2
+# Revision : $Id$
+# Purpose  : Cedar Backup software manual, Configuration chapter.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+-->
+
+<chapter id="cedar-config">
+
+   <title>Configuration</title>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-overview">
+
+      <title>Overview</title>
+
+      <para>
+         Configuring Cedar Backup is unfortunately
+         somewhat complicated.  The good news is that once you get through the
+         initial configuration process, you'll hardly ever have to change
+         anything. Even better, the most typical changes (i.e. adding
+         and removing directories from a backup) are easy.
+      </para>
+
+      <para>
+         First, familiarize yourself with the concepts in 
+         <xref linkend="cedar-basic"/>.  In particular, be sure that you understand
+         the differences between a master and a client.  (If you only have one
+         machine, then your machine will act as both a master and a client,
+         and we'll refer to your setup as a <firstterm>pool of one</firstterm>.)
+         Then, install Cedar Backup per the instructions in 
+         <xref linkend="cedar-install"/>.
+      </para>
+
+      <para>
+         Once everything has been installed, you are ready to begin configuring
+         Cedar Backup.  Look over <xref linkend="cedar-config-commandline"/>
+         (in <xref linkend="cedar-config"/>) to become familiar with the
+         command line interface.  Then, look over <xref
+         linkend="cedar-config-configfile"/> (below) and create a configuration
+         file for each peer in your backup pool.  To start with, create a very
+         simple configuration file, then expand it later.  Decide now whether
+         you will store the configuration file in the standard place
+         (<filename>/etc/cback.conf</filename>) or in some other location.
+      </para>
+
+      <para>
+         After you have all of the configuration files in place, configure each
+         of your machines, following the instructions in the appropriate
+         section below (for master, client or pool of one).  Since the master
+         and client(s) must communicate over the network, you won't be able to
+         fully configure the master without configuring each client and
+         vice-versa.  The instructions are clear on what needs to be done.
+      </para>
+
+      <sidebar>
+
+         <title>Which Linux Distribution?</title>
+
+         <para>
+            Cedar Backup has been designed for use on all Linux systems.
+            However, since it was developed on a Debian system, and because I
+            am a Debian developer, the packaging is prettier and the setup is
+            somewhat simpler on a Debian system than on a system where you
+            install from source.  
+         </para>
+
+         <para>
+            The configuration instructions below have been generalized so they
+            should work well regardless of what distribution you are running
+            (i.e. RedHat, Gentoo, etc.).  If instructions vary for a particular
+            distribution, you will find a note related to that distribution.
+         </para>
+
+         <para>
+            I am always open to adding more distribution-specific hints and
+            notes, so write me if you find problems with these instructions.
+         </para>
+
+      </sidebar>
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-commandline">
+         
+      <title>Command Line Interface</title>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-commandline-syntax">
+
+         <title>Syntax</title>
+
+         <para>
+            The Cedar Backup command-line interface is implemented in the <command>cback</command>
+            script.  The <command>cback</command> script has the following syntax:
+         </para>
+
+         <screen>
+ Usage: cback [switches] action(s)
+
+ The following switches are accepted:
+
+   -h, --help     Display this usage/help listing
+   -V, --version  Display version information
+   -b, --verbose  Print verbose output as well as logging to disk
+   -q, --quiet    Run quietly (display no output to the screen)
+   -c, --config   Path to config file (default: /etc/cback.conf)
+   -f, --full     Perform a full backup, regardless of configuration
+   -l, --logfile  Path to logfile (default: /var/log/cback.log)
+   -o, --owner    Logfile ownership, user:group (default: root:adm)
+   -m, --mode     Octal logfile permissions mode (default: 640)
+   -O, --output   Record some sub-command (i.e. tar) output to the log
+   -d, --debug    Write debugging information to the log (implies --output)
+   -s, --stack    Dump a Python stack trace instead of swallowing exceptions
+
+ The following actions may be specified:
+
+   all            Take all normal actions (collect, stage, store, purge)
+   collect        Take the collect action
+   stage          Take the stage action
+   store          Take the store action
+   purge          Take the purge action
+   rebuild        Rebuild "this week's" disc if possible
+   validate       Validate configuration only
+
+ You may also specify extended actions that have been defined in
+ configuration.
+
+ You must specify at least one action to take.  More than one of
+ the "collect", "stage", "store" or "purge" actions and/or
+ extended actions may be specified in any arbitrary order; they
+ will be executed in a sensible order.  The "all", "rebuild"
+ or "validate" actions may not be combined with other actions.
+         </screen>
+
+      </sect2>
+
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-commandline-options">
+
+         <title>Switches</title>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><option>-h</option>, <option>--help</option></term>
+               <listitem>
+                  <para>Display usage/help listing.</para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-V</option>, <option>--version</option></term>
+               <listitem>
+                  <para>Display version information.</para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-b</option>, <option>--verbose</option></term>
+               <listitem>
+                  <para>
+                     Print verbose output to the screen as well writing to the
+                     logfile.  When this option is enabled, most information
+                     that would normally be written to the logfile will also be
+                     written to the screen.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-q</option>, <option>--quiet</option></term>
+               <listitem>
+                  <para>Run quietly (display no output to the screen).</para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-c</option>, <option>--config</option></term>
+               <listitem>
+                  <para>
+                     Specify the path to an alternate configuration file.
+                     The default configuration file is <filename>/etc/cback.conf</filename>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-f</option>, <option>--full</option></term>
+               <listitem>
+                  <para>
+                    Perform a full backup, regardless of configuration.  For
+                    the collect action, this means that any existing
+                    information related to incremental backups will be ignored
+                    and rewritten; for the store action, this means that a new
+                    disc will be started.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-l</option>, <option>--logfile</option></term>
+               <listitem>
+                  <para>
+                     Specify the path to an alternate logfile.  The default
+                     logfile file is <filename>/var/log/cback.log</filename>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-o</option>, <option>--owner</option></term>
+               <listitem>
+                  <para>
+                    Specify the ownership of the logfile, in the form
+                    <literal>user:group</literal>.  The default ownership is
+                    <literal>root:adm</literal>, to match the Debian standard
+                    for most logfiles. This value will only be used when
+                    creating a new logfile.  If the logfile already exists when
+                    the <command>cback</command> script is executed, it will
+                    retain its existing ownership and mode. Only user and group
+                    names may be used, not numeric uid and gid values.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-m</option>, <option>--mode</option></term>
+               <listitem>
+                  <para>
+                    Specify  the  permissions  for  the logfile, using the
+                    numeric mode as in chmod(1).  The default mode is
+                    <literal>0640</literal> (<literal>-rw-r-----</literal>).
+                    This value will only be used when creating a new logfile.
+                    If the logfile already exists when the
+                    <command>cback</command> script is executed, it will retain
+                    its existing ownership and mode.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-O</option>, <option>--output</option></term>
+               <listitem>
+                  <para>
+                     Record some sub-command output to the logfile.  When this
+                     option is enabled, all output from system commands will be
+                     logged.  This might be useful for debugging or just for
+                     reference.  Cedar Backup uses system commands mostly for
+                     dealing with the CD recorder and its media.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-d</option>, <option>--debug</option></term>
+               <listitem>
+                  <para>
+                     Write debugging information to the logfile.  This option
+                     produces a high volume of output, and would generally only
+                     be needed when debugging a problem.  This option implies
+                     the <option>--output</option> option, as well.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-s</option>, <option>--stack</option></term>
+               <listitem>
+                  <para>
+                     Dump a Python stack trace instead of swallowing
+                     exceptions.  This forces Cedar Backup to dump the entire
+                     Python stack trace associated with an error, rather than
+                     just progating last message it received back up to the
+                     user interface.  Under some circumstances, this is useful
+                     information to include along with a bug report.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-commandline-actions">
+
+         <title>Actions</title>
+
+         <para>
+            You can find more information about the various actions in <xref
+            linkend="cedar-basic-process"/> (in <xref linkend="cedar-basic"/>).
+            In general, you may specify any combination of the
+            <literal>collect</literal>, <literal>stage</literal>,
+            <literal>store</literal> or <literal>purge</literal> actions, and
+            the specified actions will be executed in a sensible order.  Or,
+            you can specify one of the <literal>all</literal>,
+            <literal>rebuild</literal> or <literal>validate</literal> actions
+            (but these actions may not be combined with other actions).
+         </para>
+         
+         <para>
+            If you have configured any Cedar Backup extensions, then the
+            actions associated with those extensions may also be specified on
+            the command line.  If you specify any other actions along with an
+            extended action, the actions will be executed in a sensible order
+            per configuration.  The <literal>all</literal> action never
+            executes extended actions, however.
+         </para>
+
+      </sect2>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-configfile">
+         
+      <title>Configuration File Format</title>
+
+      <para>
+         Cedar Backup is configured through an XML <footnote><para>See 
+         <ulink url="http://www.xml.com/pub/a/98/10/guide0.html"/>
+         for a basic introduction to XML.</para></footnote> configuration file,
+         usually called <filename>/etc/cback.conf</filename>.  The configuration
+         file contains the following sections: <firstterm>reference</firstterm>,
+         <firstterm>options</firstterm>, <firstterm>collect</firstterm>,
+         <firstterm>stage</firstterm>, <firstterm>store</firstterm>,
+         <firstterm>purge</firstterm> and <firstterm>extensions</firstterm>.
+      </para>
+
+      <para>
+         All configuration files must contain the two general configuration
+         sections, the reference section and the options section.  Besides
+         that, administrators need only configure actions they intend to use.
+         For instance, on a client machine, administrators will generally only
+         configure the collect and purge sections, while on a master machine
+         they will have to configure all four action-related sections.
+         <footnote><para>See <xref linkend="cedar-basic-process"/>, in <xref
+         linkend="cedar-basic"/>.</para></footnote> The extensions section is
+         always optional and can be omitted unless extensions are in use.
+      </para>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-sample">
+
+         <title>Sample Configuration File</title>
+
+         <para>
+            Both the Python source distribution and the Debian package come with a
+            sample configuration file.  The Debian package includes a stripped
+            config file in <filename>/etc/cback.conf</filename> and a larger
+            sample in <filename>/usr/share/doc/cedar-backup2/cback.conf.sample</filename>.
+         </para>
+
+         <para>
+            This is a sample configuration file similar to the one provided in the
+            source package.  Documentation below provides more information about
+            each of the individual configuration sections.
+         </para>
+
+         <programlisting>
+&lt;?xml version="1.0"?&gt;
+&lt;cb_config&gt;
+   &lt;reference&gt;
+      &lt;author&gt;Kenneth J. Pronovici&lt;/author&gt;
+      &lt;revision&gt;1.3&lt;/revision&gt;
+      &lt;description&gt;Sample&lt;/description&gt;
+   &lt;/reference&gt;
+   &lt;options&gt;
+      &lt;starting_day&gt;tuesday&lt;/starting_day&gt;
+      &lt;working_dir&gt;/opt/backup/tmp&lt;/working_dir&gt;
+      &lt;backup_user&gt;backup&lt;/backup_user&gt;
+      &lt;backup_group&gt;group&lt;/backup_group&gt;
+      &lt;rcp_command&gt;/usr/bin/scp -B&lt;/rcp_command&gt;
+   &lt;/options&gt;
+   &lt;collect&gt;
+      &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+      &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
+      &lt;archive_mode&gt;targz&lt;/archive_mode&gt;
+      &lt;ignore_file&gt;.cbignore&lt;/ignore_file&gt;
+      &lt;dir&gt;
+         &lt;abs_path&gt;/etc&lt;/abs_path&gt;
+         &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
+      &lt;/dir&gt;
+   &lt;/collect&gt;
+   &lt;stage&gt;
+      &lt;staging_dir&gt;/opt/backup/staging&lt;/staging_dir&gt;
+      &lt;peer&gt;
+         &lt;name&gt;debian&lt;/name&gt;
+         &lt;type&gt;local&lt;/type&gt;
+         &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+      &lt;/peer&gt;
+   &lt;/stage&gt;
+   &lt;store&gt;
+      &lt;source_dir&gt;/opt/backup/staging&lt;/source_dir&gt;
+      &lt;media_type&gt;cdrw-74&lt;/media_type&gt;
+      &lt;device_type&gt;cdwriter&lt;/device_type&gt;
+      &lt;target_device&gt;/dev/cdrw&lt;/target_device&gt;
+      &lt;target_scsi_id&gt;0,0,0&lt;/target_scsi_id&gt;
+      &lt;drive_speed&gt;4&lt;/drive_speed&gt;
+      &lt;check_data&gt;Y&lt;/check_data&gt;
+   &lt;/store&gt;
+   &lt;purge&gt;
+      &lt;dir&gt;
+         &lt;abs_path&gt;/opt/backup/stage&lt;/abs_path&gt;
+         &lt;retain_days&gt;7&lt;/retain_days&gt;
+      &lt;/dir&gt;
+      &lt;dir&gt;
+         &lt;abs_path&gt;/opt/backup/collect&lt;/abs_path&gt;
+         &lt;retain_days&gt;0&lt;/retain_days&gt;
+      &lt;/dir&gt;
+   &lt;/purge&gt;
+&lt;/cb_config&gt;
+         </programlisting>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-reference">
+
+         <title>Reference Configuration</title>
+
+         <para>
+            The reference configuration section contains free-text elements
+            that exist only for reference..  The section itself is required,
+            but the individual elements may be left blank if desired.
+         </para>
+
+         <para>
+            This is an example reference configuration section:
+         </para>
+
+         <programlisting>
+&lt;reference&gt;
+   &lt;author&gt;Kenneth J. Pronovici&lt;/author&gt;
+   &lt;revision&gt;Revision 1.3&lt;/revision&gt;
+   &lt;description&gt;Sample&lt;/description&gt;
+   &lt;generator&gt;Yet to be Written Config Tool (tm)&lt;/description&gt;
+&lt;/reference&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the reference configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>author</literal></term>
+               <listitem>
+                  <para>Author of the configuration file.</para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> None
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>revision</literal></term>
+               <listitem>
+                  <para>Revision of the configuration file.</para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> None
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>description</literal></term>
+               <listitem>
+                  <para>Description of the configuration file.</para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> None
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>generator</literal></term>
+               <listitem>
+                  <para>Tool that generated the configuration file, if any.</para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> None
+                  </para>
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+            <para>
+               The &lt;generator&gt; element is new for Cedar Backup v2.0.      
+            </para>
+         </sidebar>
+         -->
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-options">
+
+         <title>Options Configuration</title>
+
+         <para>
+            The options configuration section contains configuration options
+            that are not specific to any one action.  All of the fields are
+            required and must not be empty.
+         </para>
+
+         <para>
+            This is an example options configuration section:
+         </para>
+
+         <programlisting>
+&lt;options&gt;
+   &lt;starting_day&gt;tuesday&lt;/starting_day&gt;
+   &lt;working_dir&gt;/opt/backup/tmp&lt;/working_dir&gt;
+   &lt;backup_user&gt;backup&lt;/backup_user&gt;
+   &lt;backup_group&gt;backup&lt;/backup_group&gt;
+   &lt;rcp_command&gt;/usr/bin/scp -B&lt;/rcp_command&gt;
+&lt;/options&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the options configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>starting_day</literal></term>
+               <listitem>
+                  <para>Day that starts the week.</para>
+                  <para>
+                     Cedar Backup is built around the idea of weekly backups.
+                     The starting day of week is the day that media will be
+                     rebuilt from scratch and that incremental backup
+                     information will be cleared.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be a day of the
+                     week in English, i.e. <literal>monday</literal>,
+                     <literal>tuesday</literal>, etc.  The validation is
+                     case-sensitive.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>working_dir</literal></term>
+               <listitem>
+                  <para>Working (temporary) directory to use for backups.</para>
+                  <para>
+                     This directory is used for writing temporary files, such
+                     as tar file or ISO CD images as they are being built.  It
+                     is also used to store day-to-day information about
+                     incremental backups.
+                  </para>
+                  <para>
+                     The working directory should contain enough free space to
+                     hold temporary tar files (on a client) or to build an ISO
+                     CD image (on a master).
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>backup_user</literal></term>
+               <listitem>
+                  <para>Effective user that backups should run as.</para>
+                  <para>
+                     This user must exist on the machine which is being
+                     configured and should not be root (although that
+                     restriction is not enforced).
+                  </para>
+                  <para>
+                     This value is also used as the default remote backup user
+                     for remote peers in the staging section.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>backup_group</literal></term>
+               <listitem>
+                  <para>Effective group that backups should run as.</para>
+                  <para>
+                     This group must exist on the machine which is being
+                     configured, and should not be root or some other
+                     <quote>powerful</quote> group (although that restriction
+                     is not enforced).
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>rcp_command</literal></term>
+               <listitem>
+                  <para>Default rcp-compatible copy command for staging.</para>
+                  <para>
+                     The rcp command should be the exact command used for
+                     remote copies, including any required options.  If you are
+                     using <command>scp</command>, you should pass it the
+                     <option>-B</option> option, so <command>scp</command> will
+                     not ask for any user input (which could hang the backup).
+                     A common example is something like <command>/usr/bin/scp
+                     -B</command>.
+                  </para>
+                  <para>
+                     This value is used as the default value for all remote
+                     peers in the staging section.  Technically, this value is
+                     not needed by clients, but we require it for all config
+                     files anyway.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+         
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+
+            <para>
+               In Cedar Backup v1.0, all remote peers had to use the same rcp
+               command, specified here.  In Cedar Backup v2.0, this value is
+               just used as the default by remote peers, but they can override
+               it.
+            </para>
+
+            <para>
+               in Cedar Backup v1.0, each remote peer had to specify its own
+               backup user value.  In Cedar Backup v2.0, remote peers can rely
+               on the backup user in this section as a default.
+            </para>
+         </sidebar>
+         -->
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-collect">
+
+         <title>Collect Configuration</title>
+
+         <para>
+            The collect configuration section contains configuration options
+            related the the collect action.  This section contains a variable
+            number of elements, including an optional exclusion section and a
+            repeating subsection used to specify which directories to collect.
+         </para>
+
+         <para>
+            This is an example collect configuration section:
+         </para>
+
+         <programlisting>
+&lt;collect&gt;
+   &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+   &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
+   &lt;archive_mode&gt;targz&lt;/archive_mode&gt;
+   &lt;ignore_file&gt;.cbignore&lt;/ignore_file&gt;
+   &lt;exclude&gt;
+      &lt;abs_path&gt;/etc&lt;/abs_path&gt;
+      &lt;pattern&gt;.*\.conf&lt;/pattern&gt;
+   &lt;/exclude&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/etc&lt;/abs_path&gt;
+   &lt;/dir&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/var/log&lt;/abs_path&gt;
+      &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
+   &lt;/dir&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/opt&lt;/abs_path&gt;
+      &lt;collect_mode&gt;weekly&lt;/collect_mode&gt;
+      &lt;exclude&gt;
+         &lt;abs_path&gt;/opt/large&lt;/abs_path&gt;
+         &lt;rel_path&gt;backup&lt;/rel_path&gt;
+         &lt;pattern&gt;.*tmp&lt;/pattern&gt;
+      &lt;/exclude&gt;
+   &lt;/dir&gt;
+&lt;/collect&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the collect configuration
+            section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>collect_dir</literal></term>
+               <listitem>
+                  <para>Directory to collect files into.</para>
+                  <para>
+                     On a client, this is the directory which tarfiles for
+                     individual collect directories are written into.  The
+                     master then stages files from this directory into its own
+                     staging directory.
+                  </para>
+                  <para>
+                     This field is always required.  It must contain enough
+                     free space to collect all of the backed-up files on the
+                     machine in a compressed form.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>collect_mode</literal></term>
+               <listitem>
+                  <para>Default collect mode.</para>
+                  <para>
+                     The collect mode describes how frequently a directory is
+                     backed up.   See <xref
+                     linkend="cedar-basic-process-collect"/> (in <xref
+                     linkend="cedar-basic"/>) for more information.
+                  </para>
+                  <para>
+                     This value is the collect mode that will be used by
+                     default during the collect process.  Individual collect
+                     directories (below) may override this value.  If
+                     <emphasis>all</emphasis> individual directories provide
+                     their own value, then this default value may be omitted
+                     from configuration.
+                  </para>
+                  <para>
+                     Note: if your backup device does not suppport multisession
+                     discs, then you should probably use the
+                     <literal>daily</literal> collect mode to avoid losing
+                     data.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be one of
+                     <literal>daily</literal>, <literal>weekly</literal> or
+                     <literal>incr</literal>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>archive_mode</literal></term>
+               <listitem>
+                  <para>Default archive mode for collect files.</para>
+                  <para>
+                     The archive mode maps to the way that a backup file is
+                     stored.  A value <literal>tar</literal> means just a
+                     tarfile (<filename>file.tar</filename>); a value
+                     <literal>targz</literal> means a gzipped tarfile
+                     (<filename>file.tar.gz</filename>); and a value
+                     <literal>tarbz2</literal> means a bzipped tarfile
+                     (<filename>file.tar.bz2</filename>)
+                  </para>
+                  <para>
+                     This value is the archive mode that will be used by
+                     default during the collect process.  Individual collect
+                     directories (below) may override this value.  If
+                     <emphasis>all</emphasis> individual directories provide
+                     their own value, then this default value may be omitted
+                     from configuration.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be one of
+                     <literal>tar</literal>, <literal>targz</literal> or
+                     <literal>tarbz2</literal>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>ignore_file</literal></term>
+               <listitem>
+                  <para>Default ignore file name.</para>
+                  <para>
+                     The ignore file is an indicator file.  If it exists in a
+                     given directory, then that directory will be recursively
+                     excluded from the backup as if it were explicitly excluded
+                     in configuration.  
+                  </para>
+                  <para>
+                     The ignore file provides a way for individual users (who
+                     might not have access to Cedar backup configuration) to
+                     control which of their own directories get backed up.  For
+                     instance, users with a <filename>~/tmp</filename>
+                     directory might not want it backed up.  If they create an
+                     ignore file in their directory (e.g.
+                     <filename>~/tmp/.cbignore</filename>), then Cedar Backup
+                     will ignore it.
+                  </para>
+                  <para>
+                     This value is the ignore file name that will be used by
+                     default during the collect process.  Individual collect
+                     directories (below) may override this value.  If
+                     <emphasis>all</emphasis> individual directories provide
+                     their own value, then this default value may be omitted
+                     from configuration.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>exclude</literal></term>
+               <listitem>
+                  <para>List of paths or patterns to exclude from the backup.</para>
+                  <para>
+                     This is a subsection which contains a set of absolute
+                     paths and patterns to be excluded across all configured
+                     directories.  For a given directory, the set of absolute
+                     paths and patterns to exclude is built from this list and
+                     any list that exists on the directory itself.  Directories
+                     <emphasis>cannot</emphasis> override or remove entries that
+                     are in this list, however.
+                  </para>
+                  <para>
+                     This section is optional, and if it exists can also be
+                     empty.  
+                  </para>
+                  <para>
+                     The exclude subsection can contain one or more of each of
+                     the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>abs_path</literal></term>
+                        <listitem>
+                           <para>
+                              An absolute path to be recursively excluded from
+                              the backup.
+                           </para>
+                           <para>
+                              If a directory is excluded, then all of its children
+                              are also recursively excluded.  For instance, a value
+                              <literal>/var/log/apache</literal> would exclude any
+                              files within <filename>/var/log/apache</filename> as
+                              well as files within other directories under
+                              <filename>/var/log/apache</filename>.
+                           </para>
+                           <para>
+                              This field can be repeated as many times as is
+                              necessary.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>pattern</literal></term>
+                        <listitem>
+                           <para>
+                              A pattern to be recursively excluded from the
+                              backup.
+                           </para>
+                           <para>
+                              The pattern must be a Python regular expression. 
+                              <footnote id="cedar-config-foot-regex">
+                              <para>See <ulink url="http://docs.python.org/lib/re-syntax.html"/></para></footnote>
+                              It is assumed to be bounded at front and back by the beginning
+                              and end of the string (i.e. it is treated as if it begins with
+                              <literal>^</literal> and ends with <literal>$</literal>).
+                           </para>
+                           <para>
+                              If the pattern causes a directory to be excluded,
+                              then all of the children of that directory are
+                              also recursively excluded.  For instance, a value
+                              <literal>.*apache.*</literal> might match the
+                              <filename>/var/log/apache</filename> directory.
+                              This would exclude any files within
+                              <filename>/var/log/apache</filename> as well as
+                              files within other directories under
+                              <filename>/var/log/apache</filename>.
+                           </para>
+                           <para>
+                              This field can be repeated as many times as is
+                              necessary.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty
+                           </para>
+                        </listitem>
+                     </varlistentry>
+                    
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>dir</literal></term>
+               <listitem>
+                  <para>A directory to be collected.</para>
+                  <para>
+                     This is a subsection which contains information about
+                     a specific directory to be collected (backed up).
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one collect directory must be
+                     configured.
+                  </para>
+                  <para>
+                     The collect directory subsection contains the following
+                     fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>abs_path</literal></term>
+                        <listitem>
+                           <para>
+                              Absolute path of the directory to collect.
+                           </para>
+                           <para>
+                              The path may be either a directory, a soft link
+                              to a directory, or a hard link to a directory.
+                              All three are treated the same at this level.
+                           </para>
+                           <para>
+                              The contents of the directory will be recursively
+                              collected.  The backup will contain all of the
+                              files in the directory, as well as the contents
+                              of all of the subdirectories within the
+                              directory, etc.  
+                           </para>
+                           <para>
+                              Soft links <emphasis>within</emphasis> the
+                              directory are treated as files, i.e. they are
+                              copied verbatim (as a link) and their contents
+                              are not backed up.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>collect_mode</literal></term> 
+                        <listitem>
+                           <para>Collect mode for this directory</para>
+                           <para>
+                              The collect mode describes how frequently a
+                              directory is backed up.   See <xref
+                              linkend="cedar-basic-process-collect"/> (in <xref
+                              linkend="cedar-basic"/>) for more information.
+                           </para>
+                           <para>
+                              This field is optional.  If it doesn't exist, the
+                              backup will use the default collect mode.  
+                           </para>
+                           <para>
+                              Note: if your backup device does not suppport
+                              multisession discs, then you should probably
+                              confine yourself to the <literal>daily</literal>
+                              collect mode, to avoid losing data.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be one of
+                              <literal>daily</literal>, <literal>weekly</literal> or
+                              <literal>incr</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>archive_mode</literal></term>
+                        <listitem>
+                           <para>Archive mode for this directory.</para>
+                           <para>
+                              The archive mode maps to the way that a backup
+                              file is stored.  A value <literal>tar</literal>
+                              means just a tarfile
+                              (<filename>file.tar</filename>); a value
+                              <literal>targz</literal> means a gzipped tarfile
+                              (<filename>file.tar.gz</filename>); and a value
+                              <literal>tarbz2</literal> means a bzipped tarfile
+                              (<filename>file.tar.bz2</filename>)
+                           </para>
+                           <para>
+                              This field is optional.  if it doesn't exist, the
+                              backup will use the default archive mode.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be one of
+                              <literal>tar</literal>, <literal>targz</literal> or
+                              <literal>tarbz2</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>ignore_file</literal></term>
+                        <listitem>
+                           <para>Ignore file name for this directory.</para>
+                           <para>
+                              The ignore file is an indicator file.  If it
+                              exists in a given directory, then that directory
+                              will be recursively excluded from the backup as
+                              if it were explicitly excluded in configuration.  
+                           </para>
+                           <para>
+                              The ignore file provides a way for individual
+                              users (who might not have access to Cedar backup
+                              configuration) to control which of their own
+                              directories get backed up.  For instance, users
+                              with a <filename>~/tmp</filename> directory might
+                              not want it backed up.  If they create an ignore
+                              file in their directory (e.g.
+                              <filename>~/tmp/.cbignore</filename>), then Cedar
+                              Backup will ignore it.
+                           </para>
+                           <para>
+                              This field is optional.  If it doesn't exist, the
+                              backup will use the default ignore file name.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>exclude</literal></term>
+                        <listitem>
+                           <para>List of paths or patterns to exclude from the backup.</para>
+                           <para>
+                              This is a subsection which contains a set of
+                              paths and patterns to be excluded within this
+                              collect directory.  This list is combined with
+                              the program-wide list to build a complete list
+                              for the directory.
+                           </para>
+                           <para>
+                              This section is entirely optional, and if it exists can
+                              also be empty.  
+                           </para>
+                           <para>
+                              The exclude subsection can contain one or more of each of
+                              the following fields:
+                           </para>
+
+                           <variablelist>
+
+                              <varlistentry>
+                                 <term><literal>abs_path</literal></term>
+                                 <listitem>
+                                    <para>
+                                       An absolute path to be recursively
+                                       excluded from the backup.
+                                    </para>
+                                    <para>
+                                       If a directory is excluded, then all of
+                                       its children are also recursively
+                                       excluded.  For instance, a value
+                                       <literal>/var/log/apache</literal> would
+                                       exclude any files within
+                                       <filename>/var/log/apache</filename> as
+                                       well as files within other directories
+                                       under
+                                       <filename>/var/log/apache</filename>.
+                                    </para>
+                                    <para>
+                                       This field can be repeated as many times as is
+                                       necessary.
+                                    </para>
+                                    <para>
+                                       <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                                    </para>
+                                 </listitem>
+                              </varlistentry>
+
+                              <varlistentry>
+                                 <term><literal>rel_path</literal></term>
+                                 <listitem>
+                                    <para>
+                                       A relative path to be recursively
+                                       excluded from the backup.
+                                    </para>
+                                    <para>
+                                       The path is assumed to be relative to
+                                       the collect directory itself.  For
+                                       instance, if the configured directory is
+                                       <filename>/opt/web</filename> a
+                                       configured relative path of
+                                       <filename>something/else</filename>
+                                       would exclude the path
+                                       <filename>/opt/web/something/else</filename>.
+                                    </para>
+                                    <para>
+                                       If a directory is excluded, then all of
+                                       its children are also recursively
+                                       excluded.  For instance, a value
+                                       <literal>something/else</literal> would
+                                       exclude any files within
+                                       <filename>something/else</filename> as
+                                       well as files within other directories
+                                       under <filename>something/else</filename>.
+                                    </para>
+                                    <para>
+                                       This field can be repeated as many times as is
+                                       necessary.
+                                    </para>
+                                    <para>
+                                       <emphasis>Restrictions:</emphasis> Must be non-empty.
+                                    </para>
+                                 </listitem>
+                              </varlistentry>
+
+                              <varlistentry>
+                                 <term><literal>pattern</literal></term>
+                                 <listitem>
+                                    <para>
+                                       A pattern to be excluded from the backup.
+                                    </para>
+                                    <para>
+                                       The pattern must be a Python regular
+                                       expression.  <footnoteref linkend="cedar-config-foot-regex"/> 
+                                       It is assumed to be bounded at front and
+                                       back by the beginning and end of the
+                                       string (i.e. it is treated as if it
+                                       begins with <literal>^</literal> and
+                                       ends with <literal>$</literal>).
+                                    </para>
+                                    <para>
+                                       If the pattern causes a directory to be
+                                       excluded, then all of the children of
+                                       that directory are also recursively
+                                       excluded.  For instance, a value
+                                       <literal>.*apache.*</literal> might
+                                       match the <filename>/var/log/apache</filename>
+                                       directory.  This would exclude any files
+                                       within <filename>/var/log/apache</filename> as
+                                       well as files within other directories
+                                       under <filename>/var/log/apache</filename>.
+                                    </para>
+                                    <para>
+                                       This field can be repeated as many times as is
+                                       necessary.
+                                    </para>
+                                    <para>
+                                       <emphasis>Restrictions:</emphasis> Must be non-empty
+                                    </para>
+                                 </listitem>
+                              </varlistentry>
+                             
+                           </variablelist>
+
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+
+            <para>
+               Cedar Backup v1.0 also supported a fourth archive mode,
+               <literal>tarz</literal>, which resulted in a compressed tarfile
+               (<filename>file.tar.Z</filename>).  Cedar Backup v2.0 does not
+               support this archive mode because the rewrite moved to using
+               native libraries rather than external utilities, and Python does
+               not contain a native library to create compressed archives.
+            </para>
+
+            <para>
+               Cedar Backup v1.0 did not allow collect defaults to be set
+               outside of individual collect directories, and did not exclude
+               program-wide excluded patterns or directories.  It also did not
+               allow excluded relative directories or patterns at the directory
+               level.
+            </para>
+
+            <para>
+               The collect directory field <literal>collect_mode</literal> can
+               also be written as just <literal>mode</literal>, for backwards
+               compatibility with v1.0.
+            </para>
+         </sidebar>
+         -->
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-stage">
+
+         <title>Stage Configuration</title>
+
+         <para>
+            The stage configuration section contains configuration options
+            related the the stage action.  The section defines the set of peers
+            in a backup pool, and then also indicates where data from those
+            peers should be staged to.
+         </para>
+
+         <para>
+            This is an example stage configuration section:
+         </para>
+
+         <programlisting>
+&lt;stage&gt;
+   &lt;staging_dir&gt;/opt/backup/stage&lt;/staging_dir&gt;
+   &lt;peer&gt;
+      &lt;name&gt;machine1&lt;/name&gt;
+      &lt;type&gt;local&lt;/type&gt;
+      &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+   &lt;/peer&gt;
+   &lt;peer&gt;
+      &lt;name&gt;machine2&lt;/name&gt;
+      &lt;type&gt;remote&lt;/type&gt;
+      &lt;backup_user&gt;backup&lt;/backup_user&gt;
+      &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+   &lt;/peer&gt;
+&lt;/stage&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the stage configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>staging_dir</literal></term>
+               <listitem>
+                  <para>Directory to stage files into.</para>
+                  <para>
+                     This is the directory into which the master stages collected
+                     data from each of the clients.  Within the staging directory,
+                     data is staged into date-based directories by peer name.  For
+                     instance, peer <quote>daystrom</quote> backed up on 19 Feb 2005
+                     would be staged into something like <filename>2005/02/19/daystrom</filename>
+                     relative to the staging directory itself.
+                  </para>
+                  <para>
+                     This field is always required.  The directory must contain
+                     enough free space to stage all of the files collected from
+                     all of the various machines in a backup pool.  Many
+                     administrators set up purging to keep staging directories
+                     around for a week or more, which require even more space.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>peer</literal> (local version)</term>
+               <listitem>
+                  <para>Local client peer in a backup pool.</para>
+                  <para>
+                     This is a subsection which contains information about a
+                     specific local client peer to be staged (backed up).  A
+                     local peer is one whose collect directory can be reached
+                     without requiring any rsh-based network calls.  It is
+                     possible that a remote peer might be staged as a local
+                     peer if its collect directory is mounted to the master via
+                     NFS, AFS or some other method.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one remote or local peer must be
+                     configured.
+                  </para>
+                  <para>
+                     The local peer subsection must contain the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>name</literal></term>
+                        <listitem>
+                           <para>Name of the peer, typically a valid hostname.</para>
+                           <para>
+                              For local peers, this value is only used for
+                              reference.  However, it is good practice to list
+                              the peer's hostname here, for consistency with
+                              remote peers.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>type</literal></term>
+                        <listitem>
+                           <para>Type of this peer.</para>
+                           <para>
+                              This value identifies the type of the peer.  For
+                              a local peer, it must always be <literal>local</literal>.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be <literal>local</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>collect_dir</literal></term>
+                        <listitem>
+                           <para>Collect directory to stage from for this peer.</para>
+                           <para>
+                              The master will copy all files in this directory
+                              into the appropriate staging directory.  Since
+                              this is a local peer, the directory is assumed to
+                              be reachable via normal filesystem operations
+                              (i.e. <command>cp</command>). 
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>peer</literal> (remote version)</term>
+               <listitem>
+                  <para>Remote client peer in a backup pool.</para>
+                  <para>
+                     This is a subsection which contains information about a
+                     specific remote client peer to be staged (backed up).  A
+                     remote peer is one whose collect directory can only be
+                     reached via an rsh-based network call.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one remote or local peer must be
+                     configured.
+                  </para>
+                  <para>
+                     The remote peer subsection must contain the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>name</literal></term>
+                        <listitem>
+                           <para>Hostname of the peer.</para>
+                           <para>
+                              For remote peers, this must be a valid DNS
+                              hostname or IP address which can be resolved
+                              during an rsh-based network call.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>type</literal></term>
+                        <listitem>
+                           <para>Type of this peer.</para>
+                           <para>
+                              This value identifies the type of the peer.  For
+                              a remote peer, it must always be <literal>remote</literal>.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be <literal>remote</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>collect_dir</literal></term>
+                        <listitem>
+                           <para>Collect directory to stage from for this peer.</para>
+                           <para>
+                              The master will copy all files in this directory
+                              into the appropriate staging directory.  Since
+                              this is a remote peer, the directory is assumed to
+                              be reachable via rsh-based network operations
+                              (i.e. <command>scp</command> or the configured
+                              rcp command). 
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>backup_user</literal></term>
+                        <listitem>
+                           <para>Name of backup user on the remote peer.</para>
+                           <para>
+                              This username will be used when copying files from
+                              the remote peer via an rsh-based network connection.
+                           </para>
+                           <para>
+                              This field is optional.  if it doesn't exist, the
+                              backup will use the default backup user from the 
+                              options section.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>rcp_command</literal></term>
+                        <listitem>
+                           <para>The rcp-compatible copy command for this peer.</para>
+                           <para>
+                              The rcp command should be the exact command used for
+                              remote copies, including any required options.  If you are
+                              using <command>scp</command>, you should pass it the
+                              <option>-B</option> option, so <command>scp</command> will
+                              not ask for any user input (which could hang the backup).
+                              A common example is something like <command>/usr/bin/scp
+                              -B</command>.
+                           </para>
+                           <para>
+                              This field is optional.  if it doesn't exist, the
+                              backup will use the default rcp command from the
+                              options section.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+
+            <para>
+               Cedar Backup v1.0 did not allow the rcp command to be overridden
+               for remote peers.  It also did not allow the backup user from
+               the options section to be used as the default backup user for remote
+               peers.
+            </para>
+
+            <para>
+               To make the DTD more explicit and remove the need for the
+               <literal>type</literal> tag, it would make some sense to split
+               the <literal>peer</literal> section into
+               <literal>local_peer</literal> and <literal>remote_peer</literal>
+               sections.  However, doing that would break backwards
+               compatibility with v1.0, so I've chosen to leave it alone.
+            </para>
+         </sidebar>
+         -->
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-store">
+
+         <title>Store Configuration</title>
+
+         <para>
+            The store configuration section contains configuration options
+            related the the store action.  This section contains several
+            optional fields.  Most fields control the way media is written
+            using the writer device.
+         </para> 
+
+         <para>
+            This is an example store configuration section:
+         </para>
+
+         <programlisting>
+&lt;store&gt;
+   &lt;source_dir&gt;/opt/backup/stage&lt;/source_dir&gt;
+   &lt;media_type&gt;cdrw-74&lt;/media_type&gt;
+   &lt;device_type&gt;cdwriter&lt;/device_type&gt;
+   &lt;target_device&gt;/dev/cdrw&lt;/target_device&gt;
+   &lt;target_scsi_id&gt;0,0,0&lt;/target_scsi_id&gt;
+   &lt;drive_speed&gt;4&lt;/drive_speed&gt;
+   &lt;check_data&gt;Y&lt;/check_data&gt;
+&lt;/store&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the store configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>source_dir</literal></term>
+               <listitem>
+                  <para>Directory whose contents should be written to media.</para>
+                  <para>
+                     This directory <emphasis>must</emphasis> be a Cedar Backup
+                     staging directory, as configured in the staging configuration
+                     section.  Only certain data from that directory (typically,
+                     data from the current day) will be written to disc.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>media_type</literal></term>
+               <listitem>
+                  <para>Type of the media in the device.</para>
+                  <para>
+                     Unless you want to throw away a backup disc every week,
+                     you are probably best off using rewritable media.
+                  </para>
+                  <para>
+                     If you have no idea what kind of media you have, choose
+                     <literal>cdr-74</literal>.   For more information on
+                     media types, see <xref linkend="cedar-basic-mediadevice"/>
+                     (in <xref linkend="cedar-basic"/>).
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be one of
+                     <literal>cdr-74</literal>, <literal>cdrw-74</literal>, 
+                     <literal>cdr-80</literal> or <literal>cdrw-80</literal>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>device_type</literal></term>
+               <listitem>
+                  <para>Type of the device used to write the media.</para>
+                  <para>
+                     This field mostly exists for planned future enhancements,
+                     such as support for DVD writers.  It indicates what type
+                     of device should be used to write the media, in case that
+                     makes a difference to the underlying writer functionality.
+                     Currently, it can only be set to <literal>cdwriter</literal>.
+                  </para>
+                  <para>
+                     This field is optional.  If it doesn't exist, the
+                     <literal>cdwriter</literal> device type is assumed.  
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> If set, must be <literal>cdwriter</literal>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>target_device</literal></term>
+               <listitem>
+                  <para>Filesystem device name for writer device.</para>
+                  <para>
+                     This is the UNIX device name for the writer drive, for
+                     instance <filename>/dev/scd0</filename> or
+                     <filename>/dev/cdrw</filename>.   The device name is not
+                     needed in order to write to the media.  However, it is
+                     needed in order to do several pre-write checks (such as
+                     whether the device might already be mounted) as well as
+                     the post-write consistency check, if enabled.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>target_scsi_id</literal></term>
+               <listitem>
+                  <para>SCSI id for writer device</para>
+                  <para>
+                     Under Linux, CD burners generally only work through a SCSI
+                     or pseudo-SCSI interface.  This value is the SCSI id for
+                     the drive in the form <literal>scsibus,target,lun</literal>.  
+                     The <literal>ATA:</literal> or <literal>ATAPI:</literal> 
+                     prefixes are also allowed.
+                     <footnote id="cedar-config-foot-cdrom">
+                     <para>For more information on how to configure your
+                     CD-R/CD-RW device, see <ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO"/></para></footnote> 
+                     <footnote id="cedar-config-foot-ata"><para>See 
+                     <ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html"/></para></footnote>
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be a valid SCSI identifier.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>drive_speed</literal></term>
+               <listitem>
+                  <para>Speed of the drive, i.e. <literal>2</literal> for a 2x device.</para>
+                  <para>
+                     This field is optional.  If it doesn't exist, the
+                     underlying device-related functionality will use the
+                     default drive speed.  Since some media is speed-sensitive,
+                     it might be a good idea to set this to a sensible value
+                     for your writer.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> If set, must be an integer >= 1.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>check_data</literal></term>
+               <listitem>
+                  <para>Indicates whether the media should be validated.</para>
+                  <para>
+                     This field indicates whether a resulting image on the
+                     media should be validated after the write completes, by
+                     running a consistency check against it.  If this check is
+                     enabled, the contents of the staging directory are
+                     directly compared to the media, and an error is reported
+                     if there is a mismatch.
+                  </para>
+                  <para>
+                     Practice shows that some drives can encounter an error
+                     when writing a multisession disc, but not report any problems.
+                     This consistency check allows us to catch the problem.
+                     By default, the consistency check is disabled, but most
+                     users should choose to enable it unless they have a good
+                     reason not to.
+                  </para>
+                  <para>
+                     This field is optional.  If it doesn't exist, then
+                     <literal>N</literal> will be assumed.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+                  </para>
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+
+            <para>
+               Cedar Backup v1.0 did not accept the device type field, which is
+               why it is optional.  The behavior based on defaults for these
+               values matches the only available behavior in v1.0.
+            </para>
+
+            <para>
+               Cedar Backup v2.0 does not require the drive speed field
+               (although v1.0 does) because the underlying writer functionality
+               is now smart enough to use the device default if no speed
+               is indicated.
+            </para>
+         </sidebar>
+         -->
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-purge">
+
+         <title>Purge Configuration</title>
+
+         <para>
+            The purge configuration section contains configuration options
+            related the the purge action.  This section contains a set of
+            directories to be purged, along with information about the schedule
+            at which they should be purged.
+         </para>
+
+         <para>
+            Typically, Cedar Backup should be configured to purge collect
+            directories daily (retain days of <literal>0</literal>).
+         </para>
+
+         <para>
+            If you are tight on space, staging directories can also be purged
+            daily.  However, if you have space to spare, you should consider
+            purging about once per week.  That way, if your backup media is
+            damaged, you will be able to recreate the week's backup using the
+            rebuild action.
+         </para>
+
+         <para>
+            You should also purge the working directory periodically, once
+            every few weeks or once per month.  This way, if any unneeded files
+            are left around, perhaps because a backup was interrupted or
+            because configuration changed, they will eventually be removed.
+            <emphasis>The working directory should not be purged any more
+            frequently than once per week, otherwise you will risk destroying
+            data used for incremental backups.</emphasis>
+         </para>
+
+         <para>
+            This is an example purge configuration section:
+         </para>
+
+         <programlisting>
+&lt;purge&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/opt/backup/stage&lt;/abs_path&gt;
+      &lt;retain_days&gt;7&lt;/retain_days&gt;
+   &lt;/dir&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/opt/backup/collect&lt;/abs_path&gt;
+      &lt;retain_days&gt;0&lt;/retain_days&gt;
+   &lt;/dir&gt;
+&lt;/purge&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the purge configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>dir</literal></term>
+               <listitem>
+                  <para>A directory to purge within.</para>
+                  <para>
+                     This is a subsection which contains information about
+                     a specific directory to purge within.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one purge directory must be
+                     configured.
+                  </para>
+                  <para>
+                     The purge directory subsection contains the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>abs_path</literal></term>
+                        <listitem>
+                           <para>
+                              Absolute path of the directory to purge within.
+                           </para>
+                           <para>
+                              The contents of the directory will be purged
+                              based on age.  The purge will remove any files
+                              that were last modified more than <quote>retain
+                              days</quote> days ago.  Empty directories will
+                              also eventually be removed.  The purge directory
+                              itself will never be removed.
+                           </para>
+                           <para>
+                              The path may be either a directory, a soft link
+                              to a directory, or a hard link to a directory.
+                              Soft links <emphasis>within</emphasis> the
+                              directory (if any) are treated as files.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>retain_days</literal></term>
+                        <listitem>
+                           <para>
+                              Number of days to retain old files.
+                           </para>
+                           <para>
+                              Once it has been more than this many days since a file
+                              was last modified, it is a candidate for removal.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an integer >= 0.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+
+            </varlistentry>
+
+         </variablelist>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-extensions">
+
+         <title>Extensions Configuration</title>
+
+         <para>
+            The extensions configuration section is used to configure
+            third-party extensions to Cedar Backup.  If you don't intend to use
+            any extensions, or don't know what extensions are, then you can
+            safely leave this section out of your configuration file.  It is
+            optional.
+         </para>
+
+         <para>
+            Extensions configuration is used to specify <quote>extended
+            actions</quote> implemented by code external to Cedar Backup.  An
+            administrator can use this section to map command-line Cedar
+            Backup actions to third-party extension functions.
+         </para>
+
+         <para>
+            Each extended action has a name, which is mapped to a Python
+            function within a particular module.  Each action also has an index
+            associated with it.  This index is used to properly order execution
+            when more than one action is specified on the command line.
+            The standard actions have predefined indexes, and extended actions
+            are interleaved into the normal order of execution using those
+            indexes.  The collect action has index 100, the stage index
+            has action 200, the store action has index 300 and the purge
+            action has index 400.
+         </para>
+         
+         <para>
+            For instance, imagine that a third-party developer provided a Cedar
+            Backup extension to back up a certain kind of database repository,
+            and you wanted to map that extension to the <quote>database</quote>
+            command-line action.  You have been told that this function is
+            called <quote>foobar.database</quote>.  You think of this backup as
+            a <quote>collect</quote> kind of action, so you want it to be
+            performed after collect but before stage and purge if more than one
+            action is specified on the command line.  
+         </para>
+
+         <para>
+            To configure this extension, you would list an action with a name
+            <quote>database</quote>, a module <quote>foobar</quote>,
+            a function name <quote>database</quote> and an index of
+            <quote>101</quote>.
+         </para>
+
+         <para>
+            This is how the hypothetical action would be configured:
+         </para>
+
+         <programlisting>
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;database&lt;/name&gt;
+      &lt;module&gt;foobar&lt;/module&gt;
+      &lt;function&gt;database&lt;/function&gt;
+      &lt;index&gt;101&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the extensions configuration
+            section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>action</literal></term>
+               <listitem>
+                  <para>
+                     This is a subsection that contains configuration
+                     related to a single extended action.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  
+                  </para>
+                  <para>
+                     The action subsection contains the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>name</literal></term>
+                        <listitem>
+                           <para>Name of the extended action.</para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a non-empty
+                              string consisting of only lower-case letters and digits.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>module</literal></term>
+                        <listitem>
+                           <para>Name of the Python module associated with the extension function.</para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a non-empty string
+                              and a valid Python identifier.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>function</literal></term>
+                        <listitem>
+                           <para>Name of the Python extension function within the module.</para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a non-empty string
+                              and a valid Python identifier.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>index</literal></term>
+                        <listitem>
+                           <para>Index of action, for execution ordering.</para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an integer >= 0.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+            <para>
+               Extensions functionality is new for Cedar Backup v2.0, so this
+               configuration section does not exist in v1.0.
+            </para>
+         </sidebar>
+         -->
+
+      </sect2>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-poolofone">
+         
+      <title>Setting up a Pool of One</title>
+
+      <para>
+         Cedar Backup has been designed primarily for situations where there is
+         a single master and a set of other clients that the master interacts
+         with.  However, it will just as easily work for a single machine (a
+         backup pool of one).
+      </para>
+
+      <para>
+         Once you complete all of these configuration steps, your backups will
+         run as scheduled out of cron. Any errors that occur will be reported
+         in daily emails to your root user (or the user that receives root's
+         email). If you don't receive any emails, then you know your backup
+         worked.
+      </para>
+
+      <para>
+         Note: all of these configuration steps should be run as the root user,
+         unless otherwise indicated.
+      </para>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 1: Make sure email works.</title>
+
+         <para>
+            Cedar Backup relies on email for problem notification.  This
+            notification works through the magic of cron.  Cron will email any
+            output from each job it executes to the user associated with the
+            job.  Since by default Cedar Backup only writes output to the
+            terminal if errors occur, this ensures that notification emails
+            will only be sent out if errors occur.
+         </para>
+            
+         <para>
+            In order to receive problem notifications, you must make sure that
+            email works for the user which is running the Cedar Backup cron
+            jobs (typically root).  Refer to your distribution's documentation
+            for information on how to configure email on your system.  Note
+            that you may prefer to configure root's email to forward to some
+            other user, so you do not need to check the root user's mail in
+            order to see Cedar Backup errors.
+         </para>
+            
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 2: Configure your CD-R or CD-RW drive.</title>
+
+         <para>
+            Your CD-R or CD-RW drive must either be a SCSI device or must be
+            configured to act like a Linux SCSI device.
+            <footnoteref linkend="cedar-config-foot-cdrom"/>
+            Regardless of what kind of drive you have, make sure you know its
+            SCSI address (in the form <literal>scsibus, target, lun</literal>)
+            and its device name (i.e. <literal>/dev/cdrw</literal>).  The SCSI
+            address will be used to write to media, and the device name will be
+            used when Cedar Backup needs to mount the media (for instance, when
+            a validation check must be run).
+         </para>
+
+         <para>
+            If you have an IDE drive rather than a SCSI drive and are using the
+            IDE-to-SCSI interface (which is the norm for most IDE drives under
+            Linux), then be prepared to enter the simulated SCSI device address,
+            which is often <literal>0,0,0</literal>.  Newer Linux kernels
+            (2.6.x) can also be compiled with support for other kinds of CD drive
+            interfaces.  If
+            you have configured your CD drive to use <firstterm>ATA</firstterm>
+            <footnoteref linkend="cedar-config-foot-ata"/>
+            or <firstterm>ATAPI</firstterm>, 
+            <footnote id="cedar-config-foot-atapi"><para>
+            As of kernel 2.6, you can use ATAPI directly, without SCSI emulation,
+            by prepending <literal>ATAPI:</literal> to the device address.
+            </para></footnote>
+            then include this prefix in your
+            simulated device address, i.e. <literal>ATA:0,0,0</literal> or
+            <literal>ATAPI:0,0,0</literal>.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 3: Configure your backup user.</title>
+
+         <para>
+             Choose a user to be used for backups. Some Linux distributions may
+             come with a <quote>ready made</quote> backup user. For other
+             distributions, you may have to create a user yourself. You may
+             choose any id you like, but a descriptive name such as
+             <literal>backup</literal> or <literal>cback</literal> is a good
+             choice.  See your distribution's documentation for information on
+             how to add a user.
+         </para>
+
+         <note>
+            <para>
+               Standard Debian systems come with a user named
+               <literal>backup</literal>.  You may choose to stay with this
+               user or create another one.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 4: Create your backup tree.</title>
+
+         <para>
+            Cedar Backup requires a backup directory tree on disk. This
+            directory tree must be roughly three times as big as the amount of
+            data that will be backed up on a nightly basis, to allow for the
+            data to be collected, staged, and then placed into an ISO CD
+            image on disk. (This is one disadvantage to using Cedar Backup in
+            single-machine pools, but in this day of really large hard drives,
+            it might not be an issue.) Note that if you elect not to purge the
+            staging directory every night, you will need even more space.
+         </para>
+
+         <para>
+            You should create a collect directory, a staging directory and a
+            working (temporary) directory. One recommended layout is this:
+         </para>
+
+         <programlisting>
+/opt/
+     backup/
+            collect/
+            stage/
+            tmp/
+         </programlisting>
+
+         <para>
+            If you will be backing up sensitive information (i.e. password
+            files), it is recommended that these directories be owned by the
+            backup user (whatever you named it), with permissions
+            <literal>700</literal>. 
+         </para>
+
+         <note>
+            <para>
+               You don't have to use <filename>/opt</filename> as the root of your
+               directory structure.  Use anything you would like.  I use
+               <filename>/opt</filename> because it is my <quote>dumping
+               ground</quote> for filesystems that Debian does not manage.
+            </para>
+
+            <para>
+               Some users have requested that the Debian packages set up a more
+               <quote>standard</quote> location for backups right
+               out-of-the-box.  I have resisted doing this because it's
+               difficult to choose an appropriate backup location from within
+               the package.  If you would prefer, you can create the backup
+               directory structure within some existing Debian directory such
+               as <filename>/var/backups</filename> or
+               <filename>/var/tmp</filename>.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 5: Modify the backup cron jobs.</title>
+
+         <para>
+            There are four parts to a Cedar Backup run: collect, stage, store
+            and purge. The usual way of setting off these steps is through a
+            cron job.  For more information on using cron, see the manpage for
+            crontab(5).
+         </para>
+
+         <para>
+            Backing up large directories and creating ISO CD images can be
+            intensive operations, and could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            occur every day, but it is possible to configure cron to execute
+            the backup only one day per week, three days per week, etc.
+         </para>
+
+         <para>
+            Since Cedar Backup should be run as root, one way to configure the
+            cron job is to add a line like this to your
+            <filename>/etc/crontab</filename> file:
+         </para>
+
+         <programlisting>
+30 00 * * * root  cback all
+         </programlisting>
+                          
+         <para>
+            Or, you can create an executable script containing just these lines
+            and place that file in the <filename>/etc/cron.daily</filename>
+            directory:
+         </para>
+
+         <programlisting>
+#/bin/sh
+cback all
+         </programlisting>
+
+         <note>
+            <para>
+               On a Debian system, execution of daily backups is controlled by
+               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <quote>Single machine (pool of
+               one)</quote> entry in the file, and change the line so that the
+               backup goes off when you want it to.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 6: Create the Cedar Backup configuration file.</title>
+
+         <para>
+            Following the instructions in <xref
+            linkend="cedar-config-configfile"/> (above) create a configuration
+            file for your machine.  Since you are working with a pool of one,
+            you must configure all four action-specific sections: collect,
+            stage, store and purge.
+         </para>
+            
+         <para>
+            The usual location for the Cedar Backup config file is
+            <filename>/etc/cback.conf</filename>.  If you change the location,
+            make sure you edit your cronjobs (step 5) to point the
+            <command>cback</command> script at the correct config file (using
+            the <option>--config</option> option).
+         </para>
+
+         <warning>
+            <para>
+               Configuration files should always be writable only by root
+               (or by the file owner, if the owner is not root).
+            </para>
+
+            <para>
+               If you intend to place confidental information into the Cedar
+               Backup configuration file, make sure that you set the filesystem
+               permissions on the file appropriately.  For instance, if you
+               configure any extensions that require passwords or other similar
+               information, you should make the file readable only to root or
+               to the file owner, if the owner is not root.
+            </para>
+         </warning>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 7: Validate the Cedar Backup configuration file.</title>
+
+         <para>
+            Use the command <command>cback validate</command> to validate your
+            configuration file. This command checks that the configuration file
+            can be found and parsed, and also checks for typical configuration
+            problems, such as invalid CD-R/CD-RW device entries.
+         </para>
+
+         <para>
+            Note: the most common cause of configuration problems is in not
+            closing XML tags properly. Any XML tag that is
+            <quote>opened</quote> must be <quote>closed</quote> appropriately.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+         <title>Step 8: Test your backup.</title>
+
+         <para>
+            Place a valid CD-R or CD-RW disc in your drive, and then use the
+            command <command>cback --full all</command>.  You should execute
+            this command as root.  If the command completes with no output,
+            then the backup was run successfully.
+         </para>
+
+         <para>
+            Just to be sure that everything worked properly, check the logfile
+            (<filename>/var/log/cback.log</filename>) for errors and also mount
+            the CD-R or CD-RW disc to be sure it can be read.
+         </para>
+
+         <para>
+            <emphasis>If Cedar Backup ever completes <quote>normally</quote>
+            but the disc that is created is not usable, please report this as a
+            bug.
+            <footnote id="cedar-config-foot-bugzilla"><para>
+            See <ulink url="http://cedar-solutions.com/bugzilla/"/>.</para></footnote>
+            To be safe, always enable the consistency check option in the
+            store configuration section.</emphasis>
+         </para>
+
+      </sect2>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-client">
+         
+      <title>Setting up a Client Peer Node</title>
+
+      <para>
+         Cedar Backup has been designed to backup entire <quote>pools</quote>
+         of machines.  In any given pool, there is one master and some number
+         of clients.  Most of the work takes place on the master, so
+         configuring a client is a little simpler than configuring a master.
+      </para>
+
+      <para>
+         Backups are designed to take place over an RSH or SSH connection.
+         Because RSH is generally considered insecure, you are encouraged to
+         use SSH rather than RSH. This document will only describe how to
+         configure Cedar Backup to use SSH; if you want to use RSH, you're on
+         your own. 
+      </para>
+
+      <para>
+         Once you complete all of these configuration steps, your backups will
+         run as scheduled out of cron. Any errors that occur will be reported
+         in daily emails to your root user (or the user that receives root's
+         email). If you don't receive any emails, then you know your backup
+         worked.
+      </para>
+
+      <para>
+         Note: all of these configuration steps should be run as the root user,
+         unless otherwise indicated.
+      </para>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 1: Make sure email works.</title>
+
+         <para>
+            Cedar Backup relies on email for problem notification.  This
+            notification works through the magic of cron.  Cron will email any
+            output from each job it executes to the user associated with the
+            job.  Since by default Cedar Backup only writes output to the
+            terminal if errors occur, this neatly ensures that notification
+            emails will only be sent out if errors occur.
+         </para>
+            
+         <para>
+            In order to receive problem notifications, you must make sure that
+            email works for the user which is running the Cedar Backup cron
+            jobs (typically root).  Refer to your distribution's documentation
+            for information on how to configure email on your system.  Note
+            that you may prefer to configure root's email to forward to some
+            other user, so you do not need to check the root user's mail in
+            order to see Cedar Backup errors.
+         </para>
+            
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 2: Configure the master in your backup pool.</title>
+
+         <para>
+            You will not be able to complete the client configuration until at
+            least step 3 of the master's configuration has been completed. In
+            particular, you will need to know the master's public SSH identity
+            to fully configure a client.
+         </para>
+
+         <para>
+            To find the master's public SSH identity, log in as the backup
+            user on the master and <command>cat</command> the public identity
+            file <filename>~/.ssh/id_rsa.pub</filename>:
+         </para>
+
+         <programlisting>
+user@machine> cat ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEA0vOKjlfwohPg1oPRdrmwHk75l3mI9Tb/WRZfVnu2Pw69
+uyphM9wBLRo6QfOC2T8vZCB8o/ZIgtAM3tkM0UgQHxKBXAZ+H36TOgg7BcI20I93iGtzpsMA/uXQy8kH
+HgZooYqQ9pw+ZduXgmPcAAv2b5eTm07wRqFt/U84k6bhTzs= user@machine
+         </programlisting>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 3: Configure your backup user.</title>
+
+         <para>
+             Choose a user to be used for backups. Some Linux distributions may
+             come with a "ready made" backup user. For other distributions, you
+             may have to create a user yourself. You may choose any id you
+             like, but a descriptive name such as <literal>backup</literal> or
+             <literal>cback</literal> is a good choice.  See your
+             distribution's documentation for information on how to add a user.
+         </para>
+
+         <note>
+            <para>
+               Standard Debian systems come with a user named
+               <literal>backup</literal>.  You may choose to stay with this
+               user or create another one.
+            </para>
+         </note>
+
+         <para>
+             Once you have created your backup user, you must create an SSH
+             keypair for it. Log in as your backup user, and then run the
+             command <command>ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa</command>:
+         </para>
+
+         <programlisting>
+user@machine> ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+Generating public/private rsa key pair.
+Created directory '/home/user/.ssh'.
+Your identification has been saved in /home/user/.ssh/id_rsa.
+Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+The key fingerprint is:
+11:3e:ad:72:95:fe:96:dc:1e:3b:f4:cc:2c:ff:15:9e user@machine
+         </programlisting>
+
+         <para>
+            The default permissions for this directory should be fine.
+            However, if the directory existed before you ran
+            <command>ssh-keygen</command>, then you may need to modify the
+            permissions.  Make sure that the <filename>~/.ssh</filename>
+            directory is readable only by the backup user (i.e. mode
+            <literal>700</literal>), that the
+            <filename>~/.ssh/id_rsa</filename> file is only readable and
+            writable only by the backup user (i.e. mode <literal>600</literal>)
+            and that the <filename>~/.ssh/id_rsa.pub</filename> file is
+            writable only by the backup user (i.e. mode <literal>600</literal>
+            or mode <literal>644</literal>).
+         </para>
+
+         <para>
+            Finally, take the master's public SSH identity (which you found in
+            step 2) and cut-and-paste it into the file
+            <filename>~/.ssh/authorized_keys</filename>.  Make sure the
+            identity value is pasted into the file <emphasis>all on one
+            line</emphasis>, and that the <filename>authorized_keys</filename>
+            file is owned by your backup user and has permissions
+            <literal>600</literal>.
+         </para>
+         
+         <para>
+            If you have other preferences or standard ways of setting up your
+            users' SSH configuration (i.e. different key type, etc.), feel free
+            to do things your way.  The important part is that the master must
+            be able to SSH into a client <emphasis>with no password entry
+            required</emphasis>.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 4: Create your backup tree.</title>
+
+         <para>
+            Cedar Backup requires a backup directory tree on disk. This
+            directory tree must be roughly as big as the amount of data that
+            will be backed up on a nightly basis (more if you elect not to
+            purge it all every night).
+         </para>
+
+         <para>
+            You should create a collect directory and a working (temporary)
+            directory. One recommended layout is this:
+         </para>
+
+         <programlisting>
+/opt/
+     backup/
+            collect/
+            tmp/
+         </programlisting>
+
+         <para>
+            If you will be backing up sensitive information (i.e. password
+            files), it is recommended that these directories be owned by the
+            backup user (whatever you named it), with permissions
+            <literal>700</literal>. 
+         </para>
+
+         <note>
+            <para>
+               You don't have to use <filename>/opt</filename> as the root of your
+               directory structure.  Use anything you would like.  I use
+               <filename>/opt</filename> because it is my <quote>dumping
+               ground</quote> for filesystems that Debian does not manage.
+            </para>
+
+            <para>
+               Some users have requested that the Debian packages set up a more
+               "standard" location for backups right out-of-the-box.  I have
+               resisted doing this because it's difficult to choose an
+               appropriate backup location from within the package.  If you
+               would prefer, you can create the backup directory structure
+               within some existing Debian directory such as
+               <filename>/var/backups</filename> or
+               <filename>/var/tmp</filename>.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 5: Modify the backup cron jobs.</title>
+
+         <para>
+            There are two parts to a Cedar Backup run on a client: collect
+            and purge. The usual way of setting off these steps is through a
+            cron job.  For more information on using cron, see the manpage for
+            crontab(5).
+         </para>
+
+         <para>
+            Backing up large directories could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            go occur every day, but it is possible to configure cron to 
+            execute the backup only one day per week, three days per week,
+            etc.
+         </para>
+
+         <para>
+            Since Cedar Backup should be run as root, you should add a set of
+            lines like this to your <filename>/etc/crontab</filename> file:
+         </para>
+
+         <programlisting>
+30 00 * * * root  cback collect
+30 06 * * * root  cback purge
+         </programlisting>
+                          
+         <para>
+            You will need to coordinate the collect and purge actions on the
+            client so that the collect action completes before the master
+            attempts to stage, and so that the purge action does not begin
+            until after the master has completed staging.  Usually, allowing an
+            hour or two between steps should be sufficient.  <footnote
+            id="cedar-config-foot-coordinate"><para>See <xref
+            linkend="cedar-basic-coordinate"/> in <xref
+            linkend="cedar-basic"/>.</para></footnote>
+         </para>
+
+         <note>
+            <para>
+               On a Debian system, execution of daily backups is controlled by
+               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <quote>Client machine</quote>
+               entries in the file, and change the lines so that the backup
+               goes off when you want it to.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 6: Create the Cedar Backup configuration file.</title>
+
+         <para>
+            Following the instructions in <xref
+            linkend="cedar-config-configfile"/> (above), create a configuration
+            file for your machine.  Since you are working with a client, you
+            must configure all action-specific sections for the collect and
+            purge actions.
+         </para>
+            
+         <para>
+            The usual location for the Cedar Backup config file is
+            <filename>/etc/cback.conf</filename>.  If you change the location,
+            make sure you edit your cronjobs (step 5) to point the
+            <command>cback</command> script at the correct config file (using
+            the <option>--config</option> option).
+         </para>
+
+         <warning>
+            <para>
+               Configuration files should always be writable only by root
+               (or by the file owner, if the owner is not root).
+            </para>
+
+            <para>
+               If you intend to place confidental information into the Cedar
+               Backup configuration file, make sure that you set the filesystem
+               permissions on the file appropriately.  For instance, if you
+               configure any extensions that require passwords or other similar
+               information, you should make the file readable only to root or
+               to the file owner, if the owner is not root.
+            </para>
+         </warning>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 7: Validate the Cedar Backup configuration file.</title>
+
+         <para>
+            Use the command <command>cback validate</command> to validate your
+            configuration file. This command checks that the configuration file
+            can be found and parsed, and also checks for typical configuration
+            problems.  This command <emphasis>only</emphasis> validates
+            configuration on the one client, not the master or any other
+            clients in a pool.
+         </para>
+
+         <para>
+            Note: the most common cause of configuration problems is in not
+            closing XML tags properly. Any XML tag that is
+            <quote>opened</quote> must be <quote>closed</quote> appropriately.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 8: Test your backup.</title>
+
+         <para>
+            Use the command <command>cback --full collect purge</command>.  If the 
+            command completes with no output, then the backup was run successfully.
+            Just to be sure that everything worked properly, check the logfile 
+            (<filename>/var/log/cback.log</filename>) for errors.
+         </para>
+
+      </sect2>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-master">
+         
+      <title>Setting up a Master Peer Node</title>
+
+      <para>
+         Cedar Backup has been designed to backup entire <quote>pools</quote>
+         of machines.  In any given pool, there is one master and some number
+         of clients.  Most of the work takes place on the master, so
+         configuring a master is somewhat more complicated than configuring a
+         client.
+      </para>
+
+      <para>
+         Backups are designed to take place over an RSH or SSH connection.
+         Because RSH is generally considered insecure, you are encouraged to
+         use SSH rather than RSH. This document will only describe how to
+         configure Cedar Backup to use SSH; if you want to use RSH, you're on
+         your own. 
+      </para>
+
+      <para>
+         Once you complete all of these configuration steps, your backups will
+         run as scheduled out of cron. Any errors that occur will be reported
+         in daily emails to your root user (or whichever other user receives
+         root's email). If you don't receive any emails, then you know your
+         backup worked.
+      </para>
+
+      <para>
+         Note: all of these configuration steps should be run as the root user,
+         unless otherwise indicated.
+      </para>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 1: Make sure email works.</title>
+
+         <para>
+            Cedar Backup relies on email for problem notification.  This
+            notification works through the magic of cron.  Cron will email any
+            output from each job it executes to the user associated with the
+            job.  Since by default Cedar Backup only writes output to the
+            terminal if errors occur, this neatly ensures that notification
+            emails will only be sent out if errors occur.
+         </para>
+            
+         <para>
+            In order to receive problem notifications, you must make sure that
+            email works for the user which is running the Cedar Backup cron
+            jobs (typically root).  Refer to your distribution's documentation
+            for information on how to configure email on your system.  Note
+            that you may prefer to configure root's email to forward to some
+            other user, so you do not need to check the root user's mail in
+            order to see Cedar Backup errors.
+         </para>
+            
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 2: Configure your CD-R or CD-RW drive.</title>
+
+         <para>
+            Your CD-R or CD-RW drive must either be a SCSI device or must be
+            configured to act like a Linux SCSI device.
+            <footnoteref linkend="cedar-config-foot-cdrom"/>
+            Regardless of what kind of drive you have, make sure you know its
+            SCSI address (in the form <literal>scsibus, target, lun</literal>)
+            and its device name (i.e. <literal>/dev/cdrw</literal>).  The SCSI
+            address will be used to write to media, and the device name will be
+            used when Cedar Backup needs to mount the media (for instance, when
+            a validation check must be run).
+         </para>
+
+         <para>
+            If you have an IDE drive rather than a SCSI drive and are using the
+            IDE-to-SCSI interface (which is the norm for most IDE drives under
+            Linux), then be prepared to enter the simulated SCSI device address,
+            which is often <literal>0,0,0</literal>.  Newer Linux kernels
+            (2.6.x) can also be compiled with support for other kinds of CD drive
+            interfaces.  If
+            you have configured your CD drive to use <firstterm>ATA</firstterm>
+            <footnoteref linkend="cedar-config-foot-ata"/>
+            or <firstterm>ATAPI</firstterm>, 
+            <footnoteref linkend="cedar-config-foot-atapi"/>
+            then include this prefix in your
+            simulated device address, i.e. <literal>ATA:0,0,0</literal> or
+            <literal>ATAPI:0,0,0</literal>.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 3: Configure your backup user.</title>
+
+         <para>
+             Choose a user to be used for backups. Some Linux distributions may
+             come with a <quote>ready made</quote> backup user. For other
+             distributions, you may have to create a user yourself. You may
+             choose any id you like, but a descriptive name such as
+             <literal>backup</literal> or <literal>cback</literal> is a good
+             choice.  See your distribution's documentation for information on
+             how to add a user.
+         </para>
+
+         <note>
+            <para>
+               Standard Debian systems come with a user named
+               <literal>backup</literal>.  You may choose to stay with this
+               user or create another one.
+            </para>
+         </note>
+
+         <para>
+             Once you have created your backup user, you must create an SSH
+             keypair for it. Log in as your backup user, and then run the
+             command <command>ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa</command>:
+         </para>
+
+         <programlisting>
+user@machine> ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+Generating public/private rsa key pair.
+Created directory '/home/user/.ssh'.
+Your identification has been saved in /home/user/.ssh/id_rsa.
+Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+The key fingerprint is:
+11:3e:ad:72:95:fe:96:dc:1e:3b:f4:cc:2c:ff:15:9e user@machine
+         </programlisting>
+
+         <para>
+            The default permissions for this directory should be fine.
+            However, if the directory existed before you ran
+            <command>ssh-keygen</command>, then you may need to modify the
+            permissions.  Make sure that the <filename>~/.ssh</filename>
+            directory is readable only by the backup user (i.e. mode
+            <literal>700</literal>), that the
+            <filename>~/.ssh/id_rsa</filename> file is only readable and
+            writable by the backup user (i.e. mode <literal>600</literal>) and
+            that the <filename>~/.ssh/id_rsa.pub</filename> file is writable
+            only by the backup user (i.e. mode <literal>600</literal> or mode
+            <literal>644</literal>).
+         </para>
+         
+         <para>
+            If you have other preferences or standard ways of setting up your
+            users' SSH configuration (i.e. different key type, etc.), feel free
+            to do things your way.  The important part is that the master must
+            be able to SSH into a client <emphasis>with no password entry
+            required</emphasis>.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 4: Create your backup tree.</title>
+
+         <para>
+            Cedar Backup requires a backup directory tree on disk. This
+            directory tree must be roughly large enough hold twice as much data
+            as will be backed up from the entire pool on a given night, plus
+            space for whatever is collected on the master itself. This will
+            allow for all three operations - collect, stage and store - to have
+            enough space to complete. Note that if you elect not to purge the
+            staging directory every night, you will need even more space.
+         </para>
+
+         <para>
+            You should create a collect directory, a staging directory and a
+            working (temporary) directory. One recommended layout is this:
+         </para>
+
+         <programlisting>
+/opt/
+     backup/
+            collect/
+            stage/
+            tmp/
+         </programlisting>
+
+         <para>
+            If you will be backing up sensitive information (i.e. password
+            files), it is recommended that these directories be owned by the
+            backup user (whatever you named it), with permissions
+            <literal>700</literal>. 
+         </para>
+
+         <note>
+
+            <para>
+               You don't have to use <filename>/opt</filename> as the root of your
+               directory structure.  Use anything you would like.  I use
+               <filename>/opt</filename> because it is my <quote>dumping
+               ground</quote> for filesystems that Debian does not manage.
+            </para>
+
+            <para>
+               Some users have requested that the Debian packages set up a more
+               <quote>standard</quote> location for backups right
+               out-of-the-box.  I have resisted doing this because it's
+               difficult to choose an appropriate backup location from within
+               the package.  If you would prefer, you can create the backup
+               directory structure within some existing Debian directory such
+               as <filename>/var/backups</filename> or
+               <filename>/var/tmp</filename>.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 5: Modify the backup cron jobs.</title>
+
+         <para>
+            There are four parts to a Cedar Backup run: collect, stage, store
+            and purge. The usual way of setting off these steps is through a
+            cron job.  For more information on using cron, see the manpage for
+            crontab(5).
+         </para>
+
+         <para>
+            Backing up large directories and creating ISO CD images can be
+            intensive operations, and could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            go occur every day, but it is possible to configure cron to 
+            execute the backup only one day per week, three days per week,
+            etc.
+         </para>
+
+         <para>
+            Since Cedar Backup should be run as root, you should add a set of
+            lines like this to your <filename>/etc/crontab</filename> file:
+         </para>
+
+         <programlisting>
+30 00 * * * root  cback collect
+30 02 * * * root  cback stage
+30 04 * * * root  cback store
+30 06 * * * root  cback purge
+         </programlisting>
+                          
+         <para>
+            You will need to coordinate the collect and purge actions on
+            clients so that their collect actions complete before the master
+            attempts to stage, and so that their purge actions do not begin
+            until after the master has completed staging.  Usually, allowing
+            an hour or two between steps should be sufficient.
+            <footnoteref linkend="cedar-config-foot-coordinate"/>
+         </para>
+
+         <note>
+            <para>
+               On a Debian system, execution of daily backups is controlled by
+               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <quote>Master machine</quote>
+               entries in the file, and change the lines so that the backup
+               goes off when you want it to.
+            </para>
+         </note>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 6: Create the Cedar Backup configuration file.</title>
+
+         <para>
+            Following the instructions in <xref
+            linkend="cedar-config-configfile"/> (above), create a configuration
+            file for your machine.  Since you are working with a master
+            machine, you must configure all four action-specific sections:
+            collect, stage, store and purge.
+         </para>
+            
+         <para>
+            The usual location for the Cedar Backup config file is
+            <filename>/etc/cback.conf</filename>.  If you change the location,
+            make sure you edit your cronjobs (step 5) to point the
+            <command>cback</command> script at the correct config file (using
+            the <option>--config</option> option).
+         </para>
+
+         <warning>
+            <para>
+               Configuration files should always be writable only by root
+               (or by the file owner, if the owner is not root).
+            </para>
+
+            <para>
+               If you intend to place confidental information into the Cedar
+               Backup configuration file, make sure that you set the filesystem
+               permissions on the file appropriately.  For instance, if you
+               configure any extensions that require passwords or other similar
+               information, you should make the file readable only to root or
+               to the file owner, if the owner is not root.
+            </para>
+         </warning>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 7: Validate the Cedar Backup configuration file.</title>
+
+         <para>
+            Use the command <command>cback validate</command> to validate your
+            configuration file. This command checks that the configuration file
+            can be found and parsed, and also checks for typical configuration
+            problems, such as invalid CD-R/CD-RW device entries.  This command
+            <emphasis>only</emphasis> validates configuration on the master,
+            not any clients that the master might be configured to connect to.
+         </para>
+
+         <para>
+            Note: the most common cause of configuration problems is in not
+            closing XML tags properly. Any XML tag that is
+            <quote>opened</quote> must be <quote>closed</quote> appropriately.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 8: Test connectivity to client machines.</title>
+
+         <para>
+            This step must wait until after your client machines have been at
+            least partially configured. Once the backup user(s) have been
+            configured on the client machine(s) in a pool, attempt an SSH
+            connection to each client. 
+         </para>
+            
+         <para>
+            Log in as the backup user on the master, and then use the command
+            <command>ssh user@machine</command> where
+            <replaceable>user</replaceable> is the name of backup user
+            <emphasis>on the client machine</emphasis>, and
+            <replaceable>machine</replaceable> is the name of the client
+            machine.
+         </para>
+
+         <para>
+            If you are able to log in successfully without entering a password,
+            then things have been configured properly. Otherwise, double-check
+            that you followed the user setup instructions for the master and
+            the clients.
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+         <title>Step 9: Test your backup.</title>
+
+         <para>
+             Make sure that you have configured all of the clients in your
+             backup pool. On all of the clients, execute <command>cback --full
+             collect</command>.  (You will probably have already tested this
+             command on each of the clients, so it should succeed.)
+         </para>
+
+         <para>
+            When all of the client backups have completed, place a valid CD-R
+            or CD-RW disc in your drive, and then use the command
+            <command>cback --full all</command>.  You should execute this
+            command as root.  If the command completes with no output, then the
+            backup was run successfully. 
+         </para>
+
+         <para>
+            Just to be sure that everything worked properly, check the logfile
+            (<filename>/var/log/cback.log</filename>) on the master and each of
+            the clients, and also mount the CD-R or CD-RW disc on the master to
+            be sure it can be read.
+         </para>
+
+         <para>
+            You may also want to run <command>cback purge</command> on the
+            master and each client once you have finished validating that
+            everything worked.
+         </para>
+
+         <para>
+            <emphasis>If Cedar Backup ever completes <quote>normally</quote>
+            but the disc that is created is not usable, please report this as a
+            bug.
+            <footnoteref linkend="cedar-config-foot-bugzilla"/>
+            To be safe, always enable the consistency check option in the
+            store configuration section.</emphasis>
+         </para>
+
+      </sect2>
+
+   </sect1>
+
+</chapter>
+
