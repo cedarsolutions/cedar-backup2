@@ -147,11 +147,11 @@ def _deriveDayOfWeek(dayName):
       return -1  # What else can we do??  Thrown an exception, I guess.
 
 
-#####################
-# isStart() function
-#####################
+###########################
+# isStartOfWeek() function
+###########################
 
-def isStart(startingDay):
+def isStartOfWeek(startingDay):
    """
    Indicates whether "today" is the backup starting day per configuration.
 
@@ -572,7 +572,7 @@ def executeCollect(configPath, options, config):
       raise ValueError("Collect configuration is not properly filled in.")
    fullBackup = options.full
    logger.debug("Full backup flag is [%s]" % fullBackup)
-   todayIsStart = isStart(config.options.startingDay)
+   todayIsStart = isStartOfWeek(config.options.startingDay)
    resetDigest = fullBackup or todayIsStart
    logger.debug("Reset digest flag is [%s]" % resetDigest)
    if config.collect.collectDirs is not None:
@@ -855,7 +855,7 @@ def executeStore(configPath, options, config):
       raise ValueError("Store configuration is not properly filled in.")
    rebuildMedia = options.full
    logger.debug("Rebuild media flag [%s]" % rebuildMedia)
-   todayIsStart = isStart(config.options.startingDay)
+   todayIsStart = isStartOfWeek(config.options.startingDay)
    entireDisc = rebuildMedia or todayIsStart
    logger.debug("Entire disc flag [%s]" % entireDisc)
    stagingDirs = _findCorrectDailyDir(config)
