@@ -55,7 +55,7 @@
       </para>
 
       <para>
-         Note that there is no facility for restoring backups.  It is assumed
+         That there is no facility for restoring backups.  It is assumed
          that the user can deal with copying tarfiles off disc and using them
          to restore missing files as needed.
       </para>
@@ -67,6 +67,16 @@
          path can be overridden at runtime.   See <xref linkend="cedar-config"/>
          for more information on how Cedar Backup is configured.
       </para>
+
+      <warning>
+         <para>
+            You should be aware that backups to CD-R can probably be read by
+            any user which has permissions to mount the CD-R drive.  If you
+            intend to leave the backup disc in the drive at all times, you may
+            want to consider this when setting up device permissions on your
+            machine.
+         </para>
+      </warning>
 
    </sect1>
 
@@ -114,7 +124,9 @@
          or log an error if its expectations are not met.  On the other hand,
          the initial set-up process requires some extra work on behalf of the
          administrator, in order to coordinate all of the various actions so
-         that they work together properly.
+         that they work together properly.  See <xref
+         linkend="cedar-basic-coordinate"/> for more information on this
+         subject.
       </para>
 
       <para>
@@ -224,15 +236,15 @@
          <note>
             <para>
                Nothing prevents you from staging <quote>collect</quote>
-               directories that were not created by cback.  As long as the file
-               <filename>cback.collect</filename> exists in a collect directory
-               when the stage action is taken, that directory will be staged.
-               This is a convenient way to have Cedar Backup write to disc
+               directories that were not created by Cedar Backup.  As long as
+               the file <filename>cback.collect</filename> exists in a collect
+               directory when the stage action is taken, that directory will be
+               staged.  This is a convenient way to have Cedar Backup back up
                directories <quote>collected</quote> through some other process.
-               Just beware that within the staging directory, everything for a
-               be careful to avoid namespace clash.  You can use it as an
-               alternative to writing a Cedar Backup extension, if you would
-               like.
+               You can use it as an alternative to writing a Cedar Backup
+               extension, if you would like.  Just beware that when staged,
+               everything for a given host will reside in the same directory
+               &mdash; so be careful to avoid namespace clash.  
             </para>
          </note>
 
@@ -263,15 +275,6 @@
             each day the backup runs.  
          </para>
          
-         <para>
-            The store action also supports several options which modify its
-            behavior.  If enabled, the <firstterm>safe overwrite</firstterm>
-            option forces an attempt to ensure that any disc in the drive is
-            either blank or a previously-used Cedar Backup disc.  The
-            <firstterm>capacity mode</firstterm> option drives exception
-            behavior if disc capacity is exceeded. 
-         </para>
-
       </sect2>
 
       <!-- ################################################################# -->
@@ -315,24 +318,16 @@
          </para>
 
          <para>
-            The all action first determines which actions from among the
-            standard actions are listed in configuration.  Any configured
-            actions are then executed in a sensible order, typically collect,
-            followed by stage, followed by store, followed by purge.
-         </para>
-
-         <para>
-            The all action does not have any configuration of its
-            own.  Instead, it relies on the individual configuration sections
-            for all of the other actions.  See <xref linkend="cedar-config"/>
-            for more information.
-         </para>
-
-         <para>
             Extensions cannot be configured to be executed as part of the all
             action.  If you need to execute an extended action, you must
             specify the other actions you want to run individually on the
             command line.
+         </para>
+
+         <para>
+            The all action does not have any configuration of its own.
+            Instead, it relies on the individual configuration sections for all
+            of the other actions.  
          </para>
 
       </sect2>
@@ -371,7 +366,7 @@
 
          <para>
             The rebuild action attempts to rebuild <quote>this
-            week's</quote> disc from any remaining unpurged stage directories.
+            week's</quote> disc from any remaining unpurged staging directories.
             Typically, it would be used to make a copy of a backup or to
             replace media that was damaged or lost, or perhaps to switch to new
             media mid-week for some reason.
@@ -397,15 +392,83 @@
 
    <!-- ################################################################# -->
 
+   <sect1 id="cedar-basic-coordinate">
+
+      <title>Coordination between Master and Clients</title>
+
+      <para>
+         Unless you are using Cedar Backup to manage a <quote>pool of
+         one</quote>, you will need to set up some coordination between your
+         clients and servers to make everything work properly.  This
+         coordination isn't difficult &mdash; it mostly consists of making sure
+         that operations happen in the right order &mdash; but some users are
+         suprised that it is required and want to know why Cedar Backup can't
+         just <quote>take care of it for me</quote>.
+      </para>
+       
+      <para>
+         Essentially, what is required is that each client must finish
+         collecting all of its data before the master begins staging it, and
+         the master must finish staging data from any given client before that
+         client purges its collected data.  Administrators will generally have
+         to experiment with how far apart the collect and purge entries need to
+         go so that the master has enough time to stage every client before 
+         that client is purged.
+      </para>
+
+      <para>
+         Some users are initially surprised that Cedar Backup does not manage
+         this coordination itself.  The reason is, this coordination step
+         usually doesn't take a lot of effort and is only imposed on the user
+         at configuration time.  However, to accomplish the same thing
+         <emphasis>dynamically</emphasis> in code would add quite a bit of
+         complexity to Cedar Backup.  This code would be difficult to test and
+         would initially be somewhat error-prone, at least until I worked out
+         all of the kinks.  Given that the current architecture has been proven
+         to work well, I don't think that it is worth adding complexity to the
+         code just to simplify the initial set-up process.
+         <footnote><para>Feel free to write me or the user mailing list if you
+         disagree <emphasis>and</emphasis> can come up with a straightforward
+         implementation which can be easily verified and
+         maintained.</para></footnote>
+      </para>
+
+   </sect1>
+
+
+   <!-- ################################################################# -->
+
    <sect1 id="cedar-basic-mediadevice">
 
       <title>Media and Device Types</title>
 
       <para>
          Cedar Backup is focused around writing backups to CD-R or CD-RW media
-         using a standard SCSI or IDE CD writer.  <footnote><para>The device I
-         develop against is a six or seven year old Sony CRX140E 4X CD-RW
-         drive.</para></footnote>
+         using a standard SCSI or IDE CD writer.  In Cedar Backup terms, the
+         disc itself is referred to as the <firstterm>media</firstterm>, and
+         the CD-R or CD-RW drive is referred to as the <firstterm>device</firstterm> 
+         or sometimes the <firstterm>backup device</firstterm>.
+         <footnote><para>The backup device I develop against is a fairly old
+         Sony CRX140E 4X CD-RW drive.</para> </footnote>
+      </para>
+
+      <para>
+         When using a new enough backup device, a new <quote>multisession</quote> 
+         ISO image <footnote><para>An <firstterm>ISO image</firstterm> is the
+         standard way of creating a filesystem to be copied to a CD.  It is
+         essentially a <quote>filesystem-within-a-file</quote> and most Linux
+         systems can actually mount ISO image files just like hard drives,
+         floppy disks or actual CDs.  See this <ulink
+         url="http://en.wikipedia.org/wiki/ISO_image">Wikipedia article</ulink>
+         for more information.</para></footnote> is written to the media on the
+         first day of the week, and then additional multisession images are
+         added to the media each day that Cedar Backup runs.  This way, the
+         media is complete and usable at the end of every backup run, but a
+         single disc can be used all week long.  If your backup device does not
+         support multisession images, then a new ISO image will be written to
+         the media each time Cedar Backup runs (and you should probably confine
+         yourself to the <quote>daily</quote> backup mode to avoid losing
+         data).
       </para>
 
       <para>
@@ -448,7 +511,7 @@
          I have chosen to support just these four types of media because they
          seem to be the most <quote>standard</quote> of the various types
          commonly sold in the U.S. today (early 2005).  If you regularly use
-         media a media type that is not supported by Cedar Backup, and would
+         media of a type that is not supported by Cedar Backup, and would
          like Cedar Backup to support it, send me information about the
          capacity of the media in megabytes (MB) and whether or not it is
          rewritable.  
@@ -482,24 +545,23 @@
       <para>
          Cedar Backup supports three different kinds of backups for individual
          collect directories.  These are <firstterm>daily</firstterm>,
-         <firstterm>weekly</firstterm> and <firstterm>incremental</firstterm>.
-         Directories using the daily mode are backed up every day.  Directories
-         using the weekly mode are only backed up on the first day of the week,
-         or when the <option>--full</option> option is used.  Directories
-         using the incremental mode are always backed up on the first day of
-         the week (like a weekly backup) but after that are only backed up if
-         they have changed since the previous backup.
+         <firstterm>weekly</firstterm> and <firstterm>incremental</firstterm>
+         backups.  Directories using the daily mode are backed up every day.
+         Directories using the weekly mode are only backed up on the first day
+         of the week, or when the <option>--full</option> option is used.
+         Directories using the incremental mode are always backed up on the
+         first day of the week (like a weekly backup), but after that only the
+         files which have changed are actually backed up on a daily basis.
       </para>
 
       <para>
          In Cedar Backup, incremental backups are not based on date, but are
-         instead based a saved-off checksums, one for each backed-up file.
+         instead based on saved-off checksums, one for each backed-up file.
          When a full backup is run, Cedar Backup gathers a checksum value
          <footnote><para>The checksum is actually an <firstterm>SHA
          cryptographic hash</firstterm>.  See this <ulink
-         url="http://en.wikipedia.org/wiki/SHA-1">Wikipedia article</ulink> or
-         the <ulink url="http://www.itl.nist.gov/fipspubs/fip180-1.htm">Secure
-         Hash Standard</ulink> for more information.</para></footnote> for each
+         url="http://en.wikipedia.org/wiki/SHA-1">Wikipedia article</ulink> 
+         for more information.</para></footnote> for each
          backed-up file.  The next time an incremental backup is run, Cedar
          Backup checks its list of file/checksum pairs for each file that might
          potentially be backed up.  If the file's checksum value does not match
@@ -510,12 +572,12 @@
       </para>
 
       <para>
-         Cedar Backup stores the file/checksum pairs in <filename>.sha</filename> 
-         files in its working directory, one file per collect directory.  The
-         mappings in these files are reset at the start of the week or when the
-         <option>--full</option> option is used.  Because these files are used
-         for an entire week, you should never purge the working directory more
-         frequently than once per week.
+         Cedar Backup stores the file/checksum pairs in
+         <filename>.sha</filename> files in its working directory, one file per
+         configured collect directory.  The mappings in these files are reset
+         at the start of the week or when the <option>--full</option> option is
+         used.  Because these files are used for an entire week, you should
+         never purge the working directory more frequently than once per week.
       </para>
 
    </sect1>

@@ -34,7 +34,9 @@
    <simplesect>
 
       <para>
-         Specifies how to find various dependencies on a non-Debian system.
+         Provides some additional information about the packages which Cedar
+         Backup relies on, including information about how to find
+         documentation and packages on non-Debian systems.
       </para>
 
    </simplesect>
