@@ -22,7 +22,7 @@
 ########################################################################
 
 from distutils.core import setup
-from CedarBackup2.release import VERSION, COPYRIGHT
+from CedarBackup2.release import AUTHOR, EMAIL, VERSION, COPYRIGHT, URL
 
 
 ########################################################################
@@ -46,10 +46,10 @@ setup (
    description      = 'Implements secure remote and local backups to CD-R or CD-RW.',
    long_description = LONG_DESCRIPTION,
    keywords         = ('secure', 'local', 'remote', 'backup', 'scp', 'CD-R'), 
-   author           = 'Kenneth J. Pronovici',
-   author_email     = 'pronovic@ieee.org',
-   url              = 'http://www.cedar-solutions.com/software/cedar-backup/',
-   licence          = "Copyright (c) %s Kenneth J. Pronovici.  Licensed under the GNU GPL." % COPYRIGHT,
+   author           = AUTHOR,
+   author_email     = EMAIL,
+   url              = URL,
+   license          = "Copyright (c) %s %s.  Licensed under the GNU GPL." % (COPYRIGHT, AUTHOR),
    platforms        = ('Any',),
    packages         = ['CedarBackup2',],
    scripts          = ['cback',], 

@@ -19,19 +19,17 @@
 * Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
 * Write individual action functions (process.py) in terms of other lower-level functionality
 * Implement a cli module (might take this from aborted 2.x branch?) for command-line interface
-* The cli interface probably implements a class to parse and contain command-line arguments.
-* Implement cback script in terms of the cli module (simplistic, really)
 * Do a bunch of sample runs to get the logging level right (difference between "normal" and debug...?)
 * Go back through TODO list from aborted 2.x branch and decide what we will do now, what later, and what never.
-* Go back through bugzilla bugs and make sure they're all taken into account now that entire cli is finished
-* Create manpages and other instructions using either halibut or some other system
-* Rewrite Cedar Backup webpage online, to show new version and link to old version
+* Go back through bugzilla bugs and make sure they're all taken into account now that entire cli is finished.
+* Create manpages and other instructions either in Docbook or by hand.
+* Rewrite Cedar Backup webpage online, to show new version and link to old version.
 
 * Write some sort of "what's new" paragraph for release of 2.0beta1
    - Entire codebase has been rewritten from the ground up using Python 2.3.
    - Cleaner, more pythonic, better structured, sensible mix of classes and functions
    - Much of the  lower-level is intended to be general-purpose "library" code
-   - All lower-level functionality is thoroughly regression tested via pyunit (1200+ individual unit tests)
+   - All lower-level functionality is thoroughly regression tested via pyunit (1500+ individual unit tests)
    - Configuration class is standardized, so third-party Python programs can use it.
    - Uses Python's integrated logging for realtime logs, much better than old logs.
    - Uses Python's tar module rather than GNU tar via pipes, for more consistent behavior.

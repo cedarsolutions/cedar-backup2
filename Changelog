@@ -1,6 +1,63 @@
 Version 2.0.0    unreleased
 
-	* Initial public release.
+	* Complete rewrite for 2.0.0 release.
+
+Version 1.11	17 Oct 2004
+
+	* Add experimental support for new Linux 2.6 ATA CD devices.
+	* SCSI id can now be in the form '[ATA:]scsibus,target,lun'.
+	* Internally, the SCSI id is now stored as a string, not a list.
+	* Cleaned up 'cdrecord' calls in cdr.py to make them consistent.
+	* Fixed a pile of warnings noticed by the latest pychecker.
+
+Version 1.10	01 Dec 2003
+
+	* Removed extraneous error parameter from cback's version() function.
+	* Changed copyright statement and year; added COPYRIGHT in release.py.
+	* Reworked all file headers to match new Cedar Solutions standard.
+	* Removed __version__ and __date__ values with switch to Subversion.
+	* Convert to tabs in Changelog to make the Vim syntax file happy.
+	* Be more stringent in validating contents of SCSI triplet values.
+	* Fixed bug when using modulo 1 (% 1) in a few places.
+	* Fixed shell-interpolation bug discovered by Rick Low (security hole).
+	* Replace all os.popen() calls with new execute_command() call for safety.
+
+Version 1.9    09 Nov 2002
+
+	* Packaging changes to allow Debian version to be "normal", not Debian-native.
+	* Added CedarBackup/release.py to contain "upstream" release number.
+	* Added -V,--version option to cback script.
+	* Rewrote parts of Makefile to remove most Debian-specific rules.
+	* Changed Makefile and setup.py to get version info from release.py.
+	* The setup.py script now references /usr/bin/env python, not python2.2.
+	* Debian-related changes will now reside exclusively in debian/changelog.
+
+Version 1.8    14 Oct 2002 
+
+	* Fix bug with the way the default mode is displayed in the help screen.
+
+Version 1.7    14 Oct 2002
+
+	* Bug fix.  Upgrade to Python 2.2.2b1 exposed a flaw in my version-check code.
+
+Version 1.6    06 Oct 2002
+
+	* Debian packaging cleanup (should have been a Debian-only release 1.5-2).
+
+Version 1.5    19 Sep 2002
+
+	* Changed cback script to more closely control ownership of logfile.
+
+Version 1.4    10 Sep 2002
+
+	* Various packaging cleanups.
+	* Fixed code that reported negative capacity on a full disc.
+	* Now blank disc ahead of time if it needs to be blanked.
+	* Moved to Python2.2 for cleaner packaging (True, False, etc.)
+
+Version 1.3    20 Aug 2002
+
+	* Initial "public" release.
 
 -----------------------------------------------------------------------------
 vim: set ft=changelog noexpandtab:

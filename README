@@ -23,11 +23,11 @@ discs, allowing you to add to a disc in a daily fashion.   Directories
 are backed up using tar and may be compressed using gzip or bzip2.
 
 This is release 2 of the Cedar Backup package.  It represents a complete
-object-oriented rewrite of the original package.  The new code is cleaner,
-more compact, more focused and also more "pythonic" in its approach
-(although the coding style has arguably been influenced by my experiences
-with Java over the last few years).  There is also now an extensive unit
-test suite, something the first release always lacked.
+rewrite of the original package.  The new code is cleaner, more compact,
+more focused and also more "pythonic" in its approach (although the coding
+style has arguably been influenced by my experiences with Java over the
+last few years).  There is also now an extensive unit test suite, something
+the first release always lacked.
 
 For more information, see the Cedar Backup web site:
 
