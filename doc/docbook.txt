@@ -10,6 +10,16 @@ Some other links that might be useful to you:
 
    http://tldp.org/HOWTO/DocBook-Demystification-HOWTO/index.html
    http://www.vim.org/scripts/script.php?script_id=301
+
+This is the official Docbook XSL documentation.  This is where you want to
+look for stylesheet options, etc.  For instance, these are the docs I used
+when I wanted to figure out how to put <sect1> items on new pages in PDF
+output.
+
+   http://wiki.docbook.org/topic/
+   http://wiki.docbook.org/topic/DocBookDocumentation
+   http://wiki.docbook.org/topic/DocBookXslStylesheetDocs
+   http://docbook.sourceforge.net/release/xsl/current/doc/fo/
    
 The following items need to be installed to build the user manual:
 

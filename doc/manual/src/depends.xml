@@ -1,0 +1,118 @@
+<!--
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#              C E D A R
+#          S O L U T I O N S       "Software done right."
+#           S O F T W A R E
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Copyright (c) 2005 Kenneth J. Pronovici.
+# All rights reserved.
+#
+# This work is licensed under the Creative Commons Attribution-
+# ShareAlike License. To view a copy of this license, visit
+# http://creativecommons.org/licenses/by-sa/2.0/
+# or send a letter to Creative Commons, 559 Nathan Abbott Way,
+# Stanford, California 94305, USA.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Author   : Kenneth J. Pronovici <pronovic@ieee.org>
+# Language : O'Reilly DocBook Lite XML DTD
+# Project  : Cedar Backup, release 2
+# Revision : $Id: appendixb.xml 568 2005-02-08 23:08:25Z pronovic $
+# Purpose  : Cedar Backup Software Manual, dependencies appendix.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+-->
+
+<appendix id="cedar-depends">
+
+   <title>Dependencies</title>
+
+   <simplesect>
+
+      <para>
+         This appendix provides additional information about the software which
+         Cedar Backup depends on, including information about how to find
+         documentation and packages on non-Debian systems.
+      </para>
+
+      <varlistentry>
+         <term>Python 2.3</term>
+         <listitem>
+            <para>
+               Version 2.3 of the Python interpreter was released on 29 July 2003,
+               so most <quote>current</quote> Linux distributions should include it.
+               (Unfortunately, the current Debian stable release <quote>woody</quote>
+               does <emphasis>not</emphasis> include it, but I have provided a 
+               backport on cedar-solutions.com)
+            </para>
+            <para>
+               The <quote>upstream</quote> home for Python is 
+               <ulink url="http://www.python.org"/>
+            </para>
+         </listitem>
+      </varlistentry>
+
+      <varlistentry>
+         <term>PyXML</term>
+         <listitem>
+            <para></para>
+         </listitem>
+      </varlistentry>
+
+      <varlistentry>
+         <term>SSH Server and Client</term>
+         <listitem>
+            <para></para>
+         </listitem>
+      </varlistentry>
+
+      <varlistentry>
+         <term>mkisofs</term>
+         <listitem>
+            <para></para>
+         </listitem>
+      </varlistentry>
+
+      <varlistentry>
+         <term>cdrecord</term>
+         <listitem>
+            <para></para>
+         </listitem>
+      </varlistentry>
+
+      <varlistentry>
+         <term>eject</term>
+         <listitem>
+            <para></para>
+         </listitem>
+      </varlistentry>
+
+      <varlistentry>
+         <term>mount</term>
+         <listitem>
+            <para></para>
+         </listitem>
+      </varlistentry>
+
+      <varlistentry>
+         <term>umount</term>
+         <listitem>
+            <para></para>
+         </listitem>
+      </varlistentry>
+
+      <varlistentry>
+         <term>volname</term>
+         <listitem>
+            <para></para>
+         </listitem>
+      </varlistentry>
+
+   </simplesect>
+
+</appendix>
+

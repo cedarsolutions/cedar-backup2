@@ -35,9 +35,8 @@
 <!ENTITY basic       SYSTEM "basic.xml">
 <!ENTITY install     SYSTEM "install.xml">
 <!ENTITY config      SYSTEM "config.xml">
-<!ENTITY appendixa   SYSTEM "appendixa.xml">
-<!ENTITY appendixb   SYSTEM "appendixb.xml">
-<!ENTITY appendixc   SYSTEM "appendixc.xml">
+<!ENTITY extensions  SYSTEM "extensions.xml">
+<!ENTITY depends     SYSTEM "depends.xml">
 <!ENTITY copyright   SYSTEM "copyright.xml">
 ]>
 
@@ -84,9 +83,8 @@
    &basic;
    &install;
    &config;
-   &appendixa;
-   &appendixb;
-   &appendixc;
+   &extensions;
+   &depends;
    &copyright;
 
 </book>

@@ -638,7 +638,7 @@
          <para>
             See <xref linkend="cedar-config"/> for more information on how
             extensions are configured.  Also, developers may be interested in
-            the extensions in <xref linkend="cedar-appendixb"/>.
+            the extensions in <xref linkend="cedar-extensions"/>.
          </para>
       </note>
 

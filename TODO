@@ -38,11 +38,15 @@ DOCUMENTATION
 * Complete appendix B (extension interface)
 * Complete appendix C (dependencies)
 
-* Make sure that sample config file is valid and has sensible, consistent paths in it
-* Create manpages and other instructions either in Docbook or by hand.
-* Rewrite Cedar Backup webpage online, to show new version and link to old version.
+* Manage footnotes better.  In some formats, duplicates look OK.  In others, they
+  look stupid.  If two things use the "same" footnote (basically) then set an ID
+  for the first time and refer to it later as needed.
 
-* Write a section describing why experimentation between client and server is required (be clearer, anyway)
+* Maybe see whether we really need Docbook Lite or whether plain old docbook
+  would work.  No need to put in an extra "dependency" if it's not needed.
+
+* Make sure that sample config file is valid and has sensible, consistent paths in it
+* Rewrite Cedar Backup webpage online, to show new version and link to old version.
 
 * Write some sort of "what's new" paragraph for release of 2.0beta1
    - Entire codebase has been rewritten from the ground up using Python 2.3.
