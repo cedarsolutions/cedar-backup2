@@ -697,8 +697,10 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    @return: Tuple of C{(result, output)} as described above.
    """
    logger.debug("Executing command %s with args %s." % (command, args))
+   outputLogger.info("Executing command %s with args %s." % (command, args))
    if doNotLog:
       logger.debug("Note: output will not be logged, per the doNotLog flag.")
+      outputLogger.info("Note: output will not be logged, per the doNotLog flag.")
    output = []
    fields = command[:]        # make sure to copy it so we don't destroy it
    fields.extend(args)
