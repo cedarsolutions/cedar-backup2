@@ -41,26 +41,28 @@
          Cedar Backup is architected as a Python package (library) and single
          executable (a Python script).  The Python package provides both
          application-specific code and general utilities which can be used by
-         programs other than Cedar Backup.  It also includes modules that will
-         be of use to third parties who might like to extend Cedar Backup or
-         provide related functionality.
+         programs other than Cedar Backup.  It also includes modules that can
+         be used by third parties to extend Cedar Backup or provide related
+         functionality.
       </para>
 
       <para>
          The <command>cback</command> script is designed to run as root, since
-         otherwise it's difficult to back up system directories or write the
-         CD-R/CD- RW device.  However, pains are taken to use the backup user's
+         otherwise it's difficult to back up system directories or write to the
+         CD-R/CD-RW device.  However, pains are taken to use the backup user's
          effective user id (specified in configuration) when appropriate.
-         Note: this does not mean that <command>cback</command> runs setuid or
-         setgid.  However, it will strive to write all backup files as the
-         backup user, and all rsh-based network connections will take place
-         as the backup user on the remote box.
+         Note: this does not mean that <command>cback</command> runs
+         <firstterm>setuid</firstterm><footnote><para>See <ulink
+         url="http://en.wikipedia.org/wiki/Setuid"/></para></footnote> or
+         <firstterm>setgid</firstterm>.  However, all files on disk will be
+         owned by the backup user, and and all rsh-based network connections
+         will take place as the backup user.
       </para>
 
       <para>
-         That there is no facility for restoring backups.  It is assumed
-         that the user can deal with copying tarfiles off disc and using them
-         to restore missing files as needed.
+         Cedar Backup provides no facility for restoring backups.  It is
+         assumed that the user can cpy tarfiles off disc and use them to
+         restore missing files as needed.
       </para>
 
       <para>
@@ -73,8 +75,8 @@
 
       <warning>
          <para>
-            You should be aware that backups to CD-R can probably be read by
-            any user which has permissions to mount the CD-R drive.  If you
+            You should be aware that backups to CD media can probably be read
+            by any user which has permissions to mount the CD writer.  If you
             intend to leave the backup disc in the drive at all times, you may
             want to consider this when setting up device permissions on your
             machine.
@@ -92,10 +94,10 @@
       <para>
          There are two kinds of machines in a Cedar Backup pool.  One machine
          (the <firstterm>master</firstterm>) has a CD-R or CD-RW drive on it
-         and is where the backup is written to disc.  The others
+         and writes the backup to disc.  The others
          (<firstterm>clients</firstterm>) collect data to be written to disc by
          the master.  Collectively, the master and client machines in a pool
-         are all referred to as <firstterm>peer machines</firstterm>. 
+         are called <firstterm>peer machines</firstterm>. 
       </para>
 
       <para>
@@ -123,13 +125,11 @@
          
       <para>
          This design decision has both positive and negative consequences.  On
-         the one hand, the code is much simpler and can choose to simply abend
+         the one hand, the code is much simpler and can choose to simply abort
          or log an error if its expectations are not met.  On the other hand,
-         the initial set-up process requires some extra work on behalf of the
-         administrator, in order to coordinate all of the various actions so
-         that they work together properly.  See <xref
-         linkend="cedar-basic-coordinate"/> for more information on this
-         subject.
+         the administrator must coordinate the various actions during initial
+         set-up.  See <xref linkend="cedar-basic-coordinate"/> (later in this
+         chapter) for more information on this subject.
       </para>
 
       <para>
@@ -143,10 +143,9 @@
       <para>
          In general, more than one action may be specified on the command-line.
          If more than one action is specified, then actions will be taken in a
-         sensible order (generally collect, followed by stage, followed by
-         store, followed by purge).   A special <firstterm>all</firstterm>
-         action is also allowed, which implies all of the standard actions in
-         the same sensible order.
+         sensible order (generally collect, stage, store, purge).   A special
+         <firstterm>all</firstterm> action is also allowed, which implies all
+         of the standard actions in the same sensible order.
       </para>
 
       <para>
@@ -171,13 +170,12 @@
          <title>The Collect Action</title>
 
          <para>
-            The collect action is the first action to be executed as part of a
-            standard backup run.  It executes on a client peer node.  Based on
-            configuration, this action traverses the client's filesystem and
-            gathers files to be backed up.  Each configured high-level
-            directory is collected up into its own <command>tar</command> file
-            in the <firstterm>collect directory</firstterm>.   The
-            <command>tar</command>files can either be uncompressed
+            The collect action is the first action in a standard backup run.
+            It executes both master and client nodes.  Based on configuration,
+            this action traverses the peer's filesystem and gathers files to be
+            backed up.  Each configured high-level directory is collected up
+            into its own <command>tar</command> file in the <firstterm>collect
+            directory</firstterm>.   The tarfiles can either be uncompressed
             (<filename>.tar</filename>) or compressed with either
             <command>gzip</command> (<filename>.tar.gz</filename>) or
             <command>bzip2</command> (<filename>.tar.bz2</filename>).
@@ -214,11 +212,11 @@
          <title>The Stage Action</title>
 
          <para>
-            The stage action is the second action to be executed
-            as part of a standard backup run.  It executes on a master peer
-            node.  The master machine works down the list of clients in its
-            backup pool and stages (copies) the collected backup files from
-            each of them into a daily staging directory by client name.
+            The stage action is the second action in a standard backup run.  It
+            executes on the master peer node.  The master works down the list of
+            peers in its backup pool and stages (copies) the collected backup
+            files from each of them into a daily staging directory by peer
+            name.
          </para>
 
          <para> 
@@ -231,23 +229,20 @@
 
          <para>
             If a given peer is not ready to be staged, the stage process will
-            log an error but will go on to its other peers.  This way, one
-            broken peer cannot break a backup for other peers which are up and
-            running.
+            log an error, abort the backup for that peer, and then move on to
+            its other peers.  This way, one broken peer cannot break a backup
+            for other peers which are up and running.
          </para>
 
          <note>
             <para>
-               Nothing prevents you from staging <quote>collect</quote>
-               directories that were not created by Cedar Backup.  As long as
-               the file <filename>cback.collect</filename> exists in a collect
-               directory when the stage action is taken, that directory will be
-               staged.  This is a convenient way to have Cedar Backup back up
-               directories <quote>collected</quote> through some other process.
-               You can use it as an alternative to writing a Cedar Backup
-               extension, if you would like.  Just beware that when staged,
-               everything for a given host will reside in the same directory
-               &mdash; so be careful to avoid namespace clash.  
+               Directories <quote>collected</quote> by another process can be
+               staged by Cedar Backup.  If the file
+               <filename>cback.collect</filename> exists in a collect directory
+               when the stage action is taken, then that directory will be
+               staged.  Just beware that when staged, everything for a given
+               host will reside in the same directory &mdash; so be careful to
+               avoid namespace clash.  
             </para>
          </note>
 
@@ -260,17 +255,16 @@
          <title>The Store Action</title>
 
          <para>
-            The store action is the third action to be executed as part of a
-            standard backup run.  It executes on a master peer node.  The
-            master machine determines the location of the current staging
-            directory, and then writes the contents of that staging directory
-            to disc.  After the contents of the directory have been written to
-            disc, an optional validation step ensures that the write was
-            successful.
+            The store action is the third action in a standard backup run.  It
+            executes on the master peer node.  The master machine determines the
+            location of the current staging directory, and then writes the
+            contents of that staging directory to disc.  After the contents of
+            the directory have been written to disc, an optional validation
+            step ensures that the write was successful.
          </para>
 
          <para>
-            If the backup is running on first day of the week, if the drive
+            If the backup is running on the first day of the week, if the drive
             does not support multisession discs, or if the
             <option>--full</option> option is passed to the
             <command>cback</command> command, the disc will be rebuilt from
@@ -287,18 +281,15 @@
          <title>The Purge Action</title>
 
          <para>
-            The purge action is the fourth and final action to be
-            executed as part of a standard backup run.  It executes both on the
-            master peer node and on the various client peer nodes.
+            The purge action is the fourth and final action in a standard
+            backup run.  It executes both on the master and client peer nodes.
             Configuration specifies how long to retain files in certain
-            directories, and files older than that are purged along with empty
-            directories.
+            directories, and older files and empty directories are purged.
          </para>
 
          <para>
             Typically, collect directories are purged daily, and stage
-            directories are purged weekly or slightly less often than that
-            (this way, if a disc gets corrupted, older backups may still be
+            directories are purged weekly or slightly less often (if a disc gets corrupted, older backups may still be
             available on the master).  Some users also choose to purge the
             configured working directory (which is used for temporary files) to
             eliminate any leftover files which might have resulted from changes
@@ -314,23 +305,21 @@
          <title>The All Action</title>
 
          <para>
-            The all action is a pseudo-action which causes all of
-            the actions in a standard backup run to be executed together in
-            a sensible order.  It cannot be combined with any other actions on
-            the command line.
+            The all action is a pseudo-action which causes all of the actions
+            in a standard backup run to be executed together in order.  It
+            cannot be combined with any other actions on the command line.
          </para>
 
          <para>
-            Extensions cannot be configured to be executed as part of the all
-            action.  If you need to execute an extended action, you must
-            specify the other actions you want to run individually on the
-            command line.
+            Extensions be executed as part of the all action.  If you need to
+            execute an extended action, you must specify the other actions you
+            want to run individually on the command line.
          </para>
 
          <para>
-            The all action does not have any configuration of its own.
-            Instead, it relies on the individual configuration sections for all
-            of the other actions.  
+            The all action does not have its own configuration.  Instead, it
+            relies on the individual configuration sections for all of the
+            other actions.  
          </para>
 
       </sect2>
@@ -348,9 +337,11 @@
          </para>
 
          <para>
-            The validate action checks that the configuration file
-            can be found, that the configuration file is valid, and that
-            certain portions of the configuration file make sense.
+            The validate action checks that the configuration file can be
+            found, that the configuration file is valid, and that certain
+            portions of the configuration file make sense (for instance, making
+            sure that specified users exist, directories are readable and
+            writable as necessary, etc.).
          </para>
 
       </sect2>
@@ -362,31 +353,30 @@
          <title>The Rebuild Action</title>
 
          <para>
-            The rebuild action is an exception-handling action
-            that is executed independently of any standard backup run.  It cannot
-            be combined with any other actions on the command line.
+            The rebuild action is an exception-handling action that is executed
+            independent of a standard backup run.  It cannot be combined with
+            any outside actions on the command line.
          </para>
 
          <para>
-            The rebuild action attempts to rebuild <quote>this
-            week's</quote> disc from any remaining unpurged staging directories.
-            Typically, it would be used to make a copy of a backup or to
-            replace media that was damaged or lost, or perhaps to switch to new
-            media mid-week for some reason.
+            The rebuild action attempts to rebuild <quote>this week's</quote>
+            disc from any remaining unpurged staging directories.  Typically,
+            it is used to make a copy of a backup, replace lost or damaged
+            media, or to switch to new media mid-week for some other reason.
          </para>
 
          <para>
             To decide what data to write to disc again, the rebuild action
-            looks back and finds the nearest previous starting day of week and
-            its date.  Working from there, it finds any remaining staging
-            directories between that date and the current date.  If any staging
-            directories are found, they are all written to disc in one big ISO
-            session.
+            looks back and finds first day of the current week.  Then, it finds
+            any remaining staging directories between that date and the current
+            date.  If any staging directories are found, they are all written
+            to disc in one big ISO session.
          </para>
 
          <para>
-            The rebuild action does not have any configuration of its own.
-            Instead, it mostly relies configuration for the store action.  
+            The rebuild action does not have its own configuration.  It relies
+            on configuration for other other actions, especially the store
+            action.
          </para>
 
       </sect2>
@@ -402,7 +392,7 @@
       <para>
          Unless you are using Cedar Backup to manage a <quote>pool of
          one</quote>, you will need to set up some coordination between your
-         clients and servers to make everything work properly.  This
+         clients and master to make everything work properly.  This
          coordination isn't difficult &mdash; it mostly consists of making sure
          that operations happen in the right order &mdash; but some users are
          suprised that it is required and want to know why Cedar Backup can't
@@ -410,13 +400,12 @@
       </para>
        
       <para>
-         Essentially, what is required is that each client must finish
-         collecting all of its data before the master begins staging it, and
-         the master must finish staging data from any given client before that
-         client purges its collected data.  Administrators will generally have
-         to experiment with how far apart the collect and purge entries need to
-         go so that the master has enough time to stage every client before 
-         that client is purged.
+         Essentially, each client must finish collecting all of its data before
+         the master begins staging it, and the master must finish staging data
+         from a client before that client purges its collected data.
+         Administrators may need to experiment with the time between the
+         collect and purge entries master has enough time to stage data before
+         it is purged.
       </para>
 
       <para>
@@ -512,16 +501,15 @@
       <para>
          I have chosen to support just these four types of media because they
          seem to be the most <quote>standard</quote> of the various types
-         commonly sold in the U.S. today (early 2005).  If you regularly use
-         media of a type that is not supported by Cedar Backup, and would
-         like Cedar Backup to support it, send me information about the
-         capacity of the media in megabytes (MB) and whether or not it is
-         rewritable.  
+         commonly sold in the U.S. today (early 2005).  If you regularly an
+         unsupported media type and would like Cedar Backup to support it, send
+         me information about the capacity of the media in megabytes (MB) and
+         whether it is rewritable.  
       </para>
 
       <para>
-         Future versions of Cedar Backup may support writable DVDs in some
-         form.  <footnote><para>It would just require a new
+         Future versions of Cedar Backup may support writable DVDs.
+         <footnote><para>It would just require a new
          <literal>DvdWriter</literal> class in <filename>writer.py</filename>
          as well as some minor changes to configuration code.  All
          writer-related access is through an abstract interface, so once the
@@ -557,15 +545,15 @@
 
       <para>
          In Cedar Backup, incremental backups are not based on date, but are
-         instead based on saved-off checksums, one for each backed-up file.
+         instead based on saved checksums, one for each backed-up file.
          When a full backup is run, Cedar Backup gathers a checksum value
          <footnote><para>The checksum is actually an <firstterm>SHA
          cryptographic hash</firstterm>.  See Wikipedia for more information:
          <ulink url="http://en.wikipedia.org/wiki/SHA-1"/>.</para></footnote> 
          for each backed-up file.  The next time an incremental backup is run,
          Cedar Backup checks its list of file/checksum pairs for each file that
-         might potentially be backed up.  If the file's checksum value does not
-         match the saved-off value, or if the file does not appear in the list
+         might be backed up.  If the file's checksum value does not
+         match the saved value, or if the file does not appear in the list
          of file/checksum pairs, then it will be backed up and a new checksum
          value will be placed into the list.  Otherwise, the file will be
          ignored and the checksum value will be left unchanged.
@@ -605,7 +593,7 @@
       </para>
 
       <para>
-         Starting with version 2.0, Cedar Backup implements the concept of
+         Starting with version 2.0, Cedar Backup allows
          <firstterm>extensions</firstterm> to the backup process.   An
          extension is an action that isn't part of the standard backup process,
          (i.e. not collect, stage, store or purge) but can be executed by Cedar
@@ -637,7 +625,7 @@
          <para>
             See <xref linkend="cedar-config"/> for more information on how
             extensions are configured.  Also, developers may be interested in
-            the extensions in <xref linkend="cedar-extensions"/>.
+            <xref linkend="cedar-extensions"/>.
          </para>
       </note>
 

@@ -52,9 +52,9 @@
       <title>Audience</title>
     
       <para>
-         This book is written for computer-literate administrators who need to
+         This manual has been written for computer-literate administrators who need to
          use and configure Cedar Backup on their Linux system.  The examples in
-         this book assume the reader is relatively comfortable with Unix and
+         this manual assume the reader is relatively comfortable with Unix and
          command-line interfaces.
       </para>
 
@@ -67,7 +67,7 @@
       <title>Conventions Used in This Book</title>
     
       <para>
-         This section covers the various conventions used in this book.
+         This section covers the various conventions used in this manual.
       </para>
     
       <!-- ################################################################# -->
@@ -219,7 +219,7 @@
       <title>Acknowledgments</title>
 
       <para>
-         The structure of this book and some of the basic boilerplate has been
+         The structure of this manual and some of the basic boilerplate has been
          taken from the book <ulink url="http://svnbook.red-bean.com/">Version
          Control with Subversion</ulink>.  Many thanks to the authors (and
          O'Reilly) for making this excellent reference available under a free

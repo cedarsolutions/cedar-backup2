@@ -136,7 +136,7 @@
                Extension authors are encouraged to extend the Cedar Backup
                public interface through normal methods of inheritence.
                However, no extension is allowed to directly change Cedar Backup
-               code in a way that would effect how Cedar Backup itself executes
+               code in a way that would affect how Cedar Backup itself executes
                when the extension has not been invoked.  For instance,
                extensions would not be allowed to add new command-line options
                or new writer types.

@@ -55,7 +55,7 @@
 
          <para>
             Currently, Cedar Backup is only <quote>officially</quote> supported
-            on Linux platforms.  However, It should also run on other UNIX-like
+            on Linux platforms.  However, it should also run on other UNIX-like
             systems where the <command>mkisofs</command> and
             <command>cdrecord</command> commands are available.  
          </para>
@@ -178,9 +178,9 @@ $ apt-get install cedar-backup2
          </para>
 
          <para>
-            Cedar Backup has been written in Python, and requires version 2.3
-            or greater of the language.  Version 2.3 was released on 29 July
-            2003, so by now most current Linux distributions should include it.
+            Cedar Backup is written in Python and requires version 2.3 or
+            greater of the language.  Version 2.3 was released on 29 July 2003,
+            so by now most current Linux distributions should include it.
             Cedar Backup also requires one non-standard Python module, called
             PyXML (version 0.8.2 or better).  You must install these Python
             dependencies on every peer node in a pool (master or client).

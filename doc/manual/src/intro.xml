@@ -142,8 +142,8 @@
       </para>
          
       <para>
-         In particular, you should provide the version of Cedar Backup that you
-         are using; where you got the software from (i.e. Debian package,
+         In particular, you should provide: the version of Cedar Backup that you
+         are using; how you installed Cedar Backup (i.e. Debian package,
          source package, etc.); the exact command line that you executed; any
          error messages you received, including Python stack traces (if any);
          and relevant sections of the Cedar Backup log.  It would be even
@@ -155,7 +155,7 @@
          asks for them.
       </para>
 
-      <info>
+      <tip>
          <para>
             Sometimes, the error that Cedar Backup displays can be rather
             cryptic.  This is because under internal error conditions, the text
@@ -168,7 +168,7 @@
             than just printing the last message it received.  This is good
             information to include along with a bug report, as well.
          </para>
-      </info>
+      </tip>
 
    </sect1>
 
@@ -222,9 +222,9 @@
          Version 1.0 of <application>Cedar Backup</application> was released in
          June of 2002.  We immediately began using it to back up skyjammer.com
          and cedar-solutions.com, where it proved to be much more stable than
-         the original code was.  Since then, we have continued to use Cedar
+         the original code.  Since then, we have continued to use Cedar
          Backup for those sites, and Cedar Backup has picked up a handful of
-         other users who have occassionally reported bugs or requested minor
+         other users who have occasionally reported bugs or requested minor
          enhancements.  
       </para>
 
@@ -234,8 +234,8 @@
          Java.  It soon became obvious that the internal structure of
          <application>Cedar Backup</application> 1.0, while much better than
          <application>kbackup</application>, still left something to be
-         desired.  In November of 2003, I began an attempt at cleaning
-         up the codebase.  I converted all of the internal documentation to use
+         desired.  In November 2003, I began an attempt at cleaning up the
+         codebase.  I converted all of the internal documentation to use
          Epydoc, <footnote><para>Epydoc is a Python code documentation tool.
          See <ulink url="http://epydoc.sourceforge.net/"/>.</para></footnote>
          and updated the code to use the newly-released Python logging package
@@ -243,13 +243,13 @@
          url="http://docs.python.org/lib/module-logging.html"/>
          .</para></footnote> after having a good experience with Java's log4j.
          However, I was still not satisfied with the code, which did not lend
-         itself to the kinds of automated regression testing I had become used
-         to when working with junit in my Java code.
+         itself to the automated regression testing I had used when working
+         with junit in my Java code.
       </para>
 
       <para>
          So, rather than releasing the cleaned-up code, I instead began another
-         ground-up rewrite in May of 2004.  With this rewrite, I applied
+         ground-up rewrite in May 2004.  With this rewrite, I applied
          everything I had learned from other Java and Python projects I had
          undertaken over the last few years.  I structured the code to take
          advantage of Python's unique ability to blend procedural code with
@@ -258,11 +258,10 @@
          compact, better focused, and better documented than any release before
          it.  Utility code is less application-specific, and is now usable as a
          general-purpose library.  The 2.0 release also includes a complete
-         regression test suite of over 1700 tests, <footnote><para>Implemented
-         using Python's unit test framework.  See <ulink
-         url="http://docs.python.org/lib/module-unittest.html"/>
-         .</para></footnote> which will help to ensure that quality is
-         maintained as development continues into the future.
+         regression test suite of over 1700 tests, which will help to ensure
+         that quality is maintained as development continues into the future.
+         <footnote><para>Tests are implemented using Python's unit test
+         framework.  See <ulink url="http://docs.python.org/lib/module-unittest.html"/>.</para></footnote> 
       </para>
 
    </sect1>
