@@ -134,13 +134,6 @@ class LocalPeer(object):
       @note: The caller is responsible for checking that the indicator exists,
       if they care.  This function only stages the files within the directory.
 
-      @note: Unlike the local peer version of this method, an I/O error might
-      be raised if the directory is empty.  Since we're using a remote copy
-      method, we just don't have the fine-grained control over our exceptions
-      that's available when we can look directly at the filesystem, and we
-      can't control whether the remote copy method thinks an empty directory is
-      an error.  
-
       @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
@@ -148,10 +141,10 @@ class LocalPeer(object):
       @type targetDir: String representing a directory on disk
 
       @param ownership: Owner and group that the staged files should have
-      @type ownership: Tuple of numeric ids (uid, gid)
+      @type ownership: Tuple of numeric ids C{(uid, gid)}
 
       @param permissions: Permissions that the staged files should have
-      @type permissions: UNIX permissions mode, typically specified in octal (i.e. 0640).
+      @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @raise ValueError: If collect directory is not a directory or does not exist 
       @raise ValueError: If target directory is not a directory, does not exist or is not absolute.
@@ -177,7 +170,7 @@ class LocalPeer(object):
       When a peer has completed collecting its backup files, it will write an
       empty indicator file into its collect directory.  This method checks to
       see whether that indicator has been written.  We're "stupid" here - if
-      the collect directory doesn't exist, you'll naturally get back False.
+      the collect directory doesn't exist, you'll naturally get back C{False}.
 
       If you need to, you can override the name of the collect indicator file
       by passing in a different name.
@@ -210,10 +203,10 @@ class LocalPeer(object):
       @type stageIndicator: String representing name of a file in the collect directory
 
       @param ownership: Owner and group that the indicator file should have
-      @type ownership: Tuple of numeric ids (uid, gid)
+      @type ownership: Tuple of numeric ids C{(uid, gid)}
 
       @param permissions: Permissions that the indicator file should have
-      @type permissions: UNIX permissions mode, typically specified in octal (i.e. 0640).
+      @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @raise ValueError: If collect directory is not a directory or does not exist 
       @raise IOError: If there is an IO error creating the file.
@@ -238,22 +231,20 @@ class LocalPeer(object):
       allowed to be soft links to a directory, but besides that soft links are
       ignored.
 
-      @note: This is a static method.
-
       @note: If you have user/group as strings, call the L{util.getUidGid}
       function to get the associated uid/gid as an ownership tuple.
 
-      @param sourceDir Source directory
+      @param sourceDir: Source directory
       @type sourceDir: String representing a directory on disk
 
       @param targetDir: Target directory
       @type targetDir: String representing a directory on disk
 
       @param ownership: Owner and group that the copied files should have
-      @type ownership: Tuple of numeric ids (uid, gid)
+      @type ownership: Tuple of numeric ids C{(uid, gid)}
 
       @param permissions: Permissions that the staged files should have
-      @type permissions: UNIX permissions mode, typically specified in octal (i.e. 0640).
+      @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @return: Number of files copied from the source directory to the target directory.
       @raise ValueError: If source or target is not a directory or does not exist.
@@ -270,27 +261,25 @@ class LocalPeer(object):
       """
       Copies a source file to a target file.
 
-      If the source file is None then the target file will be created or
-      overwritten as an empty file.  If the target file is None, this method is
-      a no-op.  Attempting to copy a soft link or a directory will result in an
-      exception.
-
-      @note: This is a static method.
+      If the source file is C{None} then the target file will be created or
+      overwritten as an empty file.  If the target file is C{None}, this method
+      is a no-op.  Attempting to copy a soft link or a directory will result in
+      an exception.
 
       @note: If you have user/group as strings, call the L{util.getUidGid}
       function to get the associated uid/gid as an ownership tuple.
 
-      @param sourceFile Source file to copy
-      @type sourceFile: String representing a file on disk (absolute path)
+      @param sourceFile: Source file to copy
+      @type sourceFile: String representing a file on disk, as an absolute path
 
       @param targetFile: Target file to create
-      @type targetFile: String representing a file on disk (absolute path)
+      @type targetFile: String representing a file on disk, as an absolute path
 
       @param ownership: Owner and group that the copied should have
-      @type ownership: Tuple of numeric ids (uid, gid)
+      @type ownership: Tuple of numeric ids C{(uid, gid)}
 
       @param permissions: Permissions that the staged files should have
-      @type permissions: UNIX permissions mode, typically specified in octal (i.e. 0640).
+      @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @raise ValueError: If the passed-in source file is not a regular file.
       @raise IOError: If there is an IO error copying the file
@@ -354,9 +343,9 @@ class RemotePeer(object):
 
       @note: If provided, the rcp command will eventually be parsed into a list
       of strings suitable for passing to L{popen2.Popen4}, which is used
-      instead of a simple L{popen} in order to avoid security holes related to
-      shell interpolation.  There is no "standard" way to parse such a command
-      string, and it's actually not an easy problem to solve portably
+      instead of a simple L{os.popen} in order to avoid security holes related
+      to shell interpolation.  There is no "standard" way to parse such a
+      command string, and it's actually not an easy problem to solve portably
       (essentially, we have to emulate the shell argument-processing logic).
       The code used here internally only respects double quotes (C{"}) for
       grouping arguments, not single quotes (C{'}).  Make sure you take this
@@ -400,14 +389,21 @@ class RemotePeer(object):
       @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
+      @note: Unlike the local peer version of this method, an I/O error might
+      be raised if the directory is empty.  Since we're using a remote copy
+      method, we just don't have the fine-grained control over our exceptions
+      that's available when we can look directly at the filesystem, and we
+      can't control whether the remote copy method thinks an empty directory is
+      an error.  
+
       @param targetDir: Target directory to write data into
       @type targetDir: String representing a directory on disk
 
       @param ownership: Owner and group that the staged files should have
-      @type ownership: Tuple of numeric ids (uid, gid)
+      @type ownership: Tuple of numeric ids C{(uid, gid)}
 
       @param permissions: Permissions that the staged files should have
-      @type permissions: UNIX permissions mode, typically specified in octal (i.e. 0640).
+      @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @raise ValueError: If target directory is not a directory, does not exist or is not absolute.
       @raise IOError: If there is an IO error copying a file.
@@ -428,14 +424,14 @@ class RemotePeer(object):
       When a peer has completed collecting its backup files, it will write an
       empty indicator file into its collect directory.  This method checks to
       see whether that indicator has been written.  If the remote copy command
-      fails, we return False as if the file weren't there.  We depend on the
+      fails, we return C{False} as if the file weren't there.  We depend on the
       rcp command returning some sort of error if the file doesn't exist.
 
       If you need to, you can override the name of the collect indicator file
       by passing in a different name.
 
       @note: This method's behavior is UNIX-specific.  It depends on the
-      ability of tempfile.NamedTemporaryFile() to create files that can be
+      ability of L{tempfile.NamedTemporaryFile} to create files that can be
       opened more than once.
 
       @param collectIndicator: Name of the collect indicator file to check
@@ -469,7 +465,7 @@ class RemotePeer(object):
       to get the associated uid/gid as an ownership tuple.
 
       @note: This method's behavior is UNIX-specific.  It depends on the
-      ability of tempfile.NamedTemporaryFile() to create files that can be
+      ability of L{tempfile.NamedTemporaryFile} to create files that can be
       opened more than once.
 
       @param stageIndicator: Name of the indicator file to write
@@ -493,11 +489,9 @@ class RemotePeer(object):
       """
       Returns the contents of a directory in terms of a Set.
       
-      The directory's contents are read as a FilesystemList() containing only
-      files, and then the list is converted into a sets.Set object for later
+      The directory's contents are read as a L{FilesystemList} containing only
+      files, and then the list is converted into a L{sets.Set} object for later
       use.
-
-      @note: This is a static method.
 
       @param path: Directory path to get contents for
       @type path: String representing a path on disk
@@ -522,8 +516,6 @@ class RemotePeer(object):
       the collect directory is dependent on the behavior of the specified rcp
       command.
 
-      @note: This is a static method.
-
       @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
@@ -543,19 +535,19 @@ class RemotePeer(object):
       @type remoteHost: String representing a hostname, accessible via the copy command
 
       @param rcpCommand: An rcp-compatible copy command to use for copying files
-      @type rcpCommand: String representing a system command
+      @type rcpCommand: Command as a list to be passed to L{util.executeCommand}
 
-      @param sourceDir Source directory
+      @param sourceDir: Source directory
       @type sourceDir: String representing a directory on disk
 
       @param targetDir: Target directory
       @type targetDir: String representing a directory on disk
 
       @param ownership: Owner and group that the copied files should have
-      @type ownership: Tuple of numeric ids (uid, gid)
+      @type ownership: Tuple of numeric ids C{(uid, gid)}
 
       @param permissions: Permissions that the staged files should have
-      @type permissions: UNIX permissions mode, typically specified in octal (i.e. 0640).
+      @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @return: Number of files copied from the source directory to the target directory.
       @raise ValueError: If source or target is not a directory or does not exist.
@@ -583,8 +575,6 @@ class RemotePeer(object):
       screwed up.  I hope this is portable to various different rcp methods,
       but I guess it might not be (all I have to test with is OpenSSH).
 
-      @note: This is a static method.
-
       @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
@@ -595,19 +585,19 @@ class RemotePeer(object):
       @type remoteHost: String representing a hostname, accessible via the copy command
 
       @param rcpCommand: An rcp-compatible copy command to use for copying files
-      @type rcpCommand: String representing a system command
+      @type rcpCommand: Command as a list to be passed to L{util.executeCommand}
 
-      @param sourceFile Source file to copy
-      @type sourceFile: String representing a file on disk (absolute path)
+      @param sourceFile: Source file to copy
+      @type sourceFile: String representing a file on disk, as an absolute path
 
       @param targetFile: Target file to create
-      @type targetFile: String representing a file on disk (absolute path)
+      @type targetFile: String representing a file on disk, as an absolute path
 
       @param ownership: Owner and group that the copied should have
-      @type ownership: Tuple of numeric ids (uid, gid)
+      @type ownership: Tuple of numeric ids C{(uid, gid)}
 
       @param permissions: Permissions that the staged files should have
-      @type permissions: UNIX permissions mode, typically specified in octal (i.e. 0640).
+      @type permissions: UNIX permissions mode, specified in octal (i.e. C{0640}).
 
       @raise IOError: If there is an IO error copying the file
       @raise OSError: If there is an OS error changing permissions on the file
@@ -631,8 +621,6 @@ class RemotePeer(object):
       screwed up.  I hope this is portable to various different rcp methods,
       but I guess it might not be (all I have to test with is OpenSSH).
 
-      @note: This is a static method.
-
       @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
@@ -643,13 +631,13 @@ class RemotePeer(object):
       @type remoteHost: String representing a hostname, accessible via the copy command
 
       @param rcpCommand: An rcp-compatible copy command to use for copying files
-      @type rcpCommand: String representing a system command
+      @type rcpCommand: Command as a list to be passed to L{util.executeCommand}
 
-      @param sourceFile Source file to copy
-      @type sourceFile: String representing a file on disk (absolute path)
+      @param sourceFile: Source file to copy
+      @type sourceFile: String representing a file on disk, as an absolute path
 
       @param targetFile: Target file to create
-      @type targetFile: String representing a file on disk (absolute path)
+      @type targetFile: String representing a file on disk, as an absolute path
 
       @raise IOError: If there is an IO error copying the file
       @raise OSError: If there is an OS error changing permissions on the file

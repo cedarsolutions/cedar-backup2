@@ -78,7 +78,7 @@ def getUidGid(user, group):
    @param group: Group name
    @type group: Group name as a string
 
-   @return Tuple (uid, gid) matching passed-in user and group.
+   @return: Tuple C{(uid, gid)} matching passed-in user and group.
    @raise ValueError: If the ownership user/group values are invalid
    """
    try:
@@ -99,35 +99,35 @@ def executeCommand(command, args, returnOutput=False):
    """
    Executes a shell command, hopefully in a safe way (UNIX-specific).
 
-   This function exists to replace direct calls to os.popen() in the Cedar
-   Backup code.  It's not safe to call a function such as os.popen() with
+   This function exists to replace direct calls to L{os.popen()} in the Cedar
+   Backup code.  It's not safe to call a function such as L{os.popen()} with
    untrusted arguments, since that can cause problems if the string contains
    non-safe variables or other constructs (imagine that the argument is
-   $WHATEVER, but $WHATEVER contains something like "; rm -fR ~/; echo" in the
-   current environment).
+   C{$WHATEVER}, but C{$WHATEVER} contains something like C{"; rm -fR ~/;
+   echo"} in the current environment).
 
-   It's safer to use popen4 (or popen2 or popen3) and pass a list rather than a
-   string for the first argument.  When called this way, popen4 will use the
-   list's first item as the command and the remainder of the list's items as
-   arguments to that command.
+   It's safer to use C{popen4} (or C{popen2} or C{popen3}) and pass a list
+   rather than a string for the first argument.  When called this way,
+   C{popen4} will use the list's first item as the command and the remainder of
+   the list's items as arguments to that command.
 
-   Under the normal case, the function will return a tuple of (status, None)
-   where the status is the wait-encoded return status of the call per the
-   Popen4 documentation.  If returnOutput is passed in as true, the function
-   will return a tuple of (status, output) where output is a list of strings,
-   one entry per line in the intermingled combination of stdout and stderr from
-   the command.  Output is always logged to the logger.info() target, regardless
-   of whether it's returned.
+   Under the normal case, this function will return a tuple of C{(status,
+   None)} where the status is the wait-encoded return status of the call per
+   the L{popen2.Popen4} documentation.  If C{returnOutput} is passed in as
+   C{True}, the function will return a tuple of C{(status, output)} where
+   C{output} is a list of strings, one entry per line in the intermingled
+   combination of C{stdout} and C{stderr} from the command.  Output is always
+   logged to the C{logger.info()} target, regardless of whether it's returned.
 
    @note: I know that it's a bit confusing that the command and the arguments
    are both lists.  I could have just required the caller to pass in one big
    list.  However, I think it makes some sense to keep the command (the
-   constant part of what we're executing, i.e. "scp -B") separate from its
+   constant part of what we're executing, i.e. C{"scp -B"}) separate from its
    arguments, even if they both end up looking kind of similar.
 
-   @note: You cannot redirect output (i.e. 2>&1, 2>/dev/null, etc.) using this
-   function.  The redirection string would be passed to the command just like
-   any other argument.
+   @note: You cannot redirect output (i.e. C{2>&1}, C{2>/dev/null}, etc.) using
+   this function.  The redirection string would be passed to the command just
+   like any other argument.
 
    @param command: Shell command to execute
    @type command: List of individual arguments that make up the command
@@ -136,9 +136,9 @@ def executeCommand(command, args, returnOutput=False):
    @type args: List of additional arguments to the command
 
    @param returnOutput: Indicates whether to return the output of the command
-   @type returnOutput: Boolean True or False
+   @type returnOutput: Boolean C{True} or C{False}
 
-   @return Tuple of (result, output) as described above.
+   @return: Tuple of C{(result, output)} as described above.
    """
    logger.debug("Executing command [%s] with args %s." % (command, args))
    output = []

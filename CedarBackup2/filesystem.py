@@ -218,7 +218,7 @@ class FilesystemList(list):
 
       @note: If the passed-in directory happens to be a soft link, it will
       still be recursed.  However, any soft links I{within} the directory will
-      only be added by name, not recursively.   Any invalid soft links (i.e
+      only be added by name, not recursively.   Any invalid soft links (i.e.
       soft links that point to non-existent items) will be silently ignored.
 
       @note: The L{excludeDirs} flag only controls whether any given soft link
@@ -383,9 +383,9 @@ class FilesystemList(list):
       This method removes from the list all entries which match the passed in
       C{pattern}.  Since there is no need to check the type of each entry, it
       is faster to call this method than to call the L{removeFiles},
-      L{removeDirs} method individually.  If you know which patterns you will
-      want to remove ahead of time, you may be better off setting
-      L{excludePatterns} before adding items to the list.
+      L{removeDirs} or L{removeLinks} methods individually.  If you know which
+      patterns you will want to remove ahead of time, you may be better off
+      setting L{excludePatterns} before adding items to the list.
 
       @param pattern: Regular expression pattern representing entries to remove
 
@@ -708,9 +708,9 @@ class PurgeItemList(FilesystemList):
       """
       Purges all items in the list.
 
-      Every item in the list will be purged.  Directories in the list will NOT
-      be purged recursively, and hence will only be removed if they are empty.
-      Errors will be ignored.
+      Every item in the list will be purged.  Directories in the list will
+      I{not} be purged recursively, and hence will only be removed if they are
+      empty.  Errors will be ignored.
       
       To faciliate easy removal of directories that will end up being empty,
       the delete process happens in two passes: files first (including soft
