@@ -460,7 +460,7 @@ def displayBytes(bytes, digits=3):
 
       print "Size: %s bytes" % bytes
 
-   Call this function instead:
+   Call this function instead::
 
       print "Size: %s" % displayBytes(bytes)
 
