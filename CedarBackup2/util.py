@@ -95,7 +95,7 @@ def getUidGid(user, group):
 # executeCommand() function
 ############################
 
-def executeCommand(command, args, returnOutput=False):
+def executeCommand(command, args, returnOutput=False, ignoreStderr=False):
    """
    Executes a shell command, hopefully in a safe way (UNIX-specific).
 
@@ -115,9 +115,14 @@ def executeCommand(command, args, returnOutput=False):
    None)} where the status is the wait-encoded return status of the call per
    the L{popen2.Popen4} documentation.  If C{returnOutput} is passed in as
    C{True}, the function will return a tuple of C{(status, output)} where
-   C{output} is a list of strings, one entry per line in the intermingled
-   combination of C{stdout} and C{stderr} from the command.  Output is always
-   logged to the C{logger.info()} target, regardless of whether it's returned.
+   C{output} is a list of strings, one entry per line in the output from the
+   command.  Output is always logged to the C{logger.info()} target, regardless
+   of whether it's returned.
+
+   By default, C{stdout} and C{stderr} will be intermingled in the output.
+   However, if you pass in C{ignoreStderr=True}, then only C{stdout} will be
+   included in the output.  This is implemented by using L{popen2.Popen4} in
+   the normal case and L{popen2.Popen3} if C{stderr} is to be ignored.
 
    @note: I know that it's a bit confusing that the command and the arguments
    are both lists.  I could have just required the caller to pass in one big
@@ -127,7 +132,8 @@ def executeCommand(command, args, returnOutput=False):
 
    @note: You cannot redirect output (i.e. C{2>&1}, C{2>/dev/null}, etc.) using
    this function.  The redirection string would be passed to the command just
-   like any other argument.
+   like any other argument.  However, you can implement C{2>/dev/null} by using
+   C{ignoreStderr=True}, as discussed above.
 
    @param command: Shell command to execute
    @type command: List of individual arguments that make up the command
@@ -144,7 +150,10 @@ def executeCommand(command, args, returnOutput=False):
    output = []
    fields = command[:]        # make sure to copy it so we don't destroy it
    fields.extend(args)
-   pipe = popen2.Popen4(fields)
+   if ignoreStderr:
+      pipe = popen2.Popen3(fields, capturestderr=True)
+   else:
+      pipe = popen2.Popen4(fields)
    pipe.tochild.close()       # we'll never write to it, and this way we don't confuse anything.
    while True:
       line = pipe.fromchild.readline()
