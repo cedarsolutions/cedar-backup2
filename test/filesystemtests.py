@@ -143,9 +143,17 @@ def removedir(tree):
    """Recursively removes an entire directory."""
    for root, dirs, files in os.walk(tree, topdown=False):
       for name in files:
-         os.remove(os.path.join(root, name))
+         path = os.path.join(root, name)
+         if os.path.islink(path):
+            os.remove(path)
+         elif os.path.isfile(path):
+            os.remove(path)
       for name in dirs:
-         os.rmdir(os.path.join(root, name))
+         path = os.path.join(root, name)
+         if os.path.islink(path):
+            os.remove(path)
+         elif os.path.isdir(path):
+            os.rmdir(path)
    os.rmdir(tree)
 
 
@@ -173,9 +181,7 @@ class TestFilesystemList(unittest.TestCase):
          self.fail(e)
 
    def tearDown(self):
-      try:
-         removedir(self.tmpdir)
-      except: pass
+      removedir(self.tmpdir)
 
 
    ##################
