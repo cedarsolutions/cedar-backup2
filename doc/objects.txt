@@ -1,5 +1,4 @@
-What objects can we envision to be part of a
-Cedar Backup system?  
+What objects can we envision to be part of a Cedar Backup system?  
 
 #
 # Configuration
@@ -29,17 +28,6 @@ PurgeItemList  - FilesystemList containing files and directories to be
                  purged.  Adds the ability to purge the entries in the
                  list.  Directories can only be purged if they are empty.
 
-CollectProcess - Encapsulates a collect process on the local peer for
-                 the given day.  Would be initialized with Configuration
-                 and would do everything that was in functional.py for
-                 the collect action.
-
-PurgeProcess   - Encapsulates a purge process on the local peer for
-                 the given day.  Would be initialized with Configuration
-                 and would do everything that was in functional.py for
-                 the purge action.
-
-
 #
 # Staging
 ##
@@ -56,10 +44,6 @@ RemotePeer     - BackupPeer representing a remote (network) peer in a
                  operations, etc.  This object would be used by a server to
                  stage from a remote peer.
 
-StageProcess   - Encapsulates a stage process on the local peer (server)
-                 for the given day.  Would be initialized with
-                 Configuration and would do everything that was in
-                 functional.py for the stage action.
 
 
 #
@@ -81,14 +65,45 @@ CdWriter       - ImageWriter that knows how to write to CD media.
 
 DvdWriter      - ImageWriter that knows how to write to DVD media.
 
+
+#
+# Processes
+## 
+
+
+CollectProcess - Encapsulates a collect process on the local peer for
+                 the given day.  Would be initialized with Configuration
+                 and would do everything that was in functional.py for
+                 the collect action.  This might be better as a function
+                 than an object, given that we can do both easily in
+                 Python.
+
+PurgeProcess   - Encapsulates a purge process on the local peer for
+                 the given day.  Would be initialized with Configuration
+                 and would do everything that was in functional.py for
+                 the purge action.  This might be better as a function
+                 than an object, given that we can do both easily in
+                 Python.
+
+StageProcess   - Encapsulates a stage process on the local peer (server)
+                 for the given day.  Would be initialized with
+                 Configuration and would do everything that was in
+                 functional.py for the stage action.  This might be better
+                 as a function than an object, given that we can do both
+                 easily in Python.
+
 StoreProcess   - Encapsulates a store process on the local peer (server)
                  for the given day.  Would be initialized with
                  Configuration and would do everything that was in
-                 functional.py for the store action.
+                 functional.py for the store action.  This might be better
+                 as a function than an object, given that we can do both
+                 easily in Python.
 
 RebuildProcess - Encapsulates a rebuild process on the local peer (server)
                  for the given day.  Would be initialized with
                  Configuration and would do everything that was in
                  functional.py for the rebuild action.  Might inherit from
                  StoreProcess to take advantage of common functionality.
+                 This might be better as a function than an object, given
+                 that we can do both easily in Python.
   
