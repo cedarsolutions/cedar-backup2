@@ -110,6 +110,7 @@ UNIT_MBYTES        = 2
 UNIT_SECTORS       = 3
 
 MTAB_FILE          = "/etc/mtab"
+DEV_NULL_PATH      = "/dev/null"
 
 
 ########################################################################
@@ -391,6 +392,66 @@ class RestrictedContentList(UnorderedList):
 
 
 ########################################################################
+# Pipe class definition
+########################################################################
+
+class Pipe(popen2.Popen4):
+
+   """
+   Specialized pipe class for use by C{executeCommand}.
+
+   The L{executeCommand} function needs a specialized way of interacting with a
+   pipe that isn't satisfied by the standard C{Popen3} and C{Popen4} classes in
+   C{popen2}.  First, C{executeCommand} only reads from the pipe, and never
+   writes to it.  Second, C{executeCommand} needs a way to discard all output
+   written to C{stderr}, as a means of simulating the shell C{2>/dev/null}
+   construct.  
+
+   This class inherits from C{Popen4}.  If the C{ignoreStderr} flag is passed in
+   as C{False}, then the standard C{Popen4} constructor will be called and
+   C{stdout} and C{stderr} will be intermingled in the output.  
+
+   Otherwise, we'll call a custom version of the constructor which was
+   basically stolen from the real constructor in C{python2.3/Lib/popen2.py}.
+   This custom constructor will redirect the C{stderr} file descriptor to
+   C{/dev/null}.  I've done this based on a suggestion from Donn Cave on
+   comp.lang.python.
+
+   In either case, the C{tochild} file object is always closed before returning
+   from the constructor, since it is never needed by C{executeCommand}.
+
+   I really wish there were a prettier way to do this.  Unfortunately, I need
+   access to the guts of the constructor implementation because of the way the
+   pipe process is forked, etc.  It doesn't work to just call the superclass
+   constructor and then modify a few things afterwards.  Even worse, I have to
+   access private C{popen2} module members C{_cleanup} and C{_active} in order
+   to duplicate the implementation.  Hopefully that will continue to work. :(
+   """
+   
+   def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
+      if not ignoreStderr:
+         popen2.Popen4.__init__(self, cmd, bufsize)
+      else:
+         popen2._cleanup()
+         p2cread, p2cwrite = os.pipe()
+         c2pread, c2pwrite = os.pipe()
+         self.pid = os.fork()
+         if self.pid == 0: # Child
+            os.dup2(p2cread, 0)
+            os.dup2(c2pwrite, 1)
+            null = os.open(DEV_NULL_PATH, os.O_RDWR)
+            os.dup2(null, 2)
+            os.close(null)
+            self._run_child(cmd)
+         os.close(p2cread)
+         self.tochild = os.fdopen(p2cwrite, 'w', bufsize)
+         os.close(c2pwrite)
+         self.fromchild = os.fdopen(c2pread, 'r', bufsize)
+         popen2._active.append(self)
+      self.tochild.close()       # we'll never write to it, and this way we don't confuse anything.
+
+
+########################################################################
 # Public functions
 ########################################################################
 
@@ -640,7 +701,8 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    It's safer to use C{popen4} (or C{popen2} or C{popen3}) and pass a list
    rather than a string for the first argument.  When called this way,
    C{popen4} will use the list's first item as the command and the remainder of
-   the list's items as arguments to that command.
+   the list's items as arguments to that command.  What this function uses is
+   actually a customized L{Pipe} class that inherits from C{popen2.Popen4}.
 
    Under the normal case, this function will return a tuple of C{(status,
    None)} where the status is the wait-encoded return status of the call per
@@ -652,14 +714,13 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
 
    By default, C{stdout} and C{stderr} will be intermingled in the output.
    However, if you pass in C{ignoreStderr=True}, then only C{stdout} will be
-   included in the output.  This is implemented by using L{popen2.Popen4} in
-   the normal case and L{popen2.Popen3} if C{stderr} is to be ignored.
+   included in the output.  
 
-   The C{doNotLog} parameter exists so that callers can force the function
-   to not log command output to the debug log.  Normally, you would want to
-   log.  However, if you're using this function to write huge output files
-   (i.e. database backups written to stdout) then you might want to avoid
-   putting all that information into the debug log.
+   The C{doNotLog} parameter exists so that callers can force the function to
+   not log command output to the debug log.  Normally, you would want to log.
+   However, if you're using this function to write huge output files (i.e.
+   database backups written to C{stdout}) then you might want to avoid putting
+   all that information into the debug log.
 
    The C{outputFile} parameter exists to make it easier for a caller to push
    output into a file, i.e. as a substitute for redirection to a file.  If this
@@ -674,10 +735,11 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    constant part of what we're executing, i.e. C{"scp -B"}) separate from its
    arguments, even if they both end up looking kind of similar.
 
-   @note: You cannot redirect output (i.e. C{2>&1}, C{2>/dev/null}, etc.) using
-   this function.  The redirection string would be passed to the command just
-   like any other argument.  However, you can implement C{2>/dev/null} by using
-   C{ignoreStderr=True}, as discussed above.
+   @note: You cannot redirect output via shell constructs (i.e. C{>file},
+   C{2>/dev/null}, etc.) using this function.  The redirection string would be
+   passed to the command just like any other argument.  However, you can
+   implement the equivalent to redirection using C{ignoreStderr} and
+   C{outputFile}, as discussed above.
 
    @param command: Shell command to execute
    @type command: List of individual arguments that make up the command
@@ -704,11 +766,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    output = []
    fields = command[:]        # make sure to copy it so we don't destroy it
    fields.extend(args)
-   if ignoreStderr:
-      pipe = popen2.Popen3(fields, capturestderr=True)
-   else:
-      pipe = popen2.Popen4(fields)
-   pipe.tochild.close()       # we'll never write to it, and this way we don't confuse anything.
+   pipe = Pipe(fields, ignoreStderr=ignoreStderr)
    while True:
       line = pipe.fromchild.readline()
       if not line: break
