@@ -1,3 +1,8 @@
+Version 2.3.2	unreleased
+
+	* Re-license manual under GPL with clarifications (Creative
+	  Commons licenses are not considered to be DFSG-free).
+
 Version 2.3.1	23 Mar 2005
 
 	* Attempt to deal more gracefully with corrupted media.
