@@ -611,21 +611,22 @@
       </para>
 
       <para>
-         Although the initial 2.0 release will not include any extensions, it
-         is our hope that as use of Cedar Backup 2.0 grows, users will
+         It is our hope that as use of Cedar Backup 2.0 grows, users will
          contribute their own extensions back to the community.  Well-written
          general-purpose extensions will be accepted into the official
-         codebase, and we already have plans for a Subversion extension, a
-         MySQL extension, and an extension for collecting important system
-         information (<command>fdisk</command> information, etc.) to accompany a
-         backup.
+         codebase.
       </para>
 
       <note>
          <para>
-            See <xref linkend="cedar-config"/> for more information on how
-            extensions are configured.  Also, developers may be interested in
-            <xref linkend="cedar-extensions"/>.
+            Users should see <xref linkend="cedar-config"/> for more
+            information on how extensions are configured, and <xref
+            linkend="cedar-extensions"/> for details on all of the
+            officially-supported extensions.  
+         </para>
+            
+         <para>
+            Developers may be interested in <xref linkend="cedar-extenspec"/>.
          </para>
       </note>
 

@@ -1,0 +1,475 @@
+<!-- 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#              C E D A R
+#          S O L U T I O N S       "Software done right."
+#           S O F T W A R E
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Copyright (c) 2005 Kenneth J. Pronovici.
+# All rights reserved.
+#
+# This work is licensed under the Creative Commons Attribution-
+# ShareAlike License. To view a copy of this license, visit
+# http://creativecommons.org/licenses/by-sa/2.0/
+# or send a letter to Creative Commons, 559 Nathan Abbott Way,
+# Stanford, California 94305, USA.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Author   : Kenneth J. Pronovici <pronovic@ieee.org>
+# Language : O'Reilly DocBook Lite XML DTD
+# Project  : Cedar Backup, release 2
+# Revision : $Id$
+# Purpose  : Cedar Backup software manual, Official Extensions chapter.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+-->
+
+<chapter id="cedar-extensions">
+
+   <title>Official Extensions</title>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-extensions-sysinfo">
+
+      <title>System Information Extension</title>
+
+      <para>
+         The System Information Extension is a simple Cedar Backup extension
+         used to save off important system recovery information that might be
+         useful when reconstructing a <quote>broken</quote> system.  It is
+         intended to be run either immediately before or immediately after the
+         standard collect action.
+      </para>
+
+      <para>
+         This extension saves off the following information to the configured
+         Cedar Backup collect directory.  Saved off data is always compressed
+         using <command>bzip2</command>.
+      </para>
+
+      <itemizedlist>
+         <listitem><para>Currently-installed Debian packages via <command>dpkg --get-selections</command></para></listitem>
+         <listitem><para>Disk partition information via <command>fdisk -l</command></para></listitem>
+         <listitem><para>System-wide mounted filesystem contents, via <command>ls -laR</command></para></listitem>
+      </itemizedlist>
+
+      <para>
+         The Debian-specific information is only collected on systems where
+         <filename>/usr/bin/dpkg</filename> exists.
+      </para>
+
+      <para>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </para>
+      
+      <programlisting>
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;sysinfo&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.sysinfo&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;101&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </programlisting>
+
+      <para>
+         This extension relies on the options and collect configuration
+         sectionns in the standard Cedar Backup configuration file, but
+         requires no new configuration of its own.  
+      </para>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-extensions-subversion">
+
+      <title>Subversion Extension</title>
+
+      <para>
+         The Subversion Extension is a Cedar Backup extension
+         used to back up Subversion 
+         <footnote><para>See <ulink url="http://subversion.org"/></para></footnote>
+         version control repositories via the Cedar Backup command line.
+         It is intended to be run either immediately before or immediately
+         after the standard collect action.
+      </para>
+
+      <para>
+         There are two different kinds of Subversion repositories at this
+         writing: BDB (Berkeley Database) and fsfs (a more CVS-like "filesystem
+         within a filesystem").  This extension only works with BDB
+         repositories.  Each Subversion repository can be backed using the same
+         collect modes allowed for filesystems in the standard Cedar Backup
+         collect action (weekly, daily, incremental) and the output can be
+         compressed using either <command>gzip</command> or
+         <command>bzip2</command>.
+      </para>
+
+      <para>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </para>
+      
+      <programlisting>
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;subversion&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.subversion&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;101&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </programlisting>
+      
+      <para>
+         This extension relies on the options and collect configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <literal>subversion</literal> configuration
+         section.  This is an example Subversion configuration section:
+      </para> 
+
+      <programlisting>
+&lt;subversion&gt;
+   &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
+   &lt;compress_mode&gt;none&lt;/compress_mode&gt;
+   &lt;repository&gt;
+      &lt;abs_path&gt;/opt/public/svn/software&lt;/abs_path&gt;
+      &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
+   &lt;/repository&gt;
+   &lt;repository&gt;
+      &lt;abs_path&gt;/opt/public/svn/web&lt;/abs_path&gt;
+      &lt;compress_mode&gt;gzip&lt;/compress_mode&gt;
+   &lt;/repository&gt;
+&lt;/subversion&gt;
+      </programlisting>
+
+      <para>
+         The following elements are part of the Subversion configuration section:
+      </para>
+
+      <variablelist>
+
+         <varlistentry>
+            <term><literal>collect_mode</literal></term>
+            <listitem>
+               <para>Default collect mode.</para>
+               <para>
+                  The collect mode describes how frequently a Subversion
+                  repository is backed up.  The Subversion extension
+                  recognizes the same collect modes as the standard Cedar
+                  Backup collect action (see <xref linkend="cedar-basic"/>).
+               </para>
+               <para>
+                  This value is the collect mode that will be used by
+                  default during the backup process.  Individual
+                  repositories (below) may override this value.  If
+                  <emphasis>all</emphasis> individual repositories provide
+                  their own value, then this default value may be omitted
+                  from configuration.
+               </para>
+               <para>
+                  Note: if your backup device does not suppport multisession
+                  discs, then you should probably use the
+                  <literal>daily</literal> collect mode to avoid losing
+                  data.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be one of
+                  <literal>daily</literal>, <literal>weekly</literal> or
+                  <literal>incr</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>compress_mode</literal></term>
+            <listitem>
+               <para>Default compress mode.</para>
+               <para>
+                  Subversion repositories backups are just
+                  specially-formatted text files, and often compress quite
+                  well using <command>gzip</command> or
+                  <command>bzip2</command>.  The compress mode describes how
+                  the backed-up data will be compressed, if at all.  
+               </para>
+               <para>
+                  This value is the compress mode that will be used by
+                  default during the backup process.  Individual
+                  repositories (below) may override this value.  If
+                  <emphasis>all</emphasis> individual repositories provide
+                  their own value, then this default value may be omitted
+                  from configuration.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be one of
+                  <literal>none</literal>, <literal>gzip</literal> or
+                  <literal>bzip2</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>repository</literal></term>
+            <listitem>
+               <para>A Subversion repository be collected.</para>
+               <para>
+                  This is a subsection which contains information about
+                  a specific Subversion repository to be backed up.
+               </para>
+               <para>
+                  This section can be repeated as many times as is
+                  necessary.  At least one repository directory must be
+                  configured.
+               </para>
+               <para>
+                  The repository subsection contains the following fields:
+               </para>
+
+               <variablelist>
+
+                  <varlistentry>
+                     <term><literal>abs_path</literal></term>
+                     <listitem>
+                        <para>
+                           Absolute path of the Subversion repository to
+                           back up.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>collect_mode</literal></term>
+                     <listitem>
+                        <para>Collect mode for this repository.</para>
+                        <para>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default collect mode.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>daily</literal>, <literal>weekly</literal> or
+                           <literal>incr</literal>.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>compress_mode</literal></term>
+                     <listitem>
+                        <para>Compress mode for this repository.</para>
+                        <para>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default compress mode.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>none</literal>, <literal>gzip</literal> or
+                           <literal>bzip2</literal>.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+               </variablelist>
+
+            </listitem>
+
+         </varlistentry>
+
+      </variablelist>
+
+   </sect1>
+
+   <sect1 id="cedar-extensions-mysql">
+
+      <title>MySQL Extension</title>
+
+      <para>
+         The MySQL Extension is a Cedar Backup extension used to back up MySQL
+         <footnote><para>See <ulink url="http://www.mysql.com"/></para></footnote> 
+         databases via the Cedar Backup command line.  It is intended to be run
+         either immediately before or immediately after the standard collect
+         action.
+      </para>
+
+      <para>
+         The backup is done via the <command>mysqldump</command> command
+         included with the MySQL product.  Output can be compressed using
+         either <command>gzip</command> or <command>bzip2</command>.
+         Administrators can configure the extension either to back up all
+         databases or to back up only specific databases.  The extension
+         assumes that all databases can be backed up by a single user
+         (typically <literal>root</literal>).
+      </para>
+
+      <para>
+         Note that this code always produces a full backup.  There is currently
+         no facility for making incremental backups.  If/when someone has a
+         need for this and can describe how to do it correctly, I'll update
+         this extension or provide another.
+      </para>
+
+      <para>
+         Unfortunately, use of this extension <emphasis>will</emphasis> expose
+         usernames and passwords in the process listing (via
+         <command>ps</command>) when the backup is running.  This is because
+         none of the official MySQL backup scripts provide a good way to
+         specify password other than via the <option>--password</option>
+         command-line option.  The only workaround I can come up with would be
+         to manipulate program I/O interactively through a pipe, which is a
+         real pain.
+      </para>
+
+      <para>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </para>
+      
+      <programlisting>
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;mysql&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.mysql&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;101&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </programlisting>
+      
+      <para>
+         This extension relies on the options and collect configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <literal>mysql</literal> configuration section.
+         This is an example MySQL configuration section:
+      </para> 
+
+      <programlisting>
+&lt;mysql&gt;
+   &lt;user&gt;root&lt;/user&gt;
+   &lt;password&gt;password&lt;/password&gt;
+   &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
+   &lt;all&gt;Y&lt;/all&gt;
+&lt;/mysql&gt;
+      </programlisting>
+
+      <para>
+         You should always make <filename>/etc/cback.conf</filename> unreadable
+         to non-root users once you place MySQL configuration into it, since it
+         contains information about available MySQL databases, usernames and
+         passwords.
+      </para>
+
+      <para>
+         The following elements are part of the MySQL configuration section:
+      </para>
+
+      <variablelist>
+
+         <varlistentry>
+            <term><literal>user</literal></term>
+            <listitem>
+               <para>Database user.</para>
+               <para>
+                  The database user that the backup should be executed as.
+                  Even if you list more than one database (below) all backups
+                  must be done as the same user.  Typically, this would be
+                  <literal>root</literal> (i.e. the database root user, not the
+                  system root user).
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be non-empty.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>password</literal></term>
+            <listitem>
+               <para>Password associated with the database user.</para>
+               <para>
+                  Note that once you put this value into configuration, you
+                  should make sure that your configuration file cannot be read
+                  by users which should not see this password.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be non-empty.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>compress_mode</literal></term>
+            <listitem>
+               <para>Compress mode.</para>
+               <para>
+                  MySQL databases dumps are just
+                  specially-formatted text files, and often compress quite
+                  well using <command>gzip</command> or
+                  <command>bzip2</command>.  The compress mode describes how
+                  the backed-up data will be compressed, if at all.  
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be one of
+                  <literal>none</literal>, <literal>gzip</literal> or
+                  <literal>bzip2</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>all</literal></term>
+            <listitem>
+               <para>Indicates whether to back up all databases.</para>
+               <para>
+                  If this value is <literal>Y</literal>, then all MySQL
+                  databases will be backed up.  If this value is
+                  <literal>N</literal>, then one or more specific databases
+                  must be specified (see below).
+               </para>
+               <para>
+                  If you choose this option, the entire database backup will go
+                  into one big dump file.  
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>database</literal></term>
+            <listitem>
+               <para>Named database to be backed up.</para>
+               <para>
+                  If you choose to specify individual databases rather than all
+                  databases, then each database will be backed up into its own
+                  dump file.
+               </para>
+               <para>
+                  This field can be repeated as many times as is necessary.  At
+                  least one database must be configured if the all option
+                  (above) is set to <literal>N</literal>.  You may not
+                  configure any individual databases if the all option is set
+                  to <literal>Y</literal>.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be non-empty.
+               </para>
+            </listitem>
+         </varlistentry>
+
+      </variablelist>
+
+   </sect1>
+
+</chapter>
+
