@@ -46,11 +46,20 @@ Code Coverage
 
    This module contains individual tests for most of the public functions
    and classes implemented in peer.py: the C{LocalPeer} and C{RemotePeer} 
-   classes and C{executeCommand()} function.
+   classes and C{executeCommand()} function.  The C{getUidGid} function is
+   not tested because it's trivial.
 
-Dependencies
-============
+   There are some parts of this functionality that can't be tested easily.  For
+   instance, the stage code allows the caller to change ownership on files.
+   Generally, this can only be done by root, and we won't be running these
+   tests as root.  We'll have to hope that the code that tests the way
+   permissions are changed gives us enough coverage.
 
+   Network-related testing also causes us problems.  In order to test the
+   RemotePeer, we need a "remote" host that we can rcp to and from.  We want to
+   fall back on using localhost and the current user, but that might not be
+   safe or appropriate.  The compromise is that the remote peer tests will only
+   be run if PEERTESTS_REMOTE is set to "Y" in the environment.
 
 Naming Conventions
 ==================
@@ -346,6 +355,139 @@ class TestLocalPeer(unittest.TestCase):
    def tearDown(self):
       pass
 
+   ###########################
+   # Test basic functionality
+   ###########################
+
+   def testBasic_001(self):
+      """
+      Make sure exception is thrown for non-absolute collect directory.
+      """
+      pass
+
+   def testBasic_002(self):
+      """
+      Make sure attributes are set properly for valid constructor input.
+      """
+      pass
+
+
+   ###############################
+   # Test checkCollectIndicator()
+   ###############################
+
+   def testCheckCollectIndicator_001(self):
+      """
+      Attempt to check collect indicator with non-existent collect directory.
+      """
+      pass
+
+   def testCheckCollectIndicator_002(self):
+      """
+      Attempt to check collect indicator with non-readable collect directory.
+      """
+      pass
+
+   def testCheckCollectIndicator_003(self):
+      """
+      Attempt to check collect indicator collect indicator file that does not exist.
+      """
+      pass
+
+   def testCheckCollectIndicator_004(self):
+      """
+      Attempt to check collect indicator collect indicator file that does exist.
+      """
+      pass
+
+
+   #############################
+   # Test writeStageIndicator()
+   #############################
+
+   def testWriteStageIndicator_001(self):
+      """
+      Attempt to write stage indicator with non-existent collect directory.
+      """
+      pass
+
+   def testWriteStageIndicator_002(self):
+      """
+      Attempt to write stage indicator with non-writable collect directory.
+      """
+      pass
+
+   def testWriteStageIndicator_003(self):
+      """
+      Attempt to write stage indicator in a valid directory.
+      """
+      pass
+
+
+   ###################
+   # Test stagePeer()
+   ###################
+
+   def testStagePeer_001(self):
+      """
+      Attempt to stage files with non-existent collect directory.
+      """
+      pass
+
+   def testStagePeer_002(self):
+      """
+      Attempt to stage files with non-readable collect directory.
+      """
+      pass
+
+   def testStagePeer_003(self):
+      """
+      Attempt to stage files with non-absolute target directory.
+      """
+      pass
+
+   def testStagePeer_004(self):
+      """
+      Attempt to stage files with non-existent target directory.
+      """
+      pass
+
+   def testStagePeer_005(self):
+      """
+      Attempt to stage files with non-writable target directory.
+      """
+      pass
+
+   def testStagePeer_006(self):
+      """
+      Attempt to stage files with empty collect directory.
+      """
+      pass
+
+   def testStagePeer_007(self):
+      """
+      Attempt to stage files with non-empty collect directory.
+      """
+      pass
+
+   def testStagePeer_008(self):
+      """
+      Attempt to stage files with non-empty collect directory containing links and directories.
+      """
+      pass
+
+   def testStagePeer_009(self):
+      """
+      Attempt to stage files with non-empty collect directory and attempt to set valid permissions.
+      """
+      pass
+
+   def testStagePeer_010(self):
+      """
+      Attempt to stage files with non-empty collect directory and attempt to set invalid permissions.
+      """
+      pass
+
 
 ######################
 # TestRemotePeer class
@@ -363,6 +505,215 @@ class TestRemotePeer(unittest.TestCase):
       pass
 
    def tearDown(self):
+      pass
+
+
+   ############################
+   # Tests basic functionality
+   ############################
+
+   def testBasic_001(self):
+      """
+      Make sure exception is thrown for non-absolute collect directory.
+      """
+      pass
+
+   def testBasic_002(self):
+      """
+      Make sure attributes are set properly for valid constructor input.
+      """
+      pass
+
+
+   ###############################
+   # Test checkCollectIndicator()
+   ###############################
+
+   def testCheckCollectIndicator_001(self):
+      """
+      Attempt to check collect indicator with invalid hostname.
+      """
+      pass
+
+   def testCheckCollectIndicator_002(self):
+      """
+      Attempt to check collect indicator with invalid remote user.
+      """
+      pass
+
+   def testCheckCollectIndicator_003(self):
+      """
+      Attempt to check collect indicator with invalid rcp command.
+      """
+      pass
+
+   def testCheckCollectIndicator_004(self):
+      """
+      Attempt to stage files with a valid rcp command that will have
+      connectivity problems.
+      """
+      pass
+
+   def testCheckCollectIndicator_005(self):
+      """
+      Attempt to check collect indicator with non-existent collect directory.
+      """
+      pass
+
+   def testCheckCollectIndicator_006(self):
+      """
+      Attempt to check collect indicator with non-readable collect directory.
+      """
+      pass
+
+   def testCheckCollectIndicator_007(self):
+      """
+      Attempt to check collect indicator collect indicator file that does not exist.
+      """
+      pass
+
+   def testCheckCollectIndicator_008(self):
+      """
+      Attempt to check collect indicator collect indicator file that does exist.
+      """
+      pass
+
+
+   #############################
+   # Test writeStageIndicator()
+   #############################
+
+   def testWriteStageIndicator_001(self):
+      """
+      Attempt to write stage indicator with invalid hostname.
+      """
+      pass
+
+   def testWriteStageIndicator_002(self):
+      """
+      Attempt to write stage indicator with invalid remote user.
+      """
+      pass
+
+   def testWriteStageIndicator_003(self):
+      """
+      Attempt to write stage indicator with invalid rcp command.
+      """
+      pass
+
+   def testWriteStageIndicator_004(self):
+      """
+      Attempt to stage files with a valid rcp command that will have
+      connectivity problems.
+      """
+      pass
+
+   def testWriteStageIndicator_005(self):
+      """
+      Attempt to write stage indicator with non-existent collect directory.
+      """
+      pass
+
+   def testWriteStageIndicator_006(self):
+      """
+      Attempt to write stage indicator with non-writable collect directory.
+      """
+      pass
+
+   def testWriteStageIndicator_007(self):
+      """
+      Attempt to write stage indicator in a valid directory.
+      """
+      pass
+
+
+   ###################
+   # Test stagePeer()
+   ###################
+
+   def testStagePeer_001(self):
+      """
+      Attempt to stage files with invalid hostname.
+      """
+      pass
+
+   def testStagePeer_002(self):
+      """
+      Attempt to stage files with invalid remote user.
+      """
+      pass
+
+   def testStagePeer_003(self):
+      """
+      Attempt to stage files with invalid rcp command.
+      """
+      pass
+
+   def testStagePeer_004(self):
+      """
+      Attempt to stage files with a valid rcp command that will have
+      connectivity problems.
+      """
+      pass
+
+   def testStagePeer_005(self):
+      """
+      Attempt to stage files with non-existent collect directory.
+      """
+      pass
+
+   def testStagePeer_006(self):
+      """
+      Attempt to stage files with non-readable collect directory.
+      """
+      pass
+
+   def testStagePeer_007(self):
+      """
+      Attempt to stage files with non-absolute target directory.
+      """
+      pass
+
+   def testStagePeer_008(self):
+      """
+      Attempt to stage files with non-existent target directory.
+      """
+      pass
+
+   def testStagePeer_009(self):
+      """
+      Attempt to stage files with non-writable target directory.
+      """
+      pass
+
+   def testStagePeer_010(self):
+      """
+      Attempt to stage files with empty collect directory.
+      """
+      pass
+
+   def testStagePeer_011(self):
+      """
+      Attempt to stage files with non-empty collect directory.
+      """
+      pass
+
+   def testStagePeer_012(self):
+      """
+      Attempt to stage files with non-empty collect directory containing links and directories.
+      """
+      pass
+
+   def testStagePeer_013(self):
+      """
+      Attempt to stage files with non-empty collect directory and attempt to set valid permissions.
+      """
+      pass
+
+   def testStagePeer_014(self):
+      """
+      Attempt to stage files with non-empty collect directory and attempt to set invalid permissions.
+      """
       pass
 
 
