@@ -1114,7 +1114,7 @@ def executeRebuild(configPath, options, config):
       raise ValueError("Rebuild configuration is not properly filled in.")
    stagingDirs = _findRebuildDirs(config)
    _writeImage(config, True, stagingDirs)
-   if config.stage.checkData:
+   if config.store.checkData:
       logger.debug("Running consistency check of media.")
       _consistencyCheck(config, stagingDirs)
    _writeStoreIndicator(config, stagingDirs)
