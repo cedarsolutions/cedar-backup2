@@ -13,11 +13,10 @@ include util/knapsackdemo.py
 include util/docbook/*
 include test/*.py
 include test/data/*
-include manual/*
-include manual/src/*
-include manual/src/images/*
-include manual/src/images/html/*
-include manual/src/images/pdf/*
+include manual/Makefile
+include manual/src/*.xml
+include manual/src/images/html/*.png
+include manual/src/images/pdf/*.png
 include doc/cback.1
 include doc/cback.conf.sample
 include doc/docbook.txt
