@@ -48,6 +48,8 @@
 
                <informaltable>
                   <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
                      <thead>
                         <row>
                            <entry>Source</entry>
@@ -94,6 +96,8 @@
 
                <informaltable>
                   <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
                      <thead>
                         <row>
                            <entry>Source</entry>
@@ -149,6 +153,8 @@
 
                <informaltable>
                   <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
                      <thead>
                         <row>
                            <entry>Source</entry>
@@ -196,6 +202,8 @@
 
                <informaltable>
                   <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
                      <thead>
                         <row>
                            <entry>Source</entry>
@@ -250,6 +258,8 @@
 
                <informaltable>
                   <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
                      <thead>
                         <row>
                            <entry>Source</entry>
@@ -304,6 +314,8 @@
 
                <informaltable>
                   <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
                      <thead>
                         <row>
                            <entry>Source</entry>
@@ -351,6 +363,8 @@
 
                <informaltable>
                   <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
                      <thead>
                         <row>
                            <entry>Source</entry>

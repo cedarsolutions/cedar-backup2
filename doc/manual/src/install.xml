@@ -64,10 +64,10 @@
             If you would like to use Cedar Backup on a non-Linux system, you
             should install the Python source distribution along with all of the
             indicated dependencies.  Then, please report back to the Cedar
-            Backup Users mailing list <footnote><para>See the Cedar Solutions
-            <ulink url="http://cedar-solutions.com/listarchives/">Mailing
-            Lists</ulink> page for more information.</para></footnote> with
-            information about your platform and any problems you encountered.
+            Backup Users mailing list <footnote><para>See <ulink
+            url="http://cedar-solutions.com/listarchives/"/>.</para></footnote>
+            with information about your platform and any problems you
+            encountered.
          </para>
       </sidebar>
 
@@ -99,10 +99,9 @@
 
       <para>
          First, add the Cedar Solutions APT data source to your
-         <filename>/etc/apt/sources.list</filename> file. 
-         <footnote><para>See the the Cedar Solutions 
-         <ulink url="http://cedar-solutions.com/debian">Debian</ulink> 
-         page for more information.</para></footnote> Then, execute:
+         <filename>/etc/apt/sources.list</filename> file.  <footnote><para>See
+         <ulink url="http://cedar-solutions.com/debian.html"/>.</para></footnote>
+         Then, execute:
       </para>
 
       <screen>
@@ -115,9 +114,8 @@ $ apt-get install cedar-backup2
          <filename>.deb</filename> files any install them by hand with a tool
          such as <command>dpkg</command>.  You can find a link to the
          <filename>.deb</filename> files on the Cedar Solutions website.
-         <footnote><para>The Cedar Solutions
-         <ulink url="http://cedar-solutions.com/software.html">Software</ulink>
-         page is a good starting point.</para></footnote>
+         <footnote id="cedar-install-foot-software"><para>See <ulink
+         url="http://cedar-solutions.com/software.html"/>.</para></footnote>
       </para>
 
       <para>
@@ -144,14 +142,13 @@ $ apt-get install cedar-backup2
 
       <para>
          On platforms other than Debian, Cedar Backup is installed from a
-         Python source distribution. <footnote><para>See the 
-         <ulink url="http://docs.python.org/lib/module-distutils.html">Python 
-         library documentation</ulink> for more information</para></footnote>
-         A Python source distribution is much like a CPAN Perl distribution,
-         <footnote><para>See <ulink url="http://cpan.org/">CPAN</ulink>
-         for more information.</para></footnote> except that it
-         typically does not include dependency-checking information.  This
-         means that you will have to manage dependencies on your own.
+         Python source distribution. <footnote><para>See <ulink
+         url="http://docs.python.org/lib/module-distutils.html"/>
+         .</para></footnote> A Python source distribution is much like a CPAN
+         Perl distribution, <footnote><para>See <ulink
+         url="http://cpan.org/"/>.</para></footnote> except that it typically
+         does not include dependency-checking information.  This means that you
+         will have to manage dependencies on your own.
       </para>
 
       <tip>
@@ -228,10 +225,8 @@ $ apt-get install cedar-backup2
 
          <para>
             Once you have downloaded the source package from the Cedar
-            Solutions website,
-            <footnote><para>The Cedar Solutions 
-            <ulink url="http://cedar-solutions.com/software.html">Software</ulink>
-            page is a good starting point.</para></footnote> untar it:
+            Solutions website, <footnoteref
+            linkend="cedar-install-foot-software"/> untar it:
          </para>
 
          <screen>
