@@ -16,8 +16,12 @@
 
 MISSING FUNCTIONALITY FOR 2.0
 
-None
-
+* Figure out why unicode files like this cause failures:
+/home/pronovic/projects/debbuild/python2.3.710/chroot/pdebuild/7809/usr/share/doc/console-tools-libs/examples/unicode cause
+  Problem is at filesystem.py:367 (it's a failing os.path.join)
+* Add unit tests for --stack option
+* Add documentation for --stack option  (don't leave it undocumented)
+* Maybe att --stack to notes on how to report bugs, i.e. if you get an error that doesn't make sense, re-run with --stack
 
 ITEMS THAT SHOULD BE DONE BUT NEED TESTING
 
@@ -34,6 +38,7 @@ ADMINISTRATIVE
 DOCUMENTATION
 
 * Rewrite Cedar Backup webpage online, to show new version and link to old version.
+* Rework extension docs to use an example other than Subversion.
 
 * Write some sort of "what's new" paragraph for release of 2.0beta1
    - Entire codebase has been rewritten from the ground up using Python 2.3.

@@ -107,6 +107,17 @@ class FilesystemList(list):
    bounded at front and back by the beginning and end of the string, i.e. they
    are treated as if they begin with C{^} and end with C{$}.
 
+   @note: You I{will} get different behavior if you pass in unicode paths (i.e.
+   C{u"/path/to/file"}) versus just normal string paths.  In particular, your
+   user's locale will have an effect on how UTF-8 filenames are treated.
+   Chances are, everything will look like it's working until you run into a
+   directory containing a filename something like C{"\xe2\x99\xaa\xe2\x99\xac"}.  
+   What will then happen is that file path operations (like C{os.path.join})
+   will begin failing because your original path is unicode and the file path
+   itself is just a string (but really a string outside the normal range of
+   ASCII values).  It's going to be really confusing to debug.  I suggest
+   sticking with simple strings, instead.
+
    @sort: __init__, addFile, addDir, addDirContents, removeFiles, removeDirs,
           removeLinks, removeMatch, removeInvalid, normalize, validate, 
           excludeFiles, excludeDirs, excludeLinks, excludePaths, 

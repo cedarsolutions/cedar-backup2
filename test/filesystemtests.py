@@ -110,7 +110,7 @@ from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemLis
 DATA_DIRS = [ "./data", "./test/data" ]
 RESOURCES = [ "tree1.tar.gz", "tree2.tar.gz", "tree3.tar.gz", "tree4.tar.gz", "tree5.tar.gz",
               "tree6.tar.gz", "tree7.tar.gz", "tree8.tar.gz", "tree9.tar.gz", "tree10.tar.gz", 
-              "tree11.tar.gz", ]
+              "tree11.tar.gz", "tree12.tar.gz", "tree13.tar.gz", ]
 
 INVALID_FILE      = "bogus"         # This file name should never exist
 NOMATCH_PATH      = "/something"    # This file should never match something we put in a file list 
@@ -724,6 +724,17 @@ class TestFilesystemList(unittest.TestCase):
       """
       self.extractTar("tree11")
       path = self.buildPath(["tree11", "file with spaces"])
+      fsList = FilesystemList()
+      count = fsList.addFile(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
+
+   def testAddFile_035(self):
+      """
+      Attempt to add a UTF-8 file.
+      """
+      self.extractTar("tree12")
+      path = self.buildPath(["tree12", "unicode", "\xe2\x99\xaa\xe2\x99\xac"])
       fsList = FilesystemList()
       count = fsList.addFile(path)
       self.failUnlessEqual(1, count)
@@ -2764,6 +2775,46 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
       self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
+   def testAddDirContents_071(self):
+      """
+      Attempt to add a directory which has a UTF-8 filename in it.
+      """
+      self.extractTar("tree12")
+      path = self.buildPath(["tree12", "unicode", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(6, count)
+      self.failUnlessEqual(6, len(fsList))
+      self.failUnless(self.buildPath([ "tree12", "unicode", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree12", "unicode", "README.strange-name", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree12", "unicode", "utflist.long.gz", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree12", "unicode", "utflist.cp437.gz", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree12", "unicode", "utflist.short.gz", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree12", "unicode", "\xe2\x99\xaa\xe2\x99\xac", ]) in fsList)
+
+   def testAddDirContents_072(self):
+      """
+      Attempt to add a directory which has several UTF-8 filenames in it.
+      This test data was taken from Rick Lowe's problems around the release of v1.10.
+      """
+      self.extractTar("tree13")
+      path = self.buildPath(["tree13", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(11, count)
+      self.failUnlessEqual(11, len(fsList))
+      self.failUnless(self.buildPath([ "tree13", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "Les mouvements de r\x82forme.doc", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "l'\x82nonc\x82.sxw", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "l\x82onard - renvois et bibliographie.sxw", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "l\x82onard copie finale.sxw", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci - page titre.sxw", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci.sxw", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "Rammstein - B\x81ck Dich.mp3", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "megaherz - Glas Und Tr\x84nen.mp3", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "Megaherz - Mistst\x81ck.MP3", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree13", "Rammstein - Mutter - B\x94se.mp3", ]) in fsList)
 
 
    #####################
