@@ -58,15 +58,10 @@ test than how their environment should be configured.
 
 We want to make sure the tests use the modules in the current source tree, not
 any versions previously-installed elsewhere, if possible.  We don't actually
-import the modules here, but we warn if the wrong ones would be found.  (The
-filesystem.py check below is just one example of one of the files we would
-expect to find in the CedarBackup2 directory.)
-
-We also want to make sure we are running the correct 'test' package - not one
-found elsewhere on the user's path - since 'test' could be a relatively common
-name for a package.  (The filesystemtests.py import below is just one example
-of one of the files we would expect to find in the CedarBackup2 test
-directory.)
+import the modules here, but we warn if the wrong ones would be found.  We also
+want to make sure we are running the correct 'test' package - not one found
+elsewhere on the user's path - since 'test' could be a relatively common name
+for a package.
 
 Finally, this script might be used people who won't have an environment that
 allows running all of the tests, especially certain tests related to remote
@@ -77,6 +72,11 @@ what they're doing can put "full" as one of the arguments on the command-line,
 and they'll get all of the available tests (or they can dig further and
 explicitly set certain environment variables to get more precise control over
 what will be tested).
+
+@note: Even if you run this test with the C{python2.3} interpreter, some of the
+individual unit tests require the C{python} interpreter.  In particular, the
+utility tests (in test/utiltests.py) use brief Python script snippets with
+known results to verify the behavior of C{executeCommand}.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """

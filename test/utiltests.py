@@ -75,6 +75,7 @@ Full vs. Reduced Tests
 # Import modules and do runtime validations
 ########################################################################
 
+import sys
 import os
 import unittest
 import tempfile
@@ -1319,10 +1320,12 @@ class TestFunctions(unittest.TestCase):
       """
       Test with simple string, a non-ascii path.
       """
-      path = u"\xe2\x99\xaa\xe2\x99\xac"
-      safePath = encodePath(path)
-      self.failUnless(isinstance(safePath, str))
-      self.failUnlessEqual("\xe2\x99\xaa\xe2\x99\xac", safePath)
+      encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
+      if encoding.find("ANSI") != 0:    # test can't work on some filesystems
+         path = u"\xe2\x99\xaa\xe2\x99\xac"
+         safePath = encodePath(path)
+         self.failUnless(isinstance(safePath, str))
+         self.failUnlessEqual("\xe2\x99\xaa\xe2\x99\xac", safePath)
 
 
 #######################################################################
