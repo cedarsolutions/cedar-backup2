@@ -84,7 +84,8 @@ from CedarBackup2.image import IsoImage
 from CedarBackup2.writer import CdWriter
 from CedarBackup2.writer import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 from CedarBackup2.filesystem import BackupFileList, PurgeItemList, compareContents
-from CedarBackup2.util import executeCommand, getUidGid, changeOwnership, getFunctionReference, deviceMounted
+from CedarBackup2.util import executeCommand, getUidGid, changeOwnership
+from CedarBackup2.util import getFunctionReference, deviceMounted, displayBytes
 from CedarBackup2.config import DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE
 
 
@@ -629,7 +630,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
    backupList.addDirContents(absolutePath)
    if collectMode != 'incr':
       logger.debug("Collect mode is [%s]; no digest will be used." % collectMode)
-      logger.info("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
+      logger.info("Backing up %d files in %s (%s)." % (len(backupList), absolutePath, displayBytes(backupList.totalSize())))
       if len(backupList) > 0:
          backupList.generateTarfile(tarfilePath, archiveMode, True)
          changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
@@ -643,7 +644,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
       newDigest = backupList.generateDigestMap()   # be sure to do this before removing unchanged files!
       removed = backupList.removeUnchanged(oldDigest)
       logger.debug("Removed %d unchanged files based on digest values." % removed)
-      logger.info("Backing up %d files in this directory (%.0f bytes)." % (len(backupList), backupList.totalSize()))
+      logger.info("Backing up %d files in this directory (%s)." % (len(backupList), displayBytes(backupList.totalSize())))
       if len(backupList) > 0:
          backupList.generateTarfile(tarfilePath, archiveMode, True)
          changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
@@ -934,16 +935,17 @@ def _writeImage(config, entireDisc, stagingDirs):
    logger.debug("entireDisc: %s" % entireDisc)
    writer = _getWriter(config)
    capacity = writer.retrieveCapacity(entireDisc=entireDisc)
-   logger.debug("Media capacity: %d bytes" % capacity.bytesAvailable)
+   logger.debug("Media capacity: %s" % displayBytes(capacity.bytesAvailable))
    image = IsoImage(writer.device, capacity.boundaries)
    for stageDir in stagingDirs.keys():
       logger.debug("Adding stage directory [%s]." % stageDir)
       dateSuffix = stagingDirs[stageDir]
       image.addEntry(path=stageDir, graftPoint=dateSuffix, contentsOnly=True)
    imageSize = image.getEstimatedSize()
-   logger.info("Image size will be %.0f bytes." % imageSize)
+   logger.info("Image size will be %s." % displayBytes(imageSize))
    if imageSize > capacity.bytesAvailable:
-      logger.error("Image (%.0f bytes) does not fit in available capacity (%.0f bytes)." % (imageSize, capacity.bytesAvailable))
+      logger.error("Image (%s) does not fit in available capacity (%s)." % (displayBytes(imageSize), 
+                                                                            displayBytes(capacity.bytesAvailable)))
       raise IOError("Media does not contain enough capacity to store image.")
    try:
       (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)

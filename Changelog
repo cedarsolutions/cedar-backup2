@@ -1,7 +1,10 @@
 Version 2.1.0	unreleased 
 
 	* Fixed doc/cback.1 .TH line to give proper manpage section.
+	* Fix a few logging statements for collect action, to be clearer.
+	* Add simple main routine to cli.py, so executing it is the same as cback.
 	* Added optional outputFile and doNotLog parameters to util.executeCommand().
+	* Display byte quantities in sensible units (i.e. bytes, kB, MB) when logged.
 	* Refactored private code into public in action.py and config.py.
 	* Created MySQL extension in CedarBackup2.extend.mysql.
 	* Created sysinfo extension in CedarBackup2.extend.sysinfo.
