@@ -2095,9 +2095,9 @@ class Config(object):
    Class representing a Cedar Backup XML configuration document.
 
    The C{Config} class is a Python object representation of a Cedar Backup XML
-   configuration file.  It is intended to be the only Python- language
-   interface to Cedar Backup configuration on disk for both Cedar Backup itself
-   and for external applications.
+   configuration file.  It is intended to be the only Python-language interface
+   to Cedar Backup configuration on disk for both Cedar Backup itself and for
+   external applications.
 
    The object representation is two-way: XML data can be used to create a
    C{Config} object, and then changes to the object can be propogated back to

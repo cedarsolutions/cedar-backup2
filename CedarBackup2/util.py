@@ -41,7 +41,7 @@
 Provides general-purpose utilities. 
 
 @sort: AbsolutePathList, ObjectTypeList, convertSize, 
-       getUidGid, executeCommand, calculateFileAge,
+       getUidGid, splitCommandLine, executeCommand, calculateFileAge,
        ISO_SECTOR_SIZE, BYTES_PER_KBYTE, KBYTES_PER_MBYTE, BYTES_PER_MBYTE,
        BYTES_PER_SECTOR, SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, 
        SECONDS_PER_DAY, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
@@ -69,6 +69,7 @@ Provides general-purpose utilities.
 ########################################################################
 
 import os
+import re
 import time
 import popen2
 import logging
@@ -322,6 +323,63 @@ class ObjectTypeList(UnorderedList):
 
 
 ########################################################################
+# RestrictedContentList class definition
+########################################################################
+
+class RestrictedContentList(UnorderedList):
+
+   """
+   Class representing a list containing only object with certain values.
+
+   This is an unordered list.
+
+   We override the C{append}, C{insert} and C{extend} methods to ensure that
+   any item added to the list is among the valid values.  We use a standard
+   comparison, so pretty much anything can be in the list of valid values.
+
+   The C{valuesDescr} value will be used in exceptions, i.e. C{"Item must be
+   one of values in VALID_ACTIONS" if C{valuesDescr} is C{"VALID_ACTIONS"}.
+   """
+   
+   def __init__(self, valuesList, valuesDescr):
+      """
+      Initializes a list restricted to containing certain values.
+      @param valuesList: List of valid values.
+      @param valuesDescr: Short string describing list of values.
+      """
+      self.valuesList = valuesList
+      self.valuesDescr = valuesDescr
+
+   def append(self, item):
+      """
+      Overrides the standard C{append} method.
+      @raise ValueError: If item is not in the values list.
+      """
+      if item not in self.valuesList:
+         raise ValueError("Item must be one of values in %s." % self.valuesDescr)
+      list.append(self, item)
+
+   def insert(self, index, item):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If item is not in the values list.
+      """
+      if item not in self.valuesList:
+         raise ValueError("Item must be one of values in %s." % self.valuesDescr)
+      list.insert(self, index, item)
+
+   def extend(self, seq):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If item is not in the values list.
+      """
+      for item in seq:
+         if item not in self.valuesList:
+            raise ValueError("Item must be one of values in %s." % self.valuesDescr)
+      list.extend(self, seq)
+
+
+########################################################################
 # Public functions
 ########################################################################
 
@@ -403,6 +461,34 @@ def getUidGid(user, group):
    except Exception, e:
       logger.debug("Error looking up uid and gid for user/group %s/%s: %s" % (user, group, e))
       raise ValueError("Unable to lookup up uid and gid for passed in user/group.")
+
+
+##############################
+# splitCommandLine() function
+##############################
+
+def splitCommandLine(commandLine):
+   """
+   Splits a command line string into a list of arguments.
+
+   Unfortunately, there is no "standard" way to parse a command line string,
+   and it's actually not an easy problem to solve portably (essentially, we
+   have to emulate the shell argument-processing logic).  This code only
+   respects double quotes (C{"}) for grouping arguments, not single quotes
+   (C{'}).  Make sure you take this into account when building your command
+   line.
+
+   Incidentally, I found this particular parsing method while digging around in
+   Google Groups, and I tweaked it for my own use.
+
+   @param commandLine: Command line string
+   @type commandLine: String, i.e. "cback --verbose stage store"
+
+   @return: List of arguments, suitable for passing to L{popen2.Popen4}.
+   """
+   fields = re.findall('[^ "]+|"[^"]+"', commandLine)
+   fields = map(lambda field: field.replace('"', ''), fields)
+   return fields
 
 
 ############################
