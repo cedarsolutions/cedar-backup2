@@ -116,8 +116,7 @@ DATA_DIRS = [ "./data", "./test/data", ]
 RESOURCES = [ "cback.conf.1", "cback.conf.2", "cback.conf.3", "cback.conf.4", 
               "cback.conf.5", "cback.conf.6", "cback.conf.7", "cback.conf.8", 
               "cback.conf.9", "cback.conf.10", "cback.conf.11", "cback.conf.12", 
-              "cback.conf.13", "cback.conf.14", "cback.conf.15", "cback.conf.16", 
-              "cback.conf.17", ]
+              "cback.conf.13", "cback.conf.14", "cback.conf.15", "cback.conf.16", ]
 
 
 #######################################################################
@@ -4085,7 +4084,7 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test constructor with all values filled in, with valid values.
       """
-      store = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
       self.failUnlessEqual("/source", store.sourceDir)
       self.failUnlessEqual("cdr-74", store.mediaType)
       self.failUnlessEqual("cdwriter", store.deviceType)
@@ -4376,8 +4375,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
       self.failUnlessEqual(store1, store2)
       self.failUnless(store1 == store2)
       self.failUnless(not store1 < store2)
@@ -4404,8 +4403,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, sourceDir differs.
       """
-      store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
-      store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
+      store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -4432,8 +4431,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, mediaType differs.
       """
-      store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(not store1 < store2)
@@ -4474,8 +4473,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, devicePath differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True, True, "fail")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -4502,8 +4501,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, deviceScsiId differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True, True, "fail")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -4530,8 +4529,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, driveSpeed differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, "fail")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -4544,8 +4543,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, checkData differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False, True, "fail")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -5555,7 +5554,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       config.extensions = ExtensionsConfig()
-      config.extensions.actions = [ ExtendedAction("one", "two", "three") ]
+      config.extensions.actions = [ ExtendedAction("one", "two", "three", 100) ]
       config._validateExtensions()
 
    def testValidate_011(self):
@@ -5575,7 +5574,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       config.extensions = ExtensionsConfig()
-      config.extensions.actions = [ ExtendedAction("a", "b", "c", 1), ExtendedAction("e", "f", "g") ]
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", 1), ExtendedAction("e", "f", "g", 10) ]
       config._validateExtensions()
 
    def testValidate_013(self):
@@ -6388,7 +6387,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions = ExtensionsConfig()
       expected.extensions.actions = []
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
-      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", None))
+      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
@@ -6437,7 +6436,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions = ExtensionsConfig()
       expected.extensions.actions = []
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
-      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", None))
+      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]

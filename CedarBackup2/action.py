@@ -51,6 +51,11 @@ Extension Architecture Interface, i.e. the same interface that extensions will
 implement.  There's no particular reason it has to be this way, except that it
 seems more straightforward to do it this way.
 
+The code is organized into two sections: internal utility code and public
+functions.  Utility functions related to a single public function are grouped
+with that function (below it, typically).  Utility functions used in more than
+one place are higher up in the code.
+
 @sort: executeCollect, executeStage, executeStore, executePurge, executeRebuild, executeValidate
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
@@ -68,13 +73,14 @@ import re
 import logging
 import pickle
 import tempfile
+import datetime
 
 # Cedar Backup modules
 from CedarBackup2.peer import RemotePeer, LocalPeer
 from CedarBackup2.image import IsoImage
 from CedarBackup2.writer import CdWriter
-from CedarBackup2.filesystem import BackupFileList
-from CedarBackup2.util import getUidGid, getFunctionReference
+from CedarBackup2.filesystem import BackupFileList, PurgeItemList
+from CedarBackup2.util import executeCommand, getUidGid, getFunctionReference, deviceMounted
 
 
 ########################################################################
@@ -95,6 +101,9 @@ SECONDS_PER_DAY      = 60*60*24
 
 MEDIA_VOLUME_NAME    = "Cedar Backup"    # must be 32 or fewer characters long
 
+MOUNT_CMD            = [ "mount", ]
+UMOUNT_CMD           = [ "umount", ]
+
 
 ########################################################################
 # Utility functions
@@ -113,7 +122,7 @@ def _getDayOfWeek(dayName):
    @param dayName: Day of week to convert
    @type dayName: string, i.e. C{"monday"}, C{"tuesday"}, etc.
 
-   @returns: Day of week convered to integer (C{0}=C{"monday"}, C{6}=C{"sunday"})
+   @returns: Integer, where Monday is 0 and Sunday is 6.
    """
    if dayName.lower() == "monday":
       return 0
@@ -174,6 +183,11 @@ def _getNormalizedPath(absPath):
    normalized = re.sub("\s", "_", normalized)
    return normalized
 
+
+##############################
+# _changeOwnership() function
+##############################
+
 def _changeOwnership(user, group, path):
    """
    Changes ownership of path to match the user and group.
@@ -186,6 +200,168 @@ def _changeOwnership(user, group, path):
       os.chown(path, uid, gid)
    except Exception, e:
       logger.error("Error changing ownership of %s: %s" % (path, e))
+
+
+########################
+# _getWriter() function
+########################
+
+def _getWriter(config):
+   """
+   Gets a writer object based on current configuration.
+
+   This function creates and returns a writer based on configuration.  This is
+   done to abstract action methods from knowing what kind of writer is in use.
+   Since all writers implement the same interface, there's no need for actions
+   to care which one they're working with.
+   
+   Right now, only the C{cdwriter} device type is allowed, which results in a
+   L{CdWriter} object.  An exception will be raised if any other device type is
+   used.
+
+   This function also checks to make sure that the device isn't mounted before
+   creating a writer object for it.  Experience shows that sometimes if the
+   device is mounted, we have problems with the backup.  We may as well do the
+   check here first, before instantiating the writer.
+
+   @param config: Config object.
+
+   @return: Writer that can be used to write a directory to some media.
+
+   @raise ValueError: If there is a problem getting the writer.
+   @raise IOError: If there is a problem creating the writer object.
+   """
+   if deviceMounted(config.store.devicePath):
+      raise IOError("Device %s is currently mounted." % (config.store.devicePath))
+   if config.store.deviceType == "cdwriter":
+      return CdWriter(config.store.devicePath, config.store.deviceScsiId, config.store.driveSpeed, config.store.mediaType)
+   else:
+      raise ValueError("Device type '%s' is invalid." % config.store.deviceType)
+
+
+#########################
+# _writeImage() function
+#########################
+
+def _writeImage(config, entireDisc, stagingDirs):
+   """
+   Builds and writes an ISO image containing the indicated stage directories.
+
+   The generated image will contain each of the staging directories listed in
+   C{stagingDirs}.  The directories will be placed into the image at the root by
+   date, so staging directory C{/opt/stage/2005/02/10} will be placed into the
+   disc at C{/2005/02/10}.
+
+   @param config: Config object.
+   @param entireDisc: Indicates whether entire disc should be used
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+
+   @raise ValueError: Under many generic error conditions
+   @raise IOError: If there is a problem writing the image to disc.
+   """
+   writer = _getWriter(config)
+   capacity = writer.retrieveCapacity(entireDisc=entireDisc)
+   image = IsoImage(writer.device, capacity.boundaries)
+   for stageDir in stagingDirs.keys():
+      dateSuffix = stagingDirs[stageDir]
+      image.addEntry(path=stageDir, graftPoint=dateSuffix, contentsOnly=True)
+   imageSize = image.getEstimatedSize()
+   logger.info("Image size will be %.2f bytes." % imageSize)
+   if imageSize > capacity.bytesAvailable:
+      logger.error("Image (%.2f bytes) does not fit in available capacity (%.2f bytes)." % (imageSize, capacity.bytesAvailable))
+      raise IOError("Media does not contain enough capacity to store image.")
+   try:
+      (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)
+      handle.close()
+      image.writeImage(imagePath)
+   finally:
+      if os.path.exists(imagePath): 
+         try:
+            os.unlink(imagePath)
+         except: pass
+
+
+###############################
+# _consistencyCheck() function
+###############################
+
+def _consistencyCheck(config, stagingDirs):
+   """
+   Runs a consistency check against media in the backup device.
+
+   It seems that sometimes, it's possible to create a corrupted multisession
+   disc (i.e. one that cannot be read) although no errors were encountered
+   while writing the disc.  This consistency check makes sure that the data
+   read from disc matches the data that was used to create the disc.
+
+   The function mounts the device at a temporary mount point in the working
+   directory, and then compares the indicated staging directories in the
+   staging directory and on the media.  The comparison is done via the
+   L{BackupFileList} object's built-in functionality for generating digest
+   maps.
+
+   If no exceptions are thrown, there were no problems with the consistency
+   check.  A positive confirmation of "no problems" is also written to the log
+   with C{info} priority.
+
+   @warning: The implementation of this function is very UNIX-specific and is
+   probably Linux-specific as well.
+
+   @param config: Config object.
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+
+   @raise IOError: If there is a problem working with the media.
+   """
+   logger.debug("Running consistency check.")
+   mountPoint = tempfile.mkdtemp(dir=config.options.workingDir)
+   try:
+      args = [ "-tiso9660", config.store.backupDevice, mountPoint ]
+      result = executeCommand(MOUNT_CMD, args, returnOutput=False, ignoreStderr=True)
+      if result != 0:
+         raise IOError("Error (%d) mounting media for consistency check." % result)
+      for stagingDir in stagingDirs.keys():
+         dateSuffix = stagingDirs[stagingDir]
+         filesystemList = BackupFileList()
+         mediaList = BackupFileList()
+         filesystemList.addDirContents(stagingDir)
+         mediaList.addDirContents(os.path.join(mountPoint, dateSuffix))
+         filesystemMap = filesystemList.generateDigestMap()
+         mediaMap = mediaList.generateDigestMap()
+         if filesystemMap.keys() != mediaMap.keys():
+            raise IOError("Consistency check failed: filesystem and media have different contents.")
+         for filename in filesystemMap.keys():
+            if filesystemMap[filename] != mediaMap[filename]:
+               raise IOError("Consistency check failed: file [%s] differs." % filename)
+         logger.info("Consistency check completed for [%s].  No problems found." % stagingDir)
+   finally:
+      if os.path.isdir(mountPoint):
+         try:
+            executeCommand(UMOUNT_CMD, [ mountPoint, ], returnOutput=False, ignoreStderr=True)
+            os.rmdir(mountPoint)
+         except: pass
+
+
+#######################
+# _writeStoreIndicator
+#######################
+
+def _writeStoreIndicator(config, stagingDirs):
+   """
+   Writes a store indicator file into staging directories.
+
+   The store indicator is written into each of the staging directories when
+   either a store or rebuild action has written the staging directory to disc.
+
+   @param config: Config object.
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+   """
+   for stagingDir in stagingDirs.keys():
+      filename = os.path.join(stagingDir, STORE_INDICATOR)
+      try:
+         open(filename, "w").write("")
+         _changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
+      except Exception, e:
+         logger.error("Error writing store indicator: %s", e)
 
 
 ########################################################################
@@ -215,20 +391,20 @@ def executeCollect(configPath, options, config):
    @type config: Config object.
 
    @raise ValueError: Under many generic error conditions
-   @raise TarError: If there is a problem creating the tar file
+   @raise TarError: If there is a problem creating a tar file
    """
    fullBackup = options.full
    if config.options is None or config.collect is None:
-      raise ValueError("Configuration is not properly filled in.")
+      raise ValueError("Collect configuration is not properly filled in.")
    todayIsStart = _todayIsStart(config.options.startingDay)
    resetDigest = fullBackup or todayIsStart
-   if config.collect.collectDirs is not None:
+   if config.collect.collectDirs is None:
       for collectDir in config.collect.collectDirs:
          collectMode = _getCollectMode(config, collectDir)
          archiveMode = _getArchiveMode(config, collectDir)
          digestPath = _getDigestPath(config, collectDir)
          tarfilePath = _getTarfilePath(config, collectDir, archiveMode)
-         if fullBackup or collectMode in ['daily', 'incr', ] or (collectMode == 'weekly' and todayIsStart):
+         if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
             _collectDirectory(config, collectDir.absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath)
          logger.info("Completed collecting directory: %s" % collectDir.absolutePath)
    _writeCollectIndicator(config)
@@ -277,15 +453,14 @@ def _getTarfilePath(config, collectDir, archiveMode):
    @param archiveMode: Archive mode to use for this tarfile.
    @return: Absolute path to the tarfile associated with the collect directory.
    """
-   extension = ""
    if archiveMode == 'tar':
-      extension = ".tar"
+      extension = "tar"
    elif archiveMode == 'targz':
-      extension = ".tar.gz"
+      extension = "tar.gz"
    elif archiveMode == 'tarbz2':
-      extension = ".tar.bz2"
+      extension = "tar.bz2"
    normalized = _getNormalizedPath(collectDir.absolutePath)
-   filename = "%s%s" % (normalized, extension)
+   filename = "%s.%s" % (normalized, extension)
    return os.path.join(config.collect.targetDir, filename)
 
 def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath):
@@ -300,7 +475,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
 
    The caller must decide what the collect and archive modes are, since they
    can be on both the collect configuration and the collect directory itself.
-   The passed-in values are always used rather than looking on the collect
+   The passed-in values are always used rather than looking in the collect
    directory.
 
    @param config: Config object.
@@ -389,13 +564,13 @@ def executeStage(configPath, options, config):
    @note: The daily directory is derived once and then we stick with it, just
    in case a backup happens to span midnite.
 
-   @note: When the stage action is complete, we will write various indicator
-   files so that it's obvious what actions have been completed.  Each peer gets
-   a stage indicator in its collect directory, and then the master gets a stage
-   indicator in its daily staging directory.  The store process uses the
-   master's stage indicator to decide whehter a directory is ready to be
-   stored.  Currently, nothing uses the indicator at each peer, and it exists
-   for reference only. 
+   @note: As portions of the stage action is complete, we will write various
+   indicator files so that it's obvious what actions have been completed.  Each
+   peer gets a stage indicator in its collect directory, and then the master
+   gets a stage indicator in its daily staging directory.  The store process
+   uses the master's stage indicator to decide whether a directory is ready to
+   be stored.  Currently, nothing uses the indicator at each peer, and it
+   exists for reference only. 
 
    @param configPath: Path to configuration file on disk.
    @type configPath: String representing a path on disk.
@@ -405,9 +580,12 @@ def executeStage(configPath, options, config):
 
    @param config: Program configuration.
    @type config: Config object.
+
+   @raise ValueError: Under many generic error conditions
+   @raise IOError: If there are problems reading or writing files.
    """
    if config.options is None or config.stage is None:
-      raise ValueError("Configuration is not properly filled in.")
+      raise ValueError("Stage configuration is not properly filled in.")
    dailyDir = _getDailyDir(config)
    localPeers = _getLocalPeers(config)
    remotePeers = _getRemotePeers(config)
@@ -419,7 +597,7 @@ def executeStage(configPath, options, config):
          continue
       targetDir = stagingDirs[peer.name]
       ownership = (config.options.backupUser, config.options.backupGroup)
-      peer.stagePeer(targetDir=targetDir, ownership=ownership)  # note: utilize backup user's default umask
+      peer.stagePeer(targetDir=targetDir, ownership=ownership)  # note: utilize effective user's default umask
       peer.writeStageIndicator()
    _writeStageIndicator(config, dailyDir)
    logger.info("Executed the 'stage' action successfully.")
@@ -434,7 +612,7 @@ def _getDailyDir(config):
 
    @param config: Config object
 
-   @return: Daily staging directory;
+   @return: Path of daily staging directory.
    """
    return os.path.join(config.stage.targetDir, time.strftime(DIR_TIME_FORMAT))
 
@@ -528,7 +706,8 @@ def _writeStageIndicator(config, dailyDir):
 
    Note that there is a stage indicator on each peer (to indicate that a
    collect directory has been staged) and in the daily staging directory itself
-   (to indicate that the staging directory has been utilized).
+   (to indicate that the staging directory has been utilized).  This just deals
+   with the daily staging directory.
 
    @param config: Config object.
    @param dailyDir: Daily staging directory.
@@ -549,10 +728,13 @@ def executeStore(configPath, options, config):
    """
    Executes the store backup action.
 
+   Note that the rebuild action and the store action are very similar.  The
+   main difference is that while store only stores a single day's staging
+   directory, the rebuild action operates on multiple staging directories.
+
    @note: When the store action is complete, we will write a store indicator to
    the daily staging directory we used, so it's obvious that the store action
-   has completed.  This store indicator is used as discussed in the notes for
-   L{_getCorrectStoreDir}.
+   has completed.  
 
    @param configPath: Path to configuration file on disk.
    @type configPath: String representing a path on disk.
@@ -562,126 +744,67 @@ def executeStore(configPath, options, config):
 
    @param config: Program configuration.
    @type config: Config object.
+
+   @raise ValueError: Under many generic error conditions
+   @raise IOError: If there are problems reading or writing files.
    """
    rebuildMedia = options.full
    if config.options is None or config.store is None:
-      raise ValueError("Configuration is not properly filled in.")
+      raise ValueError("Store configuration is not properly filled in.")
    todayIsStart = _todayIsStart(config.options.startingDay)
    entireDisc = rebuildMedia or todayIsStart
-   (storeDir, dateSuffix) = _getCorrectStoreDir(config)
-   writer = _getWriter(config)
-   (image, imagePath) = _createImage(config, entireDisc, storeDir, dateSuffix, writer)
-   try:
-      writer.writeImage(imagePath, newDisc=entireDisc)
-   finally:
-      os.unlink(imagePath)
-   logger.warn(" *** Warning: consistency check is not yet implemented! *** ")
-   _writeStoreIndicator(config, storeDir)
+   stagingDirs = _findCorrectDailyDir(config)
+   _writeImage(config, entireDisc, stagingDirs)
+   if config.stage.checkData:
+      _consistencyCheck(config, stagingDirs)
+   _writeStoreIndicator(config, stagingDirs)
    logger.info("Executed the 'store' action successfully.")
 
-def _getCorrectStoreDir(config):
+def _findCorrectDailyDir(config):
    """
-   Get directory that should be stored.
+   Finds the correct daily staging directory to be written to disk.
 
-   Normally, we will just attempt to store the staging directory for the
-   current day.  However, if we can't find that directory or that directory
-   does not have a staging indicator written to it, we'll look one day on
-   either side of the current day (first before, then after) for a different
-   directory that has been staged but not yet stored.  If we find such a
-   directory, we'll use it instead.  This way, we can seamlessly handle the
-   case where a backup spans midnite (i.e. the stage happens on a different day
-   than the store).
+   In Cedar Backup v1.0, we assumed that the correct staging directory matched
+   the current date.  However, that has problems.  In particular, it breaks
+   down if collect is on one side of midnite and stage is on the other, or if
+   certain processes span midnite.
+
+   For v2.0, I'm trying to be smarter.  I'll first check the current day.  If
+   that's found, it's good enough.  If it's not found, I'll look for a valid
+   directory from the day before or day after I{which has not yet been staged,
+   according to the stage indicator file}.  The first one I find, I'll use.
+
+   @note: This code is probably longer and more verbose than it needs to be,
+   but at least it's straightforward.
 
    @param config: Config object.
 
-   @return: Daily staging directory to be stored.
-   @raise Exception: If a store directory cannot be found.
+   @return: Correct staging dir, as a dict mapping directory to date suffix.
+   @raise IOError: If the staging directory cannot be found.
    """
-   t = time.time()
-   today = time.localtime(t)
-   yesterday = time.localtime(t-SECONDS_PER_DAY)
-   tomorrow = time.localtime(t+SECONDS_PER_DAY)
-   for stamp in [ today, yesterday, tomorrow, ]:
-      dateSuffix = time.strftime(DIR_TIME_FORMAT, stamp)
-      dailyDir = os.path.join(config.store.sourceDir, dateSuffix)
-      stageIndicator = os.path.join(dailyDir, STAGE_INDICATOR)
-      if os.path.isdir(dailyDir) and os.path.isfile(stageIndicator):
-         logger.debug("Found dir %s ready to be stored." % dailyDir)
-         return (dailyDir, dateSuffix)
-   raise Exception("Unable to find a staged directory ready to be stored.")
-
-def _getWriter(config):
-   """
-   Gets a writer object based on current configuration.
-
-   This method abstracts (a bit) the main store method from knowing what kind
-   of writer it's using.  It creates and returns a writer based on
-   configuration.  Right now, it will always return a L{CdWriter} and will
-   thrown an exception if any other kind of writer is specified.
-
-   @param config: Config object.
-
-   @return: Writer that can be used to write a directory to some media.
-
-   @raise ValueError: If there is a problem getting the writer.
-   @raise IOError: If there is a problem getting the writer.
-   """
-   if config.store.deviceType != "cdwriter":
-      raise ValueError("Device type '%s' is invalid." % config.store.deviceType)
-   return CdWriter(config.store.devicePath, config.store.deviceScsiId, config.store.driveSpeed, config.store.mediaType)
-
-def _writeStoreIndicator(config, dailyDir):
-   """
-   Writes a store indicator file into a target store directory.
-
-   Note that there is a store indicator on each peer (to indicate that a
-   collect directory has been stored) and in the daily staging directory itself
-   (to indicate that the staging directory has been utilized).
-
-   @param config: Config object.
-   @param dailyDir: Daily staging directory that was stored.
-   """
-   dailyDir = _getDailyDir(config)
-   filename = os.path.join(dailyDir, STORE_INDICATOR)
-   try:
-      open(filename, "w").write("")
-      _changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
-   except Exception, e:
-      logger.error("Error writing store indicator: %s", e)
-
-def _createImage(config, entireDisc, storeDir, dateSuffix, writer):
-   """
-   Creates and returns an ISO image ready to write to disc.
-
-   The image will be created and then written to disc in the working directory
-   with a temporary name.  The caller must remove the image when it is done
-   being written.
-
-   @todo: Implement handlers for the 'overwrite', 'rebuild' and 'rewrite'
-   capacity modes.
-
-   @param config: Config object.
-   @param entireDisc: Indicates whether entire disc should be used (i.e. rewrite disc).
-   @param storeDir: Directory to be written into the image.
-   @param dateSuffix: Date string (i.e. C{2000/10/07} to be used as the graft point for the data.
-   @param writer: Writer associated with the media.
-
-   @return: Tuple of (image, imagePath).
-
-   @raise IOError: If the media is full and the image cannot be made to fit.
-   """
-   capacity = writer.retrieveCapacity(entireDisc=entireDisc)
-   image = IsoImage(writer.device, capacity.boundaries)
-   image.addEntry(path=storeDir, graftPoint=dateSuffix, contentsOnly=True)
-   imageSize = image.getEstimatedSize()
-   logger.info("Image size will be %.2f bytes." % imageSize)
-   if imageSize > capacity.bytesAvailable:
-      logger.error("Image (%.2f bytes) does not fit in available capacity (%.2f bytes)." % (imageSize, capacity.bytesAvailable))
-      raise IOError("Media does not contain enough capacity to store image.")
-   (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)
-   handle.close()
-   image.writeImage(imagePath)
-   return (image, imagePath)
+   oneDay = datetime.timedelta(days=1)
+   today = datetime.date.today()
+   yesterday = today - oneDay;
+   tomorrow = today + oneDay;
+   todayDate = today.strftime(DIR_TIME_FORMAT);
+   yesterdayDate = yesterday.strftime(DIR_TIME_FORMAT);
+   tomorrowDate = tomorrow.strftime(DIR_TIME_FORMAT);
+   todayPath = os.path.join(config.stage.targetDir, todayDate)
+   yesterdayPath = os.path.join(config.stage.targetDir, yesterdayDate)
+   tomorrowPath = os.path.join(config.stage.targetDir, tomorrowDate)
+   todayIndicator = os.path.join(todayPath, STAGE_INDICATOR)
+   yesterdayIndicator = os.path.join(yesterdayPath, STAGE_INDICATOR)
+   tomorrowIndicator = os.path.join(tomorrowPath, STAGE_INDICATOR)
+   if os.path.isdir(todayPath) and os.path.exists(todayIndicator):
+      logger.info("Store process will use current day's stage directory: %s" % todayPath)
+      return { todayPath:todayDate }
+   elif os.path.isdir(yesterdayPath) and os.path.exists(yesterdayIndicator):
+      logger.info("Store process will use previous day's stage directory: %s" % yesterdayPath)
+      return { yesterdayPath:yesterdayDate }
+   elif os.path.isdir(tomorrowPath) and os.path.exists(tomorrowIndicator):
+      logger.info("Store process will use next day's stage directory: %s" % tomorrowPath)
+      return { tomorrowPath:tomorrowDate }
+   raise IOError("Unable to find a staging directory to store (tried today, yesterday, tomorrow).")
 
 
 ##########################
@@ -692,6 +815,10 @@ def executePurge(configPath, options, config):
    """
    Executes the purge backup action.
 
+   For each configured directory, we create a purge item list, remove from the
+   list anything that's younger than the configured retain days value, and then
+   purge from the filesystem what's left.
+
    @param configPath: Path to configuration file on disk.
    @type configPath: String representing a path on disk.
 
@@ -700,7 +827,17 @@ def executePurge(configPath, options, config):
 
    @param config: Program configuration.
    @type config: Config object.
+
+   @raise ValueError: Under many generic error conditions
    """
+   if config.options is None or config.purge is None:
+      raise ValueError("Purge configuration is not properly filled in.")
+   if config.purge.purgeDirs is not None:
+      for purgeDir in config.purge.purgeDirs:
+         purgeList = PurgeItemList()
+         purgeList.addDirContents(purgeDir.absolutePath)  # add everything within directory
+         purgeList.removeYoungFiles(purgeDir.retainDays)  # remove young files *from the list* so they won't be purged
+         purgeList.purgeItems()                           # remove remaining items from the filesystem
    logger.info("Executed the 'purge' action successfully.")
 
 
@@ -716,6 +853,10 @@ def executeRebuild(configPath, options, config):
    to media or hardware problems.  Note that the "stage complete" indicator
    isn't checked for this action.
 
+   Note that the rebuild action and the store action are very similar.  The
+   main difference is that while store only stores a single day's staging
+   directory, the rebuild action operates on multiple staging directories.
+
    @param configPath: Path to configuration file on disk.
    @type configPath: String representing a path on disk.
 
@@ -724,8 +865,53 @@ def executeRebuild(configPath, options, config):
 
    @param config: Program configuration.
    @type config: Config object.
+
+   @raise ValueError: Under many generic error conditions
+   @raise IOError: If there are problems reading or writing files.
    """
+   if config.options is None or config.store is None:
+      raise ValueError("Rebuild configuration is not properly filled in.")
+   stagingDirs = _findRebuildDirs(config)
+   _writeImage(config, True, stagingDirs)
+   if config.stage.checkData:
+      _consistencyCheck(config, stagingDirs)
+   _writeStoreIndicator(config, stagingDirs)
    logger.info("Executed the 'rebuild' action successfully.")
+
+def _findRebuildDirs(config):
+   """
+   Finds the set of directories to be included in a disc rebuild.
+
+   A the rebuild action is supposed to recreate the "last week's" disc.  This
+   won't always be possible if some of the staging directories are missing.
+   However, the general procedure is to look back into the past no further than
+   the previous "starting day of week", and then work forward from there trying
+   to find all of the staging directories between then and now that still exist
+   and have a stage indicator.
+
+   @param config: Config object.
+
+   @return: Correct staging dir, as a dict mapping directory to date suffix.
+   @raise IOError: If we do not find at least one staging directory.
+   """
+   stagingDirs = {}
+   start = _getDayOfWeek(config.options.startingDay)
+   today = datetime.date.today()
+   if today.weekday() >= start:
+      days = today.weekday() - start + 1
+   else:
+      days = 7 - (start - today.weekday()) + 1
+   for i in range (0, days):
+      currentDay = today - datetime.timedelta(days=i)
+      dateSuffix = currentDay.strftime(DIR_TIME_FORMAT)
+      stageDir = os.path.join(config.stage.targetDir, dateSuffix)
+      indicator = os.path.join(stageDir, STAGE_INDICATOR)
+      if os.path.isdir(stageDir) and os.path.exists(indicator):
+         logger.info("Rebuild process will include stage directory: %s" % stageDir)
+         stagingDirs[stageDir] = dateSuffix
+   if len(stagingDirs) == 0:
+      raise IOError("Unable to find any staging directories for rebuild process.")
+   return stagingDirs
 
 
 #############################
@@ -759,7 +945,7 @@ def executeValidate(configPath, options, config):
    @param config: Program configuration.
    @type config: Config object.
 
-   @throws ValueError: If some configuration value is invalid.
+   @raise ValueError: If some configuration value is invalid.
    """
    if options.quiet:
       logfunc = logger.info   # info so it goes to the log

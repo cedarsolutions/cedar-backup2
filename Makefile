@@ -98,7 +98,7 @@ allcheck:
 # Aliases, since I can't remember what to type. :)
 docs: doc
 docsclean: docclean
-epydoc: interface-doc
+epydoc: interface-html
 interface: interface-doc
 book: manual
 

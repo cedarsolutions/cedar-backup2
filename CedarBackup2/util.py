@@ -102,6 +102,8 @@ UNIT_KBYTES        = 1
 UNIT_MBYTES        = 2
 UNIT_SECTORS       = 3
 
+MTAB_FILE          = "/etc/mtab"
+
 
 ########################################################################
 # UnorderedList class definition
@@ -638,6 +640,8 @@ def calculateFileAge(file):
    Technically, we only intend this function to work with files, but it will
    probably work with anything on the filesystem.
 
+   @param file: Path to a file on disk.
+
    @return: Age of the file in days.
    @raise OSError: If the file doesn't exist.
    """
@@ -646,4 +650,32 @@ def calculateFileAge(file):
    lastUse = max(fileStats.st_atime, fileStats.st_mtime)  # "most recent" is "largest" 
    ageInDays = (currentTime - lastUse) / SECONDS_PER_DAY
    return ageInDays
+
+
+###########################
+# deviceMounted() function
+###########################
+
+def deviceMounted(devicePath):
+   """
+   Indicates whether a specific filesystem device is currently mounted.
+
+   We determine whether the device is mounted by looking through the system's
+   C{mtab} file.  This file shows every currently-mounted filesystem, ordered
+   by device.  We only do the check if the C{mtab} file exists and is readable.
+   Otherwise, we assume that the device is not mounted.
+
+   @param devicePath: Path of device to be checked
+
+   @return: True if device is mounted, false otherwise.
+   """
+   if os.path.exists(MTAB_FILE) and os.access(MTAB_FILE, os.R_OK):
+      devicePath = os.path.realpath(devicePath)
+      lines = open(MTAB_FILE).readlines()
+      for line in lines:
+         (mountDevice, mountPoint, remainder) = line.split(None, 2)
+         if mountDevice == devicePath:
+            logger.debug("Device %s is mounted at %s." % (devicePath, mountPoint))
+            return True
+   return False
 
