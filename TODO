@@ -15,11 +15,6 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-BUG FIXES
-
-* Logging still isn't quite right for collect "Backing up 475 files in this directory" should say directory.
-
-
 FUTURE FUNCTIONALITY
 
 * Add in notes on configuration interface for extensions if they want 3rd parties to be able to deal with their configuration.

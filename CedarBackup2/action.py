@@ -630,7 +630,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
    backupList.addDirContents(absolutePath)
    if collectMode != 'incr':
       logger.debug("Collect mode is [%s]; no digest will be used." % collectMode)
-      logger.info("Backing up %d files in %s (%s)." % (len(backupList), absolutePath, displayBytes(backupList.totalSize())))
+      logger.info("Backing up %d files in [%s] (%s)." % (len(backupList), absolutePath, displayBytes(backupList.totalSize())))
       if len(backupList) > 0:
          backupList.generateTarfile(tarfilePath, archiveMode, True)
          changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
@@ -644,7 +644,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
       newDigest = backupList.generateDigestMap()   # be sure to do this before removing unchanged files!
       removed = backupList.removeUnchanged(oldDigest)
       logger.debug("Removed %d unchanged files based on digest values." % removed)
-      logger.info("Backing up %d files in this directory (%s)." % (len(backupList), displayBytes(backupList.totalSize())))
+      logger.info("Backing up %d files in [%s] (%s)." % (len(backupList), absolutePath, displayBytes(backupList.totalSize())))
       if len(backupList) > 0:
          backupList.generateTarfile(tarfilePath, archiveMode, True)
          changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
@@ -756,7 +756,7 @@ def executeStage(configPath, options, config):
       logger.debug("Using target dir [%s], ownership [%d:%d]." % (targetDir, ownership[0], ownership[1]))
       try:
          count = peer.stagePeer(targetDir=targetDir, ownership=ownership)  # note: utilize effective user's default umask
-         logger.info("Staged %d files for this peer." % count)
+         logger.info("Staged %d files for peer [%s]." % (count, peer.name))
          peer.writeStageIndicator()
       except (ValueError, IOError, OSError), e:
          logger.error("Error staging [%s]: %s" % (peer.name, e))
