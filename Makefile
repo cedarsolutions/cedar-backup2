@@ -104,7 +104,7 @@ book: manual
 
 doc: interface-doc manual-doc
 
-interface-doc: interface-html interface-pdf
+interface-doc: interface-html 
 
 interface-html: $(INTERFACE_DIR)
 	@$(EPYDOC) --name "CedarBackup2" --target $(INTERFACE_DIR) --url $(URL) CedarBackup2/*.py
