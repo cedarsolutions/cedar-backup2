@@ -14,14 +14,23 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-MISSING FUNCTIONALITY FOR 2.0
+ITEMS TO TEST
 
-* Figure out why unicode files like this cause failures:
-/home/pronovic/projects/debbuild/python2.3.710/chroot/pdebuild/7809/usr/share/doc/console-tools-libs/examples/unicode cause
-  Problem is at filesystem.py:367 (it's a failing os.path.join)
-* Add unit tests for --stack option
-* Add documentation for --stack option  (don't leave it undocumented)
-* Maybe att --stack to notes on how to report bugs, i.e. if you get an error that doesn't make sense, re-run with --stack
+* Test that weekly collect seems to work appropriately
+* Test that daily collect seems to work appropriately
+* Check that incremental backup works before and after .sha file exists
+
+BUGS TO FIX
+
+* Figure out what is the cause of the 'name to long > 100' error
+* Figure out why incremental backups don't seem to pay any attention to the digest on disk
+* Ignore file isn't configured
+* Why does digest have only 25 entries if list for boot has 26 entries?
+
+TESTS TO ADD
+
+* Create tests for creating tarfile with extremely long names (> 100 for link, > 256 for file)
+
 
 ITEMS THAT SHOULD BE DONE BUT NEED TESTING
 
@@ -30,6 +39,8 @@ ITEMS THAT SHOULD BE DONE BUT NEED TESTING
 
 ADMINISTRATIVE
 
+* Decide (maybe ask the list) whether it's important to list every file that is backed up
+* Clean up home debbuild environment (not really Cedar Backup - just noticed it)
 * Do a bunch of sample runs to get the logging level right (difference between "normal" and debug...?)
 * Come up with a standard svn label script to do releases, so I can't forget as easily.
 * Backport Python 2.3 and Python XML for 2.3 to woody to support 1.0.  Couldn't we have released sooner?
@@ -38,7 +49,8 @@ ADMINISTRATIVE
 DOCUMENTATION
 
 * Rewrite Cedar Backup webpage online, to show new version and link to old version.
-* Rework extension docs to use an example other than Subversion.
+* Add documentation for --stack option  (don't leave it undocumented)
+* Maybe add --stack to notes on how to report bugs, i.e. if you get an error that doesn't make sense, re-run with --stack
 
 * Write some sort of "what's new" paragraph for release of 2.0beta1
    - Entire codebase has been rewritten from the ground up using Python 2.3.
@@ -53,6 +65,8 @@ DOCUMENTATION
    - Documentation has been completely rewritten
    - Document that we have dropped support for the tarz format (.tar.Z).
    - Runtime 'validate' action now checks many more things
+   - Actions are now names not -- switches
+   - Unicode files are now natively supported without a need for user settings at the site level
 
 
 FUTURE FUNCTIONALITY

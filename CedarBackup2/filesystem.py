@@ -144,7 +144,6 @@ class FilesystemList(list):
       self.excludePaths = []
       self.excludePatterns = []
       self.ignoreFile = None
-      logger.debug("Created new list with no configured exclusions.")
 
 
    #############
@@ -786,9 +785,9 @@ class BackupFileList(FilesystemList):
       elif(mode == 'targz'): tarmode = "w:gz"
       elif(mode == 'tarbz2'): tarmode = "w:bz2"
       else: raise ValueError("Mode [%s] is not valid." % mode)
-
       try:
          tar = tarfile.open(path, tarmode)
+         tar.posix = False    # make a GNU-compatible archive without file length limits
          for entry in self:
             try:
                tar.add(entry, recursive=False)
