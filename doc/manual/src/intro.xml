@@ -155,6 +155,21 @@
          asks for them.
       </para>
 
+      <info>
+         <para>
+            Sometimes, the error that Cedar Backup displays can be rather
+            cryptic.  This is because under internal error conditions, the text
+            related to an exception might get propogated all of the way up to
+            the user interface.  If the message you receive doesn't make much
+            sense, or if you suspect that it results from an internal error,
+            you might want to re-run Cedar Backup with the
+            <option>--stack</option> option.  This forces Cedar Backup to dump
+            the entire Python stack trace associated with the error, rather
+            than just printing the last message it received.  This is good
+            information to include along with a bug report, as well.
+         </para>
+      </info>
+
    </sect1>
 
    <!-- ################################################################# -->
@@ -243,7 +258,7 @@
          compact, better focused, and better documented than any release before
          it.  Utility code is less application-specific, and is now usable as a
          general-purpose library.  The 2.0 release also includes a complete
-         regression test suite of over 1500 tests, <footnote><para>Implemented
+         regression test suite of over 1700 tests, <footnote><para>Implemented
          using Python's unit test framework.  See <ulink
          url="http://docs.python.org/lib/module-unittest.html"/>
          .</para></footnote> which will help to ensure that quality is
