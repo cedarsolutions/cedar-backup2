@@ -1,3 +1,7 @@
+Version 2.1.1	06 Mar 2005
+
+	* Fix bug in setup.py (need to install extensions properly).
+
 Version 2.1.0	06 Mar 2005
 
 	* Fixed doc/cback.1 .TH line to give proper manpage section.
