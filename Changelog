@@ -1,4 +1,4 @@
-Version 2.4.0	unreleased
+Version 2.4.0	02 Apr 2005
 
 	* Re-license manual under "GPL with clarifications" to satisfy DFSG.
 	* Rework our unmount solution again to try and fix observed problems.
