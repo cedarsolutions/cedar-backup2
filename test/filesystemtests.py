@@ -372,14 +372,12 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree5")
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addFile(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       try:
          fsList.addFile(path)
@@ -433,14 +431,12 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addFile(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludeFiles = True
       try:
@@ -496,14 +492,12 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addFile(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludeDirs = True
       try:
@@ -560,14 +554,12 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addFile(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
       try:
@@ -624,14 +616,12 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addFile(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
       try:
@@ -688,14 +678,12 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addFile(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
       try:
@@ -752,14 +740,12 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "link001"])     # link to a file
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addFile(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
       try:
@@ -825,13 +811,11 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDir(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
    def testAddDir_004(self):
       """
@@ -886,14 +870,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDir(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
    def testAddDir_008(self):
       """
@@ -949,14 +931,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDir(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
 
    def testAddDir_012(self):
       """
@@ -1013,14 +993,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDir(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
 
    def testAddDir_016(self):
       """
@@ -1078,14 +1056,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDir(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
    def testAddDir_020(self):
       """
@@ -1143,14 +1119,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDir(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
 
    def testAddDir_024(self):
       """
@@ -1208,14 +1182,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDir(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
    def testAddDir_028(self):
       """
@@ -1274,13 +1246,11 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDir(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
    def testAddDirContents_004(self):
       """
@@ -1326,7 +1296,7 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree5", "dir001"])
       fsList = FilesystemList()
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(7, count)
+      self.failUnlessEqual(8, count)
       self.failUnless(self.buildPath(["tree5", "dir001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "dir001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "dir002",]) in fsList)
@@ -1334,6 +1304,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath(["tree5", "dir001", "dir004",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "file001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "file002",]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "link001",]) in fsList)
 
    def testAddDirContents_008(self):
       """
@@ -1377,14 +1348,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludeFiles = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
    def testAddDirContents_011(self):
       """
@@ -1482,14 +1451,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludeDirs = True
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
 
    def testAddDirContents_018(self):
       """
@@ -1538,9 +1505,10 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       fsList.excludeDirs = True
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(2, count)
+      self.failUnlessEqual(3, count)
       self.failUnless(self.buildPath(["tree5", "dir001", "file001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "file002",]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "link001",]) in fsList)
 
    def testAddDirContents_022(self):
       """
@@ -1585,14 +1553,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
 
    def testAddDirContents_025(self):
       """
@@ -1690,14 +1656,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
    def testAddDirContents_032(self):
       """
@@ -1750,7 +1714,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       fsList.excludePaths = [ NOMATCH_PATH ]
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(7, count)
+      self.failUnlessEqual(8, count)
       self.failUnless(self.buildPath(["tree5", "dir001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "dir001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "dir002",]) in fsList)
@@ -1758,6 +1722,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath(["tree5", "dir001", "dir004",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "file001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "file002",]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "link001",]) in fsList)
 
    def testAddDirContents_036(self):
       """
@@ -1802,14 +1767,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*%s.*" % path ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
 
    def testAddDirContents_040(self):
       """
@@ -1908,14 +1871,12 @@ class TestFilesystemList(unittest.TestCase):
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
       self.extractTar("tree5")
-      path = self.buildPath(["tree5", "dir002" "link001"])  # link to a dir
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
-      try:
-         fsList.addFile(path)
-         self.fail("Expected ValueError.")
-      except ValueError: pass
-      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
    def testAddDirContents_047(self):
       """
@@ -1968,7 +1929,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       fsList.excludePatterns = [ NOMATCH_PATH ]
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(7, count)
+      self.failUnlessEqual(8, count)
       self.failUnless(self.buildPath(["tree5", "dir001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "dir001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "dir002",]) in fsList)
@@ -1976,6 +1937,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath(["tree5", "dir001", "dir004",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "file001",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "file002",]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "link001",]) in fsList)
 
    def testAddDirContents_051(self):
       """
@@ -1985,10 +1947,8 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree6"])
       fsList = FilesystemList()
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(96, count)
+      self.failUnlessEqual(136, count)
       self.failUnless(self.buildPath([ "tree6", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in fsList)
@@ -2000,18 +1960,26 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in fsList)
@@ -2024,7 +1992,12 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in fsList)
@@ -2036,7 +2009,12 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in fsList)
@@ -2046,11 +2024,20 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in fsList)
@@ -2062,7 +2049,9 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file001", ]) in fsList)
@@ -2070,6 +2059,11 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in fsList)
@@ -2080,8 +2074,16 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
 
    def testAddDirContents_052(self):
       """
@@ -2092,35 +2094,49 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       fsList.excludeFiles = True
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(28, count)
+      self.failUnlessEqual(42, count)
       self.failUnless(self.buildPath([ "tree6", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
 
    def testAddDirContents_053(self):
       """
@@ -2131,7 +2147,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       fsList.excludeDirs = True
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(68, count)
+      self.failUnlessEqual(94, count)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file003", ]) in fsList)
@@ -2140,13 +2156,18 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file003", ]) in fsList)
@@ -2156,6 +2177,10 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in fsList)
@@ -2164,6 +2189,9 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in fsList)
@@ -2171,9 +2199,15 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file003", ]) in fsList)
@@ -2183,11 +2217,15 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in fsList)
@@ -2198,8 +2236,12 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
 
    def testAddDirContents_054(self):
       """
@@ -2213,10 +2255,8 @@ class TestFilesystemList(unittest.TestCase):
                               self.buildPath([ "tree6", "dir003", "dir002", "file001", ]), 
                               self.buildPath([ "tree6", "dir003", "dir002", "file002", ]), ]
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(87, count)
+      self.failUnlessEqual(125, count)
       self.failUnless(self.buildPath([ "tree6", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in fsList)
@@ -2228,12 +2268,18 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file001", ]) in fsList)
@@ -2245,7 +2291,12 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in fsList)
@@ -2257,7 +2308,12 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in fsList)
@@ -2267,11 +2323,20 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in fsList)
@@ -2283,12 +2348,19 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in fsList)
@@ -2299,8 +2371,16 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
 
    def testAddDirContents_055(self):
       """
@@ -2311,10 +2391,8 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       fsList.excludePatterns = [ ".*file001.*", ".*tree6\/dir002\/dir001.*" ]
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(73, count)
+      self.failUnlessEqual(108, count)
       self.failUnless(self.buildPath([ "tree6", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in fsList)
@@ -2325,16 +2403,24 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in fsList)
@@ -2345,7 +2431,12 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in fsList)
@@ -2354,10 +2445,19 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file002", ]) in fsList)
@@ -2368,13 +2468,20 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in fsList)
@@ -2384,7 +2491,15 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
 
    def testAddDirContents_056(self):
       """
@@ -2396,21 +2511,24 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       fsList.ignoreFile = "ignore"
       count = fsList.addDirContents(path)
-      self.failUnlessEqual(53, count)
+      self.failUnlessEqual(79, count)
       self.failUnless(self.buildPath([ "tree6", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in fsList)
@@ -2423,7 +2541,12 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in fsList)
@@ -2435,7 +2558,12 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in fsList)
@@ -2445,11 +2573,24 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "link005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
 
 
    #####################

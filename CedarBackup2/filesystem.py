@@ -82,8 +82,9 @@ class FilesystemList(list):
    can add individual files or directories to the list, or can recursively add
    the contents of a directory.  The class also allows for up-front exclusions
    in several forms (all files, all directories, all items matching a pattern,
-   or all directories containing a specific "ignore file").  Symbolic links are
-   not supported.
+   or all directories containing a specific "ignore file").  Symbolic links
+   backed up non-recursively, i.e. the link to a directory is backed up, but
+   not the contents of that link.
 
    The custom methods such as L{addFile} will only add items if they exist on
    the filesystem and do not match any exclusions that are already in place.
@@ -141,7 +142,7 @@ class FilesystemList(list):
       @return: Number of items added to the list.
       @raise ValueError: If path is not a file or does not exist.
       """
-      if not os.path.exists(path) or not os.path.isfile(path) or os.path.islink(path):
+      if not os.path.exists(path) or not os.path.isfile(path):
          logger.debug("Path [%s] is not a file or does not exist on disk." % path)
          raise ValueError("Path is not a file or does not exist on disk.")
       if self.excludeFiles:
@@ -234,10 +235,12 @@ class FilesystemList(list):
          added += self.addDir(path)
       for entry in entries:
          entrypath = os.path.join(path, entry)
-         if not os.path.islink(entrypath):
-            if os.path.isfile(entrypath):
-               added += self.addFile(entrypath)
-            elif os.path.isdir(entrypath):
+         if os.path.isfile(entrypath):
+            added += self.addFile(entrypath)
+         elif os.path.isdir(entrypath):
+            if os.path.islink(entrypath):
+               added += self.addDir(entrypath)
+            else:
                added += self.addDirContents(entrypath)
       return added
 
