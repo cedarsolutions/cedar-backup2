@@ -555,7 +555,7 @@ class RemotePeer(object):
       """
       beforeSet = RemotePeer._getDirContents(targetDir)
       copySource = "%s@%s:%s/*" % (remoteUser, remoteHost, sourceDir)
-      result = executeCommand(rcpCommand, [copySource, targetDir])[0]
+      (result, output) = executeCommand(rcpCommand, [copySource, targetDir])[0]
       if result != 0:
          raise IOError("Error (%d) copying files from remote host." % result)
       afterSet = RemotePeer._getDirContents(targetDir)
@@ -603,7 +603,7 @@ class RemotePeer(object):
       @raise OSError: If there is an OS error changing permissions on the file
       """
       copySource = "%s@%s:%s" % (remoteUser, remoteHost, sourceFile.replace(" ", "\\ "))
-      result = executeCommand(rcpCommand, [copySource, targetFile.replace(" ", "\\ ")])[0]
+      (result, output) = executeCommand(rcpCommand, [copySource, targetFile.replace(" ", "\\ ")])[0]
       if result != 0:
          raise IOError("Error (%d) copying file from remote host." % result)
       if ownership is not None:
@@ -643,7 +643,7 @@ class RemotePeer(object):
       @raise OSError: If there is an OS error changing permissions on the file
       """
       copyTarget = "%s@%s:%s" % (remoteUser, remoteHost, targetFile.replace(" ", "\\ "))
-      result = executeCommand(rcpCommand, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
+      (result, output) = executeCommand(rcpCommand, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
       if result != 0:
          raise IOError("Error (%d) copying file to remote host." % result)
    _pushLocalFile = staticmethod(_pushLocalFile)
