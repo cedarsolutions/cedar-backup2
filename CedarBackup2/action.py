@@ -513,7 +513,6 @@ def _getExclusions(config, collectDir):
 
    @param config: Config object.
    @param collectDir: Collect directory object.
-   @param archiveMode: Archive mode to use for this tarfile.
 
    @return: Tuple (files, patterns) indicating what to exclude.
    """
