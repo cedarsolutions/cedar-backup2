@@ -6393,7 +6393,7 @@ def suite():
                               unittest.makeSuite(TestStageConfig, 'test'), 
                               unittest.makeSuite(TestStoreConfig, 'test'), 
                               unittest.makeSuite(TestPurgeConfig, 'test'), 
-                              unittest.makeSuite(TestConfig, 'testEx'), 
+                              unittest.makeSuite(TestConfig, 'test'), 
                             ))
 
 
