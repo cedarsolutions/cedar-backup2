@@ -217,6 +217,8 @@ Validation
 @var VALID_DEVICE_TYPES: List of valid device types.
 @var VALID_MEDIA_TYPES: List of valid media types.
 @var VALID_CAPACITY_MODES: List of valid capacity modes.
+@var VALID_COLLECT_MODES: List of valid collect modes.
+@var VALID_ARCHIVE_MODES: List of valid archive modes.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -255,6 +257,8 @@ DEFAULT_CAPACITY_MODE = "fail"
 VALID_DEVICE_TYPES    = [ "cdwriter", ]
 VALID_MEDIA_TYPES     = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
 VALID_CAPACITY_MODES  = [ "fail", "discard", "overwrite", "rebuild", "rewrite", ]
+VALID_COLLECT_MODES   = ["daily", "weekly", "incr", ]
+VALID_ARCHIVE_MODES   = ["tar", "targz", "tarbz2", ]
 
 
 ########################################################################
@@ -275,8 +279,8 @@ class CollectDir(object):
    The following restrictions exist on data in this class:
 
       - Absolute paths must be absolute
-      - The collect mode must be one of C{"daily"}, C{"weekly"} or C{"incr"}.  
-      - The archive mode must be one of C{"tar"}, C{"targz"} or C{"tarbz2"}.
+      - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
+      - The archive mode must be one of the values in L{VALID_ARCHIVE_MODES}.
       - The ignore file must be a non-empty string.
 
    For the C{absoluteExcludePaths} list, validation is accomplished through the
@@ -383,12 +387,12 @@ class CollectDir(object):
    def _setCollectMode(self, value):
       """
       Property target used to set the collect mode.
-      If not C{None}, the mode must be one of C{"daily"}, C{"weekly"} or C{"incr"}.
+      If not C{None}, the mode must be one of the values in L{VALID_COLLECT_MODES}.
       @raise ValueError: If the value is not valid.
       """
       if value is not None:
-         if value not in ["daily", "weekly", "incr", ]:
-            raise ValueError("Collect mode must be one of \"daily\", \"weekly\" or \"incr\".")
+         if value not in VALID_COLLECT_MODES:
+            raise ValueError("Collect mode must be one of %s." % VALID_COLLECT_MODES)
       self._collectMode = value
 
    def _getCollectMode(self):
@@ -400,12 +404,12 @@ class CollectDir(object):
    def _setArchiveMode(self, value):
       """
       Property target used to set the archive mode.
-      If not C{None}, the mode must be one of C{"tar"}, C{"targz"} or C{"tarbz2"}.
+      If not C{None}, the mode must be one of the values in L{VALID_ARCHIVE_MODES}.
       @raise ValueError: If the value is not valid.
       """
       if value is not None:
-         if value not in ["daily", "weekly", "incr", ]:
-            raise ValueError("Archive mode must be one of \"daily\", \"weekly\" or \"incr\".")
+         if value not in VALID_ARCHIVE_MODES:
+            raise ValueError("Archive mode must be one of %s." % VALID_ARCHIVE_MODES)
       self._archiveMode = value
 
    def _getArchiveMode(self):
@@ -441,8 +445,13 @@ class CollectDir(object):
       if value is None:
          self._absoluteExcludePaths = None
       else:
-         self._absoluteExcludePaths = AbsolutePathList()
-         self._absoluteExcludePaths.extend(value)
+         try:
+            saved = self._absoluteExcludePaths
+            self._absoluteExcludePaths = AbsolutePathList()
+            self._absoluteExcludePaths.extend(value)
+         except Exception, e:
+            self._absoluteExcludePaths = saved
+            raise e
 
    def _getAbsoluteExcludePaths(self):
       """
@@ -458,8 +467,13 @@ class CollectDir(object):
       if value is None:
          self._relativeExcludePaths = None
       else:
-         self._relativeExcludePaths = UnorderedList()
-         self._relativeExcludePaths.extend(value)
+         try:
+            saved = self._relativeExcludePaths
+            self._relativeExcludePaths = UnorderedList()
+            self._relativeExcludePaths.extend(value)
+         except Exception, e:
+            self._relativeExcludePaths = saved
+            raise e
 
    def _getRelativeExcludePaths(self):
       """
@@ -474,8 +488,13 @@ class CollectDir(object):
       if value is None:
          self._excludePatterns = None
       else:
-         self._excludePatterns = UnorderedList()
-         self._excludePatterns.extend(value)
+         try:
+            saved = self._excludePatterns
+            self._excludePatterns = UnorderedList()
+            self._excludePatterns.extend(value)
+         except Exception, e:
+            self._excludePatterns = saved
+            raise e
 
    def _getExcludePatterns(self):
       """
@@ -1155,8 +1174,8 @@ class CollectConfig(object):
    The following restrictions exist on data in this class:
 
       - The target directory must be an absolute path.
-      - The collect mode must be one of C{"daily"}, C{"weekly"} or C{"incr"}.  
-      - The archive mode must be one of C{"tar"}, C{"targz"} or C{"tarbz2"}.
+      - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
+      - The archive mode must be one of the values in L{VALID_ARCHIVE_MODES}.
       - The ignore file must be a non-empty string.
       - Each of the paths in C{absoluteExcludePaths} must be an absolute path
       - The collect directory list must be a list of C{CollectDir} objects.
@@ -1327,8 +1346,13 @@ class CollectConfig(object):
       if value is None:
          self._absoluteExcludePaths = None
       else:
-         self._absoluteExcludePaths = AbsolutePathList()
-         self._absoluteExcludePaths.extend(value)
+         try:
+            saved = self._absoluteExcludePaths
+            self._absoluteExcludePaths = AbsolutePathList()
+            self._absoluteExcludePaths.extend(value)
+         except Exception, e:
+            self._absoluteExcludePaths = saved
+            raise e
 
    def _getAbsoluteExcludePaths(self):
       """
@@ -1343,8 +1367,13 @@ class CollectConfig(object):
       if value is None:
          self._excludePatterns = None
       else:
-         self._excludePatterns = UnorderedList()
-         self._excludePatterns.extend(value)
+         try:
+            saved = self._excludePatterns
+            self._excludePatterns = UnorderedList()
+            self._excludePatterns.extend(value)
+         except Exception, e:
+            self._excludePatterns = saved
+            raise e
 
    def _getExcludePatterns(self):
       """
@@ -1361,8 +1390,13 @@ class CollectConfig(object):
       if value is None:
          self._collectDirs = None
       else:
-         self._collectDirs = ObjectTypeList(CollectDir, "CollectDir")
-         self._collectDirs.extend(value)
+         try:
+            saved = self._collectDirs
+            self._collectDirs = ObjectTypeList(CollectDir, "CollectDir")
+            self._collectDirs.extend(value)
+         except Exception, e:
+            self._collectDirs = saved
+            raise e
 
    def _getCollectDirs(self):
       """
@@ -1473,8 +1507,13 @@ class StageConfig(object):
       if value is None:
          self._localPeers = None
       else:
-         self._localPeers = ObjectTypeList(LocalPeer, "LocalPeer")
-         self._localPeers.extend(value)
+         try:
+            saved = self._localPeers
+            self._localPeers = ObjectTypeList(LocalPeer, "LocalPeer")
+            self._localPeers.extend(value)
+         except Exception, e:
+            self._localPeers = saved
+            raise e
 
    def _getLocalPeers(self):
       """
@@ -1491,8 +1530,13 @@ class StageConfig(object):
       if value is None:
          self._remotePeers = None
       else:
-         self._remotePeers = ObjectTypeList(RemotePeer, "RemotePeer")
-         self._remotePeers.extend(value)
+         try:
+            saved = self._remotePeers
+            self._remotePeers = ObjectTypeList(RemotePeer, "RemotePeer")
+            self._remotePeers.extend(value)
+         except Exception, e:
+            self._remotePeers = saved
+            raise e
 
    def _getRemotePeers(self):
       """
@@ -1523,9 +1567,9 @@ class StoreConfig(object):
    The following restrictions exist on data in this class:
 
       - The source directory must be an absolute path.
-      - The media type must be one of the values in C{VALID_MEDIA_TYPES}.
-      - The device type must be one of the values in C{VALID_DEVICE_TYPES}.
-      - The capacity mode must be one of the values in C{VALID_CAPACITY_MODES}.
+      - The media type must be one of the values in L{VALID_MEDIA_TYPES}.
+      - The device type must be one of the values in L{VALID_DEVICE_TYPES}.
+      - The capacity mode must be one of the values in L{VALID_CAPACITY_MODES}.
       - The device path must be an absolute path.
       - The SCSI id must be in the form specified by L{writer.validateScsiId}.
       - The drive speed must be an integer >= 1
@@ -1648,7 +1692,7 @@ class StoreConfig(object):
    def _setMediaType(self, value):
       """
       Property target used to set the media type.
-      The value must be one of C{VALID_MEDIA_TYPES}.
+      The value must be one of L{VALID_MEDIA_TYPES}.
       @raise ValueError: If the value is not valid.
       """
       if value is not None:
@@ -1665,7 +1709,7 @@ class StoreConfig(object):
    def _setDeviceType(self, value):
       """
       Property target used to set the device type.
-      The value must be one of C{VALID_DEVICE_TYPES}.
+      The value must be one of L{VALID_DEVICE_TYPES}.
       This field mostly exists to support future functionality.
       @raise ValueError: If the value is not valid.
       """
@@ -1764,7 +1808,7 @@ class StoreConfig(object):
    def _setCapacityMode(self, value):
       """
       Property target used to set the capacity mode.
-      The value must be one of C{VALID_CAPACITY_MODES}.
+      The value must be one of L{VALID_CAPACITY_MODES}.
       @raise ValueError: If the value is not valid.
       """
       if value is not None:
@@ -1849,8 +1893,13 @@ class PurgeConfig(object):
       if value is None:
          self._purgeDirs = None
       else:
-         self._purgeDirs = ObjectTypeList(PurgeDir, "PurgeDir")
-         self._purgeDirs.extend(value)
+         try:
+            saved = self._purgeDirs
+            self._purgeDirs = ObjectTypeList(PurgeDir, "PurgeDir")
+            self._purgeDirs.extend(value)
+         except Exception, e:
+            self._purgeDirs = saved
+            raise e
 
    def _getPurgeDirs(self):
       """

@@ -28,6 +28,7 @@
 * Go back through bugzilla bugs and make sure they're all taken into account now that entire cli is finished
 * Create manpages and other instructions using either halibut or some other system
 * Rewrite Cedar Backup webpage online, to show new version and link to old version
+* Document that we have dropped support for the tarz format (.tar.Z).
 
 * Write some sort of "what's new" paragraph for release of 2.0beta1
    - Entire codebase has been rewritten from the ground up using Python 2.3.
