@@ -40,8 +40,8 @@
 """
 Provides general-purpose utilities. 
 
-@sort: AbsolutePathList, ObjectTypeList, convertSize, 
-       getUidGid, splitCommandLine, executeCommand, calculateFileAge,
+@sort: AbsolutePathList, ObjectTypeList, convertSize, getUidGid, 
+       splitCommandLine, executeCommand, calculateFileAge, encodePath, 
        ISO_SECTOR_SIZE, BYTES_PER_KBYTE, KBYTES_PER_MBYTE, BYTES_PER_MBYTE,
        BYTES_PER_SECTOR, SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, 
        SECONDS_PER_DAY, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
@@ -68,6 +68,7 @@ Provides general-purpose utilities.
 # Imported modules
 ########################################################################
 
+import sys
 import os
 import re
 import time
@@ -678,4 +679,85 @@ def deviceMounted(devicePath):
             logger.debug("Device [%s] is mounted at [%s]." % (devicePath, mountPoint))
             return True
    return False
+
+
+######################
+# encodePath function
+######################
+
+def encodePath(path):
+
+   """
+   Safely encodes a filesystem path.
+
+   Many Python filesystem functions, such as C{os.listdir}, behave differently
+   if they are passed unicode arguments versus simple string arguments.  For
+   instance, C{os.listdir} generally returns unicode path names if it is passed
+   a unicode argument, and string pathnames if it is passed a string argument.
+
+   However, this behavior often isn't as consistent as we might like.  As an example,
+   C{os.listdir} "gives up" if it finds a filename that it can't properly encode
+   given the current locale settings.  This means that the returned list is
+   a mixed set of unicode and simple string paths.  This has consequences later,
+   because other filesystem functions like C{os.path.join} will blow up if they
+   are given one string path and one unicode path.
+
+   On comp.lang.python, Martin v. Löwis explained the C{os.listdir} behavior
+   like this::
+
+      The operating system (POSIX) does not have the inherent notion that file
+      names are character strings. Instead, in POSIX, file names are primarily
+      byte strings. There are some bytes which are interpreted as characters
+      (e.g. '\x2e', which is '.', or '\x2f', which is '/'), but apart from
+      that, most OS layers think these are just bytes.
+
+      Now, most *people* think that file names are character strings.  To
+      interpret a file name as a character string, you need to know what the
+      encoding is to interpret the file names (which are byte strings) as
+      character strings.
+
+      There is, unfortunately, no operating system API to carry the notion of a
+      file system encoding. By convention, the locale settings should be used
+      to establish this encoding, in particular the LC_CTYPE facet of the
+      locale. This is defined in the environment variables LC_CTYPE, LC_ALL,
+      and LANG (searched in this order).
+
+      If LANG is not set, the "C" locale is assumed, which uses ASCII as its
+      file system encoding. In this locale, '\xe2\x99\xaa\xe2\x99\xac' is not a
+      valid file name (at least it cannot be interpreted as characters, and
+      hence not be converted to Unicode).
+
+      Now, your Python script has requested that all file names *should* be
+      returned as character (ie. Unicode) strings, but Python cannot comply,
+      since there is no way to find out what this byte string means, in terms
+      of characters.
+
+      So we have three options:
+
+      1. Skip this string, only return the ones that can be converted to Unicode. 
+         Give the user the impression the file does not exist.
+      2. Return the string as a byte string
+      3. Refuse to listdir altogether, raising an exception (i.e. return nothing)
+
+      Python has chosen alternative 2, allowing the application to implement 1
+      or 3 on top of that if it wants to (or come up with other strategies,
+      such as user feedback).
+
+   As a solution, he suggests that rather than passing unicode paths into the
+   filesystem functions, that I should sensibly encode the path first.  That is
+   what this function accomplishes.  Any function which takes a filesystem path
+   as an argument should encode it first, before using it for any other purpose.
+
+   @parma path: Path to encode
+
+   @return: Path, as a string, encoded appropriately
+   @raise ValueError: If the path cannot be properly encoded.
+   """
+   try:
+      if isinstance(path, unicode):
+         encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
+         path = path.encode(encoding)
+      return path
+   except UnicodeError:
+      raise ValueError("Path could not be safely encoded as %s." % encoding)
 

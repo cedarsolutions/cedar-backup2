@@ -75,10 +75,9 @@ Full vs. Reduced Tests
 # Import modules and do runtime validations
 ########################################################################
 
-# Import standard modules
 import unittest
 from os.path import isdir
-from CedarBackup2.util import executeCommand, getFunctionReference, UnorderedList
+from CedarBackup2.util import executeCommand, getFunctionReference, encodePath, UnorderedList
 
 
 #######################################################################
@@ -1070,6 +1069,83 @@ class TestFunctions(unittest.TestCase):
       self.failUnlessEqual(2, len(output))
       self.failUnlessEqual("first\n", output[0])
       self.failUnlessEqual("second\n", output[1])
+
+
+   ####################
+   # Test encodePath() 
+   ####################
+         
+   def testEncodePath_002(self):
+      """
+      Test with a simple string, empty.
+      """
+      path = ""
+      safePath = encodePath(path)
+      self.failUnless(isinstance(safePath, str))
+      self.failUnlessEqual(path, safePath)
+
+   def testEncodePath_003(self):
+      """
+      Test with an simple string, an ascii word.
+      """
+      path = "whatever"
+      safePath = encodePath(path)
+      self.failUnless(isinstance(safePath, str))
+      self.failUnlessEqual(path, safePath)
+
+   def testEncodePath_004(self):
+      """
+      Test with simple string, a complete path.
+      """
+      path = "/usr/share/doc/xmltv/README.Debian"
+      safePath = encodePath(path)
+      self.failUnless(isinstance(safePath, str))
+      self.failUnlessEqual(path, safePath)
+
+   def testEncodePath_005(self):
+      """
+      Test with simple string, a non-ascii path.
+      """
+      path = "\xe2\x99\xaa\xe2\x99\xac"
+      safePath = encodePath(path)
+      self.failUnless(isinstance(safePath, str))
+      self.failUnlessEqual(path, safePath)
+
+   def testEncodePath_006(self):
+      """
+      Test with a simple string, empty.
+      """
+      path = u""
+      safePath = encodePath(path)
+      self.failUnless(isinstance(safePath, str))
+      self.failUnlessEqual(path, safePath)
+
+   def testEncodePath_007(self):
+      """
+      Test with an simple string, an ascii word.
+      """
+      path = u"whatever"
+      safePath = encodePath(path)
+      self.failUnless(isinstance(safePath, str))
+      self.failUnlessEqual(path, safePath)
+
+   def testEncodePath_008(self):
+      """
+      Test with simple string, a complete path.
+      """
+      path = u"/usr/share/doc/xmltv/README.Debian"
+      safePath = encodePath(path)
+      self.failUnless(isinstance(safePath, str))
+      self.failUnlessEqual(path, safePath)
+
+   def testEncodePath_009(self):
+      """
+      Test with simple string, a non-ascii path.
+      """
+      path = u"\xe2\x99\xaa\xe2\x99\xac"
+      safePath = encodePath(path)
+      self.failUnless(isinstance(safePath, str))
+      self.failUnlessEqual("\xe2\x99\xaa\xe2\x99\xac", safePath)
 
 
 #######################################################################
