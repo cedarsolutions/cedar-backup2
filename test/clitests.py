@@ -1572,18 +1572,6 @@ class TestOptions(unittest.TestCase):
 
    def testConstructor_094(self):
       """
-      Test constructor with argumentList=["bogus", ], validate=False.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentList=["bogus", ], validate=False)
-
-   def testConstructor_095(self):
-      """
-      Test constructor with argumentString="bogus", validate=False.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentString="bogus", validate=False)
-
-   def testConstructor_096(self):
-      """
       Test constructor with argumentList=["-d", "--verbose", "-O", "--mode", "600", "collect", "stage", ], validate=False.
       """
       options = Options(argumentList=["-d", "--verbose", "-O", "--mode", "600", "collect", "stage", ], validate=False)
@@ -1600,7 +1588,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
-   def testConstructor_097(self):
+   def testConstructor_095(self):
       """
       Test constructor with argumentString="-d --verbose -O --mode 600 collect stage", validate=False.
       """
@@ -1618,19 +1606,19 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
-   def testConstructor_098(self):
+   def testConstructor_096(self):
       """
       Test constructor with argumentList=[], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=[], validate=True)
 
-   def testConstructor_099(self):
+   def testConstructor_097(self):
       """
       Test constructor with argumentString="", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="", validate=True)
 
-   def testConstructor_100(self):
+   def testConstructor_098(self):
       """
       Test constructor with argumentList=["--help", ], validate=True.
       """
@@ -1648,7 +1636,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_101(self):
+   def testConstructor_099(self):
       """
       Test constructor with argumentString="--help", validate=True.
       """
@@ -1666,7 +1654,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_102(self):
+   def testConstructor_100(self):
       """
       Test constructor with argumentList=["-h", ], validate=True.
       """
@@ -1684,7 +1672,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_103(self):
+   def testConstructor_101(self):
       """
       Test constructor with argumentString="-h", validate=True.
       """
@@ -1702,7 +1690,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_104(self):
+   def testConstructor_102(self):
       """
       Test constructor with argumentList=["--version", ], validate=True.
       """
@@ -1720,7 +1708,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_105(self):
+   def testConstructor_103(self):
       """
       Test constructor with argumentString="--version", validate=True.
       """
@@ -1738,7 +1726,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_106(self):
+   def testConstructor_104(self):
       """
       Test constructor with argumentList=["-V", ], validate=True.
       """
@@ -1756,7 +1744,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_107(self):
+   def testConstructor_105(self):
       """
       Test constructor with argumentString="-V", validate=True.
       """
@@ -1774,367 +1762,367 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual([], options.actions)
 
-   def testConstructor_108(self):
+   def testConstructor_106(self):
       """
       Test constructor with argumentList=["--verbose", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--verbose", ], validate=True)
 
-   def testConstructor_109(self):
+   def testConstructor_107(self):
       """
       Test constructor with argumentString="--verbose", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--verbose", validate=True)
 
-   def testConstructor_110(self):
+   def testConstructor_108(self):
       """
       Test constructor with argumentList=["-b", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-b", ], validate=True)
 
-   def testConstructor_111(self):
+   def testConstructor_109(self):
       """
       Test constructor with argumentString="-b", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-b", validate=True)
 
-   def testConstructor_112(self):
+   def testConstructor_110(self):
       """
       Test constructor with argumentList=["--quiet", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--quiet", ], validate=True)
 
-   def testConstructor_113(self):
+   def testConstructor_111(self):
       """
       Test constructor with argumentString="--quiet", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--quiet", validate=True)
 
-   def testConstructor_114(self):
+   def testConstructor_112(self):
       """
       Test constructor with argumentList=["-q", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-q", ], validate=True)
 
-   def testConstructor_115(self):
+   def testConstructor_113(self):
       """
       Test constructor with argumentString="-q", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-q", validate=True)
 
-   def testConstructor_116(self):
+   def testConstructor_114(self):
       """
       Test constructor with argumentList=["--config", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--config", ], validate=True)
 
-   def testConstructor_117(self):
+   def testConstructor_115(self):
       """
       Test constructor with argumentString="--config", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--config", validate=True)
 
-   def testConstructor_118(self):
+   def testConstructor_116(self):
       """
       Test constructor with argumentList=["-c", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-c", ], validate=True)
 
-   def testConstructor_119(self):
+   def testConstructor_117(self):
       """
       Test constructor with argumentString="-c", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-c", validate=True)
 
-   def testConstructor_120(self):
+   def testConstructor_118(self):
       """
       Test constructor with argumentList=["--config", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--config", "something", ], validate=True)
 
-   def testConstructor_121(self):
+   def testConstructor_119(self):
       """
       Test constructor with argumentString="--config something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--config something", validate=True)
 
-   def testConstructor_123(self):
+   def testConstructor_120(self):
       """
       Test constructor with argumentList=["-c", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-c", "something", ], validate=True)
 
-   def testConstructor_124(self):
+   def testConstructor_121(self):
       """
       Test constructor with argumentString="-c something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-c something", validate=True)
 
-   def testConstructor_125(self):
+   def testConstructor_122(self):
       """
       Test constructor with argumentList=["--full", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--full", ], validate=True)
 
-   def testConstructor_126(self):
+   def testConstructor_123(self):
       """
       Test constructor with argumentString="--full", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--full", validate=True)
 
-   def testConstructor_127(self):
+   def testConstructor_124(self):
       """
       Test constructor with argumentList=["-f", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-f", ], validate=True)
 
-   def testConstructor_128(self):
+   def testConstructor_125(self):
       """
       Test constructor with argumentString="-f", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-f", validate=True)
 
-   def testConstructor_129(self):
+   def testConstructor_126(self):
       """
       Test constructor with argumentList=["--logfile", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--logfile", ], validate=True)
 
-   def testConstructor_130(self):
+   def testConstructor_127(self):
       """
       Test constructor with argumentString="--logfile", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--logfile", validate=True)
 
-   def testConstructor_131(self):
+   def testConstructor_128(self):
       """
       Test constructor with argumentList=["-l", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-l", ], validate=True)
 
-   def testConstructor_132(self):
+   def testConstructor_129(self):
       """
       Test constructor with argumentString="-l", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-l", validate=True)
 
-   def testConstructor_133(self):
+   def testConstructor_130(self):
       """
       Test constructor with argumentList=["--logfile", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--logfile", "something", ], validate=True)
 
-   def testConstructor_134(self):
+   def testConstructor_131(self):
       """
       Test constructor with argumentString="--logfile something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--logfile something", validate=True)
 
-   def testConstructor_135(self):
+   def testConstructor_132(self):
       """
       Test constructor with argumentList=["-l", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-l", "something", ], validate=True)
 
-   def testConstructor_136(self):
+   def testConstructor_133(self):
       """
       Test constructor with argumentString="-l something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-l something", validate=True)
 
-   def testConstructor_137(self):
+   def testConstructor_134(self):
       """
       Test constructor with argumentList=["--owner", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--owner", ], validate=True)
 
-   def testConstructor_138(self):
+   def testConstructor_135(self):
       """
       Test constructor with argumentString="--owner", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--owner", validate=True)
 
-   def testConstructor_139(self):
+   def testConstructor_136(self):
       """
       Test constructor with argumentList=["-o", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-o", ], validate=True)
 
-   def testConstructor_140(self):
+   def testConstructor_137(self):
       """
       Test constructor with argumentString="-o", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-o", validate=True)
 
-   def testConstructor_141(self):
+   def testConstructor_138(self):
       """
       Test constructor with argumentList=["--owner", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--owner", "something", ], validate=True)
 
-   def testConstructor_142(self):
+   def testConstructor_139(self):
       """
       Test constructor with argumentString="--owner something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--owner something", validate=True)
 
-   def testConstructor_143(self):
+   def testConstructor_140(self):
       """
       Test constructor with argumentList=["-o", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-o", "something", ], validate=True)
 
-   def testConstructor_144(self):
+   def testConstructor_141(self):
       """
       Test constructor with argumentString="-o something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-o something", validate=True)
 
-   def testConstructor_145(self):
+   def testConstructor_142(self):
       """
       Test constructor with argumentList=["--owner", "a:b", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--owner", "a:b", ], validate=True)
 
-   def testConstructor_146(self):
+   def testConstructor_143(self):
       """
       Test constructor with argumentString="--owner a:b", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--owner a:b", validate=True)
 
-   def testConstructor_147(self):
+   def testConstructor_144(self):
       """
       Test constructor with argumentList=["-o", "a:b", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-o", "a:b", ], validate=True)
 
-   def testConstructor_148(self):
+   def testConstructor_145(self):
       """
       Test constructor with argumentString="-o a:b", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-o a:b", validate=True)
 
-   def testConstructor_149(self):
+   def testConstructor_146(self):
       """
       Test constructor with argumentList=["--mode", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--mode", ], validate=True)
 
-   def testConstructor_150(self):
+   def testConstructor_147(self):
       """
       Test constructor with argumentString="--mode", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--mode", validate=True)
 
-   def testConstructor_151(self):
+   def testConstructor_148(self):
       """
       Test constructor with argumentList=["-m", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-m", ], validate=True)
 
-   def testConstructor_152(self):
+   def testConstructor_149(self):
       """
       Test constructor with argumentString="-m", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-m", validate=True)
 
-   def testConstructor_153(self):
+   def testConstructor_150(self):
       """
       Test constructor with argumentList=["--mode", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--mode", "something", ], validate=True)
 
-   def testConstructor_154(self):
+   def testConstructor_151(self):
       """
       Test constructor with argumentString="--mode something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--mode something", validate=True)
 
-   def testConstructor_155(self):
+   def testConstructor_152(self):
       """
       Test constructor with argumentList=["-m", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-m", "something", ], validate=True)
 
-   def testConstructor_156(self):
+   def testConstructor_153(self):
       """
       Test constructor with argumentString="-m something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-m something", validate=True)
 
-   def testConstructor_157(self):
+   def testConstructor_154(self):
       """
       Test constructor with argumentList=["--mode", "631", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--mode", "631", ], validate=True)
 
-   def testConstructor_158(self):
+   def testConstructor_155(self):
       """
       Test constructor with argumentString="--mode 631", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--mode 631", validate=True)
 
-   def testConstructor_159(self):
+   def testConstructor_156(self):
       """
       Test constructor with argumentList=["-m", "631", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-m", "631", ], validate=True)
 
-   def testConstructor_160(self):
+   def testConstructor_157(self):
       """
       Test constructor with argumentString="-m 631", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-m 631", validate=True)
 
-   def testConstructor_161(self):
+   def testConstructor_158(self):
       """
       Test constructor with argumentList=["--output", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--output", ], validate=True)
 
-   def testConstructor_162(self):
+   def testConstructor_159(self):
       """
       Test constructor with argumentString="--output", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--output", validate=True)
 
-   def testConstructor_163(self):
+   def testConstructor_160(self):
       """
       Test constructor with argumentList=["-O", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-O", ], validate=True)
 
-   def testConstructor_164(self):
+   def testConstructor_161(self):
       """
       Test constructor with argumentString="-O", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-O", validate=True)
 
-   def testConstructor_165(self):
+   def testConstructor_162(self):
       """
       Test constructor with argumentList=["--debug", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--debug", ], validate=True)
 
-   def testConstructor_166(self):
+   def testConstructor_163(self):
       """
       Test constructor with argumentString="--debug", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--debug", validate=True)
 
-   def testConstructor_167(self):
+   def testConstructor_164(self):
       """
       Test constructor with argumentList=["-d", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-d", ], validate=True)
 
-   def testConstructor_168(self):
+   def testConstructor_165(self):
       """
       Test constructor with argumentString="-d", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-d", validate=True)
 
-   def testConstructor_169(self):
+   def testConstructor_166(self):
       """
       Test constructor with argumentList=["all", ], validate=True.
       """
@@ -2152,7 +2140,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["all", ], options.actions)
 
-   def testConstructor_170(self):
+   def testConstructor_167(self):
       """
       Test constructor with argumentString="all", validate=True.
       """
@@ -2170,7 +2158,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["all", ], options.actions)
 
-   def testConstructor_171(self):
+   def testConstructor_168(self):
       """
       Test constructor with argumentList=["collect", ], validate=True.
       """
@@ -2188,7 +2176,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["collect", ], options.actions)
 
-   def testConstructor_172(self):
+   def testConstructor_169(self):
       """
       Test constructor with argumentString="collect", validate=True.
       """
@@ -2206,7 +2194,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["collect", ], options.actions)
 
-   def testConstructor_173(self):
+   def testConstructor_170(self):
       """
       Test constructor with argumentList=["stage", ], validate=True.
       """
@@ -2224,7 +2212,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["stage", ], options.actions)
 
-   def testConstructor_174(self):
+   def testConstructor_171(self):
       """
       Test constructor with argumentString="stage", validate=True.
       """
@@ -2242,7 +2230,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["stage", ], options.actions)
 
-   def testConstructor_175(self):
+   def testConstructor_172(self):
       """
       Test constructor with argumentList=["store", ], validate=True.
       """
@@ -2260,7 +2248,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["store", ], options.actions)
 
-   def testConstructor_176(self):
+   def testConstructor_173(self):
       """
       Test constructor with argumentString="store", validate=True.
       """
@@ -2278,7 +2266,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["store", ], options.actions)
 
-   def testConstructor_177(self):
+   def testConstructor_174(self):
       """
       Test constructor with argumentList=["purge", ], validate=True.
       """
@@ -2296,7 +2284,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["purge", ], options.actions)
 
-   def testConstructor_178(self):
+   def testConstructor_175(self):
       """
       Test constructor with argumentString="purge", validate=True.
       """
@@ -2314,7 +2302,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["purge", ], options.actions)
 
-   def testConstructor_179(self):
+   def testConstructor_176(self):
       """
       Test constructor with argumentList=["rebuild", ], validate=True.
       """
@@ -2332,7 +2320,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
-   def testConstructor_180(self):
+   def testConstructor_177(self):
       """
       Test constructor with argumentString="rebuild", validate=True.
       """
@@ -2350,7 +2338,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
-   def testConstructor_181(self):
+   def testConstructor_178(self):
       """
       Test constructor with argumentList=["validate", ], validate=True.
       """
@@ -2368,7 +2356,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["validate", ], options.actions)
 
-   def testConstructor_182(self):
+   def testConstructor_179(self):
       """
       Test constructor with argumentString="validate", validate=True.
       """
@@ -2386,55 +2374,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(["validate", ], options.actions)
 
-   def testConstructor_183(self):
-      """
-      Test constructor with argumentList=["collect", "all", ], validate=True.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentList=["collect", "all", ], validate=True)
-
-   def testConstructor_184(self):
-      """
-      Test constructor with argumentString="collect all", validate=True.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentString="collect all", validate=True)
-
-   def testConstructor_185(self):
-      """
-      Test constructor with argumentList=["collect", "rebuild", ], validate=True.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentList=["collect", "rebuild", ], validate=True)
-
-   def testConstructor_186(self):
-      """
-      Test constructor with argumentString="collect rebuild", validate=True.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentString="collect rebuild", validate=True)
-
-   def testConstructor_187(self):
-      """
-      Test constructor with argumentList=["collect", "validate", ], validate=True.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentList=["collect", "validate", ], validate=True)
-
-   def testConstructor_188(self):
-      """
-      Test constructor with argumentString="collect validate", validate=True.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentString="collect validate", validate=True)
-
-   def testConstructor_189(self):
-      """
-      Test constructor with argumentList=["bogus", ], validate=True.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentList=["bogus", ], validate=True)
-
-   def testConstructor_190(self):
-      """
-      Test constructor with argumentString="bogus", validate=True.
-      """
-      self.failUnlessRaises(ValueError, Options, argumentString="bogus", validate=True)
-
-   def testConstructor_191(self):
+   def testConstructor_180(self):
       """
       Test constructor with argumentList=["-d", "--verbose", "-O", "--mode", "600", "collect", "stage", ], validate=True.
       """
@@ -2452,7 +2392,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
-   def testConstructor_192(self):
+   def testConstructor_181(self):
       """
       Test constructor with argumentString="-d --verbose -O --mode 600 collect stage", validate=True.
       """
