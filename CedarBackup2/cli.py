@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004 Kenneth J. Pronovici.
+# Copyright (c) 2004-2005 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -86,7 +86,7 @@ import logging
 import getopt
 
 # Cedar Backup modules
-from CedarBackup2.release import VERSION, DATE, COPYRIGHT
+from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
 from CedarBackup2.util import RestrictedContentList, splitCommandLine
 
 
@@ -173,7 +173,7 @@ def version(fd=sys.stdout):
    fd.write("\n")
    fd.write(" Cedar Backup version %s, released %s." % (VERSION, DATE))
    fd.write("\n")
-   fd.write(" Copyright (c) %s Kenneth J. Pronovici <pronovic@ieee.org>." % COPYRIGHT)
+   fd.write(" Copyright (c) %s %s <%s>." % (COPYRIGHT, AUTHOR, EMAIL))
    fd.write(" This is free software; there is NO warranty.  See the\n")
    fd.write(" GNU General Public License version 2 for copying conditions.\n")
    fd.write("\n")

@@ -19,16 +19,22 @@
 """
 Provides location to maintain version information.
 
-@sort: COPYRIGHT, VERSION, DATE
+@sort: AUTHOR, EMAIL, COPYRIGHT, VERSION, DATE, URL
 
-@var COPYRIGHT: Copyright date
-@var VERSION: Software version
+@var AUTHOR: Author of software for reference.
+@var EMAIL: Email address of author.
+@var COPYRIGHT: Copyright date.
+@var VERSION: Software version.
 @var DATE: Software release date.
+@var URL: URL of Cedar Backup webpage.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
-COPYRIGHT   = "2004"
+AUTHOR      = "Kenneth J. Pronovici"
+EMAIL       = "pronovic@ieee.org"
+COPYRIGHT   = "2004-2005"
 VERSION     = "2.0.0"
 DATE        = "unreleased"
+URL         = "http://cedar-solutions.com/software/cedar-backup"
 

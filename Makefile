@@ -39,6 +39,7 @@ RM                = rm
 SETUP             = $(PYTHON) ./setup.py
 SUDO              = sudo
 VERSION           = `cat CedarBackup2/release.py | grep VERSION | awk -F\" '{print $$2}'`
+URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $$2}'`
 
 
 ############
@@ -95,9 +96,9 @@ docclean:
 
 docs: doc
 doc: $(EPYDOC_DIR)
-	@$(EPYDOC) --name "CedarBackup"   \
+	@$(EPYDOC) --name "CedarBackup2"  \
                    --target $(EPYDOC_DIR) \
-                   --url "http://www.cedar-solutions.com/software/cedar-backup/" \
+                   --url $(URL)           \
                    CedarBackup2/*.py
 
 $(EPYDOC_DIR):
@@ -109,9 +110,9 @@ $(EPYDOC_DIR):
 ################
 # The rules in this section build a Python source distribution, and then
 # also that same source distribution named appropriately for Debian (the
-# Debian packages are maintained via cvs-buildpackag as usual).  This keeps
-# cedar-backup being a Debian native package, and also making it easier for
-# someone to do an NMU if/when this ends up in Debian proper.
+# Debian packages are maintained via cvs-buildpackage as usual).  This
+# keeps cedar-backup2 from being a Debian native package, and also making
+# it easier for someone to do an NMU if/when this ends up in Debian proper.
 
 distrib: doc sdist debdist 
 
@@ -130,11 +131,11 @@ sdistclean:
 	@$(RM) -f $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz
 
 debdist: sdist
-	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz
-	@$(CP) $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz ../
+	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz
+	@$(CP) $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz ../
 
 debdistclean: 
-	@$(RM) -f $(SDIST_DIR)/wordutils_$(VERSION).orig.tar.gz 
+	@$(RM) -f $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz 
 
 .PHONY: all clean unittest test check pychecker pycheck doc doclean distrib sdist sdistclean debdist debdistclean
 

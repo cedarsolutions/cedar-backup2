@@ -18,7 +18,7 @@ This module is distributed in standard Python distutils form.  Use:
 
    python setup.py --help 
 
-for more information on how to install it.  You must have a python
+For more information on how to install it.  You must have a Python
 interpreter version 2.3 or better to use these modules.
 
 In the simplest case, you will probably just use:
@@ -34,7 +34,7 @@ installed by setup.py.  You may put them wherever you would like.
 You may wish to run the unit tests before actually installing anything.
 Run them like so:
 
-   python unittest.py
+   python util/test.py
 
 If any unit test reports a failure on your system, please email me the
 output from the unit test, so I can fix the problem.  
