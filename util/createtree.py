@@ -312,13 +312,11 @@ def main():
       sys.exit(2)
 
    # Create the tree (this is a recursive call)
-   os.mkdir(basedir)
-   filldir(config, basedir, 1)
-#   try:
-#      os.mkdir(basedir)
-#      filldir(config, basedir, 1)
-#   except Exception, e:
-#      print "Error filling directory: %s" % e
+   try:
+      os.mkdir(basedir)
+      filldir(config, basedir, 1)
+   except Exception, e:
+      print "Error filling directory: %s" % e
 
    # Print a closing message
    print "Completed with no errors."

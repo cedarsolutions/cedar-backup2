@@ -82,7 +82,7 @@ Debugging these Tests
 import sys
 import os
 import unittest
-import CedarBackup2.knapsack as knapsack
+from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 
 
 #######################################################################

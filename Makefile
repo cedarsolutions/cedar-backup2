@@ -73,9 +73,7 @@ test:
 check: pycheck
 pychecker: pycheck
 pycheck: 
-	-@$(PYCHECKER) --config CedarBackup2/pycheckrc CedarBackup2/*.py
-	-@cd unittest && $(PYCHECKER) --config pycheckrc *.py
-	-@cd util && $(PYCHECKER) --config pycheckrc *.py
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py test/*.py util/*.py
 
 
 ################
