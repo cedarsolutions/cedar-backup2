@@ -14,12 +14,12 @@ if [[ $? = 0 ]]
 then
    print "Removing existing release label for ${VERSION}."
    svn del svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP_V${VERSION} \
-            -m "Tagging new version of ${VERSION}} release of Cedar Backup."
+            -m "Tagging new version of ${VERSION} release of Cedar Backup."
 fi
 
 svn copy svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/trunk \
          svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP_V${VERSION} \
-         -m "Tagging the ${VERSION}} release of Cedar Backup."
+         -m "Tagging the ${VERSION} release of Cedar Backup."
 if [[ $? != 0 ]]
 then
    print "Failed to label ${VERSION} release."
