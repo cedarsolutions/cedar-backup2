@@ -133,7 +133,7 @@ def _dumpDebianPackages(targetDir, compress=True):
       else:
          result = executeCommand(DPKG_COMMAND, [], returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)[0]
          if result != 0:
-            raise IOError("Error [%d] executing Debian package dump.")
+            raise IOError("Error [%d] executing Debian package dump." % result)
    finally:
       outputFile.close()
    if not os.path.exists(filename):
@@ -150,7 +150,7 @@ def _dumpPartitionTable(targetDir, compress=True):
    try:
       result = executeCommand(FDISK_COMMAND, [], returnOutput=False, ignoreStderr=True, outputFile=outputFile)[0]
       if result != 0:
-         raise IOError("Error [%d] executing partition table dump.")
+         raise IOError("Error [%d] executing partition table dump." % result)
    finally:
       outputFile.close()
    if not os.path.exists(filename):
