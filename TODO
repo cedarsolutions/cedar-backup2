@@ -17,6 +17,7 @@
 
 FUTURE FUNCTIONALITY
 
+* Hrm, the 'umount -l' functionality probably is Linux-specific, and that >= 2.4.11 or better as well.
 * Add in notes on configuration interface for extensions if they want 3rd parties to be able to deal with their configuration.
 * We should probably check the staging flag and refuse to stage if it's already been done...?
 * Add a config value or option for indicating whether backed-up files should be logged (if anyone cares).
