@@ -51,7 +51,7 @@ setup (
    url              = URL,
    license          = "Copyright (c) %s %s.  Licensed under the GNU GPL." % (COPYRIGHT, AUTHOR),
    platforms        = ('Any',),
-   packages         = ['CedarBackup2',],
+   packages         = ['CedarBackup2', 'CedarBackup2.extend', ],
    scripts          = ['cback',], 
 )
 
