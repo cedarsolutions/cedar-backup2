@@ -112,6 +112,9 @@ UNIT_SECTORS       = 3
 MTAB_FILE          = "/etc/mtab"
 DEV_NULL_PATH      = "/dev/null"
 
+MOUNT_CMD          = [ "mount", ]
+UMOUNT_CMD         = [ "umount", ]
+
 
 ########################################################################
 # UnorderedList class definition
@@ -807,6 +810,88 @@ def calculateFileAge(file):
    lastUse = max(fileStats.st_atime, fileStats.st_mtime)  # "most recent" is "largest" 
    ageInDays = (currentTime - lastUse) / SECONDS_PER_DAY
    return ageInDays
+
+
+###################
+# mount() function
+###################
+
+def mount(devicePath, mountPoint, fsType):
+   """
+   Mounts the indicated device at the indicated mount point.
+
+   For instance, to mount a CD, you might use device path C{/dev/cdrw}, mount
+   point C{/media/cdrw} and filesystem type C{iso9660}.  You can safely use any
+   filesystem type that is supported by C{mount} on your platform.  If the type
+   is C{None}, we'll attempt to let C{mount} auto-detect it.  This may or may
+   not work on all systems.
+
+   @param devicePath: Path of device to be mounted.
+   @param mountPoint: Path that device should be mounted at.
+   @param fsType: Type of the filesystem assumed to be available via the device.
+
+   @raise IOError: If the device cannot be mounted.
+   """
+   if fsType is None:
+      args = [ devicePath, mountPoint ]
+   else:
+      args = [ "-t", fsType, devicePath, mountPoint ]
+   result = executeCommand(MOUNT_CMD, args, returnOutput=False, ignoreStderr=True)[0]
+   if result != 0:
+      raise IOError("Error [%d] mounting [%s] at [%s] as [%s]." % (result, devicePath, mountPoint, fsType))
+
+
+#####################
+# unmount() function
+#####################
+
+def unmount(mountPoint, removeAfter=False, attempts=1, waitSeconds=0):
+   """
+   Unmounts whatever device is mounted at the indicated mount point.
+
+   Sometimes, it might not be possible to unmount the mount point immediately,
+   if there are still files open there.  Use the C{attempts} and C{waitSeconds}
+   arguments to indicate how many unmount attmpts to make and how many seconds
+   to wait between attempts.  If you pass in zero attempts, no attempts will be
+   made (duh).
+
+   If the indicated mount point is not really a mount point per
+   C{os.path.ismount()}, then it will be ignored.  This seems to be a safer
+   check then looking through C{/etc/mtab}, since C{ismount()} is already in
+   the Python standard library and is documented as working on all POSIX
+   systems.
+
+   If C{removeAfter} is C{True}, then the mount point will be removed using
+   C{os.rmdir()} after the unmount action succeeds.  If for some reason the
+   mount point is not a directory, then it will not be removed.
+
+   @param mountPoint: Mount point to be unmounted.
+   @param removeAfter: Remove the mount point after unmounting it.
+   @param attempts: Number of times to attempt the unmount.
+   @param waitSeconds: Number of seconds to wait between repeated attempts.
+
+   @raise IOError: If the mount point is still mounted after attempts are exhausted.
+   """
+   if os.path.ismount(mountPoint):
+      for attempt in range(0, attempts):
+         logger.debug("Attempt %d to unmount [%s]." % mountPoint)
+         result = executeCommand(UMOUNT_CMD, [ mountPoint, ], returnOutput=False, ignoreStderr=True)[0]
+         if result != 0:
+            logger.error("Error [%d] unmounting [%s] on attempt %d." % (result, mountPoint, attempt))
+         elif os.path.ismount(mountPoint):
+            logger.error("After attempt %d, [%s] is still mounted." % (mountPoint, attempt))
+         else:
+            logger.debug("Successfully unmounted [%s] on attempt %d." % (mountPoint, attempt))
+            break  # this will cause us to skip the loop else: clause
+         if attempt+1 < attempts:  # i.e. this isn't the last attempt
+            if waitSeconds > 0:
+               logger.info("Sleeping %d second(s) before next unmount attempt." % waitSeconds)
+               time.sleep(waitSeconds)
+      else:
+         raise IOError("Unable to unmount [%s] after %d attempts." % (mountPoint, attempts))
+      if os.path.isdir(mountPoint) and removeAfter:
+         logger.debug("Removing mount point [%s]." % mountPoint)
+         os.rmdir(mountPoint)
 
 
 ###########################

@@ -1,6 +1,12 @@
-Version 2.3.2	unreleased
+Version 2.4.0	unreleased
 
-	* Re-license manual under GPL with clarifications to satisfy DFSG.
+	* Re-license manual under "GPL with clarifications" to satisfy DFSG.
+	* Rework our unmount solution again to try and fix observed problems.
+	  - Sometimes, unmount seems to "work" but leaves things mounted.
+	  - This might be because some file is not yet completely closed.
+	  - We try to work around this by making repeated unmount attempts.
+	  - This logic is now encapsulated in util.mount() and util.unmount().
+	  - This solution should also be more portable to non-Linux systems.
 
 Version 2.3.1	23 Mar 2005
 

@@ -84,7 +84,7 @@ from CedarBackup2.image import IsoImage
 from CedarBackup2.writer import CdWriter
 from CedarBackup2.writer import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 from CedarBackup2.filesystem import BackupFileList, PurgeItemList, compareContents
-from CedarBackup2.util import executeCommand, getUidGid, changeOwnership
+from CedarBackup2.util import executeCommand, getUidGid, changeOwnership, mount, unmount
 from CedarBackup2.util import getFunctionReference, deviceMounted, displayBytes
 from CedarBackup2.config import DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE
 
@@ -106,9 +106,6 @@ DIGEST_EXTENSION     = "sha"
 SECONDS_PER_DAY      = 60*60*24
 
 MEDIA_VOLUME_NAME    = "Cedar Backup"    # must be 32 or fewer characters long
-
-MOUNT_CMD            = [ "mount", ]
-UMOUNT_CMD           = [ "umount", ]
 
 
 ########################################################################
@@ -972,17 +969,12 @@ def _consistencyCheck(config, stagingDirs):
 
    The function mounts the device at a temporary mount point in the working
    directory, and then compares the indicated staging directories in the
-   staging directory and on the media.  The comparison is done via the
-   L{BackupFileList} object's built-in functionality for generating digest
-   maps.
+   staging directory and on the media.  The comparison is done via
+   functionality in C{filesystem.py}.
 
    If no exceptions are thrown, there were no problems with the consistency
    check.  A positive confirmation of "no problems" is also written to the log
    with C{info} priority.
-
-   The unmount of the device is done with C{-l} ("lazy unmount") in attempt to
-   avoid occasional problems observed when trying to unmount the drive after
-   there are read errors during the consistency check.
 
    @warning: The implementation of this function is very UNIX-specific and is
    probably Linux-specific as well.
@@ -996,21 +988,14 @@ def _consistencyCheck(config, stagingDirs):
    logger.debug("Running consistency check.")
    mountPoint = tempfile.mkdtemp(dir=config.options.workingDir)
    try:
-      args = [ "-t", "iso9660", config.store.devicePath, mountPoint ]
-      result = executeCommand(MOUNT_CMD, args, returnOutput=False, ignoreStderr=True)[0]
-      if result != 0:
-         raise IOError("Error [%d] mounting media for consistency check." % result)
+      mount(config.store.devicepath, mountPoint, "iso9660")
       for stagingDir in stagingDirs.keys():
          discDir = os.path.join(mountPoint, stagingDirs[stagingDir])
          logger.debug("Checking [%s] vs. [%s]." % (stagingDir, discDir))
          compareContents(stagingDir, discDir, verbose=True)
          logger.info("Consistency check completed for [%s].  No problems found." % stagingDir)
    finally:
-      if os.path.isdir(mountPoint):
-         try:
-            executeCommand(UMOUNT_CMD, [ "-l", mountPoint, ], returnOutput=False, ignoreStderr=True)
-            os.rmdir(mountPoint)
-         except: pass
+      unmount(mountPoint, True, 5, 1)  # try 5 times, and remove mount point when done
 
 def _writeStoreIndicator(config, stagingDirs):
    """
