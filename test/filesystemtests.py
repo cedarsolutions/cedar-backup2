@@ -90,45 +90,10 @@ Debugging these Tests
 # Import modules and do runtime validations
 ########################################################################
 
-# Import standard modules
 import sys
-try:
-   import os
-   import unittest
-except ImportError, e:
-    print "Failed to import standard modules: %s" % e
-    print "Please try setting the PYTHONPATH environment variable."
-    sys.exit(1)
-
-# Try to find the right CedarBackup2 module.  
-# We want to make sure the tests use the modules in the current source
-# tree, not any versions previously-installed elsewhere, if possible.
-try:
-   if os.path.exists(os.path.join(".", "CedarBackup2", "filesystem.py")):
-      sys.path.insert(0, ".")
-   elif os.path.basename(os.getcwd()) == "unittest" and os.path.exists(os.path.join("..", "CedarBackup2", "filesystem.py")):
-      sys.path.insert(0, "..")
-   else:
-      print "WARNING: CedarBackup2 modules were not found in the expected"
-      print "location.  If the import succeeds, you may be using an"
-      print "unexpected version of CedarBackup2."
-      print ""
-   from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemList
-except ImportError, e:
-   print "Failed to import CedarBackup2 modules: %s" % e
-   print "You must either run the unit tests from the CedarBackup2 source"
-   print "tree, or properly set the PYTHONPATH enviroment variable."
-   sys.exit(1)
-
-# Check the Python version.  We require 2.3 or greater.
-try:
-   if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 3]:
-      print "Python version 2.3 or greater required, sorry."
-      sys.exit(1)
-except:
-   # sys.version_info isn't available before 2.0
-   print "Python version 2.3 or greater required, sorry."
-   sys.exit(1)
+import os
+import unittest
+from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemList
 
 
 #######################################################################
@@ -305,11 +270,10 @@ class TestPurgeItemList(unittest.TestCase):
 
 def suite():
    """Returns a suite containing all the test cases in this module."""
-   TestFilesystemListSuite = unittest.makeSuite(TestFilesystemList, 'test')
-   TestBackupFileListSuite = unittest.makeSuite(TestBackupFileList, 'test')
-   TestPurgeItemListSuite = unittest.makeSuite(TestPurgeItemList, 'test')
-   return unittest.TestSuite((TestFilesystemListSuite, TestBackupFileListSuite, TestPurgeItemListSuite))
-#   return(unittest.makeSuite((TestFilesystemList, TestBackupFileList, TestPurgeItemList, )))
+   return unittest.TestSuite((unittest.makeSuite(TestFilesystemList, 'test'),
+                              unittest.makeSuite(TestBackupFileList, 'test'),
+                              unittest.makeSuite(TestPurgeItemList, 'test'), ))
+
 
 
 ########################################################################
@@ -318,11 +282,5 @@ def suite():
 
 # When this module is executed from the command-line, run its tests
 if __name__ == '__main__':
-   print "\nTesting CedarBackup2/filesystem.py."
-   try:
-      import psyco
-      psyco.full()
-      print "Note: using pyscho for speedup, since it's available."
-   except: pass
    unittest.main()
 
