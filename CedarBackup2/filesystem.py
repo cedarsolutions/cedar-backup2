@@ -97,6 +97,10 @@ class FilesystemList(list):
    custom methods to remove specific types of entries or entries which match a
    particular pattern.
 
+   @note: Regular expression patterns that apply to paths are assumed to be
+   bounded at front and back by the beginning and end of the string, i.e. they
+   are treated as if they begin with C{^} and end with C{$}.
+
    @ivar excludeFiles: Boolean indicating whether files should be excluded
    @ivar excludeDirs: Boolean indicating whether directories should be excluded
    @ivar excludePaths: List of absolute paths to be excluded
@@ -137,15 +141,18 @@ class FilesystemList(list):
       @return: Number of items added to the list.
       @raise ValueError: If path is not a file or does not exist.
       """
-      if not os.path.exists(path) or not os.path.isfile(path):
+      if not os.path.exists(path) or not os.path.isfile(path) or os.path.islink(path):
          logger.debug("Path [%s] is not a file or does not exist on disk." % path)
          raise ValueError("Path is not a file or does not exist on disk.")
-      if self.excludeFiles or path in self.excludePaths:
-         logger.debug("Path [%s] is excluded." % path)
+      if self.excludeFiles:
+         logger.debug("Path [%s] is excluded based on excludeFiles." % path)
+         return 0
+      if path in self.excludePaths:
+         logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return 0
       for pattern in self.excludePatterns:
-         if re.compile(pattern).match(path):
-            logger.debug("Path [%s] is excluded." % path)
+         if re.compile("^%s$" % pattern).match(path):
+            logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
       logger.debug("Added path [%s] into list." % path)
@@ -168,29 +175,27 @@ class FilesystemList(list):
       if not os.path.exists(path) or not os.path.isdir(path):
          logger.debug("Path [%s] is not a file or does not exist on disk." % path)
          raise ValueError("Path is not a directory or does not exist on disk.")
-      if self.excludeDirs or path in self.excludePaths:
-         logger.debug("Path [%s] is excluded based on exclude list." % path)
+      if self.excludeDirs:
+         logger.debug("Path [%s] is excluded based on excludeDirs." % path)
+         return 0
+      if path in self.excludePaths:
+         logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return 0
       for pattern in self.excludePatterns:
-         if re.compile(pattern).match(path):
+         if re.compile("^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
       logger.debug("Added path [%s] into list." % path)
       return 1
 
-   def addDirContents(self, path, recurse=True):
+   def addDirContents(self, path):
       """
       Adds the contents of a directory to the list.
 
       The path must exist and must be a directory.  The contents of the
-      directory (as well as the directory path itself) will be added to the
-      list, subject to any exclusions that are in place.  
-
-      If C{recurse} is C{True}, then the contents of the directory will be
-      added to the list recursively (i.e. the directory's children will be
-      added, as well as all of their children, etc., etc.), subject to the same
-      exclusions as usual.
+      directory (as well as the directory path itself) will be recursively
+      added to the list, subject to any exclusions that are in place.  
 
       @note: If a directory's absolute path matches an exclude pattern or path,
       or if the directory contains the configured ignore file, then the
@@ -213,24 +218,27 @@ class FilesystemList(list):
          logger.debug("Path [%s] is not a directory or does not exist on disk." % path)
          raise ValueError("Path is not a directory or does not exist on disk.")
       if path in self.excludePaths:
-         logger.debug("Path [%s] is excluded based on exclude list." % path)
+         logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return added
       for pattern in self.excludePatterns:
-         if re.compile(pattern).match(path):
+         if re.compile("^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return added
-      (root, dirs, files) = os.walk(path)
-      if self.ignoreFile is not None and self.ignoreFile in files:
+      entries = os.listdir(path)
+      if self.ignoreFile is not None and self.ignoreFile in entries:
          logger.debug("Path [%s] is excluded based on ignore file." % path)
          return added
-      added += self.addDir(path)
-      for f in files:
-         added += self.addFile(os.path.join(root, f))
-      for d in dirs:
-         if recurse:
-            added += self.addDirContents(os.path.join(root, d), True)
-         else:
-            added += self.addDir(os.path.join(root, d))
+      if self.excludeDirs:
+         logger.debug("Path [%s], but not its contents, is excluded based on excludeDirs." % path)
+      else:
+         added += self.addDir(path)
+      for entry in entries:
+         entrypath = os.path.join(path, entry)
+         if not os.path.islink(entrypath):
+            if os.path.isfile(entrypath):
+               added += self.addFile(entrypath)
+            elif os.path.isdir(entrypath):
+               added += self.addDirContents(entrypath)
       return added
 
 
