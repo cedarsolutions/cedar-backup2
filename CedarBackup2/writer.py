@@ -39,6 +39,16 @@
 
 """
 Provides image writer-related objects.
+
+@sort: validateScsiId, validateDriveSpeed, 
+       MediaDefinition, MediaCapacity, CdWriter, 
+       MEDIA_CDRW_74, MEDIA_CDR_74, MEDIA_CDRW_80, MEDIA_CDR_80
+
+@var MEDIA_CDRW_74: Constant representing 74-minute CD-RW media.
+@var MEDIA_CDR_74: Constant representing 74-minute CD-R media.
+@var MEDIA_CDRW_80: Constant representing 80-minute CD-RW media.
+@var MEDIA_CDR_80: Constant representing 80-minute CD-R media.
+
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -71,6 +81,63 @@ EJECT_CMD    = [ "eject", ]
 
 
 ########################################################################
+# Utility functions
+########################################################################
+
+def _validateDevice(device, unittest=False):
+   """
+   Validates configured device.
+   The device must be an absolute path, must exist, and must be writable.
+   The unittest flag turns off validation of the device on disk.
+   @param device: Filesystem device associated with this writer.
+   @param unittest: Indicates whether we're unit testing.
+   @return: Device as a string, suitable for assignment to C{CdWriter.device}.
+   @raise ValueError: If the device value is invalid.
+   """
+   if not os.path.isabs(device):
+      raise ValueError("Device must be an absolute path.")
+   if not unittest and not os.path.exists(device):
+      raise ValueError("Device must exist on disk.")
+   if not unittest and not os.access(device, os.W_OK):
+      raise ValueError("Device is not writable by the current user.")
+   return device
+
+def validateScsiId(scsiId):
+   """
+   Validates a SCSI id string.
+   SCSI id must be a string in the form C{[ATA:]scsibus,target,lun}.
+   @note: For consistency, if C{None} is passed in, C{None} will be returned.
+   @param scsiId: SCSI id for the device.
+   @return: SCSI id as a string, suitable for assignment to C{CdWriter.scsiId}.
+   @raise ValueError: If the SCSI id string is invalid.
+   """
+   ataPattern = re.compile(r"^\s*ATA:[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
+   normalPattern = re.compile(r"^\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
+   if not ataPattern.search(scsiId) and not normalPattern.search(scsiId):
+      raise ValueError("SCSI id must be in the form '[ATA:]scsibus,target,lun'.")
+   return scsiId
+
+def validateDriveSpeed(driveSpeed):
+   """
+   Validates a drive speed value.
+   Drive speed must be an integer which is >= 1.
+   @note: For consistency, if C{None} is passed in, C{None} will be returned.
+   @param driveSpeed: Speed at which the drive writes.
+   @return: Drive speed as an integer, suitable for assignment to C{CdWriter.driveSpeed}.
+   @raise ValueError: If the drive speed value is invalid.
+   """
+   if driveSpeed is None:
+      return None
+   try:
+      intSpeed = int(driveSpeed)
+   except TypeError:
+      raise ValueError("Drive speed must be an integer >= 1.")
+   if intSpeed < 1:
+      raise ValueError("Drive speed must an integer >= 1.")
+   return intSpeed
+
+
+########################################################################
 # MediaDefinition class definition
 ########################################################################
 
@@ -93,6 +160,8 @@ class MediaDefinition(object):
    @ivar initialLeadIn: Initial lead-in required for first image written to media.
    @ivar leadIn: Lead-in required on successive images written to media.
    @ivar capacity: Total capacity of the media before any required lead-in.
+
+   @sort: __init__, rewritable, initialLeadIn, leadIn, capacity
    """
 
    def __init__(self, mediaType):
@@ -140,6 +209,8 @@ class MediaCapacity(object):
    @ivar bytesUsed: Space used on disc, in bytes.
    @ivar bytesAvailable: Space available on disc, in bytes.
    @ivar boundaries: Session disc boundaries, in terms of ISO sectors
+
+   @sort: __init__, bytesUsed, bytesAvailable, boundaries
    """
 
    def __init__(self, bytesUsed, bytesAvailable, boundaries):
@@ -239,6 +310,14 @@ class CdWriter(object):
    @ivar deviceSupportsMulti: Indicates whether device supports multisession discs.
    @ivar deviceHasTray: Indicates whether the device has a tray to hold its media. 
    @ivar deviceCanEject: Indicates whether the device supports ejecting its media.
+
+   @sort: __init__, isRewritable, _retrieveProperties, retrieveCapacity, _getBoundaries,
+          _calculateCapacity, openTray, closeTray, refreshMedia, writeImage,
+          _blankMedia, _parsePropertiesOutput, _parseBoundariesOutput, 
+          _buildOpenTrayArgs, _buildCloseTrayArgs, _buildPropertiesArgs, 
+          _buildBoundariesArgs, _buildBlankArgs, _buildWriteArgs,
+          device, scsiId, driveSpeed, media, deviceType, deviceVendor, deviceId, 
+          deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject
    """
 
    ##############
@@ -288,9 +367,9 @@ class CdWriter(object):
       @raise ValueError: If the drive speed is not an integer >= 1.
       @raise IOError: If device properties could not be read for some reason.
       """
-      self.device = CdWriter._validateDevice(device, unittest)
-      self.scsiId = CdWriter._validateScsiId(scsiId)
-      self.driveSpeed = CdWriter._validateDriveSpeed(driveSpeed)
+      self.device = _validateDevice(device, unittest)
+      self.scsiId = validateScsiId(scsiId)
+      self.driveSpeed = validateDriveSpeed(driveSpeed)
       self.media = MediaDefinition(mediaType)
       if not unittest:
          (self.deviceType,
@@ -301,58 +380,6 @@ class CdWriter(object):
           self.deviceHasTray,
           self.deviceCanEject) = self._retrieveProperties()
 
-   def _validateDevice(device, unittest):
-      """
-      Validates configured device.
-      The device must be an absolute path, must exist, and must be writable.
-      The self.unittest flag turns off validation of the device on disk.
-      @param device: Filesystem device associated with this writer.
-      @param unittest: Indicates whether we're unit testing.
-      @return: Device as a string, suitable for assignment to self.device.
-      @raise ValueError: If the device value is invalid.
-      """
-      if not os.path.isabs(device):
-         raise ValueError("Device must be an absolute path.")
-      if not unittest and not os.path.exists(device):
-         raise ValueError("Device must exist on disk.")
-      if not unittest and not os.access(device, os.W_OK):
-         raise ValueError("Device is not writable by the current user.")
-      return device
-   _validateDevice = staticmethod(_validateDevice)
-
-   def _validateScsiId(scsiId):
-      """
-      Validates configured SCSI id.
-      SCSI id must be a string in the form C{[ATA:]scsibus,target,lun}.
-      @param scsiId: SCSI id for the device.
-      @return: SCSI id as a string, suitable for assignment to self.scsiId.
-      @raise ValueError: If the SCSI id value is invalid.
-      """
-      ataPattern = re.compile(r"^\s*ATA:[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
-      normalPattern = re.compile(r"^\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
-      if not ataPattern.search(scsiId) and not normalPattern.search(scsiId):
-         raise ValueError("SCSI id must be in the form '[ATA:]scsibus,target,lun'.")
-      return scsiId
-   _validateScsiId = staticmethod(_validateScsiId)
-
-   def _validateDriveSpeed(driveSpeed):
-      """
-      Validates configured drive speed.
-      Drive speed must be an integer which is >= 1.
-      @param driveSpeed: Speed at which the drive writes.
-      @return: Drive speed as an integer, suitable for assignment to self.driveSpeed.
-      @raise ValueError: If the drive speed value is invalid.
-      """
-      if driveSpeed is None:
-         return None
-      try:
-         intSpeed = int(driveSpeed)
-      except TypeError:
-         raise ValueError("Drive speed must be an integer >= 1.")
-      if intSpeed < 1:
-         raise ValueError("Drive speed must an integer >= 1.")
-      return intSpeed
-   _validateDriveSpeed = staticmethod(_validateDriveSpeed)
 
 
    #################################################

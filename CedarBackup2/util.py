@@ -39,6 +39,22 @@
 
 """
 Provides general-purpose utilities. 
+
+@sort: convertSize, getUidGid, executeCommand, 
+       ISO_SECTOR_SIZE, 
+       BYTES_PER_KBYTE, KBYTES_PER_MBYTE, BYTES_PER_MBYTE, BYTES_PER_SECTOR,
+       UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
+
+@var ISO_SECTOR_SIZE: Size of an ISO image sector, in bytes.
+@var BYTES_PER_KBYTE: Number of bytes (B) per kilobyte (kB).
+@var KBYTES_PER_MBYTE: Number of kilobytes (kB) per megabyte (MB).
+@var BYTES_PER_MBYTE: Number of bytes (B) per megabyte (MB).
+@var BYTES_PER_SECTOR: Number of bytes (B) per ISO sector.
+@var UNIT_BYTES: Constant representing the byte (B) unit for conversion.
+@var UNIT_KBYTES: Constant representing the kilobyte (kB) unit for conversion.
+@var UNIT_MBYTES: Constant representing the megabyte (MB) unit for conversion.
+@var UNIT_SECTORS: Constant representing the ISO sector unit for conversion.
+
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
