@@ -22,6 +22,7 @@ MISSING FUNCTIONALITY FOR 2.0
 * Write individual action functions (process.py) in terms of other lower-level functionality
 * Make sure that errors such as failure to connect to peer are reliably indicated outside of log (bug #12)
 * Make validate action report on missing directories and bad permissions (at CLI level and not configuration level). (bug #7)
+* Make validate action check that users exist, as well - as much checking as possible after config is valid.
 * Test _ActionSet and _ActionItem functionality, hopefully in a unit test of some sort
 * Make sure that --full backup always backs up weekly items, even if it isn't the start of the week.
 
