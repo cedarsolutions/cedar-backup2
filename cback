@@ -22,6 +22,8 @@ Implements Cedar Backup cback script.
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
+import sys
 from CedarBackup2.cli import cli
-cli()
+result = cli()
+sys.exit(result)
 

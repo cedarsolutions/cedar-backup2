@@ -89,6 +89,8 @@ import getopt
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
 from CedarBackup2.util import RestrictedContentList, splitCommandLine, getUidGid
+from CedarBackup2.config import Config
+from CedarBackup2.process import executeCollect, executeStage, executeStore, executePurge, executeRebuild
 
 
 ########################################################################
@@ -119,14 +121,89 @@ LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet',
 
 
 #######################################################################
-# Functions
+# Public functions
 #######################################################################
 
-###################
-# usage() function
-###################
+#################
+# cli() function
+#################
 
-def usage(fd=sys.stderr):
+def cli():
+   """
+   Implements the command-line interface for the C{cback} script.
+
+   Essentially, this is the "main routine" for the cback script.  It does all
+   of the argument processing for the script, and then sets about executing the
+   indicated actions.
+
+   Raised exceptions always result in an immediate return.  Otherwise, we
+   generally return when all specified actions have been completed.  Actions
+   are ignored if the help, version or validate flags are set.
+
+   A different error code is returned for each type of failure::
+
+      - C{1}: Error processing command-line arguments
+      - C{2}: Error configuring logging
+      - C{3}: Error parsing indicated configuration file
+      - C{4}: Error executing backup
+
+   @return: Error code as described above.
+   """
+   try:
+      options = Options(argumentList=sys.argv[1:])
+   except Exception, e:
+      _usage()
+      return 1
+   if options.help:
+      _usage()
+      return 0
+   if options.version:
+      _version()
+      return 0
+   try:
+      _setupLogging(options)
+   except Exception, e:
+      sys.stderr.write("Error setting up logging: %s\n" % e)
+      return 2
+   try:
+      config = Config(xmlPath=options.config)
+   except Exception, e:
+      logger.error("Configuration error: %s" % e)
+      return 3
+   if 'validate' in options.actions:
+      return 0
+   try:
+      if 'rebuild' in options.actions:
+         executeRebuild(config, options.full)
+      elif 'all' in options.actions:
+         executeCollect(config, options.full)
+         executeStage(config, options.full)
+         executeStore(config, options.full)
+         executePurge(config, options.full)
+      else:
+         if 'collect' in options.actions:
+            executeCollect(config, options.full)
+         if 'stage' in options.actions:
+            executeStage(config, options.full)
+         if 'store' in options.actions:
+            executeStore(config, options.full)
+         if 'purge' in options.actions:
+            executePurge(config, options.full)
+   except Exception, e:
+      logger.error("Error executing backup: %s" % e)
+      return 4
+   return 0
+
+
+#######################################################################
+# Utility functions
+#######################################################################
+
+####################
+# _usage() function
+####################
+
+def _usage(fd=sys.stderr):
    """
    Prints usage information for the cback script.
    @param fd: File descriptor used to print information.
@@ -141,11 +218,11 @@ def usage(fd=sys.stderr):
    fd.write("   -V, --version  Display version information\n")
    fd.write("   -b, --verbose  Print verbose output as well as logging to disk\n")
    fd.write("   -q, --quiet    Run quietly (display no output to the screen)\n")
-   fd.write("   -c, --config   Path to config file (default: %s)" % DEFAULT_CONFIG)
+   fd.write("   -c, --config   Path to config file (default: %s)\n" % DEFAULT_CONFIG)
    fd.write("   -f, --full     Perform a full backup, regardless of configuration\n")
-   fd.write("   -l, --logfile  Path to logfile (default: %s)" % DEFAULT_LOGFILE)
-   fd.write("   -o, --owner    Logfile ownership, user:group (default: %s)" % DEFAULT_OWNERSHIP)
-   fd.write("   -m, --mode     Octal logfile permissions mode (default: %o)" % DEFAULT_MODE)
+   fd.write("   -l, --logfile  Path to logfile (default: %s)\n" % DEFAULT_LOGFILE)
+   fd.write("   -o, --owner    Logfile ownership, user:group (default: %s)\n" % DEFAULT_OWNERSHIP)
+   fd.write("   -m, --mode     Octal logfile permissions mode (default: %o)\n" % DEFAULT_MODE)
    fd.write("   -O, --output   Record some sub-command (i.e. tar) output to the log\n")
    fd.write("   -d, --debug    Write debugging information to the log (implies --output)\n")
    fd.write("\n")
@@ -167,20 +244,20 @@ def usage(fd=sys.stderr):
    fd.write("\n")
 
 
-#####################
-# version() function
-#####################
+######################
+# _version() function
+######################
 
-def version(fd=sys.stdout):
+def _version(fd=sys.stdout):
    """
    Prints version information for the cback script.
    @param fd: File descriptor used to print information.
    @note: The C{fd} is used rather than C{print} to facilitate unit testing.
    """
    fd.write("\n")
-   fd.write(" Cedar Backup version %s, released %s." % (VERSION, DATE))
+   fd.write(" Cedar Backup version %s, released %s.\n" % (VERSION, DATE))
    fd.write("\n")
-   fd.write(" Copyright (c) %s %s <%s>." % (COPYRIGHT, AUTHOR, EMAIL))
+   fd.write(" Copyright (c) %s %s <%s>.\n" % (COPYRIGHT, AUTHOR, EMAIL))
    fd.write(" This is free software; there is NO warranty.  See the\n")
    fd.write(" GNU General Public License version 2 for copying conditions.\n")
    fd.write("\n")
@@ -188,11 +265,11 @@ def version(fd=sys.stdout):
    fd.write("\n")
 
 
-##########################
-# setupLogging() function
-##########################
+###########################
+# _setupLogging() function
+###########################
 
-def setupLogging(options):
+def _setupLogging(options):
    """
    Set up logging based on command-line options.
 
@@ -221,11 +298,11 @@ def setupLogging(options):
    @param options: Command-line options.
    @type options: L{Options} object
    """
-   logfile = setupLogfile(options)
-   setupFlowLogging(logfile, options)
-   setupOutputLogging(logfile, options)
+   logfile = _setupLogfile(options)
+   _setupFlowLogging(logfile, options)
+   _setupOutputLogging(logfile, options)
 
-def setupLogfile(options):
+def _setupLogfile(options):
    """
    Sets up and creates logfile as needed.
 
@@ -252,15 +329,15 @@ def setupLogfile(options):
       logfile = options.logfile
    if not os.path.exists(logfile):
       if options.mode is None: 
-         os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND)).write("")
+         os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND, DEFAULT_MODE)).write("")
       else:
-         os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND), options.mode).write("")
-      if options.user is not None and options.group is not None:
-         (uid, gid) = getUidGid(options.user, options.group)
+         os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND, options.mode)).write("")
+      if options.owner is not None and options.group is not None:
+         (uid, gid) = getUidGid(options.owner, options.group)
          os.chown(logfile, uid, gid)
    return logfile
 
-def setupFlowLogging(logfile, options):
+def _setupFlowLogging(logfile, options):
    """
    Sets up flow logging.
    @param logfile: Path to logfile on disk.
@@ -268,10 +345,10 @@ def setupFlowLogging(logfile, options):
    """
    flowLogger = logging.getLogger("CedarBackup2.log")
    flowLogger.setLevel(logging.DEBUG)    # let the logger see all messages
-   setupDiskFlowLogging(flowLogger, logfile, options)
-   setupScreenFlowLogging(flowLogger, options)
+   _setupDiskFlowLogging(flowLogger, logfile, options)
+   _setupScreenFlowLogging(flowLogger, options)
 
-def setupOutputLogging(logfile, options):
+def _setupOutputLogging(logfile, options):
    """
    Sets up command output logging.
    @param logfile: Path to logfile on disk.
@@ -279,9 +356,9 @@ def setupOutputLogging(logfile, options):
    """
    outputLogger = logging.getLogger("CedarBackup2.output")
    outputLogger.setLevel(logging.DEBUG)      # let the logger see all messages
-   setupDiskOutputLogging(outputLogger, logfile, options)
+   _setupDiskOutputLogging(outputLogger, logfile, options)
 
-def setupDiskFlowLogging(flowLogger, logfile, options):
+def _setupDiskFlowLogging(flowLogger, logfile, options):
    """
    Sets up on-disk flow logging.
    @param flowLogger: Python flow logger object.
@@ -297,11 +374,10 @@ def setupDiskFlowLogging(flowLogger, logfile, options):
       handler.setLevel(logging.INFO)
    flowLogger.addHandler(handler)
 
-def setupScreenFlowLogging(flowLogger, options):
+def _setupScreenFlowLogging(flowLogger, options):
    """
    Sets up on-screen flow logging.
    @param flowLogger: Python flow logger object.
-   @param logfile: Path to logfile on disk.
    @param options: Command-line options.
    """
    formatter = logging.Formatter(fmt=SCREEN_LOG_FORMAT)
@@ -318,7 +394,7 @@ def setupScreenFlowLogging(flowLogger, options):
       handler.setLevel(logging.ERROR)
    flowLogger.addHandler(handler)
 
-def setupDiskOutputLogging(outputLogger, logfile, options):
+def _setupDiskOutputLogging(outputLogger, logfile, options):
    """
    Sets up on-disk command output logging.
    @param outputLogger: Python command output logger object.
@@ -418,8 +494,8 @@ class Options(object):
       C{validate} is C{False}, it might not be possible to parse the passed-in
       command line, so an exception might still be raised.
 
-      @note: The command line format is specified by the L{usage} function.
-      Call L{usage} to see a usage statement for the cback script.
+      @note: The command line format is specified by the L{_usage} function.
+      Call L{_usage} to see a usage statement for the cback script.
 
       @note: It is strongly suggested that the C{validate} option always be set
       to C{True} (the default) unless there is a specific need to read in
@@ -776,11 +852,11 @@ class Options(object):
 
    help = property(_getHelp, _setHelp, None, "Command-line help (C{-h,--help}) flag.")
    version = property(_getVersion, _setVersion, None, "Command-line version (C{-V,--version}) flag.")
-   verbose = property(_getVerbose, _setVerbose, None, "Command-line help (C{-b,--verbose}) flag.")
-   quiet = property(_getQuiet, _setQuiet, None, "Command-line help (C{-q,--quiet}) flag.")
-   config = property(_getConfig, _setConfig, None, "Command-line help (C{-c,--config}) parameter.")
-   full = property(_getFull, _setFull, None, "Command-line help (C{-f,--full}) flag.")
-   logfile = property(_getLogfile, _setLogfile, None, "Command-line help (C{-l,--logfile}) parameter.")
+   verbose = property(_getVerbose, _setVerbose, None, "Command-line verbose (C{-b,--verbose}) flag.")
+   quiet = property(_getQuiet, _setQuiet, None, "Command-line quiet (C{-q,--quiet}) flag.")
+   config = property(_getConfig, _setConfig, None, "Command-line configuration file (C{-c,--config}) parameter.")
+   full = property(_getFull, _setFull, None, "Command-line full-backup (C{-f,--full}) flag.")
+   logfile = property(_getLogfile, _setLogfile, None, "Command-line logfile (C{-l,--logfile}) parameter.")
    owner = property(_getOwner, _setOwner, None, "Command-line owner (C{-o,--owner}) parameter, as tuple C{(user,group)}.")
    mode = property(_getMode, _setMode, None, "Command-line mode (C{-m,--mode}) parameter.")
    output = property(_getOutput, _setOutput, None, "Command-line output (C{-O,--output}) flag.")
@@ -804,8 +880,8 @@ class Options(object):
       Other validations (as for allowed values for particular options) will be
       taken care of at assignment time by the properties functionality.
 
-      @note: The command line format is specified by the L{usage} function.
-      Call L{usage} to see a usage statement for the cback script.
+      @note: The command line format is specified by the L{_usage} function.
+      Call L{_usage} to see a usage statement for the cback script.
 
       @raise ValueError: If one of the validations fails.
       """

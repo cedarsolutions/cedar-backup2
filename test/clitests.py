@@ -82,7 +82,7 @@ import unittest
 from StringIO import StringIO
 from getopt import GetoptError
 from CedarBackup2.testutil import failUnlessAssignRaises
-from CedarBackup2.cli import usage, version
+from CedarBackup2.cli import _usage, _version
 from CedarBackup2.cli import Options
 
 
@@ -144,17 +144,17 @@ class TestFunctions(unittest.TestCase):
 
    def testSimpleFuncs_001(self):
       """
-      Test that the usage() function runs without errors.
+      Test that the _usage() function runs without errors.
       We don't care what the output is, and we don't check.
       """
-      self.captureOutput(usage)
+      self.captureOutput(_usage)
 
    def testSimpleFuncs_002(self):
       """
-      Test that the version() function runs without errors.
+      Test that the _version() function runs without errors.
       We don't care what the output is, and we don't check.
       """
-      self.captureOutput(version)
+      self.captureOutput(_version)
 
 
 ####################
