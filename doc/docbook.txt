@@ -8,6 +8,7 @@ I built the entire docbook infrastructure based on the Subversion book:
 
 Some other links that might be useful to you:
 
+   http://www.sagehill.net/docbookxsl/index.html
    http://tldp.org/HOWTO/DocBook-Demystification-HOWTO/index.html
    http://www.vim.org/scripts/script.php?script_id=301
 

@@ -332,8 +332,8 @@
       <title>Configuration File Format</title>
 
       <para>
-         Cedar Backup is configured through an XML <footnote><para>See this 
-         <ulink url="http://www.xml.com/pub/a/98/10/guide0.html">guide</ulink>
+         Cedar Backup is configured through an XML <footnote><para>See 
+         <ulink url="http://www.xml.com/pub/a/98/10/guide0.html"/>
          for a basic introduction to XML.</para></footnote> configuration file,
          usually called <filename>/etc/cback.conf</filename>.  The configuration
          file contains the following sections: <firstterm>reference</firstterm>,
@@ -349,8 +349,7 @@
          For instance, on a client machine, administrators would generally only
          configure the collect and purge sections, while on a master machine
          they would have to configure all four action-related sections.  
-         <footnote><para>See 
-         <xref linkend="cedar-basic-process"/>.</para></footnote>
+         <footnote><para>See <xref linkend="cedar-basic-process"/>.</para></footnote>
          The extensions section is always optional and can be omitted unless
          extensions are in use.
       </para>
@@ -896,9 +895,8 @@
                            </para>
                            <para>
                               The pattern must be a Python regular expression. 
-                              <footnote id="cedar-config-regex">
-                              <para>See the <ulink url="http://docs.python.org/lib/re-syntax.html">
-                              Python library documentation</ulink> for more information</para></footnote>
+                              <footnote id="cedar-config-foot-regex">
+                              <para>See <ulink url="http://docs.python.org/lib/re-syntax.html"/></para></footnote>
                               It is assumed to be bounded at front and back by the beginning
                               and end of the string (i.e. it is treated as if it begins with
                               <literal>^</literal> and ends with <literal>$</literal>).
@@ -1159,7 +1157,7 @@
                                     </para>
                                     <para>
                                        The pattern must be a Python regular
-                                       expression.  <footnoteref linkend="cedar-config-regex"/> 
+                                       expression.  <footnoteref linkend="cedar-config-foot-regex"/> 
                                        It is assumed to be bounded at front and
                                        back by the beginning and end of the
                                        string (i.e. it is treated as if it
@@ -1636,13 +1634,11 @@
                      the drive in the form <literal>scsibus,target,lun</literal>.  
                      The <literal>ATA:</literal> or <literal>ATAPI:</literal> 
                      prefixes are also allowed.
-                     <footnote><para>For more information on how to configure your
-                     CD-R/CD-RW device, see the 
-                     <ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO">Linux CDROM HOWTO</ulink>.
-                     </para></footnote> 
-                     <footnote><para>See the
-                     <ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html">Linux ATA RAID HOWTO</ulink>.
-                     </para></footnote>
+                     <footnote id="cedar-config-foot-cdrom">
+                     <para>For more information on how to configure your
+                     CD-R/CD-RW device, see <ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO"/></para></footnote> 
+                     <footnote id="cedar-config-foot-ata"><para>See 
+                     <ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html"/></para></footnote>
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be a valid SCSI identifier.
@@ -2067,10 +2063,7 @@
          <para>
             Your CD-R or CD-RW drive must either be a SCSI device or must be
             configured to act like a Linux SCSI device.
-            <footnote><para>For more information on how to configure your
-            CD-R/CD-RW device, see the 
-            <ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO">Linux CDROM HOWTO</ulink>.
-            </para></footnote> 
+            <footnoteref linkend="cedar-config-foot-cdrom"/>
             Regardless of what kind of drive you have, make sure you know its
             SCSI address (in the form <literal>scsibus, target, lun</literal>)
             and its device name (i.e. <literal>/dev/cdrw</literal>).  The SCSI
@@ -2087,11 +2080,9 @@
             (2.6.x) can also be compiled with support for other kinds of CD drive
             interfaces.  If
             you have configured your CD drive to use <firstterm>ATA</firstterm>
-            <footnote><para>See the
-            <ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html">Linux ATA RAID HOWTO</ulink>.
-            </para></footnote>
+            <footnoteref linkend="cedar-config-foot-ata"/>
             or <firstterm>ATAPI</firstterm>, 
-            <footnote><para>
+            <footnote id="cedar-config-foot-atapi"><para>
             As of kernel 2.6, you can use ATAPI directly, without SCSI emulation,
             by prepending <literal>ATAPI:</literal> to the device address.
             </para></footnote>
@@ -2310,9 +2301,8 @@ cback all
             <emphasis>If Cedar Backup ever completes <quote>normally</quote>
             but the disc that is created is not usable, please report this as a
             bug.
-            <footnote><para>See the Cedar Solutions 
-            <ulink url="http://cedar-solutions.com/bugzilla/">Bug Tracking
-            System</ulink>.</para></footnote> 
+            <footnote id="cedar-config-foot-bugzilla"><para>
+            See <ulink url="http://cedar-solutions.com/bugzilla/"/>.</para></footnote>
             To be safe, always enable the consistency check option in the
             store configuration section.</emphasis>
          </para>
@@ -2575,7 +2565,8 @@ The key fingerprint is:
             attempts to stage, and so that the purge action does not begin
             until after the master has completed staging.  Usually, allowing an
             hour or two between steps should be sufficient.
-            <footnote><para>See <xref linkend="cedar-basic-coordinate"/>.</para></footnote>
+            <footnote id="cedar-config-foot-coordinate"><para>See <xref
+            linkend="cedar-basic-coordinate"/>.</para></footnote>
          </para>
 
          <note>
@@ -2726,10 +2717,7 @@ The key fingerprint is:
          <para>
             Your CD-R or CD-RW drive must either be a SCSI device or must be
             configured to act like a Linux SCSI device.
-            <footnote><para>For more information on how to configure your
-            CD-R/CD-RW device, see the 
-            <ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO">Linux CDROM HOWTO</ulink>.
-            </para></footnote> 
+            <footnoteref linkend="cedar-config-foot-cdrom"/>
             Regardless of what kind of drive you have, make sure you know its
             SCSI address (in the form <literal>scsibus, target, lun</literal>)
             and its device name (i.e. <literal>/dev/cdrw</literal>).  The SCSI
@@ -2746,14 +2734,9 @@ The key fingerprint is:
             (2.6.x) can also be compiled with support for other kinds of CD drive
             interfaces.  If
             you have configured your CD drive to use <firstterm>ATA</firstterm>
-            <footnote><para>See the
-            <ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html">Linux ATA RAID HOWTO</ulink>.
-            </para></footnote>
+            <footnoteref linkend="cedar-config-foot-ata"/>
             or <firstterm>ATAPI</firstterm>, 
-            <footnote><para>
-            As of kernel 2.6, you can use ATAPI directly, without SCSI emulation,
-            by prepending <literal>ATAPI:</literal> to the device address.
-            </para></footnote>
+            <footnoteref linkend="cedar-config-foot-atapi"/>
             then include this prefix in your
             simulated device address, i.e. <literal>ATA:0,0,0</literal> or
             <literal>ATAPI:0,0,0</literal>.
@@ -2924,7 +2907,7 @@ The key fingerprint is:
             attempts to stage, and so that their purge actions do not begin
             until after the master has completed staging.  Usually, allowing
             an hour or two between steps should be sufficient.
-            <footnote><para>See <xref linkend="cedar-basic-coordinate"/>.</para></footnote>
+            <footnoteref linkend="cedar-config-foot-coordinate"/>
          </para>
 
          <note>
@@ -3055,9 +3038,7 @@ The key fingerprint is:
             <emphasis>If Cedar Backup ever completes <quote>normally</quote>
             but the disc that is created is not usable, please report this as a
             bug.
-            <footnote><para>See the Cedar Solutions 
-            <ulink url="http://cedar-solutions.com/bugzilla/">Bug Tracking
-            System</ulink>.</para></footnote> 
+            <footnoteref linkend="cedar-config-foot-bugzilla"/>
             To be safe, always enable the consistency check option in the
             store configuration section.</emphasis>
          </para>

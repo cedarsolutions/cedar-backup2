@@ -28,13 +28,31 @@
    not have a working catalog system, then specify an absolute path to a valid
    stylesheet below where fo/docbook.xsl is imported (or switch to a real
    operating system).
+
+   I have also modified the stylesheet to include "admonition" graphics (for
+   warning, tip, note, etc.) in the PDF output, and I now use my own greyscale
+   images for PDF and Postscript (taken from nwalsh's originals and modified)
+   rather than converting the color images from O'Reilly.
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
 
-  <xsl:import href="http://docbook.sourceforge.net/release/xsl/1.67.2/fo/docbook.xsl"/>
+   <xsl:import href="http://docbook.sourceforge.net/release/xsl/1.67.2/fo/docbook.xsl"/>
 
-  <xsl:param name="fop.extensions" select="1" />
-  <xsl:param name="variablelist.as.blocks" select="1" />
+   <xsl:param name="fop.extensions" select="1"/>
+   <xsl:param name="variablelist.as.blocks" select="1"/>
+
+   <xsl:param name="hyphenate">false</xsl:param>
+
+   <xsl:param name="paper.type" select="'USletter'"/>
+
+   <xsl:param name="page.margin.bottom" select="'0.8in'"/>
+   <xsl:param name="page.margin.top" select="'0.8in'"/>
+
+   <xsl:param name="footer.rule" select="0"/>
+
+   <xsl:param name="admon.graphics" select="1"/>
+   <xsl:param name="admon.graphics.extension" select="'.png'"/>
+   <xsl:param name="admon.graphics.path">images/pdf/</xsl:param>
 
 </xsl:stylesheet>

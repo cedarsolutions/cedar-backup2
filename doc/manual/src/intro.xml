@@ -104,10 +104,8 @@
       
       <para>
          If you experience a problem, your best bet is to write the Cedar
-         Backup Users mailing list.
-         <footnote><para>See the Cedar Solutions 
-         <ulink url="http://cedar-solutions.com/listarchives/">Mailing Lists</ulink>
-         page for more information.</para></footnote> 
+         Backup Users mailing list.  <footnote><para>See <ulink
+         url="http://cedar-solutions.com/listarchives/"/>.</para></footnote>
          This is a public list for all Cedar Backup users.  If you write to
          this list, you might get help from me, or from some other user who has
          experienced the same thing you have.  
@@ -117,9 +115,8 @@
          If you know that the problem you have found constitutes a bug, or
          if you would like to make an enhancement request, then feel free to
          file a bug report in the Cedar Solutions Bug Tracking System.  
-         <footnote><para>
-         <ulink url="http://cedar-solutions.com/bugzilla/">http://cedar-solutions.com/bugzilla/</ulink>
-         </para></footnote>
+         <footnote><para>See <ulink
+         url="http://cedar-solutions.com/bugzilla/"/>.</para></footnote>
       </para>
 
       <para>
@@ -139,10 +136,9 @@
          Regardless of how you report your problem, please try to provide as
          much information as possible about the behavior you observed and the
          environment in which the problem behavior occurred.
-         <footnote><para>See Simon Tatham's excellent bug reporting tutorial,
-         called <ulink
-         url="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html"> How to
-         Report Bugs Effectively</ulink>.</para></footnote> 
+         <footnote><para>See Simon Tatham's excellent bug reporting tutorial:
+         <ulink url="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html"/>
+         .</para></footnote> 
       </para>
          
       <para>
@@ -189,13 +185,12 @@
       <para>
          Because I had become fed up with the prospect of maintaining a large
          volume of Perl code, I decided to abandon that language in favor of
-         Python. <footnote><para>See <ulink url="http://www.python.org/">Python's 
-         homepage</ulink> for more information.</para></footnote>
-         At the time, I chose Python mostly because I was interested in
-         learning it, but in retrospect it turned out to be a very good
-         decision.  Python has almost all of the strengths of Perl, but few of
-         its inherent weaknesses (primarily, Python code often ends up being
-         much more readable than Perl code).
+         Python. <footnote><para>See <ulink url="http://www.python.org/"/>
+         .</para></footnote> At the time, I chose Python mostly because I was
+         interested in learning it, but in retrospect it turned out to be a
+         very good decision.  Python has almost all of the strengths of Perl,
+         but few of its inherent weaknesses (primarily, Python code often ends
+         up being much more readable than Perl code).
       </para>
 
       <para>
@@ -226,15 +221,15 @@
          <application>kbackup</application>, still left something to be
          desired.  In November of 2003, I began an attempt at cleaning
          up the codebase.  I converted all of the internal documentation to use
-         Epydoc, <footnote><para>Epydoc is a Python code documentation tool.  
-         See <ulink url="http://epydoc.sourceforge.net/">Epydoc's SourceForge site</ulink> 
-         for more information.</para></footnote> and updated the code to use 
-         the newly-released Python logging package <footnote><para>See the
-         <ulink url="http://docs.python.org/lib/module-logging.html">Python library documentation</ulink>
-         for more information.</para></footnote> after having a good experience
-         with Java's log4j.  However, I was still not satisfied with the code,
-         which did not lend itself to the kinds of automated regression testing
-         I had become used to when working with junit in my Java code.
+         Epydoc, <footnote><para>Epydoc is a Python code documentation tool.
+         See <ulink url="http://epydoc.sourceforge.net/"/>.</para></footnote>
+         and updated the code to use the newly-released Python logging package
+         <footnote><para>See <ulink
+         url="http://docs.python.org/lib/module-logging.html"/>
+         .</para></footnote> after having a good experience with Java's log4j.
+         However, I was still not satisfied with the code, which did not lend
+         itself to the kinds of automated regression testing I had become used
+         to when working with junit in my Java code.
       </para>
 
       <para>
@@ -249,10 +244,10 @@
          it.  Utility code is less application-specific, and is now usable as a
          general-purpose library.  The 2.0 release also includes a complete
          regression test suite of over 1500 tests, <footnote><para>Implemented
-         using Python's unit test framework.  See the 
-         <ulink url="http://docs.python.org/lib/module-unittest.html">Python library documentation</ulink>
-         for more information.</para></footnote> which will help to ensure that quality
-         is maintained as development continues into the future.
+         using Python's unit test framework.  See <ulink
+         url="http://docs.python.org/lib/module-unittest.html"/>
+         .</para></footnote> which will help to ensure that quality is
+         maintained as development continues into the future.
       </para>
 
    </sect1>

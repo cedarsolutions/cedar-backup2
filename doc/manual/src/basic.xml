@@ -458,17 +458,16 @@
          standard way of creating a filesystem to be copied to a CD.  It is
          essentially a <quote>filesystem-within-a-file</quote> and most Linux
          systems can actually mount ISO image files just like hard drives,
-         floppy disks or actual CDs.  See this <ulink
-         url="http://en.wikipedia.org/wiki/ISO_image">Wikipedia article</ulink>
-         for more information.</para></footnote> is written to the media on the
-         first day of the week, and then additional multisession images are
-         added to the media each day that Cedar Backup runs.  This way, the
-         media is complete and usable at the end of every backup run, but a
-         single disc can be used all week long.  If your backup device does not
-         support multisession images, then a new ISO image will be written to
-         the media each time Cedar Backup runs (and you should probably confine
-         yourself to the <quote>daily</quote> backup mode to avoid losing
-         data).
+         floppy disks or actual CDs.  See Wikipedia for more information: <ulink
+         url="http://en.wikipedia.org/wiki/ISO_image"/>.</para></footnote> is
+         written to the media on the first day of the week, and then additional
+         multisession images are added to the media each day that Cedar Backup
+         runs.  This way, the media is complete and usable at the end of every
+         backup run, but a single disc can be used all week long.  If your
+         backup device does not support multisession images, then a new ISO
+         image will be written to the media each time Cedar Backup runs (and
+         you should probably confine yourself to the <quote>daily</quote>
+         backup mode to avoid losing data).
       </para>
 
       <para>
@@ -529,9 +528,8 @@
          testing, or unless someone else is willing to do research and test
          code on my behalf.   If you would like to see support for DVDs in
          Cedar Backup and can offer some help, please write the Cedar Backup
-         Users mailing list.  <footnote><para>See the Cedar Solutions <ulink
-         url="http://cedar-solutions.com/listarchives/"> Mailing Lists</ulink>
-         page for more information.</para></footnote>
+         Users mailing list.  
+         <footnote><para>See <ulink url="http://cedar-solutions.com/listarchives/"/>.</para></footnote>
       </para>
 
    </sect1>
@@ -559,14 +557,13 @@
          instead based on saved-off checksums, one for each backed-up file.
          When a full backup is run, Cedar Backup gathers a checksum value
          <footnote><para>The checksum is actually an <firstterm>SHA
-         cryptographic hash</firstterm>.  See this <ulink
-         url="http://en.wikipedia.org/wiki/SHA-1">Wikipedia article</ulink> 
-         for more information.</para></footnote> for each
-         backed-up file.  The next time an incremental backup is run, Cedar
-         Backup checks its list of file/checksum pairs for each file that might
-         potentially be backed up.  If the file's checksum value does not match
-         the saved-off value, or if the file does not appear in the list of
-         file/checksum pairs, then it will be backed up and a new checksum
+         cryptographic hash</firstterm>.  See Wikipedia for more information:
+         <ulink url="http://en.wikipedia.org/wiki/SHA-1"/>.</para></footnote> 
+         for each backed-up file.  The next time an incremental backup is run,
+         Cedar Backup checks its list of file/checksum pairs for each file that
+         might potentially be backed up.  If the file's checksum value does not
+         match the saved-off value, or if the file does not appear in the list
+         of file/checksum pairs, then it will be backed up and a new checksum
          value will be placed into the list.  Otherwise, the file will be
          ignored and the checksum value will be left unchanged.
       </para>
@@ -630,7 +627,7 @@
          general-purpose extensions will be accepted into the official
          codebase, and we already have plans for a Subversion extension, a
          MySQL extension, and an extension for collecting important system
-         information (<command>fdisk</command>information, etc.) to accompany a
+         information (<command>fdisk</command> information, etc.) to accompany a
          backup.
       </para>
 

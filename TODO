@@ -34,16 +34,11 @@ ADMINISTRATIVE
 
 DOCUMENTATION
 
-* Complete appendix A (differences)
-* Complete appendix B (extension interface)
-* Complete appendix C (dependencies)
+* Complete appendix A (extension interface)
 
 * Manage footnotes better.  In some formats, duplicates look OK.  In others, they
   look stupid.  If two things use the "same" footnote (basically) then set an ID
   for the first time and refer to it later as needed.
-
-* Maybe see whether we really need Docbook Lite or whether plain old docbook
-  would work.  No need to put in an extra "dependency" if it's not needed.
 
 * Make sure that sample config file is valid and has sensible, consistent paths in it
 * Rewrite Cedar Backup webpage online, to show new version and link to old version.

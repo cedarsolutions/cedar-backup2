@@ -64,7 +64,8 @@ MANUAL_PS_TARGET         = $(MANUAL_DIR)/manual.ps
 MANUAL_FO_TARGET         = $(MANUAL_DIR)/manual.fo
 MANUAL_XML_SOURCE        = $(MANUAL_DIR)/book.xml
 MANUAL_ALL_SOURCE        = $(MANUAL_DIR)/*.xml
-MANUAL_IMAGES            = $(MANUAL_DIR)/images/*.png
+MANUAL_HTML_IMAGES       = $(MANUAL_DIR)/images/html/*.png
+MANUAL_PDF_IMAGES        = $(MANUAL_DIR)/images/pdf/*.png
 
 
 #############################################
@@ -97,7 +98,7 @@ install-manual-html: $(MANUAL_HTML_TARGET) $(INSTALL_DIR)
 	$(INSTALL) -d $(INSTALL_DIR)/images
 	$(INSTALL) $(MANUAL_HTML_TARGET) $(INSTALL_DIR)
 	$(INSTALL) $(STYLES_CSS) $(INSTALL_DIR)
-	$(INSTALL) $(MANUAL_IMAGES) $(INSTALL_DIR)/images
+	$(INSTALL) $(MANUAL_HTML_IMAGES) $(INSTALL_DIR)/images
 
 
 ###########################
@@ -107,18 +108,18 @@ install-manual-html: $(MANUAL_HTML_TARGET) $(INSTALL_DIR)
 manual-chunk: $(MANUAL_CHUNK_TARGET)
 
 # The trailing slash in the $(XSLTPROC) command is essential, so that xsltproc will output pages to the dir
-$(MANUAL_CHUNK_TARGET): $(MANUAL_ALL_SOURCE) $(STYLES_CSS) $(MANUAL_IMAGES)
+$(MANUAL_CHUNK_TARGET): $(MANUAL_ALL_SOURCE) $(STYLES_CSS) $(MANUAL_HTML_IMAGES)
 	$(MKDIR) -p $(MANUAL_CHUNK_DIR)
 	$(MKDIR) -p $(MANUAL_CHUNK_DIR)/images
 	$(XSLTPROC) --output $(MANUAL_CHUNK_DIR)/ $(XSL_CHUNK) $(MANUAL_XML_SOURCE)
 	$(CP) $(STYLES_CSS) $(MANUAL_CHUNK_DIR)
-	$(CP) $(MANUAL_IMAGES) $(MANUAL_CHUNK_DIR)/images
+	$(CP) $(MANUAL_HTML_IMAGES) $(MANUAL_CHUNK_DIR)/images
 
 install-manual-chunk: $(MANUAL_CHUNK_TARGET) $(INSTALL_DIR)
 	$(INSTALL) -d $(INSTALL_DIR)/images
 	$(INSTALL) $(MANUAL_CHUNK_DIR)/*.html $(INSTALL_DIR)
 	$(INSTALL) $(STYLES_CSS) $(INSTALL_DIR)
-	$(INSTALL) $(MANUAL_IMAGES) $(INSTALL_DIR)/images
+	$(INSTALL) $(MANUAL_HTML_IMAGES) $(INSTALL_DIR)/images
 
 
 ##################
@@ -127,7 +128,7 @@ install-manual-chunk: $(MANUAL_CHUNK_TARGET) $(INSTALL_DIR)
 
 manual-pdf: $(MANUAL_PDF_TARGET)
 
-$(MANUAL_PDF_TARGET): $(MANUAL_ALL_SOURCE) $(MANUAL_IMAGES)
+$(MANUAL_PDF_TARGET): $(MANUAL_ALL_SOURCE) $(MANUAL_PDF_IMAGES)
 	$(XSLTPROC) --output $(MANUAL_FO_TARGET) $(XSL_FO) $(MANUAL_XML_SOURCE)
 	$(FOP) $(MANUAL_TOP) -fo $(MANUAL_FO_TARGET) -pdf $(MANUAL_PDF_TARGET)
 
@@ -141,7 +142,7 @@ install-manual-pdf: $(MANUAL_PDF_TARGET) $(INSTALL_DIR)
 
 manual-ps: $(MANUAL_PS_TARGET)
 
-$(MANUAL_PS_TARGET): $(MANUAL_ALL_SOURCE) $(MANUAL_IMAGES)
+$(MANUAL_PS_TARGET): $(MANUAL_ALL_SOURCE) $(MANUAL_PDF_IMAGES)
 	$(XSLTPROC) --output $(MANUAL_FO_TARGET) $(XSL_FO) $(MANUAL_XML_SOURCE)
 	$(FOP) $(MANUAL_TOP) -fo $(MANUAL_FO_TARGET) -ps $(MANUAL_PS_TARGET)
 
