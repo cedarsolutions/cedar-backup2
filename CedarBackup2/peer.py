@@ -47,7 +47,7 @@ Provides backup peer-related objects.
 # BackupPeer class definition
 ########################################################################
 
-def BackupPeer(object):
+class BackupPeer(object):
    pass
 
 
@@ -55,7 +55,7 @@ def BackupPeer(object):
 # LocalPeer class definition
 ########################################################################
 
-def LocalPeer(BackupPeer):
+class LocalPeer(BackupPeer):
    pass
 
 
@@ -63,7 +63,7 @@ def LocalPeer(BackupPeer):
 # RemotePeer class definition
 ########################################################################
 
-def RemotePeer(BackupPeer):
+class RemotePeer(BackupPeer):
    pass
 
 

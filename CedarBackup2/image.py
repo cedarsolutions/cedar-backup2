@@ -47,7 +47,7 @@ Provides ISO image-related objects.
 # IsoImage class definition
 ########################################################################
 
-def IsoImage(object):
+class IsoImage(object):
    pass
 
 
