@@ -16,19 +16,16 @@
 
 MISSING FUNCTIONALITY FOR 2.0
 
-None!
+None
 
 
 ITEMS THAT SHOULD BE DONE BUT NEED TESTING
 
 * Build some unit tests for generic action-related code
-* Write unit test for deviceMounted() function - might be difficult?
-* Test _ActionSet and _ActionItem functionality, hopefully in a unit test of some sort
 
 
 ADMINISTRATIVE
 
-* Change sort order of parameters, classes within modules, etc. where needed in Epydoc
 * Do a bunch of sample runs to get the logging level right (difference between "normal" and debug...?)
 * Come up with a standard svn label script to do releases, so I can't forget as easily.
 * Backport Python 2.3 and Python XML for 2.3 to woody to support 1.0.  Couldn't we have released sooner?
@@ -60,5 +57,6 @@ FUTURE FUNCTIONALITY
 * Prevent two backups from running against the same config file (?)
 * Make incremental backup safer if full is missed, i.e. "expire" incremental stuff after a week? (bug #6)
 * Somehow figure out if a full backup (i.e. disc-restart) has been missed (bug #6)
-
+* Perhaps update configuration to disallow two extensions with same name (right now, behavior is undefined).
+* Perhaps update configuration to disallow two peers with same name (right now, behavior is undefined).
 

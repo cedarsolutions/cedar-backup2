@@ -952,13 +952,13 @@ def executeValidate(configPath, options, config):
    else:
       logfunc = logger.error  # error so it goes to the screen
    valid = True
-   valid |= _validateReference(config, logfunc)
-   valid |= _validateOptions(config, logfunc)
-   valid |= _validateCollect(config, logfunc)
-   valid |= _validateStage(config, logfunc)
-   valid |= _validateStore(config, logfunc)
-   valid |= _validatePurge(config, logfunc)
-   valid |= _validateExtensions(config, logfunc)
+   valid &= _validateReference(config, logfunc)
+   valid &= _validateOptions(config, logfunc)
+   valid &= _validateCollect(config, logfunc)
+   valid &= _validateStage(config, logfunc)
+   valid &= _validateStore(config, logfunc)
+   valid &= _validatePurge(config, logfunc)
+   valid &= _validateExtensions(config, logfunc)
    if valid:
       logfunc("Configuration is valid.")
    else:
@@ -1001,7 +1001,7 @@ def _validateOptions(config, logfunc):
       logfunc("Required options configuration does not exist.")
       valid = False
    else:
-      valid |= _checkDir(config.options.workingDir, True, logfunc, "Working directory")
+      valid &= _checkDir(config.options.workingDir, True, logfunc, "Working directory")
       try:
          getUidGid(config.options.backupUser, config.options.backupGroup)
       except ValueError:
@@ -1025,10 +1025,10 @@ def _validateCollect(config, logfunc):
    """
    valid = True
    if config.collect is not None:
-      valid |= _checkDir(config.stage.targetDir, True, logfunc, "Collect target directory")
+      valid &= _checkDir(config.collect.targetDir, True, logfunc, "Collect target directory")
       if config.collect.collectDirs is not None:
          for collectDir in config.collect.collectDirs:
-            valid |= _checkDir(collectDir.absolutePath, False, logfunc, "Collect directory")
+            valid &= _checkDir(collectDir.absolutePath, False, logfunc, "Collect directory")
    return valid
 
 def _validateStage(config, logfunc):
@@ -1052,10 +1052,10 @@ def _validateStage(config, logfunc):
    """
    valid = True
    if config.stage is not None:
-      valid |= _checkDir(config.stage.targetDir, True, logfunc, "Stage target dir ")
+      valid &= _checkDir(config.stage.targetDir, True, logfunc, "Stage target dir ")
       if config.stage.localPeers is not None:
          for peer in config.stage.localPeers:
-            valid |= _checkDir(peer.collectDir, False, logfunc, "Local peer collect dir ")
+            valid &= _checkDir(peer.collectDir, False, logfunc, "Local peer collect dir ")
    return valid
 
 def _validateStore(config, logfunc):
@@ -1074,7 +1074,7 @@ def _validateStore(config, logfunc):
    """
    valid = True
    if config.store is not None:
-      valid |= _checkDir(config.store.sourceDir, False, logfunc, "Store source directory")
+      valid &= _checkDir(config.store.sourceDir, False, logfunc, "Store source directory")
       try:
          _getWriter(config)
       except ValueError:
@@ -1099,7 +1099,7 @@ def _validatePurge(config, logfunc):
    if config.purge is not None:
       if config.purge.purgeDirs is not None:
          for purgeDir in config.purge.purgeDirs:
-            valid |= _checkDir(purgeDir.absolutePath, True, logfunc, "Purge directory")
+            valid &= _checkDir(purgeDir.absolutePath, True, logfunc, "Purge directory")
    return valid
 
 def _validateExtensions(config, logfunc):
