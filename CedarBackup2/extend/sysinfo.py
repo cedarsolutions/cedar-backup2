@@ -72,7 +72,7 @@ import logging
 from bz2 import BZ2File
 
 # Cedar Backup modules
-from CedarBackup2.util import executeCommand
+from CedarBackup2.util import executeCommand, changeOwnership
 
 
 ########################################################################
@@ -116,15 +116,17 @@ def executeAction(configPath, options, config):
    logger.debug("Executing sysinfo extended action.")
    if config.options is None or config.collect is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
-   _dumpDebianPackages(config.collect.targetDir)
-   _dumpPartitionTable(config.collect.targetDir)
-   _dumpFilesystemContents(config.collect.targetDir)
+   _dumpDebianPackages(config.collect.targetDir, config.options.backupUser, config.options.backupGroup)
+   _dumpPartitionTable(config.collect.targetDir, config.options.backupUser, config.options.backupGroup)
+   _dumpFilesystemContents(config.collect.targetDir, config.options.backupUser, config.options.backupGroup)
    logger.info("Executed the sysinfo extended action successfully.")
 
-def _dumpDebianPackages(targetDir, compress=True):
+def _dumpDebianPackages(targetDir, backupUser, backupGroup, compress=True):
    """
    Dumps a list of currently installed Debian packages via C{dpkg}.
    @param targetDir: Directory to write output file into.
+   @param backupUser: User which should own the resulting fule.
+   @param backupGroup: Group which should own the resulting fule.
    @param compress: Indicates whether to compress the output file.
    @raise IOError: If the dump fails for some reason.
    """
@@ -142,11 +144,14 @@ def _dumpDebianPackages(targetDir, compress=True):
          outputFile.close()
       if not os.path.exists(filename):
          raise IOError("File [%s] does not seem to exist after Debian package dump finished." % filename)
+      changeOwnership(filename, backupUser, backupGroup)
 
-def _dumpPartitionTable(targetDir, compress=True):
+def _dumpPartitionTable(targetDir, backupUser, backupGroup, compress=True):
    """
    Dumps information about the partition table via C{fdisk}.
    @param targetDir: Directory to write output file into.
+   @param backupUser: User which should own the resulting fule.
+   @param backupGroup: Group which should own the resulting fule.
    @param compress: Indicates whether to compress the output file.
    @raise IOError: If the dump fails for some reason.
    """
@@ -164,11 +169,14 @@ def _dumpPartitionTable(targetDir, compress=True):
          outputFile.close()
       if not os.path.exists(filename):
          raise IOError("File [%s] does not seem to exist after partition table dump finished." % filename)
+      changeOwnership(filename, backupUser, backupGroup)
 
-def _dumpFilesystemContents(targetDir, compress=True):
+def _dumpFilesystemContents(targetDir, backupUser, backupGroup, compress=True):
    """
    Dumps complete listing of filesystem contents via C{ls -laR}.
    @param targetDir: Directory to write output file into.
+   @param backupUser: User which should own the resulting fule.
+   @param backupGroup: Group which should own the resulting fule.
    @param compress: Indicates whether to compress the output file.
    @raise IOError: If the dump fails for some reason.
    """
@@ -180,6 +188,7 @@ def _dumpFilesystemContents(targetDir, compress=True):
       outputFile.close()
    if not os.path.exists(filename):
       raise IOError("File [%s] does not seem to exist after filesystem contents dump finished." % filename)
+   changeOwnership(filename, backupUser, backupGroup)
 
 def _getOutputFile(targetDir, name, compress=True):
    """

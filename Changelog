@@ -3,6 +3,7 @@ Version 2.2.0	09 Mar 2005
 	* Fix bug related to execution of commands with huge output.
 	* Create custom class util.Pipe, inheriting from popen2.Popen4.
 	* Re-implement util.executeCommand() in terms of util.Pipe.
+	* Change ownership of sysinfo files to backup user/group after write.
 
 Version 2.1.3	08 Mar 2005
 
