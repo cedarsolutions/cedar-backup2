@@ -1,8 +1,13 @@
-Version 2.1.3	unreleased
+Version 2.1.3	08 Mar 2005
 
-	* Explicitly path 'fdisk' command in sysinfo extension.
-	* Modify behavior and logging when optional sysinfo command is not found.
+	* In sysinfo extension, explicitly path to /sbin/fdisk command.
+	* Modify behavior and logging when optional sysinfo commands are not found.
+	* Add extra logging around boundaries and capacity calculations in writer.py.
 	* Docs now suggest --output in cron command line to aid problem diagnosis.
+	* Fix bug in capacity calculation, this time for media with a single session.
+	* Validate all capacity code against in v1.0 code, making changes as needed.
+	* Re-evaluate all capacity-related regression tests against v1.0 code.
+	* Add new regression tests for capacity bugs which weren't already detected.
 
 Version 2.1.2	07 Mar 2005
 
