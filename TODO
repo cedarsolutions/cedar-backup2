@@ -32,9 +32,7 @@ FUTURE FUNCTIONALITY
 TESTING IMPROVEMENTS
 
 * Create unit tests for the store/rebuild "find directories" functions in action.py (and maybe refactor)
-* Come up with non-PyUnit code to stress test high-actions, etc. 
-* Figure out why the hell tests fail in a Debian pbuilder environment.
-* For that matter, figure out why the build fails in a 'woody' pbuilder environment.
+* Come up with non-PyUnit code to stress test high-level actions, etc. 
 
 
 DOCUMENTATION IMPROVEMENTS
