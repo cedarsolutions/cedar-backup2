@@ -49,6 +49,7 @@ Provides filesystem-related objects.
 ########################################################################
 
 # System modules
+import sys
 import os
 import re
 import sha
@@ -57,7 +58,7 @@ import tarfile
 
 # Cedar Backup modules
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
-from CedarBackup2.util import AbsolutePathList, ObjectTypeList, calculateFileAge
+from CedarBackup2.util import AbsolutePathList, ObjectTypeList, calculateFileAge, encodePath
 
 
 ########################################################################
@@ -106,17 +107,6 @@ class FilesystemList(list):
    @note: Regular expression patterns that apply to paths are assumed to be
    bounded at front and back by the beginning and end of the string, i.e. they
    are treated as if they begin with C{^} and end with C{$}.
-
-   @note: You I{will} get different behavior if you pass in unicode paths (i.e.
-   C{u"/path/to/file"}) versus just normal string paths.  In particular, your
-   user's locale will have an effect on how UTF-8 filenames are treated.
-   Chances are, everything will look like it's working until you run into a
-   directory containing a filename something like C{"\xe2\x99\xaa\xe2\x99\xac"}.  
-   What will then happen is that file path operations (like C{os.path.join})
-   will begin failing because your original path is unicode and the file path
-   itself is just a string (but really a string outside the normal range of
-   ASCII values).  It's going to be really confusing to debug.  I suggest
-   sticking with simple strings, instead.
 
    @sort: __init__, addFile, addDir, addDirContents, removeFiles, removeDirs,
           removeLinks, removeMatch, removeInvalid, normalize, validate, 
@@ -270,8 +260,11 @@ class FilesystemList(list):
       @type path: String representing a path on disk
 
       @return: Number of items added to the list.
+
       @raise ValueError: If path is not a file or does not exist.
+      @raise ValueError: If the path could not be encoded properly.
       """
+      path = encodePath(path)
       if not os.path.exists(path) or not os.path.isfile(path):
          logger.debug("Path [%s] is not a file or does not exist on disk." % path)
          raise ValueError("Path is not a file or does not exist on disk.")
@@ -304,8 +297,11 @@ class FilesystemList(list):
       @type path: String representing a path on disk
 
       @return: Number of items added to the list.
+
       @raise ValueError: If path is not a directory or does not exist.
+      @raise ValueError: If the path could not be encoded properly.
       """
+      path = encodePath(path)
       if not os.path.exists(path) or not os.path.isdir(path):
          logger.debug("Path [%s] is not a directory or does not exist on disk." % path)
          raise ValueError("Path is not a directory or does not exist on disk.")
@@ -356,8 +352,11 @@ class FilesystemList(list):
       @type path: String representing a path on disk
 
       @return: Number of items recursively added to the list
+
       @raise ValueError: If path is not a directory or does not exist.
+      @raise ValueError: If the path could not be encoded properly.
       """
+      path = encodePath(path)
       return self._addDirContentsRecursive(path)
 
    def _addDirContentsRecursive(self, path, includePath=True):
@@ -376,6 +375,7 @@ class FilesystemList(list):
       @param includePath: Indicates whether to include the path as well as contents.
 
       @return: Number of items recursively added to the list
+
       @raise ValueError: If path is not a directory or does not exist.
       """
       added = 0
@@ -647,8 +647,11 @@ class BackupFileList(FilesystemList):
       @type path: String representing a path on disk
 
       @return: Number of items added to the list.
+
       @raise ValueError: If path is not a directory or does not exist.
+      @raise ValueError: If the path could not be encoded properly.
       """
+      path = encodePath(path)
       if os.path.isdir(path) and not os.path.islink(path):
          return 0
       else:
@@ -799,8 +802,10 @@ class BackupFileList(FilesystemList):
 
       @raise ValueError: If mode is not valid
       @raise ValueError: If list is empty
+      @raise ValueError: If the path could not be encoded properly.
       @raise TarError: If there is a problem creating the tar file
       """
+      path = encodePath(path)
       if len(self) == 0: raise ValueError("Empty list cannot be used to generate tarfile.")
       if(mode == 'tar'): tarmode = "w:"
       elif(mode == 'targz'): tarmode = "w:gz"
@@ -943,8 +948,11 @@ class PurgeItemList(FilesystemList):
       @type path: String representing a path on disk
 
       @return: Number of items recursively added to the list
+
       @raise ValueError: If path is not a directory or does not exist.
+      @raise ValueError: If the path could not be encoded properly.
       """
+      path = encodePath(path)
       return super(PurgeItemList, self)._addDirContentsRecursive(path, includePath=False)
 
 

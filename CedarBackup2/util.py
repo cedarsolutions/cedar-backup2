@@ -748,11 +748,16 @@ def encodePath(path):
    what this function accomplishes.  Any function which takes a filesystem path
    as an argument should encode it first, before using it for any other purpose.
 
-   @parma path: Path to encode
+   @note: As a special case, if C{path} is C{None}, then this function will
+   return C{None}.
+
+   @param path: Path to encode
 
    @return: Path, as a string, encoded appropriately
-   @raise ValueError: If the path cannot be properly encoded.
+   @raise ValueError: If the path cannot be encoded properly.
    """
+   if path is None:
+      return path
    try:
       if isinstance(path, unicode):
          encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()

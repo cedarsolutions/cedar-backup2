@@ -62,7 +62,7 @@ import re
 import logging
 
 # Cedar Backup modules
-from CedarBackup2.util import executeCommand, convertSize, UNIT_SECTORS, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES
+from CedarBackup2.util import executeCommand, convertSize, UNIT_SECTORS, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, encodePath
 
 
 ########################################################################
@@ -93,7 +93,9 @@ def _validateDevice(device, unittest=False):
    @param unittest: Indicates whether we're unit testing.
    @return: Device as a string, suitable for assignment to C{CdWriter.device}.
    @raise ValueError: If the device value is invalid.
+   @raise ValueError: If some path cannot be encoded properly.
    """
+   device = encodePath(device)
    if not os.path.isabs(device):
       raise ValueError("Backup device must be an absolute path.")
    if not unittest and not os.path.exists(device):
@@ -724,8 +726,10 @@ class CdWriter(object):
       @type writeMulti: Boolean true/false
 
       @raise ValueError: If the image path is not absolute.
+      @raise ValueError: If some path cannot be encoded properly.
       @raise IOError: If the media could not be written to for some reason.
       """
+      imagePath = encodePath(imagePath)
       if not os.path.isabs(imagePath):
          raise ValueError("Image path must be absolute.")
       if newDisc:
