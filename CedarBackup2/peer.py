@@ -68,7 +68,7 @@ from CedarBackup2.filesystem import FilesystemList
 
 logger                  = logging.getLogger("CedarBackup2.peer")
 
-DEF_RCP_COMMAND         = [ "/usr/bin/scp", "-B", ]
+DEF_RCP_COMMAND         = [ "/usr/bin/scp", "-B", "-q", "-C" ]
 DEF_COLLECT_INDICATOR   = "cback.collect"
 DEF_STAGE_INDICATOR     = "cback.stage"
 
@@ -677,6 +677,11 @@ class RemotePeer(object):
       """
       Copies a remote source file to a target file.
 
+      @note: Internally, we have to go through and escape any spaces in the
+      source and target paths with double-backslash, otherwise things get
+      screwed up.  I hope this is portable to various different rcp methods,
+      but I guess it might not be (all I have to test with is OpenSSH).
+
       @note: This is a static method.
 
       @note: If you have user/group as strings, call the getUidGid() function
@@ -706,8 +711,8 @@ class RemotePeer(object):
       @raise IOError: If there is an IO error copying the file
       @raise OSError: If there is an OS error changing permissions on the file
       """
-      copySource = "%s@%s:%s" % (remoteUser, remoteHost, sourceFile)
-      result = executeCommand(rcpCommand, [copySource, targetFile])[0]
+      copySource = "%s@%s:%s" % (remoteUser, remoteHost, sourceFile.replace(" ", "\\ "))
+      result = executeCommand(rcpCommand, [copySource, targetFile.replace(" ", "\\ ")])[0]
       if result != 0:
          raise IOError("Error (%d) copying file from remote host." % result)
       if ownership is not None:
@@ -719,6 +724,11 @@ class RemotePeer(object):
    def _pushLocalFile(remoteUser, remoteHost, rcpCommand, sourceFile, targetFile):
       """
       Copies a local source file to a remote host.
+
+      @note: Internally, we have to go through and escape any spaces in the
+      source and target paths with double-backslash, otherwise things get
+      screwed up.  I hope this is portable to various different rcp methods,
+      but I guess it might not be (all I have to test with is OpenSSH).
 
       @note: This is a static method.
 
@@ -743,8 +753,8 @@ class RemotePeer(object):
       @raise IOError: If there is an IO error copying the file
       @raise OSError: If there is an OS error changing permissions on the file
       """
-      copyTarget = "%s@%s:%s" % (remoteUser, remoteHost, targetFile)
-      result = executeCommand(rcpCommand, [sourceFile, copyTarget])[0]
+      copyTarget = "%s@%s:%s" % (remoteUser, remoteHost, targetFile.replace(" ", "\\ "))
+      result = executeCommand(rcpCommand, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
       if result != 0:
          raise IOError("Error (%d) copying file to remote host." % result)
    _pushLocalFile = staticmethod(_pushLocalFile)
