@@ -61,12 +61,11 @@
       </para>
 
       <para>
-         The <command>cback</command> script is configured using an XML
-         configuration file and through some command-line options.  The
-         configuration file is normally stored in
-         <filename>/etc/cback.conf</filename>, but can be overridden at runtime
-         (see <xref linkend="cedar-config"/> for more information on the configuration
-         file itself).
+         The <command>cback</command> script is configured via command-line
+         options and an XML configuration file on disk.  The configuration file
+         is normally stored in <filename>/etc/cback.conf</filename>, but this
+         path can be overridden at runtime.   See <xref linkend="cedar-config"/>
+         for more information on how Cedar Backup is configured.
       </para>
 
    </sect1>
@@ -157,13 +156,13 @@
          <title>The Collect Action</title>
 
          <para>
-            The collect action is the first action to be executed
-            as part of a standard backup run.  It executes on a client peer node.
-            Based on configuration, this action traverses the client's
-            filesystem and gathers files to be backed up.  Each configured
-            high-level directory is collected up into its own
-            <command>tar</command> file in the <firstterm>collect
-            directory</firstterm>.   The tar files can either be uncompressed
+            The collect action is the first action to be executed as part of a
+            standard backup run.  It executes on a client peer node.  Based on
+            configuration, this action traverses the client's filesystem and
+            gathers files to be backed up.  Each configured high-level
+            directory is collected up into its own <command>tar</command> file
+            in the <firstterm>collect directory</firstterm>.   The
+            <command>tar</command>files can either be uncompressed
             (<filename>.tar</filename>) or compressed with either
             <command>gzip</command> (<filename>.tar.gz</filename>) or
             <command>bzip2</command> (<filename>.tar.bz2</filename>).
@@ -234,8 +233,8 @@
             The store action is the third action to be executed as part of a
             standard backup run.  It executes on a master peer node.  The
             master machine determines the location of the current staging
-            directory, and then writes the contents that staging directory to
-            disc.  After the contents of the directory have been written to
+            directory, and then writes the contents of that staging directory
+            to disc.  After the contents of the directory have been written to
             disc, an optional validation step ensures that the write was
             successful.
          </para>
@@ -365,8 +364,8 @@
          </para>
 
          <para>
-            To decide what data to write to disc again, the rebuild 
-            action looks back and finds the previous starting day of week and
+            To decide what data to write to disc again, the rebuild action
+            looks back and finds the nearest previous starting day of week and
             its date.  Working from there, it finds any remaining staging
             directories between that date and the current date.  If any staging
             directories are found, they are all written to disc in one big ISO
@@ -400,17 +399,17 @@
       <para>
          Prior to Cedar Backup 2.0, any such integration would have been
          completely independent of Cedar Backup itself.  The
-         <quote>external</quote> backup functionality would have to maintain
-         its own configuration and would not have had access to any Cedar
-         Backup configuration.
+         <quote>external</quote> backup functionality would have had to
+         maintain its own configuration and would not have had access to any
+         Cedar Backup configuration.
       </para>
 
       <para>
          Starting with version 2.0, Cedar Backup implements the concept of
-         <firstterm>extensions</firstterm> to the backup process.   A process
+         <firstterm>extensions</firstterm> to the backup process.   An
          extension is an action that isn't part of the standard backup process,
-         (i.e. not collect, stage, store or purge) but gets executed as part of
-         the backup process when properly configured.
+         (i.e. not collect, stage, store or purge) but can be executed by Cedar
+         Backup when properly configured.
       </para>
 
       <para>
@@ -439,8 +438,7 @@
             See <xref linkend="cedar-config"/> for more information on how
             extensions are configured.  Also, developers may be interested in
             the extensions section in <xref linkend="cedar-devel"/> and in
-            <xref linkend="cedar-appendixb"/>, which specifies the extension
-            architecture interface.
+            <xref linkend="cedar-appendixb"/>.
          </para>
       </note>
 
