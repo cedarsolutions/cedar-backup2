@@ -40,6 +40,7 @@ INSTALL                  = install
 MKDIR                    = mkdir
 RM                       = rm
 XSLTPROC                 = xsltproc
+W3M                      = w3m
 
 
 ############
@@ -62,6 +63,7 @@ MANUAL_CHUNK_TARGET      = $(MANUAL_CHUNK_DIR)/index.html  # index.html is creat
 MANUAL_PDF_TARGET        = $(MANUAL_DIR)/manual.pdf
 MANUAL_PS_TARGET         = $(MANUAL_DIR)/manual.ps
 MANUAL_FO_TARGET         = $(MANUAL_DIR)/manual.fo
+MANUAL_TEXT_TARGET       = $(MANUAL_DIR)/manual.txt
 MANUAL_XML_SOURCE        = $(MANUAL_DIR)/book.xml
 MANUAL_ALL_SOURCE        = $(MANUAL_DIR)/*.xml
 MANUAL_HTML_IMAGES       = $(MANUAL_DIR)/images/html/*.png
@@ -74,10 +76,10 @@ MANUAL_PDF_IMAGES        = $(MANUAL_DIR)/images/pdf/*.png
 
 all: manual-html manual-chunk 
 
-install: install-manual-pdf install-manual-html install-manual-chunk 
+install: install-manual-pdf install-manual-html install-manual-chunk install-manual-text
 
 clean: 
-	-@$(RM) -f $(MANUAL_HTML_TARGET) $(MANUAL_FO_TARGET)
+	-@$(RM) -f $(MANUAL_HTML_TARGET) $(MANUAL_FO_TARGET) $(MANUAL_TEXT_TARGET)
 	-@$(RM) -rf $(MANUAL_CHUNK_DIR)
 	-@$(RM) -f $(MANUAL_PDF_TARGET) $(MANUAL_PS_TARGET) 
 
@@ -87,7 +89,7 @@ $(INSTALL_DIR):
 
 ###################
 # HTML build rules
-##################*
+###################
 
 manual-html: $(MANUAL_HTML_TARGET)
 
@@ -120,6 +122,18 @@ install-manual-chunk: $(MANUAL_CHUNK_TARGET) $(INSTALL_DIR)
 	$(INSTALL) $(MANUAL_CHUNK_DIR)/*.html $(INSTALL_DIR)
 	$(INSTALL) $(STYLES_CSS) $(INSTALL_DIR)
 	$(INSTALL) $(MANUAL_HTML_IMAGES) $(INSTALL_DIR)/images
+
+###################
+# Text build rules
+###################
+
+manual-text: manual-html $(MANUAL_TEXT_TARGET)
+
+$(MANUAL_TEXT_TARGET):
+	$(W3M) -dump -cols 80 $(MANUAL_HTML_TARGET) > $(MANUAL_TEXT_TARGET)
+
+install-manual-text: $(MANUAL_TEXT_TARGET) $(INSTALL_DIR)
+	$(INSTALL) $(MANUAL_TEXT_TARGET) $(INSTALL_DIR)
 
 
 ##################
