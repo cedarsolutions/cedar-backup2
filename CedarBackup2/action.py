@@ -95,7 +95,7 @@ DIR_TIME_FORMAT      = "%Y/%m/%d"
 COLLECT_INDICATOR    = "cback.collect"
 STAGE_INDICATOR      = "cback.stage"
 STORE_INDICATOR      = "cback.store"
-DIGEST_EXTENSION     = ".sha"
+DIGEST_EXTENSION     = "sha"
 
 SECONDS_PER_DAY      = 60*60*24
 
@@ -188,18 +188,18 @@ def _getNormalizedPath(absPath):
 # _changeOwnership() function
 ##############################
 
-def _changeOwnership(user, group, path):
+def _changeOwnership(path, user, group):
    """
    Changes ownership of path to match the user and group.
+   @param path: Path whose ownership to change.
    @param user: User which owns file.
    @param group: Group which owns file.
-   @param path: Path whose ownership to change.
    """
    try:
       (uid, gid) = getUidGid(user, group)
       os.chown(path, uid, gid)
    except Exception, e:
-      logger.error("Error changing ownership of %s: %s" % (path, e))
+      logger.error("Error changing ownership of [%s]: %s" % (path, e))
 
 
 ########################
@@ -232,11 +232,11 @@ def _getWriter(config):
    @raise IOError: If there is a problem creating the writer object.
    """
    if deviceMounted(config.store.devicePath):
-      raise IOError("Device %s is currently mounted." % (config.store.devicePath))
+      raise IOError("Device [%s] is currently mounted." % (config.store.devicePath))
    if config.store.deviceType == "cdwriter":
       return CdWriter(config.store.devicePath, config.store.deviceScsiId, config.store.driveSpeed, config.store.mediaType)
    else:
-      raise ValueError("Device type '%s' is invalid." % config.store.deviceType)
+      raise ValueError("Device type [%s] is invalid." % config.store.deviceType)
 
 
 #########################
@@ -318,7 +318,7 @@ def _consistencyCheck(config, stagingDirs):
       args = [ "-tiso9660", config.store.backupDevice, mountPoint ]
       result = executeCommand(MOUNT_CMD, args, returnOutput=False, ignoreStderr=True)
       if result != 0:
-         raise IOError("Error (%d) mounting media for consistency check." % result)
+         raise IOError("Error [%d] mounting media for consistency check." % result)
       for stagingDir in stagingDirs.keys():
          dateSuffix = stagingDirs[stagingDir]
          filesystemList = BackupFileList()
@@ -393,20 +393,26 @@ def executeCollect(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise TarError: If there is a problem creating a tar file
    """
+   logger.debug("Executing collect action.")
    fullBackup = options.full
    if config.options is None or config.collect is None:
       raise ValueError("Collect configuration is not properly filled in.")
    todayIsStart = _todayIsStart(config.options.startingDay)
    resetDigest = fullBackup or todayIsStart
-   if config.collect.collectDirs is None:
+   logger.debug("Reset digest flag is [%s]" % resetDigest)
+   if config.collect.collectDirs is not None:
       for collectDir in config.collect.collectDirs:
+         logger.debug("Working with collect directory [%s]" % collectDir.absolutePath)
          collectMode = _getCollectMode(config, collectDir)
          archiveMode = _getArchiveMode(config, collectDir)
          digestPath = _getDigestPath(config, collectDir)
          tarfilePath = _getTarfilePath(config, collectDir, archiveMode)
          if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
+            logger.debug("Directory meets criteria to be backed up today.")
             _collectDirectory(config, collectDir.absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath)
-         logger.info("Completed collecting directory: %s" % collectDir.absolutePath)
+         else:
+            logger.debug("Directory will not be backed up, per collect mode.")
+         logger.info("Completed collecting directory [%s]" % collectDir.absolutePath)
    _writeCollectIndicator(config)
    logger.info("Executed the 'collect' action successfully.")
 
@@ -419,8 +425,11 @@ def _getCollectMode(config, collectDir):
    @return: Collect mode to use.
    """
    if collectDir.collectMode is None:
-      return config.collect.collectMode
-   return collectDir.collectMode
+      collectMode = config.collect.collectMode
+   else:
+      collectMode = collectDir.collectMode
+   logger.debug("Collect mode is [%s]" % collectMode)
+   return collectMode
 
 def _getArchiveMode(config, collectDir):
    """
@@ -431,8 +440,11 @@ def _getArchiveMode(config, collectDir):
    @return: Archive mode to use.
    """
    if collectDir.archiveMode is None:
-      return config.collect.archiveMode
-   return collectDir.archiveMode
+      archiveMode = config.collect.archiveMode
+   else:
+      archiveMode = collectDir.archiveMode
+   logger.debug("Archive mode is [%s]" % archiveMode)
+   return archiveMode
 
 def _getDigestPath(config, collectDir):
    """
@@ -443,7 +455,9 @@ def _getDigestPath(config, collectDir):
    """
    normalized = _getNormalizedPath(collectDir.absolutePath)
    filename = "%s.%s" % (normalized, DIGEST_EXTENSION)
-   return os.path.join(config.options.workingDir, filename)
+   digestPath = os.path.join(config.options.workingDir, filename)
+   logger.debug("Digest path is [%s]" % digestPath)
+   return digestPath
 
 def _getTarfilePath(config, collectDir, archiveMode):
    """
@@ -461,7 +475,9 @@ def _getTarfilePath(config, collectDir, archiveMode):
       extension = "tar.bz2"
    normalized = _getNormalizedPath(collectDir.absolutePath)
    filename = "%s.%s" % (normalized, extension)
-   return os.path.join(config.collect.targetDir, filename)
+   tarfilePath = os.path.join(config.collect.targetDir, filename)
+   logger.debug("Tarfile path is [%s]" % tarfilePath)
+   return tarfilePath
 
 def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath):
    """
@@ -489,13 +505,16 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
    backupList = BackupFileList()
    backupList.addDirContents(absolutePath)
    if collectMode != 'incr':
+      logger.debug("Backing up %d files in this directory." % len(backupList))
       backupList.generateTarfile(tarfilePath, archiveMode, True)
       _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
    else:
       digest = {}
       if not resetDigest:
          digest = _loadDigest(digestPath)
-         backupList.removeUnchanged(digest)
+         removed = backupList.removeUnchanged(digest)
+         logger.debug("Removed %d unchanged files from backup list." % removed)
+      logger.debug("Backing up %d files in this directory." % len(backupList))
       backupList.generateTarfile(tarfilePath, archiveMode, True)
       _changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup)
       digest = backupList.generateDigestMap()
@@ -514,13 +533,13 @@ def _loadDigest(digestPath):
    @return: Dictionary representing contents of digest path.
    """
    if not os.path.isfile(digestPath):
-      logger.debug("Digest %s does not exist on disk." % digestPath)
+      logger.debug("Digest [%s] does not exist on disk." % digestPath)
       return {}
    else:
       try: 
          return pickle.load(open(digestPath, "r"))
       except: 
-         logger.error("Failed loading digest %s from disk." % digestPath)
+         logger.error("Failed loading digest [%s] from disk." % digestPath)
          return {}
 
 def _writeDigest(config, digest, digestPath):
@@ -538,7 +557,7 @@ def _writeDigest(config, digest, digestPath):
       pickle.dump(digest, open(digestPath, "w"))
       _changeOwnership(digestPath, config.options.backupUser, config.options.backupGroup)
    except: 
-      logger.error("Failed to write digest %s to disk." % digestPath)
+      logger.error("Failed to write digest [%s] to disk." % digestPath)
 
 def _writeCollectIndicator(config):
    """
@@ -593,7 +612,7 @@ def executeStage(configPath, options, config):
    stagingDirs = _createStagingDirs(config, dailyDir, allPeers)
    for peer in allPeers:
       if not peer.checkCollectIndicator():
-         logger.error("Peer '%s' was not ready to be staged." % peer.name)
+         logger.error("Peer [%s] was not ready to be staged." % peer.name)
          continue
       targetDir = stagingDirs[peer.name]
       ownership = (config.options.backupUser, config.options.backupGroup)
@@ -796,13 +815,13 @@ def _findCorrectDailyDir(config):
    yesterdayIndicator = os.path.join(yesterdayPath, STAGE_INDICATOR)
    tomorrowIndicator = os.path.join(tomorrowPath, STAGE_INDICATOR)
    if os.path.isdir(todayPath) and os.path.exists(todayIndicator):
-      logger.info("Store process will use current day's stage directory: %s" % todayPath)
+      logger.info("Store process will use current day's stage directory [%s]" % todayPath)
       return { todayPath:todayDate }
    elif os.path.isdir(yesterdayPath) and os.path.exists(yesterdayIndicator):
-      logger.info("Store process will use previous day's stage directory: %s" % yesterdayPath)
+      logger.info("Store process will use previous day's stage directory [%s]" % yesterdayPath)
       return { yesterdayPath:yesterdayDate }
    elif os.path.isdir(tomorrowPath) and os.path.exists(tomorrowIndicator):
-      logger.info("Store process will use next day's stage directory: %s" % tomorrowPath)
+      logger.info("Store process will use next day's stage directory [%s]" % tomorrowPath)
       return { tomorrowPath:tomorrowDate }
    raise IOError("Unable to find a staging directory to store (tried today, yesterday, tomorrow).")
 
@@ -907,7 +926,7 @@ def _findRebuildDirs(config):
       stageDir = os.path.join(config.stage.targetDir, dateSuffix)
       indicator = os.path.join(stageDir, STAGE_INDICATOR)
       if os.path.isdir(stageDir) and os.path.exists(indicator):
-         logger.info("Rebuild process will include stage directory: %s" % stageDir)
+         logger.info("Rebuild process will include stage directory [%s]" % stageDir)
          stagingDirs[stageDir] = dateSuffix
    if len(stagingDirs) == 0:
       raise IOError("Unable to find any staging directories for rebuild process.")
@@ -1005,7 +1024,7 @@ def _validateOptions(config, logfunc):
       try:
          getUidGid(config.options.backupUser, config.options.backupGroup)
       except ValueError:
-         logfunc("Backup user:group (%s:%s) invalid." % (config.options.backupUser, config.options.backupGroup))
+         logfunc("Backup user:group [%s:%s] invalid." % (config.options.backupUser, config.options.backupGroup))
          valid = False
    return valid
 
@@ -1078,7 +1097,7 @@ def _validateStore(config, logfunc):
       try:
          _getWriter(config)
       except ValueError:
-         logfunc("Backup device %s (%s) is not valid." % (config.store.devicePath, config.store.deviceScsiId))
+         logfunc("Backup device [%s] [%s] is not valid." % (config.store.devicePath, config.store.deviceScsiId))
          valid = False
    return valid
 
@@ -1122,10 +1141,10 @@ def _validateExtensions(config, logfunc):
             try:
                getFunctionReference(action.module, action.function)
             except ImportError:
-               logfunc("Unable to find function %s.%s." % (action.module, action.function))
+               logfunc("Unable to find function [%s.%s]." % (action.module, action.function))
                valid = False
             except ValueError:
-               logfunc("Function %s.%s is not callable." % (action.module, action.function))
+               logfunc("Function [%s.%s] is not callable." % (action.module, action.function))
                valid = False
    return valid
 
@@ -1144,19 +1163,19 @@ def _checkDir(path, writable, logfunc, prefix):
    @return: True if the directory is OK, False otherwise.
    """
    if not os.path.exists(path):
-      logfunc("%s %s does not exist." % (prefix, path))
+      logfunc("%s [%s] does not exist." % (prefix, path))
       return False
    if not os.path.isdir(path):
-      logfunc("%s %s is not a directory." % (prefix, path))
+      logfunc("%s [%s] is not a directory." % (prefix, path))
       return False
    if not os.access(path, os.R_OK):
-      logfunc("%s %s is not readable." % (prefix, path))
+      logfunc("%s [%s] is not readable." % (prefix, path))
       return False
    if not os.access(path, os.X_OK):
-      logfunc("%s %s is not executable." % (prefix, path))
+      logfunc("%s [%s] is not executable." % (prefix, path))
       return False
    if writable and not os.access(path, os.W_OK):
-      logfunc("%s %s is not writable." % (prefix, path))
+      logfunc("%s [%s] is not writable." % (prefix, path))
       return False
    return True
 
