@@ -1,0 +1,14 @@
+#!/bin/ksh
+# Does a diff between current trunk and a released version.
+
+if [[ $# != 1 || ${1} == "--help" ]]
+then
+   print "Usage: diff <version>"
+   exit 1
+fi
+
+VERSION=${1}
+
+svn diff svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP_V${VERSION} \
+         svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/trunk
+
