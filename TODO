@@ -14,3 +14,6 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+* Finish implementing writer.py
+* Implement a removeUnchanged() method on the backup files list, taking same as its digest output
+* Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
