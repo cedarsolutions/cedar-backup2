@@ -286,7 +286,7 @@
                   <para>
                     Specify  the  permissions  for  the logfile, using the
                     numeric mode as in chmod(1).  The default mode is
-                    <literal>0640</literal> (<literallayout>-rw-r-----</literallayout>).
+                    <literal>0640</literal> (<literal>-rw-r-----</literal>).
                     This value will only be used when creating a new logfile.
                     If the logfile already exists when the
                     <command>cback</command> script is executed, it will retain
@@ -332,24 +332,1617 @@
          
       <title>Configuration File Format</title>
 
-      <sect2 id="cedar-config-configfile-collect">
-      <title/>
+      <para>
+         Cedar Backup is configured through an XML <footnote><para>See this 
+         <ulink url="http://www.xml.com/pub/a/98/10/guide0.html">guide</ulink>
+         for a basic introduction to XML.</para></footnote> configuration file,
+         usually called <filename>/etc/cback.conf</filename>.  The configuration
+         file has two sections containing general configuration items and then
+         one section for each of the standard actions <footnote><para>See 
+         <xref linkend="cedar-basic-process"/>.</para></footnote>
+         and one section used to configure Cedar Backup extensions.  These
+         sections are: <firstterm>reference</firstterm>,
+         <firstterm>options</firstterm>, <firstterm>collect</firstterm>,
+         <firstterm>stage</firstterm>, <firstterm>store</firstterm>,
+         <firstterm>purge</firstterm> and <firstterm>extensions</firstterm>.
+      </para>
+
+      <para>
+         All configuration files must contain the two general configuration
+         sections, the reference section and the options section.  Besides
+         that, administrators need only configure actions they intend to use.
+         For instance, on a client machine, administrators would generally only
+         configure the collect and purge sections, while on a master machine
+         they would have to configure all four action-related sections.  The
+         extensions section is always optional and can be omitted unless
+         extensions are in use.
+      </para>
+
+      <para>
+         Both the Python source distribution and the Debian package come with a
+         sample configuration file.  The Debian package includes a stripped
+         configure file in <filename>/etc/cback.conf</filename> and a larger
+         sample in <filename>/usr/share/doc/cedar-backup2/cback.conf.sample</filename>.
+      </para>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-reference">
+
+         <title>Reference Configuration</title>
+
+         <para>
+            The reference configuration section contains free-text elements
+            that are used for reference and logging.  The section itself is
+            required, but the individual elements may be left blank if desired.
+         </para>
+
+         <para>
+            This is an example reference configuration section:
+         </para>
+
+         <programlisting>
+&lt;reference&gt;
+   &lt;author&gt;Kenneth J. Pronovici&lt;/author&gt;
+   &lt;revision&gt;Revision 1.3&lt;/revision&gt;
+   &lt;description&gt;Sample&lt;/description&gt;
+   &lt;generator&gt;Yet to be Written Config Tool (tm)&lt;/description&gt;
+&lt;/reference&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the reference configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>author</literal></term>
+               <listitem>
+                  <para>Author of the configuration file.</para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> None
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>revision</literal></term>
+               <listitem>
+                  <para>Revision of the configuration file.</para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> None
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>description</literal></term>
+               <listitem>
+                  <para>Description of the configuration file.</para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> None
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>generator</literal></term>
+               <listitem>
+                  <para>Tool that generated the configuration file.</para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> None
+                  </para>
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+            <para>
+               The &lt;generator&gt; element is new for Cedar Backup v2.0.      
+            </para>
+         </sidebar>
+         -->
+
       </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-options">
+
+         <title>Options Configuration</title>
+
+         <para>
+            The options configuration section contains configuration options
+            that are not specific to any one action.  All of the fields are
+            required and must not be empty.
+         </para>
+
+         <para>
+            This is an example options configuration section:
+         </para>
+
+         <programlisting>
+&lt;options&gt;
+   &lt;starting_day&gt;tuesday&lt;/starting_day&gt;
+   &lt;working_dir&gt;/opt/backup/tmp&lt;/working_dir&gt;
+   &lt;backup_user&gt;backup&lt;/backup_user&gt;
+   &lt;backup_group&gt;backup&lt;/backup_group&gt;
+   &lt;rcp_command&gt;/usr/bin/scp -B&lt;/rcp_command&gt;
+&lt;/options&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the options configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>starting_day</literal></term>
+               <listitem>
+                  <para>Day that starts the week.</para>
+                  <para>
+                     Cedar Backup is built around the idea of weekly backups.
+                     The starting day of week is the day that media will be
+                     rebuilt from scratch and that incremental backup
+                     information will be cleared.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be a day of the
+                     week in English, i.e. <literal>monday</literal>,
+                     <literal>tuesday</literal>, etc.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>working_dir</literal></term>
+               <listitem>
+                  <para>Working (temporary) directory to use for backups.</para>
+                  <para>
+                     This directory is used for writing temporary files, such
+                     as tar or ISO files as they are being built.  It is also
+                     used to store day-to-day information about incremental
+                     backups.
+                  </para>
+                  <para>
+                     The working directory should contain enough free space to
+                     hold temporary tar files (on a client) or to build an ISO
+                     image (on a master).
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>backup_user</literal></term>
+               <listitem>
+                  <para>Effective user that backups should run as.</para>
+                  <para>
+                     This user must exist on the machine which is being
+                     configured, and should almost certainly not be root
+                     (although that restriction is not enforced).
+                  </para>
+                  <para>
+                     This value is also used as the default value the remote
+                     backup user for remote peers in the staging section.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>backup_group</literal></term>
+               <listitem>
+                  <para>Effective group that backups should run as.</para>
+                  <para>
+                     This group must exist on the machine which is being
+                     configured, and should almost certainly not be root or
+                     some other <quote>powerful</quote> group (although that
+                     restriction is not enforced).
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>rcp_command</literal></term>
+               <listitem>
+                  <para>Default rcp-compatible copy command for staging.</para>
+                  <para>
+                     The rcp command should be the exact command used for
+                     remote copies, including any required options.  If you are
+                     using <command>scp</command>, you should pass it the
+                     <option>-B</option> option, so <command>scp</command> will
+                     not ask for any user input (which could hang the backup).
+                     A common example is something like <command>/usr/bin/scp
+                     -B</command>.
+                  </para>
+                  <para>
+                     This value is used as the default value for all remote
+                     peers in the staging section.  Technically, this value is
+                     not needed by clients, but we require for all config files
+                     anyway.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+         
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+
+            <para>
+               In Cedar Backup v1.0, all remote peers had to use the same rcp
+               command, specified here.  In Cedar Backup v2.0, this value is
+               just used as the default by remote peers, but they can override
+               it.
+            </para>
+
+            <para>
+               in Cedar Backup v1.0, each remote peer had to specify its own
+               backup user value.  In Cedar Backup v2.0, remote peers can rely
+               on the backup user in this section as a default.
+            </para>
+         </sidebar>
+         -->
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-collect">
+
+         <title>Collect Configuration</title>
+
+         <para>
+            The collect configuration section contains configuration options
+            related the the collect action.  This section contains a variable
+            number of elements, including an optional exclusion section and a
+            repeating subsection used to specify which directories to collect.
+         </para>
+
+         <para>
+            This is an example collect configuration section:
+         </para>
+
+         <programlisting>
+&lt;collect&gt;
+   &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+   &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
+   &lt;archive_mode&gt;targz&lt;/archive_mode&gt;
+   &lt;ignore_file&gt;.cbignore&lt;/ignore_file&gt;
+   &lt;exclude&gt;
+      &lt;abs_path&gt;/etc&lt;/abs_path&gt;
+      &lt;pattern&gt;.*\.conf&lt;/pattern&gt;
+   &lt;/exclude&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/etc&lt;/abs_path&gt;
+   &lt;/dir&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/var/log&lt;/abs_path&gt;
+      &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
+   &lt;/dir&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/opt&lt;/abs_path&gt;
+      &lt;collect_mode&gt;weekly&lt;/collect_mode&gt;
+      &lt;exclude&gt;
+         &lt;abs_path&gt;/opt/large&lt;/abs_path&gt;
+         &lt;rel_path&gt;backup&lt;/rel_path&gt;
+         &lt;pattern&gt;.*tmp&lt;/pattern&gt;
+      &lt;/exclude&gt;
+   &lt;/dir&gt;
+&lt;/collect&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the collect configuration
+            section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>collect_dir</literal></term>
+               <listitem>
+                  <para>Directory to collect files into.</para>
+                  <para>
+                     On a client, this is the directory which tarfiles for
+                     individual collect directories are written into.  The
+                     master then stages files from this directory into its own
+                     staging directory.
+                  </para>
+                  <para>
+                     This value is always required.  It must contain enough
+                     free space to collect all of the backed-up files on the
+                     machine in a compressed form.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>collect_mode</literal></term>
+               <listitem>
+                  <para>Default collect mode.</para>
+                  <para>
+                     The collect mode describes how frequently a directory is
+                     backed up.   The value <literal>daily</literal> means that
+                     the directory will be backed up every day; the value
+                     <literal>weekly</literal> means that the directory will be
+                     backed up once per week; and  the value
+                     <literal>incr</literal> means that the directory will be
+                     backed up incrementally, i.e. once at the beginning of a
+                     week, and then after that only if its contents change.
+                  </para>
+                  <para>
+                     This value is the collect mode that will be used by
+                     default during the collect process.  Individual collect
+                     directories (below) may override this value.  If
+                     <emphasis>all</emphasis> individual directories provide
+                     their own value, then this default value may be omitted
+                     from configuration.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be one of
+                     <literal>daily</literal>, <literal>weekly</literal> or
+                     <literal>incr</literal>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>archive_mode</literal></term>
+               <listitem>
+                  <para>Default archive mode for collect files.</para>
+                  <para>
+                     The archive mode maps to the way that a backup file is
+                     stored.  A value <literal>tar</literal> means just a
+                     tarfile (<filename>file.tar</filename>); a value
+                     <literal>targz</literal> means a gzipped tarfile
+                     (<filename>file.tar.gz</filename>); and a value
+                     <literal>tarbz2</literal> means a bzipped tarfile
+                     (<filename>file.tar.bz2</filename>)
+                  </para>
+                  <para>
+                     This value is the archive mode that will be used by
+                     default during the collect process.  Individual collect
+                     directories (below) may override this value.  If
+                     <emphasis>all</emphasis> individual directories provide
+                     their own value, then this default value may be omitted
+                     from configuration.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be one of
+                     <literal>tar</literal>, <literal>targz</literal> or
+                     <literal>tar.bz2</literal>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>ignore_file</literal></term>
+               <listitem>
+                  <para>Default ignore file name.</para>
+                  <para>
+                     The ignore file is an indicator file.  If it exists in a
+                     given directory, then that directory will be recursively
+                     excluded from the backup as if it were explicitly excluded
+                     in configuration.  
+                  </para>
+                  <para>
+                     The ignore file provides a way for individual users (who
+                     might not have access to Cedar backup configuration) to
+                     control which of their own directories get backed up.  For
+                     instance, users with a <filename>~/tmp</filename>
+                     directory might not want it backed up, and can cause that
+                     to happen by creating the ignore file in their directory
+                     (for instance, by creating something like
+                     <filename>~/tmp/.cbignore</filename>).
+                  </para>
+                  <para>
+                     This value is the ignore file name that will be used by
+                     default during the collect process.  Individual collect
+                     directories (below) may override this value.  If
+                     <emphasis>all</emphasis> individual directories provide
+                     their own value, then this default value may be omitted
+                     from configuration.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>exclude</literal></term>
+               <listitem>
+                  <para>List of paths or patterns to exclude from the backup.</para>
+                  <para>
+                     This is a subsection which contains a set of absolute
+                     paths and patterns to be excluded across all configured
+                     directories.  For a given directory, the set of absolute
+                     paths and patterns to exclude is built from this list and
+                     any list that exists on the directory itself.  Directories
+                     <emphasis>cannot</emphasis> override or remove entries that
+                     are in this list, however.
+                  </para>
+                  <para>
+                     This section is entirely optional, and if it exists can
+                     also be empty.  
+                  </para>
+                  <para>
+                     The exclude subsection can contain one or more of each of
+                     the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>abs_path</literal></term>
+                        <listitem>
+                           <para>
+                              An absolute path to be recursively excluded from
+                              the backup.
+                           </para>
+                           <para>
+                              If a directory is excluded, then all of its children
+                              are also recursively excluded.  For instance, a value
+                              <literal>/var/log/apache</literal> would exclude any
+                              files within <filename>/var/log/apache</filename> as
+                              well as files within other directories under
+                              <filename>/var/log/apache</filename>.
+                           </para>
+                           <para>
+                              This field can be repeated as many times as is
+                              necessary.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>pattern</literal></term>
+                        <listitem>
+                           <para>
+                              A pattern to be recursively excluded from the
+                              backup.
+                           </para>
+                           <para>
+                              The pattern must be a Python regular expression. 
+                              <footnote id="cedar-config-regex">
+                              <para>See the <ulink url="http://docs.python.org/lib/re-syntax.html">
+                              Python library documentation</ulink> for more information</para></footnote>
+                              It is assumed to be bounded at front and back by the beginning
+                              and end of the string (i.e. it is treated as if it begins with
+                              <literal>^</literal> and ends with <literal>$</literal>).
+                           </para>
+                           <para>
+                              If the pattern causes a directory to be excluded,
+                              then all of the children of that directory are
+                              also recursively excluded.  For instance, a value
+                              <literal>.*apache.*</literal> might match the
+                              <filename>/var/log/apache</filename> directory.
+                              This would exclude any files within
+                              <filename>/var/log/apache</filename> as well as
+                              files within other directories under
+                              <filename>/var/log/apache</filename>.
+                           </para>
+                           <para>
+                              This field can be repeated as many times as is
+                              necessary.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty
+                           </para>
+                        </listitem>
+                     </varlistentry>
+                    
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>dir</literal></term>
+               <listitem>
+                  <para>A directory to be collected.</para>
+                  <para>
+                     This is a subsection which contains information about
+                     a specific directory to be collected (backed up).
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one collect directory must be
+                     configured.
+                  </para>
+                  <para>
+                     The collect directory subsection contains the following
+                     fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>abs_path</literal></term>
+                        <listitem>
+                           <para>
+                              Absolute path of the directory to collect.
+                           </para>
+                           <para>
+                              The path may be either a directory, a soft link
+                              to a directory, or a hard link to a directory.
+                              All three are treated the same at this level.
+                           </para>
+                           <para>
+                              The contents of the directory will be recursively
+                              collected.  The backup will contain all of the
+                              files in the directory, as well as the contents
+                              of all of the subdirectories within the
+                              directory, etc.  
+                           </para>
+                           <para>
+                              Soft links <emphasis>within</emphasis> the
+                              directory are treated as files, i.e. they are
+                              copied verbatim (as a link) and their contents
+                              are not backed up.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>collect_mode</literal></term> 
+                        <listitem>
+                           <para>Collect mode for this directory</para>
+                           <para>
+                              The collect mode describes how frequently a
+                              directory is backed up.   The value
+                              <literal>daily</literal> means that the directory
+                              will be backed up every day; the value
+                              <literal>weekly</literal> means that the
+                              directory will be backed up once per week; and
+                              the value <literal>incr</literal> means that the
+                              directory will be backed up incrementally, i.e.
+                              once at the beginning of a week, and then after
+                              that only if its contents change.
+                           </para>
+                           <para>
+                              This value is optional.  If it doesn't exist, the backup
+                              will use the default collect mode.  
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be one of
+                              <literal>daily</literal>, <literal>weekly</literal> or
+                              <literal>incr</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>archive_mode</literal></term>
+                        <listitem>
+                           <para>Archive mode for this directory.</para>
+                           <para>
+                              The archive mode maps to the way that a backup
+                              file is stored.  A value <literal>tar</literal>
+                              means just a tarfile
+                              (<filename>file.tar</filename>); a value
+                              <literal>targz</literal> means a gzipped tarfile
+                              (<filename>file.tar.gz</filename>); and a value
+                              <literal>tarbz2</literal> means a bzipped tarfile
+                              (<filename>file.tar.bz2</filename>)
+                           </para>
+                           <para>
+                              This value is optional.  if it doesn't exist, the
+                              backup will use the default archive mode.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be one of
+                              <literal>tar</literal>, <literal>targz</literal> or
+                              <literal>tar.bz2</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>ignore_file</literal></term>
+                        <listitem>
+                           <para>Ignore file name for this directory.</para>
+                           <para>
+                              The ignore file is an indicator file.  If it
+                              exists in a given directory, then that directory
+                              will be recursively excluded from the backup as
+                              if it were explicitly excluded in configuration.  
+                           </para>
+                           <para>
+                              The ignore file provides a way for individual
+                              users (who might not have access to Cedar backup
+                              configuration) to control which of their own
+                              directories get backed up.  For instance, users
+                              with a <filename>~/tmp</filename> directory might
+                              not want it backed up, and can cause that to
+                              happen by creating the ignore file in their
+                              directory (for instance, by creating something
+                              like <filename>~/tmp/.cbignore</filename>).
+                           </para>
+                           <para>
+                              This value is optional.  if it doesn't exist, the
+                              backup will use the default ignore file name.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>exclude</literal></term>
+                        <listitem>
+                           <para>List of paths or patterns to exclude from the backup.</para>
+                           <para>
+                              This is a subsection which contains a set of
+                              paths and patterns to be excluded within this
+                              collect directory.  This list is combined with
+                              the program-wide list to build a complete list
+                              for the directory.
+                           </para>
+                           <para>
+                              This section is entirely optional, and if it exists can
+                              also be empty.  
+                           </para>
+                           <para>
+                              The exclude subsection can contain one or more of each of
+                              the following fields:
+                           </para>
+
+                           <variablelist>
+
+                              <varlistentry>
+                                 <term><literal>abs_path</literal></term>
+                                 <listitem>
+                                    <para>
+                                       An absolute path to be recursively
+                                       excluded from the backup.
+                                    </para>
+                                    <para>
+                                       If a directory is excluded, then all of
+                                       its children are also recursively
+                                       excluded.  For instance, a value
+                                       <literal>/var/log/apache</literal> would
+                                       exclude any files within
+                                       <filename>/var/log/apache</filename> as
+                                       well as files within other directories
+                                       under
+                                       <filename>/var/log/apache</filename>.
+                                    </para>
+                                    <para>
+                                       This field can be repeated as many times as is
+                                       necessary.
+                                    </para>
+                                    <para>
+                                       <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                                    </para>
+                                 </listitem>
+                              </varlistentry>
+
+                              <varlistentry>
+                                 <term><literal>rel_path</literal></term>
+                                 <listitem>
+                                    <para>
+                                       A relative path to be recursively
+                                       excluded from the backup.
+                                    </para>
+                                    <para>
+                                       The path is assumed to be relative to
+                                       the configured directory itself.  For
+                                       instance, if the configured directory is
+                                       <filename>/opt/web</filename> a
+                                       configured relative path of
+                                       <filename>something/else</filename>
+                                       would exclude the path
+                                       <filename>/opt/web/something/else</filename>.
+                                    </para>
+                                    <para>
+                                       If a directory is excluded, then all of
+                                       its children are also recursively
+                                       excluded.  For instance, a value
+                                       <literal>something/else</literal> would
+                                       exclude any files within
+                                       <filename>something/else</filename> as
+                                       well as files within other directories
+                                       under <filename>something/else</filename>.
+                                    </para>
+                                    <para>
+                                       This field can be repeated as many times as is
+                                       necessary.
+                                    </para>
+                                    <para>
+                                       <emphasis>Restrictions:</emphasis> Must be non-empty.
+                                    </para>
+                                 </listitem>
+                              </varlistentry>
+
+                              <varlistentry>
+                                 <term><literal>pattern</literal></term>
+                                 <listitem>
+                                    <para>
+                                       A pattern to be excluded from the backup.
+                                    </para>
+                                    <para>
+                                       The pattern must be a Python regular
+                                       expression.  <footnoteref linkend="cedar-config-regex"/> 
+                                       It is assumed to be bounded at front and
+                                       back by the beginning and end of the
+                                       string (i.e. it is treated as if it
+                                       begins with <literal>^</literal> and
+                                       ends with <literal>$</literal>).
+                                    </para>
+                                    <para>
+                                       If the pattern causes a directory to be
+                                       excluded, then all of the children of
+                                       that directory are also recursively
+                                       excluded.  For instance, a value
+                                       <literal>.*apache.*</literal> might
+                                       match the <filename>/var/log/apache</filename>
+                                       directory.  This would exclude any files
+                                       within <filename>/var/log/apache</filename> as
+                                       well as files within other directories
+                                       under <filename>/var/log/apache</filename>.
+                                    </para>
+                                    <para>
+                                       This field can be repeated as many times as is
+                                       necessary.
+                                    </para>
+                                    <para>
+                                       <emphasis>Restrictions:</emphasis> Must be non-empty
+                                    </para>
+                                 </listitem>
+                              </varlistentry>
+                             
+                           </variablelist>
+
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+
+            <para>
+               Cedar Backup v1.0 also supported a fourth archive mode,
+               <literal>tarz</literal>, which resulted in a compressed tarfile
+               (<filename>file.tar.Z</filename>).  Cedar Backup v2.0 does not
+               support this archive mode because the rewrite moved to using
+               native libraries rather than external utilities, and Python does
+               not contain a native library to create compressed archives.
+            </para>
+
+            <para>
+               Cedar Backup v1.0 did not allow collect defaults to be set
+               outside of individual collect directories, and did not exclude
+               program-wide excluded patterns or directories.  It also did not
+               allow excluded relative directories or patterns at the directory
+               level.
+            </para>
+
+            <para>
+               The collect directory field <literal>collect_mode</literal> can
+               also be written as just <literal>mode</literal>, for backwards
+               compatibility with v1.0.
+            </para>
+         </sidebar>
+         -->
+
+      </sect2>
+
+      <!-- ################################################################# -->
 
       <sect2 id="cedar-config-configfile-stage">
-      <title/>
+
+         <title>Stage Configuration</title>
+
+         <para>
+            The stage configuration section contains configuration options
+            related the the stage action.  This section contains a variable
+            number of elements, depending on how many peers are in the backup
+            pool.
+         </para>
+
+         <para>
+            This is an example stage configuration section:
+         </para>
+
+         <programlisting>
+&lt;stage&gt;
+   &lt;staging_dir&gt;/opt/backup/staging&lt;/staging_dir&gt;
+   &lt;peer&gt;
+      &lt;name&gt;machine1&lt;/name&gt;
+      &lt;type&gt;local&lt;/type&gt;
+      &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+   &lt;/peer&gt;
+   &lt;peer&gt;
+      &lt;name&gt;machine2&lt;/name&gt;
+      &lt;type&gt;remote&lt;/type&gt;
+      &lt;backup_user&gt;backup&lt;/backup_user&gt;
+      &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+   &lt;/peer&gt;
+&lt;/stage&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the stage configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>staging_dir</literal></term>
+               <listitem>
+                  <para>Directory to stage files into.</para>
+                  <para>
+                     This is the directory into which the master stages collected
+                     data from each of the clients.  Within the staging directory,
+                     data is staged into date-based directories by peer name.  For
+                     instance, peer <quote>daystrom</quote> backed up on 19 Feb 2005
+                     would be staged into something like <filename>2005/02/19/daystrom</filename>
+                     relative to the staging directory itself.
+                  </para>
+                  <para>
+                     This value is always required.  The directory must contain
+                     enough free space to stage all of the files collected from
+                     all of the various machines in a backup pool.  Many
+                     administrators set up purging to keep staging directories
+                     around for a week or more, which require even more space.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>peer</literal> (local version)</term>
+               <listitem>
+                  <para>Local client peer in a backup pool.</para>
+                  <para>
+                     This is a subsection which contains information about a
+                     specific local client peer to be staged (backed up).  A
+                     local peer is one whose collect directory can be reached
+                     without requiring any rsh-based network calls.  It is
+                     possible that a remote peer might be staged as a local
+                     peer if its collect directory is mounted to the master via
+                     NFS, AFS or some other method.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one remote or local peer must be
+                     configured.
+                  </para>
+                  <para>
+                     The local peer subsection must contain the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>name</literal></term>
+                        <listitem>
+                           <para>Name of the peer, typically a valid hostname.</para>
+                           <para>
+                              For local peers, this value is only used for
+                              reference.  However, it is good practice to list
+                              the peer's hostname here, for consistency with
+                              remote peers.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>type</literal></term>
+                        <listitem>
+                           <para>Type of this peer.</para>
+                           <para>
+                              This value identifies the type of the peer.  For
+                              a local peer, it must always be <literal>local</literal>.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be <literal>local</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>collect_dir</literal></term>
+                        <listitem>
+                           <para>Collect directory to stage from for this peer.</para>
+                           <para>
+                              The master will copy all files in this directory
+                              into the appropriate staging directory.  Since
+                              this is a local peer, the directory is assumed to
+                              be reachable via normal filesystem operations
+                              (i.e. <command>cp</command>). 
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>peer</literal> (remote version)</term>
+               <listitem>
+                  <para>Remote client peer in a backup pool.</para>
+                  <para>
+                     This is a subsection which contains information about a
+                     specific remote client peer to be staged (backed up).  A
+                     remote peer is one whose collect directory can only be
+                     reached via an rsh-based network call.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one remote or local peer must be
+                     configured.
+                  </para>
+                  <para>
+                     The remote peer subsection must contain the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>name</literal></term>
+                        <listitem>
+                           <para>Hostname of the peer.</para>
+                           <para>
+                              For remote peers, this must be a valid DNS
+                              hostname or IP address which can be resolved
+                              during an rsh-based network call.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>type</literal></term>
+                        <listitem>
+                           <para>Type of this peer.</para>
+                           <para>
+                              This value identifies the type of the peer.  For
+                              a remote peer, it must always be <literal>remote</literal>.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be <literal>remote</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>collect_dir</literal></term>
+                        <listitem>
+                           <para>Collect directory to stage from for this peer.</para>
+                           <para>
+                              The master will copy all files in this directory
+                              into the appropriate staging directory.  Since
+                              this is a remote peer, the directory is assumed to
+                              be reachable via rsh-based network operations
+                              (i.e. <command>scp</command> or whatever the configured
+                              rcp command is). 
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>backup_user</literal></term>
+                        <listitem>
+                           <para>Name of backup user on the remote peer.</para>
+                           <para>
+                              This username will be used when copying files from
+                              the remote peer via an rsh-based network connection.
+                           </para>
+                           <para>
+                              This value is optional.  if it doesn't exist, the
+                              backup will use the default backup user from the 
+                              options section.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>rcp_command</literal></term>
+                        <listitem>
+                           <para>The rcp-compatible copy command for this peer.</para>
+                           <para>
+                              The rcp command should be the exact command used for
+                              remote copies, including any required options.  If you are
+                              using <command>scp</command>, you should pass it the
+                              <option>-B</option> option, so <command>scp</command> will
+                              not ask for any user input (which could hang the backup).
+                              A common example is something like <command>/usr/bin/scp
+                              -B</command>.
+                           </para>
+                           <para>
+                              This value is optional.  if it doesn't exist, the
+                              backup will use the default rcp command from the
+                              options section.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+
+            <para>
+               Cedar Backup v1.0 did not allow the rcp command to be overridden
+               for remote peers.  It also did not allow the backup user from
+               the options section to be used as the default backup user for remote
+               peers.
+            </para>
+
+            <para>
+               To make the DTD more explicit and remove the need for the
+               <literal>type</literal> tag, it would make some sense to split
+               the <literal>peer</literal> section into
+               <literal>local_peer</literal> and <literal>remote_peer</literal>
+               sections.  However, doing that would break backwards
+               compatibility with v1.0, so I've chosen to leave it alone.
+            </para>
+         </sidebar>
+         -->
+
       </sect2>
+
+      <!-- ################################################################# -->
 
       <sect2 id="cedar-config-configfile-store">
-      <title/>
+
+         <title>Store Configuration</title>
+
+         <para>
+            The store configuration section contains configuration options
+            related the the store action.  This section contains six fields,
+            several of which are optional.  Most fields control the way media
+            is written using the writer device.
+         </para> 
+
+         <para>
+            This is an example store configuration section:
+         </para>
+
+         <programlisting>
+&lt;store&gt;
+   &lt;source_dir&gt;/opt/backup/staging&lt;/source_dir&gt;
+   &lt;media_type&gt;cdrw-74&lt;/media_type&gt;
+   &lt;device_type&gt;cdwriter&lt;/device_type&gt;
+   &lt;target_device&gt;/dev/cdrw&lt;/target_device&gt;
+   &lt;target_scsi_id&gt;0,0,0&lt;/target_scsi_id&gt;
+   &lt;drive_speed&gt;4&lt;/drive_speed&gt;
+   &lt;check_data&gt;Y&lt;/check_data&gt;
+   &lt;safe_overwrite&gt;Y&lt;/safe_overwrite&gt;
+&lt;/store&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the store configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>source_dir</literal></term>
+               <listitem>
+                  <para>Directory whose contents should be written to media.</para>
+                  <para>
+                     This directory <emphasis>must</emphasis> be a Cedar Backup
+                     staging directory, as configured in the staging configuration
+                     section.  Only certain data from that directory (typically,
+                     data from the current day) will be written to disc.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>media_type</literal></term>
+               <listitem>
+                  <para>Type of the media in the device.</para>
+                  <para>
+                     Cedar Backup currently supports four different kinds of CD
+                     media: <literal>cdr-74</literal> (74-minute non-rewritable
+                     media), <literal>cdrw-74</literal> (74-minute rewritable
+                     media), <literal>cdr-80</literal> (80-minute
+                     non-rewritable media) and <literal>cdrw-80</literal>
+                     (80-minute rewritable media). 
+                  </para>
+                  <para>
+                     Unless you want to throw away a backup disc every week,
+                     you are probably best off using rewritable media.
+                  </para>
+                  <para>
+                     If you have no idea what kind of media you have, choose
+                     <literal>cdr-74</literal>.  
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be one of
+                     <literal>cdr-74</literal>, <literal>cdrw-74</literal>, 
+                     <literal>cdr-80</literal> or <literal>cdrw-80</literal>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>device_type</literal></term>
+               <listitem>
+                  <para>Type of the device used to write the media.</para>
+                  <para>
+                     This field mostly exists for planned future enhancements,
+                     such as support for DVD writers.  It indicates what type
+                     of device should be used to write the media, in case that
+                     makes a difference to the underlying writer functionality.
+                     Currently, it can only be set to <literal>cdwriter</literal>.
+                  </para>
+                  <para>
+                     This value is optional.  If it doesn't exist, the
+                     <literal>cdwriter</literal> device type is assumed.  
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> If set, must be <literal>cdwriter</literal>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>target_device</literal></term>
+               <listitem>
+                  <para>Filesystem device name for writer device.</para>
+                  <para>
+                     This is the UNIX device name for the writer drive, for
+                     instance <filename>/dev/scd0</filename> or
+                     <filename>/dev/cdrw</filename>.   The device name is not
+                     needed in order to write to the media.  However, it is
+                     needed in order to do several pre-write checks (such as
+                     whether the device might already be mounted) as well as
+                     the post-write consistency check, if enabled.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>target_scsi_id</literal></term>
+               <listitem>
+                  <para>SCSI id for writer device</para>
+                  <para>
+                     Under Linux, CD burners generally only work through a SCSI
+                     or pseudo-SCSI interface.  This value is the SCSI id for
+                     the drive in the form <literal>scsibus,target,lun</literal>.  
+                     The <literal>ATA:</literal> or <literal>ATAPI:</literal> 
+                     prefixes are also allowed.
+                     <footnote><para>For more information on how to configure your
+                     CD-R/CD-RW device, see the 
+                     <ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO">Linux CDROM HOWTO</ulink>.
+                     </para></footnote> 
+                     <footnote><para>See the
+                     <ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html">Linux ATA RAID HOWTO</ulink>.
+                     </para></footnote>
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be a valid SCSI identifier.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>drive_speed</literal></term>
+               <listitem>
+                  <para>Speed of the drive, i.e. <literal>2</literal> for a 2x device.</para>
+                  <para>
+                     This value is optional.  If it doesn't exist, the
+                     underlying device-related functionality will use the
+                     default drive speed, whatever that is.  Since some media
+                     is speed-sensitive, it might still be a good idea to set
+                     this to a sensible value for your writer.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> If set, must be an integer >= 1.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>check_data</literal></term>
+               <listitem>
+                  <para>Indicates whether the media should be validated.</para>
+                  <para>
+                     This field indicates whether a resulting image on the
+                     media should be validated after the write completes, by
+                     running a consistency check against it.  If this check is
+                     enabled, the contents of the staging directory are
+                     directly compared to the media, and an error is reported
+                     if there is a mismatch.
+                  </para>
+                  <para>
+                     Practice shows that some drives can encounter an error
+                     when writing a multisession disc, but not report an error.
+                     This consistency check allows us to catch the problem.
+                     By default, the consistency check is disabled, but most
+                     users should choose to enable it unless they have a good
+                     reason not to.
+                  </para>
+                  <para>
+                     This value is optional.  If it doesn't exist, then
+                     <literal>N</literal> will be assumed.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>safe_overwrite</literal></term>
+               <listitem>
+                  <para>Indicates whether safe-overwrite checking is enabled.</para>
+                  <para>
+                     When this option is enabled, Cedar Backup will error out
+                     if the media in the drive is not either a blank disc
+                     or a previously-used Cedar Backup disc.  The validation is
+                     done by checking the media's volume name to see if it
+                     matches an expected Cedar Backup value.  Most users won't
+                     care about this, but some users have requested the option
+                     so that they don't destroy other media accidentally left
+                     in their writer.
+                  </para>
+                  <para>
+                     This value is optional.  If it doesn't exist, then
+                     <literal>N</literal> will be assumed.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+                  </para>
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+
+            <para>
+               Cedar Backup v1.0 did not accept the device type or safe
+               overwrite fields, which is why they are optional.  The behavior
+               based on defaults for these values matches the only available
+               behavior in v1.0.
+            </para>
+
+            <para>
+               Cedar Backup v2.0 does not require the drive speed field
+               (although v1.0 does) because the underlying writer functionality
+               is now smart enough to use the device default if no speed
+               is indicated.
+            </para>
+         </sidebar>
+         -->
+
       </sect2>
+
+      <!-- ################################################################# -->
 
       <sect2 id="cedar-config-configfile-purge">
-      <title/>
+
+         <title>Purge Configuration</title>
+
+         <para>
+            The purge configuration section contains configuration options
+            related the the purge action.  This section contains a set of
+            directories to be purged, along with information about the schedule
+            at which they should be purged.
+         </para>
+
+         <para>
+            This is an example purge configuration section:
+         </para>
+
+         <programlisting>
+&lt;purge&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/opt/backup/stage&lt;/abs_path&gt;
+      &lt;retain_days&gt;5&lt;/retain_days&gt;
+   &lt;/dir&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/opt/backup/collect&lt;/abs_path&gt;
+      &lt;retain_days&gt;0&lt;/retain_days&gt;
+   &lt;/dir&gt;
+&lt;/purge&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the purge configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>dir</literal></term>
+               <listitem>
+                  <para>A directory to purge within.</para>
+                  <para>
+                     This is a subsection which contains information about
+                     a specific directory to purge within.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one purge directory must be
+                     configured.
+                  </para>
+                  <para>
+                     The purge directory subsection contains the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>abs_path</literal></term>
+                        <listitem>
+                           <para>
+                              Absolute path of the directory to purge within.
+                           </para>
+                           <para>
+                              The contents of the directory will be purged
+                              based on age.  The purge will remove any files
+                              that were last modified more than <quote>retain
+                              days</quote> days ago.  Empty directories will
+                              also eventually be removed.  The purge directory
+                              itself will never be removed.
+                           </para>
+                           <para>
+                              The path may be either a directory, a soft link
+                              to a directory, or a hard link to a directory.
+                              Soft links <emphasis>within</emphasis> the
+                              directory (if any) are treated as files.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>retain_days</literal></term>
+                        <listitem>
+                           <para>
+                              Number of days to retain old files.
+                           </para>
+                           <para>
+                              Once it has been more than this many days since a file
+                              was last modified, it is a candidate for removal.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an integer >= 0.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+
+            </varlistentry>
+
+         </variablelist>
+
       </sect2>
 
+      <!-- ################################################################# -->
+
       <sect2 id="cedar-config-configfile-extensions">
-      <title/>
+
+         <title>Extensions Configuration</title>
+
+         <para>
+            The extensions configuration section is used to configure
+            third-party extensions to Cedar Backup.  If you don't intend to use
+            any extensions, or don't know what extensions are, then you can
+            safely leave this section out of your configuration file.  It is
+            entirely optional.
+         </para>
+
+         <para>
+            Extensions configuration is used to specify <quote>extended
+            actions</quote> implemented by code external to Cedar Backup.  An
+            administrator can use this section to map command-line Cedar
+            Backup actions to third-party extension functions.
+         </para>
+
+         <para>
+            Each extended action has a name, which is mapped to a Python
+            function within a particular module.  Each action also has an index
+            associated with it.  This index is used to properly order execution
+            when more than one action is specified on the command line.
+            The standard actions have predefined indexes, and extended actions
+            are interleaved into the normal order of execution using those
+            indexes.  The collect action has index 100, the stage index
+            has action 200, the store action has index 300 and the purge
+            action has index 400.
+         </para>
+         
+         <para>
+            For instance, imagine that a third-party developer provided a Cedar
+            Backup extension to back up Subversion repositories, and you wanted
+            to map that extension to the <quote>subversion</quote> command-line
+            action.  You have been told that this function is called
+            <quote>foobar.CedarSub</quote>.  You think of this backup
+            as a <quote>collect</quote> kind of action, so you want it to be
+            performed after collect but before stage and purge if more than one
+            action is specified on the command line.  
+         </para>
+
+         <para>
+            To configure this extension, you would list an action with a name
+            <quote>subversion</quote>, a module <quote>foobar</quote>,
+            a function name <quote>CedarSub</quote> and an index of
+            <quote>101</quote>.
+         </para>
+
+         <para>
+            This is how the hypothetical action would be configured:
+         </para>
+
+         <programlisting>
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;subversion&lt;/name&gt;
+      &lt;module&gt;foobar&lt;/module&gt;
+      &lt;function&gt;CedarSub&lt;/function&gt;
+      &lt;index&gt;101&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the extensions configuration
+            section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>action</literal></term>
+               <listitem>
+                  <para>
+                     This is a subsection that contains configuration
+                     related to a single extended action.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  
+                  </para>
+                  <para>
+                     The action subsection contains the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>name</literal></term>
+                        <listitem>
+                           <para>Name of the extended action.</para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a non-empty
+                              string consisting of only lower-case letters and digits.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>module</literal></term>
+                        <listitem>
+                           <para>Name of the Python module associated with the extension function.</para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a non-empty string
+                              and a valid Python identifier.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>function</literal></term>
+                        <listitem>
+                           <para>Name of the Python extension function within the module.</para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a non-empty string
+                              and a valid Python identifier.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>index</literal></term>
+                        <listitem>
+                           <para>Index of action, for execution ordering.</para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an integer >= 0.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+
+            </varlistentry>
+
+         </variablelist>
+
+         <!--
+         <sidebar>
+            <title>Backwards Compatibility</title>
+            <para>
+               Extensions functionality is new for Cedar Backup v2.0, so this
+               configuration section does not exist in v1.0.
+            </para>
+         </sidebar>
+         -->
+
       </sect2>
 
    </sect1>

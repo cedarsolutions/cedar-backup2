@@ -221,6 +221,21 @@
             running.
          </para>
 
+         <note>
+            <para>
+               Nothing prevents you from staging <quote>collect</quote>
+               directories that were not created by cback.  As long as the file
+               <filename>cback.collect</filename> exists in a collect directory
+               when the stage action is taken, that directory will be staged.
+               This is a convenient way to have Cedar Backup write to disc
+               directories <quote>collected</quote> through some other process.
+               Just beware that within the staging directory, everything for a
+               be careful to avoid namespace clash.  You can use it as an
+               alternative to writing a Cedar Backup extension, if you would
+               like.
+            </para>
+         </note>
+
       </sect2>
 
       <!-- ################################################################# -->

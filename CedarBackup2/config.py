@@ -1303,7 +1303,7 @@ class ExtensionsConfig(object):
       """
       Official string representation for class instance.
       """
-      return "ExtensionConfig(%s)" % self.actions
+      return "ExtensionsConfig(%s)" % self.actions
 
    def __str__(self):
       """
@@ -2012,7 +2012,7 @@ class StoreConfig(object):
       @param mediaType: Type of the media (see notes above).
       @param deviceType: Type of the device (optional, see notes above).
       @param devicePath: Filesystem device name for writer device, i.e. C{/dev/cdrw}.
-      @param deviceScsiId: SCSI id for writer device, i.e. C{[ATA]:scsibus,target,lun}.
+      @param deviceScsiId: SCSI id for writer device, i.e. C{[ATA|ATAPI]:scsibus,target,lun}.
       @param driveSpeed: Speed of the drive, i.e. C{2} for 2x drive, etc.
       @param checkData: Indicates whether resulting image should be validated.
       @param safeOverwrite: Indicates whether safe-overwrite checking is enabled.
