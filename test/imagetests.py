@@ -203,6 +203,15 @@ class TestIsoImage(unittest.TestCase):
    # Utility methods
    ##################
 
+   def extractTar(self, tarname):
+      """Extracts a tarfile with a particular name."""
+      extractTar(self.tmpdir, self.resources['%s.tar.gz' % tarname])
+
+   def buildPath(self, components):
+      """Builds a complete search path from a list of components."""
+      components.insert(0, self.tmpdir)
+      return buildPath(components)
+
    def mountImage(self, imagePath):
       """
       Mounts an ISO image at C{self.tmpdir/mnt} using loopback.
@@ -282,20 +291,6 @@ class TestIsoImage(unittest.TestCase):
       self.failUnlessEqual(None, isoImage.publisherId)
       self.failUnlessEqual(None, isoImage.preparerId)
       self.failUnlessEqual(None, isoImage.volumeId)
-
-
-   ##################
-   # Utility methods
-   ##################
-
-   def extractTar(self, tarname):
-      """Extracts a tarfile with a particular name."""
-      extractTar(self.tmpdir, self.resources['%s.tar.gz' % tarname])
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
 
    ################################
