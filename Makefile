@@ -39,6 +39,7 @@ PYTHON            = python2.3
 RM                = rm
 SETUP             = $(PYTHON) ./setup.py
 SUDO              = sudo
+VALIDATE          = util/validate
 VERSION           = `cat CedarBackup2/release.py | grep VERSION | awk -F\" '{print $$2}'`
 URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $$2}'`
 
@@ -108,6 +109,9 @@ interface-doc: $(INTERFACE_DIR)
 
 manual-doc: $(MANUAL_DIR)
 	-@$(CD) $(MANUAL_SRC) && $(MAKE) install
+
+validate: 
+	-@$(VALIDATE) $(MANUAL_SRC)/src/book.xml
 
 docclean:
 	-@$(CD) $(MANUAL_SRC) && $(MAKE) clean
