@@ -16,6 +16,7 @@
 
 MISSING FUNCTIONALITY FOR 2.0
 
+* Standard action functions must all check at their top whether their configuration section exists, and error out otherwise
 * Implement logic to check (today, yesterday, tomorrow) when storing, so backups work over midnite (bug #1)
 * Implement consistency check in store action - it's not even stubbed right now.
 * Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
@@ -35,7 +36,6 @@ ADMINISTRATIVE
 
 DOCUMENTATION
 
-* Make sure that sample config file is valid and has sensible, consistent paths in it
 * Rewrite Cedar Backup webpage online, to show new version and link to old version.
 
 * Write some sort of "what's new" paragraph for release of 2.0beta1
@@ -50,6 +50,7 @@ DOCUMENTATION
    - New concept of extension modules and support for them.
    - Documentation has been completely rewritten
    - Document that we have dropped support for the tarz format (.tar.Z).
+   - Runtime 'validate' action now checks many more things
 
 
 FUTURE FUNCTIONALITY

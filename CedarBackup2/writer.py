@@ -95,11 +95,11 @@ def _validateDevice(device, unittest=False):
    @raise ValueError: If the device value is invalid.
    """
    if not os.path.isabs(device):
-      raise ValueError("Device must be an absolute path.")
+      raise ValueError("Backup device must be an absolute path.")
    if not unittest and not os.path.exists(device):
-      raise ValueError("Device must exist on disk.")
+      raise ValueError("Backup device must exist on disk.")
    if not unittest and not os.access(device, os.W_OK):
-      raise ValueError("Device is not writable by the current user.")
+      raise ValueError("Backup device is not writable by the current user.")
    return device
 
 def validateScsiId(scsiId):

@@ -354,8 +354,10 @@ class _ActionSet(object):
       @raise ValueError: If one of the specified actions is invalid.
       """
       extensionDict = {}
-      for extension in extensions:
-         extensionDict[extension.name] = extension
+      if extensions is not None:
+         if extensions.actions is not None:
+            for action in extensions.actions:
+               extensionDict[action.name] = action
       _ActionSet._validateActions(actions, extensionDict.keys())
       self.actionSet = _ActionSet._buildActionSet(actions, extensionDict)
 

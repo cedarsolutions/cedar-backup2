@@ -2037,9 +2037,9 @@ class StoreConfig(object):
       """
       Official string representation for class instance.
       """
-      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
-                                                                  self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                                  self.checkData)
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
+                                                          self.devicePath, self.deviceScsiId, self.driveSpeed,
+                                                          self.checkData)
 
    def __str__(self):
       """
