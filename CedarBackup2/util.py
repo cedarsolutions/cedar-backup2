@@ -888,7 +888,9 @@ def unmount(mountPoint, removeAfter=False, attempts=1, waitSeconds=0):
                logger.info("Sleeping %d second(s) before next unmount attempt." % waitSeconds)
                time.sleep(waitSeconds)
       else:
-         raise IOError("Unable to unmount [%s] after %d attempts." % (mountPoint, attempts))
+         if os.path.ismount(mountPoint):
+            raise IOError("Unable to unmount [%s] after %d attempts." % (mountPoint, attempts))
+         logger.info("Mount point [%s] seems to have finally gone away." % mountPoint)
       if os.path.isdir(mountPoint) and removeAfter:
          logger.debug("Removing mount point [%s]." % mountPoint)
          os.rmdir(mountPoint)

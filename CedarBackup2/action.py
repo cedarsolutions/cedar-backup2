@@ -988,7 +988,7 @@ def _consistencyCheck(config, stagingDirs):
    logger.debug("Running consistency check.")
    mountPoint = tempfile.mkdtemp(dir=config.options.workingDir)
    try:
-      mount(config.store.devicepath, mountPoint, "iso9660")
+      mount(config.store.devicePath, mountPoint, "iso9660")
       for stagingDir in stagingDirs.keys():
          discDir = os.path.join(mountPoint, stagingDirs[stagingDir])
          logger.debug("Checking [%s] vs. [%s]." % (stagingDir, discDir))
