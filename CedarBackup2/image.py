@@ -138,6 +138,12 @@ class IsoImage(object):
    @ivar publisherId: Optionally specifies the ISO header publisher id value.
    @ivar preparerId: Optionally specifies the ISO header preparer id value.
    @ivar volumeId: Optionally specifies the ISO header volume id value.
+
+   @sort: __init__, addEntry, getEstimatedSize, _getEstimatedSize, writeImage, pruneImage
+          _pruneImage, _calculateSizes, _buildEntries, _expandEntries, _buildDirEntries
+          _buildGeneralArgs, _buildSizeArgs, _buildWriteArgs, 
+          device, boundaries, graftPoint, useRockRidge, applicationId, 
+          biblioFile, publisherId, preparerId, volumeId
    """
 
    ##############

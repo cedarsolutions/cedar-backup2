@@ -39,6 +39,7 @@
 
 """
 Provides filesystem-related objects.
+@sort: FilesystemList, BackupFileList, PurgeItemList
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -111,6 +112,11 @@ class FilesystemList(list):
    @ivar excludePaths: List of absolute paths to be excluded
    @ivar excludePatterns: List of regular expression patterns to be excluded
    @ivar ignoreFile: Name of file which will cause directory contents to be ignored
+
+   @sort: __init__, addFile, addDir, addDirContents, removeFiles, removeDirs,
+          removeLinks, removeMatch, removeInvalid, normalize, validate, 
+          excludeFiles, excludeDirs, excludeLinks, excludePaths, 
+          excludePatterns, ignoreFile
    """
 
 
@@ -468,6 +474,9 @@ class BackupFileList(FilesystemList):
    for each file in the list, and it also provides a method to calculate the
    total size of the files in the list and a way to export the list into tar
    form.
+
+   @sort: __init__, addDir, totalSize, generateSizeMap, 
+          generateDigestMap, generateFitted, generateTarfile
    """
 
    ##############

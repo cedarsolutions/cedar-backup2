@@ -39,6 +39,12 @@
 
 """
 Provides backup peer-related objects and utility functions.
+
+@sort: LocalPeer, Remote Peer
+
+@var DEF_COLLECT_INDICATOR: Name of the default collect indicator file.
+@var DEF_STAGE_INDICATOR: Name of the default stage indicator file.
+
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -94,6 +100,9 @@ class LocalPeer(object):
 
    @ivar name: Name of the peer
    @ivar collectDir: Path to the peer's collect directory (an absolute local path)
+
+   @sort: __init__, stagePeer, checkCollectIndicator, writeStageIndicator, 
+          _copyLocalDir, _copyLocalFile, name, collectDir
    """
 
    ####################
@@ -331,6 +340,10 @@ class RemotePeer(object):
    @ivar remoteUser: Name of the Cedar Backup user on the remote peer
    @ivar collectDir: Path to the peer's collect directory (an absolute path on the peer)
    @ivar rcpCommand: An rcp-compatible copy command to use for copying files from the peer
+
+   @sort: __init__, stagePeer, checkCollectIndicator, writeStageIndicator, 
+          _getDirContents _copyRemoteDir, _copyRemoteFile, _pushLocalFile, 
+          name, remoteUser, collectDir, rcpCommand
    """
 
    ####################

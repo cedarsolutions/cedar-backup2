@@ -60,6 +60,8 @@ number of collect-directory tarfiles onto a disc), worst-fit is probably the
 best choice if the goal is to include as many of the collect directories as
 possible.
 
+@sort: firstFit, bestFit, worstFit, alternateFit
+
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 

@@ -18,6 +18,13 @@
 
 """
 Provides location to maintain version information.
+
+@sort: COPYRIGHT, VERSION, DATE
+
+@var COPYRIGHT: Copyright date
+@var VERSION: Software version
+@var DATE: Software release date.
+
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
