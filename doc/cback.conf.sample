@@ -23,7 +23,7 @@
       </dir>
    </collect>
    <stage>
-      <staging_dir>/opt/backup/staging</staging_dir>
+      <staging_dir>/opt/backup/stage</staging_dir>
       <peer>
          <name>debian</name>
          <type>local</type>
@@ -31,7 +31,7 @@
       </peer>
    </stage>
    <store>
-      <source_dir>/opt/backup/staging</source_dir>
+      <source_dir>/opt/backup/stage</source_dir>
       <media_type>cdrw-74</media_type>
       <device_type>cdwriter</device_type>
       <target_device>/dev/cdrw</target_device>

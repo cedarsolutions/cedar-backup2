@@ -47,11 +47,14 @@
       </para>
 
       <para>
-         The <command>cback</command> script is designed to run as
-         root, since otherwise it's difficult to back up system directories or
-         write the CD-R/CD- RW device.  However, pains are taken to use the
-         backup user's effective user id (specified in configuration) when
-         appropriate.
+         The <command>cback</command> script is designed to run as root, since
+         otherwise it's difficult to back up system directories or write the
+         CD-R/CD- RW device.  However, pains are taken to use the backup user's
+         effective user id (specified in configuration) when appropriate.
+         Note: this does not mean that <command>cback</command> runs setuid or
+         setgid.  However, it will strive to write all backup files as the
+         backup user, and all rsh-based network connections will take place
+         as the backup user on the remote box.
       </para>
 
       <para>
