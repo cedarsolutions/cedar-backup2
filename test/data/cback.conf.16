@@ -6,6 +6,7 @@
          <name>example</name>
          <module>something.whatever</module>
          <function>example</function>
+         <index>1</index>
       </action>
    </extensions>
 </cb_config>

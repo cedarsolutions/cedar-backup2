@@ -9,7 +9,5 @@
       <target_scsi_id>0,0,0</target_scsi_id>
       <drive_speed>4</drive_speed>
       <check_data>Y</check_data>
-      <safe_overwrite>Y</safe_overwrite>  
-      <capacity_mode>fail</capacity_mode>
    </store>
 </cb_config>

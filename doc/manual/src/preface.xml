@@ -188,31 +188,6 @@
          </varlistentry>
 
          <varlistentry>
-            <term><xref linkend="cedar-trouble"/></term>
-            <listitem>
-               <para>
-                  Discusses general troubleshooting techniques and provides
-                  information about how to read the logfile, interpret
-                  debugging information, etc., etc.
-               </para>
-            </listitem>
-         </varlistentry>
-
-         <varlistentry>
-            <term><xref linkend="cedar-devel"/></term>
-            <listitem>
-               <para>
-                  Provides some details about the internals of the software and
-                  rationale behind certain design choices, etc.  Also discusses
-                  the Cedar Backup extension architecture.  Users would not
-                  typically need to read this chapter, but extension developers
-                  or programmers debugging problems or implementing
-                  enhancements may find it useful.
-               </para>
-            </listitem>
-         </varlistentry>
-
-         <varlistentry>
             <term><xref linkend="cedar-appendixa"/></term>
             <listitem>
                <para>

@@ -91,6 +91,79 @@
 
    <!-- ################################################################# -->
 
+   <sect1 id="cedar-intro-support">
+
+      <title>How to Get Support</title>
+
+      <para>
+         Cedar Backup is open source software that is provided to you at no
+         cost.  It is provided with no warranty,  not even for MERCHANTABILITY
+         or FITNESS FOR A PARTICULAR PURPOSE.  However, that said, someone can
+         usually help you solve whatever problems you might see.  
+      </para>
+      
+      <para>
+         If you experience a problem, your best bet is to write the Cedar
+         Backup Users mailing list at
+         <email>cedar-backup-users@cedar-solutions.com</email>.
+         <footnote><para>See the Cedar Solutions <ulink
+         url="http://cedar-solutions.com/listarchives/">Mailing Lists</ulink>
+         page for more information.</para></footnote> This is a public list for
+         all Cedar Backup users.  If you write this list, you might get help
+         from me, or from some other user who has experienced the same thing
+         you have.  
+      </para>
+      
+      <para>
+         If you know that the problem you have found constitutes a bug, or
+         if you would like to make an enhancement request, then feel free to
+         file a bug report in the Cedar Solutions Bug Tracking System.  
+         <footnote><para>
+         <ulink url="http://cedar-solutions.com/bugzilla/">http://cedar-solutions.com/bugzilla/</ulink>
+         </para></footnote>
+      </para>
+
+      <para>
+         If you are not comfortable discussing your problem in public or
+         listing it in a public database, or if you need to send along
+         information that you do not want made public, then you can write
+         <email>support@cedar-solutions.com</email>.  That mail will go
+         directly to me or to someone else who can help you.  If you write the
+         support address about a bug, a <quote>scrubbed</quote> bug report will
+         eventually end up in the public bug database anyway, so if at all
+         possible you should use the public reporting mechanisms.  One of the
+         strengths of the open-source software development model is its
+         transparency.
+      </para>
+
+      <para>
+         Regardless of how you report your problem, please try to provide as
+         much information as possible about the behavior you observed and the
+         environment in which the problem behavior occurred.
+         <footnote><para>See Simon Tatham's excellent bug reporting tutorial,
+         called <ulink
+         url="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html"> How to
+         Report Bugs Effectively</ulink>.</para></footnote> 
+      </para>
+         
+      <para>
+         In particular, you should provide the version of Cedar Backup that you
+         are using; where you got the software from (i.e. Debian package,
+         source package, etc.); the exact command line that you executed; any
+         error messages you received, including Python stack traces (if any);
+         and relevant sections of the Cedar Backup log.  It would be even
+         better if you could describe exactly how to reproduce the problem, for
+         instance by including your entire configuration file and/or specific
+         information about your system that might relate to the problem.
+         However, please do <emphasis>not</emphasis> provide huge sections of
+         debugging logs unless you are sure they are relevant or unless someone
+         asks for them.
+      </para>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
    <sect1 id="cedar-intro-history">
 
       <title>History</title>

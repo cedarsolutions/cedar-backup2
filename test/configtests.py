@@ -4080,8 +4080,6 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual(None, store.deviceScsiId)
       self.failUnlessEqual(None, store.driveSpeed)
       self.failUnlessEqual(False, store.checkData)
-      self.failUnlessEqual(False, store.safeOverwrite)
-      self.failUnlessEqual(None, store.capacityMode)
 
    def testConstructor_002(self):
       """
@@ -4095,8 +4093,6 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual("0,0,0", store.deviceScsiId)
       self.failUnlessEqual(4, store.driveSpeed)
       self.failUnlessEqual(True, store.checkData)
-      self.failUnlessEqual(True, store.safeOverwrite)
-      self.failUnlessEqual("fail", store.capacityMode)
 
    def testConstructor_003(self):
       """
@@ -4356,86 +4352,6 @@ class TestStoreConfig(unittest.TestCase):
       store.checkData = 3
       self.failUnlessEqual(True, store.checkData)
 
-   def testConstructor_029(self):
-      """
-      Test assignment of safeOverwrite attribute, None value.
-      """
-      store = StoreConfig(safeOverwrite=True)
-      self.failUnlessEqual(True, store.safeOverwrite)
-      store.safeOverwrite = None
-      self.failUnlessEqual(False, store.safeOverwrite)
-
-   def testConstructor_030(self):
-      """
-      Test assignment of safeOverwrite attribute, valid value (real boolean).
-      """
-      store = StoreConfig()
-      self.failUnlessEqual(False, store.safeOverwrite)
-      store.safeOverwrite = True
-      self.failUnlessEqual(True, store.safeOverwrite)
-      store.safeOverwrite = False
-      self.failUnlessEqual(False, store.safeOverwrite)
-
-   def testConstructor_031(self):
-      """
-      Test assignment of safeOverwrite attribute, valid value (expression).
-      """
-      store = StoreConfig()
-      self.failUnlessEqual(False, store.safeOverwrite)
-      store.safeOverwrite = 0
-      self.failUnlessEqual(False, store.safeOverwrite)
-      store.safeOverwrite = []
-      self.failUnlessEqual(False, store.safeOverwrite)
-      store.safeOverwrite = None
-      self.failUnlessEqual(False, store.safeOverwrite)
-      store.safeOverwrite = ['a']
-      self.failUnlessEqual(True, store.safeOverwrite)
-      store.safeOverwrite = 3
-      self.failUnlessEqual(True, store.safeOverwrite)
-
-   def testConstructor_032(self):
-      """
-      Test assignment of capacityMode attribute, None value.
-      """
-      store = StoreConfig(capacityMode="fail")
-      self.failUnlessEqual("fail", store.capacityMode)
-      store.capacityMode = None
-      self.failUnlessEqual(None, store.capacityMode)
-
-   def testConstructor_033(self):
-      """
-      Test assignment of capacityMode attribute, valid value.
-      """
-      store = StoreConfig()
-      self.failUnlessEqual(None, store.capacityMode)
-      store.capacityMode = "fail"
-      self.failUnlessEqual("fail", store.capacityMode)
-      store.capacityMode = "discard"
-      self.failUnlessEqual("discard", store.capacityMode)
-      store.capacityMode = "overwrite"
-      self.failUnlessEqual("overwrite", store.capacityMode)
-      store.capacityMode = "rebuild"
-      self.failUnlessEqual("rebuild", store.capacityMode)
-      store.capacityMode = "rewrite"
-      self.failUnlessEqual("rewrite", store.capacityMode)
-
-   def testConstructor_034(self):
-      """
-      Test assignment of capacityMode attribute, invalid value (empty).
-      """
-      store = StoreConfig()
-      self.failUnlessEqual(None, store.capacityMode)
-      self.failUnlessAssignRaises(ValueError, store, "capacityMode", "")
-      self.failUnlessEqual(None, store.capacityMode)
-
-   def testConstructor_035(self):
-      """
-      Test assignment of capacityMode attribute, invalid value (not in list).
-      """
-      store = StoreConfig()
-      self.failUnlessEqual(None, store.capacityMode)
-      self.failUnlessAssignRaises(ValueError, store, "capacityMode", "giveup")
-      self.failUnlessEqual(None, store.capacityMode)
 
 
    ############################
@@ -4636,48 +4552,6 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnless(store1 <= store2)
       self.failUnless(not store1 > store2)
       self.failUnless(not store1 >= store2)
-      self.failUnless(store1 != store2)
-
-   def testComparison_015(self):
-      """
-      Test comparison of two differing objects, safeOverwrite differs.
-      """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, False, "fail")
-      self.failIfEqual(store1, store2)
-      self.failUnless(not store1 == store2)
-      self.failUnless(not store1 < store2)
-      self.failUnless(not store1 <= store2)
-      self.failUnless(store1 > store2)
-      self.failUnless(store1 >= store2)
-      self.failUnless(store1 != store2)
-
-   def testComparison_016(self):
-      """
-      Test comparison of two differing objects, capacityMode differs (one None).
-      """
-      store1 = StoreConfig()
-      store2 = StoreConfig(capacityMode="fail")
-      self.failIfEqual(store1, store2)
-      self.failUnless(not store1 == store2)
-      self.failUnless(store1 < store2)
-      self.failUnless(store1 <= store2)
-      self.failUnless(not store1 > store2)
-      self.failUnless(not store1 >= store2)
-      self.failUnless(store1 != store2)
-
-   def testComparison_017(self):
-      """
-      Test comparison of two differing objects, capacityMode differs.
-      """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "overwrite")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
-      self.failIfEqual(store1, store2)
-      self.failUnless(not store1 == store2)
-      self.failUnless(not store1 < store2)
-      self.failUnless(not store1 <= store2)
-      self.failUnless(store1 > store2)
-      self.failUnless(store1 >= store2)
       self.failUnless(store1 != store2)
 
 
@@ -6024,8 +5898,6 @@ class TestConfig(unittest.TestCase):
       config.store.deviceScsiId = "0,0,0"
       config.store.driveSpeed = 4
       config.store.checkData = True
-      config.store.safeOverwrite = False
-      config.store.capacityMode = "overwrite"
       config._validateStore()
 
    def testValidate_038(self):
@@ -6040,8 +5912,6 @@ class TestConfig(unittest.TestCase):
       config.store.deviceScsiId = "0,0,0"
       config.store.driveSpeed = 4
       config.store.checkData = True
-      config.store.safeOverwrite = False
-      config.store.capacityMode = "overwrite"
       self.failUnlessRaises(ValueError, config._validateStore)
 
       config.store = StoreConfig()
@@ -6051,8 +5921,6 @@ class TestConfig(unittest.TestCase):
       config.store.deviceScsiId = "0,0,0"
       config.store.driveSpeed = 4
       config.store.checkData = True
-      config.store.safeOverwrite = False
-      config.store.capacityMode = "overwrite"
       self.failUnlessRaises(ValueError, config._validateStore)
 
       config.store = StoreConfig()
@@ -6062,8 +5930,6 @@ class TestConfig(unittest.TestCase):
       config.store.deviceScsiId = "0,0,0"
       config.store.driveSpeed = 4
       config.store.checkData = True
-      config.store.safeOverwrite = False
-      config.store.capacityMode = "overwrite"
       self.failUnlessRaises(ValueError, config._validateStore)
 
       config.store = StoreConfig()
@@ -6073,8 +5939,6 @@ class TestConfig(unittest.TestCase):
       config.store.devicePath = "/dev/cdrw"
       config.store.driveSpeed = 4
       config.store.checkData = True
-      config.store.safeOverwrite = False
-      config.store.capacityMode = "overwrite"
       self.failUnlessRaises(ValueError, config._validateStore)
 
    def testValidate_039(self):
@@ -6090,8 +5954,6 @@ class TestConfig(unittest.TestCase):
       config.store.deviceScsiId = "0,0,0"
       config.store.driveSpeed = 4
       config.store.checkData = True
-      config.store.safeOverwrite = False
-      config.store.capacityMode = "overwrite"
       config._validateStore()
 
       config.store = StoreConfig()
@@ -6101,19 +5963,6 @@ class TestConfig(unittest.TestCase):
       config.store.devicePath = "/dev/cdrw"
       config.store.deviceScsiId = "0,0,0"
       config.store.checkData = True
-      config.store.safeOverwrite = False
-      config.store.capacityMode = "overwrite"
-      config._validateStore()
-
-      config.store = StoreConfig()
-      config.store.sourceDir = "/source"
-      config.store.mediaType = "cdr-74"
-      config.store.deviceType = "cdwriter"
-      config.store.devicePath = "/dev/cdrw"
-      config.store.deviceScsiId = "0,0,0"
-      config.store.driveSpeed = 4
-      config.store.checkData = True
-      config.store.safeOverwrite = False
       config._validateStore()
 
       config.store = StoreConfig()
@@ -6124,18 +5973,6 @@ class TestConfig(unittest.TestCase):
       config.store.deviceScsiId = "0,0,0"
       config.store.driveSpeed = 4
       config.store.checkData = True
-      config.store.safeOverwrite = False
-      config.store.capacityMode = "overwrite"
-
-      config.store = StoreConfig()
-      config.store.sourceDir = "/source"
-      config.store.mediaType = "cdr-74"
-      config.store.deviceType = "cdwriter"
-      config.store.devicePath = "/dev/cdrw"
-      config.store.deviceScsiId = "0,0,0"
-      config.store.driveSpeed = 4
-      config.store.safeOverwrite = False
-      config.store.capacityMode = "overwrite"
       config._validateStore()
 
       config.store = StoreConfig()
@@ -6146,7 +5983,24 @@ class TestConfig(unittest.TestCase):
       config.store.deviceScsiId = "0,0,0"
       config.store.driveSpeed = 4
       config.store.checkData = True
-      config.store.capacityMode = "overwrite"
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config._validateStore()
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
       config._validateStore()
 
    def testValidate_040(self):
@@ -6277,45 +6131,26 @@ class TestConfig(unittest.TestCase):
    def testParse_007(self):
       """
       Parse config document containing only a extensions section, containing
-      only required fields, validate=False.
+      all fields, validate=False.
       """
       path = self.resources["cback.conf.16"]
       config = Config(xmlPath=path, validate=False)
       expected = Config()
       expected.extensions = ExtensionsConfig()
       expected.extensions.actions = []
-      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", None))
+      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 1))
       self.failUnlessEqual(expected, config)
 
    def testParse_008(self):
       """
       Parse config document containing only a extensions section, containing
-      only required fields, validate=True.
+      all fields, validate=True.
       """
       path = self.resources["cback.conf.16"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   def testParse_009(self):
-      """
-      Parse config document containing only a extensions section, containing all
-      required and optional fields, validate=False.
-      """
-      path = self.resources["cback.conf.17"]
-      config = Config(xmlPath=path, validate=False)
-      expected = Config()
-      expected.extensions = ExtensionsConfig()
-      expected.extensions.actions = []
-      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
-      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", None))
-      self.failUnlessEqual(expected, config)
-
-   def testParse_010(self):
-      """
-      Parse config document containing only a extensions section, containing all
-      required and optional fields, validate=True.
-      """
-      path = self.resources["cback.conf.17"]
-      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+   # testParse_009 has been removed
+   # testParse_010 has been removed
 
    def testParse_011(self):
       """
@@ -6488,8 +6323,6 @@ class TestConfig(unittest.TestCase):
       expected.store.deviceScsiId = "0,0,0"
       expected.store.driveSpeed = 4
       expected.store.checkData = True
-      expected.store.safeOverwrite = True
-      expected.store.capacityMode = "fail"
       self.failUnlessEqual(expected, config)
 
    def testParse_026(self):
@@ -6585,8 +6418,6 @@ class TestConfig(unittest.TestCase):
       expected.store.deviceScsiId = "0,0,0"
       expected.store.driveSpeed = 4
       expected.store.checkData = True
-      expected.store.safeOverwrite = True
-      expected.store.capacityMode = "fail"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
@@ -6636,8 +6467,6 @@ class TestConfig(unittest.TestCase):
       expected.store.deviceScsiId = "0,0,0"
       expected.store.driveSpeed = 4
       expected.store.checkData = True
-      expected.store.safeOverwrite = True
-      expected.store.capacityMode = "fail"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
@@ -6778,7 +6607,7 @@ class TestConfig(unittest.TestCase):
       before = Config()
       before.extensions = ExtensionsConfig()
       before.extensions.actions = []
-      before.extensions.actions.append(ExtendedAction("name", "module", "function"))
+      before.extensions.actions.append(ExtendedAction("name", "module", "function", 1))
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
    def testExtractXml_007(self):
@@ -6800,7 +6629,7 @@ class TestConfig(unittest.TestCase):
       before = Config()
       before.extensions = ExtensionsConfig()
       before.extensions.actions = []
-      before.extensions.actions.append(ExtendedAction("name", "module", "function"))
+      before.extensions.actions.append(ExtendedAction("name", "module", "function", 1))
       beforeXml = before.extractXml(validate=False)
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
