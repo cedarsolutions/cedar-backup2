@@ -1,3 +1,9 @@
+Version 2.3.1	23 Mar 2005
+
+	* Attempt to deal more gracefully with corrupted media.
+	* Unmount media using -l ("lazy unmount") in consistency check.
+	* Be more verbose about media errors during consistency check.
+
 Version 2.3.0	10 Mar 2005
 
 	* Make 'extend' package public by listing it in CedarBackup2/__init__.py.

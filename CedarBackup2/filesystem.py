@@ -1159,22 +1159,27 @@ def compareContents(path1, path2, verbose=False):
 
    @raise ValueError: If a directory doesn't exist or can't be read.
    @raise ValueError: If the two directories are not equivalent.
+   @raise IOError: If there is an unusual problem reading the directories.
    """
-   path1List = BackupFileList()
-   path1List.addDirContents(path1)
-   path1Digest = path1List.generateDigestMap(stripPrefix=normalizeDir(path1))
-   path2List = BackupFileList()
-   path2List.addDirContents(path2)
-   path2Digest = path2List.generateDigestMap(stripPrefix=normalizeDir(path2))
-   if not verbose:
-      if path1Digest != path2Digest:
-         raise ValueError("Consistency check failed.")
-   else:
-      list1 = UnorderedList(path1Digest.keys())
-      list2 = UnorderedList(path2Digest.keys())
-      if list1 != list2:
-         raise ValueError("Directories contain a different set of files.")
-      for key in list1:
-         if path1Digest[key] != path2Digest[key]:
-            raise ValueError("File contents for [%s] vary between directories." % key)
+   try:
+      path1List = BackupFileList()
+      path1List.addDirContents(path1)
+      path1Digest = path1List.generateDigestMap(stripPrefix=normalizeDir(path1))
+      path2List = BackupFileList()
+      path2List.addDirContents(path2)
+      path2Digest = path2List.generateDigestMap(stripPrefix=normalizeDir(path2))
+      if not verbose:
+         if path1Digest != path2Digest:
+            raise ValueError("Consistency check failed.")
+      else:
+         list1 = UnorderedList(path1Digest.keys())
+         list2 = UnorderedList(path2Digest.keys())
+         if list1 != list2:
+            raise ValueError("Directories contain a different set of files.")
+         for key in list1:
+            if path1Digest[key] != path2Digest[key]:
+               raise ValueError("File contents for [%s] vary between directories." % key)
+   except IOError, e:
+      logger.error("I/O error encountered during consistency check.")
+      raise e
 
