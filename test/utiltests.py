@@ -447,6 +447,344 @@ class TestFunctions(unittest.TestCase):
       self.failUnlessEqual("first\n", output[0])
       self.failUnlessEqual("second\n", output[1])
 
+   def testExecuteCommand_030(self):
+      """
+      Execute a command that should succeed, no arguments, returnOutput=False, ignoring stderr.
+      Command-line: echo
+      """
+      command=["echo", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_031(self):
+      """
+      Execute a command that should succeed, one argument, returnOutput=False, ignoring stderr.
+      Command-line: python -V
+      """
+      command=["python", ]
+      args=["-V", ]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_032(self):
+      """
+      Execute a command that should succeed, two arguments, returnOutput=False, ignoring stderr.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(0)"
+      """
+      command=["python", ]
+      args=["-c", "import sys; print sys.argv[1:]; sys.exit(0)", ]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_033(self):
+      """
+      Execute a command that should succeed, three arguments, returnOutput=False, ignoring stderr.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(0)" first
+      """
+      command=["python", ]
+      args=["-c", "import sys; print sys.argv[1:]; sys.exit(0)", "first", ]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_034(self):
+      """
+      Execute a command that should succeed, four arguments, returnOutput=False, ignoring stderr.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(0)" first second
+      """
+      command=["python", ]
+      args=["-c", "import sys; print sys.argv[1:]; sys.exit(0)", "first", "second", ]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_035(self):
+      """
+      Execute a command that should fail, returnOutput=False, ignoring stderr.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(1)"
+      """
+      command=["python", ]
+      args=["-c", "import sys; print sys.argv[1:]; sys.exit(1)", ]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failIfEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_036(self):
+      """
+      Execute a command that should fail, more arguments, returnOutput=False, ignoring stderr.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(1)" first second
+      """
+      command=["python", ]
+      args=["-c", "import sys; print sys.argv[1:]; sys.exit(1)", "first", "second", ]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failIfEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_037(self):
+      """
+      Execute a command that should succeed, no arguments, returnOutput=True, ignoring stderr.
+      Command-line: echo
+      """
+      command=["echo", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("\n", output[0])
+
+   def testExecuteCommand_038(self):
+      """
+      Execute a command that should succeed, one argument, returnOutput=True, ignoring stderr.
+      Command-line: python -V
+      """
+      command=["python", ]
+      args=["-V", ]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(0, len(output))
+
+   def testExecuteCommand_039(self):
+      """
+      Execute a command that should succeed, two arguments, returnOutput=True, ignoring stderr.
+      Command-line: python -c "import sys; print ''; sys.exit(0)"
+      """
+      command=["python", ]
+      args=["-c", "import sys; print ''; sys.exit(0)", ]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("\n", output[0])
+
+   def testExecuteCommand_040(self):
+      """
+      Execute a command that should succeed, three arguments, returnOutput=True, ignoring stderr.
+      Command-line: python -c "import sys; print '%s' % (sys.argv[1]); sys.exit(0)" first
+      """
+      command=["python", ]
+      args=["-c", "import sys; print '%s' % (sys.argv[1]); sys.exit(0)", "first", ]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("first\n", output[0])
+
+   def testExecuteCommand_041(self):
+      """
+      Execute a command that should succeed, four arguments, returnOutput=True, ignoring stderr.
+      Command-line: python -c "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(0)" first second
+      """
+      command=["python", ]
+      args=["-c", "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(0)", "first", "second", ]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(2, len(output))
+      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("second\n", output[1])
+
+   def testExecuteCommand_042(self):
+      """
+      Execute a command that should fail, returnOutput=True, ignoring stderr.
+      Command-line: python -c "import sys; print ''; sys.exit(1)"
+      """
+      command=["python", ]
+      args=["-c", "import sys; print ''; sys.exit(1)", ]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failIfEqual(0, result)
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("\n", output[0])
+
+   def testExecuteCommand_043(self):
+      """
+      Execute a command that should fail, more arguments, returnOutput=True, ignoring stderr.
+      Command-line: python -c "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(1)" first second
+      """
+      command=["python", ]
+      args=["-c", "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(1)", "first", "second", ]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failIfEqual(0, result)
+      self.failUnlessEqual(2, len(output))
+      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("second\n", output[1])
+
+   def testExecuteCommand_044(self):
+      """
+      Execute a command that should succeed, no arguments, returnOutput=False, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: echo
+      """
+      command=["echo", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_045(self):
+      """
+      Execute a command that should succeed, one argument, returnOutput=False, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -V
+      """
+      command=["python", "-V", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_046(self):
+      """
+      Execute a command that should succeed, two arguments, returnOutput=False, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(0)"
+      """
+      command=["python", "-c", "import sys; print sys.argv[1:]; sys.exit(0)", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_047(self):
+      """
+      Execute a command that should succeed, three arguments, returnOutput=False, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(0)" first
+      """
+      command=["python", "-c", "import sys; print sys.argv[1:]; sys.exit(0)", "first", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_048(self):
+      """
+      Execute a command that should succeed, four arguments, returnOutput=False, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(0)" first second
+      """
+      command=["python", "-c", "import sys; print sys.argv[1:]; sys.exit(0)", "first", "second", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_049(self):
+      """
+      Execute a command that should fail, returnOutput=False, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(1)"
+      """
+      command=["python", "-c", "import sys; print sys.argv[1:]; sys.exit(1)", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failIfEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_050(self):
+      """
+      Execute a command that should fail, more arguments, returnOutput=False, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print sys.argv[1:]; sys.exit(1)" first second
+      """
+      command=["python", "-c", "import sys; print sys.argv[1:]; sys.exit(1)", "first", "second", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+      self.failIfEqual(0, result)
+      self.failUnlessEqual(None, output)
+
+   def testExecuteCommand_051(self):
+      """
+      Execute a command that should succeed, no arguments, returnOutput=True, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: echo
+      """
+      command=["echo", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("\n", output[0])
+
+   def testExecuteCommand_052(self):
+      """
+      Execute a command that should succeed, one argument, returnOutput=True, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -V
+      """
+      command=["python", "-V"]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(0, len(output))
+
+   def testExecuteCommand_053(self):
+      """
+      Execute a command that should succeed, two arguments, returnOutput=True, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print ''; sys.exit(0)"
+      """
+      command=["python", "-c", "import sys; print ''; sys.exit(0)", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("\n", output[0])
+
+   def testExecuteCommand_054(self):
+      """
+      Execute a command that should succeed, three arguments, returnOutput=True, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print '%s' % (sys.argv[1]); sys.exit(0)" first
+      """
+      command=["python", "-c", "import sys; print '%s' % (sys.argv[1]); sys.exit(0)", "first", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("first\n", output[0])
+
+   def testExecuteCommand_055(self):
+      """
+      Execute a command that should succeed, four arguments, returnOutput=True, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(0)" first second
+      """
+      command=["python", "-c", "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(0)", "first", "second", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failUnlessEqual(0, result)
+      self.failUnlessEqual(2, len(output))
+      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("second\n", output[1])
+
+   def testExecuteCommand_056(self):
+      """
+      Execute a command that should fail, returnOutput=True, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print ''; sys.exit(1)"
+      """
+      command=["python", "-c", "import sys; print ''; sys.exit(1)", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failIfEqual(0, result)
+      self.failUnlessEqual(1, len(output))
+      self.failUnlessEqual("\n", output[0])
+
+   def testExecuteCommand_057(self):
+      """
+      Execute a command that should fail, more arguments, returnOutput=True, ignoring stderr.
+      Do this all bundled into the command list, just to check that this works as expected.
+      Command-line: python -c "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(1)" first second
+      """
+      command=["python", "-c", "import sys; print '%s' % sys.argv[1]; print '%s' % sys.argv[2]; sys.exit(1)", "first", "second", ]
+      args=[]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+      self.failIfEqual(0, result)
+      self.failUnlessEqual(2, len(output))
+      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("second\n", output[1])
+
 
 #######################################################################
 # Suite definition
