@@ -50,16 +50,14 @@ Provides backup peer-related objects and utility functions.
 # System modules
 import os
 import logging
-import pwd
-import grp
 import shutil
-import popen2
 import tempfile
 import sets
 import re
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
+from CedarBackup2.util import executeCommand
 
 
 ########################################################################
@@ -71,103 +69,6 @@ logger                  = logging.getLogger("CedarBackup2.peer")
 DEF_RCP_COMMAND         = [ "/usr/bin/scp", "-B", "-q", "-C" ]
 DEF_COLLECT_INDICATOR   = "cback.collect"
 DEF_STAGE_INDICATOR     = "cback.stage"
-
-
-########################################################################
-# Public functions
-########################################################################
-
-#######################
-# getUidGid() function
-#######################
-
-def getUidGid(user, group):
-   """
-   Get the uid/gid associated with a user/group pair
-
-   @param user: User name
-   @type user: User name as a string
-
-   @param group: Group name 
-   @type group: Group name as a string
-
-   @return Tuple (uid, gid) matching passed-in user and group.
-   @raise ValueError: If the ownership user/group values are invalid
-   """
-   try:
-      uid = pwd.getpwnam(user)[2]
-      gid = grp.getgrnam(group)[2]
-      logger.debug("Translated user/group %s/%s into uid/gid %d/%d." % (user, group, uid, gid))
-      return (uid, gid)
-   except Exception, e:
-      logger.debug("Error looking up uid and gid for user/group %s/%s: %s" % (user, group, e))
-      raise ValueError("Unable to lookup up uid and gid for passed in user/group.")
-
-
-############################
-# executeCommand() function
-############################
-
-def executeCommand(command, args, returnOutput=False):
-   """
-   Executes a shell command, hopefully in a safe way (UNIX-specific).
-
-   This function exists to replace direct calls to os.popen() in the Cedar
-   Backup code.  It's not safe to call a function such as os.popen() with
-   untrusted arguments, since that can cause problems if the string contains
-   non-safe variables or other constructs (imagine that the argument is
-   $WHATEVER, but $WHATEVER contains something like "; rm -fR ~/; echo" in the
-   current environment).
-
-   It's safer to use popen4 (or popen2 or popen3) and pass a list rather than a
-   string for the first argument.  When called this way, popen4 will use the
-   list's first item as the command and the remainder of the list's items as
-   arguments to that command.
-
-   Under the normal case, the function will return a tuple of (status, None)
-   where the status is the wait-encoded return status of the call per the
-   Popen4 documentation.  If returnOutput is passed in as true, the function
-   will return a tuple of (status, output) where output is a list of strings,
-   one entry per line in the intermingled combination of stdout and stderr from
-   the command.  Output is always logged to the logger.info() target, regardless
-   of whether it's returned.
-
-   @note: I know that it's a bit confusing that the command and the arguments
-   are both lists.  I could have just required the caller to pass in one big
-   list.  However, I think it makes some sense to keep the command (the
-   constant part of what we're executing, i.e. "scp -B") separate from its
-   arguments, even if they both end up looking kind of similar.
-
-   @note: You cannot redirect output (i.e. 2>&1, 2>/dev/null, etc.) using this
-   function.  The redirection string would be passed to the command just like
-   any other argument.
-
-   @param command: Shell command to execute
-   @type command: List of individual arguments that make up the command
-
-   @param args: List of arguments to the command
-   @type args: List of additional arguments to the command
-
-   @param returnOutput: Indicates whether to return the output of the command
-   @type returnOutput: Boolean True or False
-
-   @return Tuple of (result, output) as described above.
-   """
-   logger.debug("Executing command [%s] with args %s." % (command, args))
-   output = []
-   fields = command[:]        # make sure to copy it so we don't destroy it
-   fields.extend(args)
-   pipe = popen2.Popen4(fields)
-   pipe.tochild.close()       # we'll never write to it, and this way we don't confuse anything.
-   while True:
-      line = pipe.fromchild.readline()
-      if not line: break
-      if returnOutput: output.append(line)
-      logger.info(line[:-1])  # this way the log will (hopefully) get updated in realtime
-   if returnOutput:
-      return (pipe.wait(), output)
-   else:
-      return (pipe.wait(), None)
 
 
 ########################################################################
@@ -240,7 +141,7 @@ class LocalPeer(object):
       can't control whether the remote copy method thinks an empty directory is
       an error.  
 
-      @note: If you have user/group as strings, call the getUidGid() function
+      @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
       @param targetDir: Target directory to write data into
@@ -302,8 +203,8 @@ class LocalPeer(object):
       If you need to, you can override the name of the stage indicator file by
       passing in a different name.
 
-      @note: If you have user/group as strings, call the getUidGid() function
-      to get the associated uid/gid as an ownership tuple.
+      @note: If you have user/group as strings, call the L{util.getUidGid}
+      function to get the associated uid/gid as an ownership tuple.
 
       @param stageIndicator: Name of the indicator file to write
       @type stageIndicator: String representing name of a file in the collect directory
@@ -339,8 +240,8 @@ class LocalPeer(object):
 
       @note: This is a static method.
 
-      @note: If you have user/group as strings, call the getUidGid() function
-      to get the associated uid/gid as an ownership tuple.
+      @note: If you have user/group as strings, call the L{util.getUidGid}
+      function to get the associated uid/gid as an ownership tuple.
 
       @param sourceDir Source directory
       @type sourceDir: String representing a directory on disk
@@ -376,8 +277,8 @@ class LocalPeer(object):
 
       @note: This is a static method.
 
-      @note: If you have user/group as strings, call the getUidGid() function
-      to get the associated uid/gid as an ownership tuple.
+      @note: If you have user/group as strings, call the L{util.getUidGid}
+      function to get the associated uid/gid as an ownership tuple.
 
       @param sourceFile Source file to copy
       @type sourceFile: String representing a file on disk (absolute path)
@@ -496,7 +397,7 @@ class RemotePeer(object):
       passed in, ownership and permissions will be applied to the files that
       are copied.  
 
-      @note: If you have user/group as strings, call the getUidGid() function
+      @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
       @param targetDir: Target directory to write data into
@@ -564,7 +465,7 @@ class RemotePeer(object):
       If you need to, you can override the name of the stage indicator file by
       passing in a different name.
 
-      @note: If you have user/group as strings, call the getUidGid() function
+      @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
       @note: This method's behavior is UNIX-specific.  It depends on the
@@ -623,7 +524,7 @@ class RemotePeer(object):
 
       @note: This is a static method.
 
-      @note: If you have user/group as strings, call the getUidGid() function
+      @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
       @note: We don't have a good way of knowing exactly what files we copied
@@ -684,7 +585,7 @@ class RemotePeer(object):
 
       @note: This is a static method.
 
-      @note: If you have user/group as strings, call the getUidGid() function
+      @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
       @param remoteUser: Name of the Cedar Backup user on the remote peer
@@ -732,7 +633,7 @@ class RemotePeer(object):
 
       @note: This is a static method.
 
-      @note: If you have user/group as strings, call the getUidGid() function
+      @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
       @param remoteUser: Name of the Cedar Backup user on the remote peer
