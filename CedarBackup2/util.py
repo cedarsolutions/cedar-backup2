@@ -692,7 +692,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    @type doNotLog: Boolean C{True} or C{False}
 
    @param outputFile: File object that all output should be written to.
-   Type outputFile: File object as returned from C{open()} or C{file()}.
+   @type outputFile: File object as returned from C{open()} or C{file()}.
 
    @return: Tuple of C{(result, output)} as described above.
    """
