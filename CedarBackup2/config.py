@@ -235,6 +235,7 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.writer import validateScsiId, validateDriveSpeed
+from CedarBackup2.util import AbsolutePathList, ObjectTypeList
 
 
 ########################################################################
@@ -246,107 +247,6 @@ logger = logging.getLogger("CedarBackup2.config")
 DEFAULT_DEVICE_TYPE = "cdwriter"
 VALID_DEVICE_TYPES  = [ "cdwriter", ]
 VALID_MEDIA_TYPES   = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
-
-
-########################################################################
-# _AbsolutePathList class definition
-########################################################################
-
-class _AbsolutePathList(list):
-
-   """
-   Class representing a list of absolute paths.
-
-   We override the C{append}, C{insert} and C{extend} methods to ensure that
-   any item added to the list is an absolute path.  
-   """
-
-   def append(self, item):
-      """
-      Overrides the standard C{append} method.
-      @raise ValueError: If item is not an absolute path.
-      """
-      if not os.path.isabs(item):
-         raise ValueError("Item must be an absolute path.")
-      list.append(self, item)
-
-   def insert(self, index, item):
-      """
-      Overrides the standard C{insert} method.
-      @raise ValueError: If item is not an absolute path.
-      """
-      if not os.path.isabs(item):
-         raise ValueError("Item must be an absolute path.")
-      list.insert(self, index, item)
-
-   def extend(self, seq):
-      """
-      Overrides the standard C{insert} method.
-      @raise ValueError: If any item is not an absolute path.
-      """
-      for item in seq:
-         if not os.path.isabs(item):
-            raise ValueError("All items must be absolute paths.")
-      list.extend(self, seq)
-
-
-########################################################################
-# _ObjectTypeList class definition
-########################################################################
-
-class _ObjectTypeList(list):
-
-   """
-   Class representing a list containing only objects with a certain type.
-
-   We override the C{append}, C{insert} and C{extend} methods to ensure that
-   any item added to the list matches the type that is requested.  The
-   comparison uses the built-in C{isinstance}, which should allow subclasses of
-   of the requested type to be added to the list as well.
-
-   The C{objectName} value will be used in exceptions, i.e. C{"Item must be a
-   CollectDir object."} if C{objectName} is C{"CollectDir"}.
-   
-   @ivar objectType: Type that the list elements must match.
-   @ivar objectName: Short string containing the "name" of the type.
-   """
-   
-   def __init__(self, objectType, objectName):
-      """
-      Initializes a typed list for a particular type.
-      @param objectType: Type that the list elements must match.
-      @param objectName: Short string containing the "name" of the type.
-      """
-      self.objectType = objectType
-      self.objectName = objectName
-
-   def append(self, item):
-      """
-      Overrides the standard C{append} method.
-      @raise ValueError: If item does not match requested type.
-      """
-      if not isinstance(item, self.objectType):
-         raise ValueError("Item must be a %s object." % self.objectName)
-      list.append(self, item)
-
-   def insert(self, index, item):
-      """
-      Overrides the standard C{insert} method.
-      @raise ValueError: If item does not match requested type.
-      """
-      if not isinstance(item, self.objectType):
-         raise ValueError("Item must be a %s object." % self.objectName)
-      list.insert(self, index, item)
-
-   def extend(self, seq):
-      """
-      Overrides the standard C{insert} method.
-      @raise ValueError: If item does not match requested type.
-      """
-      for item in seq:
-         if not isinstance(item, self.objectType):
-            raise ValueError("All items must be %s objects." % self.objectName)
-      list.extend(self, seq)
 
 
 ########################################################################
@@ -371,8 +271,8 @@ class CollectDir(object):
       - The archive mode must be one of C{"tar"}, C{"targz"} or C{"tarbz2"}.
       - The ignore file must be a non-empty string.
 
-   For the C{absoluteExcludePaths} list, validation is accomplished through an
-   internal C{_AbsolutePathList} list implementation that overrides common list
+   For the C{absoluteExcludePaths} list, validation is accomplished through the
+   L{util.AbsolutePathList} list implementation that overrides common list
    methods and transparently does the absolute path validation for us.
 
    @sort: absolutePath, collectMode, archiveMode, ignoreFile, absoluteExcludePaths, relativeExcludePaths, excludePatterns
@@ -467,7 +367,7 @@ class CollectDir(object):
       @raise ValueError: If the value is an empty string.
       """
       if value is not None:
-         if not len(value) < 1:
+         if len(value) < 1:
             raise ValueError("The ignore file must be a non-empty string.")
       self._ignoreFile = value
 
@@ -487,7 +387,7 @@ class CollectDir(object):
       if value is None:
          self._absoluteExcludePaths = None
       else:
-         self._absoluteExcludePaths = _AbsolutePathList()
+         self._absoluteExcludePaths = AbsolutePathList()
          self._absoluteExcludePaths.extend(value)
 
    def _getAbsoluteExcludePaths(self):
@@ -664,7 +564,7 @@ class LocalPeer(object):
       @raise ValueError: If the value is an empty string.
       """
       if value is not None:
-         if not len(value) < 1:
+         if len(value) < 1:
             raise ValueError("The peer name must be a non-empty string.")
       self._name = value
 
@@ -748,7 +648,7 @@ class RemotePeer(object):
       @raise ValueError: If the value is an empty string.
       """
       if value is not None:
-         if not len(value) < 1:
+         if len(value) < 1:
             raise ValueError("The peer name must be a non-empty string.")
       self._name = value
 
@@ -783,7 +683,7 @@ class RemotePeer(object):
       @raise ValueError: If the value is an empty string.
       """
       if value is not None:
-         if not len(value) < 1:
+         if len(value) < 1:
             raise ValueError("The remote user must be a non-empty string.")
       self._remoteUser = value
 
@@ -800,7 +700,7 @@ class RemotePeer(object):
       @raise ValueError: If the value is an empty string.
       """
       if value is not None:
-         if not len(value) < 1:
+         if len(value) < 1:
             raise ValueError("The remote user must be a non-empty string.")
       self._rcpCommand = value
 
@@ -1007,7 +907,7 @@ class OptionsConfig(object):
       @raise ValueError: If the value is an empty string.
       """
       if value is not None:
-         if not len(value) < 1:
+         if len(value) < 1:
             raise ValueError("Backup user must be a non-empty string.")
       self._backupUser = value
 
@@ -1024,7 +924,7 @@ class OptionsConfig(object):
       @raise ValueError: If the value is an empty string.
       """
       if value is not None:
-         if not len(value) < 1:
+         if len(value) < 1:
             raise ValueError("Backup group must be a non-empty string.")
       self._backupGroup = value
 
@@ -1041,7 +941,7 @@ class OptionsConfig(object):
       @raise ValueError: If the value is an empty string.
       """
       if value is not None:
-         if not len(value) < 1:
+         if len(value) < 1:
             raise ValueError("The rcp command must be a non-empty string.")
       self._rcpCommand = value
 
@@ -1082,13 +982,13 @@ class CollectConfig(object):
       - Each of the paths in C{absoluteExcludePaths} must be an absolute path
       - The collect directory list must be a list of C{CollectDir} objects.
 
-   For the C{absoluteExcludePaths} list, validation is accomplished through an
-   internal C{_AbsolutePathList} list implementation that overrides common list
+   For the C{absoluteExcludePaths} list, validation is accomplished through the
+   L{util.AbsolutePathList} list implementation that overrides common list
    methods and transparently does the absolute path validation for us.
 
-   For the C{collectDirs} list, validation is accomplished through an internal
-   C{_ObjectTypeList} list implementation that overrides common list methods
-   and transparently ensures that each element is a C{CollectDir}.
+   For the C{collectDirs} list, validation is accomplished through the
+   L{util.ObjectTypeList} list implementation that overrides common list
+   methods and transparently ensures that each element is a C{CollectDir}.
 
    @sort: targetDir, collectMode, archiveMode, ignoreFile, absoluteExcludePaths, excludePatterns, collectDirs
    """
@@ -1182,7 +1082,7 @@ class CollectConfig(object):
       @raise ValueError: If the value is an empty string.
       """
       if value is not None:
-         if not len(value) < 1:
+         if len(value) < 1:
             raise ValueError("The ignore file must be a non-empty string.")
       self._ignoreFile = value
 
@@ -1202,7 +1102,7 @@ class CollectConfig(object):
       if value is None:
          self._absoluteExcludePaths = None
       else:
-         self._absoluteExcludePaths = _AbsolutePathList()
+         self._absoluteExcludePaths = AbsolutePathList()
          self._absoluteExcludePaths.extend(value)
 
    def _getAbsoluteExcludePaths(self):
@@ -1236,7 +1136,7 @@ class CollectConfig(object):
       if value is None:
          self._collectDirs = None
       else:
-         self._collectDirs = _ObjectTypeList(CollectDir, "CollectDir")
+         self._collectDirs = ObjectTypeList(CollectDir, "CollectDir")
          self._collectDirs.extend(value)
 
    def _getCollectDirs(self):
@@ -1322,7 +1222,7 @@ class StageConfig(object):
       if value is None:
          self._localPeers = None
       else:
-         self._localPeers = _ObjectTypeList(LocalPeer, "LocalPeer")
+         self._localPeers = ObjectTypeList(LocalPeer, "LocalPeer")
          self._localPeers.extend(value)
 
    def _getLocalPeers(self):
@@ -1340,7 +1240,7 @@ class StageConfig(object):
       if value is None:
          self._remotePeers = None
       else:
-         self._remotePeers = _ObjectTypeList(RemotePeer, "RemotePeer")
+         self._remotePeers = ObjectTypeList(RemotePeer, "RemotePeer")
          self._remotePeers.extend(value)
 
    def _getRemotePeers(self):
@@ -1519,9 +1419,12 @@ class StoreConfig(object):
    def _setCheckData(self, value):
       """
       Property target used to set the check data flag.
-      No validations.
+      No validations, but we normalize the value to C{True} or C{False}.
       """
-      self._checkData = value
+      if value:
+         self._checkData = True
+      else:
+         self._checkData = False
 
    def _getCheckData(self):
       """
@@ -1557,9 +1460,9 @@ class PurgeConfig(object):
 
       - The purge directory list must be a list of C{PurgeDir} objects.
 
-   For the C{purgeDirs} list, validation is accomplished through an internal
-   C{_ObjectTypeList} list implementation that overrides common list methods
-   and transparently ensures that each element is a C{PurgeDir}.
+   For the C{purgeDirs} list, validation is accomplished through the
+   L{util.ObjectTypeList} list implementation that overrides common list
+   methods and transparently ensures that each element is a C{PurgeDir}.
 
    @sort: purgeDirs
    """
@@ -1582,7 +1485,7 @@ class PurgeConfig(object):
       if value is None:
          self._purgeDirs = None
       else:
-         self._purgeDirs = _ObjectTypeList(PurgeDir, "PurgeDir")
+         self._purgeDirs = ObjectTypeList(PurgeDir, "PurgeDir")
          self._purgeDirs.extend(value)
 
    def _getPurgeDirs(self):
@@ -1692,9 +1595,9 @@ class Configuration(object):
             self.validate()
 
 
-   ##########################
-   # Property implementation
-   ##########################
+   #############
+   # Properties
+   #############
 
    def _setReference(self, value):
       """

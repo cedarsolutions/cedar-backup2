@@ -57,6 +57,7 @@ import tarfile
 
 # Cedar Backup modules
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
+from CedarBackup2.util import AbsolutePathList, ObjectTypeList
 
 
 ########################################################################
@@ -106,17 +107,10 @@ class FilesystemList(list):
    bounded at front and back by the beginning and end of the string, i.e. they
    are treated as if they begin with C{^} and end with C{$}.
 
-   @ivar excludeFiles: Boolean indicating whether files should be excluded
-   @ivar excludeDirs: Boolean indicating whether directories should be excluded
-   @ivar excludeLinks: Boolean indicating whether soft links should be excluded
-   @ivar excludePaths: List of absolute paths to be excluded
-   @ivar excludePatterns: List of regular expression patterns to be excluded
-   @ivar ignoreFile: Name of file which will cause directory contents to be ignored
-
    @sort: __init__, addFile, addDir, addDirContents, removeFiles, removeDirs,
           removeLinks, removeMatch, removeInvalid, normalize, validate, 
           excludeFiles, excludeDirs, excludeLinks, excludePaths, 
-          excludePatterns, ignoreFile
+          excludePatterns, ignoreFile 
    """
 
 
@@ -127,6 +121,12 @@ class FilesystemList(list):
    def __init__(self):
       """Initializes a list with no configured exclusions."""
       list.__init__(self)
+      self._excludeFiles = False
+      self._excludeDirs = False
+      self._excludeLinks = False
+      self._excludePaths = None
+      self._excludePatterns = None
+      self._ignoreFile = None
       self.excludeFiles = False
       self.excludeLinks = False
       self.excludeDirs = False
@@ -135,6 +135,115 @@ class FilesystemList(list):
       self.ignoreFile = None
       logger.debug("Created new list with no configured exclusions.")
 
+
+   #############
+   # Properties
+   #############
+
+   def _setExcludeFiles(self, value):
+      """
+      Property target used to set the exclude files flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._excludeFiles = True
+      else:
+         self._excludeFiles = False
+
+   def _getExcludeFiles(self):
+      """
+      Property target used to get the exclude files flag.
+      """
+      return self._excludeFiles
+
+   def _setExcludeDirs(self, value):
+      """
+      Property target used to set the exclude directories flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._excludeDirs = True
+      else:
+         self._excludeDirs = False
+
+   def _getExcludeDirs(self):
+      """
+      Property target used to get the exclude directories flag.
+      """
+      return self._excludeDirs
+
+   def _setExcludeLinks(self, value):
+      """
+      Property target used to set the exclude soft links flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._excludeLinks = True
+      else:
+         self._excludeLinks = False
+
+   def _getExcludeLinks(self):
+      """
+      Property target used to get the exclude soft links flag.
+      """
+      return self._excludeLinks
+
+   def _setExcludePaths(self, value):
+      """
+      Property target used to set the exclude paths list.
+      A C{None} value is converted to an empty list.
+      Elements do not have to exist on disk at the time of assignment.
+      @raise ValueError: If any list element is not an absolute path.
+      """
+      self._absoluteExcludePaths = AbsolutePathList()
+      if value is not None:
+         self._absoluteExcludePaths.extend(value)
+
+   def _getExcludePaths(self):
+      """
+      Property target used to get the absolute exclude paths list.
+      """
+      return self._absoluteExcludePaths
+
+   def _setExcludePatterns(self, value):
+      """
+      Property target used to set the exclude patterns list.
+      A C{None} value is converted to an empty list.
+      """
+      self._excludePatterns = []
+      if value is not None:
+         self._excludePatterns.extend(value)
+
+   def _getExcludePatterns(self):
+      """
+      Property target used to get the exclude patterns list.
+      """
+      return self._excludePatterns
+
+   def _setIgnoreFile(self, value):
+      """
+      Property target used to set the ignore file.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The ignore file must be a non-empty string.")
+      self._ignoreFile = value
+
+   def _getIgnoreFile(self):
+      """
+      Property target used to get the ignore file.
+      """
+      return self._ignoreFile
+
+   excludeFiles = property(_getExcludeFiles, _setExcludeFiles, None, "Boolean indicating whether files should be excluded.")
+   excludeDirs = property(_getExcludeDirs, _setExcludeDirs, None, "Boolean indicating whether directories should be excluded.")
+   excludeLinks = property(_getExcludeLinks, _setExcludeLinks, None, "Boolean indicating whether soft links should be excluded.")
+   excludePaths = property(_getExcludePaths, _setExcludePaths, None, "List of absolute paths to be excluded.")
+   excludePatterns = property(_getExcludePatterns, _setExcludePatterns, None, "List of regular expression patterns to be excluded.")
+   ignoreFile = property(_getIgnoreFile, _setIgnoreFile, None, "Name of file which will cause directory contents to be ignored.")
+   
 
    ##############
    # Add methods

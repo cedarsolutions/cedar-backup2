@@ -636,7 +636,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is False; entireDisc=False, useMulti=True.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer.deviceSupportsMulti = False;
+      writer._deviceSupportsMulti = False;
       boundaries = writer._getBoundaries(entireDisc=False, useMulti=True)
       self.failUnlessEqual(None, boundaries)
 
@@ -645,7 +645,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is False; entireDisc=True, useMulti=True.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer.deviceSupportsMulti = False;
+      writer._deviceSupportsMulti = False;
       boundaries = writer._getBoundaries(entireDisc=True, useMulti=True)
       self.failUnlessEqual(None, boundaries)
 
@@ -654,7 +654,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is False; entireDisc=True, useMulti=False.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer.deviceSupportsMulti = False;
+      writer._deviceSupportsMulti = False;
       boundaries = writer._getBoundaries(entireDisc=False, useMulti=False)
       self.failUnlessEqual(None, boundaries)
 
@@ -663,7 +663,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is False; entireDisc=False, useMulti=False.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer.deviceSupportsMulti = False;
+      writer._deviceSupportsMulti = False;
       boundaries = writer._getBoundaries(entireDisc=False, useMulti=False)
       self.failUnlessEqual(None, boundaries)
 
@@ -672,7 +672,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is True; entireDisc=False, useMulti=True.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer.deviceSupportsMulti = True;
+      writer._deviceSupportsMulti = True;
       self.failUnlessRaises(IOError, writer._getBoundaries, entireDisc=False, useMulti=True)
 
    def testCapacity_022(self):
@@ -680,7 +680,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is True; entireDisc=True, useMulti=True.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer.deviceSupportsMulti = True;
+      writer._deviceSupportsMulti = True;
       boundaries = writer._getBoundaries(entireDisc=True, useMulti=True)
       self.failUnlessEqual((0, 0), boundaries)
 
@@ -689,7 +689,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is True; entireDisc=True, useMulti=False.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer.deviceSupportsMulti = True;
+      writer._deviceSupportsMulti = True;
       boundaries = writer._getBoundaries(entireDisc=True, useMulti=False)
       self.failUnlessEqual(None, boundaries)
 
@@ -698,7 +698,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is True; entireDisc=False, useMulti=False.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer.deviceSupportsMulti = True;
+      writer._deviceSupportsMulti = True;
       self.failUnlessRaises(IOError, writer._getBoundaries, entireDisc=False, useMulti=True)
 
 

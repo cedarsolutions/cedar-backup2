@@ -96,18 +96,15 @@ class LocalPeer(object):
    hostname) and a collect directory.
 
    The public methods other than the constructor are part of a "backup peer"
-   interface shared with the RemotePeer class.
-
-   @ivar name: Name of the peer
-   @ivar collectDir: Path to the peer's collect directory (an absolute local path)
+   interface shared with the C{RemotePeer} class.
 
    @sort: __init__, stagePeer, checkCollectIndicator, writeStageIndicator, 
           _copyLocalDir, _copyLocalFile, name, collectDir
    """
 
-   ####################
-   # Interface methods
-   ####################
+   ##############
+   # Constructor
+   ##############
 
    def __init__(self, name, collectDir):
       """
@@ -124,13 +121,59 @@ class LocalPeer(object):
       @param collectDir: Path to the peer's collect directory 
       @type collectDir: String representing an absolute local path on disk
 
-      @raise ValueError: If collect directory is not an absolute path
+      @raise ValueError: If the name is empty.
+      @raise ValueError: If collect directory is not an absolute path.
       """
-      if not os.path.isabs(collectDir):
-         logger.debug("Collect directory [%s] not an absolute path." % collectDir)
-         raise ValueError("Collect directory must be an absolute path.")
+      self._name = None
+      self._collectDir = None
       self.name = name
       self.collectDir = collectDir
+
+
+   #############
+   # Properties
+   #############
+
+   def _setName(self, value):
+      """
+      Property target used to set the peer name.
+      The value must be a non-empty string and cannot be C{None}.
+      @raise ValueError: If the value is an empty string or C{None}.
+      """
+      if value is None or len(value) < 1:
+         raise ValueError("Peer name must be a non-empty string.")
+      self._name = value
+
+   def _getName(self):
+      """
+      Property target used to get the peer name.
+      """
+      return self._name
+
+   def _setCollectDir(self, value):
+      """
+      Property target used to set the collect directory.
+      The value must be an absolute path and cannot be C{None}.
+      It does not have to exist on disk at the time of assignment.
+      @raise ValueError: If the value is C{None} or is not an absolute path.
+      """
+      if value is None or not os.path.isabs(value):
+         raise ValueError("Collect directory must be an absolute path.")
+      self._collectDir = value
+
+   def _getCollectDir(self):
+      """
+      Property target used to get the collect directory.
+      """
+      return self._collectDir
+
+   name = property(_getName, _setName, None, "Name of the peer.")
+   collectDir = property(_getCollectDir, _setCollectDir, None, "Path to the peer's collect directory (an absolute local path).")
+
+
+   #################
+   # Public methods
+   #################
 
    def stagePeer(self, targetDir, ownership=None, permissions=None):
       """
@@ -229,6 +272,11 @@ class LocalPeer(object):
       else:
          fileName = os.path.join(self.collectDir, stageIndicator)
       LocalPeer._copyLocalFile(None, fileName, ownership, permissions)    # None for sourceFile results in an empty target
+
+
+   ##################
+   # Private methods
+   ##################
 
    def _copyLocalDir(sourceDir, targetDir, ownership=None, permissions=None):
       """
@@ -334,23 +382,18 @@ class RemotePeer(object):
    different connect method.
 
    The public methods other than the constructor are part of a "backup peer"
-   interface shared with the LocalPeer class.
-
-   @ivar name: Name of the peer (a valid DNS hostname)
-   @ivar remoteUser: Name of the Cedar Backup user on the remote peer
-   @ivar collectDir: Path to the peer's collect directory (an absolute path on the peer)
-   @ivar rcpCommand: An rcp-compatible copy command to use for copying files from the peer
+   interface shared with the C{LocalPeer} class.
 
    @sort: __init__, stagePeer, checkCollectIndicator, writeStageIndicator, 
           _getDirContents _copyRemoteDir, _copyRemoteFile, _pushLocalFile, 
-          name, remoteUser, collectDir, rcpCommand
+          name, collectDir, remoteUser, rcpCommand
    """
 
-   ####################
-   # Interface methods
-   ####################
+   ##############
+   # Constructor
+   ##############
 
-   def __init__(self, name, remoteUser, collectDir, rcpCommand=None):
+   def __init__(self, name, collectDir, remoteUser, rcpCommand=None):
       """
       Initializes a remote backup peer.
 
@@ -367,29 +410,123 @@ class RemotePeer(object):
       @param name: Name of the backup peer
       @type name: String, must be a valid DNS hostname
 
-      @param remoteUser: Name of the Cedar Backup user on the remote peer
-      @type remoteUser: String representing a username, valid via the copy command
-
       @param collectDir: Path to the peer's collect directory 
       @type collectDir: String representing an absolute path on the remote peer
+
+      @param remoteUser: Name of the Cedar Backup user on the remote peer
+      @type remoteUser: String representing a username, valid via the copy command
 
       @param rcpCommand: An rcp-compatible copy command to use for copying files from the peer
       @type rcpCommand: String representing a system command including required arguments
 
       @raise ValueError: If collect directory is not an absolute path
       """
-      if not os.path.isabs(collectDir):
-         raise ValueError("Collect directory must be an absolute path.")
+      self._name = None
+      self._collectDir = None
+      self._remoteUser = None
+      self._rcpCommand = None
+      self._rcpCommandList = None
       self.name = name
-      self.remoteUser = remoteUser
       self.collectDir = collectDir
-      if rcpCommand is None:
-         self.rcpCommand = DEF_RCP_COMMAND
+      self.remoteUser = remoteUser
+      self.rcpCommand = rcpCommand
+
+
+   #############
+   # Properties
+   #############
+
+   def _setName(self, value):
+      """
+      Property target used to set the peer name.
+      The value must be a non-empty string and cannot be C{None}.
+      @raise ValueError: If the value is an empty string or C{None}.
+      """
+      if value is None or len(value) < 1:
+         raise ValueError("Peer name must be a non-empty string.")
+      self._name = value
+
+   def _getName(self):
+      """
+      Property target used to get the peer name.
+      """
+      return self._name
+
+   def _setCollectDir(self, value):
+      """
+      Property target used to set the collect directory.
+      The value must be an absolute path and cannot be C{None}.
+      It does not have to exist on disk at the time of assignment.
+      @raise ValueError: If the value is C{None} or is not an absolute path.
+      """
+      if value is None or not os.path.isabs(value):
+         raise ValueError("Collect directory must be an absolute path.")
+      self._collectDir = value
+
+   def _getCollectDir(self):
+      """
+      Property target used to get the collect directory.
+      """
+      return self._collectDir
+
+   def _setRemoteUser(self, value):
+      """
+      Property target used to set the remote user.
+      The value must be a non-empty string and cannot be C{None}.
+      @raise ValueError: If the value is an empty string or C{None}.
+      """
+      if value is None or len(value) < 1:
+         raise ValueError("Peer remote user must be a non-empty string.")
+      self._remoteUser = value
+
+   def _getRemoteUser(self):
+      """
+      Property target used to get the remote user.
+      """
+      return self._remoteUser
+
+   def _setRcpCommand(self, value):
+      """
+      Property target to set the rcp command.
+
+      The value must be a non-empty string or C{None}.  Its value is stored in
+      the two forms: "raw" as provided by the client, and "parsed" into a list
+      suitable for being passed to L{util.executeCommand}.  However, all the
+      caller will ever see via the property is the actual value they set (which
+      includes seeing C{None}, even if we translate that internally to
+      C{DEF_RCP_COMMAND}).  Internally, we should always use
+      C{self._rcpCommandList} if we want the actual command list.
+
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is None:
+         self._rcpCommand = None
+         self._rcpCommandList = DEF_RCP_COMMAND
       else:
-         # I found this in Google Groups and tweaked it for my use
-         fields = re.findall('[^ "]+|"[^"]+"', rcpCommand)
-         fields = map(lambda field: field.replace('"', ''), fields)
-         self.rcpCommand = fields
+         if len(value) >= 1:
+            # I found this in Google Groups and tweaked it for my use
+            self._rcpCommand = value
+            fields = re.findall('[^ "]+|"[^"]+"', self._rcpCommand)
+            fields = map(lambda field: field.replace('"', ''), fields)
+            self._rcpCommandList = fields
+         else:
+            raise ValueError("The rcp command must be a non-empty string.")
+
+   def _getRcpCommand(self):
+      """
+      Property target used to get the rcp command.
+      """
+      return self._rcpCommand
+
+   name = property(_getName, _setName, None, "Name of the peer (a valid DNS hostname).")
+   collectDir = property(_getCollectDir, _setCollectDir, None, "Path to the peer's collect directory (an absolute local path).")
+   remoteUser = property(_getRemoteUser, _setRemoteUser, None, "Name of the Cedar Backup user on the remote peer.")
+   rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "An rcp-compatible copy command to use for copying files.")
+
+
+   #################
+   # Public methods
+   #################
 
    def stagePeer(self, targetDir, ownership=None, permissions=None):
       """
@@ -428,7 +565,8 @@ class RemotePeer(object):
       if not os.path.exists(targetDir) or not os.path.isdir(targetDir):
          logger.debug("Target directory [%s] is not a directory or does not exist on disk." % targetDir)
          raise ValueError("Target directory is not a directory or does not exist on disk.")
-      RemotePeer._copyRemoteDir(self.remoteUser, self.name, self.rcpCommand, self.collectDir, targetDir, ownership, permissions)
+      RemotePeer._copyRemoteDir(self.remoteUser, self.name, self._rcpCommandList, 
+                                self.collectDir, targetDir, ownership, permissions)
 
    def checkCollectIndicator(self, collectIndicator=None):
       """
@@ -458,7 +596,7 @@ class RemotePeer(object):
       else:
          sourceFile = os.path.join(self.collectDir, collectIndicator)
       try:
-         RemotePeer._copyRemoteFile(self.remoteUser, self.name, self.rcpCommand, sourceFile, targetFile.name)
+         RemotePeer._copyRemoteFile(self.remoteUser, self.name, self._rcpCommandList, sourceFile, targetFile.name)
          return True
       except:
          return False
@@ -496,7 +634,12 @@ class RemotePeer(object):
          targetFile = os.path.join(self.collectDir, DEF_STAGE_INDICATOR)
       else:
          targetFile = os.path.join(self.collectDir, stageIndicator)
-      RemotePeer._pushLocalFile(self.remoteUser, self.name, self.rcpCommand, sourceFile.name, targetFile)
+      RemotePeer._pushLocalFile(self.remoteUser, self.name, self._rcpCommandList, sourceFile.name, targetFile)
+
+
+   ##################
+   # Private methods
+   ##################
 
    def _getDirContents(path):
       """
