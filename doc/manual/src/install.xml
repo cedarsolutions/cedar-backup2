@@ -31,5 +31,255 @@
 
    <title>Installation</title>
 
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-install-background">
+         
+      <title>Background</title>
+
+      <para>
+         There are two different ways to install Cedar Backup.  The easiest way
+         is to install the pre-built Debian packages.  This method is painless
+         and ensures that all of the correct dependencies are available, etc.
+      </para>
+
+      <para>
+         If you are running a Linux distribution other than Debian, then you
+         must use the Python source distribution to install Cedar Backup.  When
+         using this method, you need to manage all of the dependencies
+         yourself.
+      </para>
+
+      <sidebar>
+         <title>Non-Linux Platforms</title>
+
+         <para>
+            Currently, Cedar Backup is only <quote>officially</quote> supported
+            on Linux platforms.  However, It should also run on other UNIX-like
+            systems where the <command>mkisofs</command> and
+            <command>cdrecord</command> commands are available.  
+         </para>
+            
+         <para>
+            If you would like to use Cedar Backup on a non-Linux system, you
+            should install the Python source distribution along with all of the
+            indicated dependencies.  Then, please report back to the Cedar
+            Backup Users mailing list <footnote><para>See the Cedar Solutions
+            <ulink url="http://cedar-solutions.com/listarchives/">Mailing
+            Lists</ulink> page for more information.</para></footnote> with
+            information about your platform and any problems you encountered.
+         </para>
+      </sidebar>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-install-debian">
+         
+      <title>Installing on a Debian System</title>
+
+      <sidebar>
+         <title>Not an <quote>Official</quote> Package</title>
+
+         <para>
+            Currently, Cedar Backup is not part of any official Debian release.
+            While I am a Debian developer, I have chosen to keep the package out
+            of the Debian archive until it demonstrates enough popularity to
+            belong there.  There is no point in putting it in Debian for three
+            users.
+         </para>
+      </sidebar>
+
+      <para>
+         The easiest way to install Cedar Backup onto a Debian system is by
+         using a tool such as <command>apt-get</command> or
+         <command>aptitude</command>.
+      </para>
+
+      <para>
+         First, add the Cedar Solutions APT data source to your
+         <filename>/etc/apt/sources.list</filename> file. 
+         <footnote><para>See the the Cedar Solutions 
+         <ulink url="http://cedar-solutions.com/debian">Debian</ulink> 
+         page for more information.</para></footnote> Then, execute:
+      </para>
+
+      <screen>
+$ apt-get update
+$ apt-get install cedar-backup2
+      </screen>
+
+      <para>
+         If you would prefer, you can also download the
+         <filename>.deb</filename> files any install them by hand with a tool
+         such as <command>dpkg</command>.  You can find a link to the
+         <filename>.deb</filename> files on the Cedar Solutions website.
+         <footnote><para>The Cedar Solutions
+         <ulink url="http://cedar-solutions.com/software.html">Software</ulink>
+         page is a good starting point.</para></footnote>
+      </para>
+
+      <para>
+         In either case, once the package has been installed, you can proceed
+         to configuration as described in <xref linkend="cedar-config"/>.
+      </para>
+
+      <note>
+         <para>
+            The Debian package-management tools must generally be run as root.
+            It is safe to install Cedar Backup to a non-standard location and
+            run it as a non-root user.  However, to do this, you must install
+            the source distribution instead of the Debian package.
+         </para>
+      </note>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-install-source">
+         
+      <title>Installing from Source</title>
+
+      <para>
+         On platforms other than Debian, Cedar Backup is installed from a
+         Python source distribution. <footnote><para>See the 
+         <ulink url="http://docs.python.org/lib/module-distutils.html">Python 
+         library documentation</ulink> for more information</para></footnote>
+         A Python source distribution is much like a CPAN Perl distribution,
+         <footnote><para>See <ulink url="http://cpan.org/">CPAN</ulink>
+         for more information.</para></footnote> except that it
+         typically does not include dependency-checking information.  This
+         means that you will have to manage dependencies on your own.
+      </para>
+
+      <tip>
+         <para>
+            Most Linux distributions provide an automatic or semi-automatic
+            way to install packages like the ones Cedar Backup requires
+            (think RPMs for Mandrake or RedHat, or Gentoo's Portage system).
+            If you are not sure how to install these packages on your
+            system, you might want to check out 
+            <xref linkend="cedar-appendixc"/>.  This appendix provides links
+            to <quote>upstream</quote> source packages, plus as much
+            information as I have been able to gather about packages for
+            non-Debian platforms.
+         </para>
+      </tip>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-install-source-deps">
+                  
+         <title>Installing Dependencies</title>
+
+         <para>
+            Cedar Backup requires a number of external packages to function
+            properly.  Before installing Cedar Backup, you must make sure that
+            these dependencies are met.  
+         </para>
+
+         <para>
+            Cedar Backup has been written in Python, and requires version 2.3
+            or greater of the language.  Version 2.3 was released on 29 July
+            2003, so by now most current Linux distributions should include it.
+            Cedar Backup also requires one non-standard Python module, called
+            PyXML.  You must install these Python dependencies on every peer
+            node in a pool (master or client).
+         </para>
+
+         <para>
+            Additionally, remote client peer nodes must be running an
+            <firstterm>RSH-compatible</firstterm> server, such as the
+            <command>ssh</command> server.  (Local client peer nodes do not
+            require an RSH-compatible server.)
+         </para>
+
+         <para>
+            Master machines require several other system utilities, most having
+            to do with writing and validating CD media.  On master machines,
+            you must make sure that these utilities are available:
+         </para>
+
+         <itemizedlist>
+            <listitem><command>mkisofs</command></listitem>
+            <listitem><command>cdrecord</command></listitem>
+            <listitem><command>eject</command></listitem>
+            <listitem><command>mount</command></listitem>
+            <listitem><command>unmount</command></listitem>
+            <listitem><command>volname</command></listitem>
+         </itemizedlist>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-install-source-package">
+                  
+         <title>Installing the Source Package</title>
+
+         <para>
+            Python source packages are fairly easy to install.  They are
+            distributed as <filename>.tar.gz</filename> files which contain
+            Python source code, a manifest and an installation script called
+            <filename>setup.py</filename>.  
+         </para>
+
+         <para>
+            Once you have downloaded the source package from the Cedar
+            Solutions website,
+            <footnote><para>The Cedar Solutions 
+            <ulink url="http://cedar-solutions.com/software.html">Software</ulink>
+            page is a good starting point.</para></footnote> untar it:
+         </para>
+
+         <screen>
+$ zcat CedarBackup-2.0.tar.gz | tar xvf -
+         </screen>
+
+         <para>
+            This will create a directory called (in this case)
+            <filename>CedarBackup-2.0</filename>.  The version number in the
+            directory will always match the version number in the filename.
+         </para>
+
+         <para>
+            If you have root access and want to install the package to the
+            <quote>standard</quote> Python location on your system, then you
+            can install the package in two simple steps:
+         </para>
+
+         <screen>
+$ cd CedarBackup-2.0
+$ python setup.py install
+         </screen>
+
+         <para>
+            Make sure that you are using a Python 2.3 or better interpreter to
+            execute <filename>setup.py</filename>.
+         </para>
+
+         <para>
+            Some users might want to choose a different install location or
+            change other install parameters.  To get more information about how
+            <filename>setup.py</filename> works, use the
+            <option>--help</option> option:
+         </para>
+
+         <screen>
+$ python setup.py --help
+$ python setup.py install --help
+         </screen>
+
+         <para>
+            In any case, once the package has been installed, you can proceed
+            to configuration as described in <xref linkend="cedar-config"/>.
+         </para>
+
+      </sect2>
+
+   </sect1>
+
 </chapter>
 
