@@ -221,14 +221,13 @@ def cli():
    try:
       logger.info("Configuration path: %s" % configPath)
       config = Config(xmlPath=configPath)
-      logger.info("Configuration is valid.")
    except Exception, e:
       logger.error("Error reading configuration: %s" % e)
       logger.info("Cedar Backup run completed with status 4.")
       return 4
 
    try:
-      actionSet = _ActionSet(options.actions, config.extensions)
+      actionSet = _ActionSet(options.actions, config.extensions.actions)
       actionSet.executeActions(configPath, options, config)
    except Exception, e:
       logger.error("Error executing backup: %s" % e)
@@ -349,15 +348,14 @@ class _ActionSet(object):
       Constructor for the C{_ActionSet} class.
 
       @param actions: Names of actions specified on the command-line.
-      @param extensions: Extended actions specified in configuration.
+      @param extensions: List of extended actions (i.e. config.extensions.actions)
 
       @raise ValueError: If one of the specified actions is invalid.
       """
       extensionDict = {}
       if extensions is not None:
-         if extensions.actions is not None:
-            for action in extensions.actions:
-               extensionDict[action.name] = action
+         for extension in extensions:
+            extensionDict[extension.name] = extension
       _ActionSet._validateActions(actions, extensionDict.keys())
       self.actionSet = _ActionSet._buildActionSet(actions, extensionDict)
 
@@ -374,6 +372,10 @@ class _ActionSet(object):
 
       @raise ValueError: If one or more configured actions are not valid.
       """
+      if extensionNames is None: 
+         extensionNames = []
+      if actions is None or actions == []:
+         raise ValueError("No actions specified.")
       for action in actions:
          if action not in VALID_ACTIONS and action not in extensionNames:
             raise ValueError("Action '%s' is not a valid action or extended action." % action)
@@ -402,15 +404,15 @@ class _ActionSet(object):
       actionSet = []
       for action in actions:
          if extensionDict.has_key(action):
-            actionSet.append(_ActionItem(None, extension=extensionDict[action]))
+            actionSet.append(_ActionItem(extensionDict[action].index, extension=extensionDict[action]))
          elif action == 'collect':
-            actionSet.append(_ActionItem(None, function=executeCollect))
+            actionSet.append(_ActionItem(COLLECT_INDEX, function=executeCollect))
          elif action == 'stage':
-            actionSet.append(_ActionItem(None, function=executeStage))
+            actionSet.append(_ActionItem(STAGE_INDEX, function=executeStage))
          elif action == 'store':
-            actionSet.append(_ActionItem(None, function=executeStore))
+            actionSet.append(_ActionItem(STORE_INDEX, function=executeStore))
          elif action == 'purge':
-            actionSet.append(_ActionItem(None, function=executePurge))
+            actionSet.append(_ActionItem(PURGE_INDEX, function=executePurge))
          elif action == 'rebuild':
             actionSet.append(_ActionItem(None, function=executeRebuild))
          elif action == 'validate':

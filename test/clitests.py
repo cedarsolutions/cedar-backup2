@@ -82,8 +82,11 @@ import unittest
 from StringIO import StringIO
 from getopt import GetoptError
 from CedarBackup2.testutil import failUnlessAssignRaises
+from CedarBackup2.config import ExtendedAction
 from CedarBackup2.cli import _usage, _version
 from CedarBackup2.cli import Options
+from CedarBackup2.cli import _ActionSet
+from CedarBackup2.action import executeCollect, executeStage, executeStore, executePurge, executeRebuild, executeValidate
 
 
 #######################################################################
@@ -3191,9 +3194,9 @@ class TestOptions(unittest.TestCase):
                              "--output", "--debug", "collect", "stage", ], argumentList)
 
 
-   ###########################
+   #############################
    # Test buildArgumentString()
-   ###########################
+   #############################
 
    def testBuildArgumentString_001(self):
       """Test with no values set, validate=False."""
@@ -3452,6 +3455,1273 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug "collect" "stage" ', argumentString)
 
 
+######################
+# TestActionSet class
+######################
+
+class TestActionSet(unittest.TestCase):
+
+   """Tests for the _ActionSet class."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   ###################
+   # Test constructor 
+   ###################
+
+   def testActionSet_001(self):
+      """
+      Test with actions=None, extensions=None.
+      """
+      actions = None
+      extensions = None
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_002(self):
+      """
+      Test with actions=[], extensions=None.
+      """
+      actions = []
+      extensions = None
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_003(self):
+      """
+      Test with actions=[], extensions=[].
+      """
+      actions = []
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_004(self):
+      """
+      Test with actions=[ collect ], extensions=[].
+      """
+      actions = [ "collect", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+
+   def testActionSet_005(self):
+      """
+      Test with actions=[ stage ], extensions=[].
+      """
+      actions = [ "stage", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+
+   def testActionSet_006(self):
+      """
+      Test with actions=[ store ], extensions=[].
+      """
+      actions = [ "store", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+
+   def testActionSet_007(self):
+      """
+      Test with actions=[ purge ], extensions=[].
+      """
+      actions = [ "purge", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+
+   def testActionSet_008(self):
+      """
+      Test with actions=[ all ], extensions=[].
+      """
+      actions = [ "all", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(None, actionSet.actionSet[2].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
+
+   def testActionSet_009(self):
+      """
+      Test with actions=[ rebuild ], extensions=[].
+      """
+      actions = [ "rebuild", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(None, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeRebuild, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+
+   def testActionSet_010(self):
+      """
+      Test with actions=[ validate ], extensions=[].
+      """
+      actions = [ "validate", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(None, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeValidate, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+
+   def testActionSet_011(self):
+      """
+      Test with actions=[ collect, collect ], extensions=[].
+      """
+      actions = [ "collect", "collect", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_012(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[].
+      """
+      actions = [ "collect", "stage", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_013(self):
+      """
+      Test with actions=[ collect, store ], extensions=[].
+      """
+      actions = [ "collect", "store", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_014(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[].
+      """
+      actions = [ "collect", "purge", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_015(self):
+      """
+      Test with actions=[ collect, all ], extensions=[].
+      """
+      actions = [ "collect", "all", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_016(self):
+      """
+      Test with actions=[ collect, rebuild ], extensions=[].
+      """
+      actions = [ "collect", "rebuild", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_017(self):
+      """
+      Test with actions=[ collect, validate ], extensions=[].
+      """
+      actions = [ "collect", "validate", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_018(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[].
+      """
+      actions = [ "stage", "collect", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_019(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[].
+      """
+      actions = [ "stage", "stage", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_020(self):
+      """
+      Test with actions=[ stage, store ], extensions=[].
+      """
+      actions = [ "stage", "store", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_021(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[].
+      """
+      actions = [ "stage", "purge", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_022(self):
+      """
+      Test with actions=[ stage, all ], extensions=[].
+      """
+      actions = [ "stage", "all", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_023(self):
+      """
+      Test with actions=[ stage, rebuild ], extensions=[].
+      """
+      actions = [ "stage", "rebuild", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_024(self):
+      """
+      Test with actions=[ stage, validate ], extensions=[].
+      """
+      actions = [ "stage", "validate", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_025(self):
+      """
+      Test with actions=[ store, collect ], extensions=[].
+      """
+      actions = [ "store", "collect", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_026(self):
+      """
+      Test with actions=[ store, stage ], extensions=[].
+      """
+      actions = [ "store", "stage", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_027(self):
+      """
+      Test with actions=[ store, store ], extensions=[].
+      """
+      actions = [ "store", "store", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_028(self):
+      """
+      Test with actions=[ store, purge ], extensions=[].
+      """
+      actions = [ "store", "purge", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_029(self):
+      """
+      Test with actions=[ store, all ], extensions=[].
+      """
+      actions = [ "store", "all", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_030(self):
+      """
+      Test with actions=[ store, rebuild ], extensions=[].
+      """
+      actions = [ "store", "rebuild", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_031(self):
+      """
+      Test with actions=[ store, validate ], extensions=[].
+      """
+      actions = [ "store", "validate", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_032(self):
+      """
+      Test with actions=[ purge, collect ], extensions=[].
+      """
+      actions = [ "purge", "collect", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_033(self):
+      """
+      Test with actions=[ purge, stage ], extensions=[].
+      """
+      actions = [ "purge", "stage", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_034(self):
+      """
+      Test with actions=[ purge, store ], extensions=[].
+      """
+      actions = [ "purge", "store", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_035(self):
+      """
+      Test with actions=[ purge, purge ], extensions=[].
+      """
+      actions = [ "purge", "purge", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_036(self):
+      """
+      Test with actions=[ purge, all ], extensions=[].
+      """
+      actions = [ "purge", "all", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_037(self):
+      """
+      Test with actions=[ purge, rebuild ], extensions=[].
+      """
+      actions = [ "purge", "rebuild", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_038(self):
+      """
+      Test with actions=[ purge, validate ], extensions=[].
+      """
+      actions = [ "purge", "validate", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_039(self):
+      """
+      Test with actions=[ all, collect ], extensions=[].
+      """
+      actions = [ "all", "collect", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_040(self):
+      """
+      Test with actions=[ all, stage ], extensions=[].
+      """
+      actions = [ "all", "stage", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_041(self):
+      """
+      Test with actions=[ all, store ], extensions=[].
+      """
+      actions = [ "all", "store", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_042(self):
+      """
+      Test with actions=[ all, purge ], extensions=[].
+      """
+      actions = [ "all", "purge", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_043(self):
+      """
+      Test with actions=[ all, all ], extensions=[].
+      """
+      actions = [ "all", "all", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_044(self):
+      """
+      Test with actions=[ all, rebuild ], extensions=[].
+      """
+      actions = [ "all", "rebuild", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_045(self):
+      """
+      Test with actions=[ all, validate ], extensions=[].
+      """
+      actions = [ "all", "validate", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_046(self):
+      """
+      Test with actions=[ rebuild, collect ], extensions=[].
+      """
+      actions = [ "rebuild", "collect", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_047(self):
+      """
+      Test with actions=[ rebuild, stage ], extensions=[].
+      """
+      actions = [ "rebuild", "stage", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_048(self):
+      """
+      Test with actions=[ rebuild, store ], extensions=[].
+      """
+      actions = [ "rebuild", "store", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_049(self):
+      """
+      Test with actions=[ rebuild, purge ], extensions=[].
+      """
+      actions = [ "rebuild", "purge", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_050(self):
+      """
+      Test with actions=[ rebuild, all ], extensions=[].
+      """
+      actions = [ "rebuild", "all", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_051(self):
+      """
+      Test with actions=[ rebuild, rebuild ], extensions=[].
+      """
+      actions = [ "rebuild", "rebuild", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_052(self):
+      """
+      Test with actions=[ rebuild, validate ], extensions=[].
+      """
+      actions = [ "rebuild", "validate", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_053(self):
+      """
+      Test with actions=[ validate, collect ], extensions=[].
+      """
+      actions = [ "validate", "collect", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_054(self):
+      """
+      Test with actions=[ validate, stage ], extensions=[].
+      """
+      actions = [ "validate", "stage", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_055(self):
+      """
+      Test with actions=[ validate, store ], extensions=[].
+      """
+      actions = [ "validate", "store", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_056(self):
+      """
+      Test with actions=[ validate, purge ], extensions=[].
+      """
+      actions = [ "validate", "purge", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_057(self):
+      """
+      Test with actions=[ validate, all ], extensions=[].
+      """
+      actions = [ "validate", "all", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_058(self):
+      """
+      Test with actions=[ validate, rebuild ], extensions=[].
+      """
+      actions = [ "validate", "rebuild", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_059(self):
+      """
+      Test with actions=[ validate, validate ], extensions=[].
+      """
+      actions = [ "validate", "validate", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_060(self):
+      """
+      Test with actions=[ bogus ], extensions=[].
+      """
+      actions = [ "bogus", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_061(self):
+      """
+      Test with actions=[ bogus, collect ], extensions=[].
+      """
+      actions = [ "bogus", "collect", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_062(self):
+      """
+      Test with actions=[ bogus, stage ], extensions=[].
+      """
+      actions = [ "bogus", "stage", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_063(self):
+      """
+      Test with actions=[ bogus, store ], extensions=[].
+      """
+      actions = [ "bogus", "store", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_064(self):
+      """
+      Test with actions=[ bogus, purge ], extensions=[].
+      """
+      actions = [ "bogus", "purge", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_065(self):
+      """
+      Test with actions=[ bogus, all ], extensions=[].
+      """
+      actions = [ "bogus", "all", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_066(self):
+      """
+      Test with actions=[ bogus, rebuild ], extensions=[].
+      """
+      actions = [ "bogus", "rebuild", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_067(self):
+      """
+      Test with actions=[ bogus, validate ], extensions=[].
+      """
+      actions = [ "bogus", "validate", ]
+      extensions = []
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_068(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 50) ].
+      """
+      actions = [ "collect", "one",  ]
+      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_069(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, index 50) ].
+      """
+      actions = [ "stage", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_070(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 50) ].
+      """
+      actions = [ "store", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_071(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, index 50) ].
+      """
+      actions = [ "purge", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_072(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, index 50) ].
+      """
+      actions = [ "all", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_073(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, index 50) ].
+      """
+      actions = [ "rebuild", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_074(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, index 50) ].
+      """
+      actions = [ "validate", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_075(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 150) ].
+      """
+      actions = [ "collect", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(150, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 150), actionSet.actionSet[1].extension)
+
+   def testActionSet_076(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, index 150) ].
+      """
+      actions = [ "stage", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(150, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 150), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_077(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 150) ].
+      """
+      actions = [ "store", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(150, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 150), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_078(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, index 150) ].
+      """
+      actions = [ "purge", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(150, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 150), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_079(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, index 150) ].
+      """
+      actions = [ "all", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_080(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, index 150) ].
+      """
+      actions = [ "rebuild", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_081(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, index 150) ].
+      """
+      actions = [ "validate", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_082(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 250) ].
+      """
+      actions = [ "collect", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(250, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 250), actionSet.actionSet[1].extension)
+
+   def testActionSet_083(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, index 250) ].
+      """
+      actions = [ "stage", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(250, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 250), actionSet.actionSet[1].extension)
+
+   def testActionSet_084(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 250) ].
+      """
+      actions = [ "store", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(250, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 250), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_085(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, index 250) ].
+      """
+      actions = [ "purge", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(250, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 250), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_086(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, index 250) ].
+      """
+      actions = [ "all", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_087(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, index 250) ].
+      """
+      actions = [ "rebuild", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_088(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, index 250) ].
+      """
+      actions = [ "validate", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_089(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 350) ].
+      """
+      actions = [ "collect", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(350, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 350), actionSet.actionSet[1].extension)
+
+   def testActionSet_090(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, index 350) ].
+      """
+      actions = [ "stage", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(350, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 350), actionSet.actionSet[1].extension)
+
+   def testActionSet_091(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 350) ].
+      """
+      actions = [ "store", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(350, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 350), actionSet.actionSet[1].extension)
+
+   def testActionSet_092(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, index 350) ].
+      """
+      actions = [ "purge", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(350, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 350), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+
+   def testActionSet_093(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, index 350) ].
+      """
+      actions = [ "all", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_094(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, index 350) ].
+      """
+      actions = [ "rebuild", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_095(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, index 350) ].
+      """
+      actions = [ "validate", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_096(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 450) ].
+      """
+      actions = [ "collect", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(450, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+
+   def testActionSet_097(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, index 450) ].
+      """
+      actions = [ "stage", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(450, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+
+   def testActionSet_098(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 450) ].
+      """
+      actions = [ "store", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(450, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+
+   def testActionSet_099(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, index 450) ].
+      """
+      actions = [ "purge", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(450, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+
+   def testActionSet_100(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, index 450) ].
+      """
+      actions = [ "all", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_101(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, index 450) ].
+      """
+      actions = [ "rebuild", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_102(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, index 450) ].
+      """
+      actions = [ "validate", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions)
+
+   def testActionSet_103(self):
+      """
+      Test with actions=[ one, one ], extensions=[ (one, index 450) ].
+      """
+      actions = [ "one", "one", ]
+      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(450, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(450, actionSet.actionSet[1].index)
+      self.failUnlessEqual(None, actionSet.actionSet[1].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+
+   def testActionSet_104(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[].
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(None, actionSet.actionSet[2].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
+
+   def testActionSet_105(self):
+      """
+      Test with actions=[ stage, purge, collect, store ], extensions=[].
+      """
+      actions = [ "stage", "purge", "collect", "store", ]
+      extensions = []
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(None, actionSet.actionSet[2].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
+
+   def testActionSet_106(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four, five ], extensions=[ (index 50, 150, 250, 350, 450)].
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
+      extensions = [ ExtendedAction("one", "a", "b", 50), ExtendedAction("two", "a", "b", 150), 
+                     ExtendedAction("three", "a", "b", 250), ExtendedAction("four", "a", "b", 350), 
+                     ExtendedAction("five", "a", "b", 450), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 9)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+      self.failUnlessEqual(150, actionSet.actionSet[2].index)
+      self.failUnlessEqual(None, actionSet.actionSet[2].function)
+      self.failUnlessEqual(ExtendedAction("two", "a", "b", 150), actionSet.actionSet[2].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[3].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[3].function)
+      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
+      self.failUnlessEqual(250, actionSet.actionSet[4].index)
+      self.failUnlessEqual(None, actionSet.actionSet[4].function)
+      self.failUnlessEqual(ExtendedAction("three", "a", "b", 250), actionSet.actionSet[4].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[5].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[5].function)
+      self.failUnlessEqual(None, actionSet.actionSet[5].extension)
+      self.failUnlessEqual(350, actionSet.actionSet[6].index)
+      self.failUnlessEqual(None, actionSet.actionSet[6].function)
+      self.failUnlessEqual(ExtendedAction("four", "a", "b", 350), actionSet.actionSet[6].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[7].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[7].function)
+      self.failUnlessEqual(None, actionSet.actionSet[7].extension)
+      self.failUnlessEqual(450, actionSet.actionSet[8].index)
+      self.failUnlessEqual(None, actionSet.actionSet[8].function)
+      self.failUnlessEqual(ExtendedAction("five", "a", "b", 450), actionSet.actionSet[8].extension)
+
+   def testActionSet_107(self):
+      """
+      Test with actions=[ one, five, collect, store, three, stage, four, purge, two ], extensions=[ (index 50, 150, 250, 350, 450)].
+      """
+      actions = [ "one", "five", "collect", "store", "three", "stage", "four", "purge", "two", ]
+      extensions = [ ExtendedAction("one", "a", "b", 50), ExtendedAction("two", "a", "b", 150), 
+                     ExtendedAction("three", "a", "b", 250), ExtendedAction("four", "a", "b", 350), 
+                     ExtendedAction("five", "a", "b", 450), ]
+      actionSet = _ActionSet(actions, extensions)
+      self.failUnless(len(actionSet.actionSet) == 9)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
+      self.failUnlessEqual(150, actionSet.actionSet[2].index)
+      self.failUnlessEqual(None, actionSet.actionSet[2].function)
+      self.failUnlessEqual(ExtendedAction("two", "a", "b", 150), actionSet.actionSet[2].extension)
+      self.failUnlessEqual(200, actionSet.actionSet[3].index)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[3].function)
+      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
+      self.failUnlessEqual(250, actionSet.actionSet[4].index)
+      self.failUnlessEqual(None, actionSet.actionSet[4].function)
+      self.failUnlessEqual(ExtendedAction("three", "a", "b", 250), actionSet.actionSet[4].extension)
+      self.failUnlessEqual(300, actionSet.actionSet[5].index)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[5].function)
+      self.failUnlessEqual(None, actionSet.actionSet[5].extension)
+      self.failUnlessEqual(350, actionSet.actionSet[6].index)
+      self.failUnlessEqual(None, actionSet.actionSet[6].function)
+      self.failUnlessEqual(ExtendedAction("four", "a", "b", 350), actionSet.actionSet[6].extension)
+      self.failUnlessEqual(400, actionSet.actionSet[7].index)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[7].function)
+      self.failUnlessEqual(None, actionSet.actionSet[7].extension)
+      self.failUnlessEqual(450, actionSet.actionSet[8].index)
+      self.failUnlessEqual(None, actionSet.actionSet[8].function)
+      self.failUnlessEqual(ExtendedAction("five", "a", "b", 450), actionSet.actionSet[8].extension)
+
+
 #######################################################################
 # Suite definition
 #######################################################################
@@ -3461,6 +4731,7 @@ def suite():
    return unittest.TestSuite((
                               unittest.makeSuite(TestFunctions, 'test'), 
                               unittest.makeSuite(TestOptions, 'test'), 
+                              unittest.makeSuite(TestActionSet, 'test'), 
                             ))
 
 
