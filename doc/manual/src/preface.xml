@@ -39,7 +39,7 @@
 
       <para>
          This software manual has been written to document the 2.0 series of
-         Cedar Backup, released in early 2005.
+         Cedar Backup, originally released in early 2005.
       </para>
 
    </sect1>
@@ -79,21 +79,21 @@
          <variablelist>
 
             <varlistentry>
-               <term><command>Constant width</command></term>
+               <term><command>Command</command></term>
                <listitem>
                   <para>Used for commands, command output, and switches</para>
                </listitem>
             </varlistentry>
 
             <varlistentry>
-            <term><replaceable>Constant width italic</replaceable></term>
+            <term><replaceable>Replaceable</replaceable></term>
                <listitem>
                   <para>Used for replaceable items in code and text</para>
                </listitem>
             </varlistentry>
 
             <varlistentry>
-            <term><filename>Italic</filename></term>
+            <term><filename>Filenames</filename></term>
                <listitem>
                   <para>Used for file and directory names</para>
                </listitem>
@@ -139,7 +139,7 @@
       <variablelist>
         
          <varlistentry>
-            <term>Chapter 1, <emphasis><xref linkend="cedar-intro"/></emphasis></term>
+            <term><xref linkend="cedar-intro"/></term>
             <listitem>
                <para>
                   Provides some background about how Cedar Backup came to be,
@@ -150,7 +150,7 @@
          </varlistentry>
         
          <varlistentry>
-            <term>Chapter 2, <emphasis><xref linkend="cedar-basic"/></emphasis></term>
+            <term><xref linkend="cedar-basic"/></term>
             <listitem>
                <para>
                   Discusses the basic concepts of a Cedar Backup infrastructure,
@@ -160,7 +160,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Chapter 3, <emphasis><xref linkend="cedar-install"/></emphasis></term>
+            <term><xref linkend="cedar-install"/></term>
             <listitem>
                <para>
                   Explains how to install and configure the Cedar Backup
@@ -171,7 +171,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Chapter 4, <emphasis><xref linkend="cedar-config"/></xref></emphasis></term>
+            <term><xref linkend="cedar-config"/></term>
             <listitem>
                <para>
                   Provides detailed information about how to configure Cedar
@@ -181,7 +181,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Chapter 5, <emphasis><xref linkend="cedar-trouble"/></emphasis></term>
+            <term><xref linkend="cedar-trouble"/></term>
             <listitem>
                <para>
                   Discusses general troubleshooting techniques and provides
@@ -192,7 +192,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Chapter 6, <emphasis><xref linkend="cedar-devel"/></emphasis></term>
+            <term><xref linkend="cedar-devel"/></term>
             <listitem>
                <para>
                   Provides some details about the internals of the software and
@@ -206,7 +206,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Appendix A, <emphasis><xref linkend="cedar-appendixa"/></emphasis></term>
+            <term><xref linkend="cedar-appendixa"/></term>
             <listitem>
                <para>
                   Covers the major differences between the current Cedar Backup
@@ -219,7 +219,7 @@
          </varlistentry>
 
          <varlistentry>
-            <term>Appendix B, <emphasis><xref linkend="cedar-appendixb"/></emphasis></term>
+            <term><xref linkend="cedar-appendixb"/></term>
             <listitem>
                <para>
                   Specifies the Cedar Backup extension architecture interface,
@@ -244,7 +244,7 @@
          taken from the book <ulink url="http://svnbook.red-bean.com/">Version
          Control with Subversion</ulink>.  Many thanks to the authors (and
          O'Reilly) for making this excellent reference available under a free
-         license.
+         and open license.
       </para>
 
       <para>

@@ -35,7 +35,7 @@
 
    <simplesect id="cedar-devel-quote">
     
-      <comment>Reference: http://en.wikiquote.org/wiki/Linus_Torvalds</comment>
+      <!-- Reference: http://en.wikiquote.org/wiki/Linus_Torvalds -->
 
       <blockquote>
          <para>
@@ -44,6 +44,12 @@
       </blockquote>
 
    </simplesect>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-devel-extensions">
+   <title/>
+   </sect1>
 
 </chapter>
 
