@@ -52,7 +52,7 @@ import re
 import logging
 
 # Cedar Backup modules
-from CedarBackup2.util import executeCommand, convertSize, UNIT_SECTORS, UNIT_BYTES, UNIT_MBYTES
+from CedarBackup2.util import executeCommand, convertSize, UNIT_SECTORS, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES
 
 
 ########################################################################
@@ -103,6 +103,7 @@ class MediaDefinition(object):
       """
       if mediaType not in [MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80]:
          raise ValueError("Invalid media type %d." % mediaType)
+      self.mediaType = mediaType
       self.initialLeadIn = 11400    # per cdrecord's documentation
       self.leadIn = 6900            # per cdrecord's documentation
       if mediaType == MEDIA_CDR_74:
@@ -244,7 +245,7 @@ class CdWriter(object):
    # Constructor
    ##############
 
-   def __init__(self, device, scsiId, driveSpeed=None, mediaType=MEDIA_CDRW_74):
+   def __init__(self, device, scsiId, driveSpeed=None, mediaType=MEDIA_CDRW_74, unittest=False):
       """
       Initializes a CD writer object.
 
@@ -254,11 +255,18 @@ class CdWriter(object):
       media to be in the drive until one of the other media attribute-related
       methods is called.
 
-      @note: The device and SCSI id are both required because some commands
-      (like C{eject}) need the device, and other commands (like C{cdrecord})
-      need the SCSI id.  It's also nice to be able to track both of them in
-      once place for reference by other pieces of functionality outside of this
-      module.
+      The various instance variables such as C{deviceType}, C{deviceVendor},
+      etc. might be C{None}, if we're unable to parse this specific information
+      from the C{cdrecord} output.  This information is just for reference.
+
+      The device and SCSI id are both required because some commands (like
+      C{eject}) need the device, and other commands (like C{cdrecord}) need the
+      SCSI id.  It's also nice to be able to track both of them in once place
+      for reference by other pieces of functionality outside of this module.
+
+      @note: The C{unittest} parameter should never be set to C{True}
+      outside of Cedar Backup code.  It is intended for use in unit testing
+      Cedar Backup internals and has no other sensible purpose.
 
       @param device: Filesystem device associated with this writer.
       @type device: Absolute path to a filesystem device, i.e. C{/dev/cdrw}
@@ -272,36 +280,42 @@ class CdWriter(object):
       @param mediaType: Type of the media that is assumed to be in the drive.
       @type mediaType: One of the valid media type as discussed above.
 
+      @param unittest: Turns off certain validations, for use in unit testing.
+      @type unittest: Boolean true/false
+
       @raise ValueError: If the device is not valid for some reason.
       @raise ValueError: If the SCSI id is not in a valid form.
       @raise ValueError: If the drive speed is not an integer >= 1.
       @raise IOError: If device properties could not be read for some reason.
       """
-      self.device = CdWriter._validateDevice(device)
+      self.device = CdWriter._validateDevice(device, unittest)
       self.scsiId = CdWriter._validateScsiId(scsiId)
       self.driveSpeed = CdWriter._validateDriveSpeed(driveSpeed)
       self.media = MediaDefinition(mediaType)
-      (self.deviceType,
-       self.deviceVendor,
-       self.deviceId,
-       self.deviceBufferSize,
-       self.deviceSupportsMulti,
-       self.deviceHasTray,
-       self.deviceCanEject) = self._retrieveProperties()
+      if not unittest:
+         (self.deviceType,
+          self.deviceVendor,
+          self.deviceId,
+          self.deviceBufferSize,
+          self.deviceSupportsMulti,
+          self.deviceHasTray,
+          self.deviceCanEject) = self._retrieveProperties()
 
-   def _validateDevice(device):
+   def _validateDevice(device, unittest):
       """
       Validates configured device.
       The device must be an absolute path, must exist, and must be writable.
+      The self.unittest flag turns off validation of the device on disk.
       @param device: Filesystem device associated with this writer.
+      @param unittest: Indicates whether we're unit testing.
       @return: Device as a string, suitable for assignment to self.device.
       @raise ValueError: If the device value is invalid.
       """
       if not os.path.isabs(device):
          raise ValueError("Device must be an absolute path.")
-      if not os.path.exists(device):
+      if not unittest and not os.path.exists(device):
          raise ValueError("Device must exist on disk.")
-      if not os.access(device, os.W_OK):
+      if not unittest and not os.access(device, os.W_OK):
          raise ValueError("Device is not writable by the current user.")
       return device
    _validateDevice = staticmethod(_validateDevice)
@@ -417,7 +431,7 @@ class CdWriter(object):
       @return: Boundaries tuple or C{None}, as described above.
       @raise IOError: If the media could not be read for some reason.
       """
-      if self.deviceSupportsMulti:
+      if not self.deviceSupportsMulti:
          return None
       elif not useMulti:
          return None
@@ -542,8 +556,11 @@ class CdWriter(object):
       @param writeMulti: Indicates whether a multisession disc should be written, if possible.
       @type writeMulti: Boolean true/false
 
+      @raise ValueError: If the image path is not absolute.
       @raise IOError: If the media could not be written to for some reason.
       """
+      if not os.path.isabs(imagePath):
+         raise ValueError("Image path must be absolute.")
       if newDisc:
          self._blankMedia()
       args = CdWriter._buildWriteArgs(self.scsiId, imagePath, self.driveSpeed, writeMulti and self.deviceSupportsMulti)
@@ -578,6 +595,21 @@ class CdWriter(object):
       C{_buildPropertiesArgs}.  The list of strings will be parsed to yield
       information about the properties of the device.
 
+      The output is expected to be a huge long list of strings.  Unfortunately,
+      the strings aren't in a completely regular format.  However, the format
+      of individual lines seems to be regular enough that we can look for
+      specific values.  Two kinds of parsing take place: one kind of parsing
+      picks out out specific values like the device id, device vendor, etc.
+      The other kind of parsing just sets a boolean flag C{True} if a matching
+      line is found.  All of the parsing is done with regular expressions.
+
+      Right now, pretty much nothing in the output is required and we should
+      parse an empty document successfully (albeit resulting in a device that
+      can't eject, doesn't have a tray and doesnt't support multisession
+      discs).   I had briefly considered erroring out if certain lines weren't
+      found or couldn't be parsed, but that seems like a bad idea given that
+      most of the information is just for reference.  
+
       The results are returned as a tuple of the object device attributes:
       C{(deviceType, deviceVendor, deviceId, deviceBufferSize,
       deviceSupportsMulti, deviceHasTray, deviceCanEject)}.
@@ -594,7 +626,7 @@ class CdWriter(object):
       deviceSupportsMulti = False
       deviceHasTray = False
       deviceCanEject = False
-      typePattern   = re.compile(r"(^Device type\s*:\s*'\s*)(.*?)(\s*')(.*$)")
+      typePattern   = re.compile(r"(^Device type\s*:\s*)(.*)(\s*)(.*$)")
       vendorPattern = re.compile(r"(^Vendor_info\s*:\s*'\s*)(.*?)(\s*')(.*$)")
       idPattern     = re.compile(r"(^Identifikation\s*:\s*'\s*)(.*?)(\s*')(.*$)")
       bufferPattern = re.compile(r"(^\s*Buffer size in KB:\s*)(.*?)(\s*$)")
@@ -614,10 +646,9 @@ class CdWriter(object):
          elif bufferPattern.search(line):
             try:
                sectors = int(bufferPattern.search(line).group(2))
-            except TypeError:
-               raise IOError("Unable to parse output of properties command.")
-            deviceBufferSize = convertSize(sectors, UNIT_SECTORS, UNIT_BYTES)
-            logger.info("Device buffer size [%d] bytes." % deviceBufferSize)
+               deviceBufferSize = convertSize(sectors, UNIT_KBYTES, UNIT_BYTES)
+               logger.info("Device buffer size is [%d] bytes." % deviceBufferSize)
+            except TypeError: pass
          elif multiPattern.search(line):
             deviceSupportsMulti = True
             logger.info("Device does support multisession discs.")
@@ -627,8 +658,6 @@ class CdWriter(object):
          elif ejectPattern.search(line):
             deviceCanEject = True
             logger.info("Device can eject its media.")
-      if deviceType is None or deviceVendor is None or deviceId is None or deviceBufferSize is None:
-         raise IOError("Unable to parse output of properties command.")
       return (deviceType, deviceVendor, deviceId, deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject)
    _parsePropertiesOutput = staticmethod(_parsePropertiesOutput)
 
@@ -641,6 +670,12 @@ class CdWriter(object):
       C{_buildBoundaryArgs}.  The list of strings will be parsed to yield
       information about the capacity of the media in the device.
 
+      Basically, we expect the list of strings to include just one line, a pair
+      of values.  There isn't supposed to be whitespace, but we allow it anyway
+      in the regular expression.  Any lines below the one line we parse are
+      completely ignored.  It would be a good idea to ignore C{stderr} when
+      executing the C{cdrecord} command that generates output for this method.
+
       The results are returned as a tuple of (lower, upper) as needed by the
       C{IsoImage} class.  Note that these values are in terms of ISO sectors,
       not bytes.  Clients should generally consider the boundaries value
@@ -651,7 +686,7 @@ class CdWriter(object):
       @return: Boundaries tuple as described above.
       @raise IOError: If there is problem parsing the output.
       """
-      boundaryPattern = re.compile(r"(^)([0-9]*)(,)([0-9]*)($)")
+      boundaryPattern = re.compile(r"(^\s*)([0-9]*)(\s*,\s*)([0-9]*)(\s*$)")
       parsed = boundaryPattern.search(output[0])
       if not parsed:
          raise IOError("Unable to parse output of boundaries command.")
