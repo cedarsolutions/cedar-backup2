@@ -140,6 +140,8 @@ class UnorderedList(list):
       @param other: Other object to compare to.
       @return: True/false depending on whether C{self == other}.
       """
+      if other is None:
+         return False
       selfSorted = self[:]
       otherSorted = other[:]
       selfSorted.sort()
@@ -152,6 +154,8 @@ class UnorderedList(list):
       @param other: Other object to compare to.
       @return: True/false depending on whether C{self != other}.
       """
+      if other is None:
+         return True
       selfSorted = self[:]
       otherSorted = other[:]
       selfSorted.sort()
@@ -164,6 +168,8 @@ class UnorderedList(list):
       @param other: Other object to compare to.
       @return: True/false depending on whether C{self >= other}.
       """
+      if other is None:
+         return True
       selfSorted = self[:]
       otherSorted = other[:]
       selfSorted.sort()
@@ -176,6 +182,8 @@ class UnorderedList(list):
       @param other: Other object to compare to.
       @return: True/false depending on whether C{self > other}.
       """
+      if other is None:
+         return True
       selfSorted = self[:]
       otherSorted = other[:]
       selfSorted.sort()
@@ -188,6 +196,8 @@ class UnorderedList(list):
       @param other: Other object to compare to.
       @return: True/false depending on whether C{self <= other}.
       """
+      if other is None:
+         return False
       selfSorted = self[:]
       otherSorted = other[:]
       selfSorted.sort()
@@ -200,6 +210,8 @@ class UnorderedList(list):
       @param other: Other object to compare to.
       @return: True/false depending on whether C{self < other}.
       """
+      if other is None:
+         return False
       selfSorted = self[:]
       otherSorted = other[:]
       selfSorted.sort()
