@@ -111,7 +111,7 @@ interface-html: $(INTERFACE_DIR)
 	@$(EPYDOC) --name "CedarBackup2" --target $(INTERFACE_DIR) --url $(URL) CedarBackup2/
 
 manual-doc: $(MANUAL_DIR)
-	-@$(CD) $(MANUAL_SRC) && $(MAKE) install
+	@$(CD) $(MANUAL_SRC) && $(MAKE) install
 
 # For convenience, this rule builds chunk only
 manual: 
