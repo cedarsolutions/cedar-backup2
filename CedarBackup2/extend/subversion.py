@@ -974,7 +974,7 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
    args = [ "dump", "--quiet", "-r%s:%s" % (startRevision, endRevision), "--incremental", repositoryPath, ]
    result = executeCommand(SVNADMIN_COMMAND, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
    if result != 0:
-      raise IOError("Error [%d] executing Subversion dump for repository [%s]." % repositoryPath)
+      raise IOError("Error [%d] executing Subversion dump for repository [%s]." % (result, repositoryPath))
    logger.debug("Completed dumping subversion repository [%s]." % repositoryPath)
 
 
@@ -1000,7 +1000,7 @@ def getYoungestRevision(repositoryPath):
    args = [ 'youngest', repositoryPath, ]
    (result, output) = executeCommand(SVNLOOK_COMMAND, args, returnOutput=True, ignoreStderr=True)
    if result != 0:
-      raise IOError("Error [%d] executing 'svnlook youngest' for repository [%s]." % repositoryPath)
+      raise IOError("Error [%d] executing 'svnlook youngest' for repository [%s]." % (result, repositoryPath))
    if len(output) != 1:
       raise ValueError("Unable to parse 'svnlook youngest' output.")
    return int(output[0])

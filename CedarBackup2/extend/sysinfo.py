@@ -131,7 +131,7 @@ def _dumpDebianPackages(targetDir, compress=True):
       if not os.path.exists(DPKG_PATH) or not os.access(DPKG_PATH, os.X_OK):
          logger.debug("Not executing Debian package dump since dpkg doesn't seem to exist.")
       else:
-         result = executeCommand(DPKG_COMMAND, [], returnOutput=False, ignoreStderr=True, outputFile=outputFile)[0]
+         result = executeCommand(DPKG_COMMAND, [], returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)[0]
          if result != 0:
             raise IOError("Error [%d] executing Debian package dump.")
    finally:
@@ -166,7 +166,7 @@ def _dumpFilesystemContents(targetDir, compress=True):
    (outputFile, filename) = _getOutputFile(targetDir, "ls-laR", compress)
    try:
       # Note: can't count on return status from 'ls', so we don't check it.
-      executeCommand(LS_COMMAND, [], returnOutput=False, ignoreStderr=True, outputFile=outputFile)
+      executeCommand(LS_COMMAND, [], returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)
    finally:
       outputFile.close()
    if not os.path.exists(filename):
