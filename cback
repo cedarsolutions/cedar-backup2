@@ -22,6 +22,16 @@ Implements Cedar Backup cback script.
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
+# Check the Python version.  We require 2.3 or greater.
+try:
+   if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 3]:
+      print "Python version 2.3 or greater required, sorry."
+      sys.exit(1)
+except:
+   # sys.version_info isn't available before 2.0
+   print "Python version 2.3 or greater required, sorry."
+   sys.exit(1)
+
 from CedarBackup2.cli import cli
 cli()
 
