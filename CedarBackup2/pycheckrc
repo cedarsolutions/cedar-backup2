@@ -1,0 +1,3 @@
+# list of strings: ignore unused locals/arguments if name is one of
+unusedNames = [ 'i' ]
+
