@@ -23,7 +23,7 @@
 # Language : O'Reilly DocBook Lite XML DTD
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Cedar Backup Software Manual, Main Book
+# Purpose  : Cedar Backup software manual, book definition.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 -->
@@ -73,7 +73,7 @@
 
    </bookinfo>
 
-   <!-- External entity refs -->
+   <!-- External entity references (i.e. chapters and appendices to include) -->
 
    &preface;
    &intro;
