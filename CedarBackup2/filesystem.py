@@ -302,6 +302,7 @@ class FilesystemList(list):
       @raise ValueError: If the path could not be encoded properly.
       """
       path = encodePath(path)
+      path = normalizeDir(path)
       if not os.path.exists(path) or not os.path.isdir(path):
          logger.debug("Path [%s] is not a directory or does not exist on disk." % path)
          raise ValueError("Path is not a directory or does not exist on disk.")
@@ -357,6 +358,7 @@ class FilesystemList(list):
       @raise ValueError: If the path could not be encoded properly.
       """
       path = encodePath(path)
+      path = normalizeDir(path)
       return self._addDirContentsRecursive(path)
 
    def _addDirContentsRecursive(self, path, includePath=True):
@@ -652,6 +654,7 @@ class BackupFileList(FilesystemList):
       @raise ValueError: If the path could not be encoded properly.
       """
       path = encodePath(path)
+      path = normalizeDir(path)
       if os.path.isdir(path) and not os.path.islink(path):
          return 0
       else:
@@ -691,7 +694,7 @@ class BackupFileList(FilesystemList):
             table[entry] = float(os.stat(entry).st_size)
       return table
 
-   def generateDigestMap(self):
+   def generateDigestMap(self, stripPrefix=None):
       """
       Generates a mapping from file to file digest.
 
@@ -705,13 +708,25 @@ class BackupFileList(FilesystemList):
       Soft links are ignored.  We would end up generating a digest for the file
       that the soft link points at, which doesn't make any sense.
 
+      If C{stripPrefix} is passed in, then that prefix will be stripped from
+      each key when the map is generated.  This can be useful in generating two
+      "relative" digest maps to be compared to one another.
+
+      @param stripPrefix: Common prefix to be stripped from paths
+      @type stripPrefix: String with any contents
+
       @return: Dictionary mapping file to digest value
       @see L{removeUnchanged}
       """
       table = { }
-      for entry in self:
-         if os.path.isfile(entry) and not os.path.islink(entry):
-            table[entry] = BackupFileList._generateDigest(entry)
+      if stripPrefix is not None:
+         for entry in self:
+            if os.path.isfile(entry) and not os.path.islink(entry):
+               table[entry.replace(stripPrefix, "", 1)] = BackupFileList._generateDigest(entry)
+      else:
+         for entry in self:
+            if os.path.isfile(entry) and not os.path.islink(entry):
+               table[entry] = BackupFileList._generateDigest(entry)
       return table
    
    def _generateDigest(path):
@@ -960,6 +975,7 @@ class PurgeItemList(FilesystemList):
       @raise ValueError: If the path could not be encoded properly.
       """
       path = encodePath(path)
+      path = normalizeDir(path)
       return super(PurgeItemList, self)._addDirContentsRecursive(path, includePath=False)
 
 
@@ -1041,4 +1057,87 @@ class PurgeItemList(FilesystemList):
             except OSError:
                pass
       return (files, dirs)
+
+
+########################################################################
+# Public functions
+########################################################################
+
+##########################
+# normalizeDir() function
+##########################
+
+def normalizeDir(path):
+   """
+   Normalizes a directory name.
+
+   For our purposes, a directory name is normalized by removing the trailing
+   path separator, if any.  This is important because we want directories to
+   appear within lists in a consistent way, although from the user's
+   perspective passing in C{/path/to/dir/} and C{/path/to/dir} are equivalent.
+
+   @param path: Path to be normalized.
+   @type path: String representing a path on disk
+
+   @return: Normalized path, which should be equivalent to the original.
+   """
+   if path[-1:] == os.sep:
+      return path[:-1]
+   return path
+
+
+#############################
+# compareContents() function
+#############################
+
+def compareContents(path1, path2, verbose=False):
+   """
+   Compares the contents of two directories to see if they are equivalent.
+
+   The two directories are recursively compared.  First, we check whether they
+   contain exactly the same set of files.  Then, we check to see every given 
+   file has exactly the same contents in both directories.
+
+   This is all relatively simple to implement through the magic of
+   L{BackupFileList.generateDigestMap}, which knows how to strip the largest
+   common path off the front of each entry in the mapping it generates.  This
+   makes our comparison as simple as creating a list for each path, then
+   generating a digest map for each path and comparing the two.
+
+   If no exception is thrown, the two directories are considered identical.
+   The thrown C{ValueError} exception distinguishes between the directories
+   containing different files, and containing the same files with differing
+   content.
+
+   If the C{verbose} flag is C{True}, then an alternate (but slower) method is
+   used so that any thrown exception can indicate exactly which file caused the
+   comparison to fail.
+
+   @param path1: First path to compare.
+   @type path1: String representing a path on disk
+
+   @param path2: First path to compare.
+   @type path12 String representing a path on disk
+
+   @param verbose: Indicates whether a verbose response should be given.
+   @type verbose: Boolean
+
+   @raise ValueError: If a directory doesn't exist or can't be read.
+   @raise ValueError: If the two directories are not equivalent.
+   """
+   path1List = BackupFileList()
+   path1List.addDirContents(path1)
+   path1Digest = path1List.generateDigestMap(stripPrefix=normalizeDir(path1))
+   path2List = BackupFileList()
+   path2List.addDirContents(path2)
+   path2Digest = path2List.generateDigestMap(stripPrefix=normalizeDir(path2))
+   if path1Digest.keys() != path2Digest.keys():
+      raise ValueError("Directories contain a different set of files.")
+   if not verbose:
+      if path1Digest != path2Digest:
+         raise ValueError("File contents vary between directories.")
+   else:
+      for key in path1Digest.keys():
+         if path1Digest[key] != path2Digest[key]:
+            raise ValueError("File contents for [%s] vary between directories." % key)
 
