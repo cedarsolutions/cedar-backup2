@@ -45,7 +45,10 @@ Code Coverage
 =============
 
    This module contains individual tests for the many of the public functions
-   and classes implemented in clie.py.  
+   and classes implemented in cli.py.  Where possible, we test functions that
+   print output by passing a custom file descriptor.  Sometimes, we only ensure
+   that a function or method runs without failure, and we don't validate what
+   its result is or what it prints out.
 
 Naming Conventions
 ==================
@@ -76,14 +79,83 @@ Full vs. Reduced Tests
 ########################################################################
 
 import unittest
+from StringIO import StringIO
 from getopt import GetoptError
 from CedarBackup2.testutil import failUnlessAssignRaises
+from CedarBackup2.cli import usage, version
 from CedarBackup2.cli import Options
 
 
 #######################################################################
 # Test Case Classes
 #######################################################################
+
+######################
+# TestFunctions class
+######################
+
+class TestFunctions(unittest.TestCase):
+
+   """Tests for the public functions."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   ##################
+   # Utility methods
+   ##################
+
+   def captureOutput(self, callable):
+      """
+      Captures the output (stdout, stderr) of a function or a method.
+
+      Some of our functions don't do anything other than just print output.  We
+      need a way to test these functions (at least nominally) but we don't want
+      any of the output spoiling the test suite output.
+
+      This function just creates a dummy file descriptor that can be used as a
+      target by the callable function, rather than C{stdout} or C{stderr}.
+
+      @note: This method assumes that C{callable} doesn't take any arguments
+      besides keyword argument C{fd} to specify the file descriptor.
+
+      @param callable: Callable function or method.
+
+      @return: Output of function, as one big string.
+      """
+      fd = StringIO()
+      callable(fd=fd)
+      result = fd.getvalue()
+      fd.close()
+      return result
+
+
+   ########################
+   # Test simple functions
+   ########################
+
+   def testSimpleFuncs_001(self):
+      """
+      Test that the usage() function runs without errors.
+      We don't care what the output is, and we don't check.
+      """
+      self.captureOutput(usage)
+
+   def testSimpleFuncs_002(self):
+      """
+      Test that the version() function runs without errors.
+      We don't care what the output is, and we don't check.
+      """
+      self.captureOutput(version)
+
 
 ####################
 # TestOptions class
@@ -3447,6 +3519,7 @@ class TestOptions(unittest.TestCase):
 def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
+                              unittest.makeSuite(TestFunctions, 'test'), 
                               unittest.makeSuite(TestOptions, 'test'), 
                             ))
 
