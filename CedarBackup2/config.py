@@ -70,6 +70,12 @@ External Python Libraries
    depends on the XPath functionality provided by the PyXML product in the
    C{xml.xpath} package.
 
+   The XPath library that I'm using is not particularly fast.  This is
+   particularly noticable when reading lists of things with the [n] syntax.  I
+   have considered moving to the 4Suite version of the library (which should be
+   roughly compatible) but I haven't gotten around to it yet.  I may also want
+   to rework some parts of the parsing to depend less on XPath.
+
 Backwards Compatibility
 =======================
 
@@ -230,6 +236,7 @@ Validation
 # System modules
 import os
 import logging
+from StringIO import StringIO
 
 # XML-related modules
 from xml.dom.ext.reader import PyExpat
@@ -322,6 +329,22 @@ class CollectDir(object):
       self.relativeExcludePaths = relativeExcludePaths
       self.excludePatterns = excludePatterns
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "CollectDir(%s, %s, %s, %s, %s, %s, %s)" % (self.absolutePath, self.collectMode, 
+                                                         self.archiveMode, self.ignoreFile, 
+                                                         self.absoluteExcludePaths, 
+                                                         self.relativeExcludePaths, 
+                                                         self.excludePatterns)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "CollectDir(%s, %s, %s)" % (self.absolutePath, self.collectMode, self.archiveMode)
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
@@ -329,6 +352,8 @@ class CollectDir(object):
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._absolutePath != other._absolutePath: 
          if self._absolutePath < other.absolutePath:
             return -1
@@ -548,12 +573,26 @@ class PurgeDir(object):
       self.absolutePath = absolutePath
       self.retainDays = retainDays
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "PurgeDir(%s, %s)" % (self.absolutePath, self.retainDays)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "PurgeDir(%s, %s)" % (self.absolutePath, self.retainDays)
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._absolutePath != other._absolutePath: 
          if self._absolutePath < other._absolutePath: 
             return -1
@@ -648,12 +687,26 @@ class LocalPeer(object):
       self.name = name
       self.collectDir = collectDir
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "LocalPeer(%s, %s)" % (self.name, self.collectDir)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "LocalPeer(%s, %s)" % (self.name, self.collectDir)
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._name != other._name: 
          if self._name < other._name: 
             return -1
@@ -750,12 +803,26 @@ class RemotePeer(object):
       self.remoteUser = remoteUser
       self.rcpCommand = rcpCommand
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "RemotePeer(%s, %s, %s, %s)" % (self.name, self.collectDir, self.remoteUser, self.rcpCommand)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "RemotePeer(%s, %s, %s, %s)" % (self.name, self.collectDir, self.remoteUser, self.rcpCommand)
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._name != other._name:
          if self._name < other._name:
             return -1
@@ -893,12 +960,26 @@ class ReferenceConfig(object):
       self.description = description
       self.generator = generator
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "ReferenceConfig(%s, %s, %s, %s)" % (self.author, self.revision, self.description, self.generator)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "ReferenceConfig(%s, %s, %s, %s)" % (self.author, self.revision, self.description, self.generator)
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._author != other._author:
          if self._author < other._author:
             return -1
@@ -1029,12 +1110,28 @@ class OptionsConfig(object):
       self.backupGroup = backupGroup
       self.rcpCommand = rcpCommand
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "OptionsConfig(%s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir, self.backupUser, 
+                                                    self.backupGroup, self.rcpCommand)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "OptionsConfig(%s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir, self.backupUser, 
+                                                    self.backupGroup, self.rcpCommand)
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._startingDay != other._startingDay:
          if self._startingDay < other._startingDay:
             return -1
@@ -1223,6 +1320,20 @@ class CollectConfig(object):
       self.excludePatterns = excludePatterns
       self.collectDirs = collectDirs
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "CollectConfig(%s, %s, %s, %s, %s, %s, %s)" % (self.targetDir, self.collectMode, self.archiveMode, 
+                                                            self.ignoreFile, self.absoluteExcludePaths,
+                                                            self.excludePatterns, self.collectDirs)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "CollectConfig(%s, %s, %s)" % (self.targetDir, self.collectMode, self.archiveMode)
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
@@ -1230,6 +1341,8 @@ class CollectConfig(object):
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._targetDir != other._targetDir:
          if self._targetDir < other._targetDir:
             return -1
@@ -1456,6 +1569,18 @@ class StageConfig(object):
       self.localPeers = localPeers
       self.remotePeers = remotePeers
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "StageConfig(%s, %s, %s)" % (self.targetDir, self.localPeers, self.remotePeers)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "StageConfig(%s, %s, %s)" % (self.targetDir, self.localPeers, self.remotePeers)
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
@@ -1463,6 +1588,8 @@ class StageConfig(object):
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._targetDir != other._targetDir:
          if self._targetDir < other._targetDir:
             return -1
@@ -1618,12 +1745,30 @@ class StoreConfig(object):
       self.safeOverwrite = safeOverwrite
       self.capacityMode = capacityMode
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
+                                                                  self.devicePath, self.deviceScsiId, self.driveSpeed,
+                                                                  self.checkData, self.safeOverwrite, self.capacityMode)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
+                                                                  self.devicePath, self.deviceScsiId, self.driveSpeed,
+                                                                  self.checkData, self.safeOverwrite, self.capacityMode)
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._sourceDir != other._sourceDir:
          if self._sourceDir < other._sourceDir:
             return -1
@@ -1870,6 +2015,18 @@ class PurgeConfig(object):
       self._purgeDirs = None
       self.purgeDirs = purgeDirs
 
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "PurgeConfig(%s)" % self.purgeDirs
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "PurgeConfig(%s)" % self.purgeDirs
+
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
@@ -1877,6 +2034,8 @@ class PurgeConfig(object):
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._purgeDirs != other._purgeDirs:
          if self._purgeDirs < other._purgeDirs:
             return -1
@@ -1998,6 +2157,12 @@ class Config(object):
       self._stage = None
       self._store = None
       self._purge = None
+      self.reference = None
+      self.options = None
+      self.collect = None
+      self.stage = None
+      self.store = None
+      self.purge = None
       if xmlData is not None and xmlPath is not None:
          raise ValueError("Use either xmlData or xmlPath, but not both.")
       if xmlData is not None:
@@ -2011,6 +2176,23 @@ class Config(object):
             self.validate()
 
 
+   #########################
+   # String representations
+   #########################
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "Config(%s, %s, %s, %s, %s, %s)" % (self.reference, self.options, self.collect, self.stage, self.store, self.purge)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "Config(%s, %s, %s, %s, %s, %s)" % (self.reference, self.options, self.collect, self.stage, self.store, self.purge)
+
+
    #############################
    # Standard comparison method
    #############################
@@ -2022,6 +2204,8 @@ class Config(object):
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      if other is None:
+         return 1
       if self._reference != other._reference:
          if self._reference < other._reference:
             return -1
@@ -2173,12 +2357,12 @@ class Config(object):
       """
       return self._purge
 
-   reference = property(_getReference, _getReference, None, "Reference configuration in terms of a C{ReferenceConfig} object.")
-   options = property(_getOptions, _getOptions, None, "Options configuration in terms of a C{OptionsConfig} object.")
-   collect = property(_getCollect, _getCollect, None, "Collect configuration in terms of a C{CollectConfig} object.")
-   stage = property(_getStage, _getStage, None, "Stage configuration in terms of a C{StageConfig} object.")
-   store = property(_getStore, _getStore, None, "Store configuration in terms of a C{StoreConfig} object.")
-   purge = property(_getPurge, _getPurge, None, "Purge configuration in terms of a C{PurgeConfig} object.")
+   reference = property(_getReference, _setReference, None, "Reference configuration in terms of a C{ReferenceConfig} object.")
+   options = property(_getOptions, _setOptions, None, "Options configuration in terms of a C{OptionsConfig} object.")
+   collect = property(_getCollect, _setCollect, None, "Collect configuration in terms of a C{CollectConfig} object.")
+   stage = property(_getStage, _setStage, None, "Stage configuration in terms of a C{StageConfig} object.")
+   store = property(_getStore, _setStore, None, "Store configuration in terms of a C{StoreConfig} object.")
+   purge = property(_getPurge, _setPurge, None, "Purge configuration in terms of a C{PurgeConfig} object.")
 
 
    #################
@@ -2441,7 +2625,7 @@ class Config(object):
          store.devicePath = Config._readString(xmlDom,  "//cb_config/store/target_device")
          store.deviceScsiId = Config._readString(xmlDom,  "//cb_config/store/target_scsi_id")
          store.driveSpeed = Config._readInteger(xmlDom, "//cb_config/store/drive_speed")
-         store.checkData = Config._readInteger(xmlDom, "//cb_config/store/check_data")
+         store.checkData = Config._readBoolean(xmlDom, "//cb_config/store/check_data")
          store.safeOverwrite = Config._readBoolean(xmlDom, "//cb_config/store/safe_overwrite")
          store.capacityMode = Config._readString(xmlDom,  "//cb_config/store/capacity_mode")
       return store
@@ -2614,7 +2798,7 @@ class Config(object):
       @param expr: XPath expression describing location to read.
       @return: Boolean true/false depending on whether node exists.
       """
-      result = Evaluate("string(%s)" % expr, xmlDom.documentElement)
+      result = Evaluate(expr, xmlDom.documentElement)
       if result == []:
          return False
       return True
@@ -2630,7 +2814,7 @@ class Config(object):
       """
       result = Evaluate("string(%s)" % expr, xmlDom.documentElement)
       if len(result) >= 1:
-         return result[0]
+         return result
       else:
          return None
    _readString = staticmethod(_readString)
@@ -2691,14 +2875,17 @@ class Config(object):
 
       @return: List of elements, one per item matching the base expression.
       """
-      elements = []
-      result = Evaluate("string(%s)" % baseExpr, xmlDom.documentElement)
-      indices = range(1, len(result)+1)
-      for i in indices:
-         result = func(xmlDom, "%s[%d]" % (baseExpr, i))
-         if result is not None:
-            elements.append(result)
-      return elements
+      result = Evaluate(baseExpr, xmlDom.documentElement)
+      if result == []:
+         return None
+      else:
+         elements = []
+         indices = range(1, len(result)+1)
+         for i in indices:
+            result = func(xmlDom, "%s[%d]" % (baseExpr, i))
+            if result is not None:
+               elements.append(result)
+         return elements
    _readList = staticmethod(_readList)
 
 
@@ -2728,7 +2915,10 @@ class Config(object):
       Config._addStage(xmlDom, parentNode, self.stage)
       Config._addStore(xmlDom, parentNode, self.store)
       Config._addPurge(xmlDom, parentNode, self.purge)
-      xmlData = PrettyPrint(xmlDom)
+      xmlBuffer = StringIO()
+      PrettyPrint(xmlDom, xmlBuffer)
+      xmlData = xmlBuffer.getvalue()
+      xmlBuffer.close()
       xmlDom.unlink()
       return xmlData
 
@@ -2743,15 +2933,14 @@ class Config(object):
          description    //cb_config/reference/description
          generator      //cb_config/reference/generator
 
-      If C{referenceConfig} is C{None}, then an empty <reference> container
-      will be added.
+      If C{referenceConfig} is C{None}, then no container will be added.
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
       @param referenceConfig: Reference configuration section to be added to the document.
       """
-      sectionNode = Config._addContainerNode(xmlDom, parentNode, "reference")
       if referenceConfig is not None:
+         sectionNode = Config._addContainerNode(xmlDom, parentNode, "reference")
          Config._addStringNode(xmlDom, sectionNode, "author", referenceConfig.author)
          Config._addStringNode(xmlDom, sectionNode, "revision", referenceConfig.revision)
          Config._addStringNode(xmlDom, sectionNode, "description", referenceConfig.description)
@@ -2770,15 +2959,14 @@ class Config(object):
          backupGroup    //cb_config/options/backup_group
          rcpCommand     //cb_config/options/rcp_command
 
-      If C{optionsConfig} is C{None}, then an empty <options> container will be
-      added.
+      If C{optionsConfig} is C{None}, then no container will be added.
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
       @param optionsConfig: Options configuration section to be added to the document.
       """
-      sectionNode = Config._addContainerNode(xmlDom, parentNode, "options")
       if optionsConfig is not None:
+         sectionNode = Config._addContainerNode(xmlDom, parentNode, "options")
          Config._addStringNode(xmlDom, sectionNode, "starting_day", optionsConfig.startingDay)
          Config._addStringNode(xmlDom, sectionNode, "working_dir", optionsConfig.workingDir)
          Config._addStringNode(xmlDom, sectionNode, "backup_user", optionsConfig.backupUser)
@@ -2806,26 +2994,30 @@ class Config(object):
 
       The individual collect directories are added by L{_addCollectDir}.
    
-      If C{collectConfig} is C{None}, then an empty <collect> container will be
-      added.
+      If C{collectConfig} is C{None}, then no container will be added.
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
       @param collectConfig: Collect configuration section to be added to the document.
       """
-      sectionNode = Config._addContainerNode(xmlDom, parentNode, "collect")
       if collectConfig is not None:
+         sectionNode = Config._addContainerNode(xmlDom, parentNode, "collect")
          Config._addStringNode(xmlDom, sectionNode, "collect_dir", collectConfig.targetDir)
          Config._addStringNode(xmlDom, sectionNode, "collect_mode", collectConfig.collectMode)
          Config._addStringNode(xmlDom, sectionNode, "archive_mode", collectConfig.archiveMode)
          Config._addStringNode(xmlDom, sectionNode, "ignore_file", collectConfig.ignoreFile)
-         excludeNode = Config._addContainerNode(xmlDom, sectionNode, "exclude")
-         for absolutePath in collectConfig.absoluteExcludePaths:
-            Config._addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
-         for pattern in collectConfig.excludePatterns:
-            Config._addStringNode(xmlDom, excludeNode, "pattern", pattern)
-         for collectDir in collectConfig.collectDirs:
-            Config._addCollectDir(xmlDom, sectionNode, collectDir)
+         if ((collectConfig.absoluteExcludePaths is not None and collectConfig.absoluteExcludePaths != []) or
+             (collectConfig.excludePatterns is not None and collectConfig.excludePatterns != [])):
+            excludeNode = Config._addContainerNode(xmlDom, sectionNode, "exclude")
+            if collectConfig.absoluteExcludePaths is not None:
+               for absolutePath in collectConfig.absoluteExcludePaths:
+                  Config._addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
+            if collectConfig.excludePatterns is not None:
+               for pattern in collectConfig.excludePatterns:
+                  Config._addStringNode(xmlDom, excludeNode, "pattern", pattern)
+         if collectConfig.collectDirs is not None:
+            for collectDir in collectConfig.collectDirs:
+               Config._addCollectDir(xmlDom, sectionNode, collectDir)
    _addCollect = staticmethod(_addCollect)
 
    def _addStage(xmlDom, parentNode, stageConfig):
@@ -2845,20 +3037,21 @@ class Config(object):
       The individual local and remote peer entries are added by
       L{_addLocalPeer} and L{_addRemotePeer}, respectively.
 
-      If C{stageConfig} is C{None}, then an empty <stage> container will be
-      added.
+      If C{stageConfig} is C{None}, then no container will be added.
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
       @param stageConfig: Stage configuration section to be added to the document.
       """
-      sectionNode = Config._addContainerNode(xmlDom, parentNode, "stage")
       if stageConfig is not None:
+         sectionNode = Config._addContainerNode(xmlDom, parentNode, "stage")
          Config._addStringNode(xmlDom, sectionNode, "staging_dir", stageConfig.targetDir)
-         for localPeer in stageConfig.localPeers:
-            Config._addLocalPeer(xmlDom, sectionNode, localPeer)
-         for remotePeer in stageConfig.remotePeers:
-            Config._addRemotePeer(xmlDom, sectionNode, remotePeer)
+         if stageConfig.localPeers is not None:
+            for localPeer in stageConfig.localPeers:
+               Config._addLocalPeer(xmlDom, sectionNode, localPeer)
+         if stageConfig.remotePeers is not None:
+            for remotePeer in stageConfig.remotePeers:
+               Config._addRemotePeer(xmlDom, sectionNode, remotePeer)
    _addStage = staticmethod(_addStage)
 
    def _addStore(xmlDom, parentNode, storeConfig):
@@ -2877,24 +3070,23 @@ class Config(object):
          safeOverwrite     //cb_config/store/safe_overwrite
          capacityMode      //cb_config/store/capacity_mode
 
-      If C{storeConfig} is C{None}, then an empty <store> container will be
-      added.
+      If C{storeConfig} is C{None}, then no container will be added.
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
       @param storeConfig: Store configuration section to be added to the document.
       """
-      sectionNode = Config._addContainerNode(xmlDom, parentNode, "store")
       if storeConfig is not None:
-         Config._addStringNode(xmlDom, sectionNode, "sourceDir", storeConfig.sourceDir)
-         Config._addStringNode(xmlDom, sectionNode, "mediaType", storeConfig.mediaType)
-         Config._addStringNode(xmlDom, sectionNode, "deviceType", storeConfig.deviceType)
-         Config._addStringNode(xmlDom, sectionNode, "devicePath", storeConfig.devicePath)
-         Config._addStringNode(xmlDom, sectionNode, "deviceScsiId", storeConfig.deviceScsiId)
-         Config._addIntegerNode(xmlDom, sectionNode, "driveSpeed", storeConfig.driveSpeed)
-         Config._addBooleanNode(xmlDom, sectionNode, "checkData", storeConfig.checkData)
-         Config._addBooleanNode(xmlDom, sectionNode, "safeOverwrite", storeConfig.safeOverwrite)
-         Config._addStringNode(xmlDom, sectionNode, "capacityMode", storeConfig.capacityMode)
+         sectionNode = Config._addContainerNode(xmlDom, parentNode, "store")
+         Config._addStringNode(xmlDom, sectionNode, "source_dir", storeConfig.sourceDir)
+         Config._addStringNode(xmlDom, sectionNode, "media_type", storeConfig.mediaType)
+         Config._addStringNode(xmlDom, sectionNode, "device_type", storeConfig.deviceType)
+         Config._addStringNode(xmlDom, sectionNode, "target_device", storeConfig.devicePath)
+         Config._addStringNode(xmlDom, sectionNode, "target_scsi_id", storeConfig.deviceScsiId)
+         Config._addIntegerNode(xmlDom, sectionNode, "drive_speed", storeConfig.driveSpeed)
+         Config._addBooleanNode(xmlDom, sectionNode, "check_data", storeConfig.checkData)
+         Config._addBooleanNode(xmlDom, sectionNode, "safe_overwrite", storeConfig.safeOverwrite)
+         Config._addStringNode(xmlDom, sectionNode, "capacity_mode", storeConfig.capacityMode)
    _addStore = staticmethod(_addStore)
 
    def _addPurge(xmlDom, parentNode, purgeConfig):
@@ -2907,17 +3099,17 @@ class Config(object):
 
       The individual directory entries are added by L{_addPurgeDir}.
 
-      If C{purgeConfig} is C{None}, then an empty <purge> container will be
-      added.
+      If C{purgeConfig} is C{None}, then no container will be added.
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
       @param purgeConfig: Purge configuration section to be added to the document.
       """
-      sectionNode = Config._addContainerNode(xmlDom, parentNode, "purge")
       if purgeConfig is not None:
-         for purgeDir in purgeConfig.purgeDirs:
-            Config._addPurgeDir(xmlDom, sectionNode, purgeDir)
+         sectionNode = Config._addContainerNode(xmlDom, parentNode, "purge")
+         if purgeConfig.purgeDirs is not None:
+            for purgeDir in purgeConfig.purgeDirs:
+               Config._addPurgeDir(xmlDom, sectionNode, purgeDir)
    _addPurge = staticmethod(_addPurge)
 
    def _addCollectDir(xmlDom, parentNode, collectDir):
@@ -2957,13 +3149,19 @@ class Config(object):
          Config._addStringNode(xmlDom, sectionNode, "collect_mode", collectDir.collectMode)
          Config._addStringNode(xmlDom, sectionNode, "archive_mode", collectDir.archiveMode)
          Config._addStringNode(xmlDom, sectionNode, "ignore_file", collectDir.ignoreFile)
-         excludeNode = Config._addContainerNode(xmlDom, sectionNode, "exclude")
-         for absolutePath in collectDir.absoluteExcludePaths:
-            Config._addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
-         for relativePath in collectDir.relativeExcludePaths:
-            Config._addStringNode(xmlDom, excludeNode, "rel_path", relativePath)
-         for pattern in collectDir.excludePatterns:
-            Config._addStringNode(xmlDom, excludeNode, "pattern", pattern)
+         if ((collectDir.absoluteExcludePaths is not None and collectDir.absoluteExcludePaths != []) or
+             (collectDir.relativeExcludePaths is not None and collectDir.relativeExcludePaths != []) or
+             (collectDir.excludePatterns is not None and collectDir.excludePatterns != [])):
+            excludeNode = Config._addContainerNode(xmlDom, sectionNode, "exclude")
+            if collectDir.absoluteExcludePaths is not None:
+               for absolutePath in collectDir.absoluteExcludePaths:
+                  Config._addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
+            if collectDir.relativeExcludePaths is not None:
+               for relativePath in collectDir.relativeExcludePaths:
+                  Config._addStringNode(xmlDom, excludeNode, "rel_path", relativePath)
+            if collectDir.excludePatterns is not None:
+               for pattern in collectDir.excludePatterns:
+                  Config._addStringNode(xmlDom, excludeNode, "pattern", pattern)
    _addCollectDir = staticmethod(_addCollectDir)
 
    def _addLocalPeer(xmlDom, parentNode, localPeer):
@@ -2991,6 +3189,7 @@ class Config(object):
       if localPeer is not None:
          sectionNode = Config._addContainerNode(xmlDom, parentNode, "peer")
          Config._addStringNode(xmlDom, sectionNode, "name", localPeer.name)
+         Config._addStringNode(xmlDom, sectionNode, "type", "local")
          Config._addStringNode(xmlDom, sectionNode, "collect_dir", localPeer.collectDir)
    _addLocalPeer = staticmethod(_addLocalPeer)
 
@@ -3021,6 +3220,7 @@ class Config(object):
       if remotePeer is not None:
          sectionNode = Config._addContainerNode(xmlDom, parentNode, "peer")
          Config._addStringNode(xmlDom, sectionNode, "name", remotePeer.name)
+         Config._addStringNode(xmlDom, sectionNode, "type", "remote")
          Config._addStringNode(xmlDom, sectionNode, "collect_dir", remotePeer.collectDir)
          Config._addStringNode(xmlDom, sectionNode, "backup_user", remotePeer.remoteUser)
          Config._addStringNode(xmlDom, sectionNode, "rcp_command", remotePeer.rcpCommand)
@@ -3048,7 +3248,7 @@ class Config(object):
       if purgeDir is not None:
          sectionNode = Config._addContainerNode(xmlDom, parentNode, "dir")
          Config._addStringNode(xmlDom, sectionNode, "abs_path", purgeDir.absolutePath)
-         Config._addStringNode(xmlDom, sectionNode, "retain_days", purgeDir.retainDays)
+         Config._addIntegerNode(xmlDom, sectionNode, "retain_days", purgeDir.retainDays)
    _addPurgeDir = staticmethod(_addPurgeDir)
 
    def _addContainerNode(xmlDom, parentNode, nodeName):
@@ -3179,16 +3379,17 @@ class Config(object):
 
       @raise ValueError: If reference configuration is invalid.
       """
-      if self.options.startingData is None:
-         raise ValueError("Options section starting day must be filled in.")
-      if self.options.workingDir is None:
-         raise ValueError("Options section working directory must be filled in.")
-      if self.options.backupUser is None:
-         raise ValueError("Options section backup user must be filled in.")
-      if self.options.backupGroup is None:
-         raise ValueError("Options section backup group must be filled in.")
-      if self.options.rcpCommand is None:
-         raise ValueError("Options section remote copy command must be filled in.")
+      if self.options is not None:
+         if self.options.startingDay is None:
+            raise ValueError("Options section starting day must be filled in.")
+         if self.options.workingDir is None:
+            raise ValueError("Options section working directory must be filled in.")
+         if self.options.backupUser is None:
+            raise ValueError("Options section backup user must be filled in.")
+         if self.options.backupGroup is None:
+            raise ValueError("Options section backup group must be filled in.")
+         if self.options.rcpCommand is None:
+            raise ValueError("Options section remote copy command must be filled in.")
 
    def _validateCollect(self):
       """
@@ -3210,11 +3411,11 @@ class Config(object):
 
       @raise ValueError: If collect configuration is invalid.
       """
-      if self.collect.targetDir is None:
-         raise ValueError("Collect section target directory must be filled in.")
-      if len(self.collect.collectDirs) < 1:
-         raise ValueError("Collect section must contain at least one collect directory.")
-      if self.collect.collectDirs is not None:
+      if self.collect is not None:
+         if self.collect.targetDir is None:
+            raise ValueError("Collect section target directory must be filled in.")
+         if self.collect.collectDirs is None or len(self.collect.collectDirs) < 1:
+            raise ValueError("Collect section must contain at least one collect directory.")
          for collectDir in self.collect.collectDirs:
             if collectDir.absolutePath is None:
                raise ValueError("Each collect directory must set an absolute path.")
@@ -3242,32 +3443,42 @@ class Config(object):
 
       @raise ValueError: If stage configuration is invalid.
       """
-      if self.stage.targetDir is None:
-         raise ValueError("Stage section target directory must be filled in.")
-      if len(self.stage.localPeers) + len(self.stage.remotePeers) < 1:
-         raise ValueError("Stage section must contain at least one backup peer.")
-      if self.stage.localPeers is not None:
-         for localPeer in self.stage.localPeers:
-            if localPeer.name is None:
-               raise ValueError("Local peers must set a name.")
-            if localPeer.collectDir is None:
-               raise ValueError("Local peers must set a collect directory.")
-      if self.stage.remotePeers is not None:
-         for remotePeer in self.stage.remotePeers:
-            if remotePeer.name is None:
-               raise ValueError("Remote peers must set a name.")
-            if remotePeer.collectDir is None:
-               raise ValueError("Remote peers must set a collect directory.")
-            if self.options.backupUser is None and remotePeer.remoteUser is None:   # redundant, per options validations
-               raise ValueError("Remote user must either be set in options section or individual remote peer.")
-            if self.options.rcpCommand is None and remotePeer.rcpCommand is None:   # redundant, per options validations
-               raise ValueError("Remote copy command must either be set in options section or individual remote peer.")
+      if self.stage is not None:
+         if self.stage.targetDir is None:
+            raise ValueError("Stage section target directory must be filled in.")
+         if self.stage.localPeers is None and self.stage.remotePeers is None:
+            raise ValueError("Stage section must contain at least one backup peer.")
+         if self.stage.localPeers is None and self.stage.remotePeers is not None:
+            if len(self.stage.remotePeers) < 1:
+               raise ValueError("Stage section must contain at least one backup peer.")
+         elif self.stage.localPeers is not None and self.stage.remotePeers is None:
+            if len(self.stage.localPeers) < 1:
+               raise ValueError("Stage section must contain at least one backup peer.")
+         elif self.stage.localPeers is not None and self.stage.remotePeers is not None:
+            if len(self.stage.localPeers) + len(self.stage.remotePeers) < 1:
+               raise ValueError("Stage section must contain at least one backup peer.")
+         if self.stage.localPeers is not None:
+            for localPeer in self.stage.localPeers:
+               if localPeer.name is None:
+                  raise ValueError("Local peers must set a name.")
+               if localPeer.collectDir is None:
+                  raise ValueError("Local peers must set a collect directory.")
+         if self.stage.remotePeers is not None:
+            for remotePeer in self.stage.remotePeers:
+               if remotePeer.name is None:
+                  raise ValueError("Remote peers must set a name.")
+               if remotePeer.collectDir is None:
+                  raise ValueError("Remote peers must set a collect directory.")
+               if (self.options is None or self.options.backupUser is None) and remotePeer.remoteUser is None: # redundant
+                  raise ValueError("Remote user must either be set in options section or individual remote peer.")
+               if (self.options is None or self.options.rcpCommand is None) and remotePeer.rcpCommand is None: # redundant
+                  raise ValueError("Remote copy command must either be set in options section or individual remote peer.")
 
    def _validateStore(self):
       """
       Validates store configuration.
 
-      The device type and drive speed and capacity mode are optional, and all
+      The device type, drive speed and capacity mode are optional, and all
       other values are required (missing booleans will be set to defaults,
       which is OK).
 
@@ -3278,14 +3489,15 @@ class Config(object):
 
       @raise ValueError: If store configuration is invalid.
       """
-      if self.store.sourceDir is None:
-         raise ValueError("Store section source directory must be filled in.")
-      if self.store.mediaType is None:
-         raise ValueError("Store section media type must be filled in.")
-      if self.store.devicePath is None:
-         raise ValueError("Store section device path must be filled in.")
-      if self.store.deviceScsiId is None:
-         raise ValueError("Store section SCSI id must be filled in.")
+      if self.store is not None:
+         if self.store.sourceDir is None:
+            raise ValueError("Store section source directory must be filled in.")
+         if self.store.mediaType is None:
+            raise ValueError("Store section media type must be filled in.")
+         if self.store.devicePath is None:
+            raise ValueError("Store section device path must be filled in.")
+         if self.store.deviceScsiId is None:
+            raise ValueError("Store section SCSI id must be filled in.")
 
    def _validatePurge(self):
       """
@@ -3297,10 +3509,11 @@ class Config(object):
 
       @raise ValueError: If purge configuration is invalid.
       """
-      if self.purge.purgeDirs is not None:
-         for purgeDir in self.purge.purgeDirs:
-            if purgeDir.absolutePath is None:
-               raise ValueError("Each purge directory must set an absolute path.")
-            if purgeDir.retainDays is None:
-               raise ValueError("Each purge directory must set a retain days value.")
+      if self.purge is not None:
+         if self.purge.purgeDirs is not None:
+            for purgeDir in self.purge.purgeDirs:
+               if purgeDir.absolutePath is None:
+                  raise ValueError("Each purge directory must set an absolute path.")
+               if purgeDir.retainDays is None:
+                  raise ValueError("Each purge directory must set a retain days value.")
 

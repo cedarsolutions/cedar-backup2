@@ -47,6 +47,15 @@ Code Coverage
    This module contains individual tests for the public functions and classes
    implemented in config.py.  
 
+   I usually prefer to test only the public interface to a class, because that
+   way the regression tests don't depend on the internal implementation.  In
+   this case, I've decided to test some of the private methods, because their
+   "privateness" is more a matter of presenting a clean external interface than
+   anything else.  In particular, this is the case with the private validation
+   functions (I use the private functions so I can test just the validations
+   for one specific case, even if the public interface only exposes one broad
+   validation).
+
 Naming Conventions
 ==================
 
@@ -58,6 +67,22 @@ Naming Conventions
    Each method has a docstring describing what it's supposed to accomplish.  I
    feel that this makes it easier to judge how important a given failure is,
    and also makes it somewhat easier to diagnose and fix individual problems.
+
+Testing XML Extraction
+======================
+
+   It's difficult to validated that generated XML is exactly "right",
+   especially when dealing with pretty-printed XML.  We can't just provide a
+   constant string and say "the result must match this".  Instead, what we do
+   is extract the XML and then feed it back into another object's constructor.
+   If that parse process succeeds and the old object is equal to the new
+   object, we assume that the extract was successful.  
+
+   It would argumably be better if we could do a completely independent check -
+   but implementing that check would be equivalent to re-implementing all of
+   the existing functionality that we're validating here!  After all, the most
+   important thing is that data can move seamlessly from object to XML document
+   and back to object.
 
 Full vs. Reduced Tests
 ======================
@@ -90,7 +115,7 @@ from CedarBackup2.config import StageConfig, StoreConfig, PurgeConfig, Config
 DATA_DIRS = [ "./data", "./test/data", ]
 RESOURCES = [ "cback.conf.1", "cback.conf.2", "cback.conf.3", "cback.conf.4", "cback.conf.5", 
               "cback.conf.6", "cback.conf.7", "cback.conf.8", "cback.conf.9", "cback.conf.10", 
-              "cback.conf.11", "cback.conf.12", "cback.conf.13", "cback.conf.14", ]
+              "cback.conf.11", "cback.conf.12", "cback.conf.13", "cback.conf.14", "cback.conf.15", ]
 
 
 #######################################################################
@@ -224,6 +249,19 @@ class TestCollectDir(unittest.TestCase):
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
       failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = CollectDir()
+      obj.__repr__()
+      obj.__str__()
 
 
    ##################################
@@ -618,6 +656,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [])
       collectDir2 = CollectDir("/stuff", "incr", "tar", ".ignore", [], [], [])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -645,6 +684,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [])
       collectDir2 = CollectDir("/etc/whatever", "daily", "tar", ".ignore", [], [], [])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
       self.failUnless(not collectDir1 <= collectDir2)
@@ -672,6 +712,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "targz", ".ignore", [], [], [])
       collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
       self.failUnless(not collectDir1 <= collectDir2)
@@ -699,6 +740,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [])
       collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
       self.failUnless(not collectDir1 <= collectDir2)
@@ -743,6 +785,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [])
       collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/whatever", ], [], [])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -757,6 +800,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", ], [], [])
       collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", "/something", ], [], [])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)     # note: different than standard due to unsorted list
       self.failUnless(not collectDir1 <= collectDir2)    # note: different than standard due to unsorted list
@@ -801,6 +845,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [])
       collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
       self.failUnless(not collectDir1 <= collectDir2)
@@ -815,6 +860,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [])
       collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["two", ], [])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -859,6 +905,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [])
       collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["pattern", ])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -873,6 +920,7 @@ class TestCollectDir(unittest.TestCase):
       """
       collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p1", ])
       collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p2", ])
+      self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -916,6 +964,19 @@ class TestPurgeDir(unittest.TestCase):
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
       failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = PurgeDir()
+      obj.__repr__()
+      obj.__str__()
 
 
    ##################################
@@ -1080,6 +1141,7 @@ class TestPurgeDir(unittest.TestCase):
       """
       purgeDir1 = PurgeDir("/etc/blech", 12)
       purgeDir2 = PurgeDir("/etc/whatever", 12)
+      self.failIfEqual(purgeDir1, purgeDir2)
       self.failUnless(not purgeDir1 == purgeDir2)
       self.failUnless(purgeDir1 < purgeDir2)
       self.failUnless(purgeDir1 <= purgeDir2)
@@ -1107,6 +1169,7 @@ class TestPurgeDir(unittest.TestCase):
       """
       purgeDir1 = PurgeDir("/etc/whatever", 365)
       purgeDir2 = PurgeDir("/etc/whatever", 12)
+      self.failIfEqual(purgeDir1, purgeDir2)
       self.failUnless(not purgeDir1 == purgeDir2)
       self.failUnless(not purgeDir1 < purgeDir2)
       self.failUnless(not purgeDir1 <= purgeDir2)
@@ -1150,6 +1213,19 @@ class TestLocalPeer(unittest.TestCase):
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
       failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = LocalPeer()
+      obj.__repr__()
+      obj.__str__()
 
 
    ##################################
@@ -1287,6 +1363,7 @@ class TestLocalPeer(unittest.TestCase):
       """
       localPeer1 = LocalPeer("name", "/etc/stuff")
       localPeer2 = LocalPeer("name", "/etc/whatever")
+      self.failIfEqual(localPeer1, localPeer2)
       self.failUnless(not localPeer1 == localPeer2)
       self.failUnless(localPeer1 < localPeer2)
       self.failUnless(localPeer1 <= localPeer2)
@@ -1314,6 +1391,7 @@ class TestLocalPeer(unittest.TestCase):
       """
       localPeer1 = LocalPeer("name2", "/etc/stuff")
       localPeer2 = LocalPeer("name1", "/etc/stuff")
+      self.failIfEqual(localPeer1, localPeer2)
       self.failUnless(not localPeer1 == localPeer2)
       self.failUnless(not localPeer1 < localPeer2)
       self.failUnless(not localPeer1 <= localPeer2)
@@ -1357,6 +1435,19 @@ class TestRemotePeer(unittest.TestCase):
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
       failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = RemotePeer()
+      obj.__repr__()
+      obj.__str__()
 
 
    ##################################
@@ -1552,6 +1643,7 @@ class TestRemotePeer(unittest.TestCase):
       """
       remotePeer1 = RemotePeer("name1", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
       remotePeer2 = RemotePeer("name2", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
       self.failUnless(remotePeer1 <= remotePeer2)
@@ -1579,6 +1671,7 @@ class TestRemotePeer(unittest.TestCase):
       """
       remotePeer1 = RemotePeer("name", "/etc", "backup", "scp -1 -B")
       remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
       self.failUnless(remotePeer1 <= remotePeer2)
@@ -1606,6 +1699,7 @@ class TestRemotePeer(unittest.TestCase):
       """
       remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "spot", "scp -1 -B")
       remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
       self.failUnless(not remotePeer1 <= remotePeer2)
@@ -1633,6 +1727,7 @@ class TestRemotePeer(unittest.TestCase):
       """
       remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -2 -B")
       remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
       self.failUnless(not remotePeer1 <= remotePeer2)
@@ -1676,6 +1771,19 @@ class TestReferenceConfig(unittest.TestCase):
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
       failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = ReferenceConfig()
+      obj.__repr__()
+      obj.__str__()
 
 
    ##################################
@@ -1862,6 +1970,7 @@ class TestReferenceConfig(unittest.TestCase):
       """
       reference1 = ReferenceConfig("", "two", "three", "four")
       reference2 = ReferenceConfig("one", "two", "three", "four")
+      self.failIfEqual(reference1, reference2)
       self.failUnless(not reference1 == reference2)
       self.failUnless(reference1 < reference2)
       self.failUnless(reference1 <= reference2)
@@ -1875,6 +1984,7 @@ class TestReferenceConfig(unittest.TestCase):
       """
       reference1 = ReferenceConfig("one", "two", "three", "four")
       reference2 = ReferenceConfig("author", "two", "three", "four")
+      self.failIfEqual(reference1, reference2)
       self.failUnless(not reference1 == reference2)
       self.failUnless(not reference1 < reference2)
       self.failUnless(not reference1 <= reference2)
@@ -1902,6 +2012,7 @@ class TestReferenceConfig(unittest.TestCase):
       """
       reference1 = ReferenceConfig("one", "two", "three", "four")
       reference2 = ReferenceConfig("one", "", "three", "four")
+      self.failIfEqual(reference1, reference2)
       self.failUnless(not reference1 == reference2)
       self.failUnless(not reference1 < reference2)
       self.failUnless(not reference1 <= reference2)
@@ -1915,6 +2026,7 @@ class TestReferenceConfig(unittest.TestCase):
       """
       reference1 = ReferenceConfig("one", "two", "three", "four")
       reference2 = ReferenceConfig("one", "revision", "three", "four")
+      self.failIfEqual(reference1, reference2)
       self.failUnless(not reference1 == reference2)
       self.failUnless(not reference1 < reference2)
       self.failUnless(not reference1 <= reference2)
@@ -1942,6 +2054,7 @@ class TestReferenceConfig(unittest.TestCase):
       """
       reference1 = ReferenceConfig("one", "two", "three", "four")
       reference2 = ReferenceConfig("one", "two", "", "four")
+      self.failIfEqual(reference1, reference2)
       self.failUnless(not reference1 == reference2)
       self.failUnless(not reference1 < reference2)
       self.failUnless(not reference1 <= reference2)
@@ -1955,6 +2068,7 @@ class TestReferenceConfig(unittest.TestCase):
       """
       reference1 = ReferenceConfig("one", "two", "description", "four")
       reference2 = ReferenceConfig("one", "two", "three", "four")
+      self.failIfEqual(reference1, reference2)
       self.failUnless(not reference1 == reference2)
       self.failUnless(reference1 < reference2)
       self.failUnless(reference1 <= reference2)
@@ -1982,6 +2096,7 @@ class TestReferenceConfig(unittest.TestCase):
       """
       reference1 = ReferenceConfig("one", "two", "three", "")
       reference2 = ReferenceConfig("one", "two", "three", "four")
+      self.failIfEqual(reference1, reference2)
       self.failUnless(not reference1 == reference2)
       self.failUnless(reference1 < reference2)
       self.failUnless(reference1 <= reference2)
@@ -1995,6 +2110,7 @@ class TestReferenceConfig(unittest.TestCase):
       """
       reference1 = ReferenceConfig("one", "two", "three", "four")
       reference2 = ReferenceConfig("one", "two", "three", "generator")
+      self.failIfEqual(reference1, reference2)
       self.failUnless(not reference1 == reference2)
       self.failUnless(reference1 < reference2)
       self.failUnless(reference1 <= reference2)
@@ -2038,6 +2154,19 @@ class TestOptionsConfig(unittest.TestCase):
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
       failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = OptionsConfig()
+      obj.__repr__()
+      obj.__str__()
 
 
    ##################################
@@ -2284,6 +2413,7 @@ class TestOptionsConfig(unittest.TestCase):
       """
       options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
       options2 = OptionsConfig("tuesday", "/tmp", "user", "group", "scp -1 -B")
+      self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
       self.failUnless(options1 <= options2)
@@ -2311,6 +2441,7 @@ class TestOptionsConfig(unittest.TestCase):
       """
       options1 = OptionsConfig("monday", "/tmp/whatever", "user", "group", "scp -1 -B")
       options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
       self.failUnless(not options1 <= options2)
@@ -2338,6 +2469,7 @@ class TestOptionsConfig(unittest.TestCase):
       """
       options1 = OptionsConfig("monday", "/tmp", "user2", "group", "scp -1 -B")
       options2 = OptionsConfig("monday", "/tmp", "user1", "group", "scp -1 -B")
+      self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
       self.failUnless(not options1 <= options2)
@@ -2365,6 +2497,7 @@ class TestOptionsConfig(unittest.TestCase):
       """
       options1 = OptionsConfig("monday", "/tmp", "user", "group1", "scp -1 -B")
       options2 = OptionsConfig("monday", "/tmp", "user", "group2", "scp -1 -B")
+      self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
       self.failUnless(options1 <= options2)
@@ -2392,6 +2525,7 @@ class TestOptionsConfig(unittest.TestCase):
       """
       options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -2 -B")
       options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
       self.failUnless(not options1 <= options2)
@@ -2435,6 +2569,19 @@ class TestCollectConfig(unittest.TestCase):
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
       failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = CollectConfig()
+      obj.__repr__()
+      obj.__str__()
 
 
    ##################################
@@ -2980,6 +3127,19 @@ class TestStageConfig(unittest.TestCase):
       failUnlessAssignRaises(self, exception, object, property, value)
 
 
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = StageConfig()
+      obj.__repr__()
+      obj.__str__()
+
+
    ##################################
    # Test constructor and attributes
    ##################################
@@ -3414,6 +3574,19 @@ class TestStoreConfig(unittest.TestCase):
       failUnlessAssignRaises(self, exception, object, property, value)
 
 
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = StoreConfig()
+      obj.__repr__()
+      obj.__str__()
+
+
    ##################################
    # Test constructor and attributes
    ##################################
@@ -3840,6 +4013,7 @@ class TestStoreConfig(unittest.TestCase):
       """
       store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
       store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
       self.failUnless(store1 <= store2)
@@ -3867,6 +4041,7 @@ class TestStoreConfig(unittest.TestCase):
       """
       store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
       store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(not store1 < store2)
       self.failUnless(not store1 <= store2)
@@ -3908,6 +4083,7 @@ class TestStoreConfig(unittest.TestCase):
       """
       store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
       store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True, True, "fail")
+      self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
       self.failUnless(store1 <= store2)
@@ -3935,6 +4111,7 @@ class TestStoreConfig(unittest.TestCase):
       """
       store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
       store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True, True, "fail")
+      self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
       self.failUnless(store1 <= store2)
@@ -3962,6 +4139,7 @@ class TestStoreConfig(unittest.TestCase):
       """
       store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, "fail")
       store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
       self.failUnless(store1 <= store2)
@@ -3975,6 +4153,7 @@ class TestStoreConfig(unittest.TestCase):
       """
       store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False, True, "fail")
       store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
       self.failUnless(store1 <= store2)
@@ -3988,6 +4167,7 @@ class TestStoreConfig(unittest.TestCase):
       """
       store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
       store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, False, "fail")
+      self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(not store1 < store2)
       self.failUnless(not store1 <= store2)
@@ -4015,6 +4195,7 @@ class TestStoreConfig(unittest.TestCase):
       """
       store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "overwrite")
       store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(not store1 < store2)
       self.failUnless(not store1 <= store2)
@@ -4058,6 +4239,19 @@ class TestPurgeConfig(unittest.TestCase):
    def failUnlessAssignRaises(self, exception, object, property, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
       failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = PurgeConfig()
+      obj.__repr__()
+      obj.__str__()
 
 
    ##################################
@@ -4196,6 +4390,7 @@ class TestPurgeConfig(unittest.TestCase):
       """
       purge1 = PurgeConfig(None)
       purge2 = PurgeConfig([])
+      self.failIfEqual(purge1, purge2)
       self.failUnless(not purge1 == purge2)
       self.failUnless(purge1 < purge2)
       self.failUnless(purge1 <= purge2)
@@ -4210,6 +4405,7 @@ class TestPurgeConfig(unittest.TestCase):
       """
       purge1 = PurgeConfig(None)
       purge2 = PurgeConfig([PurgeDir(), ])
+      self.failIfEqual(purge1, purge2)
       self.failUnless(not purge1 == purge2)
       self.failUnless(purge1 < purge2)
       self.failUnless(purge1 <= purge2)
@@ -4224,6 +4420,7 @@ class TestPurgeConfig(unittest.TestCase):
       """
       purge1 = PurgeConfig([])
       purge2 = PurgeConfig([PurgeDir(), ])
+      self.failIfEqual(purge1, purge2)
       self.failUnless(not purge1 == purge2)
       self.failUnless(purge1 < purge2)
       self.failUnless(purge1 <= purge2)
@@ -4238,6 +4435,7 @@ class TestPurgeConfig(unittest.TestCase):
       """
       purge1 = PurgeConfig([PurgeDir("/two"), ])
       purge2 = PurgeConfig([PurgeDir("/one"), ])
+      self.failIfEqual(purge1, purge2)
       self.failUnless(not purge1 == purge2)
       self.failUnless(not purge1 < purge2)
       self.failUnless(not purge1 <= purge2)
@@ -4283,6 +4481,1901 @@ class TestConfig(unittest.TestCase):
       failUnlessAssignRaises(self, exception, object, property, value)
 
 
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = Config()
+      obj.__repr__()
+      obj.__str__()
+
+
+   #####################################################
+   # Test basic constructor and attribute functionality
+   #####################################################
+
+   def testConstructor_001(self):
+      """
+      Test empty constructor, validate=False.
+      """
+      config = Config(validate=False)
+      self.failUnlessEqual(None, config.reference)
+      self.failUnlessEqual(None, config.options)
+      self.failUnlessEqual(None, config.collect)
+      self.failUnlessEqual(None, config.stage)
+      self.failUnlessEqual(None, config.store)
+      self.failUnlessEqual(None, config.purge)
+
+   def testConstructor_002(self):
+      """
+      Test empty constructor, validate=True.
+      """
+      config = Config(validate=True)
+      self.failUnlessEqual(None, config.reference)
+      self.failUnlessEqual(None, config.options)
+      self.failUnlessEqual(None, config.collect)
+      self.failUnlessEqual(None, config.stage)
+      self.failUnlessEqual(None, config.store)
+      self.failUnlessEqual(None, config.purge)
+
+   def testConstructor_003(self):
+      """
+      Test with empty config document as both data and file, validate=False.
+      """
+      path = self.resources["cback.conf.2"]
+      contents = open(path).read()
+      self.failUnlessRaises(ValueError, Config, xmlData=contents, xmlPath=path, validate=False)
+
+   def testConstructor_004(self):
+      """
+      Test with empty config document as data, validate=False.
+      """
+      path = self.resources["cback.conf.2"]
+      contents = open(path).read()
+      config = Config(xmlData=contents, validate=False)
+      self.failUnlessEqual(None, config.reference)
+      self.failUnlessEqual(None, config.options)
+      self.failUnlessEqual(None, config.collect)
+      self.failUnlessEqual(None, config.stage)
+      self.failUnlessEqual(None, config.store)
+      self.failUnlessEqual(None, config.purge)
+
+   def testConstructor_005(self):
+      """
+      Test with empty config document in a file, validate=False.
+      """
+      path = self.resources["cback.conf.2"]
+      config = Config(xmlPath=path, validate=False)
+      self.failUnlessEqual(None, config.reference)
+      self.failUnlessEqual(None, config.options)
+      self.failUnlessEqual(None, config.collect)
+      self.failUnlessEqual(None, config.stage)
+      self.failUnlessEqual(None, config.store)
+      self.failUnlessEqual(None, config.purge)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of reference attribute, None value.
+      """
+      config = Config()
+      config.reference = None
+      self.failUnlessEqual(None, config.reference)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of reference attribute, valid value.
+      """
+      config = Config()
+      config.reference = ReferenceConfig()
+      self.failUnlessEqual(ReferenceConfig(), config.reference)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of reference attribute, invalid value (not ReferenceConfig).
+      """
+      config = Config()
+      self.failUnlessAssignRaises(ValueError, config, "reference", CollectDir())
+
+   def testConstructor_009(self):
+      """
+      Test assignment of options attribute, None value.
+      """
+      config = Config()
+      config.options = None
+      self.failUnlessEqual(None, config.options)
+
+   def testConstructor_010(self):
+      """
+      Test assignment of options attribute, valid value.
+      """
+      config = Config()
+      config.options = OptionsConfig()
+      self.failUnlessEqual(OptionsConfig(), config.options)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of options attribute, invalid value (not OptionsConfig).
+      """
+      config = Config()
+      self.failUnlessAssignRaises(ValueError, config, "options", CollectDir())
+
+   def testConstructor_012(self):
+      """
+      Test assignment of collect attribute, None value.
+      """
+      config = Config()
+      config.collect = None
+      self.failUnlessEqual(None, config.collect)
+
+   def testConstructor_013(self):
+      """
+      Test assignment of collect attribute, valid value.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      self.failUnlessEqual(CollectConfig(), config.collect)
+
+   def testConstructor_014(self):
+      """
+      Test assignment of collect attribute, invalid value (not CollectConfig).
+      """
+      config = Config()
+      self.failUnlessAssignRaises(ValueError, config, "collect", CollectDir())
+
+   def testConstructor_015(self):
+      """
+      Test assignment of stage attribute, None value.
+      """
+      config = Config()
+      config.stage = None
+      self.failUnlessEqual(None, config.stage)
+
+   def testConstructor_016(self):
+      """
+      Test assignment of stage attribute, valid value.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      self.failUnlessEqual(StageConfig(), config.stage)
+
+   def testConstructor_017(self):
+      """
+      Test assignment of stage attribute, invalid value (not StageConfig).
+      """
+      config = Config()
+      self.failUnlessAssignRaises(ValueError, config, "stage", CollectDir())
+
+   def testConstructor_018(self):
+      """
+      Test assignment of store attribute, None value.
+      """
+      config = Config()
+      config.store = None
+      self.failUnlessEqual(None, config.store)
+
+   def testConstructor_019(self):
+      """
+      Test assignment of store attribute, valid value.
+      """
+      config = Config()
+      config.store = StoreConfig()
+      self.failUnlessEqual(StoreConfig(), config.store)
+
+   def testConstructor_020(self):
+      """
+      Test assignment of store attribute, invalid value (not StoreConfig).
+      """
+      config = Config()
+      self.failUnlessAssignRaises(ValueError, config, "store", CollectDir())
+
+   def testConstructor_021(self):
+      """
+      Test assignment of purge attribute, None value.
+      """
+      config = Config()
+      config.purge = None
+      self.failUnlessEqual(None, config.purge)
+
+   def testConstructor_022(self):
+      """
+      Test assignment of purge attribute, valid value.
+      """
+      config = Config()
+      config.purge = PurgeConfig()
+      self.failUnlessEqual(PurgeConfig(), config.purge)
+
+   def testConstructor_023(self):
+      """
+      Test assignment of purge attribute, invalid value (not PurgeConfig).
+      """
+      config = Config()
+      self.failUnlessAssignRaises(ValueError, config, "purge", CollectDir())
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      config1 = Config()
+      config2 = Config()
+      self.failUnlessEqual(config1, config2)
+      self.failUnless(config1 == config2)
+      self.failUnless(not config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(config1 >= config2)
+      self.failUnless(not config1 != config2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.options = OptionsConfig()
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig()
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      config2.options = OptionsConfig()
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig()
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig()
+
+      self.failUnlessEqual(config1, config2)
+      self.failUnless(config1 == config2)
+      self.failUnless(not config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(config1 >= config2)
+      self.failUnless(not config1 != config2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two differing objects, reference differs (one None).
+      """
+      config1 = Config()
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two differing objects, reference differs.
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig(author="one")
+      config1.options = OptionsConfig()
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig()
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config2.reference = ReferenceConfig(author="two")
+      config2.options = OptionsConfig()
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig()
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig()
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two differing objects, options differs (one None).
+      """
+      config1 = Config()
+      config2 = Config()
+      config2.options = OptionsConfig()
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two differing objects, options differs.
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.options = OptionsConfig(startingDay="tuesday")
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig()
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      config2.options = OptionsConfig(startingDay="monday")
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig()
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig()
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(not config1 < config2)
+      self.failUnless(not config1 <= config2)
+      self.failUnless(config1 > config2)
+      self.failUnless(config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_007(self):
+      """
+      Test comparison of two differing objects, collect differs (one None).
+      """
+      config1 = Config()
+      config2 = Config()
+      config2.collect = CollectConfig()
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_008(self):
+      """
+      Test comparison of two differing objects, collect differs.
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.options = OptionsConfig()
+      config1.collect = CollectConfig(collectMode="daily")
+      config1.stage = StageConfig()
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      config2.options = OptionsConfig()
+      config2.collect = CollectConfig(collectMode="incr")
+      config2.stage = StageConfig()
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig()
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_009(self):
+      """
+      Test comparison of two differing objects, stage differs (one None).
+      """
+      config1 = Config()
+      config2 = Config()
+      config2.stage = StageConfig()
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_010(self):
+      """
+      Test comparison of two differing objects, stage differs.
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.options = OptionsConfig()
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig(targetDir="/something")
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      config2.options = OptionsConfig()
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig(targetDir="/whatever")
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig()
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_011(self):
+      """
+      Test comparison of two differing objects, store differs (one None).
+      """
+      config1 = Config()
+      config2 = Config()
+      config2.store = StoreConfig()
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_012(self):
+      """
+      Test comparison of two differing objects, store differs.
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.options = OptionsConfig()
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig()
+      config1.store = StoreConfig(deviceScsiId="ATA:0,0,0")
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      config2.options = OptionsConfig()
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig()
+      config2.store = StoreConfig(deviceScsiId="0,0,0")
+      config2.purge = PurgeConfig()
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(not config1 < config2)
+      self.failUnless(not config1 <= config2)
+      self.failUnless(config1 > config2)
+      self.failUnless(config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_013(self):
+      """
+      Test comparison of two differing objects, purge differs (one None).
+      """
+      config1 = Config()
+      config2 = Config()
+      config2.purge = PurgeConfig()
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_014(self):
+      """
+      Test comparison of two differing objects, purge differs.
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.options = OptionsConfig()
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig()
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig(purgeDirs=None)
+
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      config2.options = OptionsConfig()
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig()
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig(purgeDirs=[])
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+
+   ######################
+   # Test validate logic 
+   ######################
+
+   def testValidate_001(self):
+      """
+      Test validate on an empty reference section.
+      """
+      config = Config()
+      config.reference = ReferenceConfig()
+      config._validateReference()
+
+   def testValidate_002(self):
+      """
+      Test validate on a non-empty reference section, with everything filled in.
+      """
+      config = Config()
+      config.reference = ReferenceConfig("author", "revision", "description", "generator")
+      config._validateReference()
+
+   def testValidate_003(self):
+      """
+      Test validate on an empty options section.
+      """
+      config = Config()
+      config.options = OptionsConfig()
+      self.failUnlessRaises(ValueError, config._validateOptions)
+
+   def testValidate_004(self):
+      """
+      Test validate on a non-empty options section, with everything filled in.
+      """
+      config = Config()
+      config.options = OptionsConfig("monday", "/whatever", "user", "group", "command")
+      config._validateOptions()
+
+   def testValidate_005(self):
+      """
+      Test validate on a non-empty options section, with individual items missing.
+      """
+      config = Config()
+      config.options = OptionsConfig("monday", "/whatever", "user", "group", "command")
+      config._validateOptions()
+      config.options = OptionsConfig("monday", "/whatever", "user", "group", "command")
+      config.options.startingDay = None
+      self.failUnlessRaises(ValueError, config._validateOptions)
+      config.options = OptionsConfig("monday", "/whatever", "user", "group", "command")
+      config.options.workingDir = None
+      self.failUnlessRaises(ValueError, config._validateOptions)
+      config.options = OptionsConfig("monday", "/whatever", "user", "group", "command")
+      config.options.backupUser = None
+      self.failUnlessRaises(ValueError, config._validateOptions)
+      config.options = OptionsConfig("monday", "/whatever", "user", "group", "command")
+      config.options.backupGroup = None
+      self.failUnlessRaises(ValueError, config._validateOptions)
+      config.options = OptionsConfig("monday", "/whatever", "user", "group", "command")
+      config.options.rcpCommand = None
+      self.failUnlessRaises(ValueError, config._validateOptions)
+
+   def testValidate_006(self):
+      """
+      Test validate on an empty collect section.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      self.failUnlessRaises(ValueError, config._validateCollect)
+
+   def testValidate_007(self):
+      """
+      Test validate on collect section containing only targetDir.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      self.failUnlessRaises(ValueError, config._validateCollect)
+
+   def testValidate_008(self):
+      """
+      Test validate on collect section containing only targetDir and one
+      collectDirs entry that is empty.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectDirs = [ CollectDir(), ]
+      self.failUnlessRaises(ValueError, config._validateCollect)
+
+   def testValidate_009(self):
+      """
+      Test validate on collect section containing only targetDir and one
+      collectDirs entry with only a path.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff"), ]
+      self.failUnlessRaises(ValueError, config._validateCollect)
+
+   def testValidate_010(self):
+      """
+      Test validate on collect section containing only targetDir and one
+      collectDirs entry with path, collect mode, archive mode and ignore file.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff", collectMode="incr", archiveMode="tar", ignoreFile="i"), ]
+      config._validateCollect()
+
+   def testValidate_011(self):
+      """
+      Test validate on collect section containing targetDir, collect mode,
+      archive mode and ignore file, and one collectDirs entry with only a path.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectMode = "incr"
+      config.collect.archiveMode = "tar"
+      config.collect.ignoreFile = "ignore"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff"), ]
+      config._validateCollect()
+
+   def testValidate_012(self):
+      """
+      Test validate on collect section containing targetDir, but with collect mode,
+      archive mode and ignore file mixed between main section and directories.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.archiveMode = "tar"
+      config.collect.ignoreFile = "ignore"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff", collectMode="incr", ignoreFile="i"), ]
+      config._validateCollect()
+      config.collect.collectDirs.append(CollectDir(absolutePath="/stuff2"))
+      self.failUnlessRaises(ValueError, config._validateCollect)
+      config.collect.collectDirs[-1].collectMode="daily"
+      config._validateCollect()
+
+   def testValidate_013(self):
+      """
+      Test validate on an empty stage section.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_014(self):
+      """
+      Test validate on stage section containing only targetDir and None for the
+      lists.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = None
+      config.stage.remotePeers = None
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_015(self):
+      """
+      Test validate on stage section containing only targetDir and [] for the
+      lists.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = []
+      config.stage.remotePeers = []
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_016(self):
+      """
+      Test validate on stage section containing targetDir and one local peer
+      that is empty.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = [LocalPeer(), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_017(self):
+      """
+      Test validate on stage section containing targetDir and one local peer
+      with only a name.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = [LocalPeer(name="name"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_018(self):
+      """
+      Test validate on stage section containing targetDir and one local peer
+      with a name and path, None for remote list.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = [LocalPeer(name="name", collectDir="/somewhere"), ]
+      config.stage.remotePeers = None
+      config._validateStage()
+
+   def testValidate_019(self):
+      """
+      Test validate on stage section containing targetDir and one local peer
+      with a name and path, [] for remote list.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = [LocalPeer(name="name", collectDir="/somewhere"), ]
+      config.stage.remotePeers = []
+      config._validateStage()
+
+   def testValidate_020(self):
+      """
+      Test validate on stage section containing targetDir and one remote peer
+      that is empty.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.remotePeers = [RemotePeer(), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_021(self):
+      """
+      Test validate on stage section containing targetDir and one remote peer
+      with only a name.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.remotePeers = [RemotePeer(name="blech"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_022(self):
+      """
+      Test validate on stage section containing targetDir and one remote peer
+      with a name and path, None for local list.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = None
+      config.stage.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config._validateStage()
+      config.options = None
+      self.failUnlessRaises(ValueError, config._validateStage)
+      config.stage.remotePeers[-1].remoteUser = "remote"
+      config.stage.remotePeers[-1].rcpCommand = "command"
+      config._validateStage()
+
+   def testValidate_023(self):
+      """
+      Test validate on stage section containing targetDir and one remote peer
+      with a name and path, [] for local list.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = []
+      config.stage.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config._validateStage()
+      config.options = None
+      self.failUnlessRaises(ValueError, config._validateStage)
+      config.stage.remotePeers[-1].remoteUser = "remote"
+      config.stage.remotePeers[-1].rcpCommand = "command"
+      config._validateStage()
+
+   def testValidate_024(self):
+      """
+      Test validate on stage section containing targetDir and one remote and
+      one local peer.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = [LocalPeer(name="metoo", collectDir="/nowhere"),  ]
+      config.stage.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config._validateStage()
+      config.options = None
+      self.failUnlessRaises(ValueError, config._validateStage)
+      config.stage.remotePeers[-1].remoteUser = "remote"
+      config.stage.remotePeers[-1].rcpCommand = "command"
+      config._validateStage()
+
+   def testValidate_025(self):
+      """
+      Test validate on stage section containing targetDir multiple remote and
+      local peers.
+      """
+      config = Config()
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = [LocalPeer(name="metoo", collectDir="/nowhere"), LocalPeer("one", "/two"), LocalPeer("a", "/b"), ]
+      config.stage.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), RemotePeer("a", "/b"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config._validateStage()
+      config.options = None
+      self.failUnlessRaises(ValueError, config._validateStage)
+      config.stage.remotePeers[-1].remoteUser = "remote"
+      config.stage.remotePeers[-1].rcpCommand = "command"
+      self.failUnlessRaises(ValueError, config._validateStage)
+      config.stage.remotePeers[0].remoteUser = "remote"
+      config.stage.remotePeers[0].rcpCommand = "command"
+      config._validateStage()
+
+   def testValidate_026(self):
+      """
+      Test validate on an empty store section.
+      """
+      config = Config()
+      config.store = StoreConfig()
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+   def testValidate_027(self):
+      """
+      Test validate on store section with everything filled in.
+      """
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.safeOverwrite = False
+      config.store.capacityMode = "overwrite"
+      config._validateStore()
+
+   def testValidate_028(self):
+      """
+      Test validate on store section missing one each of required fields.
+      """
+      config = Config()
+      config.store = StoreConfig()
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.safeOverwrite = False
+      config.store.capacityMode = "overwrite"
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.safeOverwrite = False
+      config.store.capacityMode = "overwrite"
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.safeOverwrite = False
+      config.store.capacityMode = "overwrite"
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.safeOverwrite = False
+      config.store.capacityMode = "overwrite"
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+   def testValidate_029(self):
+      """
+      Test validate on store section missing one each of device type, drive
+      speed and capacity mode and the booleans.
+      """
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.safeOverwrite = False
+      config.store.capacityMode = "overwrite"
+      config._validateStore()
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.checkData = True
+      config.store.safeOverwrite = False
+      config.store.capacityMode = "overwrite"
+      config._validateStore()
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.safeOverwrite = False
+      config._validateStore()
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.safeOverwrite = False
+      config.store.capacityMode = "overwrite"
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.safeOverwrite = False
+      config.store.capacityMode = "overwrite"
+      config._validateStore()
+
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.capacityMode = "overwrite"
+      config._validateStore()
+
+   def testValidate_030(self):
+      """
+      Test validate on an empty purge section, with a None list.
+      """
+      config = Config()
+      config.purge = PurgeConfig()
+      config.purge.purgeDirs = None
+      config._validatePurge()
+
+   def testValidate_031(self):
+      """
+      Test validate on an empty purge section, with [] for the list.
+      """
+      config = Config()
+      config.purge = PurgeConfig()
+      config.purge.purgeDirs = []
+      config._validatePurge()
+
+   def testValidate_032(self):
+      """
+      Test validate on an a purge section, with one empty purge dir.
+      """
+      config = Config()
+      config.purge = PurgeConfig()
+      config.purge.purgeDirs = [PurgeDir(), ]
+      self.failUnlessRaises(ValueError, config._validatePurge)
+
+   def testValidate_033(self):
+      """
+      Test validate on an a purge section, with one purge dir that has only a
+      path.
+      """
+      config = Config()
+      config.purge = PurgeConfig()
+      config.purge.purgeDirs = [PurgeDir(absolutePath="/whatever"), ]
+      self.failUnlessRaises(ValueError, config._validatePurge)
+
+   def testValidate_034(self):
+      """
+      Test validate on an a purge section, with one purge dir that has only
+      retain days.
+      """
+      config = Config()
+      config.purge = PurgeConfig()
+      config.purge.purgeDirs = [PurgeDir(retainDays=3), ]
+      self.failUnlessRaises(ValueError, config._validatePurge)
+
+   def testValidate_035(self):
+      """
+      Test validate on an a purge section, with one purge dir that makes sense.
+      """
+      config = Config()
+      config.purge = PurgeConfig()
+      config.purge.purgeDirs = [ PurgeDir(absolutePath="/whatever", retainDays=4), ]
+      config._validatePurge()
+
+   def testValidate_036(self):
+      """
+      Test validate on an a purge section, with several purge dirs that make
+      sense.
+      """
+      config = Config()
+      config.purge = PurgeConfig()
+      config.purge.purgeDirs = [ PurgeDir("/whatever", 4), PurgeDir("/etc/different", 12), ]
+      config._validatePurge()
+
+
+   ############################
+   # Test parsing of documents
+   ############################
+
+   def testParse_001(self):
+      """
+      Parse empty config document, validate=False.
+      """
+      path = self.resources["cback.conf.2"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      self.failUnlessEqual(expected, config)
+
+   def testParse_002(self):
+      """
+      Parse empty config document, validate=True.
+      """
+      path = self.resources["cback.conf.2"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_003(self):
+      """
+      Parse config document containing only a reference section, containing
+      only required fields, validate=False.
+      """
+      path = self.resources["cback.conf.3"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.reference = ReferenceConfig()
+      self.failUnlessEqual(expected, config)
+
+   def testParse_004(self):
+      """
+      Parse config document containing only a reference section, containing
+      only required fields, validate=True.
+      """
+      path = self.resources["cback.conf.3"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_005(self):
+      """
+      Parse config document containing only a reference section, containing all
+      required and optional fields, validate=False.
+      """
+      path = self.resources["cback.conf.4"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration", "Generated by hand.")
+      self.failUnlessEqual(expected, config)
+
+   def testParse_006(self):
+      """
+      Parse config document containing only a reference section, containing all
+      required and optional fields, validate=True.
+      """
+      path = self.resources["cback.conf.4"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_007(self):
+      """
+      Parse config document containing only an options section, containing only
+      required fields, validate=False.
+      """
+      path = self.resources["cback.conf.5"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      self.failUnlessEqual(expected, config)
+
+   def testParse_008(self):
+      """
+      Parse config document containing only an options section, containing only
+      required fields, validate=True.
+      """
+      path = self.resources["cback.conf.5"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_009(self):
+      """
+      Parse config document containing only an options section, containing
+      required and optional fields, validate=False.
+      """
+      path = self.resources["cback.conf.6"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      self.failUnlessEqual(expected, config)
+
+   def testParse_010(self):
+      """
+      Parse config document containing only an options section, containing
+      required and optional fields, validate=True.
+      """
+      path = self.resources["cback.conf.6"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_011(self):
+      """
+      Parse config document containing only a collect section, containing only
+      required fields, validate=False.
+      """
+      path = self.resources["cback.conf.7"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.collect = CollectConfig("/opt/backup/collect", "daily", "tar", ".ignore")
+      expected.collect.collectDirs = [CollectDir(absolutePath="/etc"), ]
+      self.failUnlessEqual(expected, config)
+
+   def testParse_012(self):
+      """
+      Parse config document containing only a collect section, containing only
+      required fields, validate=True.
+      """
+      path = self.resources["cback.conf.7"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_013(self):
+      """
+      Parse config document containing only a collect section, containing
+      required and optional fields, validate=False.
+      """
+      path = self.resources["cback.conf.8"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
+      expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
+      expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
+      expected.collect.collectDirs = []
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      collectDir = CollectDir(absolutePath="/opt")
+      collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
+      collectDir.relativeExcludePaths = [ "large", "backup", ]
+      collectDir.excludePatterns = [ ".*\.doc\.*", ".*\.xls\.*", ]
+      expected.collect.collectDirs.append(collectDir)
+      self.failUnlessEqual(expected, config)
+
+   def testParse_014(self):
+      """
+      Parse config document containing only a collect section, containing
+      required and optional fields, validate=True.
+      """
+      path = self.resources["cback.conf.8"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_015(self):
+      """
+      Parse config document containing only a stage section, containing only
+      required fields, validate=False.
+      """
+      path = self.resources["cback.conf.9"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = []
+      expected.stage.remotePeers = [ RemotePeer("machine2", "/opt/backup/collect"), ]
+      self.failUnlessEqual(expected, config)
+
+   def testParse_016(self):
+      """
+      Parse config document containing only a stage section, containing only
+      required fields, validate=True.
+      """
+      path = self.resources["cback.conf.9"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_017(self):
+      """
+      Parse config document containing only a stage section, containing all
+      required and optional fields, validate=False.
+      """
+      path = self.resources["cback.conf.10"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = []
+      expected.stage.remotePeers = []
+      expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
+      expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_018(self):
+      """
+      Parse config document containing only a stage section, containing all
+      required and optional fields, validate=True.
+      """
+      path = self.resources["cback.conf.10"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_019(self):
+      """
+      Parse config document containing only a store section, containing only
+      required fields, validate=False.
+      """
+      path = self.resources["cback.conf.11"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.store = StoreConfig("/opt/backup/staging", mediaType="cdrw-74", devicePath="/dev/cdrw", deviceScsiId="0,0,0")
+      self.failUnlessEqual(expected, config)
+
+   def testParse_020(self):
+      """
+      Parse config document containing only a store section, containing only
+      required fields, validate=True.
+      """
+      path = self.resources["cback.conf.11"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_021(self):
+      """
+      Parse config document containing only a store section, containing all
+      required and optional fields, validate=False.
+      """
+      path = self.resources["cback.conf.12"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.store = StoreConfig()
+      expected.store.sourceDir = "/opt/backup/staging"
+      expected.store.mediaType = "cdrw-74"
+      expected.store.deviceType = "cdwriter"
+      expected.store.devicePath = "/dev/cdrw"
+      expected.store.deviceScsiId = "0,0,0"
+      expected.store.driveSpeed = 4
+      expected.store.checkData = True
+      expected.store.safeOverwrite = True
+      expected.store.capacityMode = "fail"
+      self.failUnlessEqual(expected, config)
+
+   def testParse_022(self):
+      """
+      Parse config document containing only a store section, containing all
+      required and optional fields, validate=True.
+      """
+      path = self.resources["cback.conf.12"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_023(self):
+      """
+      Parse config document containing only a purge section, containing only
+      required fields, validate=False.
+      """
+      path = self.resources["cback.conf.13"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = [PurgeDir("/opt/backup/stage", 5), ]
+      self.failUnlessEqual(expected, config)
+
+   def testParse_024(self):
+      """
+      Parse config document containing only a purge section, containing only
+      required fields, validate=True.
+      """
+      path = self.resources["cback.conf.13"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_025(self):
+      """
+      Parse config document containing only a purge section, containing all
+      required and optional fields, validate=False.
+      """
+      path = self.resources["cback.conf.14"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = []
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
+      expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_026(self):
+      """
+      Parse config document containing only a purge section, containing all
+      required and optional fields, validate=True.
+      """
+      path = self.resources["cback.conf.14"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_027(self):
+      """
+      Parse complete document containing all required and optional fields,
+      validate=False.
+      """
+      path = self.resources["cback.conf.15"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration", "Generated by hand.")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
+      expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
+      expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
+      expected.collect.collectDirs = []
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      collectDir = CollectDir(absolutePath="/opt")
+      collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
+      collectDir.relativeExcludePaths = [ "large", "backup", ]
+      collectDir.excludePatterns = [ ".*\.doc\.*", ".*\.xls\.*", ]
+      expected.collect.collectDirs.append(collectDir)
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = []
+      expected.stage.remotePeers = []
+      expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
+      expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      expected.store = StoreConfig()
+      expected.store.sourceDir = "/opt/backup/staging"
+      expected.store.mediaType = "cdrw-74"
+      expected.store.deviceType = "cdwriter"
+      expected.store.devicePath = "/dev/cdrw"
+      expected.store.deviceScsiId = "0,0,0"
+      expected.store.driveSpeed = 4
+      expected.store.checkData = True
+      expected.store.safeOverwrite = True
+      expected.store.capacityMode = "fail"
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = []
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
+      expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_028(self):
+      """
+      Parse complete document containing all required and optional fields,
+      validate=True.
+      """
+      path = self.resources["cback.conf.15"]
+      config = Config(xmlPath=path, validate=True)
+      expected = Config()
+      expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration", "Generated by hand.")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
+      expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
+      expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
+      expected.collect.collectDirs = []
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      collectDir = CollectDir(absolutePath="/opt")
+      collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
+      collectDir.relativeExcludePaths = [ "large", "backup", ]
+      collectDir.excludePatterns = [ ".*\.doc\.*", ".*\.xls\.*", ]
+      expected.collect.collectDirs.append(collectDir)
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = []
+      expected.stage.remotePeers = []
+      expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
+      expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      expected.store = StoreConfig()
+      expected.store.sourceDir = "/opt/backup/staging"
+      expected.store.mediaType = "cdrw-74"
+      expected.store.deviceType = "cdwriter"
+      expected.store.devicePath = "/dev/cdrw"
+      expected.store.deviceScsiId = "0,0,0"
+      expected.store.driveSpeed = 4
+      expected.store.checkData = True
+      expected.store.safeOverwrite = True
+      expected.store.capacityMode = "fail"
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = []
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
+      expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_029(self):
+      """
+      Parse a sample from Cedar Backup v1.x, which must still be valid,
+      validate=False.
+      """
+      path = self.resources["cback.conf.1"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B")
+      expected.collect = CollectConfig()
+      expected.collect.targetDir = "/opt/backup/collect"
+      expected.collect.archiveMode = "targz"
+      expected.collect.ignoreFile = ".cbignore"
+      expected.collect.collectDirs = []
+      expected.collect.collectDirs.append(CollectDir("/etc", collectMode="daily"))
+      expected.collect.collectDirs.append(CollectDir("/var/log", collectMode="incr"))
+      collectDir = CollectDir("/opt", collectMode="weekly")
+      collectDir.absoluteExcludePaths = ["/opt/large", "/opt/backup", "/opt/tmp", ]
+      expected.collect.collectDirs.append(collectDir)
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = [LocalPeer("machine1", "/opt/backup/collect"), ]
+      expected.stage.remotePeers = [RemotePeer("machine2", "/opt/backup/collect", remoteUser="backup"), ]
+      expected.store = StoreConfig()
+      expected.store.sourceDir = "/opt/backup/staging"
+      expected.store.devicePath = "/dev/cdrw"
+      expected.store.deviceScsiId = "0,0,0"
+      expected.store.driveSpeed = 4
+      expected.store.mediaType = "cdrw-74"
+      expected.store.checkData = True
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = []
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_030(self):
+      """
+      Parse a sample from Cedar Backup v1.x, which must still be valid,
+      validate=True.
+      """
+      path = self.resources["cback.conf.1"]
+      config = Config(xmlPath=path, validate=True)
+      expected = Config()
+      expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B")
+      expected.collect = CollectConfig()
+      expected.collect.targetDir = "/opt/backup/collect"
+      expected.collect.archiveMode = "targz"
+      expected.collect.ignoreFile = ".cbignore"
+      expected.collect.collectDirs = []
+      expected.collect.collectDirs.append(CollectDir("/etc", collectMode="daily"))
+      expected.collect.collectDirs.append(CollectDir("/var/log", collectMode="incr"))
+      collectDir = CollectDir("/opt", collectMode="weekly")
+      collectDir.absoluteExcludePaths = ["/opt/large", "/opt/backup", "/opt/tmp", ]
+      expected.collect.collectDirs.append(collectDir)
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = [LocalPeer("machine1", "/opt/backup/collect"), ]
+      expected.stage.remotePeers = [RemotePeer("machine2", "/opt/backup/collect", remoteUser="backup"), ]
+      expected.store = StoreConfig()
+      expected.store.sourceDir = "/opt/backup/staging"
+      expected.store.devicePath = "/dev/cdrw"
+      expected.store.deviceScsiId = "0,0,0"
+      expected.store.driveSpeed = 4
+      expected.store.mediaType = "cdrw-74"
+      expected.store.checkData = True
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = []
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
+      self.failUnlessEqual(expected, config)
+
+
+   #########################
+   # Test the extract logic
+   #########################
+
+   def testExtractXml_001(self):
+      """
+      Extract empty config document, validate=True.
+      """
+      before = Config()
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_002(self):
+      """
+      Extract empty config document, validate=False.
+      """
+      before = Config()
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_003(self):
+      """
+      Extract document containing only a valid reference section,
+      validate=True.
+      """
+      before = Config()
+      before.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration")
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_004(self):
+      """
+      Extract document containing only a valid reference section,
+      validate=False.
+      """
+      before = Config()
+      before.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration")
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_005(self):
+      """
+      Extract document containing only a valid options section, validate=True.
+      """
+      before = Config()
+      before.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B")
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_006(self):
+      """
+      Extract document containing only a valid options section, validate=False.
+      """
+      before = Config()
+      before.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B")
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_007(self):
+      """
+      Extract document containing only an invalid options section,
+      validate=True.
+      """
+      before = Config()
+      before.options = OptionsConfig()
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_008(self):
+      """
+      Extract document containing only an invalid options section,
+      validate=False.
+      """
+      before = Config()
+      before.options = OptionsConfig()
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_009(self):
+      """
+      Extract document containing only a valid collect section, empty lists,
+      validate=True.
+      """
+      before = Config()
+      before.collect = CollectConfig()
+      before.collect.targetDir = "/opt/backup/collect"
+      before.collect.archiveMode = "targz"
+      before.collect.ignoreFile = ".cbignore"
+      before.collect.collectDirs = [CollectDir("/etc", collectMode="daily"), ]
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_010(self):
+      """
+      Extract document containing only a valid collect section, empty lists,
+      validate=False.
+      """
+      before = Config()
+      before.collect = CollectConfig()
+      before.collect.targetDir = "/opt/backup/collect"
+      before.collect.archiveMode = "targz"
+      before.collect.ignoreFile = ".cbignore"
+      before.collect.collectDirs = [CollectDir("/etc", collectMode="daily"), ]
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_011(self):
+      """
+      Extract document containing only a valid collect section, non-empty
+      lists, validate=True.
+      """
+      before = Config()
+      before.collect = CollectConfig()
+      before.collect.targetDir = "/opt/backup/collect"
+      before.collect.archiveMode = "targz"
+      before.collect.ignoreFile = ".cbignore"
+      before.collect.absoluteExcludePaths = [ "/one", "/two", "/three", ]
+      before.collect.excludePatterns = [ "pattern", ]
+      before.collect.collectDirs = [CollectDir("/etc", collectMode="daily"), ]
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_012(self):
+      """
+      Extract document containing only a valid collect section, non-empty
+      lists, validate=False.
+      """
+      before = Config()
+      before.collect = CollectConfig()
+      before.collect.targetDir = "/opt/backup/collect"
+      before.collect.archiveMode = "targz"
+      before.collect.ignoreFile = ".cbignore"
+      before.collect.absoluteExcludePaths = [ "/one", "/two", "/three", ]
+      before.collect.excludePatterns = [ "pattern", ]
+      before.collect.collectDirs = [CollectDir("/etc", collectMode="daily"), ]
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_013(self):
+      """
+      Extract document containing only an invalid collect section,
+      validate=True.
+      """
+      before = Config()
+      before.collect = CollectConfig()
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_014(self):
+      """
+      Extract document containing only an invalid collect section,
+      validate=False.
+      """
+      before = Config()
+      before.collect = CollectConfig()
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_015(self):
+      """
+      Extract document containing only a valid stage section, one empty list,
+      validate=True.
+      """
+      before = Config()
+      before.stage = StageConfig()
+      before.stage.targetDir = "/opt/backup/staging"
+      before.stage.localPeers = [LocalPeer("machine1", "/opt/backup/collect"), ]
+      before.stage.remotePeers = []
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_016(self):
+      """
+      Extract document containing only a valid stage section, empty lists,
+      validate=False.
+      """
+      before = Config()
+      before.stage = StageConfig()
+      before.stage.targetDir = "/opt/backup/staging"
+      before.stage.localPeers = [LocalPeer("machine1", "/opt/backup/collect"), ]
+      before.stage.remotePeers = []
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_017(self):
+      """
+      Extract document containing only a valid stage section, non-empty lists,
+      validate=True.
+      """
+      before = Config()
+      before.stage = StageConfig()
+      before.stage.targetDir = "/opt/backup/staging"
+      before.stage.localPeers = [LocalPeer("machine1", "/opt/backup/collect"), ]
+      before.stage.remotePeers = [RemotePeer("machine2", "/opt/backup/collect", remoteUser="backup"), ]
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_018(self):
+      """
+      Extract document containing only a valid stage section, non-empty lists,
+      validate=False.
+      """
+      before = Config()
+      before.stage = StageConfig()
+      before.stage.targetDir = "/opt/backup/staging"
+      before.stage.localPeers = [LocalPeer("machine1", "/opt/backup/collect"), ]
+      before.stage.remotePeers = [RemotePeer("machine2", "/opt/backup/collect", remoteUser="backup"), ]
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_019(self):
+      """
+      Extract document containing only an invalid stage section, validate=True.
+      """
+      before = Config()
+      before.stage = StageConfig()
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_020(self):
+      """
+      Extract document containing only an invalid stage section,
+      validate=False.
+      """
+      before = Config()
+      before.stage = StageConfig()
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_021(self):
+      """
+      Extract document containing only a valid store section, validate=True.
+      """
+      before = Config()
+      before.store = StoreConfig()
+      before.store.sourceDir = "/opt/backup/staging"
+      before.store.devicePath = "/dev/cdrw"
+      before.store.deviceScsiId = "0,0,0"
+      before.store.driveSpeed = 4
+      before.store.mediaType = "cdrw-74"
+      before.store.checkData = True
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_022(self):
+      """
+      Extract document containing only a valid store section, validate=False.
+      """
+      before = Config()
+      before.store = StoreConfig()
+      before.store.sourceDir = "/opt/backup/staging"
+      before.store.devicePath = "/dev/cdrw"
+      before.store.deviceScsiId = "0,0,0"
+      before.store.driveSpeed = 4
+      before.store.mediaType = "cdrw-74"
+      before.store.checkData = True
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_023(self):
+      """
+      Extract document containing only an invalid store section, validate=True.
+      """
+      before = Config()
+      before.store = StoreConfig()
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_024(self):
+      """
+      Extract document containing only an invalid store section,
+      validate=False.
+      """
+      before = Config()
+      before.store = StoreConfig()
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_025(self):
+      """
+      Extract document containing only a valid purge section, empty list,
+      validate=True.
+      """
+      before = Config()
+      before.purge = PurgeConfig()
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_026(self):
+      """
+      Extract document containing only a valid purge section, empty list,
+      validate=False.
+      """
+      before = Config()
+      before.purge = PurgeConfig()
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_027(self):
+      """
+      Extract document containing only a valid purge section, non-empty list,
+      validate=True.
+      """
+      before = Config()
+      before.purge = PurgeConfig()
+      before.purge.purgeDirs = []
+      before.purge.purgeDirs.append(PurgeDir(absolutePath="/whatever", retainDays=3))
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_028(self):
+      """
+      Extract document containing only a valid purge section, non-empty list,
+      validate=False.
+      """
+      before = Config()
+      before.purge = PurgeConfig()
+      before.purge.purgeDirs = []
+      before.purge.purgeDirs.append(PurgeDir(absolutePath="/whatever", retainDays=3))
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_029(self):
+      """
+      Extract document containing only an invalid purge section, validate=True.
+      """
+      before = Config()
+      before.purge = PurgeConfig()
+      before.purge.purgeDirs = []
+      before.purge.purgeDirs.append(PurgeDir(absolutePath="/whatever"))
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_030(self):
+      """
+      Extract document containing only an invalid purge section,
+      validate=False.
+      """
+      before = Config()
+      before.purge = PurgeConfig()
+      before.purge.purgeDirs = []
+      before.purge.purgeDirs.append(PurgeDir(absolutePath="/whatever"))
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtract_031(self):
+      """
+      Extract complete document containing all required and optional fields,
+      validate=False.
+      """
+      path = self.resources["cback.conf.15"]
+      before = Config(xmlPath=path, validate=False)
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtract_032(self):
+      """
+      Extract complete document containing all required and optional fields,
+      validate=True.
+      """
+      path = self.resources["cback.conf.15"]
+      before = Config(xmlPath=path, validate=True)
+      beforeXml = before.extractXml(validate=True)
+      after = Config(xmlData=beforeXml, validate=True)
+      self.failUnlessEqual(before, after)
+
+   def testExtract_033(self):
+      """
+      Extract a sample from Cedar Backup v1.x, which must still be valid,
+      validate=False.
+      """
+      path = self.resources["cback.conf.1"]
+      before = Config(xmlPath=path, validate=False)
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
+   def testExtract_034(self):
+      """
+      Extract a sample from Cedar Backup v1.x, which must still be valid,
+      validate=True.
+      """
+      path = self.resources["cback.conf.1"]
+      before = Config(xmlPath=path, validate=True)
+      beforeXml = before.extractXml(validate=True)
+      after = Config(xmlData=beforeXml, validate=True)
+      self.failUnlessEqual(before, after)
+
+
 #######################################################################
 # Suite definition
 #######################################################################
@@ -4300,7 +6393,7 @@ def suite():
                               unittest.makeSuite(TestStageConfig, 'test'), 
                               unittest.makeSuite(TestStoreConfig, 'test'), 
                               unittest.makeSuite(TestPurgeConfig, 'test'), 
-                              unittest.makeSuite(TestConfig, 'test'), 
+                              unittest.makeSuite(TestConfig, 'testEx'), 
                             ))
 
 

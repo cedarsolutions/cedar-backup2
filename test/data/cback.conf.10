@@ -22,6 +22,7 @@
          <name>machine3</name>
          <type>remote</type>
          <backup_user>someone</backup_user>
+         <rcp_command>scp -B</rcp_command>
          <collect_dir>/home/whatever/tmp</collect_dir>
       </peer>
    </stage>
