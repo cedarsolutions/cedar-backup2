@@ -89,7 +89,7 @@ check:
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/extend/*.py
 
 allcheck: 
-	-@$(PYCHECKER) --maxlocals 50 --config pycheckrc CedarBackup2/*.py CedarBackup2/extend/*.py test/*.py util/*.py
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/extend/*.py test/*.py util/*.py
 
 
 ################
