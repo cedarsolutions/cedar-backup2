@@ -28,7 +28,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 -->
 
-<!DOCTYPE book SYSTEM "../../../util/docbook/dblite.dtd"
+<!DOCTYPE book SYSTEM "../../util/docbook/dblite.dtd"
 [
 <!ENTITY preface     SYSTEM "preface.xml">
 <!ENTITY intro       SYSTEM "intro.xml">
