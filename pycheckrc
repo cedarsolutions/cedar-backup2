@@ -1,5 +1,5 @@
 # list of strings: ignore unused locals/arguments if name is one of
-unusedNames = [ 'i', 'object', 'value', ]
+unusedNames = [ 'i', 'object', 'value', 'config', 'options', ]
 
 # bool:  ignore all warnings from standard library components
 #   (this includes anything under the standard library, eg, site-packages)
