@@ -87,6 +87,7 @@ what will be tested).
 
 import sys
 import os
+import logging
 import unittest
 
 
@@ -153,6 +154,13 @@ def main():
    else:
       os.environ["PEERTESTS_FULL"] = "N"
       os.environ["IMAGETESTS_FULL"] = "N"
+
+   # Set up logging to discard everything
+   handler = logging.FileHandler(filename="/dev/null")
+   handler.setLevel(logging.NOTSET)
+   logger = logging.getLogger("CedarBackup2")
+   logger.setLevel(logging.NOTSET)
+   logger.addHandler(handler)
 
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."

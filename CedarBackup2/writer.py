@@ -857,6 +857,9 @@ class CdWriter(object):
       @return: Boundaries tuple as described above.
       @raise IOError: If there is problem parsing the output.
       """
+      if len(output) < 1:
+         logger.warn("Unable to read disc (might not be initialized); returning full capacity.")
+         return (0, 0)
       boundaryPattern = re.compile(r"(^\s*)([0-9]*)(\s*,\s*)([0-9]*)(\s*$)")
       parsed = boundaryPattern.search(output[0])
       if not parsed:
