@@ -99,10 +99,12 @@ from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemLis
 
 DATA_DIRS = [ "./data", "./test/data" ]
 RESOURCES = [ "tree1.tar.gz", "tree2.tar.gz", "tree3.tar.gz", "tree4.tar.gz", "tree5.tar.gz",
-              "tree6.tar.gz", "tree7.tar.gz", "tree8.tar.gz", "tree9.tar.gz", "tree10.tar.gz", ]
+              "tree6.tar.gz", "tree7.tar.gz", "tree8.tar.gz", "tree9.tar.gz", "tree10.tar.gz", 
+              "tree11.tar.gz", ]
 
-INVALID_FILE = "bogus"         # This file name should never exist
-NOMATCH_PATH = "something"     # This file should never match something we put in a file list 
+INVALID_FILE      = "bogus"         # This file name should never exist
+NOMATCH_PATH      = "something"     # This file should never match something we put in a file list 
+NOMATCH_PATTERN   = "pattern"       # This pattern should never match something we put in a file list 
 
 
 ####################
@@ -744,6 +746,17 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       self.failUnlessRaises(ValueError, fsList.addFile, path)
 
+   def testAddFile_034(self):
+      """
+      Attempt to add a file that has spaces in its name.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", "file with spaces"])
+      fsList = FilesystemList()
+      count = fsList.addFile(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
+
 
    ################
    # Test addDir()
@@ -1153,6 +1166,17 @@ class TestFilesystemList(unittest.TestCase):
       path = self.buildPath(["tree10", "link001"])
       fsList = FilesystemList()
       self.failUnlessRaises(ValueError, fsList.addDir, path)
+
+   def testAddDir_034(self):
+      """
+      Attempt to add a directory that has spaces in its name.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", "dir with spaces"])
+      fsList = FilesystemList()
+      count = fsList.addDir(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
 
 
    ########################
@@ -2726,6 +2750,49 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree10", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree10", "dir002", ]) in fsList)
 
+   def testAddDirContents_069(self):
+      """
+      Attempt to add a directory containing items with spaces.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
+   def testAddDirContents_070(self):
+      """
+      Attempt to add a directory which has a name containing spaces.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", "dir with spaces", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(5, count)
+      self.failUnlessEqual(5, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
 
    #####################
    # Test removeFiles()
@@ -3125,6 +3192,52 @@ class TestFilesystemList(unittest.TestCase):
 
    def testRemoveFiles_008(self):
       """
+      Test with a non-empty list (spaces in path names) and a pattern of None.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeFiles(pattern=NOMATCH_PATTERN)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
+   def testRemoveFiles_009(self):
+      """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches none of them.
       """
@@ -3142,7 +3255,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
-      count = fsList.removeFiles(pattern=NOMATCH_PATH)
+      count = fsList.removeFiles(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(8, len(fsList))
       self.failUnless(self.buildPath([ "tree1", ]) in fsList)
@@ -3154,7 +3267,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
 
-   def testRemoveFiles_009(self):
+   def testRemoveFiles_010(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches none of them.
@@ -3176,7 +3289,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
-      count = fsList.removeFiles(pattern=NOMATCH_PATH)
+      count = fsList.removeFiles(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(11, len(fsList))
       self.failUnless(self.buildPath([ "tree2", ]) in fsList)
@@ -3191,7 +3304,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
 
-   def testRemoveFiles_010(self):
+   def testRemoveFiles_011(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches none of them.
@@ -3283,7 +3396,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
-      count = fsList.removeFiles(pattern=NOMATCH_PATH)
+      count = fsList.removeFiles(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(81, len(fsList))
       self.failUnless(self.buildPath([ "tree4", ]) in fsList)
@@ -3368,7 +3481,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveFiles_011(self):
+   def testRemoveFiles_012(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches none of them.
@@ -3401,7 +3514,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
-      count = fsList.removeFiles(pattern=NOMATCH_PATH)
+      count = fsList.removeFiles(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(22, len(fsList))
       self.failUnless(self.buildPath([ "tree9", ]) in fsList)
@@ -3427,7 +3540,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
 
-   def testRemoveFiles_012(self):
+   def testRemoveFiles_013(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches none of them.
@@ -3521,7 +3634,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
-      count = fsList.removeFiles(pattern=NOMATCH_PATH)
+      count = fsList.removeFiles(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(82, len(fsList))
       self.failUnless(self.buildPath([ "tree4", ]) in fsList)
@@ -3607,7 +3720,54 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveFiles_013(self):
+   def testRemoveFiles_014(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches none of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeFiles(pattern=NOMATCH_PATTERN)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
+   def testRemoveFiles_015(self):
       """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches some of them.
@@ -3636,7 +3796,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file005", ]) in fsList)
 
-   def testRemoveFiles_014(self):
+   def testRemoveFiles_016(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches some of them.
@@ -3673,7 +3833,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
 
-   def testRemoveFiles_015(self):
+   def testRemoveFiles_017(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches some of them.
@@ -3840,7 +4000,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveFiles_016(self):
+   def testRemoveFiles_018(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches some of them.
@@ -3895,7 +4055,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
 
-   def testRemoveFiles_017(self):
+   def testRemoveFiles_019(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches some of them.
@@ -4074,7 +4234,48 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveFiles_018(self):
+   def testRemoveFiles_020(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches some of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeFiles(pattern=".*with spaces.*")
+      self.failUnlessEqual(6, count)
+      self.failUnlessEqual(10, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+
+   def testRemoveFiles_021(self):
       """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches all of the entries.
@@ -4098,7 +4299,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, len(fsList))
       self.failUnless(self.buildPath([ "tree1", ]) in fsList)
 
-   def testRemoveFiles_019(self):
+   def testRemoveFiles_022(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches all of the entries.
@@ -4135,7 +4336,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
 
-   def testRemoveFiles_020(self):
+   def testRemoveFiles_023(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches all of them.
@@ -4268,7 +4469,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "dir006", "dir004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "dir006", "dir005", ]) in fsList)
 
-   def testRemoveFiles_021(self):
+   def testRemoveFiles_024(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches all of them.
@@ -4317,7 +4518,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
 
-   def testRemoveFiles_022(self):
+   def testRemoveFiles_025(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches all of them.
@@ -4452,6 +4653,42 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "dir006", "dir003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "dir006", "dir004", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "dir006", "dir005", ]) in fsList)
+
+   def testRemoveFiles_026(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches all of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeFiles(pattern=".*")
+      self.failUnlessEqual(11, count)
+      self.failUnlessEqual(5, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
 
 
    ####################
@@ -4857,6 +5094,47 @@ class TestFilesystemList(unittest.TestCase):
 
    def testRemoveDirs_008(self):
       """
+      Test with a non-empty list (spaces in path names) and a pattern of None.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeDirs(pattern=None)
+      self.failUnlessEqual(5, count)
+      self.failUnlessEqual(11, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
+   def testRemoveDirs_009(self):
+      """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches none of them.
       """
@@ -4874,7 +5152,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
-      count = fsList.removeDirs(pattern=NOMATCH_PATH)
+      count = fsList.removeDirs(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(8, len(fsList))
       self.failUnless(self.buildPath([ "tree1", ]) in fsList)
@@ -4886,7 +5164,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
 
-   def testRemoveDirs_009(self):
+   def testRemoveDirs_010(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches none of them.
@@ -4908,7 +5186,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
-      count = fsList.removeDirs(pattern=NOMATCH_PATH)
+      count = fsList.removeDirs(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(11, len(fsList))
       self.failUnless(self.buildPath([ "tree2", ]) in fsList)
@@ -4923,7 +5201,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
 
-   def testRemoveDirs_010(self):
+   def testRemoveDirs_011(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches none of them.
@@ -5015,7 +5293,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
-      count = fsList.removeDirs(pattern=NOMATCH_PATH)
+      count = fsList.removeDirs(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(81, len(fsList))
       self.failUnless(self.buildPath([ "tree4", ]) in fsList)
@@ -5100,7 +5378,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveDirs_011(self):
+   def testRemoveDirs_012(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches none of them.
@@ -5133,7 +5411,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
-      count = fsList.removeDirs(pattern=NOMATCH_PATH)
+      count = fsList.removeDirs(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(22, len(fsList))
       self.failUnless(self.buildPath([ "tree9", ]) in fsList)
@@ -5159,7 +5437,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
 
-   def testRemoveDirs_012(self):
+   def testRemoveDirs_013(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches none of them.
@@ -5253,7 +5531,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
-      count = fsList.removeDirs(pattern=NOMATCH_PATH)
+      count = fsList.removeDirs(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(82, len(fsList))
       self.failUnless(self.buildPath([ "tree4", ]) in fsList)
@@ -5339,7 +5617,54 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveDirs_013(self):
+   def testRemoveDirs_014(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches none of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeDirs(pattern=NOMATCH_PATTERN)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
+   def testRemoveDirs_015(self):
       """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches some of them.
@@ -5370,7 +5695,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
 
-   def testRemoveDirs_014(self):
+   def testRemoveDirs_016(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches some of them.
@@ -5406,7 +5731,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
 
-   def testRemoveDirs_015(self):
+   def testRemoveDirs_017(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches some of them.
@@ -5574,7 +5899,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveDirs_016(self):
+   def testRemoveDirs_018(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches some of them.
@@ -5627,7 +5952,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
 
-   def testRemoveDirs_017(self):
+   def testRemoveDirs_019(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches some of them.
@@ -5798,7 +6123,53 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveDirs_018(self):
+   def testRemoveDirs_020(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches some of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeDirs(pattern=".*with spaces.*")
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual(15, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
+   def testRemoveDirs_021(self):
       """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches all of them.
@@ -5828,7 +6199,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
 
-   def testRemoveDirs_019(self):
+   def testRemoveDirs_022(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches all of them.
@@ -5854,7 +6225,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(11, count)
       self.failUnlessEqual(0, len(fsList))
 
-   def testRemoveDirs_020(self):
+   def testRemoveDirs_023(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches all of them.
@@ -5994,7 +6365,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveDirs_021(self):
+   def testRemoveDirs_024(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches all of them.
@@ -6041,7 +6412,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
 
-   def testRemoveDirs_022(self):
+   def testRemoveDirs_025(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches all of them.
@@ -6183,6 +6554,48 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
+
+   def testRemoveDirs_026(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches all of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeDirs(pattern=".*")
+      self.failUnlessEqual(5, count)
+      self.failUnlessEqual(11, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
 
 
    #####################
@@ -6678,6 +7091,46 @@ class TestFilesystemList(unittest.TestCase):
 
    def testRemoveLinks_008(self):
       """
+      Test with a non-empty list (spaces in path names) and a pattern of None.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeLinks(pattern=None)
+      self.failUnlessEqual(6, count)
+      self.failUnlessEqual(10, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+
+   def testRemoveLinks_009(self):
+      """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches none of them.
       """
@@ -6695,7 +7148,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
-      count = fsList.removeLinks(pattern="pattern")
+      count = fsList.removeLinks(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(8, len(fsList))
       self.failUnless(self.buildPath([ "tree1", ]) in fsList)
@@ -6707,7 +7160,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
 
-   def testRemoveLinks_009(self):
+   def testRemoveLinks_010(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches none of them.
@@ -6729,7 +7182,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
-      count = fsList.removeLinks(pattern="pattern")
+      count = fsList.removeLinks(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(11, len(fsList))
       self.failUnless(self.buildPath([ "tree2", ]) in fsList)
@@ -6744,7 +7197,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
 
-   def testRemoveLinks_010(self):
+   def testRemoveLinks_011(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches none of them.
@@ -6836,7 +7289,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
-      count = fsList.removeLinks(pattern="pattern")
+      count = fsList.removeLinks(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(81, len(fsList))
       self.failUnless(self.buildPath([ "tree4", ]) in fsList)
@@ -6921,7 +7374,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveLinks_011(self):
+   def testRemoveLinks_012(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches none of them.
@@ -6954,7 +7407,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
-      count = fsList.removeLinks(pattern=NOMATCH_PATH)
+      count = fsList.removeLinks(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(22, len(fsList))
       self.failUnless(self.buildPath([ "tree9", ]) in fsList)
@@ -6980,7 +7433,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
 
-   def testRemoveLinks_012(self):
+   def testRemoveLinks_013(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches none of them.
@@ -7074,7 +7527,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
-      count = fsList.removeLinks(pattern="pattern")
+      count = fsList.removeLinks(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(82, len(fsList))
       self.failUnless(self.buildPath([ "tree4", ]) in fsList)
@@ -7160,7 +7613,54 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveLinks_013(self):
+   def testRemoveLinks_014(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches none of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeLinks(pattern=NOMATCH_PATTERN)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
+   def testRemoveLinks_015(self):
       """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches some of them.
@@ -7191,7 +7691,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
 
-   def testRemoveLinks_014(self):
+   def testRemoveLinks_016(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches some of them.
@@ -7228,7 +7728,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
 
-   def testRemoveLinks_015(self):
+   def testRemoveLinks_017(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches some of them.
@@ -7405,7 +7905,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveLinks_016(self):
+   def testRemoveLinks_018(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches some of them.
@@ -7460,7 +7960,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
 
-   def testRemoveLinks_017(self):
+   def testRemoveLinks_019(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches some of them.
@@ -7640,7 +8140,51 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveLinks_018(self):
+   def testRemoveLinks_020(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches some of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeLinks(pattern=".*with spaces.*")
+      self.failUnlessEqual(3, count)
+      self.failUnlessEqual(13, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+
+   def testRemoveLinks_021(self):
       """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches all of them.
@@ -7671,7 +8215,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
 
-   def testRemoveLinks_019(self):
+   def testRemoveLinks_022(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches all of them.
@@ -7708,7 +8252,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
 
-   def testRemoveLinks_020(self):
+   def testRemoveLinks_023(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches all of them.
@@ -7885,7 +8429,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveLinks_021(self):
+   def testRemoveLinks_024(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches all of them.
@@ -7935,7 +8479,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
 
-   def testRemoveLinks_022(self):
+   def testRemoveLinks_025(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches all of them.
@@ -8115,6 +8659,47 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
+   def testRemoveLinks_026(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches all of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeLinks(pattern=".*")
+      self.failUnlessEqual(6, count)
+      self.failUnlessEqual(10, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+
 
    #####################
    # Test removeMatch()
@@ -8154,7 +8739,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
-      count = fsList.removeMatch(pattern=NOMATCH_PATH)
+      count = fsList.removeMatch(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(8, len(fsList))
       self.failUnless(self.buildPath([ "tree1", ]) in fsList)
@@ -8188,7 +8773,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir008", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
-      count = fsList.removeMatch(pattern=NOMATCH_PATH)
+      count = fsList.removeMatch(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(11, len(fsList))
       self.failUnless(self.buildPath([ "tree2", ]) in fsList)
@@ -8295,7 +8880,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
-      count = fsList.removeMatch(pattern=NOMATCH_PATH)
+      count = fsList.removeMatch(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(81, len(fsList))
       self.failUnless(self.buildPath([ "tree4", ]) in fsList)
@@ -8413,7 +8998,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
-      count = fsList.removeMatch(pattern=NOMATCH_PATH)
+      count = fsList.removeMatch(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(22, len(fsList))
       self.failUnless(self.buildPath([ "tree9", ]) in fsList)
@@ -8533,7 +9118,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
-      count = fsList.removeMatch(pattern=NOMATCH_PATH)
+      count = fsList.removeMatch(pattern=NOMATCH_PATTERN)
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(82, len(fsList))
       self.failUnless(self.buildPath([ "tree4", ]) in fsList)
@@ -8621,6 +9206,53 @@ class TestFilesystemList(unittest.TestCase):
 
    def testRemoveMatch_008(self):
       """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches none of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeMatch(pattern=NOMATCH_PATTERN)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
+   def testRemoveMatch_009(self):
+      """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches some of them.
       """
@@ -8647,7 +9279,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
 
-   def testRemoveMatch_009(self):
+   def testRemoveMatch_010(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches some of them.
@@ -8680,7 +9312,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree2", "dir009", ]) in fsList)
       self.failUnless(self.buildPath([ "tree2", "dir010", ]) in fsList)
 
-   def testRemoveMatch_010(self):
+   def testRemoveMatch_011(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches some of them.
@@ -8839,7 +9471,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveMatch_011(self):
+   def testRemoveMatch_012(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches some of them.
@@ -8895,7 +9527,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
 
-   def testRemoveMatch_012(self):
+   def testRemoveMatch_013(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches some of them.
@@ -9050,7 +9682,47 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree4", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree4", "file007", ]) in fsList)
 
-   def testRemoveMatch_013(self):
+   def testRemoveMatch_014(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches some of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeMatch(pattern=".*with spaces.*")
+      self.failUnlessEqual(7, count)
+      self.failUnlessEqual(9, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+
+   def testRemoveMatch_015(self):
       """
       Test with a non-empty list (files only) and a non-empty pattern that
       matches all of them.
@@ -9073,7 +9745,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(8, count)
       self.failUnlessEqual(0, len(fsList))
 
-   def testRemoveMatch_014(self):
+   def testRemoveMatch_016(self):
       """
       Test with a non-empty list (directories only) and a non-empty pattern
       that matches all of them.
@@ -9099,7 +9771,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(11, count)
       self.failUnlessEqual(0, len(fsList))
 
-   def testRemoveMatch_015(self):
+   def testRemoveMatch_017(self):
       """
       Test with a non-empty list (files and directories) and a non-empty
       pattern that matches all of them.
@@ -9195,7 +9867,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(81, count)
       self.failUnlessEqual(0, len(fsList))
 
-   def testRemoveMatch_016(self):
+   def testRemoveMatch_019(self):
       """
       Test with a non-empty list (files, directories and links) and a non-empty
       pattern that matches all of them.
@@ -9232,7 +9904,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(22, count)
       self.failUnlessEqual(0, len(fsList))
 
-   def testRemoveMatch_017(self):
+   def testRemoveMatch_020(self):
       """
       Test with a non-empty list (files and directories, some nonexistent) and
       a non-empty pattern that matches all of them.
@@ -9330,6 +10002,37 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(82, count)
       self.failUnlessEqual(0, len(fsList))
 
+   def testRemoveMatch_021(self):
+      """
+      Test with a non-empty list (spaces in path names) and a non-empty pattern
+      that matches all of them.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeMatch(pattern=".*")
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(0, len(fsList))
+
 
    #######################
    # Test removeInvalid()
@@ -9345,7 +10048,7 @@ class TestFilesystemList(unittest.TestCase):
 
    def testRemoveInvalid_002(self):
       """
-      Test with a non-empty list containing only invalid entries.
+      Test with a non-empty list containing only invalid entries (some with spaces).
       """
       self.extractTar("tree9")
       fsList = FilesystemList()
@@ -9353,13 +10056,15 @@ class TestFilesystemList(unittest.TestCase):
       fsList.append(self.buildPath([ "tree9", "%s-2" % INVALID_FILE, ]))     # file won't exist on disk
       fsList.append(self.buildPath([ "tree9", "%s-3" % INVALID_FILE, ]))     # file won't exist on disk
       fsList.append(self.buildPath([ "tree9", "%s-4" % INVALID_FILE, ]))     # file won't exist on disk
-      self.failUnlessEqual(4, len(fsList))
+      fsList.append(self.buildPath([ "tree9", " %s 5  " % INVALID_FILE, ]))     # file won't exist on disk
+      self.failUnlessEqual(5, len(fsList))
       self.failUnless(self.buildPath([ "tree9", "%s-1" % INVALID_FILE, ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "%s-2" % INVALID_FILE, ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "%s-3" % INVALID_FILE, ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "%s-4" % INVALID_FILE, ]) in fsList)
+      self.failUnless(self.buildPath([ "tree9", " %s 5  " % INVALID_FILE, ]) in fsList)
       count = fsList.removeInvalid()
-      self.failUnlessEqual(4, count)
+      self.failUnlessEqual(5, count)
       self.failUnlessEqual(0, len(fsList))
 
    def testRemoveInvalid_003(self):
@@ -9732,6 +10437,53 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+
+   def testRemoveInvalid_008(self):
+      """
+      Test with a non-empty list containing only valid entries (files,
+      directories and links, some with spaces).
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      count = fsList.removeInvalid()
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
 
 
    ###################
@@ -10311,6 +11063,53 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
 
+   def testVerify_008(self):
+      """
+      Test with a non-empty list containing valid and invalid entries (some
+      containing spaces).
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      ok = fsList.verify()
+      self.failUnlessEqual(True, ok)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+
 
 ###########################
 # TestBackupFileList class
@@ -10515,7 +11314,33 @@ class TestBackupFileList(unittest.TestCase):
       size = backupList.totalSize()
       self.failUnlessEqual(1116, size)
 
-   def testTotalSize_003(self):
+   def testTotalSize_004(self):
+      """
+      Test on a non-empty list (some containing spaces).
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(13, count)
+      self.failUnlessEqual(13, len(backupList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in backupList)
+      size = backupList.totalSize()
+      self.failUnlessEqual(1085, size)
+
+   def testTotalSize_005(self):
       """
       Test on a non-empty list containing a directory (which shouldn't be
       possible).
@@ -10547,7 +11372,7 @@ class TestBackupFileList(unittest.TestCase):
       size = backupList.totalSize()
       self.failUnlessEqual(1116, size)
 
-   def testTotalSize_004(self):
+   def testTotalSize_006(self):
       """
       Test on a non-empty list containing a non-existent file.
       """
@@ -10636,6 +11461,45 @@ class TestBackupFileList(unittest.TestCase):
 
    def testGenerateSizeMap_004(self):
       """
+      Test on a non-empty list (some containing spaces).
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(13, count)
+      self.failUnlessEqual(13, len(backupList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in backupList)
+      sizeMap = backupList.generateSizeMap()
+      self.failUnlessEqual(13, len(sizeMap))
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree11", "file001", ])])
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree11", "file with spaces", ])])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree11", "link001", ])])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree11", "link002", ])])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree11", "link003", ])])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree11", "link with spaces", ])])
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree11", "dir002", "file001", ])])
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree11", "dir002", "file002", ])])
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree11", "dir002", "file003", ])])
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree11", "dir with spaces", "file001", ])])
+      self.failUnlessEqual(155, sizeMap[self.buildPath([ "tree11", "dir with spaces", "file with spaces", ])])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree11", "dir with spaces", "link002", ])])
+      self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree11", "dir with spaces", "link with spaces", ])])
+
+   def testGenerateSizeMap_005(self):
+      """
       Test on a non-empty list containing a directory (which shouldn't be
       possible).
       """
@@ -10681,7 +11545,7 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "link001", ]) ])
       self.failUnlessEqual(0, sizeMap[self.buildPath([ "tree9", "link002", ]) ])
 
-   def testGenerateSizeMap_005(self):
+   def testGenerateSizeMap_006(self):
       """
       Test on a non-empty list containing a non-existent file.
       """
@@ -10773,6 +11637,39 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", digestMap[self.buildPath([ "tree9", "dir002", "file002", ])])
       self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree9", "file001", ])])
       self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", digestMap[self.buildPath([ "tree9", "file002", ])])
+
+   def testGenerateDigestMap_003(self):
+      """
+      Test on a non-empty list containing only valid entries (some containing spaces).
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(13, count)
+      self.failUnlessEqual(13, len(backupList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in backupList)
+      digestMap = backupList.generateDigestMap()
+      self.failUnlessEqual(7, len(digestMap))
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree11", "file001", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree11", "file with spaces", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree11", "dir002", "file001",])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree11", "dir002", "file002",])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree11", "dir002", "file003",])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree11", "dir with spaces", "file001",])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree11", "dir with spaces", "file with spaces",])])
 
    def testGenerateDigestMap_004(self):
       """
@@ -10907,6 +11804,46 @@ class TestBackupFileList(unittest.TestCase):
 
    def testGenerateFitted_003(self):
       """
+      Test on a non-empty list containing only valid entries (some containing
+      spaces), all of which fit.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(13, count)
+      self.failUnlessEqual(13, len(backupList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in backupList)
+      fittedList = backupList.generateFitted(2000)
+      self.failUnlessEqual(13, len(fittedList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fittedList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fittedList)
+
+   def testGenerateFitted_004(self):
+      """
       Test on a non-empty list containing only valid entries, some of which fit.
       """
       self.extractTar("tree9")
@@ -10943,7 +11880,7 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fittedList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fittedList)
 
-   def testGenerateFitted_004(self):
+   def testGenerateFitted_005(self):
       """
       Test on a non-empty list containing only valid entries, none of which fit.
       """
@@ -10982,7 +11919,7 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fittedList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fittedList)
 
-   def testGenerateFitted_005(self):
+   def testGenerateFitted_006(self):
       """
       Test on a non-empty list containing a directory (which shouldn't be
       possible).
@@ -11029,7 +11966,7 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in fittedList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in fittedList)
 
-   def testGenerateFitted_006(self):
+   def testGenerateFitted_007(self):
       """
       Test on a non-empty list containing a non-existent file.
       """
@@ -11304,6 +12241,50 @@ class TestBackupFileList(unittest.TestCase):
 
    def testGenerateTarfile_007(self):
       """
+      Test on a non-empty list (some containing spaces), default mode.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(13, count)
+      self.failUnlessEqual(13, len(backupList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in backupList)
+      tarPath = self.buildPath(["file.tar", ])      
+      backupList.generateTarfile(tarPath)
+      self.failUnless(tarfile.is_tarfile(tarPath))
+      tarFile = tarfile.open(tarPath)
+      tarList = tarFile.getnames()
+      tarFile.close()
+      self.failUnlessEqual(13, len(tarList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ])[1:] in tarList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ])[1:] in tarList)
+
+   def testGenerateTarfile_008(self):
+      """
       Test on a non-empty list containing only valid entries, 'tar' mode.
       """
       self.extractTar("tree9")
@@ -11350,7 +12331,7 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ])[1:] in tarList)
       self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
-   def testGenerateTarfile_008(self):
+   def testGenerateTarfile_009(self):
       """
       Test on a non-empty list containing only valid entries, 'targz' mode.
       """
@@ -11398,7 +12379,7 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "link001", ])[1:] in tarList)
       self.failUnless(self.buildPath([ "tree9", "link002", ])[1:] in tarList)
 
-   def testGenerateTarfile_009(self):
+   def testGenerateTarfile_010(self):
       """
       Test on a non-empty list containing only valid entries, 'tarbz2' mode.
       """
@@ -11813,6 +12794,57 @@ class TestPurgeItemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree1", "file005", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file006", ]) in fsList)
       self.failUnless(self.buildPath([ "tree1", "file007", ]) in fsList)
+
+   def testPurgeItems_009(self):
+      """
+      Test with a list containing entries containing spaces.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11"])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(16, count)
+      self.failUnlessEqual(16, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
+      purgeList = PurgeItemList()
+      purgeList.addFile(self.buildPath([ "tree11", "file with spaces", ]))
+      purgeList.addFile(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]))
+      (files, dirs) = purgeList.purgeItems()
+      self.failUnlessEqual(2, files)
+      self.failUnlessEqual(0, dirs)
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(12, count)
+      self.failUnlessEqual(12, len(fsList))
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) not in fsList)             # file it points to was removed
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) not in fsList)   # file it points to was removed
+      self.failUnless(self.buildPath([ "tree11", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
 
 
 #######################################################################
