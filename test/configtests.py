@@ -5689,7 +5689,7 @@ class TestConfig(unittest.TestCase):
       expected = Config()
       expected.stage = StageConfig()
       expected.stage.targetDir = "/opt/backup/staging"
-      expected.stage.localPeers = []
+      expected.stage.localPeers = None
       expected.stage.remotePeers = [ RemotePeer("machine2", "/opt/backup/collect"), ]
       self.failUnlessEqual(expected, config)
 
@@ -6153,7 +6153,7 @@ class TestConfig(unittest.TestCase):
       before.stage = StageConfig()
       before.stage.targetDir = "/opt/backup/staging"
       before.stage.localPeers = [LocalPeer("machine1", "/opt/backup/collect"), ]
-      before.stage.remotePeers = []
+      before.stage.remotePeers = None
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
    def testExtractXml_016(self):
@@ -6165,7 +6165,7 @@ class TestConfig(unittest.TestCase):
       before.stage = StageConfig()
       before.stage.targetDir = "/opt/backup/staging"
       before.stage.localPeers = [LocalPeer("machine1", "/opt/backup/collect"), ]
-      before.stage.remotePeers = []
+      before.stage.remotePeers = None
       beforeXml = before.extractXml(validate=False)
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
