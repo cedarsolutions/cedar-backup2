@@ -39,6 +39,7 @@ PYTHON            = python2.3
 RM                = rm
 SETUP             = $(PYTHON) ./setup.py
 SUDO              = sudo
+TAR               = tar
 VALIDATE          = util/validate
 VERSION           = `cat CedarBackup2/release.py | grep '^VERSION' | awk -F\" '{print $$2}'`
 URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $$2}'`
@@ -148,7 +149,7 @@ $(INTERFACE_TEMPDIR):
 # keeps cedar-backup2 from being a Debian native package, and also making
 # it easier for someone to do an NMU if/when this ends up in Debian proper.
 
-distrib: doc sdist debdist 
+distrib: doc sdist debdist docdist
 
 distribclean: sdistclean debdistclean
 	-@$(RM) -f MANIFEST 
@@ -170,6 +171,9 @@ debdist: sdist
 
 debdistclean: 
 	@$(RM) -f $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz 
+
+docdist: 
+	@$(TAR) -zcvf ../htmldocs.tar.gz doc/manual doc/interface
 
 .PHONY: all clean unittest test check pychecker pycheck doc docclean interface-doc manual-doc distrib sdist sdistclean debdist debdistclean
 
