@@ -2256,6 +2256,24 @@ cback all
             the <option>--config</option> option).
          </para>
 
+         <warning>
+            <para>
+               Configuration files should always be writable only by root
+               or by the file owner, if the owner is not root.
+            </para>
+
+            <para>
+               Configuration files should always be writable only by the root
+               If you intend to place confidental information into the Cedar
+               Backup configuration file, make sure that you set the filesystem
+               permissions on the file appropriately.  A basic configuration file
+               can be made world-readable, but if you configure any extensions
+               that require passwords or other similar information, you should
+               make the file readable only to root or to the file owner, if
+               the owner is not root.
+            </para>
+         </warning>
+
       </sect2>
 
       <!-- ################################################################# -->
@@ -2604,6 +2622,24 @@ The key fingerprint is:
             the <option>--config</option> option).
          </para>
 
+         <warning>
+            <para>
+               Configuration files should always be writable only by root
+               or by the file owner, if the owner is not root.
+            </para>
+
+            <para>
+               Configuration files should always be writable only by the root
+               If you intend to place confidental information into the Cedar
+               Backup configuration file, make sure that you set the filesystem
+               permissions on the file appropriately.  A basic configuration file
+               can be made world-readable, but if you configure any extensions
+               that require passwords or other similar information, you should
+               make the file readable only to root or to the file owner, if
+               the owner is not root.
+            </para>
+         </warning>
+
       </sect2>
 
       <!-- ################################################################# -->
@@ -2944,6 +2980,24 @@ The key fingerprint is:
             <command>cback</command> script at the correct config file (using
             the <option>--config</option> option).
          </para>
+
+         <warning>
+            <para>
+               Configuration files should always be writable only by root
+               or by the file owner, if the owner is not root.
+            </para>
+
+            <para>
+               Configuration files should always be writable only by the root
+               If you intend to place confidental information into the Cedar
+               Backup configuration file, make sure that you set the filesystem
+               permissions on the file appropriately.  A basic configuration file
+               can be made world-readable, but if you configure any extensions
+               that require passwords or other similar information, you should
+               make the file readable only to root or to the file owner, if
+               the owner is not root.
+            </para>
+         </warning>
 
       </sect2>
 

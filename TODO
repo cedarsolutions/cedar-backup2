@@ -34,12 +34,6 @@ ADMINISTRATIVE
 
 DOCUMENTATION
 
-* Complete appendix A (extension interface)
-
-* Manage footnotes better.  In some formats, duplicates look OK.  In others, they
-  look stupid.  If two things use the "same" footnote (basically) then set an ID
-  for the first time and refer to it later as needed.
-
 * Make sure that sample config file is valid and has sensible, consistent paths in it
 * Rewrite Cedar Backup webpage online, to show new version and link to old version.
 
