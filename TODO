@@ -31,7 +31,7 @@
    - Entire codebase has been rewritten from the ground up using Python 2.3.
    - Cleaner, more pythonic, better structured, sensible mix of classes and functions
    - Much of the  lower-level is intended to be general-purpose "library" code
-   - All lower-level functionality is thoroughly regression tested via pyunit (XXX individual unit tests)
+   - All lower-level functionality is thoroughly regression tested via pyunit (1200+ individual unit tests)
    - Configuration class is standardized, so third-party Python programs can use it.
    - Uses Python's integrated logging for realtime logs, much better than old logs.
    - Uses Python's tar module rather than GNU tar via pipes, for more consistent behavior.
