@@ -190,6 +190,16 @@
             <term><xref linkend="cedar-extensions"/></term>
             <listitem>
                <para>
+                  Describes each of the officially-supported Cedar Backup
+                  extensions.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><xref linkend="cedar-extenspec"/></term>
+            <listitem>
+               <para>
                   Specifies the Cedar Backup extension architecture interface,
                   through which third party developers can write extensions to
                   Cedar Backup.
