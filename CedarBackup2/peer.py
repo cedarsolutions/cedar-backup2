@@ -63,7 +63,7 @@ import re
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import executeCommand
+from CedarBackup2.util import splitCommandLine, executeCommand
 
 
 ########################################################################
@@ -398,15 +398,11 @@ class RemotePeer(object):
       Initializes a remote backup peer.
 
       @note: If provided, the rcp command will eventually be parsed into a list
-      of strings suitable for passing to L{popen2.Popen4}, which is used
-      instead of a simple L{os.popen} in order to avoid security holes related
-      to shell interpolation.  There is no "standard" way to parse such a
-      command string, and it's actually not an easy problem to solve portably
-      (essentially, we have to emulate the shell argument-processing logic).
-      The code used here internally only respects double quotes (C{"}) for
-      grouping arguments, not single quotes (C{'}).  Make sure you take this
-      into account when building your rcp command.
-      
+      of strings suitable for passing to L{popen2.Popen4} in order to avoid
+      security holes related to shell interpolation.   This parsing will be
+      done by the L{util.splitCommandLine} function.  See the documentation for
+      that function for some important notes about its limitations.
+
       @param name: Name of the backup peer
       @type name: String, must be a valid DNS hostname
 
@@ -491,10 +487,12 @@ class RemotePeer(object):
 
       The value must be a non-empty string or C{None}.  Its value is stored in
       the two forms: "raw" as provided by the client, and "parsed" into a list
-      suitable for being passed to L{util.executeCommand}.  However, all the
-      caller will ever see via the property is the actual value they set (which
-      includes seeing C{None}, even if we translate that internally to
-      C{DEF_RCP_COMMAND}).  Internally, we should always use
+      suitable for being passed to L{util.executeCommand} via
+      L{util.splitCommandLine}.  
+
+      However, all the caller will ever see via the property is the actual
+      value they set (which includes seeing C{None}, even if we translate that
+      internally to C{DEF_RCP_COMMAND}).  Internally, we should always use
       C{self._rcpCommandList} if we want the actual command list.
 
       @raise ValueError: If the value is an empty string.
@@ -504,11 +502,8 @@ class RemotePeer(object):
          self._rcpCommandList = DEF_RCP_COMMAND
       else:
          if len(value) >= 1:
-            # I found this in Google Groups and tweaked it for my use
             self._rcpCommand = value
-            fields = re.findall('[^ "]+|"[^"]+"', self._rcpCommand)
-            fields = map(lambda field: field.replace('"', ''), fields)
-            self._rcpCommandList = fields
+            self._rcpCommandList = splitCommandLine(self._rcpCommand)
          else:
             raise ValueError("The rcp command must be a non-empty string.")
 
