@@ -42,15 +42,18 @@ Provides general-purpose utilities.
 
 @sort: AbsolutePathList, ObjectTypeList, convertSize, getUidGid, changeOwnership, 
        splitCommandLine, executeCommand, calculateFileAge, encodePath, 
-       ISO_SECTOR_SIZE, BYTES_PER_KBYTE, KBYTES_PER_MBYTE, BYTES_PER_MBYTE,
-       BYTES_PER_SECTOR, SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, 
-       SECONDS_PER_DAY, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
+       ISO_SECTOR_SIZE, BYTES_PER_SECTOR, 
+       BYTES_PER_KBYTE, BYTES_PER_MBYTE, BYTES_PER_GBYTE, KBYTES_PER_MBYTE, MBYTES_PER_GBYTE, 
+       SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, SECONDS_PER_DAY, 
+       UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
 
 @var ISO_SECTOR_SIZE: Size of an ISO image sector, in bytes.
-@var BYTES_PER_KBYTE: Number of bytes (B) per kilobyte (kB).
-@var KBYTES_PER_MBYTE: Number of kilobytes (kB) per megabyte (MB).
-@var BYTES_PER_MBYTE: Number of bytes (B) per megabyte (MB).
 @var BYTES_PER_SECTOR: Number of bytes (B) per ISO sector.
+@var BYTES_PER_KBYTE: Number of bytes (B) per kilobyte (kB).
+@var BYTES_PER_MBYTE: Number of bytes (B) per megabyte (MB).
+@var BYTES_PER_GBYTE: Number of bytes (B) per megabyte (GB).
+@var KBYTES_PER_MBYTE: Number of kilobytes (kB) per megabyte (MB).
+@var MBYTES_PER_GBYTE: Number of megabytes (MB) per gigabyte (GB).
 @var SECONDS_PER_MINUTE: Number of seconds per minute.
 @var MINUTES_PER_HOUR: Number of minutes per hour.
 @var HOURS_PER_DAY: Number of hours per day.
@@ -87,11 +90,13 @@ logger = logging.getLogger("CedarBackup2.log.util")
 outputLogger = logging.getLogger("CedarBackup2.output")
 
 ISO_SECTOR_SIZE    = 2048.0   # in bytes
+BYTES_PER_SECTOR   = ISO_SECTOR_SIZE
 
 BYTES_PER_KBYTE    = 1024.0
 KBYTES_PER_MBYTE   = 1024.0
+MBYTES_PER_GBYTE   = 1024.0
 BYTES_PER_MBYTE    = BYTES_PER_KBYTE * KBYTES_PER_MBYTE
-BYTES_PER_SECTOR   = ISO_SECTOR_SIZE
+BYTES_PER_GBYTE    = BYTES_PER_MBYTE * MBYTES_PER_GBYTE
 
 SECONDS_PER_MINUTE = 60
 MINUTES_PER_HOUR   = 60
@@ -439,7 +444,52 @@ def convertSize(size, fromUnit, toUnit):
       return byteSize / BYTES_PER_SECTOR
    else:
       raise ValueError("Unknown 'to' unit %d." % toUnit)
-   
+
+##########################
+# displayBytes() function
+##########################
+
+def displayBytes(bytes, digits=3):
+   """
+   Format a byte quantity so it can be sensibly displayed.
+
+   It's rather difficult to look at a number like "72372224 bytes" and get any
+   meaningful information out of it.  It would be more useful to see something
+   like "72.37 MB".  That's what this function does.  Any time you want to display
+   a byte value, i.e.::
+
+      print "Size: %s bytes" % bytes
+
+   Call this function instead:
+
+      print "Size: %s" % displayBytes(bytes)
+
+   What comes out will be sensibly formatted.  The indicated number of digits
+   will be listed after the decimal point.
+
+   @param bytes: Byte quantity.
+   @type bytes: Integer number of bytes.
+
+   @param digits: Number of digits to display after the decimal point.
+   @type digits: Integer value, typically 3-10.
+
+   @return: String, formatted for sensible display.
+   """
+   bytes = float(bytes)
+   if bytes < BYTES_PER_KBYTE:
+      format = "%.0f bytes"
+      value = bytes
+   elif bytes < BYTES_PER_MBYTE:
+      format = "%." + "%d" % digits + "f kB"
+      value = bytes / BYTES_PER_KBYTE
+   elif bytes < BYTES_PER_GBYTE:
+      format = "%." + "%d" % digits + "f MB"
+      value = bytes / BYTES_PER_MBYTE
+   else:
+      format = "%." + "%d" % digits + "f GB"
+      value = bytes / BYTES_PER_GBYTE
+   return format % value
+
 
 ##################################
 # getFunctionReference() function

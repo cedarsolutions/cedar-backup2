@@ -18,8 +18,6 @@
 FUTURE FUNCTIONALITY
 
 * Add in notes on configuration interface for extensions if they want 3rd parties to be able to deal with their configuration.
-* Maybe make cli module have main routine that is basically the same as cback script?
-* Logging levels for the collect action aren't quite right - need either more or less info to make sense.
 * We should probably check the staging flag and refuse to stage if it's already been done...?
 * Add a config value or option for indicating whether backed-up files should be logged (if anyone cares).
 * Implement capacity mode functionality, i.e. what to do with a full disc. (bug #6)
@@ -29,7 +27,6 @@ FUTURE FUNCTIONALITY
 * Somehow figure out if a full backup (i.e. disc-restart) has been missed (bug #6)
 * Perhaps update configuration to disallow two extensions with same name (right now, behavior is undefined).
 * Perhaps update configuration to disallow two peers with same name (right now, behavior is undefined).
-* Would be nice if "XXXX bytes" output could be in engineering notation or something - ByteQuantity object or something?
 
 
 TESTING IMPROVEMENTS
@@ -40,14 +37,9 @@ TESTING IMPROVEMENTS
 * For that matter, figure out why the build fails in a 'woody' pbuilder environment.
 
 
-PLANNED EXTENSIONS
-
-* Create Subversion extension (initially, for backing up Berkely DB repositories)
-* Create "system info" extension to dump fdisk information, etc. to collect directory.
-* Create MySQL extension to back up MySQL databases like Bugzilla.
-
-
 DOCUMENTATION IMPROVEMENTS
+
+Add documentation for the three new official extensions.
 
 Documentation in some places is difficult to read, especially in the config section.
 

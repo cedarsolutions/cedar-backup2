@@ -1361,3 +1361,12 @@ class Options(object):
       if switches.has_key("-s") or switches.has_key("--stack"):
          self.stacktrace = True
 
+
+#########################################################################
+# Main routine
+########################################################################
+
+if __name__ == "__main__":
+   result = cli()
+   sys.exit(result)
+
