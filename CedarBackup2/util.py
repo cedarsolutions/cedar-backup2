@@ -40,10 +40,9 @@
 """
 Provides general-purpose utilities. 
 
-@sort: convertSize, getUidGid, executeCommand, 
-       ISO_SECTOR_SIZE, 
-       BYTES_PER_KBYTE, KBYTES_PER_MBYTE, BYTES_PER_MBYTE, BYTES_PER_SECTOR,
-       UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
+@sort: AbsolutePathList, ObjectTypeList, convertSize, getUidGid, executeCommand, 
+       ISO_SECTOR_SIZE, BYTES_PER_KBYTE, KBYTES_PER_MBYTE, BYTES_PER_MBYTE,
+       BYTES_PER_SECTOR, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
 
 @var ISO_SECTOR_SIZE: Size of an ISO image sector, in bytes.
 @var BYTES_PER_KBYTE: Number of bytes (B) per kilobyte (kB).
@@ -63,6 +62,7 @@ Provides general-purpose utilities.
 # Imported modules
 ########################################################################
 
+import os
 import popen2
 import logging
 import pwd
@@ -86,6 +86,104 @@ UNIT_BYTES  = 0
 UNIT_KBYTES = 1
 UNIT_MBYTES = 2
 UNIT_SECTORS = 3
+
+
+########################################################################
+# AbsolutePathList class definition
+########################################################################
+
+class AbsolutePathList(list):
+
+   """
+   Class representing a list of absolute paths.
+
+   We override the C{append}, C{insert} and C{extend} methods to ensure that
+   any item added to the list is an absolute path.  
+   """
+
+   def append(self, item):
+      """
+      Overrides the standard C{append} method.
+      @raise ValueError: If item is not an absolute path.
+      """
+      if not os.path.isabs(item):
+         raise ValueError("Item must be an absolute path.")
+      list.append(self, item)
+
+   def insert(self, index, item):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If item is not an absolute path.
+      """
+      if not os.path.isabs(item):
+         raise ValueError("Item must be an absolute path.")
+      list.insert(self, index, item)
+
+   def extend(self, seq):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If any item is not an absolute path.
+      """
+      for item in seq:
+         if not os.path.isabs(item):
+            raise ValueError("All items must be absolute paths.")
+      list.extend(self, seq)
+
+
+########################################################################
+# ObjectTypeList class definition
+########################################################################
+
+class ObjectTypeList(list):
+
+   """
+   Class representing a list containing only objects with a certain type.
+
+   We override the C{append}, C{insert} and C{extend} methods to ensure that
+   any item added to the list matches the type that is requested.  The
+   comparison uses the built-in C{isinstance}, which should allow subclasses of
+   of the requested type to be added to the list as well.
+
+   The C{objectName} value will be used in exceptions, i.e. C{"Item must be a
+   CollectDir object."} if C{objectName} is C{"CollectDir"}.
+   """
+   
+   def __init__(self, objectType, objectName):
+      """
+      Initializes a typed list for a particular type.
+      @param objectType: Type that the list elements must match.
+      @param objectName: Short string containing the "name" of the type.
+      """
+      self.objectType = objectType
+      self.objectName = objectName
+
+   def append(self, item):
+      """
+      Overrides the standard C{append} method.
+      @raise ValueError: If item does not match requested type.
+      """
+      if not isinstance(item, self.objectType):
+         raise ValueError("Item must be a %s object." % self.objectName)
+      list.append(self, item)
+
+   def insert(self, index, item):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If item does not match requested type.
+      """
+      if not isinstance(item, self.objectType):
+         raise ValueError("Item must be a %s object." % self.objectName)
+      list.insert(self, index, item)
+
+   def extend(self, seq):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If item does not match requested type.
+      """
+      for item in seq:
+         if not isinstance(item, self.objectType):
+            raise ValueError("All items must be %s objects." % self.objectName)
+      list.extend(self, seq)
 
 
 ########################################################################

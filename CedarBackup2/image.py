@@ -55,6 +55,7 @@ import logging
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.knapsack import worstFit
 from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_SECTORS
+from CedarBackup2.writer import validateScsiId
 
 
 ########################################################################
@@ -129,16 +130,6 @@ class IsoImage(object):
       C{mkisofs} behavior.  It is arguably more "consistent", but is probably
       less flexible in a general sense.
 
-   @ivar device: Device that image will be written to (either filesystem device or SCSI address).
-   @ivar boundaries: Session boundaries as required by C{mkisofs}.
-   @ivar graftPoint: Default image-wide graft point (see L{addEntry} for details).
-   @ivar useRockRidge: Indicates whether to use the RockRidge protocol (default is C{True}).
-   @ivar applicationId: Optionally specifies the ISO header application id value.
-   @ivar biblioFile: Optionally specifies ISO bibliographic file name.
-   @ivar publisherId: Optionally specifies the ISO header publisher id value.
-   @ivar preparerId: Optionally specifies the ISO header preparer id value.
-   @ivar volumeId: Optionally specifies the ISO header volume id value.
-
    @sort: __init__, addEntry, getEstimatedSize, _getEstimatedSize, writeImage, pruneImage
           _pruneImage, _calculateSizes, _buildEntries, _expandEntries, _buildDirEntries
           _buildGeneralArgs, _buildSizeArgs, _buildWriteArgs, 
@@ -173,6 +164,15 @@ class IsoImage(object):
       @param graftPoint: Default graft point for this page.
       @type graftPoint: String representing a graft point path (see L{addEntry}).
       """
+      self._device = None
+      self._boundaries = None
+      self._graftPoint = None
+      self._useRockRidge = True
+      self._applicationId = None
+      self._biblioFile = None
+      self._publisherId = None
+      self._preparerId = None
+      self._volumeId = None
       self.entries = { }
       self.device = device
       self.boundaries = boundaries
@@ -184,6 +184,180 @@ class IsoImage(object):
       self.preparerId = None
       self.volumeId = None
       logger.debug("Created new ISO image object.")
+
+
+   #############
+   # Properties
+   #############
+
+   def _setDevice(self, value):
+      """
+      Property target used to set the device value.
+      If not C{None}, the value can be either an absolute path or a SCSI id.
+      @raise ValueError: If the value is not valid
+      """
+      try:
+         if value is None:
+            self._device = None
+         else:
+            if os.path.isabs(value):
+               self._device = value
+            else:
+               self._device = validateScsiId(value)
+      except ValueError:
+         raise ValueError("Device must either be an absolute path or a valid SCSI id.")
+
+   def _getDevice(self):
+      """
+      Property target used to get the device value.
+      """
+      return self._device
+
+   def _setBoundaries(self, value):
+      """
+      Property target used to set the boundaries tuple.
+      If not C{None}, the value must be a tuple of two integers.
+      @raise ValueError: If the tuple values are not integers.
+      @raise IndexError: If the tuple does not contain enough elements.
+      """
+      if value is None:
+         self._boundaries = None
+      else:
+         self._boundaries = (int(value[0]), int(value[1]))
+
+   def _getBoundaries(self):
+      """
+      Property target used to get the boundaries value.
+      """
+      return self._boundaries
+
+   def _setGraftPoint(self, value):
+      """
+      Property target used to set the graft point.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The graft point must be a non-empty string.")
+      self._graftPoint = value
+
+   def _getGraftPoint(self):
+      """
+      Property target used to get the graft point.
+      """
+      return self._graftPoint
+
+   def _setUseRockRidge(self, value):
+      """
+      Property target used to set the use RockRidge flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._useRockRidge = True
+      else:
+         self._useRockRidge = False
+
+   def _getUseRockRidge(self):
+      """
+      Property target used to get the use RockRidge flag.
+      """
+      return self._useRockRidge
+
+   def _setApplicationId(self, value):
+      """
+      Property target used to set the application id.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The application id must be a non-empty string.")
+      self._applicationId = value
+
+   def _getApplicationId(self):
+      """
+      Property target used to get the application id.
+      """
+      return self._applicationId
+
+   def _setBiblioFile(self, value):
+      """
+      Property target used to set the biblio file.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The biblio file must be a non-empty string.")
+      self._biblioFile = value
+
+   def _getBiblioFile(self):
+      """
+      Property target used to get the biblio file.
+      """
+      return self._biblioFile
+
+   def _setPublisherId(self, value):
+      """
+      Property target used to set the publisher id.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The publisher id must be a non-empty string.")
+      self._publisherId = value
+
+   def _getPublisherId(self):
+      """
+      Property target used to get the publisher id.
+      """
+      return self._publisherId
+
+   def _setPreparerId(self, value):
+      """
+      Property target used to set the preparer id.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The preparer id must be a non-empty string.")
+      self._preparerId = value
+
+   def _getPreparerId(self):
+      """
+      Property target used to get the preparer id.
+      """
+      return self._preparerId
+
+   def _setVolumeId(self, value):
+      """
+      Property target used to set the volume id.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The volume id must be a non-empty string.")
+      self._volumeId = value
+
+   def _getVolumeId(self):
+      """
+      Property target used to get the volume id.
+      """
+      return self._volumeId
+
+   device = property(_getDevice, _setDevice, None, "Device that image will be written to (device path or SCSI id).")
+   boundaries = property(_getBoundaries, _setBoundaries, None, "Session boundaries as required by C{mkisofs}.")
+   graftPoint = property(_getGraftPoint, _setGraftPoint, None, "Default image-wide graft point (see L{addEntry} for details).")
+   useRockRidge = property(_getUseRockRidge, _setUseRockRidge, None, "Indicates whether to use RockRidge (default is C{True}).")
+   applicationId = property(_getApplicationId, _setApplicationId, None, "Optionally specifies the ISO header application id value.")
+   biblioFile = property(_getBiblioFile, _setBiblioFile, None, "Optionally specifies the ISO bibliographic file name.")
+   publisherId = property(_getPublisherId, _setPublisherId, None, "Optionally specifies the ISO header publisher id value.")
+   preparerId = property(_getPreparerId, _setPreparerId, None, "Optionally specifies the ISO header preparer id value.")
+   volumeId = property(_getVolumeId, _setVolumeId, None, "Optionally specifies the ISO header volume id value.")
 
 
    #########################

@@ -111,7 +111,7 @@ RESOURCES = [ "tree1.tar.gz", "tree2.tar.gz", "tree3.tar.gz", "tree4.tar.gz", "t
               "tree11.tar.gz", ]
 
 INVALID_FILE      = "bogus"         # This file name should never exist
-NOMATCH_PATH      = "something"     # This file should never match something we put in a file list 
+NOMATCH_PATH      = "/something"    # This file should never match something we put in a file list 
 NOMATCH_PATTERN   = "pattern"       # This pattern should never match something we put in a file list 
 
 
