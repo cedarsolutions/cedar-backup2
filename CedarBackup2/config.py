@@ -323,17 +323,44 @@ class CollectDir(object):
       Definition of equals operator for this class.
       Lists within this class are "unordered" for equality comparisons.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, CollectDir): return False
-      if self._absolutePath != other._absolutePath: return False
-      if self._collectMode != other._collectMode: return False
-      if self._archiveMode != other._archiveMode: return False
-      if self._ignoreFile != other._ignoreFile: return False
-      if self._absoluteExcludePaths != other._absoluteExcludePaths: return False
-      if self._relativeExcludePaths != other._relativeExcludePaths: return False
-      if self._excludePatterns != other._excludePatterns: return False
-      return True
+      if self._absolutePath != other._absolutePath: 
+         if self._absolutePath < other.absolutePath:
+            return -1
+         else:
+            return 1 
+      if self._collectMode != other._collectMode: 
+         if self._collectMode < other._collectMode: 
+            return -1
+         else:
+            return 1 
+      if self._archiveMode != other._archiveMode: 
+         if self._archiveMode < other._archiveMode: 
+            return -1
+         else:
+            return 1 
+      if self._ignoreFile != other._ignoreFile: 
+         if self._ignoreFile < other._ignoreFile: 
+            return -1
+         else:
+            return 1 
+      if self._absoluteExcludePaths != other._absoluteExcludePaths: 
+         if self._absoluteExcludePaths < other._absoluteExcludePaths: 
+            return -1
+         else:
+            return 1 
+      if self._relativeExcludePaths != other._relativeExcludePaths:  
+         if self._relativeExcludePaths < other._relativeExcludePaths:  
+            return -1
+         else:
+            return 1 
+      if self._excludePatterns != other._excludePatterns: 
+         if self._excludePatterns < other._excludePatterns: 
+            return -1
+         else:
+            return 1 
+      return 0
 
    def _setAbsolutePath(self, value):
       """
@@ -506,12 +533,19 @@ class PurgeDir(object):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, PurgeDir): return False
-      if self._absolutePath != other._absolutePath: return False
-      if self._retainDays != other._retainDays: return False
-      return True
+      if self._absolutePath != other._absolutePath: 
+         if self._absolutePath < other._absolutePath: 
+            return -1
+         else:
+            return 1
+      if self._retainDays != other._retainDays: 
+         if self._retainDays < other._retainDays: 
+            return -1
+         else:
+            return 1
+      return 0
 
    def _setAbsolutePath(self, value):
       """
@@ -599,12 +633,19 @@ class LocalPeer(object):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, LocalPeer): return False
-      if self._name != other._name: return False
-      if self._collectDir != other._collectDir: return False
-      return True
+      if self._name != other._name: 
+         if self._name < other._name: 
+            return -1
+         else:
+            return 1
+      if self._collectDir != other._collectDir:
+         if self._collectDir < other._collectDir:
+            return -1
+         else:
+            return 1
+      return 0
 
    def _setName(self, value):
       """
@@ -694,14 +735,29 @@ class RemotePeer(object):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, RemotePeer): return False
-      if self._name != other._name: return False
-      if self._collectDir != other._collectDir: return False
-      if self._remoteUser != other._remoteUser: return False
-      if self._rcpCommand != other._rcpCommand: return False
-      return True
+      if self._name != other._name:
+         if self._name < other._name:
+            return -1
+         else:
+            return 1
+      if self._collectDir != other._collectDir: 
+         if self._collectDir < other._collectDir: 
+            return -1
+         else:
+            return 1
+      if self._remoteUser != other._remoteUser:
+         if self._remoteUser < other._remoteUser:
+            return -1
+         else:
+            return 1
+      if self._rcpCommand != other._rcpCommand:
+         if self._rcpCommand < other._rcpCommand:
+            return -1
+         else:
+            return 1
+      return 0
 
    def _setName(self, value):
       """
@@ -822,14 +878,29 @@ class ReferenceConfig(object):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, ReferenceConfig): return False
-      if self._author != other._author: return False
-      if self._revision != other._revision: return False
-      if self._description != other._description: return False
-      if self._generator != other._generator: return False
-      return True
+      if self._author != other._author:
+         if self._author < other._author:
+            return -1
+         else:
+            return 1
+      if self._revision != other._revision:
+         if self._revision < other._revision:
+            return -1
+         else:
+            return 1
+      if self._description != other._description:
+         if self._description < other._description:
+            return -1
+         else:
+            return 1
+      if self._generator != other._generator:
+         if self._generator < other._generator:
+            return -1
+         else:
+            return 1
+      return 0
 
    def _setAuthor(self, value):
       """
@@ -943,15 +1014,34 @@ class OptionsConfig(object):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, OptionsConfig): return False
-      if self._startingDay != other._startingDay: return False
-      if self._workingDir != other._workingDir: return False
-      if self._backupUser != other._backupUser: return False
-      if self._backupGroup != other._backupGroup: return False
-      if self._rcpCommand != other._rcpCommand: return False
-      return True
+      if self._startingDay != other._startingDay:
+         if self._startingDay < other._startingDay:
+            return -1
+         else:
+            return 1
+      if self._workingDir != other._workingDir:
+         if self._workingDir < other._workingDir:
+            return -1
+         else:
+            return 1
+      if self._backupUser != other._backupUser:
+         if self._backupUser < other._backupUser:
+            return -1
+         else:
+            return 1
+      if self._backupGroup != other._backupGroup:
+         if self._backupGroup < other._backupGroup:
+            return -1
+         else:
+            return 1
+      if self._rcpCommand != other._rcpCommand:
+         if self._rcpCommand < other._rcpCommand:
+            return -1
+         else:
+            return 1
+      return 0
 
    def _setStartingDay(self, value):
       """
@@ -1119,17 +1209,44 @@ class CollectConfig(object):
       Definition of equals operator for this class.
       Lists within this class are "unordered" for equality comparisons.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, CollectConfig): return False
-      if self._targetDir != other._targetDir: return False
-      if self._collectMode != other._collectMode: return False
-      if self._archiveMode != other._archiveMode: return False
-      if self._ignoreFile != other._ignoreFile: return False
-      if self._absoluteExcludePaths != other._absoluteExcludePaths: return False
-      if self._excludePatterns != other._excludePatterns: return False
-      if self._collectDirs != other._collectDirs: return False
-      return True
+      if self._targetDir != other._targetDir:
+         if self._targetDir < other._targetDir:
+            return -1
+         else:
+            return 1
+      if self._collectMode != other._collectMode:
+         if self._collectMode < other._collectMode:
+            return -1
+         else:
+            return 1
+      if self._archiveMode != other._archiveMode:
+         if self._archiveMode < other._archiveMode:
+            return -1
+         else:
+            return 1
+      if self._ignoreFile != other._ignoreFile:
+         if self._ignoreFile < other._ignoreFile:
+            return -1
+         else:
+            return 1
+      if self._absoluteExcludePaths != other._absoluteExcludePaths:
+         if self._absoluteExcludePaths < other._absoluteExcludePaths:
+            return -1
+         else:
+            return 1
+      if self._excludePatterns != other._excludePatterns:
+         if self._excludePatterns < other._excludePatterns:
+            return -1
+         else:
+            return 1
+      if self._collectDirs != other._collectDirs:
+         if self._collectDirs < other._collectDirs:
+            return -1
+         else:
+            return 1
+      return 0
 
    def _setTargetDir(self, value):
       """
@@ -1310,13 +1427,24 @@ class StageConfig(object):
       Definition of equals operator for this class.
       Lists within this class are "unordered" for equality comparisons.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, StageConfig): return False
-      if self._targetDir != other._targetDir: return False
-      if self._localPeers != other._localPeers: return False
-      if self._remotePeers != other._remotePeers: return False
-      return True
+      if self._targetDir != other._targetDir:
+         if self._targetDir < other._targetDir:
+            return -1
+         else:
+            return 1
+      if self._localPeers != other._localPeers:
+         if self._localPeers < other._localPeers:
+            return -1
+         else:
+            return 1
+      if self._remotePeers != other._remotePeers:
+         if self._remotePeers < other._remotePeers:
+            return -1
+         else:
+            return 1
+      return 0
 
    def _setTargetDir(self, value):
       """
@@ -1450,19 +1578,54 @@ class StoreConfig(object):
       """
       Definition of equals operator for this class.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, StoreConfig): return False
-      if self._sourceDir != other._sourceDir: return False
-      if self._mediaType != other._mediaType: return False
-      if self._deviceType != other._deviceType: return False
-      if self._devicePath != other._devicePath: return False
-      if self._deviceScsiId != other._deviceScsiId: return False
-      if self._driveSpeed != other._driveSpeed: return False
-      if self._checkData != other._checkData: return False
-      if self._safeOverwrite != other._safeOverwrite: return False
-      if self._capacityMode != other._capacityMode: return False
-      return True
+      if self._sourceDir != other._sourceDir:
+         if self._sourceDir < other._sourceDir:
+            return -1
+         else:
+            return 1
+      if self._mediaType != other._mediaType:
+         if self._mediaType < other._mediaType:
+            return -1
+         else:
+            return 1
+      if self._deviceType != other._deviceType:
+         if self._deviceType < other._deviceType:
+            return -1
+         else:
+            return 1
+      if self._devicePath != other._devicePath:
+         if self._devicePath < other._devicePath:
+            return -1
+         else:
+            return 1
+      if self._deviceScsiId != other._deviceScsiId:
+         if self._deviceScsiId < other._deviceScsiId:
+            return -1
+         else:
+            return 1
+      if self._driveSpeed != other._driveSpeed:
+         if self._driveSpeed < other._driveSpeed:
+            return -1
+         else:
+            return 1
+      if self._checkData != other._checkData:
+         if self._checkData < other._checkData:
+            return -1
+         else:
+            return 1
+      if self._safeOverwrite != other._safeOverwrite:
+         if self._safeOverwrite < other._safeOverwrite:
+            return -1
+         else:
+            return 1
+      if self._capacityMode != other._capacityMode:
+         if self._capacityMode < other._capacityMode:
+            return -1
+         else:
+            return 1
+      return 0
 
    def _setSourceDir(self, value):
       """
@@ -1668,11 +1831,14 @@ class PurgeConfig(object):
       Definition of equals operator for this class.
       Lists within this class are "unordered" for equality comparisons.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, PurgeConfig): return False
-      if self._purgeDirs != other._purgeDirs: return False
-      return True
+      if self._purgeDirs != other._purgeDirs:
+         if self._purgeDirs < other._purgeDirs:
+            return -1
+         else:
+            return 1
+      return 0
 
    def _setPurgeDirs(self, value):
       """
@@ -1805,16 +1971,39 @@ class Config(object):
       Definition of equals operator for this class.
       Lists within this class are "unordered" for equality comparisons.
       @param other: Other object to compare to.
-      @return: True/false depending on whether the two objects are equivalent.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      if not isinstance(other, Config): return False
-      if self._reference != other._reference: return False
-      if self._options != other._options: return False
-      if self._collect != other._collect: return False
-      if self._stage != other._stage: return False
-      if self._store != other._store: return False
-      if self._purge != other._purge: return False
-      return True
+      if self._reference != other._reference:
+         if self._reference < other._reference:
+            return -1
+         else:
+            return 1
+      if self._options != other._options:
+         if self._options < other._options:
+            return -1
+         else:
+            return 1
+      if self._collect != other._collect:
+         if self._collect < other._collect:
+            return -1
+         else:
+            return 1
+      if self._stage != other._stage:
+         if self._stage < other._stage:
+            return -1
+         else:
+            return 1
+      if self._store != other._store:
+         if self._store < other._store:
+            return -1
+         else:
+            return 1
+      if self._purge != other._purge:
+         if self._purge < other._purge:
+            return -1
+         else:
+            return 1
+      return 0
 
 
    #############
