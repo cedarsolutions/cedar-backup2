@@ -71,7 +71,9 @@ incremental.
 # System modules
 import os
 import logging
+import pickle
 from bz2 import BZ2File
+from gzip import GzipFile
 
 # XML-related modules
 from xml.dom.ext.reader import PyExpat
@@ -84,7 +86,8 @@ from xml.dom.ext import PrettyPrint
 
 # Cedar Backup modules
 from CedarBackup2.config import Config, VALID_COLLECT_MODES
-from CedarBackup2.util import executeCommand, ObjectTypeList, encodePath
+from CedarBackup2.action import isStart, buildNormalizedPath
+from CedarBackup2.util import executeCommand, ObjectTypeList, encodePath, changeOwnership
 
 
 ########################################################################
@@ -96,7 +99,9 @@ logger = logging.getLogger("CedarBackup2.log.extend.subversion")
 SVNLOOK_COMMAND      = [ "svnlook", ]
 SVNADMIN_COMMAND     = [ "svnadmin", ]
 
-VALID_COMPRESS_MODES = [ "gzip", "bzip2", ]
+REVISION_PATH_EXTENSION = "svnlast"
+
+VALID_COMPRESS_MODES = [ "none", "gzip", "bzip2", ]
 
 
 ########################################################################
@@ -728,5 +733,269 @@ def executeAction(configPath, options, config):
    if config.options is None or config.collect is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
+   todayIsStart = isStart(config.options.startingDay)
+   fullBackup = options.full or todayIsStart
+   logger.debug("Full backup flag is [%s]" % fullBackup)
+   if local.subversion.repositories is not None:
+      for repository in local.subversion.repositories:
+         logger.debug("Working with repository [%s]." % repository.repositoryPath)
+         if repository.type == "BDB":
+            collectMode = _getCollectMode(local, repository)
+            compressMode = _getCompressMode(local, repository)
+            revisionPath = _getRevisionPath(config, repository)
+            backupPath = _getBackupPath(config, repository, compressMode)
+            if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
+               logger.debug("Repository meets criteria to be backed up today.")
+               _backupBDBRepository(config, repository.repositoryPath, backupPath, 
+                                    revisionPath, fullBackup, collectMode, compressMode)
+            else:
+               logger.debug("Repository will not be backed up, per collect mode.")
+         else:
+            logger.debug("Repository will not be backed up, since it is not type BDB.")
+         logger.info("Completed backing up Subversion repository [%s]." % repository.repositoryPath)
    logger.info("Executed the Subversion extended action successfully.")
+
+def _getCollectMode(local, repository):
+   """
+   Gets the collect mode that should be used for a repository.
+   Use repository's if possible, otherwise take from subversion section.
+   @param config: LocalConfig object.
+   @param repository: BDBRepository object.
+   @return: Collect mode to use.
+   """
+   if repository.collectMode is None:
+      collectMode = local.subversion.collectMode
+   else:
+      collectMode = repository.collectMode
+   logger.debug("Collect mode is [%s]" % collectMode)
+   return collectMode
+
+def _getCompressMode(local, repository):
+   """
+   Gets the compress mode that should be used for a repository.
+   Use repository's if possible, otherwise take from subversion section.
+   @param local: LocalConfig object.
+   @param repository: BDBRepository object.
+   @return: Compress mode to use.
+   """
+   if repository.compressMode is None:
+      compressMode = local.subversion.compressMode
+   else:
+      compressMode = repository.compressMode
+   logger.debug("Compress mode is [%s]" % compressMode)
+   return compressMode
+
+def _getRevisionPath(config, repository):
+   """
+   Gets the path to the revision file associated with a repository.
+   @param config: Config object.
+   @param repository: BDBRepository object.
+   @return: Absolute path to the revision file associated with the repository.
+   """
+   normalized = buildNormalizedPath(repository.repositoryPath)
+   filename = "%s.%s" % (normalized, REVISION_PATH_EXTENSION)
+   revisionPath = os.path.join(config.options.workingDir, filename)
+   logger.debug("Revision file path is [%s]" % revisionPath)
+   return revisionPath
+
+def _getBackupPath(config, repository, compressMode):
+   """
+   Gets the backup file path (including correct extension) associated with a repository.
+   @param config: Config object.
+   @param repository: BDBRepository object.
+   @param compressMode: Compress mode to use for this repository.
+   @return: Absolute path to the backup file associated with the repository.
+   """
+   filename = buildNormalizedPath(repository.repositoryPath)
+   if compressMode == 'gzip':
+      filename = "%s.gz" % filename
+   elif compressMode == 'bzip2':
+      filename = "%s.bz2" % filename
+   backupPath = os.path.join(config.collect.targetDir, filename)
+   logger.debug("Backup file path is [%s]" % backupPath)
+   return backupPath
+
+def _backupBDBRepository(config, repositoryPath, backupPath, revisionPath, fullBackup, collectMode, compressMode):
+   """
+   Backs up an individual Subversion BDB repository.
+
+   This internal method wraps the public method and adds some functionality
+   to work better with the extended action itself.
+
+   @param config: Cedar Backup configuration.
+   @param repositoryPath: Path to Subversion repository to back up.
+   @param backupPath: Path to backup file that will be written.
+   @param revisionPath: Path used to store incremental revision information.
+   @param fullBackup: Indicates whether this should be a full backup.
+   @param collectMode: Collect mode to use.
+   @param compressMode: Compress mode to use.
+    
+   @raise ValueError: If some value is missing or invalid.
+   @raise IOError: If there is a problem executing the Subversion dump.
+   """
+   if collectMode != "incr" or fullBackup:
+      startRevision = 0
+      endRevision = getYoungestRevision(repositoryPath)
+      logger.debug("Using full backup, revision: (%d, %d)." % (startRevision, endRevision))
+   else:
+      if fullBackup:
+         startRevision = 0
+      else:
+         startRevision = _loadLastRevision(revisionPath) + 1
+      endRevision = getYoungestRevision(repositoryPath)
+      logger.debug("Using incremental backup, revision: (%d, %d)." % (startRevision, endRevision))
+   outputFile = _getOutputFile(backupPath, compressMode)
+   try:
+      backupBDBRepository(repositoryPath, outputFile, startRevision, endRevision)
+   finally:
+      outputFile.close()
+   if not os.path.exists(backupPath):
+      raise IOError("Dump file [%s] does not seem to exist after backup completed." % backupPath)
+   changeOwnership(backupPath, config.options.backupUser, config.options.backupGroup)
+   if collectMode == "incr":
+      _writeLastRevision(config, revisionPath, endRevision)
+
+def _getOutputFile(backupPath, compressMode):
+   """
+   Opens the output file used for saving the Subversion dump.
+
+   If the compress mode is "gzip", we'll open a C{GzipFile}, and if the
+   compress mode is "bzip2", we'll open a C{BZ2File}.  Otherwise, we'll just
+   return an object from the normal C{open()} method.
+
+   @param backupPath: Path to file to open.
+   @param compressMode: Compress mode of file ("none", "gzip", "bzip").
+
+   @return: Output file object.
+   """
+   if compressMode == "gzip":
+      return GzipFile(backupPath, "w")
+   elif compressMode == "bzip2":
+      return BZ2File(backupPath, "w")
+   else:
+      return open(backupPath, "w")
+
+def _loadLastRevision(revisionPath):
+   """
+   Loads the indicated revision file from disk into an integer.
+
+   If we can't load the revision file successfully (either because it doesn't
+   exist or for some other reason), then a revision of -1 will be returned -
+   but the condition will be logged.  This way, we err on the side of backing
+   up too much, because anyone using this will presumably be adding 1 to the
+   revision, so they don't duplicate any backups.
+
+   @param revisionPath: Path to the revision file on disk.
+
+   @return: Integer representing last backed-up revision, -1 on error or if none can be read.
+   """
+   if not os.path.isfile(revisionPath):
+      startRevision = -1
+      logger.debug("Revision file [%s] does not exist on disk." % revisionPath)
+   else:
+      try:
+         startRevision = pickle.load(open(revisionPath, "r"))
+         logger.debug("Loaded revision file [%s] from disk: %d." % (revisionPath, startRevision))
+      except:
+         startRevision = -1
+         logger.error("Failed loading revision file [%s] from disk." % revisionPath)
+   return startRevision
+
+def _writeLastRevision(config, revisionPath, endRevision):
+   """
+   Writes the end revision to the indicated revision file on disk.
+
+   If we can't write the revision file successfully for any reason, we'll log
+   the condition but won't throw an exception.
+
+   @param config: Config object.
+   @param revisionPath: Path to the revision file on disk.
+   @param endRevision: Last revision backed up on this run.
+   """
+   try:
+      pickle.dump(endRevision, open(revisionPath, "w"))
+      changeOwnership(revisionPath, config.options.backupUser, config.options.backupGroup)
+      logger.debug("Wrote new revision file [%s] to disk: %d." % (revisionPath, endRevision))
+   except:
+      logger.error("Failed to write revision file [%s] to disk." % revisionPath)
+
+
+#################################
+# backupBDBRepository() function
+#################################
+
+def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
+   """
+   Backs up an individual Subversion BDB repository.
+
+   The starting and ending revision values control an incremental backup.  If
+   the starting revision is not passed in, then revision zero (the start of the
+   repository) is assumed.  If the ending revision is not passed in, then the
+   youngest revision in the database will be used as the endpoint.
+
+   The backup data will be written into the passed-in back file.  Normally,
+   this would be an object as returned from C{open}, but it is possible to use
+   something like a C{GzipFile} to write compressed output.  The caller is
+   responsible for closing the passed-in backup file.
+
+   @note: This function should either be run as root or as the owner of the
+   Subversion repository.
+
+   @param repositoryPath: Path to Subversion repository to back up
+   @type repositoryPath: String path representing Subversion BDB repository on disk.
+
+   @param backupFile: Python file object to use for writing backup.
+   @type backupFile: Python file object as from C{open()} or C{file()}.
+   
+   @param startRevision: Starting repository revision to back up (for incremental backups)
+   @type startRevision: Integer value >= 0.
+
+   @param endRevision: Ending repository revision to back up (for incremental backups)
+   @type endRevision: Integer value >= 0.
+
+   @raise ValueError: If some value is missing or invalid.
+   @raise IOError: If there is a problem executing the MySQL dump.
+   """
+   if startRevision is None:
+      startRevision = 0
+   if endRevision is None:
+      endRevision = getYoungestRevision(repositoryPath)
+   if int(startRevision) < 0:
+      raise ValueError("Start revision must be >= 0.")
+   if int(endRevision) < 0:
+      raise ValueError("End revision must be >= 0.")
+   if startRevision > endRevision:
+      raise ValueError("Start revision must be <= end revision.")
+   args = [ "dump", "-r%s:%s" % (startRevision, endRevision), "--incremental", repositoryPath, ]
+   result = executeCommand(SVNADMIN_COMMAND, args, returnOutput=False, ignoreStderr=True, outputFile=backupFile)[0]
+   if result != 0:
+      raise IOError("Error [%d] executing Subversion dump for repository [%s]." % repositoryPath)
+
+
+#################################
+# getYoungestRevision() function
+#################################
+
+def getYoungestRevision(repositoryPath):
+   """
+   Gets the youngest (newest) revision in a Subversion repository using C{svnlook}.
+
+   @note: This function should either be run as root or as the owner of the
+   Subversion repository.
+
+   @param repositoryPath: Path to Subversion repository to look in.
+   @type repositoryPath: String path representing Subversion BDB repository on disk.
+
+   @return: Youngest revision as an integer.
+   
+   @raise ValueError: If there is a problem parsing the C{svnlook} output.
+   @raise IOError: If there is a problem executing the C{svnlook} command.
+   """
+   args = [ 'youngest', repositoryPath, ]
+   (result, output) = executeCommand(SVNLOOK_COMMAND, args, returnOutput=True, ignoreStderr=True)
+   if result != 0:
+      raise IOError("Error [%d] executing 'svnlook youngest' for repository [%s]." % repositoryPath)
+   if len(output) != 1:
+      raise ValueError("Unable to parse 'svnlook youngest' output.")
+   return int(output[0])
 

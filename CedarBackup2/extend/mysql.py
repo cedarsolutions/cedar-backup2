@@ -90,7 +90,7 @@ from xml.dom.ext import PrettyPrint
 
 # Cedar Backup modules
 from CedarBackup2.config import Config
-from CedarBackup2.util import executeCommand, ObjectTypeList
+from CedarBackup2.util import executeCommand, ObjectTypeList, changeOwnership
 
 
 ########################################################################
@@ -512,21 +512,32 @@ def executeAction(configPath, options, config):
    local = LocalConfig(xmlPath=configPath)
    if local.mysql.all:
       logger.info("Backing up all databases.")
-      _backupDatabase(config.collect.collectDir, local.mysql.user, local.mysql.password, None)
+      _backupDatabase(config.collect.collectDir, 
+                      local.mysql.user, local.mysql.password, 
+                      config.options.backupUser, config.options.backupGroup,
+                      None)
    else:
       logger.debug("Backing up %d individual databases." % len(local.mysql.databases))
       for database in local.mysql.databases:
          logger.info("Backing up database [%s]." % database)
-         _backupDatabase(config.collect.collectDir, local.mysql.user, local.mysql.password, database)
+         _backupDatabase(config.collect.collectDir, 
+                         local.mysql.user, local.mysql.password, 
+                         config.options.backupUser, config.options.backupGroup,
+                         database)
    logger.info("Executed the MySQL extended action successfully.")
 
-def _backupDatabase(targetDir, user, password, database=None, compress=True):
+def _backupDatabase(targetDir, user, password, backupUser, backupGroup, database=None, compress=True):
    """
    Backs up an individual MySQL database, or all databases.
+
+   This internal method wraps the public method and adds some functionality,
+   like figuring out a filename, etc.
 
    @param targetDir:  Directory into which backups should be written.
    @param user: User to use for connecting to the database.
    @param password: Password associated with user.
+   @param backupUser: User to own resulting file.
+   @param backupGroup: Group to own resulting file.
    @param database: Name of database, or C{None} for all databases.
 
    @return: Name of the generated backup file.
@@ -535,9 +546,13 @@ def _backupDatabase(targetDir, user, password, database=None, compress=True):
    @raise IOError: If there is a problem executing the MySQL dump.
    """
    (outputFile, filename) = _getOutputFile(targetDir, database, compress)
-   backupDatabase(user, password, outputFile, database)
+   try:
+      backupDatabase(user, password, outputFile, database)
+   finally:
+      outputFile.close()
    if not os.path.exists(filename):
       raise IOError("Dump file [%s] does not seem to exist after backup completed." % filename)
+   changeOwnership(filename, backupUser, backupGroup)
 
 def _getOutputFile(targetDir, database, compress=True):
    """
@@ -576,40 +591,48 @@ def backupDatabase(user, password, backupFile, database=None):
 
    This function backs up either a named local MySQL database or all local
    MySQL databases, using the passed in user and password for connectivity.
+   This is I{always} a full backup.  There is no facility for incremental
+   backups.
 
    The backup data will be written into the passed-in back file.  Normally,
-   this would be an object as returned from C{open}, but you might want to use
-   something a C{GzipFile} to write compressed output.
+   this would be an object as returned from C{open()}, but it is possible to
+   use something like a C{GzipFile} to write compressed output.  The caller is
+   responsible for closing the passed-in backup file.
 
    @note: Typically, you would use the C{root} user to back up all databases.
 
    @param user: User to use for connecting to the database.
+   @type user: String representing MySQL username.
+
    @param password: Password associated with user.
-   @param backupFile: Python file object to use for writing backup.
+   @type password: String representing MySQL password.
+
+   @param backupFile: File use for writing backup.
+   @type backupFile: Python file object as from C{open()} or C{file()}.
+   
    @param database: Name of the database to be backed up.
+   @type database: String representing database name, or C{None} for all databases.
 
    @raise ValueError: If some value is missing or invalid.
    @raise IOError: If there is a problem executing the MySQL dump.
    """
    args = _buildDumpArgs(user, password, database)
-   try:
-      result = executeCommand(MYSQLDUMP_COMMAND, args, returnOutput=False, ignoreStderr=True, outputFile=backupFile)[0]
-      if result != 0:
-         if database is None:
-            raise IOError("Error [%d] executing MySQL database dump for all databases.")
-         else:
-            raise IOError("Error [%d] executing MySQL database dump for database [%s]." % database)
-   finally:
-      backupFile.close()
+   result = executeCommand(MYSQLDUMP_COMMAND, args, returnOutput=False, ignoreStderr=True, outputFile=backupFile)[0]
+   if result != 0:
+      if database is None:
+         raise IOError("Error [%d] executing MySQL database dump for all databases.")
+      else:
+         raise IOError("Error [%d] executing MySQL database dump for database [%s]." % database)
 
 def _buildDumpArgs(user, password, database):
    """
-   Builds list of arguments to be passed to C{mysqldump} command.
+   Builds list of arguments to be passed to the C{mysqldump} command.
 
    @param user: User to use for connecting to the database.
    @param password: Password associated with user.
    @param database: Name of database, or C{None} for all databases.
 
+   @return: List of arguments to pass to C{mysqldump}.
    @raise ValueError: If some value is missing or invalid.
    """
    if user is None or password is None:
