@@ -926,61 +926,107 @@ class TestPurgeDir(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      pass
+      purgeDir = PurgeDir()
+      self.failUnlessEqual(None, purgeDir.absolutePath)
+      self.failUnlessEqual(None, purgeDir.retainDays)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      pass
+      purgeDir = PurgeDir("/whatever", 0)
+      self.failUnlessEqual("/whatever", purgeDir.absolutePath)
+      self.failUnlessEqual(0, purgeDir.retainDays)
 
    def testConstructor_003(self):
       """
       Test assignment of absolutePath attribute, None value.
       """
-      pass
+      purgeDir = PurgeDir(absolutePath="/whatever")
+      self.failUnlessEqual("/whatever", purgeDir.absolutePath)
+      purgeDir.absolutePath = None
+      self.failUnlessEqual(None, purgeDir.absolutePath)
 
    def testConstructor_004(self):
       """
       Test assignment of absolutePath attribute, valid value.
       """
-      pass
+      purgeDir = PurgeDir()
+      self.failUnlessEqual(None, purgeDir.absolutePath)
+      purgeDir.absolutePath = "/etc/whatever"
+      self.failUnlessEqual("/etc/whatever", purgeDir.absolutePath)
 
    def testConstructor_005(self):
       """
       Test assignment of absolutePath attribute, invalid value (empty).
       """
-      pass
+      purgeDir = PurgeDir()
+      self.failUnlessEqual(None, purgeDir.absolutePath)
+      self.failUnlessAssignRaises(ValueError, purgeDir, "absolutePath", "")
+      self.failUnlessEqual(None, purgeDir.absolutePath)
 
    def testConstructor_006(self):
       """
       Test assignment of absolutePath attribute, invalid value (non-absolute).
       """
-      pass
+      purgeDir = PurgeDir()
+      self.failUnlessEqual(None, purgeDir.absolutePath)
+      self.failUnlessAssignRaises(ValueError, purgeDir, "absolutePath", "bogus")
+      self.failUnlessEqual(None, purgeDir.absolutePath)
 
    def testConstructor_007(self):
       """
       Test assignment of retainDays attribute, None value.
       """
-      pass
+      purgeDir = PurgeDir(retainDays=12)
+      self.failUnlessEqual(12, purgeDir.retainDays)
+      purgeDir.retainDays = None
+      self.failUnlessEqual(None, purgeDir.retainDays)
 
    def testConstructor_008(self):
       """
-      Test assignment of retainDays attribute, valid value.
+      Test assignment of retainDays attribute, valid value (integer).
       """
-      pass
+      purgeDir = PurgeDir()
+      self.failUnlessEqual(None, purgeDir.retainDays)
+      purgeDir.retainDays = 12
+      self.failUnlessEqual(12, purgeDir.retainDays)
 
    def testConstructor_009(self):
       """
-      Test assignment of retainDays attribute, invalid value (empty).
+      Test assignment of retainDays attribute, valid value (string representing integer).
       """
-      pass
+      purgeDir = PurgeDir()
+      self.failUnlessEqual(None, purgeDir.retainDays)
+      purgeDir.retainDays = "12"
+      self.failUnlessEqual(12, purgeDir.retainDays)
 
    def testConstructor_010(self):
       """
-      Test assignment of retainDays attribute, invalid value (non-integer).
+      Test assignment of retainDays attribute, invalid value (empty string).
       """
-      pass
+      purgeDir = PurgeDir()
+      self.failUnlessEqual(None, purgeDir.retainDays)
+      self.failUnlessAssignRaises(ValueError, purgeDir, "retainDays", "")
+      self.failUnlessEqual(None, purgeDir.retainDays)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of retainDays attribute, invalid value (non-integer, like a list).
+      """
+      purgeDir = PurgeDir()
+      self.failUnlessEqual(None, purgeDir.retainDays)
+      self.failUnlessAssignRaises(ValueError, purgeDir, "retainDays", [])
+      self.failUnlessEqual(None, purgeDir.retainDays)
+
+   def testConstructor_012(self):
+      """
+      Test assignment of retainDays attribute, invalid value (string representing non-integer).
+      """
+      purgeDir = PurgeDir()
+      self.failUnlessEqual(None, purgeDir.retainDays)
+      self.failUnlessAssignRaises(ValueError, purgeDir, "retainDays", "blech")
+      self.failUnlessEqual(None, purgeDir.retainDays)
 
 
    ############################
@@ -991,37 +1037,82 @@ class TestPurgeDir(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      pass
+      purgeDir1 = PurgeDir()
+      purgeDir2 = PurgeDir()
+      self.failUnlessEqual(purgeDir1, purgeDir2)
+      self.failUnless(purgeDir1 == purgeDir2)
+      self.failUnless(not purgeDir1 < purgeDir2)
+      self.failUnless(purgeDir1 <= purgeDir2)
+      self.failUnless(not purgeDir1 > purgeDir2)
+      self.failUnless(purgeDir1 >= purgeDir2)
+      self.failUnless(not purgeDir1 != purgeDir2)
 
    def testComparison_002(self):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      pass
+      purgeDir1 = PurgeDir("/etc/whatever", 12)
+      purgeDir2 = PurgeDir("/etc/whatever", 12)
+      self.failUnless(purgeDir1 == purgeDir2)
+      self.failUnless(not purgeDir1 < purgeDir2)
+      self.failUnless(purgeDir1 <= purgeDir2)
+      self.failUnless(not purgeDir1 > purgeDir2)
+      self.failUnless(purgeDir1 >= purgeDir2)
+      self.failUnless(not purgeDir1 != purgeDir2)
 
    def testComparison_003(self):
       """
       Test comparison of two differing objects, absolutePath differs (one None).
       """
-      pass
+      purgeDir1 = PurgeDir()
+      purgeDir2 = PurgeDir(absolutePath="/whatever")
+      self.failIfEqual(purgeDir1, purgeDir2)
+      self.failUnless(not purgeDir1 == purgeDir2)
+      self.failUnless(purgeDir1 < purgeDir2)
+      self.failUnless(purgeDir1 <= purgeDir2)
+      self.failUnless(not purgeDir1 > purgeDir2)
+      self.failUnless(not purgeDir1 >= purgeDir2)
+      self.failUnless(purgeDir1 != purgeDir2)
 
    def testComparison_004(self):
       """
       Test comparison of two differing objects, absolutePath differs.
       """
-      pass
+      purgeDir1 = PurgeDir("/etc/blech", 12)
+      purgeDir2 = PurgeDir("/etc/whatever", 12)
+      self.failUnless(not purgeDir1 == purgeDir2)
+      self.failUnless(purgeDir1 < purgeDir2)
+      self.failUnless(purgeDir1 <= purgeDir2)
+      self.failUnless(not purgeDir1 > purgeDir2)
+      self.failUnless(not purgeDir1 >= purgeDir2)
+      self.failUnless(purgeDir1 != purgeDir2)
 
    def testComparison_005(self):
       """
       Test comparison of two differing objects, retainDays differs (one None).
       """
-      pass
+      purgeDir1 = PurgeDir()
+      purgeDir2 = PurgeDir(retainDays=365)
+      self.failIfEqual(purgeDir1, purgeDir2)
+      self.failUnless(not purgeDir1 == purgeDir2)
+      self.failUnless(purgeDir1 < purgeDir2)
+      self.failUnless(purgeDir1 <= purgeDir2)
+      self.failUnless(not purgeDir1 > purgeDir2)
+      self.failUnless(not purgeDir1 >= purgeDir2)
+      self.failUnless(purgeDir1 != purgeDir2)
 
    def testComparison_006(self):
       """
       Test comparison of two differing objects, retainDays differs.
       """
-      pass
+      purgeDir1 = PurgeDir("/etc/whatever", 365)
+      purgeDir2 = PurgeDir("/etc/whatever", 12)
+      self.failUnless(not purgeDir1 == purgeDir2)
+      self.failUnless(not purgeDir1 < purgeDir2)
+      self.failUnless(not purgeDir1 <= purgeDir2)
+      self.failUnless(purgeDir1 > purgeDir2)
+      self.failUnless(purgeDir1 >= purgeDir2)
+      self.failUnless(purgeDir1 != purgeDir2)
 
 
 ######################
@@ -1069,55 +1160,80 @@ class TestLocalPeer(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      pass
+      localPeer = LocalPeer()
+      self.failUnlessEqual(None, localPeer.name)
+      self.failUnlessEqual(None, localPeer.collectDir)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      pass
+      localPeer = LocalPeer("myname", "/whatever")
+      self.failUnlessEqual("myname", localPeer.name)
+      self.failUnlessEqual("/whatever", localPeer.collectDir)
 
    def testConstructor_003(self):
       """
       Test assignment of name attribute, None value.
       """
-      pass
+      localPeer = LocalPeer(name="myname")
+      self.failUnlessEqual("myname", localPeer.name)
+      localPeer.name = None
+      self.failUnlessEqual(None, localPeer.name)
 
    def testConstructor_004(self):
       """
       Test assignment of name attribute, valid value.
       """
-      pass
+      localPeer = LocalPeer()
+      self.failUnlessEqual(None, localPeer.name)
+      localPeer.name = "myname"
+      self.failUnlessEqual("myname", localPeer.name)
 
    def testConstructor_005(self):
       """
       Test assignment of name attribute, invalid value (empty).
       """
-      pass
+      localPeer = LocalPeer()
+      self.failUnlessEqual(None, localPeer.name)
+      self.failUnlessAssignRaises(ValueError, localPeer, "name", "")
+      self.failUnlessEqual(None, localPeer.name)
 
    def testConstructor_006(self):
       """
       Test assignment of collectDir attribute, None value.
       """
-      pass
+      localPeer = LocalPeer(collectDir="/whatever")
+      self.failUnlessEqual("/whatever", localPeer.collectDir)
+      localPeer.collectDir = None
+      self.failUnlessEqual(None, localPeer.collectDir)
 
    def testConstructor_007(self):
       """
       Test assignment of collectDir attribute, valid value.
       """
-      pass
+      localPeer = LocalPeer()
+      self.failUnlessEqual(None, localPeer.collectDir)
+      localPeer.collectDir = "/etc/stuff"
+      self.failUnlessEqual("/etc/stuff", localPeer.collectDir)
 
    def testConstructor_008(self):
       """
       Test assignment of collectDir attribute, invalid value (empty).
       """
-      pass
+      localPeer = LocalPeer()
+      self.failUnlessEqual(None, localPeer.collectDir)
+      self.failUnlessAssignRaises(ValueError, localPeer, "collectDir", "")
+      self.failUnlessEqual(None, localPeer.collectDir)
 
    def testConstructor_009(self):
       """
       Test assignment of collectDir attribute, invalid value (non-absolute).
       """
-      pass
+      localPeer = LocalPeer()
+      self.failUnlessEqual(None, localPeer.collectDir)
+      self.failUnlessAssignRaises(ValueError, localPeer, "collectDir", "bogus")
+      self.failUnlessEqual(None, localPeer.collectDir)
 
 
    ############################
@@ -1128,38 +1244,82 @@ class TestLocalPeer(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      pass
+      localPeer1 = LocalPeer()
+      localPeer2 = LocalPeer()
+      self.failUnlessEqual(localPeer1, localPeer2)
+      self.failUnless(localPeer1 == localPeer2)
+      self.failUnless(not localPeer1 < localPeer2)
+      self.failUnless(localPeer1 <= localPeer2)
+      self.failUnless(not localPeer1 > localPeer2)
+      self.failUnless(localPeer1 >= localPeer2)
+      self.failUnless(not localPeer1 != localPeer2)
 
    def testComparison_002(self):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      pass
+      localPeer1 = LocalPeer("myname", "/etc/stuff")
+      localPeer2 = LocalPeer("myname", "/etc/stuff")
+      self.failUnless(localPeer1 == localPeer2)
+      self.failUnless(not localPeer1 < localPeer2)
+      self.failUnless(localPeer1 <= localPeer2)
+      self.failUnless(not localPeer1 > localPeer2)
+      self.failUnless(localPeer1 >= localPeer2)
+      self.failUnless(not localPeer1 != localPeer2)
 
    def testComparison_003(self):
       """
       Test comparison of two differing objects, name differs (one None).
       """
-      pass
+      localPeer1 = LocalPeer()
+      localPeer2 = LocalPeer(name="blech")
+      self.failIfEqual(localPeer1, localPeer2)
+      self.failUnless(not localPeer1 == localPeer2)
+      self.failUnless(localPeer1 < localPeer2)
+      self.failUnless(localPeer1 <= localPeer2)
+      self.failUnless(not localPeer1 > localPeer2)
+      self.failUnless(not localPeer1 >= localPeer2)
+      self.failUnless(localPeer1 != localPeer2)
 
    def testComparison_004(self):
       """
       Test comparison of two differing objects, name differs.
       """
-      pass
+      localPeer1 = LocalPeer("name", "/etc/stuff")
+      localPeer2 = LocalPeer("name", "/etc/whatever")
+      self.failUnless(not localPeer1 == localPeer2)
+      self.failUnless(localPeer1 < localPeer2)
+      self.failUnless(localPeer1 <= localPeer2)
+      self.failUnless(not localPeer1 > localPeer2)
+      self.failUnless(not localPeer1 >= localPeer2)
+      self.failUnless(localPeer1 != localPeer2)
 
    def testComparison_005(self):
       """
       Test comparison of two differing objects, collectDir differs (one None).
       """
-      pass
+      localPeer1 = LocalPeer()
+      localPeer2 = LocalPeer(collectDir="/etc/whatever")
+      self.failIfEqual(localPeer1, localPeer2)
+      self.failUnless(not localPeer1 == localPeer2)
+      self.failUnless(localPeer1 < localPeer2)
+      self.failUnless(localPeer1 <= localPeer2)
+      self.failUnless(not localPeer1 > localPeer2)
+      self.failUnless(not localPeer1 >= localPeer2)
+      self.failUnless(localPeer1 != localPeer2)
 
    def testComparison_006(self):
       """
       Test comparison of two differing objects, collectDir differs.
       """
-      pass
-
+      localPeer1 = LocalPeer("name2", "/etc/stuff")
+      localPeer2 = LocalPeer("name1", "/etc/stuff")
+      self.failUnless(not localPeer1 == localPeer2)
+      self.failUnless(not localPeer1 < localPeer2)
+      self.failUnless(not localPeer1 <= localPeer2)
+      self.failUnless(localPeer1 > localPeer2)
+      self.failUnless(localPeer1 >= localPeer2)
+      self.failUnless(localPeer1 != localPeer2)
 
 
 #######################
@@ -1207,91 +1367,138 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.name)
+      self.failUnlessEqual(None, remotePeer.collectDir)
+      self.failUnlessEqual(None, remotePeer.remoteUser)
+      self.failUnlessEqual(None, remotePeer.rcpCommand)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      pass
+      remotePeer = RemotePeer("myname", "/stuff", "backup", "scp -1 -B")
+      self.failUnlessEqual("myname", remotePeer.name)
+      self.failUnlessEqual("/stuff", remotePeer.collectDir)
+      self.failUnlessEqual("backup", remotePeer.remoteUser)
+      self.failUnlessEqual("scp -1 -B", remotePeer.rcpCommand)
 
    def testConstructor_003(self):
       """
       Test assignment of name attribute, None value.
       """
-      pass
+      remotePeer = RemotePeer(name="myname")
+      self.failUnlessEqual("myname", remotePeer.name)
+      remotePeer.name = None
+      self.failUnlessEqual(None, remotePeer.name)
 
    def testConstructor_004(self):
       """
       Test assignment of name attribute, valid value.
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.name)
+      remotePeer.name = "namename"
+      self.failUnlessEqual("namename", remotePeer.name)
 
    def testConstructor_005(self):
       """
       Test assignment of name attribute, invalid value (empty).
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.name)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "name", "")
+      self.failUnlessEqual(None, remotePeer.name)
 
    def testConstructor_006(self):
       """
       Test assignment of collectDir attribute, None value.
       """
-      pass
+      remotePeer = RemotePeer(collectDir="/etc/stuff")
+      self.failUnlessEqual("/etc/stuff", remotePeer.collectDir)
+      remotePeer.collectDir = None
+      self.failUnlessEqual(None, remotePeer.collectDir)
 
    def testConstructor_007(self):
       """
       Test assignment of collectDir attribute, valid value.
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.collectDir)
+      remotePeer.collectDir = "/tmp"
+      self.failUnlessEqual("/tmp", remotePeer.collectDir)
 
    def testConstructor_008(self):
       """
       Test assignment of collectDir attribute, invalid value (empty).
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.collectDir)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "collectDir", "")
+      self.failUnlessEqual(None, remotePeer.collectDir)
 
    def testConstructor_009(self):
       """
       Test assignment of collectDir attribute, invalid value (non-absolute).
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.collectDir)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "collectDir", "bogus/stuff/there")
+      self.failUnlessEqual(None, remotePeer.collectDir)
 
    def testConstructor_010(self):
       """
       Test assignment of remoteUser attribute, None value.
       """
-      pass
+      remotePeer = RemotePeer(remoteUser="spot")
+      self.failUnlessEqual("spot", remotePeer.remoteUser)
+      remotePeer.remoteUser = None
+      self.failUnlessEqual(None, remotePeer.remoteUser)
 
    def testConstructor_011(self):
       """
       Test assignment of remoteUser attribute, valid value.
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.remoteUser)
+      remotePeer.remoteUser = "spot"
+      self.failUnlessEqual("spot", remotePeer.remoteUser)
 
    def testConstructor_012(self):
       """
       Test assignment of remoteUser attribute, invalid value (empty).
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.remoteUser)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "remoteUser", "")
+      self.failUnlessEqual(None, remotePeer.remoteUser)
 
    def testConstructor_013(self):
       """
       Test assignment of rcpCommand attribute, None value.
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.rcpCommand)
+      remotePeer.rcpCommand = "scp"
+      self.failUnlessEqual("scp", remotePeer.rcpCommand)
 
    def testConstructor_014(self):
       """
       Test assignment of rcpCommand attribute, valid value.
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.rcpCommand)
+      remotePeer.rcpCommand = "scp"
+      self.failUnlessEqual("scp", remotePeer.rcpCommand)
 
    def testConstructor_015(self):
       """
       Test assignment of rcpCommand attribute, invalid value (empty).
       """
-      pass
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.rcpCommand)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "rcpCommand", "")
+      self.failUnlessEqual(None, remotePeer.rcpCommand)
 
 
    ############################
@@ -1302,61 +1509,136 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      pass
+      remotePeer1 = RemotePeer()
+      remotePeer2 = RemotePeer()
+      self.failUnlessEqual(remotePeer1, remotePeer2)
+      self.failUnless(remotePeer1 == remotePeer2)
+      self.failUnless(not remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(remotePeer1 >= remotePeer2)
+      self.failUnless(not remotePeer1 != remotePeer2)
 
    def testComparison_002(self):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      pass
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      self.failUnless(remotePeer1 == remotePeer2)
+      self.failUnless(not remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(remotePeer1 >= remotePeer2)
+      self.failUnless(not remotePeer1 != remotePeer2)
 
    def testComparison_003(self):
       """
       Test comparison of two differing objects, name differs (one None).
       """
-      pass
+      remotePeer1 = RemotePeer()
+      remotePeer2 = RemotePeer(name="name")
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
 
    def testComparison_004(self):
       """
       Test comparison of two differing objects, name differs.
       """
-      pass
+      remotePeer1 = RemotePeer("name1", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      remotePeer2 = RemotePeer("name2", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
 
    def testComparison_005(self):
       """
       Test comparison of two differing objects, collectDir differs (one None).
       """
-      pass
+      remotePeer1 = RemotePeer()
+      remotePeer2 = RemotePeer(collectDir="/tmp")
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
 
    def testComparison_006(self):
       """
       Test comparison of two differing objects, collectDir differs.
       """
-      pass
+      remotePeer1 = RemotePeer("name", "/etc", "backup", "scp -1 -B")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
 
    def testComparison_007(self):
       """
       Test comparison of two differing objects, remoteUser differs (one None).
       """
-      pass
+      remotePeer1 = RemotePeer()
+      remotePeer2 = RemotePeer(remoteUser="spot")
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
 
    def testComparison_008(self):
       """
       Test comparison of two differing objects, remoteUser differs.
       """
-      pass
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "spot", "scp -1 -B")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(not remotePeer1 < remotePeer2)
+      self.failUnless(not remotePeer1 <= remotePeer2)
+      self.failUnless(remotePeer1 > remotePeer2)
+      self.failUnless(remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
 
    def testComparison_009(self):
       """
       Test comparison of two differing objects, rcpCommand differs (one None).
       """
-      pass
+      remotePeer1 = RemotePeer()
+      remotePeer2 = RemotePeer(rcpCommand="scp")
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
 
    def testComparison_010(self):
       """
       Test comparison of two differing objects, rcpCommand differs.
       """
-      pass
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -2 -B")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(not remotePeer1 < remotePeer2)
+      self.failUnless(not remotePeer1 <= remotePeer2)
+      self.failUnless(remotePeer1 > remotePeer2)
+      self.failUnless(remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
 
 
 ############################
@@ -1404,85 +1686,129 @@ class TestReferenceConfig(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      pass
+      reference = ReferenceConfig()
+      self.failUnlessEqual(None, reference.author)
+      self.failUnlessEqual(None, reference.revision)
+      self.failUnlessEqual(None, reference.description)
+      self.failUnlessEqual(None, reference.generator)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      pass
+      reference = ReferenceConfig("one", "two", "three", "four")
+      self.failUnlessEqual("one", reference.author)
+      self.failUnlessEqual("two", reference.revision)
+      self.failUnlessEqual("three", reference.description)
+      self.failUnlessEqual("four", reference.generator)
 
    def testConstructor_003(self):
       """
       Test assignment of author attribute, None value.
       """
-      pass
+      reference = ReferenceConfig(author="one")
+      self.failUnlessEqual("one", reference.author)
+      reference.author = None
+      self.failUnlessEqual(None, reference.author)
 
    def testConstructor_004(self):
       """
       Test assignment of author attribute, valid value.
       """
-      pass
+      reference = ReferenceConfig()
+      self.failUnlessEqual(None, reference.author)
+      reference.author = "one"
+      self.failUnlessEqual("one", reference.author)
 
    def testConstructor_005(self):
       """
       Test assignment of author attribute, valid value (empty).
       """
-      pass
+      reference = ReferenceConfig()
+      self.failUnlessEqual(None, reference.author)
+      reference.author = ""
+      self.failUnlessEqual("", reference.author)
 
    def testConstructor_006(self):
       """
       Test assignment of revision attribute, None value.
       """
-      pass
+      reference = ReferenceConfig(revision="one")
+      self.failUnlessEqual("one", reference.revision)
+      reference.revision = None
+      self.failUnlessEqual(None, reference.revision)
 
    def testConstructor_007(self):
       """
       Test assignment of revision attribute, valid value.
       """
-      pass
+      reference = ReferenceConfig()
+      self.failUnlessEqual(None, reference.revision)
+      reference.revision = "one"
+      self.failUnlessEqual("one", reference.revision)
 
    def testConstructor_008(self):
       """
       Test assignment of revision attribute, valid value (empty).
       """
-      pass
+      reference = ReferenceConfig()
+      self.failUnlessEqual(None, reference.revision)
+      reference.revision = ""
+      self.failUnlessEqual("", reference.revision)
 
    def testConstructor_009(self):
       """
       Test assignment of description attribute, None value.
       """
-      pass
+      reference = ReferenceConfig(description="one")
+      self.failUnlessEqual("one", reference.description)
+      reference.description = None
+      self.failUnlessEqual(None, reference.description)
 
    def testConstructor_010(self):
       """
       Test assignment of description attribute, valid value.
       """
-      pass
+      reference = ReferenceConfig()
+      self.failUnlessEqual(None, reference.description)
+      reference.description = "one"
+      self.failUnlessEqual("one", reference.description)
 
    def testConstructor_011(self):
       """
       Test assignment of description attribute, valid value (empty).
       """
-      pass
+      reference = ReferenceConfig()
+      self.failUnlessEqual(None, reference.description)
+      reference.description = ""
+      self.failUnlessEqual("", reference.description)
 
    def testConstructor_012(self):
       """
       Test assignment of generator attribute, None value.
       """
-      pass
+      reference = ReferenceConfig(generator="one")
+      self.failUnlessEqual("one", reference.generator)
+      reference.generator = None
+      self.failUnlessEqual(None, reference.generator)
 
    def testConstructor_013(self):
       """
       Test assignment of generator attribute, valid value.
       """
-      pass
+      reference = ReferenceConfig()
+      self.failUnlessEqual(None, reference.generator)
+      reference.generator = "one"
+      self.failUnlessEqual("one", reference.generator)
 
    def testConstructor_014(self):
       """
       Test assignment of generator attribute, valid value (empty).
       """
-      pass
+      reference = ReferenceConfig()
+      self.failUnlessEqual(None, reference.generator)
+      reference.generator = ""
+      self.failUnlessEqual("", reference.generator)
 
 
    ############################
@@ -1493,61 +1819,188 @@ class TestReferenceConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      pass
+      reference1 = ReferenceConfig()
+      reference2 = ReferenceConfig()
+      self.failUnlessEqual(reference1, reference2)
+      self.failUnless(reference1 == reference2)
+      self.failUnless(not reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(reference1 >= reference2)
+      self.failUnless(not reference1 != reference2)
 
    def testComparison_002(self):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      pass
+      reference1 = ReferenceConfig("one", "two", "three", "four")
+      reference2 = ReferenceConfig("one", "two", "three", "four")
+      self.failUnless(reference1 == reference2)
+      self.failUnless(not reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(reference1 >= reference2)
+      self.failUnless(not reference1 != reference2)
 
    def testComparison_003(self):
       """
       Test comparison of two differing objects, author differs (one None).
       """
-      pass
+      reference1 = ReferenceConfig()
+      reference2 = ReferenceConfig(author="one")
+      self.failIfEqual(reference1, reference2)
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(not reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
 
    def testComparison_004(self):
       """
-      Test comparison of two differing objects, author differs.
+      Test comparison of two differing objects, author differs (one empty).
       """
-      pass
+      reference1 = ReferenceConfig("", "two", "three", "four")
+      reference2 = ReferenceConfig("one", "two", "three", "four")
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(not reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
 
    def testComparison_005(self):
       """
-      Test comparison of two differing objects, revision differs (one None).
+      Test comparison of two differing objects, author differs.
       """
-      pass
+      reference1 = ReferenceConfig("one", "two", "three", "four")
+      reference2 = ReferenceConfig("author", "two", "three", "four")
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(not reference1 < reference2)
+      self.failUnless(not reference1 <= reference2)
+      self.failUnless(reference1 > reference2)
+      self.failUnless(reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
 
    def testComparison_006(self):
       """
-      Test comparison of two differing objects, revision differs.
+      Test comparison of two differing objects, revision differs (one None).
       """
-      pass
+      reference1 = ReferenceConfig()
+      reference2 = ReferenceConfig(revision="one")
+      self.failIfEqual(reference1, reference2)
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(not reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
 
    def testComparison_007(self):
       """
-      Test comparison of two differing objects, description differs (one None).
+      Test comparison of two differing objects, revision differs (one empty).
       """
-      pass
+      reference1 = ReferenceConfig("one", "two", "three", "four")
+      reference2 = ReferenceConfig("one", "", "three", "four")
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(not reference1 < reference2)
+      self.failUnless(not reference1 <= reference2)
+      self.failUnless(reference1 > reference2)
+      self.failUnless(reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
 
    def testComparison_008(self):
       """
-      Test comparison of two differing objects, description differs.
+      Test comparison of two differing objects, revision differs.
       """
-      pass
+      reference1 = ReferenceConfig("one", "two", "three", "four")
+      reference2 = ReferenceConfig("one", "revision", "three", "four")
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(not reference1 < reference2)
+      self.failUnless(not reference1 <= reference2)
+      self.failUnless(reference1 > reference2)
+      self.failUnless(reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
 
    def testComparison_009(self):
       """
-      Test comparison of two differing objects, generator differs (one None).
+      Test comparison of two differing objects, description differs (one None).
       """
-      pass
+      reference1 = ReferenceConfig()
+      reference2 = ReferenceConfig(description="one")
+      self.failIfEqual(reference1, reference2)
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(not reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
 
    def testComparison_010(self):
       """
+      Test comparison of two differing objects, description differs (one empty).
+      """
+      reference1 = ReferenceConfig("one", "two", "three", "four")
+      reference2 = ReferenceConfig("one", "two", "", "four")
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(not reference1 < reference2)
+      self.failUnless(not reference1 <= reference2)
+      self.failUnless(reference1 > reference2)
+      self.failUnless(reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
+
+   def testComparison_011(self):
+      """
+      Test comparison of two differing objects, description differs.
+      """
+      reference1 = ReferenceConfig("one", "two", "description", "four")
+      reference2 = ReferenceConfig("one", "two", "three", "four")
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(not reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
+
+   def testComparison_012(self):
+      """
+      Test comparison of two differing objects, generator differs (one None).
+      """
+      reference1 = ReferenceConfig()
+      reference2 = ReferenceConfig(generator="one")
+      self.failIfEqual(reference1, reference2)
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(not reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
+
+   def testComparison_013(self):
+      """
+      Test comparison of two differing objects, generator differs (one empty).
+      """
+      reference1 = ReferenceConfig("one", "two", "three", "")
+      reference2 = ReferenceConfig("one", "two", "three", "four")
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(not reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
+
+   def testComparison_014(self):
+      """
       Test comparison of two differing objects, generator differs.
       """
-      pass
+      reference1 = ReferenceConfig("one", "two", "three", "four")
+      reference2 = ReferenceConfig("one", "two", "three", "generator")
+      self.failUnless(not reference1 == reference2)
+      self.failUnless(reference1 < reference2)
+      self.failUnless(reference1 <= reference2)
+      self.failUnless(not reference1 > reference2)
+      self.failUnless(not reference1 >= reference2)
+      self.failUnless(reference1 != reference2)
 
 
 ##########################
@@ -1595,115 +2048,188 @@ class TestOptionsConfig(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.startingDay)
+      self.failUnlessEqual(None, options.workingDir)
+      self.failUnlessEqual(None, options.backupUser)
+      self.failUnlessEqual(None, options.backupGroup)
+      self.failUnlessEqual(None, options.rcpCommand)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      pass
+      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      self.failUnlessEqual("monday", options.startingDay)
+      self.failUnlessEqual("/tmp", options.workingDir)
+      self.failUnlessEqual("user", options.backupUser)
+      self.failUnlessEqual("group", options.backupGroup)
+      self.failUnlessEqual("scp -1 -B", options.rcpCommand)
 
    def testConstructor_003(self):
       """
       Test assignment of startingDay attribute, None value.
       """
-      pass
+      options = OptionsConfig(startingDay="monday")
+      self.failUnlessEqual("monday", options.startingDay)
+      options.startingDay = None
+      self.failUnlessEqual(None, options.startingDay)
 
    def testConstructor_004(self):
       """
       Test assignment of startingDay attribute, valid value.
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.startingDay)
+      options.startingDay = "monday"
+      self.failUnlessEqual("monday", options.startingDay)
+      options.startingDay = "tuesday"
+      self.failUnlessEqual("tuesday", options.startingDay)
+      options.startingDay = "wednesday"
+      self.failUnlessEqual("wednesday", options.startingDay)
+      options.startingDay = "thursday"
+      self.failUnlessEqual("thursday", options.startingDay)
+      options.startingDay = "friday"
+      self.failUnlessEqual("friday", options.startingDay)
+      options.startingDay = "saturday"
+      self.failUnlessEqual("saturday", options.startingDay)
+      options.startingDay = "sunday"
+      self.failUnlessEqual("sunday", options.startingDay)
 
    def testConstructor_005(self):
       """
       Test assignment of startingDay attribute, invalid value (empty).
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.startingDay)
+      self.failUnlessAssignRaises(ValueError, options, "startingDay", "")
+      self.failUnlessEqual(None, options.startingDay)
 
    def testConstructor_006(self):
       """
       Test assignment of startingDay attribute, invalid value (not in list).
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.startingDay)
+      self.failUnlessAssignRaises(ValueError, options, "startingDay", "dienstag")   # ha, ha, pretend I'm German
+      self.failUnlessEqual(None, options.startingDay)
 
    def testConstructor_007(self):
       """
       Test assignment of workingDir attribute, None value.
       """
-      pass
+      options = OptionsConfig(workingDir="/tmp")
+      self.failUnlessEqual("/tmp", options.workingDir)
+      options.workingDir = None
+      self.failUnlessEqual(None, options.workingDir)
 
    def testConstructor_008(self):
       """
       Test assignment of workingDir attribute, valid value.
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.workingDir)
+      options.workingDir = "/tmp"
+      self.failUnlessEqual("/tmp", options.workingDir)
 
    def testConstructor_009(self):
       """
       Test assignment of workingDir attribute, invalid value (empty).
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.workingDir)
+      self.failUnlessAssignRaises(ValueError, options, "workingDir", "")
+      self.failUnlessEqual(None, options.workingDir)
 
    def testConstructor_010(self):
       """
       Test assignment of workingDir attribute, invalid value (non-absolute).
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.workingDir)
+      self.failUnlessAssignRaises(ValueError, options, "workingDir", "stuff")
+      self.failUnlessEqual(None, options.workingDir)
 
    def testConstructor_011(self):
       """
       Test assignment of backupUser attribute, None value.
       """
-      pass
+      options = OptionsConfig(backupUser="user")
+      self.failUnlessEqual("user", options.backupUser)
+      options.backupUser = None
+      self.failUnlessEqual(None, options.backupUser)
 
    def testConstructor_012(self):
       """
       Test assignment of backupUser attribute, valid value.
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.backupUser)
+      options.backupUser = "user"
+      self.failUnlessEqual("user", options.backupUser)
 
    def testConstructor_013(self):
       """
       Test assignment of backupUser attribute, invalid value (empty).
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.backupUser)
+      self.failUnlessAssignRaises(ValueError, options, "backupUser", "")
+      self.failUnlessEqual(None, options.backupUser)
 
    def testConstructor_014(self):
       """
       Test assignment of backupGroup attribute, None value.
       """
-      pass
+      options = OptionsConfig(backupGroup="group")
+      self.failUnlessEqual("group", options.backupGroup)
+      options.backupGroup = None
+      self.failUnlessEqual(None, options.backupGroup)
 
    def testConstructor_015(self):
       """
       Test assignment of backupGroup attribute, valid value.
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.backupGroup)
+      options.backupGroup = "group"
+      self.failUnlessEqual("group", options.backupGroup)
 
    def testConstructor_016(self):
       """
       Test assignment of backupGroup attribute, invalid value (empty).
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.backupGroup)
+      self.failUnlessAssignRaises(ValueError, options, "backupGroup", "")
+      self.failUnlessEqual(None, options.backupGroup)
 
    def testConstructor_017(self):
       """
       Test assignment of rcpCommand attribute, None value.
       """
-      pass
+      options = OptionsConfig(rcpCommand="command")
+      self.failUnlessEqual("command", options.rcpCommand)
+      options.rcpCommand = None
+      self.failUnlessEqual(None, options.rcpCommand)
 
    def testConstructor_018(self):
       """
       Test assignment of rcpCommand attribute, valid value.
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.rcpCommand)
+      options.rcpCommand = "command"
+      self.failUnlessEqual("command", options.rcpCommand)
 
    def testConstructor_019(self):
       """
       Test assignment of rcpCommand attribute, invalid value (empty).
       """
-      pass
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.rcpCommand)
+      self.failUnlessAssignRaises(ValueError, options, "rcpCommand", "")
+      self.failUnlessEqual(None, options.rcpCommand)
 
 
    ############################
@@ -1714,74 +2240,164 @@ class TestOptionsConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      pass
+      options1 = OptionsConfig()
+      options2 = OptionsConfig()
+      self.failUnlessEqual(options1, options2)
+      self.failUnless(options1 == options2)
+      self.failUnless(not options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(options1 >= options2)
+      self.failUnless(not options1 != options2)
 
    def testComparison_002(self):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      pass
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      self.failUnlessEqual(options1, options2)
+      self.failUnless(options1 == options2)
+      self.failUnless(not options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(options1 >= options2)
+      self.failUnless(not options1 != options2)
 
    def testComparison_003(self):
       """
       Test comparison of two differing objects, startingDay differs (one None).
       """
-      pass
+      options1 = OptionsConfig()
+      options2 = OptionsConfig(startingDay="monday")
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
 
    def testComparison_004(self):
       """
       Test comparison of two differing objects, startingDay differs.
       """
-      pass
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      options2 = OptionsConfig("tuesday", "/tmp", "user", "group", "scp -1 -B")
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
 
    def testComparison_005(self):
       """
       Test comparison of two differing objects, workingDir differs (one None).
       """
-      pass
+      options1 = OptionsConfig()
+      options2 = OptionsConfig(workingDir="/tmp")
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
 
    def testComparison_006(self):
       """
       Test comparison of two differing objects, workingDir differs.
       """
-      pass
+      options1 = OptionsConfig("monday", "/tmp/whatever", "user", "group", "scp -1 -B")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      self.failUnless(not options1 == options2)
+      self.failUnless(not options1 < options2)
+      self.failUnless(not options1 <= options2)
+      self.failUnless(options1 > options2)
+      self.failUnless(options1 >= options2)
+      self.failUnless(options1 != options2)
 
    def testComparison_007(self):
       """
       Test comparison of two differing objects, backupUser differs (one None).
       """
-      pass
+      options1 = OptionsConfig()
+      options2 = OptionsConfig(backupUser="user")
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
 
    def testComparison_008(self):
       """
       Test comparison of two differing objects, backupUser differs.
       """
-      pass
+      options1 = OptionsConfig("monday", "/tmp", "user2", "group", "scp -1 -B")
+      options2 = OptionsConfig("monday", "/tmp", "user1", "group", "scp -1 -B")
+      self.failUnless(not options1 == options2)
+      self.failUnless(not options1 < options2)
+      self.failUnless(not options1 <= options2)
+      self.failUnless(options1 > options2)
+      self.failUnless(options1 >= options2)
+      self.failUnless(options1 != options2)
 
    def testComparison_009(self):
       """
       Test comparison of two differing objects, backupGroup differs (one None).
       """
-      pass
+      options1 = OptionsConfig()
+      options2 = OptionsConfig(backupGroup="group")
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
 
    def testComparison_010(self):
       """
       Test comparison of two differing objects, backupGroup differs.
       """
-      pass
+      options1 = OptionsConfig("monday", "/tmp", "user", "group1", "scp -1 -B")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group2", "scp -1 -B")
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
 
    def testComparison_011(self):
       """
       Test comparison of two differing objects, rcpCommand differs (one None).
       """
-      pass
+      options1 = OptionsConfig()
+      options2 = OptionsConfig(rcpCommand="command")
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
 
    def testComparison_012(self):
       """
       Test comparison of two differing objects, rcpCommand differs.
       """
-      pass
-
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -2 -B")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      self.failUnless(not options1 == options2)
+      self.failUnless(not options1 < options2)
+      self.failUnless(not options1 <= options2)
+      self.failUnless(options1 > options2)
+      self.failUnless(options1 >= options2)
+      self.failUnless(options1 != options2)
 
 
 ##########################
@@ -1829,233 +2445,353 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.targetDir)
+      self.failUnlessEqual(None, collect.collectMode)
+      self.failUnlessEqual(None, collect.archiveMode)
+      self.failUnlessEqual(None, collect.ignoreFile)
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
+      self.failUnlessEqual(None, collect.excludePatterns)
+      self.failUnlessEqual(None, collect.collectDirs)
 
    def testConstructor_002(self):
       """
-      Test constructor with all values filled in, with valid values.
+      Test constructor with all values filled in, with valid values (lists empty).
       """
-      pass
+      collect = CollectConfig("/target", "incr", "tar", "ignore", [], [], [])
+      self.failUnlessEqual("/target", collect.targetDir)
+      self.failUnlessEqual("incr", collect.collectMode)
+      self.failUnlessEqual("tar", collect.archiveMode)
+      self.failUnlessEqual("ignore", collect.ignoreFile)
+      self.failUnlessEqual([], collect.absoluteExcludePaths)
+      self.failUnlessEqual([], collect.excludePatterns)
+      self.failUnlessEqual([], collect.collectDirs)
 
    def testConstructor_003(self):
       """
-      Test assignment of targetDir attribute, None value.
+      Test constructor with all values filled in, with valid values (lists not empty).
       """
-      pass
+      collect = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectDir(),])
+      self.failUnlessEqual("/target", collect.targetDir)
+      self.failUnlessEqual("incr", collect.collectMode)
+      self.failUnlessEqual("tar", collect.archiveMode)
+      self.failUnlessEqual("ignore", collect.ignoreFile)
+      self.failUnlessEqual(["/path",], collect.absoluteExcludePaths)
+      self.failUnlessEqual(["pattern",], collect.excludePatterns)
+      self.failUnlessEqual([CollectDir(),], collect.collectDirs)
 
    def testConstructor_004(self):
       """
-      Test assignment of targetDir attribute, valid value.
+      Test assignment of targetDir attribute, None value.
       """
-      pass
+      collect = CollectConfig(targetDir="/whatever")
+      self.failUnlessEqual("/whatever", collect.targetDir)
+      collect.targetDir = None
+      self.failUnlessEqual(None, collect.targetDir)
 
    def testConstructor_005(self):
       """
-      Test assignment of targetDir attribute, invalid value (empty).
+      Test assignment of targetDir attribute, valid value.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.targetDir)
+      collect.targetDir = "/whatever"
+      self.failUnlessEqual("/whatever", collect.targetDir)
 
    def testConstructor_006(self):
       """
-      Test assignment of targetDir attribute, invalid value (non-absolute).
+      Test assignment of targetDir attribute, invalid value (empty).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.targetDir)
+      self.failUnlessAssignRaises(ValueError, collect, "targetDir", "")
+      self.failUnlessEqual(None, collect.targetDir)
 
    def testConstructor_007(self):
       """
-      Test assignment of collectMode attribute, None value.
+      Test assignment of targetDir attribute, invalid value (non-absolute).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.targetDir)
+      self.failUnlessAssignRaises(ValueError, collect, "targetDir", "bogus")
+      self.failUnlessEqual(None, collect.targetDir)
 
    def testConstructor_008(self):
       """
-      Test assignment of collectMode attribute, valid value.
+      Test assignment of collectMode attribute, None value.
       """
-      pass
+      collect = CollectConfig(collectMode="incr")
+      self.failUnlessEqual("incr", collect.collectMode)
+      collect.collectMode = None
+      self.failUnlessEqual(None, collect.collectMode)
 
    def testConstructor_009(self):
       """
-      Test assignment of collectMode attribute, invalid value (empty).
+      Test assignment of collectMode attribute, valid value.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.collectMode)
+      collect.collectMode = "daily"
+      self.failUnlessEqual("daily", collect.collectMode)
+      collect.collectMode = "weekly"
+      self.failUnlessEqual("weekly", collect.collectMode)
+      collect.collectMode = "incr"
+      self.failUnlessEqual("incr", collect.collectMode)
 
    def testConstructor_010(self):
       """
-      Test assignment of collectMode attribute, invalid value (not in list).
+      Test assignment of collectMode attribute, invalid value (empty).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.collectMode)
+      self.failUnlessAssignRaises(ValueError, collect, "collectMode", "")
+      self.failUnlessEqual(None, collect.collectMode)
 
    def testConstructor_011(self):
       """
-      Test assignment of archiveMode attribute, None value.
+      Test assignment of collectMode attribute, invalid value (not in list).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.collectMode)
+      self.failUnlessAssignRaises(ValueError, collect, "collectMode", "periodic")
+      self.failUnlessEqual(None, collect.collectMode)
 
    def testConstructor_012(self):
       """
-      Test assignment of archiveMode attribute, valid value.
+      Test assignment of archiveMode attribute, None value.
       """
-      pass
+      collect = CollectConfig(archiveMode="tar")
+      self.failUnlessEqual("tar", collect.archiveMode)
+      collect.archiveMode = None
+      self.failUnlessEqual(None, collect.archiveMode)
 
    def testConstructor_013(self):
       """
-      Test assignment of archiveMode attribute, invalid value (empty).
+      Test assignment of archiveMode attribute, valid value.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.archiveMode)
+      collect.archiveMode = "tar"
+      self.failUnlessEqual("tar", collect.archiveMode)
+      collect.archiveMode = "targz"
+      self.failUnlessEqual("targz", collect.archiveMode)
+      collect.archiveMode = "tarbz2"
+      self.failUnlessEqual("tarbz2", collect.archiveMode)
 
    def testConstructor_014(self):
       """
-      Test assignment of archiveMode attribute, invalid value (not in list).
+      Test assignment of archiveMode attribute, invalid value (empty).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.archiveMode)
+      self.failUnlessAssignRaises(ValueError, collect, "archiveMode", "")
+      self.failUnlessEqual(None, collect.archiveMode)
 
    def testConstructor_015(self):
       """
-      Test assignment of ignoreFile attribute, None value.
+      Test assignment of archiveMode attribute, invalid value (not in list).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.archiveMode)
+      self.failUnlessAssignRaises(ValueError, collect, "archiveMode", "tarz")
+      self.failUnlessEqual(None, collect.archiveMode)
 
    def testConstructor_016(self):
       """
-      Test assignment of ignoreFile attribute, valid value.
+      Test assignment of ignoreFile attribute, None value.
       """
-      pass
+      collect = CollectConfig(ignoreFile="ignore")
+      self.failUnlessEqual("ignore", collect.ignoreFile)
+      collect.ignoreFile = None
+      self.failUnlessEqual(None, collect.ignoreFile)
 
    def testConstructor_017(self):
       """
-      Test assignment of ignoreFile attribute, invalid value (empty).
+      Test assignment of ignoreFile attribute, valid value.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.ignoreFile)
+      collect.ignoreFile = "ignore"
+      self.failUnlessEqual("ignore", collect.ignoreFile)
 
    def testConstructor_018(self):
       """
-      Test assignment of absoluteExcludePaths attribute, None value.
+      Test assignment of ignoreFile attribute, invalid value (empty).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.ignoreFile)
+      self.failUnlessAssignRaises(ValueError, collect, "ignoreFile", "")
+      self.failUnlessEqual(None, collect.ignoreFile)
 
    def testConstructor_019(self):
       """
-      Test assignment of absoluteExcludePaths attribute, [] value.
+      Test assignment of absoluteExcludePaths attribute, None value.
       """
-      pass
+      collect = CollectConfig(absoluteExcludePaths=[])
+      self.failUnlessEqual([], collect.absoluteExcludePaths)
+      collect.absoluteExcludePaths = None
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
 
    def testConstructor_020(self):
       """
-      Test assignment of absoluteExcludePaths attribute, single valid entry.
+      Test assignment of absoluteExcludePaths attribute, [] value.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
+      collect.absoluteExcludePaths = []
+      self.failUnlessEqual([], collect.absoluteExcludePaths)
 
    def testConstructor_021(self):
+      """
+      Test assignment of absoluteExcludePaths attribute, single valid entry.
+      """
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
+      collect.absoluteExcludePaths = ["/whatever",]
+      self.failUnlessEqual(["/whatever", ], collect.absoluteExcludePaths)
+
+   def testConstructor_022(self):
       """
       Test assignment of absoluteExcludePaths attribute, multiple valid
       entries.
       """
-      pass
-
-   def testConstructor_022(self):
-      """
-      Test assignment of absoluteExcludePaths attribute, single invalid entry
-      (empty).
-      """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
+      collect.absoluteExcludePaths = ["/one", "/two", "/three", ]
+      self.failUnlessEqual(["/one", "/two", "/three", ], collect.absoluteExcludePaths)
 
    def testConstructor_023(self):
       """
       Test assignment of absoluteExcludePaths attribute, single invalid entry
-      (not absolute).
+      (empty).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
+      self.failUnlessAssignRaises(ValueError, collect, "absoluteExcludePaths", [ "", ])
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
 
    def testConstructor_024(self):
+      """
+      Test assignment of absoluteExcludePaths attribute, single invalid entry
+      (not absolute).
+      """
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
+      self.failUnlessAssignRaises(ValueError, collect, "absoluteExcludePaths", [ "one", ])
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
+
+   def testConstructor_025(self):
       """
       Test assignment of absoluteExcludePaths attribute, mixed valid and
       invalid entries.
       """
-      pass
-
-   def testConstructor_025(self):
-      """
-      Test assignment of excludePatterns attribute, None value.
-      """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
+      self.failUnlessAssignRaises(ValueError, collect, "absoluteExcludePaths", [ "one", "/two", ])
+      self.failUnlessEqual(None, collect.absoluteExcludePaths)
 
    def testConstructor_026(self):
       """
-      Test assignment of excludePatterns attribute, [] value.
+      Test assignment of excludePatterns attribute, None value.
       """
-      pass
+      collect = CollectConfig(excludePatterns=[])
+      self.failUnlessEqual([], collect.excludePatterns)
+      collect.excludePatterns = None
+      self.failUnlessEqual(None, collect.excludePatterns)
 
    def testConstructor_027(self):
       """
-      Test assignment of excludePatterns attribute, single valid entry.
+      Test assignment of excludePatterns attribute, [] value.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.excludePatterns)
+      collect.excludePatterns = []
+      self.failUnlessEqual([], collect.excludePatterns)
 
    def testConstructor_028(self):
       """
-      Test assignment of excludePatterns attribute, multiple valid entries.
+      Test assignment of excludePatterns attribute, single valid entry.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.excludePatterns)
+      collect.excludePatterns = ["pattern", ]
+      self.failUnlessEqual(["pattern", ], collect.excludePatterns)
 
    def testConstructor_029(self):
       """
-      Test assignment of excludePatterns attribute, single invalid entry
-      (empty).
+      Test assignment of excludePatterns attribute, multiple valid entries.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.excludePatterns)
+      collect.excludePatterns = ["pattern1", "pattern2", ]
+      self.failUnlessEqual(["pattern1", "pattern2", ], collect.excludePatterns)
 
    def testConstructor_030(self):
       """
-      Test assignment of excludePatterns attribute, mixed valid and invalid
-      entries.
+      Test assignment of collectDirs attribute, None value.
       """
-      pass
+      collect = CollectConfig(collectDirs=[])
+      self.failUnlessEqual([], collect.collectDirs)
+      collect.collectDirs = None
+      self.failUnlessEqual(None, collect.collectDirs)
 
    def testConstructor_031(self):
       """
-      Test assignment of collectDirs attribute, None value.
+      Test assignment of collectDirs attribute, [] value.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.excludePatterns)
+      collect.excludePatterns = []
+      self.failUnlessEqual([], collect.excludePatterns)
 
    def testConstructor_032(self):
       """
-      Test assignment of collectDirs attribute, [] value.
-      """
-      pass
-
-   def testConstructor_033(self):
-      """
       Test assignment of collectDirs attribute, single valid entry.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.excludePatterns)
+      collect.excludePatterns = [CollectDir(absolutePath="/one"), ]
+      self.failUnlessEqual([CollectDir(absolutePath="/one"), ], collect.excludePatterns)
 
-   def testConstructor_034(self):
+   def testConstructor_033(self):
       """
       Test assignment of collectDirs attribute, multiple valid
       entries.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.excludePatterns)
+      collect.excludePatterns = [CollectDir(absolutePath="/one"), CollectDir(absolutePath="/two"), ]
+      self.failUnlessEqual([CollectDir(absolutePath="/one"), CollectDir(absolutePath="/two"), ], collect.excludePatterns)
 
-   def testConstructor_035(self):
+   def testConstructor_034(self):
       """
       Test assignment of collectDirs attribute, single invalid entry
       (None).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.collectDirs)
+      self.failUnlessAssignRaises(ValueError, collect, "collectDirs", [ None, ])
+      self.failUnlessEqual(None, collect.collectDirs)
 
-   def testConstructor_036(self):
+   def testConstructor_035(self):
       """
       Test assignment of collectDirs attribute, single invalid entry
       (not a CollectDir).
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.collectDirs)
+      self.failUnlessAssignRaises(ValueError, collect, "collectDirs", [ "hello", ])
+      self.failUnlessEqual(None, collect.collectDirs)
 
-   def testConstructor_037(self):
+   def testConstructor_036(self):
       """
       Test assignment of collectDirs attribute, mixed valid and
       invalid entries.
       """
-      pass
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.collectDirs)
+      self.failUnlessAssignRaises(ValueError, collect, "collectDirs", [ "hello", CollectDir(), ])
+      self.failUnlessEqual(None, collect.collectDirs)
 
 
    ############################
@@ -2252,105 +2988,198 @@ class TestStageConfig(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.targetDir)
+      self.failUnlessEqual(None, stage.localPeers)
+      self.failUnlessEqual(None, stage.remotePeers)
 
    def testConstructor_002(self):
       """
-      Test constructor with all values filled in, with valid values.
+      Test constructor with all values filled in, with valid values (empty lists).
       """
-      pass
+      stage = StageConfig("/whatever", [], [])
+      self.failUnlessEqual("/whatever", stage.targetDir)
+      self.failUnlessEqual([], stage.localPeers)
+      self.failUnlessEqual([], stage.remotePeers)
 
    def testConstructor_003(self):
       """
-      Test assignment of targetDir attribute, None value.
+      Test constructor with all values filled in, with valid values (non-empty lists).
       """
-      pass
+      stage = StageConfig("/whatever", [LocalPeer(), ], [RemotePeer(), ])
+      self.failUnlessEqual("/whatever", stage.targetDir)
+      self.failUnlessEqual([LocalPeer(), ], stage.localPeers)
+      self.failUnlessEqual([RemotePeer(), ], stage.remotePeers)
 
    def testConstructor_004(self):
       """
-      Test assignment of targetDir attribute, valid value.
+      Test assignment of targetDir attribute, None value.
       """
-      pass
+      stage = StageConfig(targetDir="/whatever")
+      self.failUnlessEqual("/whatever", stage.targetDir)
+      stage.targetDir = None
+      self.failUnlessEqual(None, stage.targetDir)
 
    def testConstructor_005(self):
       """
-      Test assignment of targetDir attribute, invalid value (empty).
+      Test assignment of targetDir attribute, valid value.
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.targetDir)
+      stage.targetDir = "/whatever"
+      self.failUnlessEqual("/whatever", stage.targetDir)
 
    def testConstructor_006(self):
       """
-      Test assignment of targetDir attribute, invalid value (non-absolute).
+      Test assignment of targetDir attribute, invalid value (empty).
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.targetDir)
+      self.failUnlessAssignRaises(ValueError, stage, "targetDir", "")
+      self.failUnlessEqual(None, stage.targetDir)
 
    def testConstructor_007(self):
       """
-      Test assignment of localPeers attribute, single valid entry.
+      Test assignment of targetDir attribute, invalid value (non-absolute).
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.targetDir)
+      self.failUnlessAssignRaises(ValueError, stage, "targetDir", "stuff")
+      self.failUnlessEqual(None, stage.targetDir)
 
    def testConstructor_008(self):
+      """
+      Test assignment of localPeers attribute, None value.
+      """
+      stage = StageConfig(localPeers=[])
+      self.failUnlessEqual([], stage.localPeers)
+      stage.localPeers = None
+      self.failUnlessEqual(None, stage.localPeers)
+
+   def testConstructor_009(self):
+      """
+      Test assignment of localPeers attribute, empty list.
+      """
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.localPeers)
+      stage.localPeers = []
+      self.failUnlessEqual([], stage.localPeers)
+
+   def testConstructor_010(self):
+      """
+      Test assignment of localPeers attribute, single valid entry.
+      """
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.localPeers)
+      stage.localPeers = [LocalPeer(), ]
+      self.failUnlessEqual([LocalPeer(), ], stage.localPeers)
+
+   def testConstructor_011(self):
       """
       Test assignment of localPeers attribute, multiple valid
       entries.
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.localPeers)
+      stage.localPeers = [LocalPeer(name="one"), LocalPeer(name="two"), ]
+      self.failUnlessEqual([LocalPeer(name="one"), LocalPeer(name="two"), ], stage.localPeers)
 
-   def testConstructor_009(self):
+   def testConstructor_012(self):
       """
       Test assignment of localPeers attribute, single invalid entry
       (None).
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.localPeers)
+      self.failUnlessAssignRaises(ValueError, stage, "localPeers", [None, ])
+      self.failUnlessEqual(None, stage.localPeers)
 
-   def testConstructor_010(self):
+   def testConstructor_013(self):
       """
       Test assignment of localPeers attribute, single invalid entry
       (not a LocalPeer).
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.localPeers)
+      self.failUnlessAssignRaises(ValueError, stage, "localPeers", [RemotePeer(), ])
+      self.failUnlessEqual(None, stage.localPeers)
 
-   def testConstructor_011(self):
+   def testConstructor_014(self):
       """
       Test assignment of localPeers attribute, mixed valid and
       invalid entries.
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.localPeers)
+      self.failUnlessAssignRaises(ValueError, stage, "localPeers", [LocalPeer(), RemotePeer(), ])
+      self.failUnlessEqual(None, stage.localPeers)
 
-   def testConstructor_012(self):
+   def testConstructor_015(self):
+      """
+      Test assignment of remotePeers attribute, None value.
+      """
+      stage = StageConfig(remotePeers=[])
+      self.failUnlessEqual([], stage.remotePeers)
+      stage.remotePeers = None
+      self.failUnlessEqual(None, stage.remotePeers)
+
+   def testConstructor_016(self):
+      """
+      Test assignment of remotePeers attribute, empty list.
+      """
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.remotePeers)
+      stage.remotePeers = []
+      self.failUnlessEqual([], stage.remotePeers)
+
+   def testConstructor_017(self):
       """
       Test assignment of remotePeers attribute, single valid entry.
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.remotePeers)
+      stage.remotePeers = [RemotePeer(name="one"), ]
+      self.failUnlessEqual([RemotePeer(name="one"), ], stage.remotePeers)
 
-   def testConstructor_013(self):
+   def testConstructor_018(self):
       """
       Test assignment of remotePeers attribute, multiple valid
       entries.
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.remotePeers)
+      stage.remotePeers = [RemotePeer(name="one"), RemotePeer(name="two"), ]
+      self.failUnlessEqual([RemotePeer(name="one"), RemotePeer(name="two"), ], stage.remotePeers)
 
-   def testConstructor_014(self):
+   def testConstructor_019(self):
       """
       Test assignment of remotePeers attribute, single invalid entry
       (None).
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.remotePeers)
+      self.failUnlessAssignRaises(ValueError, stage, "remotePeers", [None, ])
+      self.failUnlessEqual(None, stage.remotePeers)
 
-   def testConstructor_015(self):
+   def testConstructor_020(self):
       """
       Test assignment of remotePeers attribute, single invalid entry
       (not a RemotePeer).
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.remotePeers)
+      self.failUnlessAssignRaises(ValueError, stage, "remotePeers", [LocalPeer(), ])
+      self.failUnlessEqual(None, stage.remotePeers)
 
-   def testConstructor_016(self):
+   def testConstructor_021(self):
       """
       Test assignment of remotePeers attribute, mixed valid and
       invalid entries.
       """
-      pass
+      stage = StageConfig()
+      self.failUnlessEqual(None, stage.remotePeers)
+      self.failUnlessAssignRaises(ValueError, stage, "remotePeers", [LocalPeer(), RemotePeer(), ])
+      self.failUnlessEqual(None, stage.remotePeers)
 
 
    ############################
@@ -2361,82 +3190,191 @@ class TestStageConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      pass
+      stage1 = StageConfig()
+      stage2 = StageConfig()
+      self.failUnlessEqual(stage1, stage2)
+      self.failUnless(stage1 == stage2)
+      self.failUnless(not stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(stage1 >= stage2)
+      self.failUnless(not stage1 != stage2)
 
    def testComparison_002(self):
       """
-      Test comparison of two identical objects, all attributes non-None.
+      Test comparison of two identical objects, all attributes non-None (empty lists).
       """
-      pass
+      stage1 = StageConfig("/target", [], [])
+      stage2 = StageConfig("/target", [], [])
+      self.failUnlessEqual(stage1, stage2)
+      self.failUnless(stage1 == stage2)
+      self.failUnless(not stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(stage1 >= stage2)
+      self.failUnless(not stage1 != stage2)
 
    def testComparison_003(self):
       """
-      Test comparison of two differing objects, targetDir differs (one None).
+      Test comparison of two identical objects, all attributes non-None (non-empty lists).
       """
-      pass
+      stage1 = StageConfig("/target", [LocalPeer(), ], [RemotePeer(), ])
+      stage2 = StageConfig("/target", [LocalPeer(), ], [RemotePeer(), ])
+      self.failUnlessEqual(stage1, stage2)
+      self.failUnless(stage1 == stage2)
+      self.failUnless(not stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(stage1 >= stage2)
+      self.failUnless(not stage1 != stage2)
 
    def testComparison_004(self):
       """
-      Test comparison of two differing objects, targetDir differs.
+      Test comparison of two differing objects, targetDir differs (one None).
       """
-      pass
+      stage1 = StageConfig()
+      stage2 = StageConfig(targetDir="/whatever")
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(not stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
 
    def testComparison_005(self):
       """
-      Test comparison of two differing objects, localPeers differs (one None,
-      one empty).
+      Test comparison of two differing objects, targetDir differs.
       """
-      pass
+      stage1 = StageConfig("/target1", [LocalPeer(), ], [RemotePeer(), ])
+      stage2 = StageConfig("/target2", [LocalPeer(), ], [RemotePeer(), ])
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(not stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
 
    def testComparison_006(self):
       """
       Test comparison of two differing objects, localPeers differs (one None,
-      one not empty).
+      one empty).
       """
-      pass
+      stage1 = StageConfig("/target", None, [RemotePeer(), ])
+      stage2 = StageConfig("/target", [], [RemotePeer(), ])
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(not stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
 
    def testComparison_007(self):
+      """
+      Test comparison of two differing objects, localPeers differs (one None,
+      one not empty).
+      """
+      stage1 = StageConfig("/target", None, [RemotePeer(), ])
+      stage2 = StageConfig("/target", [LocalPeer(), ], [RemotePeer(), ])
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(not stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
+
+   def testComparison_008(self):
       """
       Test comparison of two differing objects, localPeers differs (one empty,
       one not empty).
       """
-      pass
+      stage1 = StageConfig("/target", [], [RemotePeer(), ])
+      stage2 = StageConfig("/target", [LocalPeer(), ], [RemotePeer(), ])
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(not stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
 
-   def testComparison_008(self):
+   def testComparison_009(self):
       """
       Test comparison of two differing objects, localPeers differs (both not
       empty).
       """
-      pass
-
-   def testComparison_009(self):
-      """
-      Test comparison of two differing objects, remotePeers differs (one None,
-      one empty).
-      """
-      pass
+      stage1 = StageConfig("/target", [LocalPeer(name="one"), ], [RemotePeer(), ])
+      stage2 = StageConfig("/target", [LocalPeer(name="two"), ], [RemotePeer(), ])
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(not stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
 
    def testComparison_010(self):
       """
       Test comparison of two differing objects, remotePeers differs (one None,
-      one not empty).
+      one empty).
       """
-      pass
+      stage1 = StageConfig("/target", [LocalPeer(), ], None)
+      stage2 = StageConfig("/target", [LocalPeer(), ], [])
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(not stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
 
    def testComparison_011(self):
+      """
+      Test comparison of two differing objects, remotePeers differs (one None,
+      one not empty).
+      """
+      stage1 = StageConfig("/target", [LocalPeer(), ], None)
+      stage2 = StageConfig("/target", [LocalPeer(), ], [RemotePeer(), ])
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(not stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
+
+   def testComparison_012(self):
       """
       Test comparison of two differing objects, remotePeers differs (one empty,
       one not empty).
       """
-      pass
+      stage1 = StageConfig("/target", [LocalPeer(), ], [])
+      stage2 = StageConfig("/target", [LocalPeer(), ], [RemotePeer(), ])
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(stage1 < stage2)
+      self.failUnless(stage1 <= stage2)
+      self.failUnless(not stage1 > stage2)
+      self.failUnless(not stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
 
-   def testComparison_012(self):
+   def testComparison_013(self):
       """
       Test comparison of two differing objects, remotePeers differs (both not
       empty).
       """
-      pass
-
+      stage1 = StageConfig("/target", [LocalPeer(), ], [RemotePeer(name="two"), ])
+      stage2 = StageConfig("/target", [LocalPeer(), ], [RemotePeer(name="one"), ])
+      self.failIfEqual(stage1, stage2)
+      self.failUnless(not stage1 == stage2)
+      self.failUnless(not stage1 < stage2)
+      self.failUnless(not stage1 <= stage2)
+      self.failUnless(stage1 > stage2)
+      self.failUnless(stage1 >= stage2)
+      self.failUnless(stage1 != stage2)
 
 
 ########################
@@ -2484,211 +3422,370 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.sourceDir)
+      self.failUnlessEqual(None, store.mediaType)
+      self.failUnlessEqual(None, store.deviceType)
+      self.failUnlessEqual(None, store.devicePath)
+      self.failUnlessEqual(None, store.deviceScsiId)
+      self.failUnlessEqual(None, store.driveSpeed)
+      self.failUnlessEqual(False, store.checkData)
+      self.failUnlessEqual(False, store.safeOverwrite)
+      self.failUnlessEqual(None, store.capacityMode)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      pass
+      store = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failUnlessEqual("/source", store.sourceDir)
+      self.failUnlessEqual("cdr-74", store.mediaType)
+      self.failUnlessEqual("cdwriter", store.deviceType)
+      self.failUnlessEqual("/dev/cdrw", store.devicePath)
+      self.failUnlessEqual("0,0,0", store.deviceScsiId)
+      self.failUnlessEqual(4, store.driveSpeed)
+      self.failUnlessEqual(True, store.checkData)
+      self.failUnlessEqual(True, store.safeOverwrite)
+      self.failUnlessEqual("fail", store.capacityMode)
 
    def testConstructor_003(self):
       """
       Test assignment of sourceDir attribute, None value.
       """
-      pass
+      store = StoreConfig(sourceDir="/whatever")
+      self.failUnlessEqual("/whatever", store.sourceDir)
+      store.sourceDir = None
+      self.failUnlessEqual(None, store.sourceDir)
 
    def testConstructor_004(self):
       """
       Test assignment of sourceDir attribute, valid value.
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.sourceDir)
+      store.sourceDir = "/whatever"
+      self.failUnlessEqual("/whatever", store.sourceDir)
 
    def testConstructor_005(self):
       """
       Test assignment of sourceDir attribute, invalid value (empty).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.sourceDir)
+      self.failUnlessAssignRaises(ValueError, store, "sourceDir", "")
+      self.failUnlessEqual(None, store.sourceDir)
 
    def testConstructor_006(self):
       """
       Test assignment of sourceDir attribute, invalid value (non-absolute).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.sourceDir)
+      self.failUnlessAssignRaises(ValueError, store, "sourceDir", "bogus")
+      self.failUnlessEqual(None, store.sourceDir)
 
    def testConstructor_007(self):
       """
       Test assignment of mediaType attribute, None value.
       """
-      pass
+      store = StoreConfig(mediaType="cdr-74")
+      self.failUnlessEqual("cdr-74", store.mediaType)
+      store.mediaType = None
+      self.failUnlessEqual(None, store.mediaType)
 
    def testConstructor_008(self):
       """
       Test assignment of mediaType attribute, valid value.
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.mediaType)
+      store.mediaType = "cdr-74"
+      self.failUnlessEqual("cdr-74", store.mediaType)
+      store.mediaType = "cdrw-74"
+      self.failUnlessEqual("cdrw-74", store.mediaType)
+      store.mediaType = "cdr-80"
+      self.failUnlessEqual("cdr-80", store.mediaType)
+      store.mediaType = "cdrw-80"
+      self.failUnlessEqual("cdrw-80", store.mediaType)
 
    def testConstructor_009(self):
       """
       Test assignment of mediaType attribute, invalid value (empty).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.mediaType)
+      self.failUnlessAssignRaises(ValueError, store, "mediaType", "")
+      self.failUnlessEqual(None, store.mediaType)
 
    def testConstructor_010(self):
       """
       Test assignment of mediaType attribute, invalid value (not in list).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.mediaType)
+      self.failUnlessAssignRaises(ValueError, store, "mediaType", "floppy")
+      self.failUnlessEqual(None, store.mediaType)
 
    def testConstructor_011(self):
       """
       Test assignment of deviceType attribute, None value.
       """
-      pass
+      store = StoreConfig(deviceType="cdwriter")
+      self.failUnlessEqual("cdwriter", store.deviceType)
+      store.deviceType = None
+      self.failUnlessEqual(None, store.deviceType)
 
    def testConstructor_012(self):
       """
       Test assignment of deviceType attribute, valid value.
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.deviceType)
+      store.deviceType = "cdwriter"
+      self.failUnlessEqual("cdwriter", store.deviceType)
 
    def testConstructor_013(self):
       """
       Test assignment of deviceType attribute, invalid value (empty).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.deviceType)
+      self.failUnlessAssignRaises(ValueError, store, "deviceType", "")
+      self.failUnlessEqual(None, store.deviceType)
 
    def testConstructor_014(self):
       """
       Test assignment of deviceType attribute, invalid value (not in list).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.deviceType)
+      self.failUnlessAssignRaises(ValueError, store, "deviceType", "ftape")
+      self.failUnlessEqual(None, store.deviceType)
 
    def testConstructor_015(self):
       """
       Test assignment of devicePath attribute, None value.
       """
-      pass
+      store = StoreConfig(devicePath="/dev/cdrw")
+      self.failUnlessEqual("/dev/cdrw", store.devicePath)
+      store.devicePath = None
+      self.failUnlessEqual(None, store.devicePath)
 
    def testConstructor_016(self):
       """
       Test assignment of devicePath attribute, valid value.
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.devicePath)
+      store.devicePath = "/dev/cdrw"
+      self.failUnlessEqual("/dev/cdrw", store.devicePath)
 
    def testConstructor_017(self):
       """
       Test assignment of devicePath attribute, invalid value (empty).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.devicePath)
+      self.failUnlessAssignRaises(ValueError, store, "devicePath", "")
+      self.failUnlessEqual(None, store.devicePath)
 
    def testConstructor_018(self):
       """
       Test assignment of devicePath attribute, invalid value (non-absolute).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.devicePath)
+      self.failUnlessAssignRaises(ValueError, store, "devicePath", "dev/cdrw")
+      self.failUnlessEqual(None, store.devicePath)
 
    def testConstructor_019(self):
       """
       Test assignment of deviceScsiId attribute, None value.
       """
-      pass
+      store = StoreConfig(deviceScsiId="0,0,0")
+      self.failUnlessEqual("0,0,0", store.deviceScsiId)
+      store.deviceScsiId = None
+      self.failUnlessEqual(None, store.deviceScsiId)
 
    def testConstructor_020(self):
       """
       Test assignment of deviceScsiId attribute, valid value.
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.deviceScsiId)
+      store.deviceScsiId = "0,0,0"
+      self.failUnlessEqual("0,0,0", store.deviceScsiId)
+      store.deviceScsiId = "ATA:0,0,0"
+      self.failUnlessEqual("ATA:0,0,0", store.deviceScsiId)
 
    def testConstructor_021(self):
       """
       Test assignment of deviceScsiId attribute, invalid value (empty).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.deviceScsiId)
+      self.failUnlessAssignRaises(ValueError, store, "deviceScsiId", "")
+      self.failUnlessEqual(None, store.deviceScsiId)
 
    def testConstructor_022(self):
       """
       Test assignment of deviceScsiId attribute, invalid value (invalid id).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.deviceScsiId)
+      self.failUnlessAssignRaises(ValueError, store, "deviceScsiId", "ATB:0,0,0")
+      self.failUnlessEqual(None, store.deviceScsiId)
+      self.failUnlessAssignRaises(ValueError, store, "deviceScsiId", "1:2:3")
+      self.failUnlessEqual(None, store.deviceScsiId)
 
    def testConstructor_023(self):
       """
       Test assignment of driveSpeed attribute, None value.
       """
-      pass
+      store = StoreConfig(driveSpeed=4)
+      self.failUnlessEqual(4, store.driveSpeed)
+      store.driveSpeed = None
+      self.failUnlessEqual(None, store.driveSpeed)
 
    def testConstructor_024(self):
       """
       Test assignment of driveSpeed attribute, valid value.
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.driveSpeed)
+      store.driveSpeed = 4
+      self.failUnlessEqual(4, store.driveSpeed)
+      store.driveSpeed = "12"
+      self.failUnlessEqual(12, store.driveSpeed)
 
    def testConstructor_025(self):
       """
       Test assignment of driveSpeed attribute, invalid value (not an integer).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.driveSpeed)
+      self.failUnlessAssignRaises(ValueError, store, "driveSpeed", "blech")
+      self.failUnlessEqual(None, store.driveSpeed)
+      self.failUnlessAssignRaises(ValueError, store, "driveSpeed", CollectDir())
+      self.failUnlessEqual(None, store.driveSpeed)
 
    def testConstructor_026(self):
       """
       Test assignment of checkData attribute, None value.
       """
-      pass
+      store = StoreConfig(checkData=True)
+      self.failUnlessEqual(True, store.checkData)
+      store.checkData = None
+      self.failUnlessEqual(False, store.checkData)
 
    def testConstructor_027(self):
       """
       Test assignment of checkData attribute, valid value (real boolean).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(False, store.checkData)
+      store.checkData = True
+      self.failUnlessEqual(True, store.checkData)
+      store.checkData = False
+      self.failUnlessEqual(False, store.checkData)
 
    def testConstructor_028(self):
       """
       Test assignment of checkData attribute, valid value (expression).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(False, store.checkData)
+      store.checkData = 0
+      self.failUnlessEqual(False, store.checkData)
+      store.checkData = []
+      self.failUnlessEqual(False, store.checkData)
+      store.checkData = None
+      self.failUnlessEqual(False, store.checkData)
+      store.checkData = ['a']
+      self.failUnlessEqual(True, store.checkData)
+      store.checkData = 3
+      self.failUnlessEqual(True, store.checkData)
 
    def testConstructor_029(self):
       """
       Test assignment of safeOverwrite attribute, None value.
       """
-      pass
+      store = StoreConfig(safeOverwrite=True)
+      self.failUnlessEqual(True, store.safeOverwrite)
+      store.safeOverwrite = None
+      self.failUnlessEqual(False, store.safeOverwrite)
 
    def testConstructor_030(self):
       """
       Test assignment of safeOverwrite attribute, valid value (real boolean).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(False, store.safeOverwrite)
+      store.safeOverwrite = True
+      self.failUnlessEqual(True, store.safeOverwrite)
+      store.safeOverwrite = False
+      self.failUnlessEqual(False, store.safeOverwrite)
 
    def testConstructor_031(self):
       """
       Test assignment of safeOverwrite attribute, valid value (expression).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(False, store.safeOverwrite)
+      store.safeOverwrite = 0
+      self.failUnlessEqual(False, store.safeOverwrite)
+      store.safeOverwrite = []
+      self.failUnlessEqual(False, store.safeOverwrite)
+      store.safeOverwrite = None
+      self.failUnlessEqual(False, store.safeOverwrite)
+      store.safeOverwrite = ['a']
+      self.failUnlessEqual(True, store.safeOverwrite)
+      store.safeOverwrite = 3
+      self.failUnlessEqual(True, store.safeOverwrite)
 
    def testConstructor_032(self):
       """
       Test assignment of capacityMode attribute, None value.
       """
-      pass
+      store = StoreConfig(capacityMode="fail")
+      self.failUnlessEqual("fail", store.capacityMode)
+      store.capacityMode = None
+      self.failUnlessEqual(None, store.capacityMode)
 
    def testConstructor_033(self):
       """
       Test assignment of capacityMode attribute, valid value.
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.capacityMode)
+      store.capacityMode = "fail"
+      self.failUnlessEqual("fail", store.capacityMode)
+      store.capacityMode = "discard"
+      self.failUnlessEqual("discard", store.capacityMode)
+      store.capacityMode = "overwrite"
+      self.failUnlessEqual("overwrite", store.capacityMode)
+      store.capacityMode = "rebuild"
+      self.failUnlessEqual("rebuild", store.capacityMode)
+      store.capacityMode = "rewrite"
+      self.failUnlessEqual("rewrite", store.capacityMode)
 
    def testConstructor_034(self):
       """
       Test assignment of capacityMode attribute, invalid value (empty).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.capacityMode)
+      self.failUnlessAssignRaises(ValueError, store, "capacityMode", "")
+      self.failUnlessEqual(None, store.capacityMode)
 
    def testConstructor_035(self):
       """
       Test assignment of capacityMode attribute, invalid value (not in list).
       """
-      pass
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.capacityMode)
+      self.failUnlessAssignRaises(ValueError, store, "capacityMode", "giveup")
+      self.failUnlessEqual(None, store.capacityMode)
 
 
    ############################
@@ -2699,110 +3796,231 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      pass
+      store1 = StoreConfig()
+      store2 = StoreConfig()
+      self.failUnlessEqual(store1, store2)
+      self.failUnless(store1 == store2)
+      self.failUnless(not store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(store1 >= store2)
+      self.failUnless(not store1 != store2)
 
    def testComparison_002(self):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      pass
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failUnlessEqual(store1, store2)
+      self.failUnless(store1 == store2)
+      self.failUnless(not store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(store1 >= store2)
+      self.failUnless(not store1 != store2)
 
    def testComparison_003(self):
       """
       Test comparison of two differing objects, sourceDir differs (one None).
       """
-      pass
+      store1 = StoreConfig()
+      store2 = StoreConfig(sourceDir="/whatever")
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_004(self):
       """
       Test comparison of two differing objects, sourceDir differs.
       """
-      pass
+      store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_005(self):
       """
       Test comparison of two differing objects, mediaType differs (one None).
       """
-      pass
+      store1 = StoreConfig()
+      store2 = StoreConfig(mediaType="cdr-74")
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_006(self):
       """
       Test comparison of two differing objects, mediaType differs.
       """
-      pass
+      store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failUnless(not store1 == store2)
+      self.failUnless(not store1 < store2)
+      self.failUnless(not store1 <= store2)
+      self.failUnless(store1 > store2)
+      self.failUnless(store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_007(self):
       """
       Test comparison of two differing objects, deviceType differs (one None).
       """
-      pass
+      store1 = StoreConfig()
+      store2 = StoreConfig(deviceType="cdwriter")
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_008(self):
       """
-      Test comparison of two differing objects, deviceType differs.
+      Test comparison of two differing objects, devicePath differs (one None).
       """
-      pass
+      store1 = StoreConfig()
+      store2 = StoreConfig(devicePath="/dev/cdrw")
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_009(self):
       """
-      Test comparison of two differing objects, devicePath differs (one None).
+      Test comparison of two differing objects, devicePath differs.
       """
-      pass
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True, True, "fail")
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_010(self):
       """
-      Test comparison of two differing objects, devicePath differs.
+      Test comparison of two differing objects, deviceScsiId differs (one None).
       """
-      pass
+      store1 = StoreConfig()
+      store2 = StoreConfig(deviceScsiId="0,0,0")
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_011(self):
       """
-      Test comparison of two differing objects, deviceScsiId differs (one None).
+      Test comparison of two differing objects, deviceScsiId differs.
       """
-      pass
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True, True, "fail")
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_012(self):
       """
-      Test comparison of two differing objects, deviceScsiId differs.
+      Test comparison of two differing objects, driveSpeed differs (one None).
       """
-      pass
+      store1 = StoreConfig()
+      store2 = StoreConfig(driveSpeed=3)
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_013(self):
       """
-      Test comparison of two differing objects, driveSpeed differs (one None).
+      Test comparison of two differing objects, driveSpeed differs.
       """
-      pass
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, "fail")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_014(self):
       """
-      Test comparison of two differing objects, driveSpeed differs.
+      Test comparison of two differing objects, checkData differs.
       """
-      pass
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False, True, "fail")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_015(self):
       """
-      Test comparison of two differing objects, checkData differs.
+      Test comparison of two differing objects, safeOverwrite differs.
       """
-      pass
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, False, "fail")
+      self.failUnless(not store1 == store2)
+      self.failUnless(not store1 < store2)
+      self.failUnless(not store1 <= store2)
+      self.failUnless(store1 > store2)
+      self.failUnless(store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_016(self):
       """
-      Test comparison of two differing objects, safeOverwrite differs.
+      Test comparison of two differing objects, capacityMode differs (one None).
       """
-      pass
+      store1 = StoreConfig()
+      store2 = StoreConfig(capacityMode="fail")
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
 
    def testComparison_017(self):
       """
-      Test comparison of two differing objects, capacityMode differs (one None).
-      """
-      pass
-
-   def testComparison_018(self):
-      """
       Test comparison of two differing objects, capacityMode differs.
       """
-      pass
-
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "overwrite")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, "fail")
+      self.failUnless(not store1 == store2)
+      self.failUnless(not store1 < store2)
+      self.failUnless(not store1 <= store2)
+      self.failUnless(store1 > store2)
+      self.failUnless(store1 >= store2)
+      self.failUnless(store1 != store2)
 
 
 ########################
@@ -2850,56 +4068,77 @@ class TestPurgeConfig(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      pass
+      purge = PurgeConfig()
+      self.failUnlessEqual(None, purge.purgeDirs)
 
    def testConstructor_002(self):
       """
-      Test constructor with all values filled in, with valid values.
+      Test constructor with all values filled in, with valid values (empty list).
       """
-      pass
+      purge = PurgeConfig([])
+      self.failUnlessEqual([], purge.purgeDirs)
 
    def testConstructor_003(self):
       """
-      Test assignment of purgeDirs attribute, None value.
+      Test constructor with all values filled in, with valid values (non-empty list).
       """
-      pass
+      purge = PurgeConfig([PurgeDir(), ])
+      self.failUnlessEqual([PurgeDir(), ], purge.purgeDirs)
 
    def testConstructor_004(self):
       """
-      Test assignment of purgeDirs attribute, [] value.
+      Test assignment of purgeDirs attribute, None value.
       """
-      pass
+      purge = PurgeConfig([])
+      self.failUnlessEqual([], purge.purgeDirs)
+      purge.purgeDirs = None
+      self.failUnlessEqual(None, purge.purgeDirs)
 
    def testConstructor_005(self):
       """
-      Test assignment of purgeDirs attribute, single valid entry.
+      Test assignment of purgeDirs attribute, [] value.
       """
-      pass
+      purge = PurgeConfig()
+      self.failUnlessEqual(None, purge.purgeDirs)
+      purge.purgeDirs = []
+      self.failUnlessEqual([], purge.purgeDirs)
 
    def testConstructor_006(self):
       """
-      Test assignment of purgeDirs attribute, multiple valid entries.
+      Test assignment of purgeDirs attribute, single valid entry.
       """
-      pass
+      purge = PurgeConfig()
+      self.failUnlessEqual(None, purge.purgeDirs)
+      purge.purgeDirs = [PurgeDir(), ]
+      self.failUnlessEqual([PurgeDir(), ], purge.purgeDirs)
 
    def testConstructor_007(self):
       """
-      Test assignment of purgeDirs attribute, single invalid entry (empty).
+      Test assignment of purgeDirs attribute, multiple valid entries.
       """
-      pass
-
-   def testConstructor_008(self):
-      """
-      Test assignment of purgeDirs attribute, single invalid entry (not
-      absolute).
-      """
-      pass
+      purge = PurgeConfig()
+      self.failUnlessEqual(None, purge.purgeDirs)
+      purge.purgeDirs = [PurgeDir("/one"), PurgeDir("/two"), ]
+      self.failUnlessEqual([PurgeDir("/one"), PurgeDir("/two"), ], purge.purgeDirs)
 
    def testConstructor_009(self):
       """
+      Test assignment of purgeDirs attribute, single invalid entry (not a
+      PurgeDir).
+      """
+      purge = PurgeConfig()
+      self.failUnlessEqual(None, purge.purgeDirs)
+      self.failUnlessAssignRaises(ValueError, purge, "purgeDirs", [ RemotePeer(), ])
+      self.failUnlessEqual(None, purge.purgeDirs)
+
+   def testConstructor_010(self):
+      """
       Test assignment of purgeDirs attribute, mixed valid and invalid entries.
       """
-      pass
+      purge = PurgeConfig()
+      self.failUnlessEqual(None, purge.purgeDirs)
+      self.failUnlessAssignRaises(ValueError, purge, "purgeDirs", [ PurgeDir(), RemotePeer(), ])
+      self.failUnlessEqual(None, purge.purgeDirs)
 
 
    ############################
@@ -2910,49 +4149,101 @@ class TestPurgeConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      pass
+      purge1 = PurgeConfig()
+      purge2 = PurgeConfig()
+      self.failUnlessEqual(purge1, purge2)
+      self.failUnless(purge1 == purge2)
+      self.failUnless(not purge1 < purge2)
+      self.failUnless(purge1 <= purge2)
+      self.failUnless(not purge1 > purge2)
+      self.failUnless(purge1 >= purge2)
+      self.failUnless(not purge1 != purge2)
 
    def testComparison_002(self):
       """
       Test comparison of two identical objects, all attributes non-None (empty
       lists).
       """
-      pass
+      purge1 = PurgeConfig([])
+      purge2 = PurgeConfig([])
+      self.failUnlessEqual(purge1, purge2)
+      self.failUnless(purge1 == purge2)
+      self.failUnless(not purge1 < purge2)
+      self.failUnless(purge1 <= purge2)
+      self.failUnless(not purge1 > purge2)
+      self.failUnless(purge1 >= purge2)
+      self.failUnless(not purge1 != purge2)
 
    def testComparison_003(self):
       """
       Test comparison of two identical objects, all attributes non-None
       (non-empty lists).
       """
-      pass
+      purge1 = PurgeConfig([PurgeDir(), ])
+      purge2 = PurgeConfig([PurgeDir(), ])
+      self.failUnlessEqual(purge1, purge2)
+      self.failUnless(purge1 == purge2)
+      self.failUnless(not purge1 < purge2)
+      self.failUnless(purge1 <= purge2)
+      self.failUnless(not purge1 > purge2)
+      self.failUnless(purge1 >= purge2)
+      self.failUnless(not purge1 != purge2)
 
    def testComparison_004(self):
       """
       Test comparison of two differing objects, purgeDirs differs (one None,
       one empty).
       """
-      pass
+      purge1 = PurgeConfig(None)
+      purge2 = PurgeConfig([])
+      self.failUnless(not purge1 == purge2)
+      self.failUnless(purge1 < purge2)
+      self.failUnless(purge1 <= purge2)
+      self.failUnless(not purge1 > purge2)
+      self.failUnless(not purge1 >= purge2)
+      self.failUnless(purge1 != purge2)
 
    def testComparison_005(self):
       """
       Test comparison of two differing objects, purgeDirs differs (one None,
       one not empty).
       """
-      pass
+      purge1 = PurgeConfig(None)
+      purge2 = PurgeConfig([PurgeDir(), ])
+      self.failUnless(not purge1 == purge2)
+      self.failUnless(purge1 < purge2)
+      self.failUnless(purge1 <= purge2)
+      self.failUnless(not purge1 > purge2)
+      self.failUnless(not purge1 >= purge2)
+      self.failUnless(purge1 != purge2)
 
    def testComparison_006(self):
       """
       Test comparison of two differing objects, purgeDirs differs (one empty,
       one not empty).
       """
-      pass
+      purge1 = PurgeConfig([])
+      purge2 = PurgeConfig([PurgeDir(), ])
+      self.failUnless(not purge1 == purge2)
+      self.failUnless(purge1 < purge2)
+      self.failUnless(purge1 <= purge2)
+      self.failUnless(not purge1 > purge2)
+      self.failUnless(not purge1 >= purge2)
+      self.failUnless(purge1 != purge2)
 
    def testComparison_007(self):
       """
       Test comparison of two differing objects, purgeDirs differs (both not
       empty).
       """
-      pass
+      purge1 = PurgeConfig([PurgeDir("/two"), ])
+      purge2 = PurgeConfig([PurgeDir("/one"), ])
+      self.failUnless(not purge1 == purge2)
+      self.failUnless(not purge1 < purge2)
+      self.failUnless(not purge1 <= purge2)
+      self.failUnless(purge1 > purge2)
+      self.failUnless(purge1 >= purge2)
+      self.failUnless(purge1 != purge2)
 
 
 ###################

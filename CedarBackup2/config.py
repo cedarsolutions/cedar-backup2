@@ -257,8 +257,8 @@ DEFAULT_CAPACITY_MODE = "fail"
 VALID_DEVICE_TYPES    = [ "cdwriter", ]
 VALID_MEDIA_TYPES     = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
 VALID_CAPACITY_MODES  = [ "fail", "discard", "overwrite", "rebuild", "rewrite", ]
-VALID_COLLECT_MODES   = ["daily", "weekly", "incr", ]
-VALID_ARCHIVE_MODES   = ["tar", "targz", "tarbz2", ]
+VALID_COLLECT_MODES   = [ "daily", "weekly", "incr", ]
+VALID_ARCHIVE_MODES   = [ "tar", "targz", "tarbz2", ]
 
 
 ########################################################################
@@ -599,7 +599,7 @@ class PurgeDir(object):
             raise ValueError("Retain days value must be an integer >= 0.")
          if value < 0:
             raise ValueError("Retain days value must be an integer >= 0.")
-         return self._retainDays
+         self._retainDays = value
 
    def _getRetainDays(self):
       """
@@ -608,7 +608,7 @@ class PurgeDir(object):
       return self._retainDays
 
    absolutePath = property(_getAbsolutePath, _setAbsolutePath, None, "Absolute path of directory to purge.")
-   retainDays = property(_getAbsolutePath, _setAbsolutePath, None, "Number of days content within directory should be retained.")
+   retainDays = property(_getRetainDays, _setRetainDays, None, "Number of days content within directory should be retained.")
 
 
 ########################################################################
@@ -1288,12 +1288,12 @@ class CollectConfig(object):
    def _setCollectMode(self, value):
       """
       Property target used to set the collect mode.
-      If not C{None}, the mode must be one of C{"daily"}, C{"weekly"} or C{"incr"}.
+      If not C{None}, the mode must be one of L{VALID_COLLECT_MODES}.
       @raise ValueError: If the value is not valid.
       """
       if value is not None:
-         if value not in ["daily", "weekly", "incr", ]:
-            raise ValueError("Collect mode must be one of \"daily\", \"weekly\" or \"incr\".")
+         if value not in VALID_COLLECT_MODES:
+            raise ValueError("Collect mode must be one of %s." % VALID_COLLECT_MODES)
       self._collectMode = value
 
    def _getCollectMode(self):
@@ -1305,12 +1305,12 @@ class CollectConfig(object):
    def _setArchiveMode(self, value):
       """
       Property target used to set the archive mode.
-      If not C{None}, the mode must be one of C{"tar"}, C{"targz"} or C{"tarbz2"}.
+      If not C{None}, the mode must be one of L{VALID_ARCHIVE_MODES}.
       @raise ValueError: If the value is not valid.
       """
       if value is not None:
-         if value not in ["daily", "weekly", "incr", ]:
-            raise ValueError("Archive mode must be one of \"daily\", \"weekly\" or \"incr\".")
+         if value not in VALID_ARCHIVE_MODES:
+            raise ValueError("Archive mode must be one of %s." % VALID_ARCHIVE_MODES)
       self._archiveMode = value
 
    def _getArchiveMode(self):
@@ -1749,15 +1749,15 @@ class StoreConfig(object):
       @raise ValueError: If the value is not valid.
       """
       if value is None:
-         self._scsiId = None
+         self._deviceScsiId = None
       else:
-         self._scsiId = validateScsiId(value)
+         self._deviceScsiId = validateScsiId(value)
 
    def _getDeviceScsiId(self):
       """
       Property target used to get the SCSI id.
       """
-      return self._scsiId
+      return self._deviceScsiId
 
    def _setDriveSpeed(self, value):
       """
@@ -2503,7 +2503,7 @@ class Config(object):
       if Config._nodeExists(xmlDom, baseExpr):
          collectDir = CollectDir()
          collectDir.absolutePath = Config._readString(xmlDom, "%s/abs_path" % baseExpr)
-         if Config._nodeExxists(xmlDom, "%s/mode" % baseExpr):
+         if Config._nodeExists(xmlDom, "%s/mode" % baseExpr):
             collectDir.collectMode = Config._readString(xmlDom, "%s/mode" % baseExpr)
          else:
             collectDir.collectMode = Config._readString(xmlDom, "%s/collect_mode" % baseExpr)
