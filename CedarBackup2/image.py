@@ -102,66 +102,38 @@ class IsoImage(object):
       the C{useRockRidge} instance variable to C{False}.  Note, however, that
       this option is not well-tested.
 
-      In any case, since soft links are ignored by C{mkisofs} by default, they
-      will be ignored here, too.
-
       The class also includes some functionality that attempts to "prune" a
       defined image to fit in a certain amount of free space.  This should help
       callers who want to write a disc, even if they can't fit everything they
       want on it.  
 
-   Graft Points
-   ============
+   Where Files and Directories are Placed in the Image
+   ===================================================
 
-      It possible to graft a path into an ISO image at a point other than the
-      root directory of the image using either the object-wide C{graftPoint}
-      instance variable or the C{graftPoint} parameter to this method.  
+      Although this class is implemented in terms of the C{mkisofs} program,
+      its "image contents" semantics are slightly different than the original
+      C{mkisofs} semantics.  The difference is that files and directories are
+      added to the image with some additional information about their source
+      directory kept intact.  I feel that this behavior (described in more
+      detail below) is more consistent than the original C{mkisofs} behavior.
+      However, to be fair, it is not quite as flexible.
 
-      The C{mkisofs} documentation has this to say about graft points::
+      As an example, suppose you add the file C{/etc/profile} to your image and
+      you do not configure a graft point.  The file C{/profile} will be created
+      in the image.  The behavior for directories is similar.  For instance,
+      suppose that you add C{/etc/X11} to the image and do not configure a
+      graft point.  In this case, the directory C{/X11} will be created in the
+      image, even if the original C{/etc/X11} directory is empty.  I{This
+      behavior differs from the standard C{mkisofs} behavior!}
 
-          ...it is possible to graft the paths at points other than the root
-          directory, and it is possible to graft files or directories onto the
-          cdrom image with names different than what they have in the source
-          filesystem.  This is easiest to illustrate with a couple of examples.
-          Let's start by assuming that a local file ../old.lis exists, and you
-          wish to include it in the cdrom image.
-
-               foo/bar/=../old.lis
-
-          will include the file old.lis in the cdrom image at /foo/bar/old.lis,
-          while
-
-               foo/bar/xxx=../old.lis
-
-          will include the file old.lis in the cdrom image at /foo/bar/xxx.
-          The same sort of syntax can be used with directories as well.
-          mkisofs will create any directories required such that the graft
-          points exist on the cdrom image - the directories do not need to
-          appear in one of the paths. 
-
-      This behavior is modified slightly for the purposes of the IsoImage
-      object.  For our purposes, the graft point is the image directory I{into
-      which the entry is placed}.  This is behavior is equivalent to the
-      C{mkisofs} behavior for files, but is slightly different for directories.
-
-      To include the file C{../old.lis} at C{/foo/bar/old.lis}, you would
-      still call::
-
-         addEntry(path="../old.lis", graftPoint="foo/bar")
-
-      However, this call will result in C{/some/dir} being placed into
-      C{/foo/bar}, resulting in C{/foo/bar/dir}::
-
-         addEntry(path="/some/dir", graftPoint="foo/bar")
-
-      This makes the object-wide graft point much more useful, since you really
-      can set it once and then add a number of files and directories, as long
-      as none of them have the same name.  If we followed the mkisofs
-      semantics, each individual added entry would probably require a different
-      graft point.  In fairness, though, it does effectively lose functionality
-      that's available in C{mkisofs}, such as the ability to combine two
-      independent directories into one "virtual" directory in the filesystem
-      image.
+      If a graft point is configured, it will be used to modify the point at
+      which a file or directory is added into an image.  Using the examples
+      from above, let's assume you set a graft point of C{base} when adding
+      C{/etc/profile} and C{/etc/X11} to your image.  In this case, the file
+      C{/base/profile} and the directory C{/base/X11} would be added to the
+      image.  Again, this behavior differs somewhat from the original
+      C{mkisofs} behavior.  It is arguably more "consistent", but is probably
+      less flexible in a general sense.
 
    @ivar device: Device that image will be written to (either filesystem device or SCSI address).
    @ivar boundaries: Session boundaries as required by C{mkisofs}.
@@ -234,7 +206,12 @@ class IsoImage(object):
       behavior is determined by the value which is in effect I{at the time this
       method is called}, so you I{must} set the object-wide value before
       calling this method for the first time, or your image may not be
-      consistent.
+      consistent.  
+
+      @note: You I{cannot} use the local C{graftPoint} parameter to "turn off"
+      an object-wide instance variable by setting it to C{None}.  Python's
+      default argument functionality buys us a lot, but it can't make this
+      method psychic. :)
 
       @param path: File or directory to be added to the image
       @type path: String representing a path on disk
@@ -256,7 +233,7 @@ class IsoImage(object):
          elif self.graftPoint is not None: 
             self.entries[path] = os.path.join(self.graftPoint, os.path.basename(path))
          else:
-            self.entries[path] = None
+            self.entries[path] = os.path.basename(path)
       elif os.path.isfile(path):
          if graftPoint is not None:
             self.entries[path] = graftPoint
@@ -337,12 +314,12 @@ class IsoImage(object):
       of times before giving up and raising an C{IOError} exception.
 
       @note: Pruning an image has the effect of expanding any directory to its
-      list of composite files internally.  This could slow down your C{mkisofs}
-      call (but it should still work).
+      list of composite files internally.  
 
       @note: This process is destructive.  Once you prune an image, you can't
       get it back in its original form without rebuilding it from scratch.
-      However, the object should be unchanged unless it returns successfully.
+      However, the object will be unchanged unless this method call returns
+      successfully.
 
       @param capacity: Capacity to prune to
       @type capacity: Integer capacity, in bytes
@@ -363,15 +340,16 @@ class IsoImage(object):
       Prunes the image to fit a certain capacity, in bytes.
 
       This is an internal method.  It mainly exists so we can adequately
-      document the pruning procedure without telling external callers exactly
-      how it's done.
+      document the pruning procedure without burdening external callers with
+      details about exactly how it's done.
 
       To be successful, we have to build an entries dictionary such that the
       resulting ISO image uses C{capacity} or fewer bytes.  We determine a
-      target overall file size, use a knapsack algorithm to hit that capacity,
-      and then check whether the resulting image would fit in our capacity.  If
-      it would fit, then we build a new entries dictionary and return it.
-      Otherwise we try a few more times, giving up after four attempts.
+      target overall file size, use a knapsack algorithm to hit that target
+      size, and then check whether the resulting image would fit in our
+      capacity.  If it would fit, then we build a new entries dictionary and
+      return it.  Otherwise we try a few more times, giving up after four
+      attempts.
 
       The trick is figuring out how to determine the target overall file size,
       by which we mean the target size among the files represented by the list
@@ -392,7 +370,7 @@ class IsoImage(object):
       We always consider it to be an error if we are unable to fit any files
       into the image.  That's important to notice, because if no files fit,
       that accidentally could look like success to us (the image would
-      certainly be small enough, unless the overhead exceeds the capacity).
+      certainly be small enough).
 
       @param capacity: Capacity to prune to
       @type capacity: Integer capacity, in bytes
@@ -404,7 +382,7 @@ class IsoImage(object):
       (sizeMap, fileSize) = IsoImage._calculateSizes(expanded)
       estimatedSize = self._getEstimatedSize(self.entries)
       overhead = estimatedSize - fileSize
-      if overhead >= capacity:   # use >= just to be safe
+      if overhead > capacity:
          raise IOError("Required overhead (%.0f) exceeds available capacity (%.0f)." % (overhead, float(capacity)))
       for factor in [ 1.0, 0.98, 0.95, 0.90 ]:
          targetSize = (capacity - overhead) * factor
@@ -421,11 +399,13 @@ class IsoImage(object):
       """
       Calculates sizes for files in an entries dictionary.
 
-      The resulting map is suitable for passing to a knapsack function; the
-      total includes all files.  The entries dictionary is assumed to have been
-      "expanded", so that it contains only files, but behavior degrades
-      gracefully if this isn't true.  Behavior also degrades gracefully by
-      ignoring entries which do not exist.
+      The resulting map contains true sizes for each file in the list of
+      entries, and the total is the sum of all of these sizes.  The map also
+      contains zero size for each link and directory in the original list of
+      entries.  This way, the process of calculating sizes doesn't lose any
+      information (it's up to the caller to pass in an entries list that
+      contains only things they care about).  In any case, an entry which
+      doesn't exist on disk is completely ignored.
 
       @param entries: An entries map (expanded via L{_expandEntries})
 
@@ -434,10 +414,13 @@ class IsoImage(object):
       table = { }
       total = 0
       for entry in entries:
-         if os.path.isfile(entry) and not os.path.islink(entry):
-            size = float(os.stat(entry).st_size)
-            table[entry] = (entry, size)
-            total += size
+         if os.path.exists(entry):
+            if os.path.isfile(entry) and not os.path.islink(entry):
+               size = float(os.stat(entry).st_size)
+               table[entry] = (entry, size)
+               total += size
+            else:
+               table[entry] = (entry, 0)
       return (table, total)
    _calculateSizes = staticmethod(_calculateSizes)
 
@@ -472,14 +455,14 @@ class IsoImage(object):
       the each directory in order to prune to fit a particular capacity.  So,
       this function goes through the the various entries and expands every
       directory it finds.  The result is an "equivalent" entries dictionary
-      that verbosely includes every file that would have been included
-      originally, along with its associated graft point (if any).  Soft links
-      are removed at this step, since C{mkisofs} would ignore them anyway.
+      that verbosely includes every file and link that would have been included
+      originally, along with its associated graft point (if any).  
 
-      There is one trick: we can't just keep exactly the same graft point,
-      since this would lose information.  We sometimes need to tack the name of the
-      directory onto the end of the graft point so the result will be the
-      same.
+      There is one trick: we can't associate the same graft point with a file
+      as with its parent directory, since this would lose information (such as
+      the directory the file was in, especially if it was deeply nested).  We
+      sometimes need to tack the name of a directory onto the end of the graft
+      point so the result will be equivalent.
 
       Here's an example: if directory C{/opt/ken/dir1} had graft point
       C{/base}, then the directory would become C{/base/dir1} in the image and
@@ -490,26 +473,41 @@ class IsoImage(object):
       we need to recognize that the prefix is really C{dir2} and tack that onto
       the graft point.  
 
+      Besides this, there are a few other hoops we have to jump through.  In
+      particular, we need to include soft links in the image, but
+      non-recursively (i.e. we don't want to traverse soft links to
+      directories).  Also, while we don't normally want bare directories in the
+      image (because the files in those directories will already have been
+      added) we need to be careful not to lose empty directories, which will
+      get pruned by a simplistic algorithm simply because they don't contain
+      any indexed files.  The bare directories are added with a graft point
+      including their own name, to force C{mkisofs} to create them.
+
       @note: Behavior of this function is probably UN*X-specific.
 
       @return: Expanded entries dictionary.
       """
       newEntries = { }
       for entry in entries:
-         if not os.path.islink(entry):
-            if os.path.isfile(entry):
-               newEntries[entry] = entries[entry]
-            elif os.path.isdir(entry):
-               fsList = FilesystemList()
-               fsList.excludeLinks = True
-               fsList.excludeDirs = True
-               fsList.addDirContents(entry)
-               for item in fsList:
+         if os.path.isfile(entry):
+            newEntries[entry] = entries[entry]
+         elif os.path.isdir(entry):
+            fsList = FilesystemList()
+            fsList.addDirContents(entry)
+            for item in fsList:
+               if os.path.islink(item) or os.path.isfile(item):
                   if entries[entry] is None:
                      newEntries[item] = None
                   else:
                      subdir = os.path.dirname(item.replace(entry, "", 1))
                      graft = os.path.join(entries[entry].strip(os.sep), subdir.strip(os.sep))
+                     newEntries[item] = graft.strip(os.sep)
+               elif os.path.os.path.isdir(item) and os.listdir(item) == []:
+                  if entries[entry] is None:
+                     newEntries[item] = os.path.basename(item)
+                  else:
+                     subdir = os.path.dirname(item.replace(entry, "", 1))
+                     graft = os.path.join(entries[entry].strip(os.sep), subdir.strip(os.sep), os.path.basename(item))
                      newEntries[item] = graft.strip(os.sep)
       return newEntries
    _expandEntries = staticmethod(_expandEntries)

@@ -5,3 +5,5 @@ unusedNames = [ 'i' ]
 #   (this includes anything under the standard library, eg, site-packages)
 ignoreStandardLibrary = 1
 
+# int: warnings for code complexity, max value before generating a warning
+maxLocals = 50    # some test code has a lot of variables
