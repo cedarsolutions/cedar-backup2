@@ -14,6 +14,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+* Test _ActionSet and _ActionItem functionality, hopefully in a unit test of some sort
 * Change sort order of parameters, classes within modules, etc. where needed in Epydoc
 * Implement "safe overwrite" functionality from aborted 2.x branch into CdWriter - shouldn't be too difficult.
 * Implement overwrite, rebuild and rewrite capacity mode functionality (right now, we just did 'discard' and 'fail')
@@ -21,7 +22,6 @@
 * Maybe change config not to accept these capacity modes?  Then we wouldn't have to log so many errors?
 * Put a check somewhere (not in the CD writer) to make sure the device isn't mounted
 * Write individual action functions (process.py) in terms of other lower-level functionality
-* Implement a cli module (might take this from aborted 2.x branch?) for command-line interface
 * Do a bunch of sample runs to get the logging level right (difference between "normal" and debug...?)
 * Go back through TODO list from aborted 2.x branch and decide what we will do now, what later, and what never.
 * Go back through bugzilla bugs and make sure they're all taken into account now that entire cli is finished.
@@ -38,5 +38,6 @@
    - Uses Python's tar module rather than GNU tar via pipes, for more consistent behavior.
    - Internal use of pipes should now be more robust and less prone to problems.
    - Support for some new functionality, such as "optimized fit to disc" (???)
+   - New concept of extension modules and support for them.
    - Documentation has been completely rewritten
    - Document that we have dropped support for the tarz format (.tar.Z).
