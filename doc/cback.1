@@ -96,6 +96,12 @@ with the CD recorder and its media.
 Write debugging information to the logfile. This option produces a high volume
 of output, and would generally only be needed when debugging a problem. This
 option implies the --output option, as well.
+\fB\-s\fR, \fB\-\-stack\fR
+Dump a Python stack trace instead of swallowing exceptions.  This forces Cedar
+Backup to dump the entire Python stack trace associated with an error, rather
+than just progating last message it received back up to the user interface.
+Under some circumstances, this is useful information to include along with a
+bug report.
 .SH ACTIONS
 .TP
 \fBall\fR

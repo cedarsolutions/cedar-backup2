@@ -136,6 +136,7 @@
    -m, --mode     Octal logfile permissions mode (default: 640)
    -O, --output   Record some sub-command (i.e. tar) output to the log
    -d, --debug    Write debugging information to the log (implies --output)
+   -s, --stack    Dump a Python stack trace instead of swallowing exceptions
 
  The following actions may be specified:
 
@@ -286,6 +287,20 @@
                      produces a high volume of output, and would generally only
                      be needed when debugging a problem.  This option implies
                      the <option>--output</option> option, as well.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-s</option>, <option>--stack</option></term>
+               <listitem>
+                  <para>
+                     Dump a Python stack trace instead of swallowing
+                     exceptions.  This forces Cedar Backup to dump the entire
+                     Python stack trace associated with an error, rather than
+                     just progating last message it received back up to the
+                     user interface.  Under some circumstances, this is useful
+                     information to include along with a bug report.
                   </para>
                </listitem>
             </varlistentry>

@@ -14,47 +14,25 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-ITEMS TO TEST
+REMAINING V2.0 RELEASE TASKS
 
+* Get Julie's changes into the documentation
+* Rewrite Cedar Backup webpage online
+* Add 'manual.txt' option for building docs (lynx --dump or something?)
+
+* Refactor out consistency check code and test it?
 * Test consistency-check logic
 * Build some unit tests for generic action-related code
-* Refactor out consistency check code and test it?
 
+* Run through full "normal" test cycle successfully on daystrom and agamemnon
+* Finish fully testing rebuild logic 
 
-ADMINISTRATIVE
-
-* Decide (maybe ask the list) whether it's important to list every file that is backed up
-* Clean up home debbuild environment (not really Cedar Backup - just noticed it)
-* Do a bunch of sample runs to get the logging level right (difference between "normal" and debug...?)
 * Come up with a standard svn label script to do releases, so I can't forget as easily.
-
-
-DOCUMENTATION
-
-* Rewrite Cedar Backup webpage online, to show new version and link to old version.
-* Add documentation for --stack option  (don't leave it undocumented)
-* Maybe add --stack to notes on how to report bugs, i.e. if you get an error that doesn't make sense, re-run with --stack
-* Change "1500" unit tests to "1700" unit tests everywhere I mention it.
-
-* Write some sort of "what's new" paragraph for release of 2.0beta1
-   - Entire codebase has been rewritten from the ground up using Python 2.3.
-   - Cleaner, more pythonic, better structured, sensible mix of classes and functions
-   - Much of the lower-level is intended to be general-purpose "library" code
-   - All lower-level functionality is thoroughly regression tested via pyunit (1700+ individual unit tests)
-   - Configuration class is standardized, so third-party Python programs can use it.
-   - Uses Python's integrated logging for realtime logs, much better than old logs.
-   - Uses Python's tar module rather than GNU tar via pipes, for more consistent behavior.
-   - Internal use of pipes should now be more robust and less prone to problems.
-   - New concept of extension modules and support for them.
-   - Documentation has been completely rewritten
-   - Document that we have dropped support for the tarz format (.tar.Z).
-   - Runtime 'validate' action now checks many more things
-   - Actions are now names not -- switches
-   - Unicode files are now natively supported without a need for user settings at the site level
 
 
 FUTURE FUNCTIONALITY
 
+* Add a config value or option for indicating whether backed-up files should be logged (if anyone cares).
 * Implement capacity mode functionality, i.e. what to do with a full disc. (bug #6)
 * Implement "safe overwrite" functionality based on disc label, and give users a way to label a disc (bug #5)
 * Prevent two backups from running against the same config file (?)
@@ -62,4 +40,8 @@ FUTURE FUNCTIONALITY
 * Somehow figure out if a full backup (i.e. disc-restart) has been missed (bug #6)
 * Perhaps update configuration to disallow two extensions with same name (right now, behavior is undefined).
 * Perhaps update configuration to disallow two peers with same name (right now, behavior is undefined).
-* Come up with non-PyUnit code to stress test actions, etc. which can't be automated and need to run as root.
+* Come up with non-PyUnit code to stress test high-actions, etc. 
+* Create Subversion extension (initially, for backing up Berkely DB repositories)
+* Create "system info" extension to dump fdisk information, etc. to collect directory.
+* Create MySQL extension to back up MySQL databases like Bugzilla.
+
