@@ -99,8 +99,9 @@ import time
 import unittest
 import tempfile
 import tarfile
+
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, changeFileAge, randomFilename
-from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemList
+from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemList, normalizeDir, compareContents
 
 
 #######################################################################
@@ -11775,6 +11776,164 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[self.buildPath([ "tree9", "file001", ])])
       self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", digestMap[self.buildPath([ "tree9", "file002", ])])
 
+   def testGenerateDigestMap_006(self):
+      """
+      Test on an empty list, passing stripPrefix not None.
+      """
+      backupList = BackupFileList()
+      prefix = "whatever"
+      digestMap = backupList.generateDigestMap(stripPrefix=prefix)
+      self.failUnlessEqual(0, len(digestMap))
+
+   def testGenerateDigestMap_007(self):
+      """
+      Test on a non-empty list containing only valid entries, passing
+      stripPrefix not None.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      prefix = normalizeDir(self.buildPath(["tree9", ]))
+      digestMap = backupList.generateDigestMap(stripPrefix=prefix)
+      self.failUnlessEqual(6, len(digestMap))
+      self.failUnlessEqual("4ff529531c7e897cd3df90ed76355de7e21e77ee", digestMap[buildPath([ "/", "dir001", "file001", ])])
+      self.failUnlessEqual("9d473094a22ecf2ae299c25932c941795d1d6cba", digestMap[buildPath([ "/", "dir001", "file002", ])])
+      self.failUnlessEqual("2f68cdda26b643ca0e53be6348ae1255b8786c4b", digestMap[buildPath([ "/", "dir002", "file001", ])])
+      self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", digestMap[buildPath([ "/", "dir002", "file002", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "file001", ])])
+      self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", digestMap[buildPath([ "/", "file002", ])])
+
+   def testGenerateDigestMap_008(self):
+      """
+      Test on a non-empty list containing only valid entries (some containing
+      spaces), passing stripPrefix not None.
+      """
+      self.extractTar("tree11")
+      path = self.buildPath(["tree11", ])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(13, count)
+      self.failUnlessEqual(13, len(backupList))
+      self.failUnless(self.buildPath([ "tree11", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "link with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir002", "file003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "file with spaces", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in backupList)
+      prefix = normalizeDir(self.buildPath(["tree11", ]))
+      digestMap = backupList.generateDigestMap(stripPrefix=prefix)
+      self.failUnlessEqual(7, len(digestMap))
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "file001", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "file with spaces", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "dir002", "file001",])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "dir002", "file002",])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "dir002", "file003",])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "dir with spaces", "file001",])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "dir with spaces", "file with spaces",])])
+
+   def testGenerateDigestMap_009(self):
+      """
+      Test on a non-empty list containing a directory (which shouldn't be
+      possible), passing stripPrefix not None.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      backupList.append(self.buildPath([ "tree9", "dir001", ]))     # back-door around addDir() 
+      self.failUnlessEqual(16, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", "dir001" ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      prefix = normalizeDir(self.buildPath(["tree9", ]))
+      digestMap = backupList.generateDigestMap(stripPrefix=prefix)
+      self.failUnlessEqual(6, len(digestMap))
+      self.failUnlessEqual("4ff529531c7e897cd3df90ed76355de7e21e77ee", digestMap[buildPath([ "/", "dir001", "file001", ])])
+      self.failUnlessEqual("9d473094a22ecf2ae299c25932c941795d1d6cba", digestMap[buildPath([ "/", "dir001", "file002", ])])
+      self.failUnlessEqual("2f68cdda26b643ca0e53be6348ae1255b8786c4b", digestMap[buildPath([ "/", "dir002", "file001", ])])
+      self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", digestMap[buildPath([ "/", "dir002", "file002", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "file001", ])])
+      self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", digestMap[buildPath([ "/", "file002", ])])
+
+   def testGenerateDigestMap_010(self):
+      """
+      Test on a non-empty list containing a non-existent file, passing
+      stripPrefix not None.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      self.failUnlessEqual(15, count)
+      self.failUnlessEqual(15, len(backupList))
+      backupList.append(self.buildPath([ "tree9", INVALID_FILE, ]))     # file won't exist on disk
+      self.failUnlessEqual(16, len(backupList))
+      self.failUnless(self.buildPath([ "tree9", INVALID_FILE ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+      self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+      prefix = normalizeDir(self.buildPath(["tree9", ]))
+      digestMap = backupList.generateDigestMap(stripPrefix=prefix)
+      self.failUnlessEqual(6, len(digestMap))
+      self.failUnlessEqual("4ff529531c7e897cd3df90ed76355de7e21e77ee", digestMap[buildPath([ "/", "dir001", "file001", ])])
+      self.failUnlessEqual("9d473094a22ecf2ae299c25932c941795d1d6cba", digestMap[buildPath([ "/", "dir001", "file002", ])])
+      self.failUnlessEqual("2f68cdda26b643ca0e53be6348ae1255b8786c4b", digestMap[buildPath([ "/", "dir002", "file001", ])])
+      self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", digestMap[buildPath([ "/", "dir002", "file002", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", digestMap[buildPath([ "/", "file001", ])])
+      self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", digestMap[buildPath([ "/", "file002", ])])
+
 
    ########################
    # Test generateFitted()
@@ -16105,6 +16264,176 @@ class TestPurgeItemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree11", "dir with spaces", "link with spaces", ]) in fsList)
 
 
+######################
+# TestFunctions class
+######################
+
+class TestFunctions(unittest.TestCase):
+
+   """Tests for the various public functions."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      try:
+         self.tmpdir = tempfile.mkdtemp()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
+      except Exception, e:
+         self.fail(e)
+
+   def tearDown(self):
+      removedir(self.tmpdir)
+
+
+   ##################
+   # Utility methods
+   ##################
+
+   def extractTar(self, tarname, within=None):
+      """Extracts a tarfile with a particular name."""
+      if within is None:
+         extractTar(self.tmpdir, self.resources['%s.tar.gz' % tarname])
+      else:
+         path = os.path.join(self.tmpdir, within)
+         os.mkdir(path)
+         extractTar(path, self.resources['%s.tar.gz' % tarname])
+
+   def buildPath(self, components):
+      """Builds a complete search path from a list of components."""
+      components.insert(0, self.tmpdir)
+      return buildPath(components)
+
+
+   #########################
+   # Test compareContents() 
+   #########################
+         
+   def testCompareContents_001(self):
+      """
+      Compare two empty directories.
+      """
+      self.extractTar("tree2", within="path1")
+      self.extractTar("tree2", within="path2")
+      path1 = self.buildPath(["path1", "tree2", "dir001",])
+      path2 = self.buildPath(["path2", "tree2", "dir002",])
+      compareContents(path1, path2)
+      compareContents(path1, path2, verbose=True)
+
+   def testCompareContents_002(self):
+      """
+      Compare one empty and one non-empty directory containing only directories.
+      """
+      self.extractTar("tree2", within="path1")
+      self.extractTar("tree2", within="path2")
+      path1 = self.buildPath(["path1", "tree2", "dir001",])
+      path2 = self.buildPath(["path2", "tree2", ])
+      compareContents(path1, path2)
+      compareContents(path1, path2, verbose=True)
+      
+   def testCompareContents_003(self):
+      """
+      Compare one empty and one non-empty directory containing only files.
+      """
+      self.extractTar("tree2", within="path1")
+      self.extractTar("tree1", within="path2")
+      path1 = self.buildPath(["path1", "tree2", "dir001",])
+      path2 = self.buildPath(["path2", "tree1", ])
+      self.failUnlessRaises(ValueError, compareContents, path1, path2)
+      self.failUnlessRaises(ValueError, compareContents, path1, path2, verbose=True)
+
+   def testCompareContents_004(self):
+      """
+      Compare two directories containing only directories, same.
+      """
+      self.extractTar("tree2", within="path1")
+      self.extractTar("tree2", within="path2")
+      path1 = self.buildPath(["path1", "tree2", ])
+      path2 = self.buildPath(["path2", "tree2", ])
+      compareContents(path1, path2)
+      compareContents(path1, path2, verbose=True)
+
+   def testCompareContents_005(self):
+      """
+      Compare two directories containing only directories, different set.
+      """
+      self.extractTar("tree2", within="path1")
+      self.extractTar("tree3", within="path2")
+      path1 = self.buildPath(["path1", "tree2", ])
+      path2 = self.buildPath(["path2", "tree3", ])
+      compareContents(path1, path2) # no error, since directories don't count
+      compareContents(path1, path2, verbose=True) # no error, since directories don't count
+
+   def testCompareContents_006(self):
+      """
+      Compare two directories containing only files, same.
+      """
+      self.extractTar("tree1", within="path1")
+      self.extractTar("tree1", within="path2")
+      path1 = self.buildPath(["path1", "tree1", ])
+      path2 = self.buildPath(["path2", "tree1", ])
+      compareContents(path1, path2)
+      compareContents(path1, path2, verbose=True)
+
+   def testCompareContents_007(self):
+      """
+      Compare two directories containing only files, different contents.
+      """
+      self.extractTar("tree1", within="path1")
+      self.extractTar("tree1", within="path2")
+      path1 = self.buildPath(["path1", "tree1", ])
+      path2 = self.buildPath(["path2", "tree1", ])
+      open(self.buildPath(["path1", "tree1", "file004", ]), "a").write("BOGUS")  # change content
+      self.failUnlessRaises(ValueError, compareContents, path1, path2)
+      self.failUnlessRaises(ValueError, compareContents, path1, path2, verbose=True)
+
+   def testCompareContents_008(self):
+      """
+      Compare two directories containing only files, different set.
+      """
+      self.extractTar("tree1", within="path1")
+      self.extractTar("tree7", within="path2")
+      path1 = self.buildPath(["path1", "tree1", ])
+      path2 = self.buildPath(["path2", "tree7", "dir001", ])
+      self.failUnlessRaises(ValueError, compareContents, path1, path2)
+      self.failUnlessRaises(ValueError, compareContents, path1, path2, verbose=True)
+
+   def testCompareContents_009(self):
+      """
+      Compare two directories containing files and directories, same.
+      """
+      self.extractTar("tree9", within="path1")
+      self.extractTar("tree9", within="path2")
+      path1 = self.buildPath(["path1", "tree9", ])
+      path2 = self.buildPath(["path2", "tree9", ])
+      compareContents(path1, path2)
+      compareContents(path1, path2, verbose=True)
+
+   def testCompareContents_010(self):
+      """
+      Compare two directories containing files and directories, different contents.
+      """
+      self.extractTar("tree9", within="path1")
+      self.extractTar("tree9", within="path2")
+      path1 = self.buildPath(["path1", "tree9", ])
+      path2 = self.buildPath(["path2", "tree9", ])
+      open(self.buildPath(["path2", "tree9", "dir001", "file002", ]), "a").write("whoops")  # change content
+      self.failUnlessRaises(ValueError, compareContents, path1, path2)
+      self.failUnlessRaises(ValueError, compareContents, path1, path2, verbose=True)
+
+   def testCompareContents_011(self):
+      """
+      Compare two directories containing files and directories, different set.
+      """
+      self.extractTar("tree9", within="path1")
+      self.extractTar("tree6", within="path2")
+      path1 = self.buildPath(["path1", "tree9", ])
+      path2 = self.buildPath(["path2", "tree6", ])
+      self.failUnlessRaises(ValueError, compareContents, path1, path2)
+      self.failUnlessRaises(ValueError, compareContents, path1, path2, verbose=True)
+
+
 #######################################################################
 # Suite definition
 #######################################################################
@@ -16115,6 +16444,7 @@ def suite():
                               unittest.makeSuite(TestFilesystemList, 'test'),
                               unittest.makeSuite(TestBackupFileList, 'test'),
                               unittest.makeSuite(TestPurgeItemList, 'test'), 
+                              unittest.makeSuite(TestFunctions, 'test'),
                             ))
 
 

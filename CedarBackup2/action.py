@@ -83,7 +83,7 @@ from CedarBackup2.peer import RemotePeer, LocalPeer
 from CedarBackup2.image import IsoImage
 from CedarBackup2.writer import CdWriter
 from CedarBackup2.writer import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
-from CedarBackup2.filesystem import BackupFileList, PurgeItemList
+from CedarBackup2.filesystem import BackupFileList, PurgeItemList, compareContents
 from CedarBackup2.util import executeCommand, getUidGid, getFunctionReference, deviceMounted
 from CedarBackup2.config import DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE
 
@@ -991,6 +991,7 @@ def _consistencyCheck(config, stagingDirs):
    @param config: Config object.
    @param stagingDirs: Dictionary mapping directory path to date suffix.
 
+   @raise ValueError: If the two directories are not equivalent.
    @raise IOError: If there is a problem working with the media.
    """
    logger.debug("Running consistency check.")
@@ -1001,32 +1002,9 @@ def _consistencyCheck(config, stagingDirs):
       if result != 0:
          raise IOError("Error [%d] mounting media for consistency check." % result)
       for stagingDir in stagingDirs.keys():
-         if stagingDir[-1:] == os.pathsep:
-            stagingDir = stagingDir[:-1]
-         stagingDirLen = len(stagingDir)
-         dateSuffix = stagingDirs[stagingDir]
-         discDir = os.path.join(mountPoint, dateSuffix)
-         if discDir[-1:] == os.pathsep:
-            discDir = discDir[:-1]
+         discDir = os.path.join(mountPoint, stagingDirs[stagingDir])
          logger.debug("Checking [%s] vs. [%s]." % (stagingDir, discDir))
-         filesystemList = BackupFileList()
-         filesystemList.addDirContents(stagingDir)
-         filesystemMap = filesystemList.generateDigestMap()
-         compareMap = {}
-         for key in filesystemMap.keys():
-            newKey = key[stagingDirLen:]
-            newKey = os.path.join(discDir, newKey)
-            compareMap[newKey] = filesystemMap[key]
-         mediaList = BackupFileList()
-         mediaList.addDirContents(discDir)
-         mediaMap = mediaList.generateDigestMap()
-         print mediaMap
-         print compareMap
-         if compareMap.keys() != mediaMap.keys():
-            raise IOError("Consistency check failed: filesystem and media have different contents.")
-         for filename in filesystemMap.keys():
-            if filesystemMap[filename] != mediaMap[filename]:
-               raise IOError("Consistency check failed: file [%s] differs." % filename)
+         compareContents(stagingDir, discDir)
          logger.info("Consistency check completed for [%s].  No problems found." % stagingDir)
    finally:
       if os.path.isdir(mountPoint):
