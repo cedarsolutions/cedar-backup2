@@ -59,10 +59,64 @@ import grp
 
 logger = logging.getLogger("CedarBackup2.util")
 
+BYTES_PER_KBYTE = 1024.0
+KBYTES_PER_MBYTE = 1024.0
+BYTES_PER_MBYTE = BYTES_PER_KBYTE * KBYTES_PER_MBYTE
+
+UNIT_BYTES  = 0
+UNIT_KBYTES = 1
+UNIT_MBYTES = 2
+
 
 ########################################################################
 # Public functions
 ########################################################################
+
+#########################
+# convertSize() function
+#########################
+
+def convertSize(size, fromUnit, toUnit):
+   """
+   Converts a size in one unit to a size in another unit.
+
+   This is just a convenience function so that the functionality can be
+   implemented in just one place.
+
+   The available units are:
+
+      - C{UNIT_BYTES} - Bytes
+      - C{UNIT_KBYTES} - Kilobytes, where 1kB = 1024B
+      - C{UNIT_MBYTES} - Megabytes, where 1MB = 1024kB
+
+   @param size: Size to convert
+   @type size: Integer or float value in units of C{fromUnit} 
+
+   @param fromUnit: Unit to convert from
+   @type fromUnit: One of the units listed above
+
+   @param toUnit: Unit to convert to
+   @param toUnit: One of the units listed above
+
+   @return: Number converted to new unit, as a float.
+   @raise ValueError: If one of the units is invalid.
+   """
+   size = float(size)
+   if fromUnit == toUnit:
+      return size
+   elif fromUnit == UNIT_BYTES and toUnit == UNIT_KBYTES:
+      return size/BYTES_PER_KBYTE
+   elif fromUnit == UNIT_BYTES and toUnit == UNIT_MBYTES:
+      return size/BYTES_PER_MBYTE
+   elif fromUnit == UNIT_KBYTES and toUnit == UNIT_BYTES:
+      return size*BYTES_PER_KBYTE
+   elif fromUnit == UNIT_KBYTES and toUnit == UNIT_MBYTES:
+      return size/KBYTES_PER_MBYTE
+   elif fromUnit == UNIT_MBYTES and toUnit == UNIT_BYTES:
+      return size*BYTES_PER_MBYTE
+   elif fromUnit == UNIT_MBYTES and toUnit == UNIT_KBYTES:
+      return size*KBYTES_PER_MBYTE
+    
 
 #######################
 # getUidGid() function
