@@ -99,8 +99,8 @@ import unittest
 import tempfile
 import tarfile
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.image import IsoImage, BYTES_PER_MBYTE
-from CedarBackup2.util import executeCommand
+from CedarBackup2.image import IsoImage
+from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYTES
 
 
 #######################################################################
@@ -1051,7 +1051,7 @@ class TestIsoImage(unittest.TestCase):
       Attempt to prune an image containing no entries.
       """
       isoImage = IsoImage()
-      self.failUnlessRaises(ValueError, isoImage.pruneImage, 650*BYTES_PER_MBYTE)
+      self.failUnlessRaises(ValueError, isoImage.pruneImage, convertSize(650, UNIT_MBYTES, UNIT_BYTES))
    
    def testPruneImage_002(self):
       """
@@ -1102,7 +1102,7 @@ class TestIsoImage(unittest.TestCase):
       isoImage = IsoImage()
       isoImage.addEntry(dir1, graftPoint="b")
       self.failUnlessEqual({ dir1:dir1graft, }, isoImage.entries)
-      result = isoImage.pruneImage(650*BYTES_PER_MBYTE)  # plenty large for everything to fit
+      result = isoImage.pruneImage(convertSize(650, UNIT_MBYTES, UNIT_BYTES))  # plenty large for everything to fit
       self.failUnless(result > 0)
       self.failUnlessEqual({ file1:file1graft, file2:file2graft, file3:file3graft, file4:file4graft, 
                              file5:file5graft, file6:file6graft, link1:link1graft, link2:link2graft,
@@ -1434,7 +1434,7 @@ class TestIsoImage(unittest.TestCase):
       isoImage.addEntry(file1)
       isoImage.addEntry(file2, graftPoint="other")
       isoImage.addEntry(dir1, graftPoint="base")
-      isoImage.pruneImage(650*BYTES_PER_MBYTE)     # shouldn't remove any files, but will force expansion
+      isoImage.pruneImage(convertSize(650, UNIT_MBYTES, UNIT_BYTES))     # shouldn't remove any files, but will force expansion
       isoImage.writeImage(imagePath)
       mountPath = self.mountImage(imagePath)
       fsList = FilesystemList()
@@ -1504,7 +1504,7 @@ class TestIsoImage(unittest.TestCase):
       dir1 = self.buildPath([ "tree9", ])
       imagePath = self.buildPath([ "image.iso", ])
       isoImage.addEntry(dir1, graftPoint="something")
-      isoImage.pruneImage(650*BYTES_PER_MBYTE)     # shouldn't remove any files, but will force expansion
+      isoImage.pruneImage(convertSize(650, UNIT_MBYTES, UNIT_BYTES))     # shouldn't remove any files, but will force expansion
       isoImage.writeImage(imagePath)
       mountPath = self.mountImage(imagePath)
       fsList = FilesystemList()
