@@ -66,6 +66,14 @@ Naming Conventions
    feel that this makes it easier to judge how important a given failure is,
    and also makes it somewhat easier to diagnose and fix individual problems.
 
+Full vs. Reduced Tests
+======================
+
+   All of the tests in this module are considered safe to be run in an average
+   build environment.  There is a no need to use a KNAPSACKTESTS_FULL
+   environment variable to provide a "reduced feature set" test suite as for
+   some of the other test modules.
+
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
 

@@ -44,8 +44,8 @@ Unit tests for CedarBackup2/util.py.
 Code Coverage
 =============
 
-   This module contains individual tests for the public functions
-   and classes implemented in util.py.
+   This module contains individual tests for the public functions and classes
+   implemented in util.py.
 
 Naming Conventions
 ==================
@@ -59,6 +59,20 @@ Naming Conventions
    feel that this makes it easier to judge how important a given failure is,
    and also makes it somewhat easier to diagnose and fix individual problems.
 
+Full vs. Reduced Tests
+======================
+
+   Some Cedar Backup regression tests require a specialized environment in
+   order to run successfully.  This environment won't necessarily be available
+   on every build system out there (for instance, on a Debian autobuilder).
+   Because of this, the default behavior is to run a "reduced feature set" test
+   suite that has no surprising system, kernel or network requirements.  If you
+   want to run all of the tests, set UTILTESTS_FULL to "Y" in the environment.
+
+   In this module, the main dependency is a kernel that allows ISO images to
+   be mounted in-place, via a loopback mechanism.  If your kernel supports this,
+   then it is safe to set UTILTESTS_FULL to "Y".
+
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -68,8 +82,21 @@ Naming Conventions
 ########################################################################
 
 # Import standard modules
+import os
 import unittest
 from CedarBackup2.util import executeCommand
+
+
+#######################################################################
+# Utility functions
+#######################################################################
+
+def runAllTests():
+   """Returns true/false depending on whether the full test suite should be run."""
+   if "UTILTESTS_FULL" in os.environ:
+      return os.environ["UTILTESTS_FULL"] == "Y"
+   else:
+      return False
 
 
 #######################################################################
@@ -95,9 +122,9 @@ class TestFunctions(unittest.TestCase):
       pass
 
 
-   ######################################
-   # Tests for executeCommand() function
-   ######################################
+   #########################
+   # Tests executeCommand() 
+   #########################
          
    def testExecuteCommand_001(self):
       """
@@ -446,9 +473,14 @@ class TestFunctions(unittest.TestCase):
 
 def suite():
    """Returns a suite containing all the test cases in this module."""
-   return unittest.TestSuite((
-                              unittest.makeSuite(TestFunctions, 'test'),
-                            ))
+   if runAllTests():
+      return unittest.TestSuite((
+                                 unittest.makeSuite(TestFunctions, 'test'),
+                               ))
+   else:
+      return unittest.TestSuite((
+                                 unittest.makeSuite(TestFunctions, 'testExecuteCommand'),
+                               ))
 
 
 ########################################################################
