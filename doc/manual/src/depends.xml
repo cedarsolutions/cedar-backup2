@@ -33,84 +33,367 @@
 
    <simplesect>
 
-      <para>
-         This appendix provides additional information about the software which
-         Cedar Backup depends on, including information about how to find
-         documentation and packages on non-Debian systems.
-      </para>
+      <variablelist>
 
-      <varlistentry>
-         <term>Python 2.3</term>
-         <listitem>
-            <para>
-               Version 2.3 of the Python interpreter was released on 29 July 2003,
-               so most <quote>current</quote> Linux distributions should include it.
-               (Unfortunately, the current Debian stable release <quote>woody</quote>
-               does <emphasis>not</emphasis> include it, but I have provided a 
-               backport on cedar-solutions.com)
-            </para>
-            <para>
-               The <quote>upstream</quote> home for Python is 
-               <ulink url="http://www.python.org"/>
-            </para>
-         </listitem>
-      </varlistentry>
+         <varlistentry>
+            <term>Python 2.3</term>
+            <listitem>
 
-      <varlistentry>
-         <term>PyXML</term>
-         <listitem>
-            <para></para>
-         </listitem>
-      </varlistentry>
+               <para>
+                  Version 2.3 of the Python interpreter was released on 29 July
+                  2003, so most <quote>current</quote> Linux distributions
+                  should include it (although Debian <quote>woody</quote> does
+                  not include it.)
+               </para>
 
-      <varlistentry>
-         <term>SSH Server and Client</term>
-         <listitem>
-            <para></para>
-         </listitem>
-      </varlistentry>
+               <informaltable>
+                  <tgroup cols="2">
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://www.python.org"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/testing/python/python2.3"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><ulink url="http://packages.gentoo.org/packages/?category=dev-lang;name=python;"/></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=python"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
 
-      <varlistentry>
-         <term>mkisofs</term>
-         <listitem>
-            <para></para>
-         </listitem>
-      </varlistentry>
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
+               </para>
 
-      <varlistentry>
-         <term>cdrecord</term>
-         <listitem>
-            <para></para>
-         </listitem>
-      </varlistentry>
+            </listitem>
 
-      <varlistentry>
-         <term>eject</term>
-         <listitem>
-            <para></para>
-         </listitem>
-      </varlistentry>
+         </varlistentry>
 
-      <varlistentry>
-         <term>mount</term>
-         <listitem>
-            <para></para>
-         </listitem>
-      </varlistentry>
+         <varlistentry>
+            <term>PyXML</term>
+            <listitem>
 
-      <varlistentry>
-         <term>umount</term>
-         <listitem>
-            <para></para>
-         </listitem>
-      </varlistentry>
+               <para>
+                  Cedar Backup should work with any version of PyXML.  
+               </para>
 
-      <varlistentry>
-         <term>volname</term>
-         <listitem>
-            <para></para>
-         </listitem>
-      </varlistentry>
+               <informaltable>
+                  <tgroup cols="2">
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://pyxml.sourceforge.net/"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/testing/python/python-xml"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><ulink url="http://packages.gentoo.org/packages/?category=dev-python;name=pyxml;"/></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=pyxml"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term>RSH Server and Client</term>
+            <listitem>
+
+               <para>
+                  Although Cedar Backup will technically work with any RSH-compatible
+                  server and client pair (such as the classic <quote>rsh</quote> client),
+                  most users should only use an SSH (secure shell) server and client.
+               </para>
+
+               <para>
+                  The defacto standard today is OpenSSH.  Some systems package the server
+                  and the client together, and others package the server and the client
+                  separately.  Note that <firstterm>master</firstterm> nodes need an
+                  SSH client, and <firstterm>client</firstterm> nodes need to run an
+                  SSH server.
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://www.openssh.com/"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/testing/net/ssh"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><ulink url="http://packages.gentoo.org/packages/?category=net-misc;name=openssh;"/></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=openssh"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find SSH client or server packages for your
+                  system, install from the package source, using the
+                  <quote>upstream</quote> link.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><command>mkisofs</command></term>
+            <listitem>
+
+               <para>
+                  The <command>mkisofs</command> command is used create ISO CD
+                  images that can later be written to backup media.
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://freshmeat.net/projects/mkisofs/"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/testing/otherosfs/mkisofs"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><para><emphasis>unknown</emphasis></para></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=mkisofs"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
+               </para>
+
+               <para>
+                  I have classified Gentoo as <quote>unknown</quote> because I
+                  can't find a specific package for that platform.  I think
+                  that maybe <command>mkisofs</command> is part of the cdrtools
+                  package (see below), but I'm not sure.  Any Gentoo users want
+                  to enlighten me?
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><command>cdrecord</command></term>
+            <listitem>
+
+               <para>
+                  The <command>cdrecord</command> command is used to write
+                  ISO images to media in a backup device.  
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://freshmeat.net/projects/cdrecord/"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/testing/otherosfs/cdrecord"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><ulink url="http://packages.gentoo.org/packages/?category=app-cdr;name=cdrtools;"/></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=cdrecord"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><command>eject</command> and <command>volname</command></term>
+            <listitem>
+
+               <para>
+                  The <command>eject</command> command is used to open and
+                  close the tray on a backup device (the backup device has a
+                  tray).  Sometimes, the tray must be opened and closed in
+                  order to "reset" the device so it notices recent changes to a
+                  disc.  
+               </para>
+
+               <para>
+                  The <command>volname</command> command is used to determine
+                  the volume name of media in a backup device.  
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://sourceforge.net/projects/eject"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/testing/utils/eject"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><ulink url="http://packages.gentoo.org/packages/?category=sys-apps;name=eject;"/></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=eject"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><command>mount</command> and <command>umount</command></term>
+            <listitem>
+
+               <para>
+                  The <command>mount</command> and <command>umount</command>
+                  commands are used to mount and unmount CD media after it has
+                  been written, in order to run a consistency check.
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://freshmeat.net/projects/util-linux/"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/testing/base/mount"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><para><emphasis>unknown</emphasis></para></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=mount"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
+               </para>
+
+               <para>
+                  I have classified Gentoo as <quote>unknown</quote> because I can't 
+                  find a specific package for that platform.  It may just be that
+                  these two utilities are considered standard, and don't have an 
+                  independent package of their own.  Any Gentoo users want to enlighten me?
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+      </variablelist>
 
    </simplesect>
 
