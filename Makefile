@@ -60,7 +60,7 @@ clean: docclean distribclean
 	find . -name "*.pyc" | xargs rm -f
 
 test:
-	$(PYTHON) unittest.py
+	$(PYTHON) util/unittest.py
 
 
 ##################################
@@ -72,7 +72,9 @@ test:
 check: pycheck
 pychecker: pycheck
 pycheck: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py
+	-@$(PYCHECKER) --config CedarBackup2/pycheckrc CedarBackup2/*.py
+	-@cd unittest && $(PYCHECKER) --config pycheckrc *.py
+	-@cd util && $(PYCHECKER) --config pycheckrc *.py
 
 
 ################
@@ -80,7 +82,7 @@ pycheck:
 ################
 
 docclean:
-	-$(RM) -rf $(DOC_DIR)
+	-$(RM) -rf $(EPYDOC_DIR)
 
 doc: $(EPYDOC_DIR)
 	@$(EPYDOC) --name "CedarBackup"   \
