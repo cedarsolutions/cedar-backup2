@@ -55,8 +55,9 @@ Cedar Backup configuration file, but requires no new configuration of its own.
 No public functions other than the action are exposed since all of this is
 pretty simple.
 
-@note: The Debian-specific call (to C{dpkg}) will only be done if
-C{/usr/bin/dpkg} exists and can be executed.
+@note: If the C{dpkg} or C{fdisk} commands cannot be found in their normal
+locations or executed by the current user, those steps will be skipped and a
+note will be logged at the INFO level.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -81,9 +82,10 @@ from CedarBackup2.util import executeCommand
 logger = logging.getLogger("CedarBackup2.log.extend.sysinfo")
 
 DPKG_PATH      = "/usr/bin/dpkg"
+FDISK_PATH     = "/sbin/fdisk"
 
-DPKG_COMMAND   = [ "/usr/bin/dpkg", "--get-selections", ]
-FDISK_COMMAND  = [ "fdisk", "-l", ]
+DPKG_COMMAND   = [ DPKG_PATH, "--get-selections", ]
+FDISK_COMMAND  = [ FDISK_PATH, "-l", ]
 LS_COMMAND     = [ "ls", "-laR", "/", ]
 
 
@@ -126,18 +128,20 @@ def _dumpDebianPackages(targetDir, compress=True):
    @param compress: Indicates whether to compress the output file.
    @raise IOError: If the dump fails for some reason.
    """
-   (outputFile, filename) = _getOutputFile(targetDir, "dpkg-selections", compress)
-   try:
-      if not os.path.exists(DPKG_PATH) or not os.access(DPKG_PATH, os.X_OK):
-         logger.debug("Not executing Debian package dump since dpkg doesn't seem to exist.")
-      else:
+   if not os.path.exists(DPKG_PATH):
+      logger.info("Not executing Debian package dump since %s doesn't seem to exist." % DPKG_PATH)
+   elif not os.access(DPKG_PATH, os.X_OK):
+      logger.info("Not executing Debian package dump since %s cannot be executed." % DPKG_PATH)
+   else:
+      (outputFile, filename) = _getOutputFile(targetDir, "dpkg-selections", compress)
+      try:
          result = executeCommand(DPKG_COMMAND, [], returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)[0]
          if result != 0:
             raise IOError("Error [%d] executing Debian package dump." % result)
-   finally:
-      outputFile.close()
-   if not os.path.exists(filename):
-      raise IOError("File [%s] does not seem to exist after Debian package dump finished." % filename)
+      finally:
+         outputFile.close()
+      if not os.path.exists(filename):
+         raise IOError("File [%s] does not seem to exist after Debian package dump finished." % filename)
 
 def _dumpPartitionTable(targetDir, compress=True):
    """
@@ -146,15 +150,20 @@ def _dumpPartitionTable(targetDir, compress=True):
    @param compress: Indicates whether to compress the output file.
    @raise IOError: If the dump fails for some reason.
    """
-   (outputFile, filename) = _getOutputFile(targetDir, "fdisk-l", compress)
-   try:
-      result = executeCommand(FDISK_COMMAND, [], returnOutput=False, ignoreStderr=True, outputFile=outputFile)[0]
-      if result != 0:
-         raise IOError("Error [%d] executing partition table dump." % result)
-   finally:
-      outputFile.close()
-   if not os.path.exists(filename):
-      raise IOError("File [%s] does not seem to exist after partition table dump finished." % filename)
+   if not os.path.exists(FDISK_PATH):
+      logger.info("Not executing partition table dump since %s doesn't seem to exist." % FDISK_PATH)
+   elif not os.access(FDISK_PATH, os.X_OK):
+      logger.info("Not executing partition table dump since %s cannot be executed." % FDISK_PATH)
+   else:
+      (outputFile, filename) = _getOutputFile(targetDir, "fdisk-l", compress)
+      try:
+         result = executeCommand(FDISK_COMMAND, [], returnOutput=False, ignoreStderr=True, outputFile=outputFile)[0]
+         if result != 0:
+            raise IOError("Error [%d] executing partition table dump." % result)
+      finally:
+         outputFile.close()
+      if not os.path.exists(filename):
+         raise IOError("File [%s] does not seem to exist after partition table dump finished." % filename)
 
 def _dumpFilesystemContents(targetDir, compress=True):
    """
