@@ -91,7 +91,8 @@
             <listitem>
 
                <para>
-                  Cedar Backup should work with any version of PyXML.  
+                  Cedar Backup should work with version 0.8.2 or better of this
+                  package.
                </para>
 
                <informaltable>

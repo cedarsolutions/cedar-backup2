@@ -1881,19 +1881,19 @@
          
          <para>
             For instance, imagine that a third-party developer provided a Cedar
-            Backup extension to back up Subversion repositories, and you wanted
-            to map that extension to the <quote>subversion</quote> command-line
-            action.  You have been told that this function is called
-            <quote>foobar.CedarSub</quote>.  You think of this backup
-            as a <quote>collect</quote> kind of action, so you want it to be
+            Backup extension to back up a certain kind of database repository,
+            and you wanted to map that extension to the <quote>database</quote>
+            command-line action.  You have been told that this function is
+            called <quote>foobar.database</quote>.  You think of this backup as
+            a <quote>collect</quote> kind of action, so you want it to be
             performed after collect but before stage and purge if more than one
             action is specified on the command line.  
          </para>
 
          <para>
             To configure this extension, you would list an action with a name
-            <quote>subversion</quote>, a module <quote>foobar</quote>,
-            a function name <quote>CedarSub</quote> and an index of
+            <quote>database</quote>, a module <quote>foobar</quote>,
+            a function name <quote>database</quote> and an index of
             <quote>101</quote>.
          </para>
 
@@ -1904,9 +1904,9 @@
          <programlisting>
 &lt;extensions&gt;
    &lt;action&gt;
-      &lt;name&gt;subversion&lt;/name&gt;
+      &lt;name&gt;database&lt;/name&gt;
       &lt;module&gt;foobar&lt;/module&gt;
-      &lt;function&gt;CedarSub&lt;/function&gt;
+      &lt;function&gt;database&lt;/function&gt;
       &lt;index&gt;101&lt;/index&gt;
    &lt;/action&gt;
 &lt;/extensions&gt;

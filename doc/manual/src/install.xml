@@ -182,8 +182,8 @@ $ apt-get install cedar-backup2
             or greater of the language.  Version 2.3 was released on 29 July
             2003, so by now most current Linux distributions should include it.
             Cedar Backup also requires one non-standard Python module, called
-            PyXML.  You must install these Python dependencies on every peer
-            node in a pool (master or client).
+            PyXML (version 0.8.2 or better).  You must install these Python
+            dependencies on every peer node in a pool (master or client).
          </para>
 
          <para>

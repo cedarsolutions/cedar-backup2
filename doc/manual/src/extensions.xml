@@ -57,17 +57,17 @@
       <programlisting>
 &lt;extensions&gt;
    &lt;action&gt;
-      &lt;name&gt;subversion&lt;/name&gt;
+      &lt;name&gt;database&lt;/name&gt;
       &lt;module&gt;foobar&lt;/module&gt;
-      &lt;function&gt;CedarSub&lt;/function&gt;
+      &lt;function&gt;database&lt;/function&gt;
       &lt;index&gt;101&lt;/index&gt;
    &lt;/action&gt; 
 &lt;/extensions&gt;
       </programlisting>
 
       <para>
-         In this case, the action <quote>subversion</quote> has been mapped to
-         the extension function <literal>foobar.CedarSub</literal>.  
+         In this case, the action <quote>database</quote> has been mapped to
+         the extension function <literal>foobar.database</literal>.  
       </para>
 
       <para>
@@ -183,22 +183,22 @@ def function(configPath, options, config):
       </para>
 
       <para>
-         For instance, our hypothetical Subversion extension might require
-         configuration indicating which repositories to back up.  This
-         information might go into a section something like this:
+         For instance, our hypothetical database extension might require
+         configuration indicating the path to some repositories to back up.
+         This information might go into a section something like this:
       </para>
 
       <programlisting>
-&lt;subversion&gt;
+&lt;database&gt;
    &lt;repository&gt;/path/to/repo1&lt;/repository&gt;
    &lt;repository&gt;/path/to/repo2&lt;/repository&gt;
-&lt;/subversion&gt;
+&lt;/database&gt;
       </programlisting>
 
       <para>
          In order to read this new configuration, the extension code can either
          inherit from the <literal>Config</literal> object and create a
-         subclass that knows how to parse the new <literal>subversion</literal>
+         subclass that knows how to parse the new <literal>database</literal>
          config section, or can write its own code to parse whatever it needs
          out of the file.  Either way, the resulting code is completely
          independent of the standard Cedar Backup functionality.

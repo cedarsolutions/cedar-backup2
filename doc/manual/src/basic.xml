@@ -590,11 +590,10 @@
 
       <para>
          Imagine that there is a third party developer who understands how to
-         to back up Subversion (Berkeley DB) repositories.  This third party
+         back up a certain kind of database repository.  This third party
          might want to integrate his or her specialized backup into the Cedar
-         Backup process, perhaps thinking of the Subversion backup as a sort of
-         <quote>collect</quote> step for Subversion repositories rather than
-         filesystems.
+         Backup process, perhaps thinking of the database backup as a sort of
+         <quote>collect</quote> step.
       </para>
 
       <para>
@@ -618,7 +617,7 @@
          with a certain interface, and are allowed to add their own sections to
          the Cedar Backup configuration file, so that all backup configuration
          can be centralized.  Then, the action process function is associated
-         with an action name (i.e. <quote>subversion</quote>) which can be
+         with an action name (i.e. <quote>database</quote>) which can be
          executed from the <command>cback</command> command line like any other
          action.
       </para>
