@@ -40,7 +40,7 @@
 """
 Provides the implementation for various knapsack algorithms.
 
-Knapsack algorithms are "fit" algorithms, used to take a set of 'things' and
+Knapsack algorithms are "fit" algorithms, used to take a set of "things" and
 decide on the optimal way to fit them into some container.  The focus of this
 code is to fit files onto a disc, although the interface (in terms of item,
 item size and capacity size, with no units) is generic enough that it can
@@ -95,19 +95,19 @@ def firstFit(items, capacity):
 
    The function assumes that the list of items may be used destructively, if
    needed.  This avoids the overhead of having the function make a copy of the
-   list, if this is not required.  Callers should pass items.copy() if they do
-   not want their version of the list modified.
+   list, if this is not required.  Callers should pass C{items.copy()} if they
+   do not want their version of the list modified.
 
    The function returns a list of chosen items and the unitless amount of
    capacity used by the items.
 
    @param items: Items to operate on
-   @type items: dictionary, keyed on item, of (item, size) tuples, item as string and size as integer
+   @type items: dictionary, keyed on item, of C{(item, size)} tuples, item as string and size as integer
 
    @param capacity: Capacity of container to fit to
    @type capacity: integer
 
-   @returns: Tuple (items, used) as described above
+   @returns: Tuple C{(items, used)} as described above
    """
 
    # Use dict since insert into dict is faster than list append
@@ -159,19 +159,19 @@ def bestFit(items, capacity):
 
    The function assumes that the list of items may be used destructively, if
    needed.  This avoids the overhead of having the function make a copy of the
-   list, if this is not required.  Callers should pass items.copy() if they do
-   not want their version of the list modified.
+   list, if this is not required.  Callers should pass C{items.copy()} if they
+   do not want their version of the list modified.
 
    The function returns a list of chosen items and the unitless amount of
    capacity used by the items.
 
    @param items: Items to operate on
-   @type items: dictionary, keyed on item, of (item, size) tuples, item as string and size as integer
+   @type items: dictionary, keyed on item, of C{(item, size)} tuples, item as string and size as integer
 
    @param capacity: Capacity of container to fit to
    @type capacity: integer
 
-   @returns: Tuple (items, used) as described above
+   @returns: Tuple C{(items, used)} as described above
    """
 
    # Use dict since insert into dict is faster than list append
@@ -228,19 +228,19 @@ def worstFit(items, capacity):
 
    The function assumes that the list of items may be used destructively, if
    needed.  This avoids the overhead of having the function make a copy of the
-   list, if this is not required.  Callers should pass items.copy() if they do
-   not want their version of the list modified.
+   list, if this is not required.  Callers should pass C{items.copy()} if they
+   do not want their version of the list modified.
 
    The function returns a list of chosen items and the unitless amount of
    capacity used by the items.
 
    @param items: Items to operate on
-   @type items: dictionary, keyed on item, of (item, size) tuples, item as string and size as integer
+   @type items: dictionary, keyed on item, of C{(item, size)} tuples, item as string and size as integer
 
    @param capacity: Capacity of container to fit to
    @type capacity: integer
 
-   @returns: Tuple (items, used) as described above
+   @returns: Tuple C{(items, used)} as described above
    """
 
    # Use dict since insert into dict is faster than list append
@@ -277,16 +277,16 @@ def alternateFit(items, capacity):
    """
    Implements the alternate-fit knapsack algorithm.
 
-   This algorithm (which I'm calling "alternate-fit") tries to balance small
-   and large items to achieve better end-of-disk performance.  Instead of just
-   working one direction through a list, it alternately works from the start
-   and end of a sorted list (sorted from smallest to largest), throwing away
-   any item which causes capacity to be exceeded.  The algorithm tends to be
-   slower than the best-fit and first-fit algorithms, and slightly faster than
-   the worst-fit algorithm, probably because of the number of items it
-   considers on average before completing.  It often achieves slightly better
-   capacity utilization than the worst-fit algorithm, while including slighly
-   fewer items.
+   This algorithm (which I'm calling "alternate-fit" as in "alternate from one
+   to the other") tries to balance small and large items to achieve better
+   end-of-disk performance.  Instead of just working one direction through a
+   list, it alternately works from the start and end of a sorted list (sorted
+   from smallest to largest), throwing away any item which causes capacity to
+   be exceeded.  The algorithm tends to be slower than the best-fit and
+   first-fit algorithms, and slightly faster than the worst-fit algorithm,
+   probably because of the number of items it considers on average before
+   completing.  It often achieves slightly better capacity utilization than the
+   worst-fit algorithm, while including slighly fewer items.
 
    The "size" values in the items and capacity arguments must be comparable,
    but they are unitless from the perspective of this function.  Zero-sized
@@ -299,19 +299,19 @@ def alternateFit(items, capacity):
 
    The function assumes that the list of items may be used destructively, if
    needed.  This avoids the overhead of having the function make a copy of the
-   list, if this is not required.  Callers should pass items.copy() if they do
-   not want their version of the list modified.
+   list, if this is not required.  Callers should pass C{items.copy()} if they
+   do not want their version of the list modified.
 
    The function returns a list of chosen items and the unitless amount of
    capacity used by the items.
 
    @param items: Items to operate on
-   @type items: dictionary, keyed on item, of (item, size) tuples, item as string and size as integer
+   @type items: dictionary, keyed on item, of C{(item, size)} tuples, item as string and size as integer
 
    @param capacity: Capacity of container to fit to
    @type capacity: integer
 
-   @returns: Tuple (items, used) as described above
+   @returns: Tuple C{(items, used)} as described above
    """
 
    # Use dict since insert into dict is faster than list append

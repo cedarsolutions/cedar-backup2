@@ -89,25 +89,26 @@ class IsoImage(object):
 
       This object represents an ISO 9660 filesystem image.  It is implemented
       in terms of the C{mkisofs} program, which has been ported to many
-      operating systems and platforms.  A "sensible subset" of the mkisofs
+      operating systems and platforms.  A "sensible subset" of the C{mkisofs}
       functionality is made available through the public interface, allowing
       callers to set a variety of basic options such as publisher id,
       application id, etc. as well as specify exactly which files and
       directories they want included in their image.
 
       By default, the image is created using the Rock Ridge protocol (using the
-      C{-r} option to mkisofs) because Rock Ridge discs are generally more
+      C{-r} option to C{mkisofs}) because Rock Ridge discs are generally more
       useful on UN*X filesystems than standard ISO 9660 images.  However,
-      callers can fall back to the default mkisofs functionality by setting the
-      C{useRockRidge} instance variable to C{False}.  
+      callers can fall back to the default C{mkisofs} functionality by setting
+      the C{useRockRidge} instance variable to C{False}.  Note, however, that
+      this option is not well-tested.
 
-      In any case, since soft links are ignored by mkisofs by default, they
+      In any case, since soft links are ignored by C{mkisofs} by default, they
       will be ignored here, too.
 
       The class also includes some functionality that attempts to "prune" a
       defined image to fit in a certain amount of free space.  This should help
       callers who want to write a disc, even if they can't fit everything they
-      want on it.  Note, however, that this option is not well-tested.
+      want on it.  
 
    Graft Points
    ============
@@ -116,7 +117,7 @@ class IsoImage(object):
       root directory of the image using either the object-wide C{graftPoint}
       instance variable or the C{graftPoint} parameter to this method.  
 
-      The mkisofs documentation has this to say about graft points::
+      The C{mkisofs} documentation has this to say about graft points::
 
           ...it is possible to graft the paths at points other than the root
           directory, and it is possible to graft files or directories onto the
@@ -148,7 +149,7 @@ class IsoImage(object):
       used.
 
    @ivar graftPoint: Default image-wide graft point (see L{addEntry} for details).
-   @ivar useRockRidge: Indicates whether to use the RockRidge protocol (default is True).
+   @ivar useRockRidge: Indicates whether to use the RockRidge protocol (default is C{True}).
    @ivar applicationId: Optionally specifies the ISO header application id value.
    @ivar biblioFile: Optionally specifies ISO bibliographic file name.
    @ivar publisherId: Optionally specifies the ISO header publisher id value.
@@ -173,10 +174,10 @@ class IsoImage(object):
       will not be written.
 
       @param device: Name of the device that the image will be written to
-      @type device: Either be a filesystem path (C{"/dev/cdrw"}) or a SCSI address (C{"[ATA:]scsibus,target,lun"}).
+      @type device: Either be a filesystem path or a SCSI address
 
       @param boundaries: Session boundaries as required by C{mkisofs}
-      @type boundaries: Tuple (last_sess_start,next_sess_start) as returned from C{cdrecord -msinfo}
+      @type boundaries: Tuple C{(last_sess_start,next_sess_start)} as returned from C{cdrecord -msinfo}
 
       @param graftPoint: Default graft point for this page.
       @type graftPoint: String representing a graft point path (see L{addEntry}).
@@ -206,7 +207,10 @@ class IsoImage(object):
       @type imagePath: String representing a path on disk
 
       @raise IOError: If there is an error writing the image to disk.
+      @raise ValueError: If there are no filesystem entries in the image
       """
+      if len(self.entries.keys) == 0:
+         raise ValueError("Image does not contain any entries.")
       args = self._buildWriteArgs(imagePath)
       result = executeCommand(MKISOFS_CMD, args)
       if result != 0:
@@ -222,15 +226,19 @@ class IsoImage(object):
       true cost of directories in the structure, etc, etc.
 
       @return: Estimated size of the image, in bytes.
-      @raise IOError: If there is a problem calling mkisofs.
+
+      @raise IOError: If there is a problem calling C{mkisofs}.
+      @raise ValueError: If there are no filesystem entries in the image
       """
+      if len(self.entries.keys) == 0:
+         raise ValueError("Image does not contain any entries.")
       return self._getEstimatedSize(self.entries)
 
    def _getEstimatedSize(self, entries):
       """
       Returns the estimated size (in bytes) for the passed-in entries dictionary.
       @return: Estimated size of the image, in bytes.
-      @raise IOError: If there is a problem calling mkisofs.
+      @raise IOError: If there is a problem calling C{mkisofs}.
       """
       args = self._buildSizeArgs(entries)
       (result, output) = executeCommand(MKISOFS_CMD, args, returnOutput=True)
@@ -258,9 +266,9 @@ class IsoImage(object):
       the image, unless the C{override} parameter is set to C{True}.
 
       @note: The method C{graftPoints} parameter overrides the object-wide
-      instance variable.  If neither the method parameter or object-wide values
+      instance variable.  If neither the method parameter or object-wide value
       is set, the path will be written at the image root.  The graft point
-      behavior is determined by what value is in effect I{at the time this
+      behavior is determined by the value which is in effect I{at the time this
       method is called}, so you I{must} set the object-wide value before
       calling this method for the first time, or your image may not be
       consistent.
@@ -300,7 +308,7 @@ class IsoImage(object):
       of times before giving up and raising an C{IOError} exception.
 
       @note: Pruning an image has the effect of expanding any directory to its
-      list of composite files internally.  This could slow down your mkisofs
+      list of composite files internally.  This could slow down your C{mkisofs}
       call (but it should still work).
 
       @note: This process is destructive.  Once you prune an image, you can't
@@ -308,14 +316,17 @@ class IsoImage(object):
       However, the object should be unchanged unless it returns successfully.
 
       @param capacity: Capacity to prune to
-      @type pruneCapacity: Integer capacity, in bytes
+      @type capacity: Integer capacity, in bytes
 
       @return: Estimated size of the image, in bytes, as from L{getEstimatedSize}.
+
       @raise IOError: If we can't prune to fit the image into the capacity.
+      @raise ValueError: If there are no filesystem entries in the image
       """
-      if len(self.entries) > 0:
-         entries = self._pruneImage(capacity)
-         self.entries = entries
+      if len(self.entries.keys) == 0:
+         raise ValueError("Image does not contain any entries.")
+      entries = self._pruneImage(capacity)
+      self.entries = entries
       return self.getEstimatedSize()
 
    def _pruneImage(self, capacity):
@@ -355,7 +366,7 @@ class IsoImage(object):
       certainly be small enough, unless the overhead exceeds the capacity).
 
       @param capacity: Capacity to prune to
-      @type pruneCapacity: Integer capacity, in bytes
+      @type capacity: Integer capacity, in bytes
 
       @return: Pruned entries dictionary safe to apply to self.entries
       @raise IOError: If we can't prune to fit the image into the capacity.
@@ -366,43 +377,15 @@ class IsoImage(object):
       overhead = estimatedSize - fileSize
       if overhead >= capacity:   # use >= just to be safe
          raise IOError("Required overhead exceeds available capacity.")
-
-      targetSize = capacity - overhead
-      (items, used) = worstFit(sizeMap, targetSize)
-      if len(items) == 0 or used == 0:
-         raise IOError("Unable to fit any entries into available capacity.")
-      prunedEntries = IsoImage._buildEntries(expanded, items)
-      estimatedSize = self._getEstimatedSize(prunedEntries)
-      if(estimatedSize <= capacity):
-         return prunedEntries
-
-      targetSize = (capacity - overhead) * 0.95
-      (items, used) = worstFit(sizeMap, targetSize)
-      if len(items) == 0 or used == 0:
-         raise IOError("Unable to fit any entries into available capacity.")
-      prunedEntries = IsoImage._buildEntries(expanded, items)
-      estimatedSize = self._getEstimatedSize(prunedEntries)
-      if(estimatedSize <= capacity):
-         return prunedEntries
-
-      targetSize = (capacity - overhead) * 0.90
-      (items, used) = worstFit(sizeMap, targetSize)
-      if len(items) == 0 or used == 0:
-         raise IOError("Unable to fit any entries into available capacity.")
-      prunedEntries = IsoImage._buildEntries(expanded, items)
-      estimatedSize = self._getEstimatedSize(prunedEntries)
-      if(estimatedSize <= capacity):
-         return prunedEntries
-
-      targetSize = (capacity - overhead) * 0.80
-      (items, used) = worstFit(sizeMap, targetSize)
-      if len(items) == 0 or used == 0:
-         raise IOError("Unable to fit any entries into available capacity.")
-      prunedEntries = IsoImage._buildEntries(expanded, items)
-      estimatedSize = self._getEstimatedSize(prunedEntries)
-      if(estimatedSize <= capacity):
-         return prunedEntries
-
+      for factor in [ 1.0, 0.98, 0.95, 0.90 ]:
+         targetSize = (capacity - overhead) * factor
+         (items, used) = worstFit(sizeMap, targetSize)
+         if len(items) == 0 or used == 0:
+            raise IOError("Unable to fit any entries into available capacity.")
+         prunedEntries = IsoImage._buildEntries(expanded, items)
+         estimatedSize = self._getEstimatedSize(prunedEntries)
+         if(estimatedSize <= capacity):
+            return prunedEntries
       raise IOError("Unable to prune image to fit the capacity after four tries.")
 
    def _expandEntries(self):
@@ -415,7 +398,8 @@ class IsoImage(object):
       this function goes through the the various entries and expands every
       directory it finds.  The result is an "equivalent" entries dictionary
       that verbosely includes every file that would have been included
-      originally, along with its associated graft point (if any).
+      originally, along with its associated graft point (if any).  Soft links
+      are removed at this step, since C{mkisofs} would ignore them anyway.
 
       @return: Expanded entries dictionary.
       """
@@ -460,7 +444,8 @@ class IsoImage(object):
       
       The result is basically the intersection of the passed-in entries
       dictionary with the keys that are in the list.  The passed-in entries
-      dictionary will not be modified.
+      dictionary will not be modified.  The items list is assumed to be a subset
+      of the list of keys in the entries dictionary.
 
       @param entries: Entries dictionary to work from
       @param items: List of items to be used as keys into the dictionary
@@ -481,16 +466,16 @@ class IsoImage(object):
    def _buildDirEntries(entries):
       """
       Uses an entries dictionary to build a list of directory locations for use
-      by mkisofs.
+      by C{mkisofs}.
 
-      We build a list of entries that can be passed to mkisofs.  Each entry is
+      We build a list of entries that can be passed to C{mkisofs}.  Each entry is
       either raw (if no graft point was configured) or in graft-point form as
       described above (if a graft point was configured).  The dictionary keys
       are the path names, and the values are the graft points, if any.
 
       @param entries: Dictionary of image entries (i.e. self.entries)
 
-      @return: List of directory locations for use by mkisofs
+      @return: List of directory locations for use by C{mkisofs}
       """
       dirEntries = []
       for key in entries.keys:
@@ -503,7 +488,7 @@ class IsoImage(object):
 
    def _buildGeneralArgs(self):
       """
-      Builds a list of general arguments to be passed to a mkisofs command.
+      Builds a list of general arguments to be passed to a C{mkisofs} command.
 
       The various instance variables (C{applicationId}, etc.) are filled into
       the list of arguments if they are set.
@@ -533,7 +518,7 @@ class IsoImage(object):
 
    def _buildSizeArgs(self, entries):
       """
-      Builds a list of arguments to be passed to a mkisofs command.
+      Builds a list of arguments to be passed to a C{mkisofs} command.
 
       The various instance variables (C{applicationId}, etc.) are filled into
       the list of arguments if they are set.  The command will be built to just
@@ -563,7 +548,7 @@ class IsoImage(object):
 
    def _buildWriteArgs(self, imagePath):
       """
-      Builds a list of arguments to be passed to a mkisofs command.
+      Builds a list of arguments to be passed to a C{mkisofs} command.
 
       The various instance variables (C{applicationId}, etc.) are filled into
       the list of arguments if they are set.  The command will be built to write
