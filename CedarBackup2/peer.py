@@ -28,17 +28,42 @@
 # Language : Python (>= 2.3)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Provides location to maintain version information.
+# Purpose  : Provides backup peer-related objects.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # This file was created with a width of 132 characters, and NO tabs.
 
+########################################################################
+# Module documentation
+########################################################################
+
 """
-Provides location to maintain version information.
+Provides backup peer-related objects.
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
-COPYRIGHT   = "2004"
-VERSION     = "2.0.0"
-DATE        = "unreleased"
+
+########################################################################
+# BackupPeer class definition
+########################################################################
+
+def BackupPeer(object):
+   pass
+
+
+########################################################################
+# LocalPeer class definition
+########################################################################
+
+def LocalPeer(BackupPeer):
+   pass
+
+
+########################################################################
+# RemotePeer class definition
+########################################################################
+
+def RemotePeer(BackupPeer):
+   pass
+
 

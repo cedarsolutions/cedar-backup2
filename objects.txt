@@ -1,0 +1,93 @@
+What objects can we envision to be part of a
+Cedar Backup system?  
+
+#
+# Configuration
+##
+
+Configuration  - Class representing XML configuration on disk.
+
+
+#
+# Collecting and purging
+##
+
+FilesystemList - Generic class that represents a list of filesystem items:
+                 directories, files, etc.  It will allow someone to add
+                 individual files, directories, recursive contents of
+                 directories, etc.  It will also allow for exclusions, and
+                 will allow a way to remove individual files or individual
+                 directories, remove entries matching a pattern, etc.
+ 
+BackupFileList - FilesystemList containing a list of files, to be backed
+                 up.  Only includes files, not directories.  It adds
+                 functionality to keep a hash (SHA, MD5, whatever) for each
+                 file, know the total size of the files in the list, create
+                 a tar file containing the files in the list, etc.
+
+PurgeItemList  - FilesystemList containing files and directories to be
+                 purged.  Includes individual files and individual
+                 directories (which will *not* be treated recursively).
+                 Adds the ability to purge the entries in the list.
+
+CollectProcess - Encapsulates a collect process on the local peer for
+                 the given day.  Would be initialized with Configuration
+                 and would do everything that was in functional.py for
+                 the collect action.
+
+PurgeProcess   - Encapsulates a purge process on the local peer for
+                 the given day.  Would be initialized with Configuration
+                 and would do everything that was in functional.py for
+                 the purge action.
+
+
+#
+# Staging
+##
+
+BackupPeer     - Generic class (interface?) representing a peer in a backup pool.
+
+LocalPeer      - BackupPeer representing a local (non-network) peer in a
+                 backup pool, allowing all filesystem operations, etc.
+                 This object would be used by a server to stage from a
+                 local peer.
+
+RemotePeer     - BackupPeer representing a remote (network) peer in a
+                 backup pool, allowing all filesystem and network
+                 operations, etc.  This object would be used by a server to
+                 stage from a remote peer.
+
+StageProcess   - Encapsulates a stage process on the local peer (server)
+                 for the given day.  Would be initialized with
+                 Configuration and would do everything that was in
+                 functional.py for the stage action.
+
+
+#
+# Storing and rebuilding
+##
+
+IsoImage       - Which would represent an ISO image on disk, and would let
+                 you add directories (which graft points, etc.) and set
+                 various mkisofs options, etc.  It also includes a way to
+                 do a consistency check of the expected image vs. the
+                 fileystem at some indicated location.
+
+ImageWriter    - Generic class (interface?) that represents a device which
+                 can write an IsoImage.  
+
+CdWriter       - ImageWriter that knows how to write to CD media.
+
+DvdWriter      - ImageWriter that knows how to write to DVD media.
+
+StoreProcess   - Encapsulates a store process on the local peer (server)
+                 for the given day.  Would be initialized with
+                 Configuration and would do everything that was in
+                 functional.py for the store action.
+
+RebuildProcess - Encapsulates a rebuild process on the local peer (server)
+                 for the given day.  Would be initialized with
+                 Configuration and would do everything that was in
+                 functional.py for the rebuild action.  Might inherit from
+                 StoreProcess to take advantage of common functionality.
+  
