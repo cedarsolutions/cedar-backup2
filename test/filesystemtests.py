@@ -520,6 +520,67 @@ class TestFilesystemList(unittest.TestCase):
 
    def testAddFile_013(self):
       """
+      Attempt to add a file that doesn't exist; excludeLinks set.
+      """
+      path = self.buildPath([INVALID_FILE])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      try:
+         fsList.addFile(path)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+
+   def testAddFile_014(self):
+      """
+      Attempt to add a directory; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "dir001"])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      try:
+         fsList.addFile(path)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+
+   def testAddFile_015(self):
+      """
+      Attempt to add a soft link; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "link001"])     # link to a file
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      count = fsList.addFile(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
+
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      try:
+         fsList.addFile(path)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+
+   def testAddFile_016(self):
+      """
+      Attempt to add an existing file; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "file001"])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      count = fsList.addFile(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
+
+   def testAddFile_017(self):
+      """
       Attempt to add a file that doesn't exist; with excludePaths including the
       path.
       """
@@ -532,7 +593,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_014(self):
+   def testAddFile_018(self):
       """
       Attempt to add a directory; with excludePaths including the path.
       """
@@ -546,7 +607,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_015(self):
+   def testAddFile_019(self):
       """
       Attempt to add a soft link; with excludePaths including the path.
       """
@@ -568,7 +629,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_016(self):
+   def testAddFile_020(self):
       """
       Attempt to add an existing file; with excludePaths including the path.
       """
@@ -580,7 +641,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddFile_017(self):
+   def testAddFile_021(self):
       """
       Attempt to add a file that doesn't exist; with excludePaths not including
       the path.
@@ -594,7 +655,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_018(self):
+   def testAddFile_022(self):
       """
       Attempt to add a directory; with excludePaths not including the path.
       """
@@ -608,7 +669,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_019(self):
+   def testAddFile_023(self):
       """
       Attempt to add a soft link; with excludePaths not including the path.
       """
@@ -630,7 +691,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_020(self):
+   def testAddFile_024(self):
       """
       Attempt to add an existing file; with excludePaths not including the path.
       """
@@ -642,7 +703,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
-   def testAddFile_021(self):
+   def testAddFile_025(self):
       """
       Attempt to add a file that doesn't exist; with excludePatterns matching
       the path.
@@ -656,7 +717,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_022(self):
+   def testAddFile_026(self):
       """
       Attempt to add a directory; with excludePatterns matching the path.
       """
@@ -670,7 +731,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_023(self):
+   def testAddFile_027(self):
       """
       Attempt to add a soft link; with excludePatterns matching the path.
       """
@@ -692,7 +753,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_024(self):
+   def testAddFile_028(self):
       """
       Attempt to add an existing file; with excludePatterns matching the path.
       """
@@ -704,7 +765,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddFile_025(self):
+   def testAddFile_029(self):
       """
       Attempt to add a file that doesn't exist; with excludePatterns not
       matching the path.
@@ -718,7 +779,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_026(self):
+   def testAddFile_030(self):
       """
       Attempt to add a directory; with excludePatterns not matching the path.
       """
@@ -732,7 +793,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_027(self):
+   def testAddFile_031(self):
       """
       Attempt to add a soft link; with excludePatterns not matching the path.
       """
@@ -754,7 +815,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddFile_028(self):
+   def testAddFile_032(self):
       """
       Attempt to add an existing file; with excludePatterns not matching the
       path.
@@ -952,6 +1013,67 @@ class TestFilesystemList(unittest.TestCase):
 
    def testAddDir_013(self):
       """
+      Attempt to add a directory that doesn't exist; excludeLinks set.
+      """
+      path = self.buildPath([INVALID_FILE])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      try:
+         fsList.addDir(path)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+
+   def testAddDir_014(self):
+      """
+      Attempt to add a file; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "file001"])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      try:
+         fsList.addDir(path)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+
+   def testAddDir_015(self):
+      """
+      Attempt to add a soft link; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "link001"])     # link to a file
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      try:
+         fsList.addDir(path)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      count = fsList.addDir(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
+
+   def testAddDir_016(self):
+      """
+      Attempt to add an existing directory; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "dir001"])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      count = fsList.addDir(path)
+      self.failUnlessEqual(1, count)
+      self.failUnlessEqual([path], fsList)
+
+   def testAddDir_017(self):
+      """
       Attempt to add a directory that doesn't exist; with excludePaths
       including the path.
       """
@@ -964,7 +1086,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDir_014(self):
+   def testAddDir_018(self):
       """
       Attempt to add a file; with excludePaths including the path.
       """
@@ -978,7 +1100,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDir_015(self):
+   def testAddDir_019(self):
       """
       Attempt to add a soft link; with excludePaths including the path.
       """
@@ -1000,7 +1122,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDir_016(self):
+   def testAddDir_020(self):
       """
       Attempt to add an existing directory; with excludePaths including the
       path.
@@ -1013,7 +1135,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDir_017(self):
+   def testAddDir_021(self):
       """
       Attempt to add a directory that doesn't exist; with excludePaths not
       including the path.
@@ -1027,7 +1149,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDir_018(self):
+   def testAddDir_022(self):
       """
       Attempt to add a file; with excludePaths not including the path.
       """
@@ -1041,7 +1163,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDir_019(self):
+   def testAddDir_023(self):
       """
       Attempt to add a soft link; with excludePaths not including the path.
       """
@@ -1063,7 +1185,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
-   def testAddDir_020(self):
+   def testAddDir_024(self):
       """
       Attempt to add an existing directory; with excludePaths not including the
       path.
@@ -1076,7 +1198,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
-   def testAddDir_021(self):
+   def testAddDir_025(self):
       """
       Attempt to add a directory that doesn't exist; with excludePatterns
       matching the path.
@@ -1090,7 +1212,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDir_022(self):
+   def testAddDir_026(self):
       """
       Attempt to add a file; with excludePatterns matching the path.
       """
@@ -1104,7 +1226,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDir_023(self):
+   def testAddDir_027(self):
       """
       Attempt to add a soft link; with excludePatterns matching the path.
       """
@@ -1126,7 +1248,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDir_024(self):
+   def testAddDir_028(self):
       """
       Attempt to add an existing directory; with excludePatterns matching the
       path.
@@ -1139,7 +1261,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDir_025(self):
+   def testAddDir_029(self):
       """
       Attempt to add a directory that doesn't exist; with excludePatterns not
       matching the path.
@@ -1153,7 +1275,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDir_026(self):
+   def testAddDir_030(self):
       """
       Attempt to add a file; with excludePatterns not matching the path.
       """
@@ -1167,7 +1289,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDir_027(self):
+   def testAddDir_031(self):
       """
       Attempt to add a soft link; with excludePatterns not matching the path.
       """
@@ -1189,7 +1311,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
-   def testAddDir_028(self):
+   def testAddDir_032(self):
       """
       Attempt to add an existing directory; with excludePatterns not matching
       the path.
@@ -1510,7 +1632,112 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath(["tree5", "dir001", "file002",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "link001",]) in fsList)
 
-   def testAddDirContents_022(self):
+   def testAddDirContents_023(self):
+      """
+      Attempt to add a directory that doesn't exist; excludeLinks set.
+      """
+      path = self.buildPath([INVALID_FILE])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      try:
+         fsList.addDirContents(path)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+
+   def testAddDirContents_024(self):
+      """
+      Attempt to add a file; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "file001"])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      try:
+         fsList.addDirContents(path)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+
+   def testAddDirContents_025(self):
+      """
+      Attempt to add a soft link; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "link001"])     # link to a file
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      try:
+         fsList.addDirContents(path)
+         self.fail("Expected ValueError.")
+      except ValueError: pass
+      except Exception, e: self.fail("Expected ValueError, got: %s" % e)
+
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_026(self):
+      """
+      Attempt to add an empty directory containing ignore file; excludeLinks set.
+      """
+      self.extractTar("tree7")
+      path = self.buildPath(["tree7", "dir001"])
+      fsList = FilesystemList()
+      fsList.ignoreFile = "ignore"
+      fsList.excludeLinks = True
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_027(self):
+      """
+      Attempt to add an empty directory; excludeLinks set.
+      """
+      self.extractTar("tree8")
+      path = self.buildPath(["tree8", "dir001"])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(1, count)
+      self.failUnless(self.buildPath(["tree8", "dir001", ]) in fsList)
+
+   def testAddDirContents_028(self):
+      """
+      Attempt to add an non-empty directory containing ignore file; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "dir008"])
+      fsList = FilesystemList()
+      fsList.ignoreFile = "ignore"
+      fsList.excludeLinks = True
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(0, count)
+      self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_029(self):
+      """
+      Attempt to add an non-empty directory; excludeLinks set.
+      """
+      self.extractTar("tree5")
+      path = self.buildPath(["tree5", "dir001"])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(7, count)
+      self.failUnless(self.buildPath(["tree5", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "dir001",]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "dir002",]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "dir003",]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "dir004",]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "file001",]) in fsList)
+      self.failUnless(self.buildPath(["tree5", "dir001", "file002",]) in fsList)
+
+   def testAddDirContents_030(self):
       """
       Attempt to add a directory that doesn't exist; with excludePaths
       including the path.
@@ -1524,7 +1751,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDirContents_023(self):
+   def testAddDirContents_031(self):
       """
       Attempt to add a file; with excludePaths including the path.
       """
@@ -1538,7 +1765,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDirContents_024(self):
+   def testAddDirContents_032(self):
       """
       Attempt to add a soft link; with excludePaths including the path.
       """
@@ -1560,7 +1787,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_025(self):
+   def testAddDirContents_033(self):
       """
       Attempt to add an empty directory containing ignore file; with
       excludePaths including the path.
@@ -1574,7 +1801,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_026(self):
+   def testAddDirContents_034(self):
       """
       Attempt to add an empty directory; with excludePaths including the path.
       """
@@ -1586,7 +1813,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_027(self):
+   def testAddDirContents_035(self):
       """
       Attempt to add an non-empty directory containing ignore file; with
       excludePaths including the path.
@@ -1600,7 +1827,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_028(self):
+   def testAddDirContents_036(self):
       """
       Attempt to add an non-empty directory; with excludePaths including the
       main directory path.
@@ -1613,7 +1840,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_029(self):
+   def testAddDirContents_037(self):
       """
       Attempt to add a directory that doesn't exist; with excludePaths not
       including the path.
@@ -1627,7 +1854,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDirContents_030(self):
+   def testAddDirContents_038(self):
       """
       Attempt to add a file; with excludePaths not including the path.
       """
@@ -1641,7 +1868,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDirContents_031(self):
+   def testAddDirContents_039(self):
       """
       Attempt to add a soft link; with excludePaths not including the path.
       """
@@ -1663,7 +1890,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
-   def testAddDirContents_032(self):
+   def testAddDirContents_040(self):
       """
       Attempt to add an empty directory containing ignore file; with
       excludePaths not including the path.
@@ -1677,7 +1904,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_033(self):
+   def testAddDirContents_041(self):
       """
       Attempt to add an empty directory; with excludePaths not including the
       path.
@@ -1690,7 +1917,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
-   def testAddDirContents_034(self):
+   def testAddDirContents_042(self):
       """
       Attempt to add an non-empty directory containing ignore file; with
       excludePaths not including the path.
@@ -1704,7 +1931,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_035(self):
+   def testAddDirContents_043(self):
       """
       Attempt to add an non-empty directory; with excludePaths not including
       the main directory path.
@@ -1724,7 +1951,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath(["tree5", "dir001", "file002",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "link001",]) in fsList)
 
-   def testAddDirContents_036(self):
+   def testAddDirContents_044(self):
       """
       Attempt to add a directory that doesn't exist; with excludePatterns
       matching the path.
@@ -1738,7 +1965,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDirContents_038(self):
+   def testAddDirContents_045(self):
       """
       Attempt to add a file; with excludePatterns matching the path.
       """
@@ -1752,7 +1979,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDirContents_039(self):
+   def testAddDirContents_046(self):
       """
       Attempt to add a soft link; with excludePatterns matching the path.
       """
@@ -1774,7 +2001,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_040(self):
+   def testAddDirContents_047(self):
       """
       Attempt to add an empty directory containing ignore file; with
       excludePatterns matching the path.
@@ -1788,7 +2015,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_041(self):
+   def testAddDirContents_048(self):
       """
       Attempt to add an empty directory; with excludePatterns matching the
       path.
@@ -1801,7 +2028,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_042(self):
+   def testAddDirContents_049(self):
       """
       Attempt to add an non-empty directory containing ignore file; with
       excludePatterns matching the path.
@@ -1815,7 +2042,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_043(self):
+   def testAddDirContents_050(self):
       """
       Attempt to add an non-empty directory; with excludePatterns matching the
       main directory path.
@@ -1828,7 +2055,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_044(self):
+   def testAddDirContents_051(self):
       """
       Attempt to add a directory that doesn't exist; with excludePatterns not
       matching the path.
@@ -1842,7 +2069,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDirContents_045(self):
+   def testAddDirContents_052(self):
       """
       Attempt to add a file; with excludePatterns not matching the path.
       """
@@ -1856,7 +2083,7 @@ class TestFilesystemList(unittest.TestCase):
       except ValueError: pass
       except Exception, e: self.fail("Expected ValueError, got: %s" % e)
 
-   def testAddDirContents_046(self):
+   def testAddDirContents_053(self):
       """
       Attempt to add a soft link; with excludePatterns not matching the path.
       """
@@ -1878,7 +2105,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
-   def testAddDirContents_047(self):
+   def testAddDirContents_054(self):
       """
       Attempt to add an empty directory containing ignore file; with
       excludePatterns not matching the path.
@@ -1892,7 +2119,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_048(self):
+   def testAddDirContents_055(self):
       """
       Attempt to add an empty directory; with excludePatterns not matching the
       path.
@@ -1905,7 +2132,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
-   def testAddDirContents_049(self):
+   def testAddDirContents_056(self):
       """
       Attempt to add an non-empty directory containing ignore file; with
       excludePatterns not matching the path.
@@ -1919,7 +2146,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(0, count)
       self.failUnlessEqual([], fsList)
 
-   def testAddDirContents_050(self):
+   def testAddDirContents_057(self):
       """
       Attempt to add an non-empty directory; with excludePatterns not matching
       the main directory path.
@@ -1939,7 +2166,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath(["tree5", "dir001", "file002",]) in fsList)
       self.failUnless(self.buildPath(["tree5", "dir001", "link001",]) in fsList)
 
-   def testAddDirContents_051(self):
+   def testAddDirContents_058(self):
       """
       Attempt to add a large tree with no exclusions.
       """
@@ -2085,7 +2312,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
 
-   def testAddDirContents_052(self):
+   def testAddDirContents_059(self):
       """
       Attempt to add a large tree, with excludeFiles set.
       """
@@ -2138,7 +2365,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
 
-   def testAddDirContents_053(self):
+   def testAddDirContents_060(self):
       """
       Attempt to add a large tree, with excludeDirs set.
       """
@@ -2243,7 +2470,114 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
 
-   def testAddDirContents_054(self):
+   def testAddDirContents_061(self):
+      """
+      Attempt to add a large tree, with excludeLinks set.
+      """
+      self.extractTar("tree6")
+      path = self.buildPath(["tree6"])
+      fsList = FilesystemList()
+      fsList.excludeLinks = True
+      count = fsList.addDirContents(path)
+      self.failUnlessEqual(96, count)
+      self.failUnless(self.buildPath([ "tree6", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file006", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file006", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "file005", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "file006", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "file007", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "file001", ]) in fsList)
+      self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
+
+   def testAddDirContents_062(self):
       """
       Attempt to add a large tree, with excludePaths set to exclude some entries.
       """
@@ -2382,7 +2716,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
 
-   def testAddDirContents_055(self):
+   def testAddDirContents_063(self):
       """
       Attempt to add a large tree, with excludePatterns set to exclude some entries.
       """
@@ -2501,7 +2835,7 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
       self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
 
-   def testAddDirContents_056(self):
+   def testAddDirContents_064(self):
       """
       Attempt to add a large tree, with ignoreFile set to exclude some directories.
       """
@@ -2596,511 +2930,637 @@ class TestFilesystemList(unittest.TestCase):
    #####################
    # Test removeFiles()
    #####################
-#         
-#   def testRemoveFiles_001(self):
-#      """
-#      Test with an empty list and a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveFiles_002(self):
-#      """
-#      Test with an empty list and a non-empty pattern.
-#      """
-#      pass
-#
-#   def testRemoveFiles_003(self):
-#      """
-#      Test with a non-empty list (files only) and a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveFiles_004(self):
-#      """
-#      Test with a non-empty list (directories only) and a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveFiles_005(self):
-#      """
-#      Test with a non-empty list (files and directories) and a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveFiles_006(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveFiles_007(self):
-#      """
-#      Test with a non-empty list (files only) and a non-empty pattern that
-#      matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_008(self):
-#      """
-#      Test with a non-empty list (directories only) and a non-empty pattern
-#      that matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_009(self):
-#      """
-#      Test with a non-empty list (files and directories) and a non-empty
-#      pattern that matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_010(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a non-empty pattern that matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_011(self):
-#      """
-#      Test with a non-empty list (files only) and a non-empty pattern that
-#      matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_012(self):
-#      """
-#      Test with a non-empty list (directories only) and a non-empty pattern
-#      that matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_013(self):
-#      """
-#      Test with a non-empty list (files and directories) and a non-empty
-#      pattern that matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_014(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a non-empty pattern that matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_015(self):
-#      """
-#      Test with a non-empty list (files only) and a non-empty pattern that
-#      matches all of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_016(self):
-#      """
-#      Test with a non-empty list (directories only) and a non-empty pattern
-#      that matches all of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_017(self):
-#      """
-#      Test with a non-empty list (files and directories) and a non-empty
-#      pattern that matches all of them.
-#      """
-#      pass
-#
-#   def testRemoveFiles_018(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a non-empty pattern that matches all of them.
-#      """
-#      pass
+         
+   def testRemoveFiles_001(self):
+      """
+      Test with an empty list and a pattern of None.
+      """
+      pass
+
+   def testRemoveFiles_002(self):
+      """
+      Test with an empty list and a non-empty pattern.
+      """
+      pass
+
+   def testRemoveFiles_003(self):
+      """
+      Test with a non-empty list (files only) and a pattern of None.
+      """
+      pass
+
+   def testRemoveFiles_004(self):
+      """
+      Test with a non-empty list (directories only) and a pattern of None.
+      """
+      pass
+
+   def testRemoveFiles_005(self):
+      """
+      Test with a non-empty list (files and directories) and a pattern of None.
+      """
+      pass
+
+   def testRemoveFiles_006(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a pattern of None.
+      """
+      pass
+
+   def testRemoveFiles_007(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches none of them.
+      """
+      pass
+
+   def testRemoveFiles_008(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches none of them.
+      """
+      pass
+
+   def testRemoveFiles_009(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches none of them.
+      """
+      pass
+
+   def testRemoveFiles_010(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches none of them.
+      """
+      pass
+
+   def testRemoveFiles_011(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches some of them.
+      """
+      pass
+
+   def testRemoveFiles_012(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches some of them.
+      """
+      pass
+
+   def testRemoveFiles_013(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches some of them.
+      """
+      pass
+
+   def testRemoveFiles_014(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches some of them.
+      """
+      pass
+
+   def testRemoveFiles_015(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches all of them.
+      """
+      pass
+
+   def testRemoveFiles_016(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches all of them.
+      """
+      pass
+
+   def testRemoveFiles_017(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches all of them.
+      """
+      pass
+
+   def testRemoveFiles_018(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches all of them.
+      """
+      pass
 
 
    ####################
    # Test removeDirs()
    ####################
          
-#   def testRemoveDirs_001(self):
-#      """
-#      Test with an empty list and a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveDirs_002(self):
-#      """
-#      Test with an empty list and a non-empty pattern.
-#      """
-#      pass
-#
-#   def testRemoveDirs_003(self):
-#      """
-#      Test with a non-empty list (files only) and a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveDirs_004(self):
-#      """
-#      Test with a non-empty list (directories only) and a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveDirs_005(self):
-#      """
-#      Test with a non-empty list (files and directories) and a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveDirs_006(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveDirs_007(self):
-#      """
-#      Test with a non-empty list (files only) and a non-empty pattern that
-#      matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_008(self):
-#      """
-#      Test with a non-empty list (directories only) and a non-empty pattern
-#      that matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_009(self):
-#      """
-#      Test with a non-empty list (files and directories) and a non-empty
-#      pattern that matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_010(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a non-empty pattern that matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_011(self):
-#      """
-#      Test with a non-empty list (files only) and a non-empty pattern that
-#      matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_012(self):
-#      """
-#      Test with a non-empty list (directories only) and a non-empty pattern
-#      that matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_013(self):
-#      """
-#      Test with a non-empty list (files and directories) and a non-empty
-#      pattern that matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_014(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a non-empty pattern that matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_015(self):
-#      """
-#      Test with a non-empty list (files only) and a non-empty pattern that
-#      matches all of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_016(self):
-#      """
-#      Test with a non-empty list (directories only) and a non-empty pattern
-#      that matches all of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_017(self):
-#      """
-#      Test with a non-empty list (files and directories) and a non-empty
-#      pattern that matches all of them.
-#      """
-#      pass
-#
-#   def testRemoveDirs_018(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a non-empty pattern that matches all of them.
-#      """
-#      pass
+   def testRemoveDirs_001(self):
+      """
+      Test with an empty list and a pattern of None.
+      """
+      pass
+
+   def testRemoveDirs_002(self):
+      """
+      Test with an empty list and a non-empty pattern.
+      """
+      pass
+
+   def testRemoveDirs_003(self):
+      """
+      Test with a non-empty list (files only) and a pattern of None.
+      """
+      pass
+
+   def testRemoveDirs_004(self):
+      """
+      Test with a non-empty list (directories only) and a pattern of None.
+      """
+      pass
+
+   def testRemoveDirs_005(self):
+      """
+      Test with a non-empty list (files and directories) and a pattern of None.
+      """
+      pass
+
+   def testRemoveDirs_006(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a pattern of None.
+      """
+      pass
+
+   def testRemoveDirs_007(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches none of them.
+      """
+      pass
+
+   def testRemoveDirs_008(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches none of them.
+      """
+      pass
+
+   def testRemoveDirs_009(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches none of them.
+      """
+      pass
+
+   def testRemoveDirs_010(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches none of them.
+      """
+      pass
+
+   def testRemoveDirs_011(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches some of them.
+      """
+      pass
+
+   def testRemoveDirs_012(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches some of them.
+      """
+      pass
+
+   def testRemoveDirs_013(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches some of them.
+      """
+      pass
+
+   def testRemoveDirs_014(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches some of them.
+      """
+      pass
+
+   def testRemoveDirs_015(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches all of them.
+      """
+      pass
+
+   def testRemoveDirs_016(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches all of them.
+      """
+      pass
+
+   def testRemoveDirs_017(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches all of them.
+      """
+      pass
+
+   def testRemoveDirs_018(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches all of them.
+      """
+      pass
+
+
+   ####################
+   # Test removeLinks()
+   ####################
+         
+   def testRemoveLinks_001(self):
+      """
+      Test with an empty list and a pattern of None.
+      """
+      pass
+
+   def testRemoveLinks_002(self):
+      """
+      Test with an empty list and a non-empty pattern.
+      """
+      pass
+
+   def testRemoveLinks_003(self):
+      """
+      Test with a non-empty list (files only) and a pattern of None.
+      """
+      pass
+
+   def testRemoveLinks_004(self):
+      """
+      Test with a non-empty list (directories only) and a pattern of None.
+      """
+      pass
+
+   def testRemoveLinks_005(self):
+      """
+      Test with a non-empty list (files and directories) and a pattern of None.
+      """
+      pass
+
+   def testRemoveLinks_006(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a pattern of None.
+      """
+      pass
+
+   def testRemoveLinks_007(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches none of them.
+      """
+      pass
+
+   def testRemoveLinks_008(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches none of them.
+      """
+      pass
+
+   def testRemoveLinks_009(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches none of them.
+      """
+      pass
+
+   def testRemoveLinks_010(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches none of them.
+      """
+      pass
+
+   def testRemoveLinks_011(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches some of them.
+      """
+      pass
+
+   def testRemoveLinks_012(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches some of them.
+      """
+      pass
+
+   def testRemoveLinks_013(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches some of them.
+      """
+      pass
+
+   def testRemoveLinks_014(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches some of them.
+      """
+      pass
+
+   def testRemoveLinks_015(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches all of them.
+      """
+      pass
+
+   def testRemoveLinks_016(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches all of them.
+      """
+      pass
+
+   def testRemoveLinks_017(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches all of them.
+      """
+      pass
+
+   def testRemoveLinks_018(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches all of them.
+      """
+      pass
 
 
    #####################
    # Test removeMatch()
    #####################
          
-#   def testRemoveMatch_001(self):
-#      """
-#      Test with an empty list and a pattern of None.
-#      """
-#      pass
-#
-#   def testRemoveMatch_002(self):
-#      """
-#      Test with an empty list and a non-empty pattern.
-#      """
-#      pass
-#
-#   def testRemoveMatch_003(self):
-#      """
-#      Test with a non-empty list (files only) and a non-empty pattern that
-#      matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_004(self):
-#      """
-#      Test with a non-empty list (directories only) and a non-empty pattern
-#      that matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_005(self):
-#      """
-#      Test with a non-empty list (files and directories) and a non-empty
-#      pattern that matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_006(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a non-empty pattern that matches none of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_007(self):
-#      """
-#      Test with a non-empty list (files only) and a non-empty pattern that
-#      matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_008(self):
-#      """
-#      Test with a non-empty list (directories only) and a non-empty pattern
-#      that matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_009(self):
-#      """
-#      Test with a non-empty list (files and directories) and a non-empty
-#      pattern that matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_010(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a non-empty pattern that matches some of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_011(self):
-#      """
-#      Test with a non-empty list (files only) and a non-empty pattern that
-#      matches all of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_012(self):
-#      """
-#      Test with a non-empty list (directories only) and a non-empty pattern
-#      that matches all of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_013(self):
-#      """
-#      Test with a non-empty list (files and directories) and a non-empty
-#      pattern that matches all of them.
-#      """
-#      pass
-#
-#   def testRemoveMatch_014(self):
-#      """
-#      Test with a non-empty list (files and directories, some nonexistent) and
-#      a non-empty pattern that matches all of them.
-#      """
-#      pass
+   def testRemoveMatch_001(self):
+      """
+      Test with an empty list and a pattern of None.
+      """
+      pass
+
+   def testRemoveMatch_002(self):
+      """
+      Test with an empty list and a non-empty pattern.
+      """
+      pass
+
+   def testRemoveMatch_003(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches none of them.
+      """
+      pass
+
+   def testRemoveMatch_004(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches none of them.
+      """
+      pass
+
+   def testRemoveMatch_005(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches none of them.
+      """
+      pass
+
+   def testRemoveMatch_006(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches none of them.
+      """
+      pass
+
+   def testRemoveMatch_007(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches some of them.
+      """
+      pass
+
+   def testRemoveMatch_008(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches some of them.
+      """
+      pass
+
+   def testRemoveMatch_009(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches some of them.
+      """
+      pass
+
+   def testRemoveMatch_010(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches some of them.
+      """
+      pass
+
+   def testRemoveMatch_011(self):
+      """
+      Test with a non-empty list (files only) and a non-empty pattern that
+      matches all of them.
+      """
+      pass
+
+   def testRemoveMatch_012(self):
+      """
+      Test with a non-empty list (directories only) and a non-empty pattern
+      that matches all of them.
+      """
+      pass
+
+   def testRemoveMatch_013(self):
+      """
+      Test with a non-empty list (files and directories) and a non-empty
+      pattern that matches all of them.
+      """
+      pass
+
+   def testRemoveMatch_014(self):
+      """
+      Test with a non-empty list (files and directories, some nonexistent) and
+      a non-empty pattern that matches all of them.
+      """
+      pass
 
 
    #######################
    # Test removeInvalid()
    #######################
          
-#   def testRemoveInvalid_001(self):
-#      """
-#      Test with an empty list.
-#      """
-#      pass
-#
-#   def testRemoveInvalid_002(self):
-#      """
-#      Test with a non-empty list containing only invalid entries (files only).
-#      """
-#      pass
-#
-#   def testRemoveInvalid_003(self):
-#      """
-#      Test with a non-empty list containing only valid entries (files only).
-#      """
-#      pass
-#
-#   def testRemoveInvalid_004(self):
-#      """
-#      Test with a non-empty list containing only valid entries (directories
-#      only).
-#      """
-#      pass
-#
-#   def testRemoveInvalid_005(self):
-#      """
-#      Test with a non-empty list containing only valid entries (files and
-#      directories).
-#      """
-#      pass
-#
-#   def testRemoveInvalid_006(self):
-#      """
-#      Test with a non-empty list containing valid and invalid entries (files
-#      only).
-#      """
-#      pass
-#
-#   def testRemoveInvalid_007(self):
-#      """
-#      Test with a non-empty list containing valid and invalid entries
-#      (directories only).
-#      """
-#      pass
-#
-#   def testRemoveInvalid_008(self):
-#      """
-#      Test with a non-empty list containing valid and invalid entries (files
-#      and directories).
-#      """
-#      pass
+   def testRemoveInvalid_001(self):
+      """
+      Test with an empty list.
+      """
+      pass
+
+   def testRemoveInvalid_002(self):
+      """
+      Test with a non-empty list containing only invalid entries (files only).
+      """
+      pass
+
+   def testRemoveInvalid_003(self):
+      """
+      Test with a non-empty list containing only valid entries (files only).
+      """
+      pass
+
+   def testRemoveInvalid_004(self):
+      """
+      Test with a non-empty list containing only valid entries (directories
+      only).
+      """
+      pass
+
+   def testRemoveInvalid_005(self):
+      """
+      Test with a non-empty list containing only valid entries (files and
+      directories).
+      """
+      pass
+
+   def testRemoveInvalid_006(self):
+      """
+      Test with a non-empty list containing valid and invalid entries (files
+      only).
+      """
+      pass
+
+   def testRemoveInvalid_007(self):
+      """
+      Test with a non-empty list containing valid and invalid entries
+      (directories only).
+      """
+      pass
+
+   def testRemoveInvalid_008(self):
+      """
+      Test with a non-empty list containing valid and invalid entries (files
+      and directories).
+      """
+      pass
 
 
    ###################
    # Test normalize()
    ###################
          
-#   def testNormalize_001(self):
-#      """
-#      Test with an empty list.
-#      """
-#      pass
-#
-#   def testNormalize_002(self):
-#      """
-#      Test with a list containing one entry.
-#      """
-#      pass
-#
-#   def testNormalize_003(self):
-#      """
-#      Test with a list containing two entries, no duplicates.
-#      """
-#      pass
-#
-#   def testNormalize_004(self):
-#      """
-#      Test with a list containing two entries, with duplicates.
-#      """
-#      pass
-#
-#   def testNormalize_005(self):
-#      """
-#      Test with a list containing many entries, no duplicates.
-#      """
-#      pass
-#
-#   def testNormalize_006(self):
-#      """
-#      Test with a list containing many entries, with duplicates.
-#      """
-#      pass
+   def testNormalize_001(self):
+      """
+      Test with an empty list.
+      """
+      pass
+
+   def testNormalize_002(self):
+      """
+      Test with a list containing one entry.
+      """
+      pass
+
+   def testNormalize_003(self):
+      """
+      Test with a list containing two entries, no duplicates.
+      """
+      pass
+
+   def testNormalize_004(self):
+      """
+      Test with a list containing two entries, with duplicates.
+      """
+      pass
+
+   def testNormalize_005(self):
+      """
+      Test with a list containing many entries, no duplicates.
+      """
+      pass
+
+   def testNormalize_006(self):
+      """
+      Test with a list containing many entries, with duplicates.
+      """
+      pass
 
 
    ################
    # Test verify()
    ################
          
-#   def testVerify_001(self):
-#      """
-#      Test with an empty list.
-#      """
-#      pass
-#
-#   def testVerify_002(self):
-#      """
-#      Test with a non-empty list containing only invalid entries (files only).
-#      """
-#      pass
-#
-#   def testVerify_003(self):
-#      """
-#      Test with a non-empty list containing only valid entries (files only).
-#      """
-#      pass
-#
-#   def testVerify_004(self):
-#      """
-#      Test with a non-empty list containing only valid entries (directories
-#      only).
-#      """
-#      pass
-#
-#   def testVerify_005(self):
-#      """
-#      Test with a non-empty list containing only valid entries (files and
-#      directories).
-#      """
-#      pass
-#
-#   def testVerify_006(self):
-#      """
-#      Test with a non-empty list containing valid and invalid entries (files
-#      only).
-#      """
-#      pass
-#
-#   def testVerify_007(self):
-#      """
-#      Test with a non-empty list containing valid and invalid entries
-#      (directories only).
-#      """
-#      pass
-#
-#   def testVerify_008(self):
-#      """
-#      Test with a non-empty list containing valid and invalid entries (files
-#      and directories).
-#      """
-#      pass
+   def testVerify_001(self):
+      """
+      Test with an empty list.
+      """
+      pass
+
+   def testVerify_002(self):
+      """
+      Test with a non-empty list containing only invalid entries (files only).
+      """
+      pass
+
+   def testVerify_003(self):
+      """
+      Test with a non-empty list containing only valid entries (files only).
+      """
+      pass
+
+   def testVerify_004(self):
+      """
+      Test with a non-empty list containing only valid entries (directories
+      only).
+      """
+      pass
+
+   def testVerify_005(self):
+      """
+      Test with a non-empty list containing only valid entries (files and
+      directories).
+      """
+      pass
+
+   def testVerify_006(self):
+      """
+      Test with a non-empty list containing valid and invalid entries (files
+      only).
+      """
+      pass
+
+   def testVerify_007(self):
+      """
+      Test with a non-empty list containing valid and invalid entries
+      (directories only).
+      """
+      pass
+
+   def testVerify_008(self):
+      """
+      Test with a non-empty list containing valid and invalid entries (files
+      and directories).
+      """
+      pass
 
 
 ###########################
@@ -3132,252 +3592,252 @@ class TestBackupFileList(unittest.TestCase):
    # Test addDir()
    ################
          
-#   def testAddDir_001(self):
-#      """
-#      Test that function is overridden with empty list, no exclusions.
-#      """
-#      pass
-#
-#   def testAddDir_002(self):
-#      """
-#      Test that function is overridden with non-empty list, no exclusions.
-#      """
-#      pass
-#
-#   def testAddDir_003(self):
-#      """
-#      Test that function is overridden with empty list, excludeFiles sets.
-#      """
-#      pass
-#
-#   def testAddDir_004(self):
-#      """
-#      Test that function is overridden with non-empty list, excludeFiles sets.
-#      """
-#      pass
-#
-#   def testAddDir_005(self):
-#      """
-#      Test that function is overridden with empty list, excludeDirs sets.
-#      """
-#      pass
-#
-#   def testAddDir_006(self):
-#      """
-#      Test that function is overridden with non-empty list, excludeDirs sets.
-#      """
-#      pass
-#
-#   def testAddDir_007(self):
-#      """
-#      Test that function is overridden with empty list, excludePaths sets.
-#      """
-#      pass
-#
-#   def testAddDir_008(self):
-#      """
-#      Test that function is overridden with non-empty list, excludePaths sets.
-#      """
-#      pass
-#
-#   def testAddDir_009(self):
-#      """
-#      Test that function is overridden with empty list, excludePatterns sets.
-#      """
-#      pass
-#
-#   def testAddDir_010(self):
-#      """
-#      Test that function is overridden with non-empty list, excludePatterns sets.
-#      """
-#      pass
+   def testAddDir_001(self):
+      """
+      Test that function is overridden with empty list, no exclusions.
+      """
+      pass
+
+   def testAddDir_002(self):
+      """
+      Test that function is overridden with non-empty list, no exclusions.
+      """
+      pass
+
+   def testAddDir_003(self):
+      """
+      Test that function is overridden with empty list, excludeFiles sets.
+      """
+      pass
+
+   def testAddDir_004(self):
+      """
+      Test that function is overridden with non-empty list, excludeFiles sets.
+      """
+      pass
+
+   def testAddDir_005(self):
+      """
+      Test that function is overridden with empty list, excludeDirs sets.
+      """
+      pass
+
+   def testAddDir_006(self):
+      """
+      Test that function is overridden with non-empty list, excludeDirs sets.
+      """
+      pass
+
+   def testAddDir_007(self):
+      """
+      Test that function is overridden with empty list, excludePaths sets.
+      """
+      pass
+
+   def testAddDir_008(self):
+      """
+      Test that function is overridden with non-empty list, excludePaths sets.
+      """
+      pass
+
+   def testAddDir_009(self):
+      """
+      Test that function is overridden with empty list, excludePatterns sets.
+      """
+      pass
+
+   def testAddDir_010(self):
+      """
+      Test that function is overridden with non-empty list, excludePatterns sets.
+      """
+      pass
 
 
    ###################
    # Test totalSize()
    ###################
          
-#   def testTotalSize_001(self):
-#      """
-#      Test on an empty list.
-#      """
-#      pass
-#
-#   def testTotalSize_002(self):
-#      """
-#      Test on a non-empty list containing a directory.
-#      """
-#      pass
-#
-#   def testTotalSize_003(self):
-#      """
-#      Test on a non-empty list containing a non-existent file.
-#      """
-#      pass
-#
-#   def testTotalSize_004(self):
-#      """
-#      Test on a non-empty list containing only valid entries.
-#      """
-#      pass
-#
-#
+   def testTotalSize_001(self):
+      """
+      Test on an empty list.
+      """
+      pass
+
+   def testTotalSize_002(self):
+      """
+      Test on a non-empty list containing a directory.
+      """
+      pass
+
+   def testTotalSize_003(self):
+      """
+      Test on a non-empty list containing a non-existent file.
+      """
+      pass
+
+   def testTotalSize_004(self):
+      """
+      Test on a non-empty list containing only valid entries.
+      """
+      pass
+
+
    #########################
    # Test generateSizeMap()
    #########################
          
-#   def testGenerateSizeMap_001(self):
-#      """
-#      Test on an empty list.
-#      """
-#      pass
-#
-#   def testGenerateSizeMap_002(self):
-#      """
-#      Test on a non-empty list containing a directory.
-#      """
-#      pass
-#
-#   def testGenerateSizeMap_003(self):
-#      """
-#      Test on a non-empty list containing a non-existent file.
-#      """
-#      pass
-#
-#   def testGenerateSizeMap_004(self):
-#      """
-#      Test on a non-empty list containing only valid entries.
-#      """
-#      pass
+   def testGenerateSizeMap_001(self):
+      """
+      Test on an empty list.
+      """
+      pass
+
+   def testGenerateSizeMap_002(self):
+      """
+      Test on a non-empty list containing a directory.
+      """
+      pass
+
+   def testGenerateSizeMap_003(self):
+      """
+      Test on a non-empty list containing a non-existent file.
+      """
+      pass
+
+   def testGenerateSizeMap_004(self):
+      """
+      Test on a non-empty list containing only valid entries.
+      """
+      pass
 
 
    ###########################
    # Test generateDigestMap()
    ###########################
          
-#   def testGenerateDigestMap01(self):
-#      """
-#      Test on an empty list.
-#      """
-#      pass
-#
-#   def testGenerateDigestMap02(self):
-#      """
-#      Test on a non-empty list containing a directory.
-#      """
-#      pass
-#
-#   def testGenerateDigestMap03(self):
-#      """
-#      Test on a non-empty list containing a non-existent file.
-#      """
-#      pass
-#
-#   def testGenerateDigestMap04(self):
-#      """
-#      Test on a non-empty list containing only valid entries.
-#      """
-#      pass
+   def testGenerateDigestMap01(self):
+      """
+      Test on an empty list.
+      """
+      pass
+
+   def testGenerateDigestMap02(self):
+      """
+      Test on a non-empty list containing a directory.
+      """
+      pass
+
+   def testGenerateDigestMap03(self):
+      """
+      Test on a non-empty list containing a non-existent file.
+      """
+      pass
+
+   def testGenerateDigestMap04(self):
+      """
+      Test on a non-empty list containing only valid entries.
+      """
+      pass
 
 
    ########################
    # Test generateFitted()
    ########################
          
-#   def testGenerateFitted_001(self):
-#      """
-#      Test on an empty list.
-#      """
-#      pass
-#
-#   def testGenerateFitted_002(self):
-#      """
-#      Test on a non-empty list containing a directory.
-#      """
-#      pass
-#
-#   def testGenerateFitted_003(self):
-#      """
-#      Test on a non-empty list containing a non-existent file.
-#      """
-#      pass
-#
-#   def testGenerateFitted_004(self):
-#      """
-#      Test on a non-empty list containing only valid entries, all of which fit.
-#      """
-#      pass
-#
-#   def testGenerateFitted_005(self):
-#      """
-#      Test on a non-empty list containing only valid entries, some of which fit.
-#      """
-#      pass
-#
-#   def testGenerateFitted_006(self):
-#      """
-#      Test on a non-empty list containing only valid entries, none of which fit.
-#      """
-#      pass
+   def testGenerateFitted_001(self):
+      """
+      Test on an empty list.
+      """
+      pass
+
+   def testGenerateFitted_002(self):
+      """
+      Test on a non-empty list containing a directory.
+      """
+      pass
+
+   def testGenerateFitted_003(self):
+      """
+      Test on a non-empty list containing a non-existent file.
+      """
+      pass
+
+   def testGenerateFitted_004(self):
+      """
+      Test on a non-empty list containing only valid entries, all of which fit.
+      """
+      pass
+
+   def testGenerateFitted_005(self):
+      """
+      Test on a non-empty list containing only valid entries, some of which fit.
+      """
+      pass
+
+   def testGenerateFitted_006(self):
+      """
+      Test on a non-empty list containing only valid entries, none of which fit.
+      """
+      pass
 
 
    #########################
    # Test generateTarfile()
    #########################
          
-#   def testGenerateTarfile_001(self):
-#      """
-#      Test on an empty list.
-#      """
-#      pass
-#
-#   def testGenerateTarfile_002(self):
-#      """
-#      Test on a non-empty list containing a directory.
-#      """
-#      pass
-#
-#   def testGenerateTarfile_003(self):
-#      """
-#      Test on a non-empty list containing a non-existent file, ignore=False.
-#      """
-#      pass
-#
-#   def testGenerateTarfile_004(self):
-#      """
-#      Test on a non-empty list containing a non-existent file, ignore=True.
-#      """
-#      pass
-#
-#   def testGenerateTarfile_005(self):
-#      """
-#      Test on a non-empty list containing only valid entries, with an invalid mode.
-#      """
-#      pass
-#
-#   def testGenerateTarfile_006(self):
-#      """
-#      Test on a non-empty list containing only valid entries, default mode.
-#      """
-#      pass
-#
-#   def testGenerateTarfile_007(self):
-#      """
-#      Test on a non-empty list containing only valid entries, 'tar' mode.
-#      """
-#      pass
-#
-#   def testGenerateTarfile_008(self):
-#      """
-#      Test on a non-empty list containing only valid entries, 'targz' mode.
-#      """
-#      pass
-#
-#   def testGenerateTarfile_009(self):
-#      """
-#      Test on a non-empty list containing only valid entries, 'tarbz2' mode.
-#      """
-#      pass
+   def testGenerateTarfile_001(self):
+      """
+      Test on an empty list.
+      """
+      pass
+
+   def testGenerateTarfile_002(self):
+      """
+      Test on a non-empty list containing a directory.
+      """
+      pass
+
+   def testGenerateTarfile_003(self):
+      """
+      Test on a non-empty list containing a non-existent file, ignore=False.
+      """
+      pass
+
+   def testGenerateTarfile_004(self):
+      """
+      Test on a non-empty list containing a non-existent file, ignore=True.
+      """
+      pass
+
+   def testGenerateTarfile_005(self):
+      """
+      Test on a non-empty list containing only valid entries, with an invalid mode.
+      """
+      pass
+
+   def testGenerateTarfile_006(self):
+      """
+      Test on a non-empty list containing only valid entries, default mode.
+      """
+      pass
+
+   def testGenerateTarfile_007(self):
+      """
+      Test on a non-empty list containing only valid entries, 'tar' mode.
+      """
+      pass
+
+   def testGenerateTarfile_008(self):
+      """
+      Test on a non-empty list containing only valid entries, 'targz' mode.
+      """
+      pass
+
+   def testGenerateTarfile_009(self):
+      """
+      Test on a non-empty list containing only valid entries, 'tarbz2' mode.
+      """
+      pass
 
 
 ##########################
@@ -3409,53 +3869,53 @@ class TestPurgeItemList(unittest.TestCase):
    # Test purgeItems()
    ####################
          
-#   def testPurgeItems01(self):
-#      """
-#      Test with an empty list.
-#      """
-#      pass
-#
-#   def testPurgeItems02(self):
-#      """
-#      Test with a list containing non-existent entries.
-#      """
-#      pass
-#
-#   def testPurgeItems03(self):
-#      """
-#      Test with a list containing only non-empty directories.
-#      """
-#      pass
-#
-#   def testPurgeItems04(self):
-#      """
-#      Test with a list containing only empty directories.
-#      """
-#      pass
-#
-#   def testPurgeItems05(self):
-#      """
-#      Test with a list containing only files.
-#      """
-#      pass
-#
-#   def testPurgeItems06(self):
-#      """
-#      Test with a list containing a directory and some of the files in that directory.
-#      """
-#      pass
-#
-#   def testPurgeItems07(self):
-#      """
-#      Test with a list containing a directory and all of the files in that directory.
-#      """
-#      pass
-#
-#   def testPurgeItems08(self):
-#      """
-#      Test with a list containing various kinds of entries.
-#      """
-#      pass
+   def testPurgeItems01(self):
+      """
+      Test with an empty list.
+      """
+      pass
+
+   def testPurgeItems02(self):
+      """
+      Test with a list containing non-existent entries.
+      """
+      pass
+
+   def testPurgeItems03(self):
+      """
+      Test with a list containing only non-empty directories.
+      """
+      pass
+
+   def testPurgeItems04(self):
+      """
+      Test with a list containing only empty directories.
+      """
+      pass
+
+   def testPurgeItems05(self):
+      """
+      Test with a list containing only files.
+      """
+      pass
+
+   def testPurgeItems06(self):
+      """
+      Test with a list containing a directory and some of the files in that directory.
+      """
+      pass
+
+   def testPurgeItems07(self):
+      """
+      Test with a list containing a directory and all of the files in that directory.
+      """
+      pass
+
+   def testPurgeItems08(self):
+      """
+      Test with a list containing various kinds of entries.
+      """
+      pass
 
 
 #######################################################################

@@ -104,6 +104,7 @@ class FilesystemList(list):
 
    @ivar excludeFiles: Boolean indicating whether files should be excluded
    @ivar excludeDirs: Boolean indicating whether directories should be excluded
+   @ivar excludeLinks: Boolean indicating whether soft links should be excluded
    @ivar excludePaths: List of absolute paths to be excluded
    @ivar excludePatterns: List of regular expression patterns to be excluded
    @ivar ignoreFile: Name of file which will cause directory contents to be ignored
@@ -120,6 +121,7 @@ class FilesystemList(list):
       list.__init__(self)
       self.excludeFiles = False
       self.excludeDirs = False
+      self.excludeLinks = False
       self.excludePaths = []
       self.excludePatterns = []
       self.ignoreFile = None
@@ -133,8 +135,8 @@ class FilesystemList(list):
       """
       Adds a file to the list.
    
-      The path must exist and must be a file.  It will be added to the list
-      subject to any exclusions that are in place.
+      The path must exist and must be a file or a link to a file.  It will be
+      added to the list subject to any exclusions that are in place.
 
       @param path: File path to be added to the list
       @type path: String representing a path on disk
@@ -147,6 +149,9 @@ class FilesystemList(list):
          raise ValueError("Path is not a file or does not exist on disk.")
       if self.excludeFiles:
          logger.debug("Path [%s] is excluded based on excludeFiles." % path)
+         return 0
+      if self.excludeLinks and os.path.islink(path):
+         logger.debug("Path [%s] is excluded based on excludeLinks." % path)
          return 0
       if path in self.excludePaths:
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
@@ -163,9 +168,10 @@ class FilesystemList(list):
       """
       Adds a directory to the list.
    
-      The path must exist and must be a directory.  It will be added to the 
-      list subject to any exclusions that are in place.  The L{ignoreFile}
-      does not apply to this method, only to L{addDirContents}.
+      The path must exist and must be a directory or a link to a directory.  It
+      will be added to the list subject to any exclusions that are in place.
+      The L{ignoreFile} does not apply to this method, only to
+      L{addDirContents}.
 
       @param path: Directory path to be added to the list
       @type path: String representing a path on disk
@@ -178,6 +184,9 @@ class FilesystemList(list):
          raise ValueError("Path is not a directory or does not exist on disk.")
       if self.excludeDirs:
          logger.debug("Path [%s] is excluded based on excludeDirs." % path)
+         return 0
+      if self.excludeLinks and os.path.islink(path):
+         logger.debug("Path [%s] is excluded based on excludeLinks." % path)
          return 0
       if path in self.excludePaths:
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
@@ -194,19 +203,27 @@ class FilesystemList(list):
       """
       Adds the contents of a directory to the list.
 
-      The path must exist and must be a directory.  The contents of the
-      directory (as well as the directory path itself) will be recursively
-      added to the list, subject to any exclusions that are in place.  
+      The path must exist and must be a directory or a link to a directory.
+      The contents of the directory (as well as the directory path itself) will
+      be recursively added to the list, subject to any exclusions that are in
+      place.  
 
       @note: If a directory's absolute path matches an exclude pattern or path,
       or if the directory contains the configured ignore file, then the
       directory and all of its contents will be recursively excluded from the
       list.
+
+      @note: If the passed-in directory happens to be a soft link, it will
+      still be recursed.  However, any soft links I{within} the directory will
+      only be added by name, not recursively.  
+
+      @note: The L{excludeDirs} flag only controls whether any given soft link
+      path itself is added to the list once it has been discovered.  It does
+      I{not} modify any behavior related to directory recursion.
    
-      @note: The L{excludeDirs} flag only controls whether the directory path
-      itself is added to the list once it has been discovered.  It does I{not}
-      affect whether the directory will actually be recursed into in search of
-      other children.
+      @note: The L{excludeDirs} flag only controls whether any given directory
+      path itself is added to the list once it has been discovered.  It does
+      I{not} modify any behavior related to directory recursion.
 
       @param path: Directory path whose contents should be added to the list
       @type path: String representing a path on disk
@@ -225,15 +242,11 @@ class FilesystemList(list):
          if re.compile("^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return added
-      entries = os.listdir(path)
-      if self.ignoreFile is not None and self.ignoreFile in entries:
+      if self.ignoreFile is not None and os.path.exists(os.path.join(path, self.ignoreFile)):
          logger.debug("Path [%s] is excluded based on ignore file." % path)
          return added
-      if self.excludeDirs:
-         logger.debug("Path [%s], but not its contents, is excluded based on excludeDirs." % path)
-      else:
-         added += self.addDir(path)
-      for entry in entries:
+      added += self.addDir(path)    # could actually be excluded by addDir, yet 
+      for entry in os.listdir(path):
          entrypath = os.path.join(path, entry)
          if os.path.isfile(entrypath):
             added += self.addFile(entrypath)
@@ -316,6 +329,42 @@ class FilesystemList(list):
          compiled = re.compile(pattern)
          for entry in self[:]:
             if os.path.exists(entry) and os.path.isdir(entry):
+               if compiled.match(entry):
+                  self.remove(entry)
+                  logger.debug("Removed path [%s] from list based on pattern [%s]." % (entry, pattern))
+                  removed += 1
+      logger.debug("Removed a total of %d entries." % removed);
+      return removed
+
+   def removeLinks(self, pattern=None):
+      """
+      Removes soft link entries from the list.
+
+      If C{pattern} is not passed in or is C{None}, then all soft link entries
+      will be removed from the list.  Otherwise, only those soft link entries
+      matching the pattern will be removed.  Any entry which does not exist on
+      disk will be ignored (use L{removeInvalid} to purge those entries).
+
+      This method might be fairly slow for large lists, since it must check the
+      type of each item in the list.  If you know ahead of time that you want
+      to exclude all soft links, then you will be better off setting
+      L{excludeLinks} to C{True} before adding items to the list.
+
+      @param pattern: Regular expression pattern representing entries to remove
+
+      @return: Number of entries removed
+      """
+      removed = 0
+      if pattern is None:
+         for entry in self[:]:
+            if os.path.exists(entry) and os.path.islink(entry):
+               self.remove(entry)
+               logger.debug("Removed path [%s] from list." % entry)
+               removed += 1
+      else:
+         compiled = re.compile(pattern)
+         for entry in self[:]:
+            if os.path.exists(entry) and os.path.islink(entry):
                if compiled.match(entry):
                   self.remove(entry)
                   logger.debug("Removed path [%s] from list based on pattern [%s]." % (entry, pattern))
