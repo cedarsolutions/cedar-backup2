@@ -29,6 +29,9 @@ REMAINING V2.0 RELEASE TASKS
 
 * Come up with a standard svn label script to do releases, so I can't forget as easily.
 
+* Manpage should list explicit return values, since we specify them anyway.
+  Probably test and make sure that they come out with that number on the command-line.
+
 
 FUTURE FUNCTIONALITY
 
