@@ -82,10 +82,10 @@ class FilesystemList(list):
    can add individual files or directories to the list, or can recursively add
    the contents of a directory.  The class also allows for up-front exclusions
    in several forms (all files, all directories, all items matching a pattern,
-   or all directories containing a specific "ignore file").  Symbolic links
-   backed up non-recursively, i.e. the link to a directory is backed up, but
-   not the contents of that link (we don't want to deal with recursive loops,
-   etc.).
+   or all directories containing a specific "ignore file").  Symbolic links are
+   typically backed up non-recursively, i.e. the link to a directory is backed
+   up, but not the contents of that link (we don't want to deal with recursive
+   loops, etc.).
 
    The custom methods such as L{addFile} will only add items if they exist on
    the filesystem and do not match any exclusions that are already in place.
