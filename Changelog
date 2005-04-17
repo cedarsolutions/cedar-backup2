@@ -1,3 +1,7 @@
+Version 2.4.1	unreleased
+
+	* Fix minor typos in user manual and source code documentation.
+
 Version 2.4.0	02 Apr 2005
 
 	* Re-license manual under "GPL with clarifications" to satisfy DFSG.

@@ -148,12 +148,8 @@ def cli():
 
    The C{'all'} action has a special meaning.  Normally, it means that the
    standard set of actions (collect, stage, store, purge) will all be executed,
-   in that order.  However, if there are extended actions, then those extended
-   actions which have a configured index will be slotted into the normal
-   sequence of execution (where the standard actions have indices
-   C{COLLECT_INDEX}, C{STAGE_INDEX}, C{STORE_INDEX} and C{PURGE_INDEX},
-   respectively).  Extended actions with no index will be ignored as part of
-   the C{'all'} action.
+   in that order.  Extended actions will be ignored as part of the C{'all'}
+   action.
 
    Raised exceptions always result in an immediate return.  Otherwise, we
    generally return when all specified actions have been completed.  Actions

@@ -307,7 +307,7 @@
 
                <para>
                   The <command>eject</command> command is used to open and
-                  close the tray on a backup device (the backup device has a
+                  close the tray on a backup device (if the backup device has a
                   tray).  Sometimes, the tray must be opened and closed in
                   order to "reset" the device so it notices recent changes to a
                   disc.  
