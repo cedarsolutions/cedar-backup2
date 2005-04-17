@@ -72,10 +72,10 @@ External Python Libraries
    depends on the XPath functionality provided by the PyXML product in the
    C{xml.xpath} package.
 
-   The PyXML XPath library is not particularly fast.  This is particularly
-   noticable when reading lists of things with the C{[n]} syntax.  Because of
-   this, this configuration code jumps through some performance-improvement
-   hoops that would normally not be required when using a faster library.
+   The PyXML XPath library is not very fast.  This is particularly noticable
+   when reading lists of things with the XPath C{[n]} syntax.  Because of this,
+   the code below jumps through some performance-improvement hoops that would
+   normally not be required when using a faster library.
 
 Backwards Compatibility
 =======================
@@ -85,15 +85,6 @@ Backwards Compatibility
    Backup 2.x configuration file.  However, it doesn't work to go the other
    direction, as the 2.x configuration files may contain additional fields that
    are not accepted by older versions of the software.  
-
-   For instance, the 2.x software allows global absolute path exclusions,
-   global regular expression exclusions, and directory-specific absolute path,
-   relative path and regular expression exclusions; while the 1.x software only
-   allows directory-specific absolute path exclusions.  There are also some
-   cases where the 2.x software allows certain values (such as the ignore file)
-   to be specified at a high-level and then overridden at a lower level where
-   in the 1.x software these values are only allowed at a single point in
-   configuration.
 
 XML Configuration Structure
 ===========================

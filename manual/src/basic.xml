@@ -66,7 +66,7 @@
 
       <para>
          Cedar Backup provides no facility for restoring backups.  It is
-         assumed that the user can cpy tarfiles off disc and use them to
+         assumed that the user can copy tarfiles off disc and use them to
          restore missing files as needed.
       </para>
 
@@ -316,9 +316,9 @@
          </para>
 
          <para>
-            Extensions be executed as part of the all action.  If you need to
-            execute an extended action, you must specify the other actions you
-            want to run individually on the command line.
+            Extensions can be executed as part of the all action.  If you need
+            to execute an extended action, you must specify the other actions
+            you want to run individually on the command line.
          </para>
 
          <para>
@@ -409,8 +409,8 @@
          the master begins staging it, and the master must finish staging data
          from a client before that client purges its collected data.
          Administrators may need to experiment with the time between the
-         collect and purge entries master has enough time to stage data before
-         it is purged.
+         collect and purge entries so that the master has enough time to stage
+         data before it is purged.
       </para>
 
       <para>
@@ -506,7 +506,7 @@
       <para>
          I have chosen to support just these four types of media because they
          seem to be the most <quote>standard</quote> of the various types
-         commonly sold in the U.S. today (early 2005).  If you regularly an
+         commonly sold in the U.S. today (early 2005).  If you regularly use an
          unsupported media type and would like Cedar Backup to support it, send
          me information about the capacity of the media in megabytes (MB) and
          whether it is rewritable.  
