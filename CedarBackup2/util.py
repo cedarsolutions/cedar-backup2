@@ -851,7 +851,7 @@ def unmount(mountPoint, removeAfter=False, attempts=1, waitSeconds=0):
 
    Sometimes, it might not be possible to unmount the mount point immediately,
    if there are still files open there.  Use the C{attempts} and C{waitSeconds}
-   arguments to indicate how many unmount attmpts to make and how many seconds
+   arguments to indicate how many unmount attempts to make and how many seconds
    to wait between attempts.  If you pass in zero attempts, no attempts will be
    made (duh).
 

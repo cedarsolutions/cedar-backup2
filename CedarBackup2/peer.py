@@ -627,11 +627,11 @@ class RemotePeer(object):
       to get the associated uid/gid as an ownership tuple.
 
       @note: Unlike the local peer version of this method, an I/O error might
-      be raised if the directory is empty.  Since we're using a remote copy
-      method, we just don't have the fine-grained control over our exceptions
-      that's available when we can look directly at the filesystem, and we
-      can't control whether the remote copy method thinks an empty directory is
-      an error.  
+      or might not be raised if the directory is empty.  Since we're using a
+      remote copy method, we just don't have the fine-grained control over our
+      exceptions that's available when we can look directly at the filesystem,
+      and we can't control whether the remote copy method thinks an empty
+      directory is an error.  
 
       @param targetDir: Target directory to write data into
       @type targetDir: String representing a directory on disk

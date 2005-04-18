@@ -716,7 +716,7 @@ class BackupFileList(FilesystemList):
       @type stripPrefix: String with any contents
 
       @return: Dictionary mapping file to digest value
-      @see L{removeUnchanged}
+      @see: L{removeUnchanged}
       """
       table = { }
       if stripPrefix is not None:
@@ -1135,10 +1135,10 @@ def compareContents(path1, path2, verbose=False):
    file has exactly the same contents in both directories.
 
    This is all relatively simple to implement through the magic of
-   L{BackupFileList.generateDigestMap}, which knows how to strip the largest
-   common path off the front of each entry in the mapping it generates.  This
-   makes our comparison as simple as creating a list for each path, then
-   generating a digest map for each path and comparing the two.
+   L{BackupFileList.generateDigestMap}, which knows how to strip a path prefix
+   off the front of each entry in the mapping it generates.  This makes our
+   comparison as simple as creating a list for each path, then generating a
+   digest map for each path and comparing the two.
 
    If no exception is thrown, the two directories are considered identical.
 
