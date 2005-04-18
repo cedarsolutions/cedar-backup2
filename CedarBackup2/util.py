@@ -11,6 +11,9 @@
 # Copyright (c) 2004-2005 Kenneth J. Pronovici.
 # All rights reserved.
 #
+# Portions copyright (c) 2001, 2002 Python Software Foundation.
+# All Rights Reserved.
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # Version 2, as published by the Free Software Foundation.
@@ -429,6 +432,10 @@ class Pipe(popen2.Popen4):
    constructor and then modify a few things afterwards.  Even worse, I have to
    access private C{popen2} module members C{_cleanup} and C{_active} in order
    to duplicate the implementation.  Hopefully that will continue to work. :(
+   
+   @copyright: Some of this code, prior to customization, was originally part
+   of the Python 2.3 codebase.  Python code is copyright (c) 2001, 2002 Python
+   Software Foundation; All Rights Reserved.
    """
    
    def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
@@ -590,6 +597,10 @@ def getFunctionReference(module, function):
 
    @raise ImportError: If the function cannot be found. 
    @raise ValueError: If the resulting reference is not callable.
+
+   @copyright: Some of this code, prior to customization, was originally part
+   of the Python 2.3 codebase.  Python code is copyright (c) 2001, 2002 Python
+   Software Foundation; All Rights Reserved.
    """
    parts = []
    if module is not None and module != "":

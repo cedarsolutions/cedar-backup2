@@ -1,6 +1,8 @@
 Version 2.4.1	unreleased
 
 	* Fix minor typos in user manual and source code documentation.
+	* Properly annotate code implemented based on Python 2.3 source.
+	* Add info within CREDITS about Python 2.3 and Docbook XSL licenses.
 
 Version 2.4.0	02 Apr 2005
 

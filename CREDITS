@@ -27,17 +27,28 @@ Unless otherwise indicated, all Cedar Backup source code is copyright
 Public License.  The contents of the GNU General Public License can be
 found in the LICENSE file, or can be downloaded from http://www.gnu.org/.
 
-Minor code examples taken from newsgroups and mailing lists is not
-generally attributed.
+Minor code snippets derived from newsgroup and mailing list postings are
+not generally attributed unless I used someone else's source code verbatim.
+
+Source code annotated as "(c) 2001, 2002 Python Software Foundation" was
+originally taken from or derived from code within the Python 2.3 codebase.
+This code was released under the Python 2.3 license, which an MIT-style
+academic license.  Items under this license include the util.Pipe
+implementation based on popen2.Popen4.
 
 Source code annotated as "(c) 2000-2004 CollabNet" was originally released
-under the CollabNet License (which is an Apache/BSD-style license).  Items
-under this license include markup and stylesheets used in creating the user
-manual.  
+under the CollabNet License, which is an Apache/BSD-style license.  Items
+under this license include basic markup and stylesheets used in creating
+the user manual.  The dblite.dtd and readme-dblite.html files are also
+assumed to be under the CollabNet License, since they were found as part of
+the Subversion source tree and did not specify an explicit copyright
+notice. 
 
-The dblite.dtd and readme-dblite.html files are also assumed to be under
-the CollabNet License, since they were found as part of the Subversion
-source tree and did not specify an explicit copyright notice. 
+Some of the PDF-specific graphics in the user manual were either directly
+taken from or were derived from images distributed in Norman Walsh's XSL
+Docbook XSL distribution.  These graphics are (c) 1999, 2000, 2001 Norman
+Walsh and were originally released under a BSD-style license as documented
+below.
 
 
 ####################
@@ -89,4 +100,104 @@ source tree and did not specify an explicit copyright notice.
  * This software consists of voluntary contributions made by many
  * individuals on behalf of CollabNet.
  */
+
+
+#####################
+# Python 2.3 License
+#####################
+
+PSF LICENSE AGREEMENT FOR PYTHON 2.3
+------------------------------------
+
+1. This LICENSE AGREEMENT is between the Python Software Foundation
+("PSF"), and the Individual or Organization ("Licensee") accessing and
+otherwise using Python 2.3 software in source or binary form and its
+associated documentation.
+
+2. Subject to the terms and conditions of this License Agreement, PSF
+hereby grants Licensee a nonexclusive, royalty-free, world-wide
+license to reproduce, analyze, test, perform and/or display publicly,
+prepare derivative works, distribute, and otherwise use Python 2.3
+alone or in any derivative version, provided, however, that PSF's
+License Agreement and PSF's notice of copyright, i.e., "Copyright (c)
+2001, 2002 Python Software Foundation; All Rights Reserved" are
+retained in Python 2.3 alone or in any derivative version prepared by
+Licensee.
+
+3. In the event Licensee prepares a derivative work that is based on
+or incorporates Python 2.3 or any part thereof, and wants to make
+the derivative work available to others as provided herein, then
+Licensee hereby agrees to include in any such work a brief summary of
+the changes made to Python 2.3.
+
+4. PSF is making Python 2.3 available to Licensee on an "AS IS"
+basis.  PSF MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR
+IMPLIED.  BY WAY OF EXAMPLE, BUT NOT LIMITATION, PSF MAKES NO AND
+DISCLAIMS ANY REPRESENTATION OR WARRANTY OF MERCHANTABILITY OR FITNESS
+FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF PYTHON 2.3 WILL NOT
+INFRINGE ANY THIRD PARTY RIGHTS.
+
+5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON
+2.3 FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS
+A RESULT OF MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 2.3,
+OR ANY DERIVATIVE THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+
+6. This License Agreement will automatically terminate upon a material
+breach of its terms and conditions.
+
+7. Nothing in this License Agreement shall be deemed to create any
+relationship of agency, partnership, or joint venture between PSF and
+Licensee.  This License Agreement does not grant permission to use PSF
+trademarks or trade name in a trademark sense to endorse or promote
+products or services of Licensee, or any third party.
+
+8. By copying, installing or otherwise using Python 2.3, Licensee
+agrees to be bound by the terms and conditions of this License
+Agreement.
+
+
+##################
+# Docbook License
+##################
+
+Copyright
+---------
+
+Copyright (C) 1999, 2000, 2001 Norman Walsh
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the ``Software''), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+Except as contained in this notice, the names of individuals
+credited with contribution to this software shall not be used in
+advertising or otherwise to promote the sale, use or other
+dealings in this Software without prior written authorization
+from the individuals in question.
+
+Any stylesheet derived from this Software that is publically
+distributed will be identified with a different name and the
+version strings in any derived Software will be changed so that
+no possibility of confusion between the derived package and this
+Software will exist.
+
+Warranty
+--------
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT.  IN NO EVENT SHALL NORMAN WALSH OR ANY OTHER
+CONTRIBUTOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
 
