@@ -1,8 +1,9 @@
-Version 2.4.1	unreleased
+Version 2.4.1	22 Apr 2005
 
 	* Fix minor typos in user manual and source code documentation.
 	* Properly annotate code implemented based on Python 2.3 source.
 	* Add info within CREDITS about Python 2.3 and Docbook XSL licenses.
+	* Fix logging for boundaries values (can't print None[0], duh).
 
 Version 2.4.0	02 Apr 2005
 
