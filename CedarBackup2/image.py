@@ -156,7 +156,7 @@ class IsoImage(object):
       @type device: Either be a filesystem path or a SCSI address
 
       @param boundaries: Session boundaries as required by C{mkisofs}
-      @type boundaries: Tuple C{(last_sess_start,next_sess_start)} as returned from C{cdrecord -msinfo}
+      @type boundaries: Tuple C{(last_sess_start,next_sess_start)} as returned from C{cdrecord -msinfo}, or C{None}
 
       @param graftPoint: Default graft point for this page.
       @type graftPoint: String representing a graft point path (see L{addEntry}).
