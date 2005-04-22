@@ -618,7 +618,7 @@ class CdWriter(object):
          if result != 0:
             raise IOError("Error (%d) executing cdrecord command to get capacity." % result)
          boundaries = CdWriter._parseBoundariesOutput(output)
-         logger.debug("Returning disc boundaries (%d, %d)." % (boundaries[0], boundaries[1]))
+         logger.debug("Returning disc boundaries:", boundaries)
          return boundaries
 
    def _calculateCapacity(media, boundaries):
