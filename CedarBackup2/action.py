@@ -700,7 +700,7 @@ def _writeCollectIndicator(config):
       open(filename, "w").write("")
       changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
    except Exception, e:
-      logger.error("Error writing collect indicator: %s", e)
+      logger.error("Error writing collect indicator: %s" % e)
 
 
 ##########################
@@ -817,7 +817,7 @@ def _writeStageIndicator(config, dailyDir):
       open(filename, "w").write("")
       changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
    except Exception, e:
-      logger.error("Error writing stage indicator: %s", e)
+      logger.error("Error writing stage indicator: %s" % e)
 
 
 ##########################
@@ -1014,7 +1014,7 @@ def _writeStoreIndicator(config, stagingDirs):
          open(filename, "w").write("")
          changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
       except Exception, e:
-         logger.error("Error writing store indicator: %s", e)
+         logger.error("Error writing store indicator: %s" % e)
 
 
 ##########################
