@@ -1,3 +1,8 @@
+Version 2.4.2	23 Apr 2005
+
+	* Fix boundaries log message again, properly this time.
+	* Fix a few other log messages that used "," rather than "%".
+
 Version 2.4.1	22 Apr 2005
 
 	* Fix minor typos in user manual and source code documentation.
