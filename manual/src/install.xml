@@ -84,18 +84,6 @@
          
       <title>Installing on a Debian System</title>
 
-      <sidebar>
-         <title>Not an <quote>Official</quote> Debian Package</title>
-
-         <para>
-            Currently, Cedar Backup is not part of any official Debian release.
-            While I am a Debian developer, I have chosen to keep the package out
-            of the Debian archive until it demonstrates enough popularity to
-            belong there.  There is no point in putting it in Debian for three
-            users.
-         </para>
-      </sidebar>
-
       <para>
          The easiest way to install Cedar Backup onto a Debian system is by
          using a tool such as <command>apt-get</command> or
@@ -103,10 +91,15 @@
       </para>
 
       <para>
-         First, add the Cedar Solutions APT data source to your
+         If you are running a Debian release which contains Cedar Backup, you
+         can use your normal Debian mirror as an APT data source. (Currently,
+         only the unstable and testing branches for the <quote>etch</quote>
+         release contain Cedar Backup packages.)  Otherwise, you need to
+         install from the Cedar Solutions APT data source.  To do this, add the
+         Cedar Solutions APT data source to your
          <filename>/etc/apt/sources.list</filename> file.  <footnote><para>See
          <ulink url="http://cedar-solutions.com/debian.html"/>.</para></footnote>
-         Then, execute:
+         Then, install the package using this set of commands:
       </para>
 
       <screen>
