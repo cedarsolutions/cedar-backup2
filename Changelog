@@ -1,3 +1,7 @@
+Version 2.4.3	unreleased
+
+	* Update docs to modify use of "secure" (suggested by Lars Wirzenius).
+
 Version 2.4.2	23 Apr 2005
 
 	* Fix boundaries log message again, properly this time.
