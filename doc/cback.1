@@ -16,22 +16,23 @@
 .\" # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 .\" This file was created with a width of 132 characters, and NO tabs.
 .\"
-.TH cback "1" "February 2005" "Cedar Backup" "Kenneth J. Pronovici"
+.TH cback "1" "July 2005" "Cedar Backup" "Kenneth J. Pronovici"
 .SH NAME
-cback \- Securely back up local and remote files and directories to CD-R or CD-RW under Linux
+cback \- Local and remote backups to CD-R/CD-RW media under Linux
 .SH SYNOPSIS
 .B cback
 [\fIswitches\fR]
 action(s)
 .SH DESCRIPTION
 .PP
-The cback script is a front-end to a Python package that supports secure
-backups of files on local and remote hosts to CD-R or CD-RW media.  The script
-is focused around weekly backups to a single disc, with the expectation that
-the disc will be changed or overwritten at the beginning of each week.  If your
-hardware is new enough, the script can write multisession discs, allowing you
-to add to a disc in a daily fashion.  Directories are backed up using tar and
-may be compressed using several different methods.
+The cback script is a front-end to a Python package that supports backups of
+files on local and remote hosts to CD-R or CD-RW media over a secure network
+connection.  The script is focused around weekly backups to a single disc, with
+the expectation that the disc will be changed or overwritten at the beginning
+of each week.  If your hardware is new enough, the script can write
+multisession discs, allowing you to add to a disc in a daily fashion.
+Directories are backed up using tar and may be compressed using several
+different methods.
 .PP
 There are two kinds of machines in a Cedar Backup pool.  One machine (the
 \fImaster\fR) has a CD-R or CD-RW drive on it and is where the backup is

@@ -14,11 +14,11 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-Cedar Backup is a Python package that supports secure backups of files on
-local and remote hosts to CD-R or CD-RW media.  Cedar Backup also includes
-extensions that understand how to back up MySQL databases and Subversion
-repositories, and it can be easily extended to support other data sources,
-as well.
+Cedar Backup is a Python package that supports backups of files on local
+and remote hosts to CD-R or CD-RW media over a secure network connection.
+Cedar Backup also includes extensions that understand how to back up MySQL
+databases and Subversion repositories, and it can be easily extended to
+support other data sources, as well.
 
 The package is focused around weekly backups to a single disc, with the
 expectation that the disc will be changed or overwritten at the beginning
