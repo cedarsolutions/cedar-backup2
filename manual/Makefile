@@ -36,7 +36,7 @@
 
 CP                       = cp
 FOP                      = ../util/docbook/run-fop.sh
-INSTALL                  = install
+INSTALL                  = install --mode=664
 MKDIR                    = mkdir
 RM                       = rm
 XSLTPROC                 = xsltproc

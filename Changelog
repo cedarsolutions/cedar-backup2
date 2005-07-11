@@ -3,6 +3,7 @@ Version 2.4.3	unreleased
 	* Update docs to modify use of "secure" (suggested by Lars Wirzenius).
 	* Removed "Not an Official Debian Package" section in software manual.
 	* Reworked Debian install procedure in manual to reference official packages.
+	* Fix manual's build process to create files with mode 664 rather than 755.
 
 Version 2.4.2	23 Apr 2005
 
