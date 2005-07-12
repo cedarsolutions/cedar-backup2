@@ -97,6 +97,7 @@
       <target_scsi_id>0,0,0</target_scsi_id>
       <drive_speed>4</drive_speed>
       <check_data>Y</check_data>
+      <warn_midnite>Y</warn_midnite>
    </store>
    <purge>
       <dir>

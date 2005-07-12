@@ -276,6 +276,34 @@
             scratch.   Otherwise, a new ISO session will be added to the disc
             each day the backup runs.  
          </para>
+
+         <sidebar>
+            <title>Current Staging Directory</title>
+
+            <para>
+               The store action tries to be smart about finding the current
+               staging directory.  It first checks the current day's staging
+               directory.  If that directory exists, and it has not yet been
+               written to disc (i.e. there is no store indicator), then it will
+               be used.  Otherwise, the store action will look for an unused
+               staging directory for either the previous day or the next day,
+               in that order.  A warning will be written to the log if a
+               midnite boundary is crossed (controlled by the
+               &lt;warn_midnite&gt; configuration value).
+            </para>
+
+            <para>
+               This behavior varies slightly when the <option>--full</option>
+               option is in effect.  Under these circumstances, any existing
+               store indicator will be ignored.  Also, the store action will
+               always attempt to use the current day's staging directory,
+               ignoring any staging directories for the previous day or the
+               next day.  This way, running a full store action more than once
+               concurrently will always produce the same results.  (You might
+               imagine a use case where a person wants to make several copies
+               of the same full backup.)
+            </para>
+         </sidebar>
          
       </sect2>
 
@@ -294,11 +322,12 @@
 
          <para>
             Typically, collect directories are purged daily, and stage
-            directories are purged weekly or slightly less often (if a disc gets corrupted, older backups may still be
-            available on the master).  Some users also choose to purge the
-            configured working directory (which is used for temporary files) to
-            eliminate any leftover files which might have resulted from changes
-            to configuration.
+            directories are purged weekly or slightly less often (if a disc
+            gets corrupted, older backups may still be available on the
+            master).  Some users also choose to purge the configured working
+            directory (which is used for temporary files) to eliminate any
+            leftover files which might have resulted from changes to
+            configuration.
          </para>
 
       </sect2>
