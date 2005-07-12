@@ -36,7 +36,7 @@
 
 CP                       = cp
 FOP                      = ../util/docbook/run-fop.sh
-INSTALL                  = install --mode=664
+INSTALL                  = install
 MKDIR                    = mkdir
 RM                       = rm
 XSLTPROC                 = xsltproc
@@ -84,7 +84,7 @@ clean:
 	-@$(RM) -f $(MANUAL_PDF_TARGET) $(MANUAL_PS_TARGET) 
 
 $(INSTALL_DIR):
-	$(INSTALL) -d $(INSTALL_DIR)
+	$(INSTALL) --mode=775 -d $(INSTALL_DIR)
 
 
 ###################
@@ -97,10 +97,10 @@ $(MANUAL_HTML_TARGET): $(MANUAL_ALL_SOURCE)
 	$(XSLTPROC) --output $(MANUAL_HTML_TARGET) $(XSL_HTML) $(MANUAL_XML_SOURCE)
 
 install-manual-html: $(MANUAL_HTML_TARGET) $(INSTALL_DIR)
-	$(INSTALL) -d $(INSTALL_DIR)/images
-	$(INSTALL) $(MANUAL_HTML_TARGET) $(INSTALL_DIR)
-	$(INSTALL) $(STYLES_CSS) $(INSTALL_DIR)
-	$(INSTALL) $(MANUAL_HTML_IMAGES) $(INSTALL_DIR)/images
+	$(INSTALL) --mode=775 -d $(INSTALL_DIR)/images
+	$(INSTALL) --mode=664 $(MANUAL_HTML_TARGET) $(INSTALL_DIR)
+	$(INSTALL) --mode=664 $(STYLES_CSS) $(INSTALL_DIR)
+	$(INSTALL) --mode=664 $(MANUAL_HTML_IMAGES) $(INSTALL_DIR)/images
 
 
 ###########################
@@ -118,10 +118,11 @@ $(MANUAL_CHUNK_TARGET): $(MANUAL_ALL_SOURCE) $(STYLES_CSS) $(MANUAL_HTML_IMAGES)
 	$(CP) $(MANUAL_HTML_IMAGES) $(MANUAL_CHUNK_DIR)/images
 
 install-manual-chunk: $(MANUAL_CHUNK_TARGET) $(INSTALL_DIR)
-	$(INSTALL) -d $(INSTALL_DIR)/images
-	$(INSTALL) $(MANUAL_CHUNK_DIR)/*.html $(INSTALL_DIR)
-	$(INSTALL) $(STYLES_CSS) $(INSTALL_DIR)
-	$(INSTALL) $(MANUAL_HTML_IMAGES) $(INSTALL_DIR)/images
+	$(INSTALL) --mode=775 -d $(INSTALL_DIR)/images
+	$(INSTALL) --mode=664 $(MANUAL_CHUNK_DIR)/*.html $(INSTALL_DIR)
+	$(INSTALL) --mode=664 $(STYLES_CSS) $(INSTALL_DIR)
+	$(INSTALL) --mode=664 $(MANUAL_HTML_IMAGES) $(INSTALL_DIR)/images
+
 
 ###################
 # Text build rules
@@ -133,7 +134,7 @@ $(MANUAL_TEXT_TARGET):
 	$(W3M) -dump -cols 80 $(MANUAL_HTML_TARGET) > $(MANUAL_TEXT_TARGET)
 
 install-manual-text: $(MANUAL_TEXT_TARGET) $(INSTALL_DIR)
-	$(INSTALL) $(MANUAL_TEXT_TARGET) $(INSTALL_DIR)
+	$(INSTALL) --mode=664 $(MANUAL_TEXT_TARGET) $(INSTALL_DIR)
 
 
 ##################
@@ -147,7 +148,7 @@ $(MANUAL_PDF_TARGET): $(MANUAL_ALL_SOURCE) $(MANUAL_PDF_IMAGES)
 	$(FOP) $(MANUAL_TOP) -fo $(MANUAL_FO_TARGET) -pdf $(MANUAL_PDF_TARGET)
 
 install-manual-pdf: $(MANUAL_PDF_TARGET) $(INSTALL_DIR)
-	$(INSTALL) $(MANUAL_PDF_TARGET) $(INSTALL_DIR)
+	$(INSTALL) --mode=664 $(MANUAL_PDF_TARGET) $(INSTALL_DIR)
 
 
 #########################
@@ -161,5 +162,5 @@ $(MANUAL_PS_TARGET): $(MANUAL_ALL_SOURCE) $(MANUAL_PDF_IMAGES)
 	$(FOP) $(MANUAL_TOP) -fo $(MANUAL_FO_TARGET) -ps $(MANUAL_PS_TARGET)
 
 install-manual-ps: $(MANUAL_PS_TARGET) $(INSTALL_DIR)
-	$(INSTALL) $(MANUAL_PS_TARGET) $(INSTALL_DIR)
+	$(INSTALL) --mode=664 $(MANUAL_PS_TARGET) $(INSTALL_DIR)
 
