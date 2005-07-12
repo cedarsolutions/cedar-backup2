@@ -2011,12 +2011,12 @@ class StoreConfig(object):
 
    @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
           mediaType, deviceType, devicePath, deviceScsiId, 
-          driveSpeed, checkData
+          driveSpeed, checkData, warnMidnite
    """
 
    def __init__(self, sourceDir=None, mediaType=None, deviceType=None, 
                 devicePath=None, deviceScsiId=None, driveSpeed=None,
-                checkData=False):
+                checkData=False, warnMidnite=False):
       """
       Constructor for the C{StoreConfig} class.
 
@@ -2026,7 +2026,8 @@ class StoreConfig(object):
       @param devicePath: Filesystem device name for writer device, i.e. C{/dev/cdrw}.
       @param deviceScsiId: SCSI id for writer device, i.e. C{[ATA|ATAPI]:scsibus,target,lun}.
       @param driveSpeed: Speed of the drive, i.e. C{2} for 2x drive, etc.
-      @param checkData: Indicates whether resulting image should be validated.
+      @param checkData: Whether resulting image should be validated.
+      @param warnMidnite: Whether to generate warnings for crossing midnite.
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -2037,6 +2038,7 @@ class StoreConfig(object):
       self._deviceScsiId = None
       self._driveSpeed = None
       self._checkData = None
+      self._warnMidnite = None
       self.sourceDir = sourceDir
       self.mediaType = mediaType
       self.deviceType = deviceType
@@ -2044,14 +2046,15 @@ class StoreConfig(object):
       self.deviceScsiId = deviceScsiId
       self.driveSpeed = driveSpeed
       self.checkData = checkData
+      self.warnMidnite = warnMidnite
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
-                                                          self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                          self.checkData)
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
+                                                              self.devicePath, self.deviceScsiId, self.driveSpeed,
+                                                              self.checkData, self.warnMidnite)
 
    def __str__(self):
       """
@@ -2099,6 +2102,11 @@ class StoreConfig(object):
             return 1
       if self._checkData != other._checkData:
          if self._checkData < other._checkData:
+            return -1
+         else:
+            return 1
+      if self._warnMidnite != other._warnMidnite:
+         if self._warnMidnite < other._warnMidnite:
             return -1
          else:
             return 1
@@ -2224,13 +2232,30 @@ class StoreConfig(object):
       """
       return self._checkData
 
+   def _setWarnMidnite(self, value):
+      """
+      Property target used to set the midnite warning flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._warnMidnite = True
+      else:
+         self._warnMidnite = False
+
+   def _getWarnMidnite(self):
+      """
+      Property target used to get the midnite warning flag.
+      """
+      return self._warnMidnite
+
    sourceDir = property(_getSourceDir, _setSourceDir, None, "Directory whose contents should be written to media.")
    mediaType = property(_getMediaType, _setMediaType, None, "Type of the media (see notes above).")
    deviceType = property(_getDeviceType, _setDeviceType, None, "Type of the device (optional, see notes above).")
    devicePath = property(_getDevicePath, _setDevicePath, None, "Filesystem device name for writer device.")
    deviceScsiId = property(_getDeviceScsiId, _setDeviceScsiId, None, "SCSI id for writer device.")
    driveSpeed = property(_getDriveSpeed, _setDriveSpeed, None, "Speed of the drive.")
-   checkData = property(_getCheckData, _setCheckData, None, "Indicates whether resulting image should be validated.")
+   checkData = property(_getCheckData, _setCheckData, None, "Whether resulting image should be validated.")
+   warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
 
 
 ########################################################################
@@ -2947,6 +2972,7 @@ class Config(object):
          deviceScsiId      //cb_config/store/target_scsi_id
          driveSpeed        //cb_config/store/drive_speed
          checkData         //cb_config/store/check_data
+         warnMidnite       //cb_config/store/warn_midnite
 
       @param parent: Parent node to search beneath.
 
@@ -2964,6 +2990,7 @@ class Config(object):
          store.deviceScsiId = readString(section,  "target_scsi_id")
          store.driveSpeed = readInteger(section, "drive_speed")
          store.checkData = readBoolean(section, "check_data")
+         store.warnMidnite = readBoolean(section, "warn_midnite")
       return store
    _parseStore = staticmethod(_parseStore)
 
@@ -3380,6 +3407,7 @@ class Config(object):
          deviceScsiId      //cb_config/store/target_scsi_id
          driveSpeed        //cb_config/store/drive_speed
          checkData         //cb_config/store/check_data
+         warnMidnite       //cb_config/store/warn_midnite
 
       If C{storeConfig} is C{None}, then no container will be added.
 
@@ -3396,6 +3424,7 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "target_scsi_id", storeConfig.deviceScsiId)
          addIntegerNode(xmlDom, sectionNode, "drive_speed", storeConfig.driveSpeed)
          addBooleanNode(xmlDom, sectionNode, "check_data", storeConfig.checkData)
+         addBooleanNode(xmlDom, sectionNode, "warn_midnite", storeConfig.warnMidnite)
    _addStore = staticmethod(_addStore)
 
    def _addPurge(xmlDom, parentNode, purgeConfig):

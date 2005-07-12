@@ -434,6 +434,7 @@
       &lt;target_scsi_id&gt;0,0,0&lt;/target_scsi_id&gt;
       &lt;drive_speed&gt;4&lt;/drive_speed&gt;
       &lt;check_data&gt;Y&lt;/check_data&gt;
+      &lt;warn_midnite&gt;Y&lt;/warn_midnite&gt;
    &lt;/store&gt;
    &lt;purge&gt;
       &lt;dir&gt;
@@ -1559,6 +1560,7 @@
    &lt;target_scsi_id&gt;0,0,0&lt;/target_scsi_id&gt;
    &lt;drive_speed&gt;4&lt;/drive_speed&gt;
    &lt;check_data&gt;Y&lt;/check_data&gt;
+   &lt;warn_midnite&gt;Y&lt;/warn_midnite&gt;
 &lt;/store&gt;
          </programlisting>
 
@@ -1688,7 +1690,7 @@
             <varlistentry>
                <term><literal>check_data</literal></term>
                <listitem>
-                  <para>Indicates whether the media should be validated.</para>
+                  <para>Whether the media should be validated.</para>
                   <para>
                      This field indicates whether a resulting image on the
                      media should be validated after the write completes, by
@@ -1704,6 +1706,34 @@
                      By default, the consistency check is disabled, but most
                      users should choose to enable it unless they have a good
                      reason not to.
+                  </para>
+                  <para>
+                     This field is optional.  If it doesn't exist, then
+                     <literal>N</literal> will be assumed.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>warn_midnite</literal></term>
+               <listitem>
+                  <para>Whether to generate warnings for crossing midnite.</para>
+                  <para>
+                     This field indicates whether warnings should be generated
+                     if the store operation has to cross a midnite boundary in
+                     order to find data to write to disc.  For instance, a
+                     warning would be generated if valid store data was only
+                     found in the day before or day after the current day.
+                  </para>
+                  <para>
+                     Configuration for some users is such that the store
+                     operation will always cross a midnite boundary, so they
+                     will not care about this warning.  Other users will expect
+                     to never cross a boundary, and want to be notified that
+                     something <quote>strange</quote> might have happened.
                   </para>
                   <para>
                      This field is optional.  If it doesn't exist, then
