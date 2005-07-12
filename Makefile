@@ -171,5 +171,5 @@ debdistclean:
 docdist: 
 	@$(TAR) -zcvf ../htmldocs.tar.gz doc/manual doc/interface
 
-.PHONY: all clean unittest test check pychecker pycheck doc docclean interface-doc manual-doc distrib sdist sdistclean debdist debdistclean
+.PHONY: all clean unittest test check pychecker pycheck doc docclean interface-doc manual-doc manual distrib sdist sdistclean debdist debdistclean
 
