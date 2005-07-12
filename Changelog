@@ -1,4 +1,4 @@
-Version 2.5.0	unreleased
+Version 2.5.0	12 Jul 2005
 
 	* Update docs to modify use of "secure" (suggested by Lars Wirzenius).
 	* Removed "Not an Official Debian Package" section in software manual.
