@@ -51,4 +51,29 @@ as to the best way to present it to the user.  I'm not sure if it's better to ha
 completely different sections or one section with "if master, do this, if client do this"
 in it.
 
+Typo in "all" action's description:
 
+    Extensions can be executed as part of the all action. If you need to execute an 
+    extended action, you must specify the other actions you want to run individually 
+    on the command line.
+
+The "can" should be "can't".
+
+Some things from Dag Rende:
+
+   I miss some things in the documentation:
+     * how to restore from the backups when they are needed - small hints on
+       how to find the right files or the rigth subversion backup.
+     * how to act when changing CD. It should be possible to force a full
+       backup after each removal of CD, to keep each CD an indepenedent
+       backup set (not needing multiple CDs to restore a file). It would be
+       impractical to take the CD just before each full backup.
+     * clarification on how to use extensions
+          * where in the config file the two xml elements should be and on
+            what level (I guessed and it worked)
+          * that the all action doesn't include extensions (it should I
+            think, especially when there is a sequence number that puts the
+            extension action in the right order)
+
+Change documentation on Subversion, since it seems to work for both FSFS and
+BDB.  Maybe another class that just changes the backend-type?
