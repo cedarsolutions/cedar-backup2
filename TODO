@@ -34,6 +34,7 @@ TESTING IMPROVEMENTS
 
 * Create unit tests for the store/rebuild "find directories" functions in action.py (and maybe refactor)
 * Come up with non-PyUnit code to stress test high-level actions, etc. 
+* Fix the UTF-8 filesystem test case, testEncodePath_009, per Dag Rende's notes.
 
 
 DOCUMENTATION IMPROVEMENTS
@@ -77,3 +78,43 @@ Some things from Dag Rende:
 
 Change documentation on Subversion, since it seems to work for both FSFS and
 BDB.  Maybe another class that just changes the backend-type?
+
+Add notes on Dag's solution for I/O errors:
+
+   I have set up  my backup configuration now and got it working.  I had some 
+   problems that was reposrted as IO error when validating the burned files.  
+   i was misled by the system log by lines like
+
+     Aug 14 12:16:17 gong2 kernel: attempt to access beyond end of device
+     Aug 14 12:16:17 gong2 kernel: hda: rw=0, want=26076, limit=25856
+
+   after a cback logging of
+
+     2005-08-14T12:16:17 CEST --> [ERROR  ] I/O error encountered during consistency check.
+     2005-08-14T12:16:17 CEST --> [ERROR  ] Error executing backup: [Errno 5] Input/output error
+
+   It was solved by turning automounting CD off with:
+
+       - created a new file /usr/share/hal/fdi/95userpolicy/noautomountcd.fdi
+
+   containing:
+
+      <?xml version="1.0" encoding="ISO-8859-1"?> <!-- -*- SGML -*- -->
+      <!-- This .fdi file prevent automount for every media (storage devices)
+           e.g. floppy, CD/DVD, USB-Stick, USB-Disk, external harddisk. -->
+      <deviceinfo version="0.2">
+         <device>
+            <match key="block.device" string="/dev/hda">
+               <match key="storage.policy.should_mount" bool="true">
+                  <merge key="storage.policy.should_mount" type="bool">false</merge>
+               </match>
+            </match>
+         </device>
+      </deviceinfo>
+
+       - changed a line in /etc/fstab
+
+         /dev/cdrecorder /media/cdrecorder       subfs   noauto,fs=cdfss,ro,procuid,nosuid,nodev,exec,iocharset=utf8 0 0
+   to
+         /dev/cdrecorder /media/cdrecorder       auto    noauto,ro,user,exec,iocharset=utf8    0 0
+
