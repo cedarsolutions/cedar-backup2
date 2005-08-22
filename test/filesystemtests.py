@@ -2799,24 +2799,26 @@ class TestFilesystemList(unittest.TestCase):
       """
       Attempt to add a directory which has several UTF-8 filenames in it.
       This test data was taken from Rick Lowe's problems around the release of v1.10.
+      I don't run the test for Darwin (Mac OS X) because the tarball isn't valid there.
       """
-      self.extractTar("tree13")
-      path = self.buildPath(["tree13", ])
-      fsList = FilesystemList()
-      count = fsList.addDirContents(path)
-      self.failUnlessEqual(11, count)
-      self.failUnlessEqual(11, len(fsList))
-      self.failUnless(self.buildPath([ "tree13", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "Les mouvements de r\x82forme.doc", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "l'\x82nonc\x82.sxw", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "l\x82onard - renvois et bibliographie.sxw", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "l\x82onard copie finale.sxw", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci - page titre.sxw", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci.sxw", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "Rammstein - B\x81ck Dich.mp3", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "megaherz - Glas Und Tr\x84nen.mp3", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "Megaherz - Mistst\x81ck.MP3", ]) in fsList)
-      self.failUnless(self.buildPath([ "tree13", "Rammstein - Mutter - B\x94se.mp3", ]) in fsList)
+      if not (sys.platform == "darwin" and sys.getfilesystemencoding() == "utf-8"):
+         self.extractTar("tree13")
+         path = self.buildPath(["tree13", ])
+         fsList = FilesystemList()
+         count = fsList.addDirContents(path)
+         self.failUnlessEqual(11, count)
+         self.failUnlessEqual(11, len(fsList))
+         self.failUnless(self.buildPath([ "tree13", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "Les mouvements de r\x82forme.doc", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "l'\x82nonc\x82.sxw", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "l\x82onard - renvois et bibliographie.sxw", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "l\x82onard copie finale.sxw", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci - page titre.sxw", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci.sxw", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "Rammstein - B\x81ck Dich.mp3", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "megaherz - Glas Und Tr\x84nen.mp3", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "Megaherz - Mistst\x81ck.MP3", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree13", "Rammstein - Mutter - B\x94se.mp3", ]) in fsList)
 
 
    #####################
@@ -14813,23 +14815,25 @@ class TestPurgeItemList(unittest.TestCase):
       """
       Attempt to add a directory which has several UTF-8 filenames in it.
       This test data was taken from Rick Lowe's problems around the release of v1.10.
+      I don't run the test for Darwin (Mac OS X) because the tarball isn't valid there.
       """
-      self.extractTar("tree13")
-      path = self.buildPath(["tree13", ])
-      purgeList = PurgeItemList()
-      count = purgeList.addDirContents(path)
-      self.failUnlessEqual(10, count)
-      self.failUnlessEqual(10, len(purgeList))
-      self.failUnless(self.buildPath([ "tree13", "Les mouvements de r\x82forme.doc", ]) in purgeList)
-      self.failUnless(self.buildPath([ "tree13", "l'\x82nonc\x82.sxw", ]) in purgeList)
-      self.failUnless(self.buildPath([ "tree13", "l\x82onard - renvois et bibliographie.sxw", ]) in purgeList)
-      self.failUnless(self.buildPath([ "tree13", "l\x82onard copie finale.sxw", ]) in purgeList)
-      self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci - page titre.sxw", ]) in purgeList)
-      self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci.sxw", ]) in purgeList)
-      self.failUnless(self.buildPath([ "tree13", "Rammstein - B\x81ck Dich.mp3", ]) in purgeList)
-      self.failUnless(self.buildPath([ "tree13", "megaherz - Glas Und Tr\x84nen.mp3", ]) in purgeList)
-      self.failUnless(self.buildPath([ "tree13", "Megaherz - Mistst\x81ck.MP3", ]) in purgeList)
-      self.failUnless(self.buildPath([ "tree13", "Rammstein - Mutter - B\x94se.mp3", ]) in purgeList)
+      if not (sys.platform == "darwin" and sys.getfilesystemencoding() == "utf-8"):
+         self.extractTar("tree13")
+         path = self.buildPath(["tree13", ])
+         purgeList = PurgeItemList()
+         count = purgeList.addDirContents(path)
+         self.failUnlessEqual(10, count)
+         self.failUnlessEqual(10, len(purgeList))
+         self.failUnless(self.buildPath([ "tree13", "Les mouvements de r\x82forme.doc", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree13", "l'\x82nonc\x82.sxw", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree13", "l\x82onard - renvois et bibliographie.sxw", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree13", "l\x82onard copie finale.sxw", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci - page titre.sxw", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree13", "l\x82onard de vinci.sxw", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree13", "Rammstein - B\x81ck Dich.mp3", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree13", "megaherz - Glas Und Tr\x84nen.mp3", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree13", "Megaherz - Mistst\x81ck.MP3", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree13", "Rammstein - Mutter - B\x94se.mp3", ]) in purgeList)
 
 
    ####################

@@ -94,6 +94,7 @@ Full vs. Reduced Tests
 # Import modules and do runtime validations
 ########################################################################
 
+import sys
 import os
 import unittest
 import tempfile
@@ -112,6 +113,8 @@ DATA_DIRS = [ "./data", "./test/data", ]
 RESOURCES = [ "tree9.tar.gz", ]
 
 SUDO_CMD = [ "sudo", ]
+HDIUTIL_CMD = [ "hdiutil", ]
+
 INVALID_FILE = "bogus"         # This file name should never exist
 
 
@@ -174,6 +177,46 @@ class TestIsoImage(unittest.TestCase):
       """
       Mounts an ISO image at C{self.tmpdir/mnt} using loopback.
 
+      This function chooses the correct operating system-specific function and
+      calls it.  If there is no operating-system-specific function, we fall
+      back to the generic function, which uses 'sudo mount'.
+
+      @return: Path the image is mounted at.
+      @raise IOError: If the command cannot be executed.
+      """
+      if sys.platform == "darwin":
+         return self.mountImageDarwin(imagePath)
+      else:
+         return self.mountImageGeneric(imagePath)
+
+   def mountImageDarwin(self, imagePath):
+      """
+      Mounts an ISO image at C{self.tmpdir/mnt} using Darwin's C{hdiutil} program.
+   
+      Darwin (Mac OS X) uses the C{hdiutil} program to mount volumes.  The
+      mount command doesn't really exist (or rather, doesn't know what to do
+      with ISO 9660 volumes).
+
+      @note: According to the manpage, the mountpoint path can't be any longer
+      than MNAMELEN characters (currently 90?) so you might have problems with
+      this depending on how your test environment is set up.
+
+      @return: Path the image is mounted at.
+      @raise IOError: If the command cannot be executed.
+      """
+      mountPath = self.buildPath([ "mnt", ])
+      os.mkdir(mountPath)
+      args = [ "attach", "-mountpoint", mountPath, imagePath, ]
+      (result, output) = executeCommand(HDIUTIL_CMD, args, returnOutput=True)
+      if result != 0:
+         raise IOError("Error (%d) executing command to mount image." % result)
+      self.mounted = True
+      return mountPath
+
+   def mountImageGeneric(self, imagePath):
+      """
+      Mounts an ISO image at C{self.tmpdir/mnt} using loopback.
+
       Note that this will fail unless the user has been granted permissions via
       sudo, using something like this:
 
@@ -193,8 +236,44 @@ class TestIsoImage(unittest.TestCase):
          raise IOError("Error (%d) executing command to mount image." % result)
       self.mounted = True
       return mountPath
-      
+
    def unmountImage(self):
+      """
+      Unmounts an ISO image from C{self.tmpdir/mnt}.
+
+      This function chooses the correct operating system-specific function and
+      calls it.  If there is no operating-system-specific function, we fall
+      back to the generic function, which uses 'sudo unmount'.
+
+      @raise IOError: If the command cannot be executed.
+      """
+      if sys.platform == "darwin":
+         self.unmountImageDarwin()
+      else:
+         self.unmountImageGeneric()
+
+   def unmountImageDarwin(self):
+      """
+      Unmounts an ISO image from C{self.tmpdir/mnt} using Darwin's C{hdiutil} program.
+
+      Darwin (Mac OS X) uses the C{hdiutil} program to mount volumes.  The
+      mount command doesn't really exist (or rather, doesn't know what to do
+      with ISO 9660 volumes).
+
+      @note: According to the manpage, the mountpoint path can't be any longer
+      than MNAMELEN characters (currently 90?) so you might have problems with
+      this depending on how your test environment is set up.
+
+      @raise IOError: If the command cannot be executed.
+      """
+      mountPath = self.buildPath([ "mnt", ])
+      args = [ "detach", mountPath, ]
+      (result, output) = executeCommand(HDIUTIL_CMD, args, returnOutput=True)
+      if result != 0:
+         raise IOError("Error (%d) executing command to unmount image." % result)
+      self.mounted = False
+      
+   def unmountImageGeneric(self):
       """
       Unmounts an ISO image from C{self.tmpdir/mnt}.
 
