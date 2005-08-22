@@ -52,6 +52,8 @@ as to the best way to present it to the user.  I'm not sure if it's better to ha
 completely different sections or one section with "if master, do this, if client do this"
 in it.
 
+Make sure that cdrtools URL is correct (note I tested with v2.0+ on Mac OS X..?
+
 Typo in "all" action's description:
 
     Extensions can be executed as part of the all action. If you need to execute an 
@@ -157,5 +159,4 @@ It's from:
 
 Might also want to double-check whether our method of backing up BDB is really
 safe if there are ongoing commits, and then note that in the documentation.
-
 
