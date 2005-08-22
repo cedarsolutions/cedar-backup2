@@ -1002,6 +1002,20 @@ def encodePath(path):
    what this function accomplishes.  Any function which takes a filesystem path
    as an argument should encode it first, before using it for any other purpose.
 
+   I confess I still don't completely understand how this works.  On a system
+   with filesystem encoding "ISO-8859-1", a path C{u"\xe2\x99\xaa\xe2\x99\xac"}
+   is converted into the string C{"\xe2\x99\xaa\xe2\x99\xac"}.  However, on a
+   system with a "utf-8" encoding, the result is a completely different string:
+   C{"\xc3\xa2\xc2\x99\xc2\xaa\xc3\xa2\xc2\x99\xc2\xac"}.  A quick test where I
+   write to the first filename and open the second proves that the two strings
+   represent the same file on disk.  I just can't tell you exactly why.
+
+   @note My Debian box (currently running "sarge") has an ISO-8859-1
+   filesystem.  I have found UTF-8 filesystems both on my iBook (Mac OS X 10.4)
+   and on a SuSE 9.3 box (as reported by Dag Rende).  Annoyingly, the Mac with
+   the fancy UTF-8 filesystem won't scp files with certain strange filenames
+   off the Debian box, which proves again how little I understand this stuff.
+
    @note: As a special case, if C{path} is C{None}, then this function will
    return C{None}.
 

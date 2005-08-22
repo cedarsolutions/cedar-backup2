@@ -1,3 +1,8 @@
+Version 2.5.1	unreleased
+
+	* Fix testEncodePath_009 unit test to work on UTF-8 filesystems.
+	* Add comments for encodePath() function to describe UTF-8 behavior.
+
 Version 2.5.0	12 Jul 2005
 
 	* Update docs to modify use of "secure" (suggested by Lars Wirzenius).
