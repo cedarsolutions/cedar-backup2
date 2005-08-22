@@ -109,14 +109,17 @@ def validateScsiId(scsiId):
    """
    Validates a SCSI id string.
    SCSI id must be a string in the form C{[ATA:|ATAPI:]scsibus,target,lun}.
+   For Mac OS X (Darwin), we also accept the form C{IO.*Services[/N]}.
    @note: For consistency, if C{None} is passed in, C{None} will be returned.
    @param scsiId: SCSI id for the device.
    @return: SCSI id as a string, suitable for assignment to C{CdWriter.scsiId}.
    @raise ValueError: If the SCSI id string is invalid.
    """
-   pattern = re.compile(r"^\s*(?:ATA:|ATAPI:)?[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
+   pattern = re.compile(r"^\s*(?:ATA:|ATAPI:)?\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
    if not pattern.search(scsiId):
-      raise ValueError("SCSI id must be in the form '[ATA:|ATAPI:]scsibus,target,lun'.")
+      pattern = re.compile(r"^\s*IO.*Services(\/[0-9][0-9]*)?\s*$")
+      if not pattern.search(scsiId):
+         raise ValueError("SCSI id is not in a valid form.")
    return scsiId
 
 def validateDriveSpeed(driveSpeed):

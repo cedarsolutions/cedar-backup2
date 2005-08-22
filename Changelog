@@ -1,9 +1,11 @@
 Version 2.5.1	unreleased
 
 	* Port to Darwin (Mac OS X).
-	  - Don't run testAddDirContents_072() for Darwin (tarball invalid there)
-	  - Write ISO mount/unmount methods in terms of Darwin's hdiutil utility
-	* Fix UTF-8 filesystem test failure noticed by Dag Rende.
+	  - Accept Darwin-style SCSI writer devices, i.e. "IOCompactDiscServices"
+	  - Tweak existing SCSI id pattern to allow spaces in a few other places
+	  - Don't run testAddDirContents_072() for Darwin (tarball's invalid there)
+	  - Write new ISO mount/unmount unit test methods in terms of hdiutil utility
+	* Handle UTF-8 filesystem test failure noticed by Dag Rende.
 	  - Fix testEncodePath_009 unit test to have proper expectations
 	  - Add comments for encodePath() function to describe UTF-8 behavior
 	  - Same problem occurs on Darwin (Mac OS X) with UTF-8 filesystem
