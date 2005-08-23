@@ -48,12 +48,16 @@ requires the options and collect configuration sections in the standard Cedar
 Backup configuration file.
 
 There are two different kinds of Subversion repositories at this writing: BDB
-(Berkeley Database) and fsfs (a more CVS-like "filesystem within a filesystem").
-I personally only use the BDB version, because when I started using Subversion,
-that's all there was.  This extension only backs up BDB repositories.  If I
-ever start using fsfs, I'll add another function to back up that kind of 
-repository as well.  (Feel free to contribute code if you would like to see
-fsfs supported.)
+(Berkeley Database) and FSFS (a "filesystem within a filesystem").  I
+personally only use the BDB version, because when I started using Subversion,
+that's all there was.  It turns out that FSFS repositories can be backed up
+either the same way as BDB repositories (via C{svnadmin dump}) or can be backed
+up just like any other set of directories.  
+
+Only use this extension for FSFS repositories if you want to use C{svnadmin
+dump} for backups.  Use the normal collect action otherwise.  It's simpler, and
+possibly less prone to problems like updates to the repository in the middle of
+a backup.
 
 Each repository can be backed using the same collect modes allowed for
 filesystems in the standard Cedar Backup collect action: weekly, daily,
@@ -114,26 +118,6 @@ class Repository(object):
    This is a base class used for validation later.  All subversion repository
    configuration (no matter how many types there are) must inherit from this
    class.
-   """
-
-   def __init__(self):
-      """
-      Constructor for the C{Repository} class.
-      """
-      raise NotImplementedError("Repository may not be instantiated.")
-
-
-########################################################################
-# BDBRepository class definition
-########################################################################
-
-class BDBRepository(Repository):
-
-   """
-   Class representing Subversion BDB (Berkeley Database) repository configuration.
-
-   The Subversion configuration information is used for backing up single
-   Subversion repository in BDB form.
 
    The following restrictions exist on data in this class:
 
@@ -146,13 +130,15 @@ class BDBRepository(Repository):
 
    def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
       """
-      Constructor for the C{BDBRepository} class.
+      Constructor for the C{Repository} class.
+
+      You should never directly instantiate this class.
       
       @param repositoryPath: Absolute path to a Subversion repository on disk.
       @param collectMode: Overridden collect mode for this directory.
       @param compressMode: Overridden compression mode for this directory.
       """
-      self._repositoryType = "BDB"
+      self._repositoryType = None
       self._repositoryPath = None
       self._collectMode = None
       self._compressMode = None
@@ -164,7 +150,7 @@ class BDBRepository(Repository):
       """
       Official string representation for class instance.
       """
-      return "BDBRepository(%s, %s, %s)" % (self.repositoryPath, self.collectMode, self.compressMode)
+      return "Repository(%s, %s, %s)" % (self.repositoryPath, self.collectMode, self.compressMode)
 
    def __str__(self):
       """
@@ -205,7 +191,6 @@ class BDBRepository(Repository):
    def _getRepositoryType(self):
       """
       Property target used to get the repository type.
-      For this class, this value is always "BDB".
       """
       return self._repositoryType
 
@@ -262,10 +247,88 @@ class BDBRepository(Repository):
       """
       return self._compressMode
 
-   repositoryType = property(_getRepositoryType, None, None, doc="Type of this repository (BDB).")
+   repositoryType = property(_getRepositoryType, None, None, doc="Type of this repository.")
    repositoryPath = property(_getRepositoryPath, _setRepositoryPath, None, doc="Path to the repository to collect.")
    collectMode = property(_getCollectMode, _setCollectMode, None, doc="Overridden collect mode for this repository.")
    compressMode = property(_getCompressMode, _setCompressMode, None, doc="Overridden compress mode for this repository.")
+
+
+########################################################################
+# BDBRepository class definition
+########################################################################
+
+class BDBRepository(Repository):
+
+   """
+   Class representing Subversion BDB (Berkeley Database) repository configuration.
+
+   The Subversion configuration information is used for backing up single
+   Subversion repository in BDB form.
+
+   The following restrictions exist on data in this class:
+
+      - The respository path must be absolute.
+      - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
+      - The compress mode must be one of the values in L{VALID_COMPRESS_MODES}.
+
+   @sort: __init__, __repr__, __str__, __cmp__, repositoryPath, collectMode, compressMode
+   """
+
+   def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
+      """
+      Constructor for the C{BDBRepository} class.
+      
+      @param repositoryPath: Absolute path to a Subversion repository on disk.
+      @param collectMode: Overridden collect mode for this directory.
+      @param compressMode: Overridden compression mode for this directory.
+      """
+      super(BDBRepository, self).__init__(repositoryPath, collectMode, compressMode)
+      self._repositoryType = "BDB"
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "BDBRepository(%s, %s, %s)" % (self.repositoryPath, self.collectMode, self.compressMode)
+
+
+########################################################################
+# FSFSRepository class definition
+########################################################################
+
+class FSFSRepository(Repository):
+
+   """
+   Class representing Subversion FSFS repository configuration.
+
+   The Subversion configuration information is used for backing up single
+   Subversion repository in FSFS form.
+
+   The following restrictions exist on data in this class:
+
+      - The respository path must be absolute.
+      - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
+      - The compress mode must be one of the values in L{VALID_COMPRESS_MODES}.
+
+   @sort: __init__, __repr__, __str__, __cmp__, repositoryPath, collectMode, compressMode
+   """
+
+   def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
+      """
+      Constructor for the C{FSFSRepository} class.
+      
+      @param repositoryPath: Absolute path to a Subversion repository on disk.
+      @param collectMode: Overridden collect mode for this directory.
+      @param compressMode: Overridden compression mode for this directory.
+      """
+      super(FSFSRepository, self).__init__(repositoryPath, collectMode, compressMode)
+      self._repositoryType = "FSFS"
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "FSFSRepository(%s, %s, %s)" % (self.repositoryPath, self.collectMode, self.compressMode)
 
 
 ########################################################################
@@ -537,10 +600,11 @@ class LocalConfig(object):
       mode and compress mode are both optional, but the list of repositories
       must contain at least one entry.
 
-      Each BDB repository must contain a repository path, and then must be
-      either able to take collect mode and compress mode configuration from the
-      parent C{SubversionConfig} object, or must set each value on its own.  We
-      don't look at any other kinds of repositories that might be in the list.
+      Each BDB or FSFS repository must contain a repository path, and then must
+      be either able to take collect mode and compress mode configuration from
+      the parent C{SubversionConfig} object, or must set each value on its own.
+      We don't look at any other kinds of repositories that might be in the
+      list.
 
       @raise ValueError: If one of the validations fails.
       """
@@ -549,7 +613,7 @@ class LocalConfig(object):
       if self.subversion.repositories is None or len(self.subversion.repositories) < 1:
          raise ValueError("At least one repository must be configured.")
       for repository in self.subversion.repositories:
-         if repository.repositoryType == "BDB":
+         if repository.repositoryType in [ "BDB", "FSFS", ]:
             if repository.repositoryPath is None:
                raise ValueError("Each repository directory must set a repository path.")
             if self.subversion.collectMode is None and repository.collectMode is None:
@@ -648,8 +712,8 @@ class LocalConfig(object):
 
       The type field is optional, and if it isn't there we assume a BDB
       repositories.  Note that we will currently ignore any repository listing
-      which has a set type other than C{"BDB"}.  However, we will log a warning
-      if we do this.
+      which has a set type other than C{["BDB", "FSFS", ]}.  However, we will
+      log a warning if we do this.
 
       @param parent: Parent node to search beneath.
 
@@ -662,6 +726,12 @@ class LocalConfig(object):
             repositoryType = readString(entry, "type")
             if repositoryType in [ None, "BDB", ]:    # BDB is the default type 
                repository = BDBRepository()
+               repository.repositoryPath = readString(entry, "abs_path")
+               repository.collectMode = readString(entry, "collect_mode")
+               repository.compressMode = readString(entry, "compress_mode")
+               lst.append(repository)
+            elif repositoryType == "FSFS":
+               repository = FSFSRepository()
                repository.repositoryPath = readString(entry, "abs_path")
                repository.collectMode = readString(entry, "collect_mode")
                repository.compressMode = readString(entry, "compress_mode")
@@ -737,19 +807,20 @@ def executeAction(configPath, options, config):
    if local.subversion.repositories is not None:
       for repository in local.subversion.repositories:
          logger.debug("Working with repository [%s]." % repository.repositoryPath)
-         if repository.repositoryType == "BDB":
+         if repository.repositoryType in ["BDB", "FSFS", ]:
             collectMode = _getCollectMode(local, repository)
             compressMode = _getCompressMode(local, repository)
             revisionPath = _getRevisionPath(config, repository)
             backupPath = _getBackupPath(config, repository, compressMode)
             if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
                logger.debug("Repository meets criteria to be backed up today.")
-               _backupBDBRepository(config, repository.repositoryPath, backupPath, 
-                                    revisionPath, fullBackup, collectMode, compressMode)
+               _backupRepository(config, repository.repositoryType,
+                                 repository.repositoryPath, backupPath, 
+                                 revisionPath, fullBackup, collectMode, compressMode)
             else:
                logger.debug("Repository will not be backed up, per collect mode.")
          else:
-            logger.debug("Repository will not be backed up, since it is not type BDB.")
+            logger.debug("Repository will not be backed up, since it is not type BDB or FSFS.")
          logger.info("Completed backing up Subversion repository [%s]." % repository.repositoryPath)
    logger.info("Executed the Subversion extended action successfully.")
 
@@ -812,14 +883,15 @@ def _getBackupPath(config, repository, compressMode):
    logger.debug("Backup file path is [%s]" % backupPath)
    return backupPath
 
-def _backupBDBRepository(config, repositoryPath, backupPath, revisionPath, fullBackup, collectMode, compressMode):
+def _backupRepository(config, repositoryType, repositoryPath, backupPath, revisionPath, fullBackup, collectMode, compressMode):
    """
-   Backs up an individual Subversion BDB repository.
+   Backs up an individual Subversion repository (either BDB or FSFS).
 
-   This internal method wraps the public method and adds some functionality
+   This internal method wraps the public methods and adds some functionality
    to work better with the extended action itself.
 
    @param config: Cedar Backup configuration.
+   @param repositoryType: Type of the repository (assumed to be BDB or FSFS).
    @param repositoryPath: Path to Subversion repository to back up.
    @param backupPath: Path to backup file that will be written.
    @param revisionPath: Path used to store incremental revision information.
@@ -847,7 +919,10 @@ def _backupBDBRepository(config, repositoryPath, backupPath, revisionPath, fullB
       logger.debug("Using incremental backup, revision: (%d, %d)." % (startRevision, endRevision))
    outputFile = _getOutputFile(backupPath, compressMode)
    try:
-      backupBDBRepository(repositoryPath, outputFile, startRevision, endRevision)
+      if repositoryType == "BDB":
+         backupBDBRepository(repositoryPath, outputFile, startRevision, endRevision)
+      else:
+         backupFSFSRepository(repositoryPath, outputFile, startRevision, endRevision)
    finally:
       outputFile.close()
    if not os.path.exists(backupPath):
@@ -959,7 +1034,7 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
    @type endRevision: Integer value >= 0.
 
    @raise ValueError: If some value is missing or invalid.
-   @raise IOError: If there is a problem executing the MySQL dump.
+   @raise IOError: If there is a problem executing the Subversion dump.
    """
    if startRevision is None:
       startRevision = 0
@@ -974,7 +1049,65 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
    args = [ "dump", "--quiet", "-r%s:%s" % (startRevision, endRevision), "--incremental", repositoryPath, ]
    result = executeCommand(SVNADMIN_COMMAND, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
    if result != 0:
-      raise IOError("Error [%d] executing Subversion dump for repository [%s]." % (result, repositoryPath))
+      raise IOError("Error [%d] executing Subversion dump for BDB repository [%s]." % (result, repositoryPath))
+   logger.debug("Completed dumping subversion repository [%s]." % repositoryPath)
+
+
+##################################
+# backupFSFSRepository() function
+##################################
+
+def backupFSFSRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
+   """
+   Backs up an individual Subversion FSFS repository.
+
+   The starting and ending revision values control an incremental backup.  If
+   the starting revision is not passed in, then revision zero (the start of the
+   repository) is assumed.  If the ending revision is not passed in, then the
+   youngest revision in the database will be used as the endpoint.
+
+   The backup data will be written into the passed-in back file.  Normally,
+   this would be an object as returned from C{open}, but it is possible to use
+   something like a C{GzipFile} to write compressed output.  The caller is
+   responsible for closing the passed-in backup file.
+
+   You should only use this function to back up an FSFS repository if you want
+   to use C{svnadmin dump} for your backup.  Use a normal filesystem copy
+   otherwise.  That will be simpler, and possibly less prone to problems like
+   updates to the repository in the middle of a backup.
+
+   @note: This function should either be run as root or as the owner of the
+   Subversion repository.
+
+   @param repositoryPath: Path to Subversion repository to back up
+   @type repositoryPath: String path representing Subversion FSFS repository on disk.
+
+   @param backupFile: Python file object to use for writing backup.
+   @type backupFile: Python file object as from C{open()} or C{file()}.
+   
+   @param startRevision: Starting repository revision to back up (for incremental backups)
+   @type startRevision: Integer value >= 0.
+
+   @param endRevision: Ending repository revision to back up (for incremental backups)
+   @type endRevision: Integer value >= 0.
+
+   @raise ValueError: If some value is missing or invalid.
+   @raise IOError: If there is a problem executing the Subversion dump.
+   """
+   if startRevision is None:
+      startRevision = 0
+   if endRevision is None:
+      endRevision = getYoungestRevision(repositoryPath)
+   if int(startRevision) < 0:
+      raise ValueError("Start revision must be >= 0.")
+   if int(endRevision) < 0:
+      raise ValueError("End revision must be >= 0.")
+   if startRevision > endRevision:
+      raise ValueError("Start revision must be <= end revision.")
+   args = [ "dump", "--quiet", "-r%s:%s" % (startRevision, endRevision), "--incremental", repositoryPath, ]
+   result = executeCommand(SVNADMIN_COMMAND, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
+   if result != 0:
+      raise IOError("Error [%d] executing Subversion dump for FSFS repository [%s]." % (result, repositoryPath))
    logger.debug("Completed dumping subversion repository [%s]." % repositoryPath)
 
 

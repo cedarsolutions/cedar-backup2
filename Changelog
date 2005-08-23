@@ -1,14 +1,19 @@
-Version 2.5.1	unreleased
+Version 2.6.0	unreleased
 
-	* Port to Darwin (Mac OS X).
+	* Port to Darwin (Mac OS X) and ensure that all regression tests pass.
+	  - Don't run testAddDirContents_072() for Darwin (tarball's invalid there)
+	  - Write new ISO mount testing methods in terms of Apple's "hdiutil" utility
 	  - Accept Darwin-style SCSI writer devices, i.e. "IOCompactDiscServices"
 	  - Tweak existing SCSI id pattern to allow spaces in a few other places
-	  - Don't run testAddDirContents_072() for Darwin (tarball's invalid there)
-	  - Write new ISO mount/unmount unit test methods in terms of hdiutil utility
-	* Handle UTF-8 filesystem test failure noticed by Dag Rende.
-	  - Fix testEncodePath_009 unit test to have proper expectations
+	  - Add new regression tests for validateScsiId() utility function
+	* Handle UTF-8 filesystem test failure on both SuSE 9.3 and Mac OS X 10.4.
+	  - Fix testEncodePath_009 unit test to have proper UTF-8 expectations
 	  - Add comments for encodePath() function to describe UTF-8 behavior
-	  - Same problem occurs on Darwin (Mac OS X) with UTF-8 filesystem
+	* Make changes to Subversion extension to support "fsfs" repositories.
+	  - Accept "FSFS" repository type in <subversion> configuration section
+	  - Create new FSFSRepository class to represent an FSFS repository
+	  - Refactor internal code common to both BDB and FSFS repositories
+	  - Add and rework test cases to provide coverage of FSFSRepository
 
 Version 2.5.0	12 Jul 2005
 
