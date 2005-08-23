@@ -117,7 +117,7 @@ from xml.dom.ext import PrettyPrint
 
 # Cedar Backup modules
 from CedarBackup2.testutil import findResources, buildPath, removedir, failUnlessAssignRaises
-from CedarBackup2.extend.subversion import LocalConfig, SubversionConfig, BDBRepository
+from CedarBackup2.extend.subversion import LocalConfig, SubversionConfig, BDBRepository, FSFSRepository
 
 
 #######################################################################
@@ -427,6 +427,301 @@ class TestBDBRepository(unittest.TestCase):
       self.failUnless(repository1 != repository2)
 
 
+###########################
+# TestFSFSRepository class
+###########################
+
+class TestFSFSRepository(unittest.TestCase):
+
+   """Tests for the FSFSRepository class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = FSFSRepository()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual("FSFS", repository.repositoryType)
+      self.failUnlessEqual(None, repository.repositoryPath)
+      self.failUnlessEqual(None, repository.collectMode)
+      self.failUnlessEqual(None, repository.compressMode)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in.
+      """
+      repository = FSFSRepository("/path/to/it", "daily", "gzip")
+      self.failUnlessEqual("FSFS", repository.repositoryType)
+      self.failUnlessEqual("/path/to/it", repository.repositoryPath)
+      self.failUnlessEqual("daily", repository.collectMode)
+      self.failUnlessEqual("gzip", repository.compressMode)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of repositoryType attribute.
+      """
+      repository = FSFSRepository()
+      self.failUnlessAssignRaises(AttributeError, repository, "repositoryType", "")
+
+   def testConstructor_004(self):
+      """
+      Test assignment of repositoryPath attribute, None value.
+      """
+      repository = FSFSRepository(repositoryPath="/path/to/something")
+      self.failUnlessEqual("/path/to/something", repository.repositoryPath)
+      repository.repositoryPath = None
+      self.failUnlessEqual(None, repository.repositoryPath)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of repositoryPath attribute, valid value.
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual(None, repository.repositoryPath)
+      repository.repositoryPath = "/path/to/whatever"
+      self.failUnlessEqual("/path/to/whatever", repository.repositoryPath)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of repositoryPath attribute, invalid value (empty).
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual(None, repository.repositoryPath)
+      self.failUnlessAssignRaises(ValueError, repository, "repositoryPath", "")
+      self.failUnlessEqual(None, repository.repositoryPath)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of repositoryPath attribute, invalid value (not absolute).
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual(None, repository.repositoryPath)
+      self.failUnlessAssignRaises(ValueError, repository, "repositoryPath", "relative/path")
+      self.failUnlessEqual(None, repository.repositoryPath)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of collectMode attribute, None value.
+      """
+      repository = FSFSRepository(collectMode="daily")
+      self.failUnlessEqual("daily", repository.collectMode)
+      repository.collectMode = None
+      self.failUnlessEqual(None, repository.collectMode)
+
+   def testConstructor_009(self):
+      """
+      Test assignment of collectMode attribute, valid value.
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual(None, repository.collectMode)
+      repository.collectMode = "daily"
+      self.failUnlessEqual("daily", repository.collectMode)
+      repository.collectMode = "weekly"
+      self.failUnlessEqual("weekly", repository.collectMode)
+      repository.collectMode = "incr"
+      self.failUnlessEqual("incr", repository.collectMode)
+
+   def testConstructor_010(self):
+      """
+      Test assignment of collectMode attribute, invalid value (empty).
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual(None, repository.collectMode)
+      self.failUnlessAssignRaises(ValueError, repository, "collectMode", "")
+      self.failUnlessEqual(None, repository.collectMode)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of collectMode attribute, invalid value (not in list).
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual(None, repository.collectMode)
+      self.failUnlessAssignRaises(ValueError, repository, "collectMode", "monthly")
+      self.failUnlessEqual(None, repository.collectMode)
+
+   def testConstructor_012(self):
+      """
+      Test assignment of compressMode attribute, None value.
+      """
+      repository = FSFSRepository(compressMode="gzip")
+      self.failUnlessEqual("gzip", repository.compressMode)
+      repository.compressMode = None
+      self.failUnlessEqual(None, repository.compressMode)
+
+   def testConstructor_013(self):
+      """
+      Test assignment of compressMode attribute, valid value.
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual(None, repository.compressMode)
+      repository.compressMode = "none"
+      self.failUnlessEqual("none", repository.compressMode)
+      repository.compressMode = "bzip2"
+      self.failUnlessEqual("bzip2", repository.compressMode)
+      repository.compressMode = "gzip"
+      self.failUnlessEqual("gzip", repository.compressMode)
+
+   def testConstructor_014(self):
+      """
+      Test assignment of compressMode attribute, invalid value (empty).
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual(None, repository.compressMode)
+      self.failUnlessAssignRaises(ValueError, repository, "compressMode", "")
+      self.failUnlessEqual(None, repository.compressMode)
+
+   def testConstructor_015(self):
+      """
+      Test assignment of compressMode attribute, invalid value (not in list).
+      """
+      repository = FSFSRepository()
+      self.failUnlessEqual(None, repository.compressMode)
+      self.failUnlessAssignRaises(ValueError, repository, "compressMode", "compress")
+      self.failUnlessEqual(None, repository.compressMode)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      repository1 = FSFSRepository()
+      repository2 = FSFSRepository()
+      self.failUnlessEqual(repository1, repository2)
+      self.failUnless(repository1 == repository2)
+      self.failUnless(not repository1 < repository2)
+      self.failUnless(repository1 <= repository2)
+      self.failUnless(not repository1 > repository2)
+      self.failUnless(repository1 >= repository2)
+      self.failUnless(not repository1 != repository2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      repository1 = FSFSRepository("/path", "daily", "gzip")
+      repository2 = FSFSRepository("/path", "daily", "gzip")
+      self.failUnlessEqual(repository1, repository2)
+      self.failUnless(repository1 == repository2)
+      self.failUnless(not repository1 < repository2)
+      self.failUnless(repository1 <= repository2)
+      self.failUnless(not repository1 > repository2)
+      self.failUnless(repository1 >= repository2)
+      self.failUnless(not repository1 != repository2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two differing objects, repositoryPath differs (one None).
+      """
+      repository1 = FSFSRepository()
+      repository2 = FSFSRepository(repositoryPath="/zippy")
+      self.failIfEqual(repository1, repository2)
+      self.failUnless(not repository1 == repository2)
+      self.failUnless(repository1 < repository2)
+      self.failUnless(repository1 <= repository2)
+      self.failUnless(not repository1 > repository2)
+      self.failUnless(not repository1 >= repository2)
+      self.failUnless(repository1 != repository2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two differing objects, repositoryPath differs.
+      """
+      repository1 = FSFSRepository("/path", "daily", "gzip")
+      repository2 = FSFSRepository("/zippy", "daily", "gzip")
+      self.failIfEqual(repository1, repository2)
+      self.failUnless(not repository1 == repository2)
+      self.failUnless(repository1 < repository2)
+      self.failUnless(repository1 <= repository2)
+      self.failUnless(not repository1 > repository2)
+      self.failUnless(not repository1 >= repository2)
+      self.failUnless(repository1 != repository2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two differing objects, collectMode differs (one None).
+      """
+      repository1 = FSFSRepository()
+      repository2 = FSFSRepository(collectMode="incr")
+      self.failIfEqual(repository1, repository2)
+      self.failUnless(not repository1 == repository2)
+      self.failUnless(repository1 < repository2)
+      self.failUnless(repository1 <= repository2)
+      self.failUnless(not repository1 > repository2)
+      self.failUnless(not repository1 >= repository2)
+      self.failUnless(repository1 != repository2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two differing objects, collectMode differs.
+      """
+      repository1 = FSFSRepository("/path", "daily", "gzip")
+      repository2 = FSFSRepository("/path", "incr", "gzip")
+      self.failIfEqual(repository1, repository2)
+      self.failUnless(not repository1 == repository2)
+      self.failUnless(repository1 < repository2)
+      self.failUnless(repository1 <= repository2)
+      self.failUnless(not repository1 > repository2)
+      self.failUnless(not repository1 >= repository2)
+      self.failUnless(repository1 != repository2)
+
+   def testComparison_007(self):
+      """
+      Test comparison of two differing objects, compressMode differs (one None).
+      """
+      repository1 = FSFSRepository()
+      repository2 = FSFSRepository(compressMode="gzip")
+      self.failIfEqual(repository1, repository2)
+      self.failUnless(not repository1 == repository2)
+      self.failUnless(repository1 < repository2)
+      self.failUnless(repository1 <= repository2)
+      self.failUnless(not repository1 > repository2)
+      self.failUnless(not repository1 >= repository2)
+      self.failUnless(repository1 != repository2)
+
+   def testComparison_008(self):
+      """
+      Test comparison of two differing objects, compressMode differs.
+      """
+      repository1 = FSFSRepository("/path", "daily", "bzip2")
+      repository2 = FSFSRepository("/path", "daily", "gzip")
+      self.failIfEqual(repository1, repository2)
+      self.failUnless(not repository1 == repository2)
+      self.failUnless(repository1 < repository2)
+      self.failUnless(repository1 <= repository2)
+      self.failUnless(not repository1 > repository2)
+      self.failUnless(not repository1 >= repository2)
+      self.failUnless(repository1 != repository2)
+
+
 #############################
 # TestSubversionConfig class
 #############################
@@ -502,7 +797,7 @@ class TestSubversionConfig(unittest.TestCase):
       """
       Test constructor with all values filled in, with valid values, with multiple repositories.
       """
-      repositories = [ BDBRepository(collectMode="daily"), BDBRepository(collectMode="weekly"), ]
+      repositories = [ BDBRepository(collectMode="daily"), FSFSRepository(collectMode="weekly"), ]
       subversion = SubversionConfig("daily", "gzip", repositories=repositories)
       self.failUnlessEqual("daily", subversion.collectMode)
       self.failUnlessEqual("gzip", subversion.compressMode)
@@ -597,10 +892,10 @@ class TestSubversionConfig(unittest.TestCase):
       """
       subversion = SubversionConfig()
       self.failUnlessEqual(None, subversion.repositories)
-      subversion.repositories = [ BDBRepository(collectMode="daily"), BDBRepository(collectMode="weekly"), ]
-      self.failUnlessEqual([ BDBRepository(collectMode="daily"), BDBRepository(collectMode="weekly"), ], subversion.repositories)
+      subversion.repositories = [ BDBRepository(collectMode="daily"), FSFSRepository(collectMode="weekly"), ]
+      self.failUnlessEqual([ BDBRepository(collectMode="daily"), FSFSRepository(collectMode="weekly"), ], subversion.repositories)
       subversion.repositories.append(BDBRepository(collectMode="incr"))
-      self.failUnlessEqual([ BDBRepository(collectMode="daily"), BDBRepository(collectMode="weekly"), BDBRepository(collectMode="incr"), ], subversion.repositories)
+      self.failUnlessEqual([ BDBRepository(collectMode="daily"), FSFSRepository(collectMode="weekly"), BDBRepository(collectMode="incr"), ], subversion.repositories)
 
    def testConstructor_016(self):
       """
@@ -794,6 +1089,20 @@ class TestSubversionConfig(unittest.TestCase):
       """
       subversion1 = SubversionConfig("daily", "gzip", [ BDBRepository(), ])
       subversion2 = SubversionConfig("daily", "gzip", [ BDBRepository(), BDBRepository(), ])
+      self.failIfEqual(subversion1, subversion2)
+      self.failUnless(not subversion1 == subversion2)
+      self.failUnless(subversion1 < subversion2)
+      self.failUnless(subversion1 <= subversion2)
+      self.failUnless(not subversion1 > subversion2)
+      self.failUnless(not subversion1 >= subversion2)
+      self.failUnless(subversion1 != subversion2)
+
+   def testComparison_013(self):
+      """
+      Test comparison of two differing objects, repositories differs (both not empty).
+      """
+      subversion1 = SubversionConfig("daily", "gzip", [ BDBRepository(), ])
+      subversion2 = SubversionConfig("daily", "gzip", [ FSFSRepository(), ])
       self.failIfEqual(subversion1, subversion2)
       self.failUnless(not subversion1 == subversion2)
       self.failUnless(subversion1 < subversion2)
@@ -1034,7 +1343,7 @@ class TestLocalConfig(unittest.TestCase):
       Test validate on a non-empty subversion section, non-empty repositories,
       defaults set, no values on repositories.
       """
-      repositories = [ BDBRepository(repositoryPath="/one"), BDBRepository(repositoryPath="/two") ]
+      repositories = [ FSFSRepository(repositoryPath="/one"), BDBRepository(repositoryPath="/two") ]
       config = LocalConfig()
       config.subversion = SubversionConfig()
       config.subversion.collectMode = "daily"
@@ -1106,7 +1415,7 @@ class TestLocalConfig(unittest.TestCase):
       Test validate on a non-empty subversion section, non-empty repositories,
       collectMode default and on repository.
       """
-      repositories = [ BDBRepository(repositoryPath="/two", collectMode="daily") ]
+      repositories = [ FSFSRepository(repositoryPath="/two", collectMode="daily") ]
       config = LocalConfig()
       config.subversion = SubversionConfig()
       config.subversion.collectMode = "daily"
@@ -1190,7 +1499,7 @@ class TestLocalConfig(unittest.TestCase):
       repositories.append(BDBRepository(repositoryPath="/opt/public/svn/one"))
       repositories.append(BDBRepository(repositoryPath="/opt/public/svn/two", collectMode="weekly"))
       repositories.append(BDBRepository(repositoryPath="/opt/public/svn/three", compressMode="bzip2"))
-      repositories.append(BDBRepository(repositoryPath="/opt/public/svn/four", collectMode="incr", compressMode="bzip2"))
+      repositories.append(FSFSRepository(repositoryPath="/opt/public/svn/four", collectMode="incr", compressMode="bzip2"))
       path = self.resources["subversion.conf.4"]
       contents = open(path).read()
       config = LocalConfig(xmlPath=path, validate=False)
@@ -1245,7 +1554,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with defaults set, single repository with compressMode set.
       """
       repositories = []
-      repositories.append(BDBRepository(repositoryPath="/path", compressMode="bzip2"))
+      repositories.append(FSFSRepository(repositoryPath="/path", compressMode="bzip2"))
       subversion = SubversionConfig(collectMode="daily", compressMode="gzip", repositories=repositories)
       config = LocalConfig()
       config.subversion = subversion
@@ -1267,7 +1576,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with no defaults set, single repository with collectMode and compressMode set.
       """
       repositories = []
-      repositories.append(BDBRepository(repositoryPath="/path", collectMode="weekly", compressMode="bzip2"))
+      repositories.append(FSFSRepository(repositoryPath="/path", collectMode="weekly", compressMode="bzip2"))
       subversion = SubversionConfig(repositories=repositories)
       config = LocalConfig()
       config.subversion = subversion
@@ -1300,7 +1609,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with compressMode set, single repository with collectMode and compressMode set.
       """
       repositories = []
-      repositories.append(BDBRepository(repositoryPath="/path", collectMode="incr", compressMode="gzip"))
+      repositories.append(FSFSRepository(repositoryPath="/path", collectMode="incr", compressMode="gzip"))
       subversion = SubversionConfig(compressMode="bzip2", repositories=repositories)
       config = LocalConfig()
       config.subversion = subversion
@@ -1324,9 +1633,9 @@ class TestLocalConfig(unittest.TestCase):
       repositories = []
       repositories.append(BDBRepository(repositoryPath="/path1", collectMode="daily", compressMode="gzip"))
       repositories.append(BDBRepository(repositoryPath="/path2", collectMode="weekly", compressMode="gzip"))
-      repositories.append(BDBRepository(repositoryPath="/path3", collectMode="incr", compressMode="gzip"))
+      repositories.append(FSFSRepository(repositoryPath="/path3", collectMode="incr", compressMode="gzip"))
       repositories.append(BDBRepository(repositoryPath="/path1", collectMode="daily", compressMode="bzip2"))
-      repositories.append(BDBRepository(repositoryPath="/path2", collectMode="weekly", compressMode="bzip2"))
+      repositories.append(FSFSRepository(repositoryPath="/path2", collectMode="weekly", compressMode="bzip2"))
       repositories.append(BDBRepository(repositoryPath="/path3", collectMode="incr", compressMode="bzip2"))
       subversion = SubversionConfig(collectMode="incr", compressMode="bzip2", repositories=repositories)
       config = LocalConfig()
@@ -1342,6 +1651,7 @@ def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
                               unittest.makeSuite(TestBDBRepository, 'test'), 
+                              unittest.makeSuite(TestFSFSRepository, 'test'), 
                               unittest.makeSuite(TestSubversionConfig, 'test'), 
                               unittest.makeSuite(TestLocalConfig, 'test'), 
                             ))
