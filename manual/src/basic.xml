@@ -345,9 +345,14 @@
          </para>
 
          <para>
-            Extensions can be executed as part of the all action.  If you need
-            to execute an extended action, you must specify the other actions
-            you want to run individually on the command line.
+            Extensions <emphasis>cannot</emphasis> be executed as part of the
+            all action.  If you need to execute an extended action, you must
+            specify the other actions you want to run individually on the
+            command line.  <footnote><para>Some users find this surprising,
+            because extensions are configured with sequence numbers.  I did it
+            this way because I felt that running extensions as part of the all
+            action would sometimes result in <quote>surprising</quote>
+            behavior.  Better to be definitive than confusing.</para></footnote>
          </para>
 
          <para>
