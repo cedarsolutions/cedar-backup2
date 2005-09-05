@@ -1010,7 +1010,7 @@ def encodePath(path):
    write to the first filename and open the second proves that the two strings
    represent the same file on disk.  I just can't tell you exactly why.
 
-   @note My Debian box (currently running "sarge") has an ISO-8859-1
+   @note: My Debian box (currently running "sarge") has an ISO-8859-1
    filesystem.  I have found UTF-8 filesystems both on my iBook (Mac OS X 10.4)
    and on a SuSE 9.3 box (as reported by Dag Rende).  Annoyingly, the Mac with
    the fancy UTF-8 filesystem won't scp files with certain strange filenames
