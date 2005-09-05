@@ -748,9 +748,6 @@ class RemotePeer(object):
       @raise OSError: If there is an OS error creating or changing permissions on the file
       """
       stageIndicator = encodePath(stageIndicator)
-      if not os.path.exists(self.collectDir) or not os.path.isdir(self.collectDir):
-         logger.debug("Collect directory [%s] is not a directory or does not exist on disk." % self.collectDir)
-         raise ValueError("Collect directory is not a directory or does not exist on disk.")
       sourceFile = tempfile.NamedTemporaryFile(dir=self.workingDir)
       if stageIndicator is None:
          sourceFile = os.path.join(self.workingDir, DEF_STAGE_INDICATOR)
