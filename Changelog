@@ -1,19 +1,18 @@
 Version 2.6.0	unreleased
 
+	* Remove bogus check for remote collect directory on master (closes: #18).
+	* Fix testEncodePath_009 test failure on UTF-8 filesystems (closes: #19).
+	* Change Subversion extension to support "fsfs" repositories (closes: #20).
+	  - Accept "FSFS" repository type in <subversion> configuration section
+	  - Create new FSFSRepository class to represent an FSFS repository
+	  - Refactor internal code common to both BDB and FSFS repositories
+	  - Add and rework test cases to provide coverage of FSFSRepository
 	* Port to Darwin (Mac OS X) and ensure that all regression tests pass.
 	  - Don't run testAddDirContents_072() for Darwin (tarball's invalid there)
 	  - Write new ISO mount testing methods in terms of Apple's "hdiutil" utility
 	  - Accept Darwin-style SCSI writer devices, i.e. "IOCompactDiscServices"
 	  - Tweak existing SCSI id pattern to allow spaces in a few other places
 	  - Add new regression tests for validateScsiId() utility function
-	* Handle UTF-8 filesystem test failure on both SuSE 9.3 and Mac OS X 10.4.
-	  - Fix testEncodePath_009 unit test to have proper UTF-8 expectations
-	  - Add comments for encodePath() function to describe UTF-8 behavior
-	* Make changes to Subversion extension to support "fsfs" repositories.
-	  - Accept "FSFS" repository type in <subversion> configuration section
-	  - Create new FSFSRepository class to represent an FSFS repository
-	  - Refactor internal code common to both BDB and FSFS repositories
-	  - Add and rework test cases to provide coverage of FSFSRepository
 
 Version 2.5.0	12 Jul 2005
 
