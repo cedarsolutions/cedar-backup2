@@ -163,6 +163,16 @@
  or "validate" actions may not be combined with other actions.
          </screen>
 
+         <para>
+            Note that the all action <emphasis>only</emphasis> executes the
+            standard four actions.  It never executes any of the configured
+            extensions.  <footnote><para>Some users find this surprising,
+            because extensions are configured with sequence numbers.  I did it
+            this way because I felt that running extensions as part of the all
+            action would sometimes result in <quote>surprising</quote>
+            behavior.  Better to be definitive than confusing.</para></footnote>
+         </para>
+
       </sect2>
 
 
