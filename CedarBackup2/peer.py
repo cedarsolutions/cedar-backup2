@@ -871,7 +871,7 @@ class RemotePeer(object):
          copySource = "%s@%s:%s/*" % (remoteUser, remoteHost, sourceDir)
          result = executeCommand(rcpCommandList, [copySource, targetDir])[0]
          if result != 0:
-            raise IOError("Error (%d) copying files from remote host (no local user)." % result)
+            raise IOError("Error (%d) copying files from remote host (using no local user)." % result)
       afterSet = RemotePeer._getDirContents(targetDir)
       if len(afterSet) == 0:
          raise IOError("Did not copy any files from remote peer.")
@@ -960,7 +960,7 @@ class RemotePeer(object):
          copySource = "%s@%s:%s" % (remoteUser, remoteHost, sourceFile.replace(" ", "\\ "))
          result = executeCommand(rcpCommandList, [copySource, targetFile])[0]
          if result != 0:
-            raise IOError("Error (%d) copying [%s] from remote host (no local user)." % (result, sourceFile))
+            raise IOError("Error (%d) copying [%s] from remote host (using no local user)." % (result, sourceFile))
       if not os.path.exists(targetFile):
          raise IOError("Apparently unable to copy file from remote host.")
       if ownership is not None:
@@ -1027,6 +1027,6 @@ class RemotePeer(object):
          copyTarget = "%s@%s:%s" % (remoteUser, remoteHost, targetFile.replace(" ", "\\ "))
          result = executeCommand(rcpCommandList, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
          if result != 0:
-            raise IOError("Error (%d) copying [%s] to remote host (no local user)." % (result, sourceFile))
+            raise IOError("Error (%d) copying [%s] to remote host (using no local user)." % (result, sourceFile))
    _pushLocalFile = staticmethod(_pushLocalFile)
 
