@@ -6,11 +6,12 @@ Version 2.6.0	unreleased
 	* Special case path "/" in the filesystem.normalize() function (closes: #24).
 	* Implement resolver mechanism to support paths to commands (closes: #22).
 	  - Added <override> section within <options> configuration
-	  - Created new config.CommandOverride class to hold overrides
+	  - Create new config.CommandOverride class to hold overrides
 	  - Added new overrides field on config.OptionsConfig class
 	  - Create util.PathResolverSingleton class to encapsulate mappings	
 	  - Create util.resolveCommand convenience function for code to call
-	  - Changed all _CMD constants to _COMMAND, for consistency
+	  - Create and call new _setupPathResolver() function in cli code
+	  - Change all _CMD constants to _COMMAND, for consistency
 	* Change Subversion extension to support "fsfs" repositories (closes: #20).
 	  - Accept "FSFS" repository type in <subversion> configuration section
 	  - Create new FSFSRepository class to represent an FSFS repository

@@ -88,7 +88,8 @@ import getopt
 
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
-from CedarBackup2.util import RestrictedContentList, splitCommandLine, getFunctionReference, getUidGid, encodePath
+from CedarBackup2.util import RestrictedContentList, PathResolverSingleton
+from CedarBackup2.util import splitCommandLine, getFunctionReference, getUidGid, encodePath
 from CedarBackup2.config import Config
 from CedarBackup2.action import executeCollect, executeStage, executeStore, executePurge, executeRebuild, executeValidate
 
@@ -218,12 +219,13 @@ def cli():
    try:
       logger.info("Configuration path is [%s]" % configPath)
       config = Config(xmlPath=configPath)
+      _setupPathResolver(config)
       if config.extensions is not None:
          actionSet = _ActionSet(options.actions, config.extensions.actions)
       else:
          actionSet = _ActionSet(options.actions, None)
    except Exception, e:
-      logger.error("Error reading configuration: %s" % e)
+      logger.error("Error reading or handling configuration: %s" % e)
       logger.info("Cedar Backup run completed with status 4.")
       return 4
 
@@ -678,6 +680,31 @@ def _setupDiskOutputLogging(outputLogger, logfile, options):
    else:
       handler.setLevel(logging.CRITICAL)  # effectively turn it off
    outputLogger.addHandler(handler)
+
+
+################################
+# _setupPathResolver() function
+################################
+
+def _setupPathResolver(config):
+   """
+   Set up the path resolver singleton based on configuration.
+
+   Cedar Backup's path resolver is implemented in terms of a singleton, the
+   L{PathResolverSingleton} class.  This function takes options configuration,
+   converts it into the dictionary form needed by the singleton, and then
+   initializes the singleton.  After that, any function that needs to resolve
+   the path of a command can use the singleton.
+
+   @param config: Configuration
+   @type options: L{Config} object
+   """
+   mapping = {}
+   if config.options.overrides is not None:
+      for override in config.options.overrides:
+         mapping[override.command] = override.absolutePath
+   singleton = PathResolverSingleton()
+   singleton.fill(mapping)
 
 
 #########################################################################
