@@ -31,6 +31,8 @@ FUTURE FUNCTIONALITY
 
 TESTING IMPROVEMENTS
 
+* Make sure to test that overrides seems to work properly in configuration, and that things are logged, etc.
+
 * Create unit tests for the store/rebuild "find directories" functions in action.py (and maybe refactor)
 * Come up with non-PyUnit code to stress test high-level actions, etc. 
 * Fix the UTF-8 filesystem test case, testEncodePath_009, per Dag Rende's notes.
@@ -50,6 +52,8 @@ to avoid duplication.  There is a lot of duplication there, but I'm kind of at a
 as to the best way to present it to the user.  I'm not sure if it's better to have
 completely different sections or one section with "if master, do this, if client do this"
 in it.
+
+Make sure to document the new overrides configuration section within options.
 
 Make sure that cdrtools URL is correct (note I tested with v2.0+ on Mac OS X..?
 
