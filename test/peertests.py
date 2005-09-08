@@ -1040,7 +1040,7 @@ class TestRemotePeer(unittest.TestCase):
       remoteUser = getLogin()
       self.failUnless(not os.path.exists(collectDir))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises(ValueError, peer.writeStageIndicator)
+      self.failUnlessRaises(IOError, peer.writeStageIndicator)
 
    def testWriteStageIndicator_005(self):
       """
