@@ -1117,7 +1117,7 @@ def normalizeDir(path):
 
    @return: Normalized path, which should be equivalent to the original.
    """
-   if path[-1:] == os.sep:
+   if path != os.sep and path[-1:] == os.sep:
       return path[:-1]
    return path
 
