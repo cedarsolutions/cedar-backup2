@@ -27,6 +27,14 @@
       <backup_user>backup</backup_user>
       <backup_group>group</backup_group>
       <rcp_command>/usr/bin/scp -1 -B</rcp_command>
+      <override>
+         <command>mkisofs</command>
+         <abs_path>/usr/bin/mkisofs</abs_path>
+      </override>
+      <override>
+         <command>svnlook</command>
+         <abs_path>/svnlook</abs_path>
+      </override>
    </options>
    <collect>
       <collect_dir>/opt/backup/collect</collect_dir>

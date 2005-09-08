@@ -2,8 +2,12 @@ Version 2.6.0	unreleased
 
 	* Remove bogus check for remote collect directory on master (closes: #18).
 	* Fix testEncodePath_009 test failure on UTF-8 filesystems (closes: #19).
+	* Fixed several unit tests related to the CollectConfig class (typos).
 	* Special case path "/" in the filesystem.normalize() function (closes: #24).
 	* Implement resolver mechanism to support paths to commands (closes: #22).
+	  - Added <override> section within <options> configuration
+	  - Created new config.CommandOverride class to hold overrides
+	  - Added new overrides field on config.OptionsConfig class
 	  - Create util.PathResolverSingleton class to encapsulate mappings	
 	  - Create util.resolveCommand convenience function for code to call
 	  - Changed all _CMD constants to _COMMAND, for consistency

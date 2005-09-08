@@ -474,6 +474,116 @@ class ExtendedAction(object):
 
 
 ########################################################################
+# CommandOverride class definition
+########################################################################
+
+class CommandOverride(object):
+
+   """
+   Class representing a piece of Cedar Backup command override configuration.
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   The following restrictions exist on data in this class:
+
+      - The absolute path must be absolute
+
+   @note: Lists within this class are "unordered" for equality comparisons.
+
+   @sort: __init__, __repr__, __str__, __cmp__, command, absolutePath
+   """
+
+   def __init__(self, command=None, absolutePath=None):
+      """
+      Constructor for the C{CommandOverride} class.
+
+      @param command: Name of command to be overridden.
+      @param absolutePath: Absolute path of the overrridden command.
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      self._command = None
+      self._absolutePath = None
+      self.command = command
+      self.absolutePath = absolutePath
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "CommandOverride(%s, %s)" % (self.command, self.absolutePath)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._command != other._command: 
+         if self._command < other.command:
+            return -1
+         else:
+            return 1 
+      if self._absolutePath != other._absolutePath: 
+         if self._absolutePath < other.absolutePath:
+            return -1
+         else:
+            return 1 
+      return 0
+
+   def _setCommand(self, value):
+      """
+      Property target used to set the command.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The command must be a non-empty string.")
+      self._command = value
+
+   def _getCommand(self):
+      """
+      Property target used to get the command.
+      """
+      return self._command
+
+   def _setAbsolutePath(self, value):
+      """
+      Property target used to set the absolute path.
+      The value must be an absolute path if it is not C{None}.
+      It does not have to exist on disk at the time of assignment.
+      @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
+      """
+      if value is not None:
+         if not os.path.isabs(value):
+            raise ValueError("Absolute path must be, er, an absolute path.")
+      self._absolutePath = encodePath(value)
+
+   def _getAbsolutePath(self):
+      """
+      Property target used to get the absolute path.
+      """
+      return self._absolutePath
+
+   command = property(_getCommand, _setCommand, None, doc="Name of command to be overridden.")
+   absolutePath = property(_getAbsolutePath, _setAbsolutePath, None, doc="Absolute path of the directory to collect.")
+
+
+########################################################################
 # CollectDir class definition
 ########################################################################
 
@@ -1384,11 +1494,14 @@ class OptionsConfig(object):
       - The working directory must be an absolute path.  
       - The starting day must be a day of the week in English, i.e. C{"monday"}, C{"tuesday"}, etc.  
       - All of the other values must be non-empty strings if they are set to something other than C{None}.
+      - The overrides list must be a list of C{CommandOverride} objects.
 
-   @sort: __init__, __repr__, __str__, __cmp__, startingDay, workingDir, backupUser, backupGroup, rcpCommand
+   @sort: __init__, __repr__, __str__, __cmp__, startingDay, workingDir, 
+         backupUser, backupGroup, rcpCommand, overrides
    """
 
-   def __init__(self, startingDay=None, workingDir=None, backupUser=None, backupGroup=None, rcpCommand=None):
+   def __init__(self, startingDay=None, workingDir=None, backupUser=None, 
+                backupGroup=None, rcpCommand=None, overrides=None):
       """
       Constructor for the C{OptionsConfig} class.
 
@@ -1397,6 +1510,7 @@ class OptionsConfig(object):
       @param backupUser: Effective user that backups should run as.
       @param backupGroup: Effective group that backups should run as.
       @param rcpCommand: Default rcp-compatible copy command for staging.
+      @param overrides: List of configured command path overrides, if any.
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -1405,18 +1519,20 @@ class OptionsConfig(object):
       self._backupUser = None
       self._backupGroup = None
       self._rcpCommand = None
+      self._overrides = None
       self.startingDay = startingDay
       self.workingDir = workingDir
       self.backupUser = backupUser
       self.backupGroup = backupGroup
       self.rcpCommand = rcpCommand
+      self.overrides = overrides
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "OptionsConfig(%s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir, self.backupUser, 
-                                                    self.backupGroup, self.rcpCommand)
+      return "OptionsConfig(%s, %s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir, self.backupUser, 
+                                                        self.backupGroup, self.rcpCommand, self.overrides)
 
    def __str__(self):
       """
@@ -1457,6 +1573,11 @@ class OptionsConfig(object):
             return -1
          else:
             return 1
+      if self._overrides != other._overrides:
+         if self._overrides < other._overrides:
+            return -1
+         else:
+            return 1
       return 0
 
    def _setStartingDay(self, value):
@@ -1468,7 +1589,7 @@ class OptionsConfig(object):
       """
       if value is not None:
          if value not in ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", ]:
-            raise ValueError("Starting day must be and English day of the week, i.e. \"monday\".")
+            raise ValueError("Starting day must be an English day of the week, i.e. \"monday\".")
       self._startingDay = value
 
    def _getStartingDay(self):
@@ -1547,11 +1668,35 @@ class OptionsConfig(object):
       """
       return self._rcpCommand
 
+   def _setOverrides(self, value):
+      """
+      Property target used to set the command path overrides list.
+      Either the value must be C{None} or each element must be a C{CommandOverride}.
+      @raise ValueError: If the value is not a C{CommandOverride}
+      """
+      if value is None:
+         self._overrides = None
+      else:
+         try:
+            saved = self._overrides
+            self._overrides = ObjectTypeList(CommandOverride, "CommandOverride")
+            self._overrides.extend(value)
+         except Exception, e:
+            self._overrides = saved
+            raise e
+
+   def _getOverrides(self):
+      """
+      Property target used to get the command path overrides list.
+      """
+      return self._overrides
+
    startingDay = property(_getStartingDay, _setStartingDay, None, "Day that starts the week.")
    workingDir = property(_getWorkingDir, _setWorkingDir, None, "Working (temporary) directory to use for backups.")
    backupUser = property(_getBackupUser, _setBackupUser, None, "Effective user that backups should run as.")
    backupGroup = property(_getBackupGroup, _setBackupGroup, None, "Effective group that backups should run as.")
    rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "Default rcp-compatible copy command for staging.")
+   overrides = property(_getOverrides, _setOverrides, None, "List of configured command path overrides, if any.")
 
 
 ########################################################################
@@ -2873,6 +3018,13 @@ class Config(object):
          backupGroup    //cb_config/options/backup_group
          rcpCommand     //cb_config/options/rcp_command
 
+      We also read groups of the following items, one list element per
+      item::
+
+         overrides      //cb_config/options/override
+
+      The overrides are parsed by L{_parseOverrides}.
+
       @param parent: Parent node to search beneath.
 
       @return: C{OptionsConfig} object or C{None} if the section does not exist.
@@ -2887,6 +3039,7 @@ class Config(object):
          options.backupUser = readString(section, "backup_user")
          options.backupGroup = readString(section, "backup_group")
          options.rcpCommand = readString(section, "rcp_command")
+         options.overrides = Config._parseOverrides(section)
       return options
    _parseOptions = staticmethod(_parseOptions)
 
@@ -3078,6 +3231,32 @@ class Config(object):
          patterns = readStringList(section, "pattern")
          return (absolute, relative, patterns)
    _parseExclusions = staticmethod(_parseExclusions)
+
+   def _parseOverrides(parent):
+      """
+      Reads a list of C{CommandOverride} objects from immediately beneath the parent.
+
+      We read the following individual fields::
+
+         command                 command 
+         absolutePath            abs_path
+
+      @param parent: Parent node to search beneath.
+
+      @return: List of C{CommandOverride} objects or C{None} if none are found.
+      @raise ValueError: If some filled-in value is invalid.
+      """
+      lst = []
+      for entry in readChildren(parent, "override"):
+         if entry.nodeType == Node.ELEMENT_NODE:
+            override = CommandOverride()
+            override.command = readString(entry, "command")
+            override.absolutePath = readString(entry, "abs_path")
+            lst.append(override)
+      if lst == []:
+         lst = None
+      return lst
+   _parseOverrides = staticmethod(_parseOverrides)
 
    def _parseCollectDirs(parent):
       """
@@ -3299,6 +3478,13 @@ class Config(object):
          backupGroup    //cb_config/options/backup_group
          rcpCommand     //cb_config/options/rcp_command
 
+      We also add groups of the following items, one list element per
+      item::
+
+         overrides      //cb_config/options/override
+
+      The individual collect directories are added by L{_addOverride}.
+
       If C{optionsConfig} is C{None}, then no container will be added.
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
@@ -3312,6 +3498,9 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "backup_user", optionsConfig.backupUser)
          addStringNode(xmlDom, sectionNode, "backup_group", optionsConfig.backupGroup)
          addStringNode(xmlDom, sectionNode, "rcp_command", optionsConfig.rcpCommand)
+         if optionsConfig.overrides is not None:
+            for override in optionsConfig.overrides:
+               Config._addOverride(xmlDom, sectionNode, override)
    _addOptions = staticmethod(_addOptions)
 
    def _addCollect(xmlDom, parentNode, collectConfig):
@@ -3478,6 +3667,31 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "function", action.function)
          addIntegerNode(xmlDom, sectionNode, "index", action.index)
    _addExtendedAction = staticmethod(_addExtendedAction)
+
+   def _addOverride(xmlDom, parentNode, override):
+      """
+      Adds a command override container as the next child of a parent.
+
+      We add the following fields to the document::
+
+         command                 override/command
+         absolutePath            override/abs_path
+   
+      The <override> node itself is created as the next child of the parent
+      node.  This method only adds one override node.  The parent must loop for
+      each override in the C{OptionsConfig} object.
+
+      If C{override} is C{None}, this method call will be a no-op.
+
+      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param parentNode: Parent that the section should be appended to.
+      @param override: Command override to be added to the document.
+      """
+      if override is not None:
+         sectionNode = addContainerNode(xmlDom, parentNode, "override")
+         addStringNode(xmlDom, sectionNode, "command", override.command)
+         addStringNode(xmlDom, sectionNode, "abs_path", override.absolutePath)
+   _addOverride = staticmethod(_addOverride)
 
    def _addCollectDir(xmlDom, parentNode, collectDir):
       """
