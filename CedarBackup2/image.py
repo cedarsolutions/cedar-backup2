@@ -54,7 +54,8 @@ import logging
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.knapsack import worstFit
-from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_SECTORS, encodePath
+from CedarBackup2.util import resolveCommand, executeCommand
+from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, encodePath
 from CedarBackup2.writer import validateScsiId
 
 
@@ -64,7 +65,7 @@ from CedarBackup2.writer import validateScsiId
 
 logger = logging.getLogger("CedarBackup2.log.image")
 
-MKISOFS_CMD          = [ "mkisofs", ]
+MKISOFS_COMMAND      = [ "mkisofs", ]
 
 
 ########################################################################
@@ -468,7 +469,8 @@ class IsoImage(object):
       @raise IOError: If there is a problem calling C{mkisofs}.
       """
       args = self._buildSizeArgs(entries)
-      (result, output) = executeCommand(MKISOFS_CMD, args, returnOutput=True, ignoreStderr=True)
+      command = resolveCommand(MKISOFS_COMMAND)
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       if result != 0:
          raise IOError("Error (%d) executing mkisofs command to estimate size." % result)
       if len(output) != 1:
@@ -495,7 +497,8 @@ class IsoImage(object):
       if len(self.entries.keys()) == 0:
          raise ValueError("Image does not contain any entries.")
       args = self._buildWriteArgs(self.entries, imagePath)
-      (result, output) = executeCommand(MKISOFS_CMD, args, returnOutput=False)
+      command = resolveCommand(MKISOFS_COMMAND)
+      (result, output) = executeCommand(command, args, returnOutput=False)
       if result != 0:
          raise IOError("Error (%d) executing mkisofs command to build image." % result)
 

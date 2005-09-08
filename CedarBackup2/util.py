@@ -43,8 +43,9 @@
 """
 Provides general-purpose utilities. 
 
-@sort: AbsolutePathList, ObjectTypeList, convertSize, getUidGid, changeOwnership, 
-       splitCommandLine, executeCommand, calculateFileAge, encodePath, 
+@sort: AbsolutePathList, ObjectTypeList, PathResolverSingleton, 
+       convertSize, getUidGid, changeOwnership, splitCommandLine, 
+       resolveCommand, executeCommand, calculateFileAge, encodePath, 
        ISO_SECTOR_SIZE, BYTES_PER_SECTOR, 
        BYTES_PER_KBYTE, BYTES_PER_MBYTE, BYTES_PER_GBYTE, KBYTES_PER_MBYTE, MBYTES_PER_GBYTE, 
        SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, SECONDS_PER_DAY, 
@@ -115,8 +116,8 @@ UNIT_SECTORS       = 3
 MTAB_FILE          = "/etc/mtab"
 DEV_NULL_PATH      = "/dev/null"
 
-MOUNT_CMD          = [ "mount", ]
-UMOUNT_CMD         = [ "umount", ]
+MOUNT_COMMAND      = [ "mount", ]
+UMOUNT_COMMAND     = [ "umount", ]
 
 
 ########################################################################
@@ -396,6 +397,102 @@ class RestrictedContentList(UnorderedList):
             raise ValueError("Item must be one of values in %s." % self.valuesDescr)
       list.extend(self, seq)
 
+
+########################################################################
+# PathResolverSingleton class definition
+########################################################################
+
+class PathResolverSingleton:
+
+   """
+   Singleton used for resolving executable paths.
+
+   Various functions throughout Cedar Backup (including extensions) need a way
+   to resolve the path of executables that they use.  For instance, the image
+   functionality needs to find the C{mkisofs} executable, and the Subversion
+   extension needs to find the C{svnlook} executable.  Cedar Backup's original
+   behavior was to assume that the simple name (C{"svnlook"} or whatever) was
+   available on the caller's C{$PATH}, and to fail otherwise.   However, this
+   turns out to be less than ideal, since for instance the root user might not
+   always have executables like C{svnlook} in its path.
+
+   One solution is to specify a path (either via an absolute path or some sort
+   of path insertion or path appending mechanism) that would apply to the
+   C{executeCommand()} function.  This is not difficult to implement, but it
+   seem like kind of a "big hammer" solution.  Besides that, it might also
+   represent a security flaw (for instance, I prefer not to mess with root's
+   C{$PATH} on the application level if I don't have to).
+   
+   The alternative is to set up some sort of configuration for the path to
+   certain executables, i.e. "find C{svnlook} in C{/usr/local/bin/svnlook}" or
+   whatever.  This PathResolverSingleton aims to provide a good solution to the
+   mapping problem.  Callers of all sorts (extensions or not) can get an
+   instance of the singleton.  Then, they call the C{lookup} method to try and
+   resolve the executable they are looking for.  Through the C{lookup} method,
+   the caller can also specify a default to use if a mapping is not found.
+   This way, with no real effort on the part of the caller, behavior can neatly
+   degrade to something equivalent to the current behavior if there is no
+   special mapping or if the singleton was never initialized in the first
+   place.  
+
+   Even better, extensions automagically get access to the same resolver
+   functionality, and they don't even need to understand how the mapping
+   happens.  All extension authors need to do is document what executables
+   their code requires, and the standard resolver configuration section will
+   meet their needs.
+
+   The class should be initialized once through the constructor somewhere in
+   the main routine.  Then, the main routine should call the L{fill} method to
+   fill in the resolver's internal structures.  Everyone else who needs to
+   resolve a path will get an instance of the class using L{getInstance} and
+   will then just call the L{lookup} method.
+
+   @cvar _instance: Holds a reference to the singleton
+   @ivar _mapping: Internal mapping from resource name to path.
+   """
+
+   _instance = None     # Holds a reference to singleton instance
+
+   class _Helper:
+      """Helper class to provide a singleton factory method."""
+      def __call__(self, *args, **kw):
+         if PathResolverSingleton._instance is None:
+            object = PathResolverSingleton()
+            PathResolverSingleton._instance = object
+         return PathResolverSingleton._instance
+    
+   getInstance = _Helper()    # Method that callers will use to get an instance
+
+   def __init__(self):
+      """Singleton constructor, which just creates the singleton instance."""
+      if PathResolverSingleton._instance is not None:
+         raise RuntimeError("Only one instance of PathResolverSingleton is allowed!")
+      PathResolverSingleton._instance = self
+      self._mapping = { }
+
+   def lookup(self, name, default=None):
+      """
+      Looks up name and returns the resolved path associated with the name.
+      @param name: Name of the path resource to resolve.
+      @param default: Default to return if resource cannot be resolved.
+      @return: Resolved path associated with name, or default if name can't be resolved.
+      """
+      value = default
+      if name in self._mapping.keys():
+         value = self._mapping[name]
+      logger.debug("Resolved command [%s] to [%s]." % (name, value))
+      return value
+
+   def fill(self, mapping):
+      """
+      Fills in the singleton's internal mapping from name to resource.
+      @param mapping: Mapping from resource name to path.
+      @type mapping: Dictionary mapping name to path, both as strings.
+      """
+      self._mapping = { }
+      for key in mapping.keys():
+         self._mapping[key] = mapping[key]
+      
 
 ########################################################################
 # Pipe class definition
@@ -698,6 +795,47 @@ def splitCommandLine(commandLine):
 
 
 ############################
+# resolveCommand() function
+############################
+
+def resolveCommand(command):
+   """
+   Resolves the real path to a command through the path resolver mechanism.
+
+   Both extensions and standard Cedar Backup functionality need a way to
+   resolve the "real" location of various executables.  Normally, they assume
+   that these executables are on the system path, but some callers need to
+   specify an alternate location.  
+
+   Ideally, we want to handle this configuration in a central location.  The
+   Cedar Backup path resolver mechanism (a singleton called
+   L{PathResolverSingleton}) provides the central location to store the
+   mappings.  This function wraps access to the singleton, and is what all
+   functions (extensions or standard functionality) should call if they need to
+   find a command.
+   
+   The passed-in command must actually be a list, in the standard form used by
+   all existing Cedar Backup code (something like C{["svnlook", ]}).  The
+   lookup will actually be done on the first element in the list, and the
+   returned command will always be in list form as well.
+
+   If the passed-in command can't be resolved or no mapping exists, then the
+   command itself will be returned unchanged.  This way, we neatly fall back on
+   default behavior if we have no sensible alternative.
+
+   @param command: Command to resolve.
+   @type command: List form of command, i.e. C{["svnlook", ]}.
+
+   @return: Path to command or just command itself if no mapping exists.
+   """
+   singleton = PathResolverSingleton.getInstance()
+   name = command[0]
+   result = command[:]
+   result[0] = singleton.lookup(name, name)
+   return result
+
+
+############################
 # executeCommand() function
 ############################
 
@@ -847,7 +985,8 @@ def mount(devicePath, mountPoint, fsType):
       args = [ devicePath, mountPoint ]
    else:
       args = [ "-t", fsType, devicePath, mountPoint ]
-   result = executeCommand(MOUNT_CMD, args, returnOutput=False, ignoreStderr=True)[0]
+   command = resolveCommand(MOUNT_COMMAND)
+   result = executeCommand(command, args, returnOutput=False, ignoreStderr=True)[0]
    if result != 0:
       raise IOError("Error [%d] mounting [%s] at [%s] as [%s]." % (result, devicePath, mountPoint, fsType))
 
@@ -886,7 +1025,8 @@ def unmount(mountPoint, removeAfter=False, attempts=1, waitSeconds=0):
    if os.path.ismount(mountPoint):
       for attempt in range(0, attempts):
          logger.debug("Making attempt %d to unmount [%s]." % (attempt, mountPoint))
-         result = executeCommand(UMOUNT_CMD, [ mountPoint, ], returnOutput=False, ignoreStderr=True)[0]
+         command = resolveCommand(UMOUNT_COMMAND)
+         result = executeCommand(command, [ mountPoint, ], returnOutput=False, ignoreStderr=True)[0]
          if result != 0:
             logger.error("Error [%d] unmounting [%s] on attempt %d." % (result, mountPoint, attempt))
          elif os.path.ismount(mountPoint):
@@ -1033,4 +1173,5 @@ def encodePath(path):
       return path
    except UnicodeError:
       raise ValueError("Path could not be safely encoded as %s." % encoding)
+
 

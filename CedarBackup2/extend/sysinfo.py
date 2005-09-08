@@ -72,7 +72,7 @@ import logging
 from bz2 import BZ2File
 
 # Cedar Backup modules
-from CedarBackup2.util import executeCommand, changeOwnership
+from CedarBackup2.util import resolveCommand, executeCommand, changeOwnership
 
 
 ########################################################################
@@ -137,7 +137,8 @@ def _dumpDebianPackages(targetDir, backupUser, backupGroup, compress=True):
    else:
       (outputFile, filename) = _getOutputFile(targetDir, "dpkg-selections", compress)
       try:
-         result = executeCommand(DPKG_COMMAND, [], returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)[0]
+         command = resolveCommand(DPKG_COMMAND)
+         result = executeCommand(command, [], returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)[0]
          if result != 0:
             raise IOError("Error [%d] executing Debian package dump." % result)
       finally:
@@ -162,7 +163,8 @@ def _dumpPartitionTable(targetDir, backupUser, backupGroup, compress=True):
    else:
       (outputFile, filename) = _getOutputFile(targetDir, "fdisk-l", compress)
       try:
-         result = executeCommand(FDISK_COMMAND, [], returnOutput=False, ignoreStderr=True, outputFile=outputFile)[0]
+         command = resolveCommand(FDISK_COMMAND)
+         result = executeCommand(command, [], returnOutput=False, ignoreStderr=True, outputFile=outputFile)[0]
          if result != 0:
             raise IOError("Error [%d] executing partition table dump." % result)
       finally:
@@ -183,7 +185,8 @@ def _dumpFilesystemContents(targetDir, backupUser, backupGroup, compress=True):
    (outputFile, filename) = _getOutputFile(targetDir, "ls-laR", compress)
    try:
       # Note: can't count on return status from 'ls', so we don't check it.
-      executeCommand(LS_COMMAND, [], returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)
+      command = resolveCommand(LS_COMMAND)
+      executeCommand(command, [], returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)
    finally:
       outputFile.close()
    if not os.path.exists(filename):

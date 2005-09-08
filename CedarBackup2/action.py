@@ -84,7 +84,7 @@ from CedarBackup2.image import IsoImage
 from CedarBackup2.writer import CdWriter
 from CedarBackup2.writer import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 from CedarBackup2.filesystem import BackupFileList, PurgeItemList, compareContents
-from CedarBackup2.util import executeCommand, getUidGid, changeOwnership, mount, unmount
+from CedarBackup2.util import getUidGid, changeOwnership, mount, unmount
 from CedarBackup2.util import getFunctionReference, deviceMounted, displayBytes
 from CedarBackup2.config import DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE
 

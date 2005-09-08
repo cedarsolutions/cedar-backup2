@@ -62,7 +62,8 @@ import re
 import logging
 
 # Cedar Backup modules
-from CedarBackup2.util import executeCommand, convertSize, displayBytes, encodePath
+from CedarBackup2.util import resolveCommand, executeCommand
+from CedarBackup2.util import convertSize, displayBytes, encodePath
 from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES
 
 
@@ -77,8 +78,8 @@ MEDIA_CDR_74   = 2
 MEDIA_CDRW_80  = 3
 MEDIA_CDR_80   = 4
 
-CDRECORD_CMD = [ "cdrecord", ]
-EJECT_CMD    = [ "eject", ]
+CDRECORD_COMMAND = [ "cdrecord", ]
+EJECT_COMMAND    = [ "eject", ]
 
 
 ########################################################################
@@ -549,7 +550,8 @@ class CdWriter(object):
       @raise IOError: If there is a problem talking to the device.
       """
       args = CdWriter._buildPropertiesArgs(self._scsiId)
-      (result, output) = executeCommand(CDRECORD_CMD, args, returnOutput=True, ignoreStderr=True)
+      command = resolveCommand(CDRECORD_COMMAND)
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       if result != 0:
          raise IOError("Error (%d) executing cdrecord command to get properties." % result)
       return CdWriter._parsePropertiesOutput(output)
@@ -617,7 +619,8 @@ class CdWriter(object):
          return None
       else:
          args = CdWriter._buildBoundariesArgs(self._scsiId)
-         (result, output) = executeCommand(CDRECORD_CMD, args, returnOutput=True, ignoreStderr=True)
+         command = resolveCommand(CDRECORD_COMMAND)
+         (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
          if result != 0:
             raise IOError("Error (%d) executing cdrecord command to get capacity." % result)
          boundaries = CdWriter._parseBoundariesOutput(output)
@@ -676,7 +679,8 @@ class CdWriter(object):
       """
       if self._deviceHasTray and self._deviceCanEject:
          args = CdWriter._buildOpenTrayArgs(self._device)
-         result = executeCommand(EJECT_CMD, args)[0]
+         command = resolveCommand(EJECT_COMMAND)
+         result = executeCommand(command, args)[0]
          if result != 0:
             raise IOError("Error (%d) executing eject command to open tray." % result)
 
@@ -694,7 +698,8 @@ class CdWriter(object):
       """
       if self._deviceHasTray and self._deviceCanEject:
          args = CdWriter._buildCloseTrayArgs(self._device)
-         result = executeCommand(EJECT_CMD, args)[0]
+         command = resolveCommand(EJECT_COMMAND)
+         result = executeCommand(command, args)[0]
          if result != 0:
             raise IOError("Error (%d) executing eject command to close tray." % result)
 
@@ -754,7 +759,8 @@ class CdWriter(object):
       if newDisc:
          self._blankMedia()
       args = CdWriter._buildWriteArgs(self._scsiId, imagePath, self._driveSpeed, writeMulti and self._deviceSupportsMulti)
-      result = executeCommand(CDRECORD_CMD, args)[0]
+      command = resolveCommand(CDRECORD_COMMAND)
+      result = executeCommand(command, args)[0]
       if result != 0:
          raise IOError("Error (%d) executing command to write disc." % result)
       self.refreshMedia()
@@ -766,7 +772,8 @@ class CdWriter(object):
       """
       if self.isRewritable():
          args = CdWriter._buildBlankArgs(self._scsiId)
-         result = executeCommand(CDRECORD_CMD, args)[0]
+         command = resolveCommand(CDRECORD_COMMAND)
+         result = executeCommand(command, args)[0]
          if result != 0:
             raise IOError("Error (%d) executing command to blank disc." % result)
          self.refreshMedia()

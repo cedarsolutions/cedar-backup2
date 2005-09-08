@@ -93,7 +93,8 @@ from xml.dom.ext import PrettyPrint
 from CedarBackup2.config import addContainerNode, addStringNode, addBooleanNode
 from CedarBackup2.config import readChildren, readFirstChild, readString, readStringList, readBoolean
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
-from CedarBackup2.util import executeCommand, ObjectTypeList, changeOwnership
+from CedarBackup2.util import resolveCommand, executeCommand
+from CedarBackup2.util import ObjectTypeList, changeOwnership
 
 
 ########################################################################
@@ -659,7 +660,8 @@ def backupDatabase(user, password, backupFile, database=None):
    else:
       args.insert(0, "--databases")
       args.append(database)
-   result = executeCommand(MYSQLDUMP_COMMAND, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
+   command = resolveCommand(MYSQLDUMP_COMMAND)
+   result = executeCommand(command, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
    if result != 0:
       if database is None:
          raise IOError("Error [%d] executing MySQL database dump for all databases." % result)
