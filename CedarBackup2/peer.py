@@ -742,7 +742,6 @@ class RemotePeer(object):
       @param stageIndicator: Name of the indicator file to write
       @type stageIndicator: String representing name of a file in the collect directory
 
-      @raise ValueError: If collect directory is not a directory or does not exist 
       @raise ValueError: If a path cannot be encoded properly.
       @raise IOError: If there is an IO error creating the file.
       @raise OSError: If there is an OS error creating or changing permissions on the file
