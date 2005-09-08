@@ -807,7 +807,8 @@ def executeAction(configPath, options, config):
    logger.debug("Full backup flag is [%s]" % fullBackup)
    if local.subversion.repositories is not None:
       for repository in local.subversion.repositories:
-         logger.debug("Working with repository [%s]." % repository.repositoryPath)
+         logger.debug("Working with repository [%s]" % repository.repositoryPath)
+         logger.debug("Repository type is [%s]" % repository.repositoryType)
          if repository.repositoryType in ["BDB", "FSFS", ]:
             collectMode = _getCollectMode(local, repository)
             compressMode = _getCompressMode(local, repository)
