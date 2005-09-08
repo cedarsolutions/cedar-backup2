@@ -103,7 +103,7 @@ Full vs. Reduced Tests
 import os
 import unittest
 from CedarBackup2.testutil import findResources, removedir, failUnlessAssignRaises
-from CedarBackup2.config import ExtendedAction, CollectDir, PurgeDir, LocalPeer, RemotePeer
+from CedarBackup2.config import ExtendedAction, CommandOverride, CollectDir, PurgeDir, LocalPeer, RemotePeer
 from CedarBackup2.config import ReferenceConfig, ExtensionsConfig, OptionsConfig
 from CedarBackup2.config import CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config
 
@@ -2543,17 +2543,19 @@ class TestOptionsConfig(unittest.TestCase):
       self.failUnlessEqual(None, options.backupUser)
       self.failUnlessEqual(None, options.backupGroup)
       self.failUnlessEqual(None, options.rcpCommand)
+      self.failUnlessEqual(None, options.overrides)
 
    def testConstructor_002(self):
       """
-      Test constructor with all values filled in, with valid values.
+      Test constructor with all values filled in, with valid values (lists empty).
       """
-      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [])
       self.failUnlessEqual("monday", options.startingDay)
       self.failUnlessEqual("/tmp", options.workingDir)
       self.failUnlessEqual("user", options.backupUser)
       self.failUnlessEqual("group", options.backupGroup)
       self.failUnlessEqual("scp -1 -B", options.rcpCommand)
+      self.failUnlessEqual([], options.overrides)
 
    def testConstructor_003(self):
       """
@@ -2720,6 +2722,86 @@ class TestOptionsConfig(unittest.TestCase):
       self.failUnlessAssignRaises(ValueError, options, "rcpCommand", "")
       self.failUnlessEqual(None, options.rcpCommand)
 
+   def testConstructor_020(self):
+      """
+      Test constructor with all values filled in, with valid values (lists not empty).
+      """
+      overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), ]
+      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides)
+      self.failUnlessEqual("monday", options.startingDay)
+      self.failUnlessEqual("/tmp", options.workingDir)
+      self.failUnlessEqual("user", options.backupUser)
+      self.failUnlessEqual("group", options.backupGroup)
+      self.failUnlessEqual("scp -1 -B", options.rcpCommand)
+      self.failUnlessEqual(overrides, options.overrides)
+
+   def testConstructor_021(self):
+      """
+      Test assignment of overrides attribute, None value.
+      """
+      collect = OptionsConfig(overrides=[])
+      self.failUnlessEqual([], collect.overrides)
+      collect.overrides = None
+      self.failUnlessEqual(None, collect.overrides)
+
+   def testConstructor_022(self):
+      """
+      Test assignment of overrides attribute, [] value.
+      """
+      collect = OptionsConfig()
+      self.failUnlessEqual(None, collect.overrides)
+      collect.overrides = []
+      self.failUnlessEqual([], collect.overrides)
+
+   def testConstructor_023(self):
+      """
+      Test assignment of overrides attribute, single valid entry.
+      """
+      collect = OptionsConfig()
+      self.failUnlessEqual(None, collect.overrides)
+      collect.overrides = [CommandOverride("one", "/one"), ]
+      self.failUnlessEqual([CommandOverride("one", "/one"), ], collect.overrides)
+
+   def testConstructor_024(self):
+      """
+      Test assignment of overrides attribute, multiple valid
+      entries.
+      """
+      collect = OptionsConfig()
+      self.failUnlessEqual(None, collect.overrides)
+      collect.overrides = [CommandOverride("one", "/one"), CommandOverride("two", "/two"), ]
+      self.failUnlessEqual([CommandOverride("one", "/one"), CommandOverride("two", "/two"), ], collect.overrides)
+
+   def testConstructor_025(self):
+      """
+      Test assignment of overrides attribute, single invalid entry
+      (None).
+      """
+      collect = OptionsConfig()
+      self.failUnlessEqual(None, collect.overrides)
+      self.failUnlessAssignRaises(ValueError, collect, "overrides", [ None, ])
+      self.failUnlessEqual(None, collect.overrides)
+
+   def testConstructor_026(self):
+      """
+      Test assignment of overrides attribute, single invalid entry
+      (not a CommandOverride).
+      """
+      collect = OptionsConfig()
+      self.failUnlessEqual(None, collect.overrides)
+      self.failUnlessAssignRaises(ValueError, collect, "overrides", [ "hello", ])
+      self.failUnlessEqual(None, collect.overrides)
+
+   def testConstructor_027(self):
+      """
+      Test assignment of overrides attribute, mixed valid and
+      invalid entries.
+      """
+      collect = OptionsConfig()
+      self.failUnlessEqual(None, collect.overrides)
+      self.failUnlessAssignRaises(ValueError, collect, "overrides", [ "hello", CommandOverride("one", "/one"), ])
+      self.failUnlessEqual(None, collect.overrides)
+
 
    ############################
    # Test comparison operators
@@ -2743,8 +2825,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
       self.failUnlessEqual(options1, options2)
       self.failUnless(options1 == options2)
       self.failUnless(not options1 < options2)
@@ -2771,8 +2853,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, startingDay differs.
       """
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
-      options2 = OptionsConfig("tuesday", "/tmp", "user", "group", "scp -1 -B")
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
+      options2 = OptionsConfig("tuesday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -2799,8 +2881,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, workingDir differs.
       """
-      options1 = OptionsConfig("monday", "/tmp/whatever", "user", "group", "scp -1 -B")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      options1 = OptionsConfig("monday", "/tmp/whatever", "user", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -2827,8 +2909,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, backupUser differs.
       """
-      options1 = OptionsConfig("monday", "/tmp", "user2", "group", "scp -1 -B")
-      options2 = OptionsConfig("monday", "/tmp", "user1", "group", "scp -1 -B")
+      options1 = OptionsConfig("monday", "/tmp", "user2", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
+      options2 = OptionsConfig("monday", "/tmp", "user1", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -2855,8 +2937,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, backupGroup differs.
       """
-      options1 = OptionsConfig("monday", "/tmp", "user", "group1", "scp -1 -B")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group2", "scp -1 -B")
+      options1 = OptionsConfig("monday", "/tmp", "user", "group1", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
+      options2 = OptionsConfig("monday", "/tmp", "user", "group2", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -2883,8 +2965,68 @@ class TestOptionsConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, rcpCommand differs.
       """
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -2 -B")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B")
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -2 -B", [ CommandOverride("one", "/one"), ] )
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(not options1 < options2)
+      self.failUnless(not options1 <= options2)
+      self.failUnless(options1 > options2)
+      self.failUnless(options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_013(self):
+      """
+      Test comparison of two differing objects, overrides differs (one
+      None, one empty).
+      """
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", None )
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [] )
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_014(self):
+      """
+      Test comparison of two differing objects, overrides differs (one
+      None, one not empty).
+      """
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", None)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_015(self):
+      """
+      Test comparison of two differing objects, overrides differs (one
+      empty, one not empty).
+      """
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride("one", "/one"), ] )
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ ] )
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(not options1 < options2)
+      self.failUnless(not options1 <= options2)
+      self.failUnless(options1 > options2)
+      self.failUnless(options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_016(self):
+      """
+      Test comparison of two differing objects, overrides differs (both
+      not empty).
+      """
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride(), CommandOverride(), ] )
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [ CommandOverride(), ] )
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -3227,18 +3369,18 @@ class TestCollectConfig(unittest.TestCase):
       Test assignment of collectDirs attribute, [] value.
       """
       collect = CollectConfig()
-      self.failUnlessEqual(None, collect.excludePatterns)
-      collect.excludePatterns = []
-      self.failUnlessEqual([], collect.excludePatterns)
+      self.failUnlessEqual(None, collect.collectDirs)
+      collect.collectDirs = []
+      self.failUnlessEqual([], collect.collectDirs)
 
    def testConstructor_032(self):
       """
       Test assignment of collectDirs attribute, single valid entry.
       """
       collect = CollectConfig()
-      self.failUnlessEqual(None, collect.excludePatterns)
-      collect.excludePatterns = [CollectDir(absolutePath="/one"), ]
-      self.failUnlessEqual([CollectDir(absolutePath="/one"), ], collect.excludePatterns)
+      self.failUnlessEqual(None, collect.collectDirs)
+      collect.collectDirs = [CollectDir(absolutePath="/one"), ]
+      self.failUnlessEqual([CollectDir(absolutePath="/one"), ], collect.collectDirs)
 
    def testConstructor_033(self):
       """
@@ -3246,9 +3388,9 @@ class TestCollectConfig(unittest.TestCase):
       entries.
       """
       collect = CollectConfig()
-      self.failUnlessEqual(None, collect.excludePatterns)
-      collect.excludePatterns = [CollectDir(absolutePath="/one"), CollectDir(absolutePath="/two"), ]
-      self.failUnlessEqual([CollectDir(absolutePath="/one"), CollectDir(absolutePath="/two"), ], collect.excludePatterns)
+      self.failUnlessEqual(None, collect.collectDirs)
+      collect.collectDirs = [CollectDir(absolutePath="/one"), CollectDir(absolutePath="/two"), ]
+      self.failUnlessEqual([CollectDir(absolutePath="/one"), CollectDir(absolutePath="/two"), ], collect.collectDirs)
 
    def testConstructor_034(self):
       """
@@ -6243,6 +6385,7 @@ class TestConfig(unittest.TestCase):
       config = Config(xmlPath=path, validate=False)
       expected = Config()
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       self.failUnlessEqual(expected, config)
 
    def testParse_014(self):
@@ -6454,6 +6597,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
@@ -6504,6 +6648,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
@@ -6732,6 +6877,7 @@ class TestConfig(unittest.TestCase):
       """
       before = Config()
       before.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B")
+      before.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
    def testExtractXml_012(self):
@@ -6740,6 +6886,7 @@ class TestConfig(unittest.TestCase):
       """
       before = Config()
       before.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B")
+      before.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       beforeXml = before.extractXml(validate=False)
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
