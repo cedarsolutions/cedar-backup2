@@ -91,7 +91,8 @@ from CedarBackup2.config import addContainerNode, addStringNode
 from CedarBackup2.config import readChildren, readFirstChild, readString
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
 from CedarBackup2.action import isStartOfWeek, buildNormalizedPath
-from CedarBackup2.util import executeCommand, ObjectTypeList, encodePath, changeOwnership
+from CedarBackup2.util import resolveCommand, executeCommand
+from CedarBackup2.util import ObjectTypeList, encodePath, changeOwnership
 
 
 ########################################################################
@@ -1047,7 +1048,8 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
    if startRevision > endRevision:
       raise ValueError("Start revision must be <= end revision.")
    args = [ "dump", "--quiet", "-r%s:%s" % (startRevision, endRevision), "--incremental", repositoryPath, ]
-   result = executeCommand(SVNADMIN_COMMAND, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
+   command = resolveCommand(SVNADMIN_COMMAND)
+   result = executeCommand(command, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
    if result != 0:
       raise IOError("Error [%d] executing Subversion dump for BDB repository [%s]." % (result, repositoryPath))
    logger.debug("Completed dumping subversion repository [%s]." % repositoryPath)
@@ -1105,7 +1107,8 @@ def backupFSFSRepository(repositoryPath, backupFile, startRevision=None, endRevi
    if startRevision > endRevision:
       raise ValueError("Start revision must be <= end revision.")
    args = [ "dump", "--quiet", "-r%s:%s" % (startRevision, endRevision), "--incremental", repositoryPath, ]
-   result = executeCommand(SVNADMIN_COMMAND, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
+   command = resolveCommand(SVNADMIN_COMMAND)
+   result = executeCommand(command, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
    if result != 0:
       raise IOError("Error [%d] executing Subversion dump for FSFS repository [%s]." % (result, repositoryPath))
    logger.debug("Completed dumping subversion repository [%s]." % repositoryPath)
@@ -1131,7 +1134,8 @@ def getYoungestRevision(repositoryPath):
    @raise IOError: If there is a problem executing the C{svnlook} command.
    """
    args = [ 'youngest', repositoryPath, ]
-   (result, output) = executeCommand(SVNLOOK_COMMAND, args, returnOutput=True, ignoreStderr=True)
+   command = resolveCommand(SVNLOOK_COMMAND)
+   (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
    if result != 0:
       raise IOError("Error [%d] executing 'svnlook youngest' for repository [%s]." % (result, repositoryPath))
    if len(output) != 1:

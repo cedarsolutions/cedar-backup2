@@ -63,7 +63,8 @@ import re
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import splitCommandLine, executeCommand, encodePath
+from CedarBackup2.util import resolveCommand, executeCommand
+from CedarBackup2.util import splitCommandLine, encodePath
 
 
 ########################################################################
@@ -864,12 +865,14 @@ class RemotePeer(object):
          if os.getuid() != 0:
             raise IOError("Only root can remote copy as another user.")
          actualCommand = "%s %s@%s:%s/* %s" % (rcpCommand, remoteUser, remoteHost, sourceDir, targetDir)
-         result = executeCommand(SU_COMMAND, [localUser, "-c", actualCommand])[0]
+         command = resolveCommand(SU_COMMAND)
+         result = executeCommand(command, [localUser, "-c", actualCommand])[0]
          if result != 0:
             raise IOError("Error (%d) copying files from remote host as local user [%s]." % (result, localUser))
       else:
          copySource = "%s@%s:%s/*" % (remoteUser, remoteHost, sourceDir)
-         result = executeCommand(rcpCommandList, [copySource, targetDir])[0]
+         command = resolveCommand(rcpCommandList)
+         result = executeCommand(command, [copySource, targetDir])[0]
          if result != 0:
             raise IOError("Error (%d) copying files from remote host (using no local user)." % result)
       afterSet = RemotePeer._getDirContents(targetDir)
@@ -953,12 +956,14 @@ class RemotePeer(object):
          if os.getuid() != 0:
             raise IOError("Only root can remote copy as another user.")
          actualCommand = "%s %s@%s:%s %s" % (rcpCommand, remoteUser, remoteHost, sourceFile.replace(" ", "\\ "), targetFile)
-         result = executeCommand(SU_COMMAND, [localUser, "-c", actualCommand])[0]
+         command = resolveCommand(SU_COMMAND) 
+         result = executeCommand(command, [localUser, "-c", actualCommand])[0]
          if result != 0:
             raise IOError("Error (%d) copying [%s] from remote host as local user [%s]." % (result, sourceFile, localUser))
       else:
          copySource = "%s@%s:%s" % (remoteUser, remoteHost, sourceFile.replace(" ", "\\ "))
-         result = executeCommand(rcpCommandList, [copySource, targetFile])[0]
+         command = resolveCommand(rcpCommandList)
+         result = executeCommand(command, [copySource, targetFile])[0]
          if result != 0:
             raise IOError("Error (%d) copying [%s] from remote host (using no local user)." % (result, sourceFile))
       if not os.path.exists(targetFile):
@@ -1020,12 +1025,14 @@ class RemotePeer(object):
          if os.getuid() != 0:
             raise IOError("Only root can remote copy as another user.")
          actualCommand = '%s "%s" "%s@%s:%s"' % (rcpCommand, sourceFile, remoteUser, remoteHost, targetFile)
-         result = executeCommand(SU_COMMAND, [localUser, "-c", actualCommand])[0]
+         command = resolveCommand(SU_COMMAND)
+         result = executeCommand(command, [localUser, "-c", actualCommand])[0]
          if result != 0:
             raise IOError("Error (%d) copying [%s] to remote host as local user [%s]." % (result, sourceFile, localUser))
       else:
          copyTarget = "%s@%s:%s" % (remoteUser, remoteHost, targetFile.replace(" ", "\\ "))
-         result = executeCommand(rcpCommandList, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
+         command = resolveCommand(rcpCommandList)
+         result = executeCommand(command, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
          if result != 0:
             raise IOError("Error (%d) copying [%s] to remote host (using no local user)." % (result, sourceFile))
    _pushLocalFile = staticmethod(_pushLocalFile)

@@ -3,6 +3,10 @@ Version 2.6.0	unreleased
 	* Remove bogus check for remote collect directory on master (closes: #18).
 	* Fix testEncodePath_009 test failure on UTF-8 filesystems (closes: #19).
 	* Special case path "/" in the filesystem.normalize() function (closes: #24).
+	* Implement resolver mechanism to support paths to commands (closes: #22).
+	  - Create util.PathResolverSingleton class to encapsulate mappings	
+	  - Create util.resolveCommand convenience function for code to call
+	  - Changed all _CMD constants to _COMMAND, for consistency
 	* Change Subversion extension to support "fsfs" repositories (closes: #20).
 	  - Accept "FSFS" repository type in <subversion> configuration section
 	  - Create new FSFSRepository class to represent an FSFS repository

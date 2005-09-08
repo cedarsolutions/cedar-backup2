@@ -82,7 +82,8 @@ import tempfile
 from os.path import isdir
 
 from CedarBackup2.testutil import removedir
-from CedarBackup2.util import executeCommand, getFunctionReference, encodePath, UnorderedList
+from CedarBackup2.util import UnorderedList, PathResolverSingleton
+from CedarBackup2.util import resolveCommand, executeCommand, getFunctionReference, encodePath
 
 
 #######################################################################
@@ -351,6 +352,138 @@ class TestUnorderedList(unittest.TestCase):
       self.failUnlessEqual(list2, list1)
 
 
+##################################
+# TestPathResolverSingleton class
+##################################
+
+class TestPathResolverSingleton(unittest.TestCase):
+
+   """Tests for the PathResolverSingleton class."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   ##########################
+   # Test singleton behavior
+   ##########################
+
+   def testBehavior_001(self):
+      """
+      Check behavior of constructor around filling and clearing instance variable.
+      """
+      PathResolverSingleton._instance = None
+      instance = PathResolverSingleton()
+      self.failIfEqual(None, PathResolverSingleton._instance)
+      self.failUnless(instance is PathResolverSingleton._instance)
+
+      self.failUnlessRaises(RuntimeError, PathResolverSingleton)
+
+      PathResolverSingleton._instance = None
+      instance = PathResolverSingleton()
+      self.failIfEqual(None, PathResolverSingleton._instance)
+      self.failUnless(instance is PathResolverSingleton._instance)
+
+   def testBehavior_002(self):
+      """
+      Check behavior of getInstance() around filling and clearing instance variable.
+      """
+      PathResolverSingleton._instance = None
+      instance1 = PathResolverSingleton.getInstance()
+      instance2 = PathResolverSingleton.getInstance()
+      instance3 = PathResolverSingleton.getInstance()
+      self.failIfEqual(None, PathResolverSingleton._instance)
+      self.failUnless(instance1 is PathResolverSingleton._instance)
+      self.failUnless(instance1 is instance2)
+      self.failUnless(instance1 is instance3)
+
+      PathResolverSingleton._instance = None
+      PathResolverSingleton()
+      instance4 = PathResolverSingleton.getInstance()
+      instance5 = PathResolverSingleton.getInstance()
+      instance6 = PathResolverSingleton.getInstance()
+      self.failUnless(instance1 is not instance4)
+      self.failUnless(instance4 is PathResolverSingleton._instance)
+      self.failUnless(instance4 is instance5)
+      self.failUnless(instance4 is instance6)
+
+      PathResolverSingleton._instance = None
+      instance7 = PathResolverSingleton.getInstance()
+      instance8 = PathResolverSingleton.getInstance()
+      instance9 = PathResolverSingleton.getInstance()
+      self.failUnless(instance1 is not instance7)
+      self.failUnless(instance4 is not instance7)
+      self.failUnless(instance7 is PathResolverSingleton._instance)
+      self.failUnless(instance7 is instance8)
+      self.failUnless(instance7 is instance9)
+
+
+   ############################
+   # Test lookup functionality
+   ############################
+
+   def testLookup_001(self):
+      """
+      Test that lookup() always returns default when singleton is empty.
+      """
+      PathResolverSingleton._instance = None
+      instance = PathResolverSingleton.getInstance()
+
+      result = instance.lookup("whatever")
+      self.failUnlessEqual(result, None)
+
+      result = instance.lookup("whatever", None)
+      self.failUnlessEqual(result, None)
+
+      result = instance.lookup("other")
+      self.failUnlessEqual(result, None)
+
+      result = instance.lookup("other", "default")
+      self.failUnlessEqual(result, "default")
+
+   def testLookup_002(self):
+      """
+      Test that lookup() returns proper values when singleton is not empty.
+      """
+      mappings = { "one" : "/path/to/one", "two" : "/path/to/two" };
+      PathResolverSingleton._instance = None
+      singleton = PathResolverSingleton()
+      singleton.fill(mappings)
+
+      instance = PathResolverSingleton.getInstance()
+
+      result = instance.lookup("whatever")
+      self.failUnlessEqual(result, None)
+
+      result = instance.lookup("whatever", None)
+      self.failUnlessEqual(result, None)
+
+      result = instance.lookup("other")
+      self.failUnlessEqual(result, None)
+
+      result = instance.lookup("other", "default")
+      self.failUnlessEqual(result, "default")
+
+      result = instance.lookup("one")
+      self.failUnlessEqual(result, "/path/to/one")
+
+      result = instance.lookup("one", None)
+      self.failUnlessEqual(result, "/path/to/one")
+
+      result = instance.lookup("two", None)
+      self.failUnlessEqual(result, "/path/to/two")
+
+      result = instance.lookup("two", "default")
+      self.failUnlessEqual(result, "/path/to/two")
+
+
 ######################
 # TestFunctions class
 ######################
@@ -408,6 +541,80 @@ class TestFunctions(unittest.TestCase):
       function = "executeCommand"
       reference = getFunctionReference(module, function)
       self.failUnless(executeCommand is reference)
+
+
+   ########################
+   # Test resolveCommand() 
+   ########################
+         
+   def testResolveCommand_001(self):
+      """
+      Test that the command is echoed back unchanged when singleton is empty.
+      """
+      PathResolverSingleton._instance = None
+
+      command = [ "BAD", ]
+      expected = command[:]
+      result = resolveCommand(command)
+      self.failUnlessEqual(expected, result)
+
+      command = [ "GOOD", ]
+      expected = command[:]
+      result = resolveCommand(command)
+      self.failUnlessEqual(expected, result)
+
+      command = [ "WHATEVER", "--verbose", "--debug", 'tvh:asa892831', "blech", "<", ]
+      expected = command[:]
+      result = resolveCommand(command)
+      self.failUnlessEqual(expected, result)
+
+   def testResolveCommand_002(self):
+      """
+      Test that the command is echoed back unchanged when mapping is not found.
+      """
+      PathResolverSingleton._instance = None
+      mappings = { "one" : "/path/to/one", "two" : "/path/to/two" };
+      singleton = PathResolverSingleton()
+      singleton.fill(mappings)
+
+      command = [ "BAD", ]
+      expected = command[:]
+      result = resolveCommand(command)
+      self.failUnlessEqual(expected, result)
+
+      command = [ "GOOD", ]
+      expected = command[:]
+      result = resolveCommand(command)
+      self.failUnlessEqual(expected, result)
+
+      command = [ "WHATEVER", "--verbose", "--debug", 'tvh:asa892831', "blech", "<", ]
+      expected = command[:]
+      result = resolveCommand(command)
+      self.failUnlessEqual(expected, result)
+
+   def testResolveCommand_003(self):
+      """
+      Test that the command is echoed back changed appropriately when mapping is found.
+      """
+      PathResolverSingleton._instance = None
+      mappings = { "one" : "/path/to/one", "two" : "/path/to/two" };
+      singleton = PathResolverSingleton()
+      singleton.fill(mappings)
+
+      command = [ "one", ]
+      expected = [ "/path/to/one", ]
+      result = resolveCommand(command)
+      self.failUnlessEqual(expected, result)
+
+      command = [ "two", ]
+      expected = [ "/path/to/two", ]
+      result = resolveCommand(command)
+      self.failUnlessEqual(expected, result)
+
+      command = [ "two", "--verbose", "--debug", 'tvh:asa892831', "blech", "<", ]
+      expected = ["/path/to/two", "--verbose", "--debug", 'tvh:asa892831', "blech", "<", ]
+      result = resolveCommand(command)
+      self.failUnlessEqual(expected, result)
 
 
    ########################
@@ -1343,6 +1550,7 @@ def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
                               unittest.makeSuite(TestUnorderedList, 'test'),
+                              unittest.makeSuite(TestPathResolverSingleton, 'test'),
                               unittest.makeSuite(TestFunctions, 'test'),
                             ))
 
