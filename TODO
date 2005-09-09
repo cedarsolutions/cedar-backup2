@@ -31,8 +31,6 @@ FUTURE FUNCTIONALITY
 
 TESTING IMPROVEMENTS
 
-* Make sure to test that overrides seems to work properly in configuration, and that things are logged, etc.
-
 * Create unit tests for the store/rebuild "find directories" functions in action.py (and maybe refactor)
 * Come up with non-PyUnit code to stress test high-level actions, etc. 
 * Fix the UTF-8 filesystem test case, testEncodePath_009, per Dag Rende's notes.
@@ -80,9 +78,6 @@ Some things from Dag Rende:
           * that the all action doesn't include extensions (it should I
             think, especially when there is a sequence number that puts the
             extension action in the right order)
-
-Change documentation on Subversion, since it seems to work for both FSFS and
-BDB.  Maybe another class that just changes the backend-type?
 
 Add notes on Dag's solution for I/O errors:
 

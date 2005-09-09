@@ -2,7 +2,7 @@ Version 2.6.0	unreleased
 
 	* Remove bogus check for remote collect directory on master (closes: #18).
 	* Fix testEncodePath_009 test failure on UTF-8 filesystems (closes: #19).
-	* Fixed several unit tests related to the CollectConfig class (typos).
+	* Fixed several unit tests related to the CollectConfig class (all typos).
 	* Special case path "/" in the filesystem.normalize() function (closes: #24).
 	* Implement resolver mechanism to support paths to commands (closes: #22).
 	  - Added <override> section within <options> configuration
@@ -13,7 +13,7 @@ Version 2.6.0	unreleased
 	  - Create and call new _setupPathResolver() function in cli code
 	  - Change all _CMD constants to _COMMAND, for consistency
 	* Change Subversion extension to support "fsfs" repositories (closes: #20).
-	  - Accept "FSFS" repository type in <subversion> configuration section
+	  - Accept "FSFS" repository <type> in <subversion> configuration section
 	  - Create new FSFSRepository class to represent an FSFS repository
 	  - Refactor internal code common to both BDB and FSFS repositories
 	  - Add and rework test cases to provide coverage of FSFSRepository
@@ -23,6 +23,7 @@ Version 2.6.0	unreleased
 	  - Accept Darwin-style SCSI writer devices, i.e. "IOCompactDiscServices"
 	  - Tweak existing SCSI id pattern to allow spaces in a few other places
 	  - Add new regression tests for validateScsiId() utility function
+	  - Add code warnings and documentation in manual and in doc/osx 
 
 Version 2.5.0	12 Jul 2005
 
