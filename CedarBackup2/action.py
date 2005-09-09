@@ -70,6 +70,7 @@ public function are grouped with that function (below it, typically).
 ########################################################################
 
 # System modules
+import sys
 import os
 import time
 import re
@@ -849,6 +850,9 @@ def executeStore(configPath, options, config):
    @raise IOError: If there are problems reading or writing files.
    """
    logger.debug("Executing store action.")
+   if sys.platform == "darwin":
+      logger.warn("Warning: the store action is not fully supported on Mac OS X.")
+      logger.warn("See the Cedar Backup software manual for further information.")
    if config.options is None or config.store is None:
       raise ValueError("Store configuration is not properly filled in.")
    rebuildMedia = options.full
@@ -859,8 +863,12 @@ def executeStore(configPath, options, config):
    stagingDirs = _findCorrectDailyDir(options, config)
    _writeImage(config, entireDisc, stagingDirs)
    if config.store.checkData:
-      logger.debug("Running consistency check of media.")
-      _consistencyCheck(config, stagingDirs)
+      if sys.platform == "darwin":
+         logger.warn("Warning: consistency check cannot be run successfully on Mac OS X.")
+         logger.warn("See the Cedar Backup software manual for further information.")
+      else:
+         logger.debug("Running consistency check of media.")
+         _consistencyCheck(config, stagingDirs)
    _writeStoreIndicator(config, stagingDirs)
    logger.info("Executed the 'store' action successfully.")
 
