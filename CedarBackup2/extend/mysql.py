@@ -432,7 +432,7 @@ class LocalConfig(object):
             raise ValueError("Databases cannot be specified if 'all' flag is set.")
       else:
          if self.mysql.databases is None or len(self.mysql.databases) < 1:
-            raise ValueError("At least one database must be indicated if 'all' flag is not set.")
+            raise ValueError("At least one MySQL database must be indicated if 'all' flag is not set.")
 
    def addConfig(self, xmlDom, parentNode):
       """

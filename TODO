@@ -120,6 +120,10 @@ Add notes on Dag's solution for I/O errors:
 
 
 Maybe along with the FSFS notes, incorporate some of this:
+(really, we just need to note that the backup we're doing should
+be safe since it's being done via svnadmin dump - but it's possible
+that if operations are occurring, there could occassionally be
+inconsistencies)
 
    Note: Backups
    -------------

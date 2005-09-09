@@ -612,7 +612,7 @@ class LocalConfig(object):
       if self.subversion is None:
          raise ValueError("Subversion section is required.")
       if self.subversion.repositories is None or len(self.subversion.repositories) < 1:
-         raise ValueError("At least one repository must be configured.")
+         raise ValueError("At least one Subversion repository must be configured.")
       for repository in self.subversion.repositories:
          if repository.repositoryType in [ "BDB", "FSFS", ]:
             if repository.repositoryPath is None:
