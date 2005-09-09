@@ -41,28 +41,27 @@
 Provides an extension to back up Subversion databases.
 
 This is a Cedar Backup extension used to back up Subversion repositories via
-the Cedar Backup command line.  It requires a new configurations section
-<subversion> and is intended to be run either immediately before or immediately
-after the standard collect action.  Aside from its own configuration, it
-requires the options and collect configuration sections in the standard Cedar
-Backup configuration file.
+the Cedar Backup command line.  Each Subversion repository can be backed using
+the same collect modes allowed for filesystems in the standard Cedar Backup
+collect action: weekly, daily, incremental.  
+
+This extension requires a new configurations section <subversion> and is
+intended to be run either immediately before or immediately after the standard
+collect action.  Aside from its own configuration, it requires the options and
+collect configuration sections in the standard Cedar Backup configuration file.
 
 There are two different kinds of Subversion repositories at this writing: BDB
-(Berkeley Database) and FSFS (a "filesystem within a filesystem").  I
-personally only use the BDB version, because when I started using Subversion,
-that's all there was.  It turns out that FSFS repositories can be backed up
-either the same way as BDB repositories (via C{svnadmin dump}) or can be backed
-up just like any other set of directories.  
+(Berkeley Database) and FSFS (a "filesystem within a filesystem").  This
+extension backs up both kinds of repositories in the same way, using C{svnadmin
+dump} in an incremental mode.
 
-Only use this extension for FSFS repositories if you want to use C{svnadmin
-dump} for backups.  Use the normal collect action otherwise.  It's simpler, and
-possibly less prone to problems like updates to the repository in the middle of
-a backup.
-
-Each repository can be backed using the same collect modes allowed for
-filesystems in the standard Cedar Backup collect action: weekly, daily,
-incremental.  
-
+It turns out that FSFS repositories can also be backed up just like any
+other filesystem directory.  If you would rather do that, then use the normal
+collect action.  This is probably simpler, although it carries its own 
+advantages and disadvantages (plus you will have to be careful to exclude
+the working directories Subversion uses when building an update to commit).
+Check the Subversion documentation for more information.
+ 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
