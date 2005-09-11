@@ -21,6 +21,7 @@ include doc/cback.1
 include doc/cback.conf.sample
 include doc/docbook.txt
 include doc/release.txt
+include doc/osx/*
 include doc/interface/*
 include doc/interface/public/*
 include doc/interface/private/*
