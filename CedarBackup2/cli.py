@@ -697,7 +697,7 @@ def _setupPathResolver(config):
    the path of a command can use the singleton.
 
    @param config: Configuration
-   @type options: L{Config} object
+   @type config: L{Config} object
    """
    mapping = {}
    if config.options.overrides is not None:
