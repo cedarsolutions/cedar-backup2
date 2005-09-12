@@ -5,6 +5,7 @@ Version 2.6.0	unreleased
 	* Fixed several unit tests related to the CollectConfig class (all typos).
 	* Special case path "/" in the filesystem.normalize() function (closes: #24).
 	* Add extension configuration to cback.conf.sample, to clarify things.
+	* Place starting and ending revision numbers into Subversion dump filenames.
 	* Implement resolver mechanism to support paths to commands (closes: #22).
 	  - Added <override> section within <options> configuration
 	  - Create new config.CommandOverride class to hold overrides

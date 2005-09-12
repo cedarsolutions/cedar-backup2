@@ -45,7 +45,7 @@ the Cedar Backup command line.  Each Subversion repository can be backed using
 the same collect modes allowed for filesystems in the standard Cedar Backup
 collect action: weekly, daily, incremental.  
 
-This extension requires a new configurations section <subversion> and is
+This extension requires a new configuration section <subversion> and is
 intended to be run either immediately before or immediately after the standard
 collect action.  Aside from its own configuration, it requires the options and
 collect configuration sections in the standard Cedar Backup configuration file.
@@ -812,12 +812,11 @@ def executeAction(configPath, options, config):
             collectMode = _getCollectMode(local, repository)
             compressMode = _getCompressMode(local, repository)
             revisionPath = _getRevisionPath(config, repository)
-            backupPath = _getBackupPath(config, repository, compressMode)
             if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
                logger.debug("Repository meets criteria to be backed up today.")
                _backupRepository(config, repository.repositoryType,
-                                 repository.repositoryPath, backupPath, 
-                                 revisionPath, fullBackup, collectMode, compressMode)
+                                 repository.repositoryPath, revisionPath, 
+                                 fullBackup, collectMode, compressMode)
             else:
                logger.debug("Repository will not be backed up, per collect mode.")
          else:
@@ -867,15 +866,18 @@ def _getRevisionPath(config, repository):
    logger.debug("Revision file path is [%s]" % revisionPath)
    return revisionPath
 
-def _getBackupPath(config, repository, compressMode):
+def _getBackupPath(config, repositoryPath, compressMode, startRevision, endRevision):
    """
    Gets the backup file path (including correct extension) associated with a repository.
    @param config: Config object.
-   @param repository: BDBRepository object.
+   @param repositoryPath: Path to the indicated repository
    @param compressMode: Compress mode to use for this repository.
+   @param startRevision: Starting repository revision.
+   @param endRevision: Ending repository revision.
    @return: Absolute path to the backup file associated with the repository.
    """
-   filename = "svndump-%s.txt" % buildNormalizedPath(repository.repositoryPath)
+   normalizedPath = buildNormalizedPath(repositoryPath)
+   filename = "svndump-%d:%d-%s.txt" % (startRevision, endRevision, normalizedPath)
    if compressMode == 'gzip':
       filename = "%s.gz" % filename
    elif compressMode == 'bzip2':
@@ -884,7 +886,7 @@ def _getBackupPath(config, repository, compressMode):
    logger.debug("Backup file path is [%s]" % backupPath)
    return backupPath
 
-def _backupRepository(config, repositoryType, repositoryPath, backupPath, revisionPath, fullBackup, collectMode, compressMode):
+def _backupRepository(config, repositoryType, repositoryPath, revisionPath, fullBackup, collectMode, compressMode):
    """
    Backs up an individual Subversion repository (either BDB or FSFS).
 
@@ -894,7 +896,6 @@ def _backupRepository(config, repositoryType, repositoryPath, backupPath, revisi
    @param config: Cedar Backup configuration.
    @param repositoryType: Type of the repository (assumed to be BDB or FSFS).
    @param repositoryPath: Path to Subversion repository to back up.
-   @param backupPath: Path to backup file that will be written.
    @param revisionPath: Path used to store incremental revision information.
    @param fullBackup: Indicates whether this should be a full backup.
    @param collectMode: Collect mode to use.
@@ -918,6 +919,7 @@ def _backupRepository(config, repositoryType, repositoryPath, backupPath, revisi
             logger.info("No need to back up repository [%s]; no new revisions." % repositoryPath)
             return
       logger.debug("Using incremental backup, revision: (%d, %d)." % (startRevision, endRevision))
+   backupPath = _getBackupPath(config, repositoryPath, compressMode, startRevision, endRevision)
    outputFile = _getOutputFile(backupPath, compressMode)
    try:
       if repositoryType == "BDB":
