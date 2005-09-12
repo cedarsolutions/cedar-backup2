@@ -559,8 +559,8 @@
 
          <para>
             The options configuration section contains configuration options
-            that are not specific to any one action.  All of the fields are
-            required and must not be empty.
+            that are not specific to any one action.  All of the fields (other
+            than the overrides section) are required and must not be empty.
          </para>
 
          <para>
@@ -574,6 +574,14 @@
    &lt;backup_user&gt;backup&lt;/backup_user&gt;
    &lt;backup_group&gt;backup&lt;/backup_group&gt;
    &lt;rcp_command&gt;/usr/bin/scp -B&lt;/rcp_command&gt;
+   &lt;override&gt;
+      &lt;command&gt;cdrecord&lt;/command&gt;
+      &lt;abs_path&gt;/opt/local/bin/cdrecord&lt;/abs_path&gt;
+   &lt;/override&gt;
+   &lt;override&gt;
+      &lt;command&gt;mkisofs&lt;/command&gt;
+      &lt;abs_path&gt;/opt/local/bin/mkisofs&lt;/abs_path&gt;
+   &lt;/override&gt;
 &lt;/options&gt;
          </programlisting>
 
@@ -680,6 +688,64 @@
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be non-empty
                   </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>override</literal></term>
+               <listitem>
+                  <para>Command to override with a customized path.</para>
+                  <para>
+                     This is a subsection which contains a command to override
+                     with a customized path.  This functionality would be used
+                     if root's <literal>$PATH</literal> does not include a
+                     particular required command, or if there is a need to use
+                     a version of a command that is different than the one
+                     listed on the <literal>$PATH</literal>.  Most users will
+                     only use this section when directed to, in order to fix a
+                     problem.
+                  </para>
+                  <para>
+                     This section is optional, and can be repeatd as many times
+                     as necessary.
+                  </para>
+                  <para>
+                     The override subsection must contain the following two
+                     fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>command</literal></term>
+                        <listitem>
+                           <para>
+                              Name of the command to be overridden, i.e.
+                              <quote>cdrecord</quote>. 
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a
+                              non-empty string.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>abs_path</literal></term>
+                        <listitem>
+                           <para>
+                              The absolute path where the overridden command 
+                              can be found.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an
+                              absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
                </listitem>
             </varlistentry>
 
