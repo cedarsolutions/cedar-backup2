@@ -384,6 +384,21 @@
          always optional and can be omitted unless extensions are in use.
       </para>
 
+      <note>
+         <para>
+            Even though the Mac OS X (darwin) filesystem is
+            <emphasis>not</emphasis> case-sensitive, Cedar Backup configuration
+            <emphasis>is</emphasis> generally case-sensitive on that platform,
+            just like on all other platforms.  For instance, even though the
+            files <quote>Ken</quote> and <quote>ken</quote> might be the same on the
+            Mac OS X filesystem, an exclusion in Cedar Backup configuration for
+            <quote>ken</quote> will only match the file if it is actually on
+            the filesystem with a lower-case <quote>k</quote> as its first
+            letter.  This won't surprise the typical UNIX user, but might
+            surprise someone who's gotten into the <quote>Mac Mindset</quote>.
+         </para>
+      </note>
+
       <!-- ################################################################# -->
 
       <sect2 id="cedar-config-configfile-sample">
@@ -394,7 +409,7 @@
             Both the Python source distribution and the Debian package come with a
             sample configuration file.  The Debian package includes a stripped
             config file in <filename>/etc/cback.conf</filename> and a larger
-            sample in <filename>/usr/share/doc/cedar-backup2/cback.conf.sample</filename>.
+            sample in <filename>/usr/share/doc/cedar-backup2/examples/cback.conf.sample</filename>.
          </para>
 
          <para>
@@ -534,15 +549,6 @@
 
          </variablelist>
 
-         <!--
-         <sidebar>
-            <title>Backwards Compatibility</title>
-            <para>
-               The &lt;generator&gt; element is new for Cedar Backup v2.0.      
-            </para>
-         </sidebar>
-         -->
-
       </sect2>
 
       <!-- ################################################################# -->
@@ -679,25 +685,6 @@
 
          </variablelist>
          
-         <!--
-         <sidebar>
-            <title>Backwards Compatibility</title>
-
-            <para>
-               In Cedar Backup v1.0, all remote peers had to use the same rcp
-               command, specified here.  In Cedar Backup v2.0, this value is
-               just used as the default by remote peers, but they can override
-               it.
-            </para>
-
-            <para>
-               in Cedar Backup v1.0, each remote peer had to specify its own
-               backup user value.  In Cedar Backup v2.0, remote peers can rely
-               on the backup user in this section as a default.
-            </para>
-         </sidebar>
-         -->
-
       </sect2>
 
       <!-- ################################################################# -->
@@ -1230,35 +1217,6 @@
 
          </variablelist>
 
-         <!--
-         <sidebar>
-            <title>Backwards Compatibility</title>
-
-            <para>
-               Cedar Backup v1.0 also supported a fourth archive mode,
-               <literal>tarz</literal>, which resulted in a compressed tarfile
-               (<filename>file.tar.Z</filename>).  Cedar Backup v2.0 does not
-               support this archive mode because the rewrite moved to using
-               native libraries rather than external utilities, and Python does
-               not contain a native library to create compressed archives.
-            </para>
-
-            <para>
-               Cedar Backup v1.0 did not allow collect defaults to be set
-               outside of individual collect directories, and did not exclude
-               program-wide excluded patterns or directories.  It also did not
-               allow excluded relative directories or patterns at the directory
-               level.
-            </para>
-
-            <para>
-               The collect directory field <literal>collect_mode</literal> can
-               also be written as just <literal>mode</literal>, for backwards
-               compatibility with v1.0.
-            </para>
-         </sidebar>
-         -->
-
       </sect2>
 
       <!-- ################################################################# -->
@@ -1520,28 +1478,6 @@
 
          </variablelist>
 
-         <!--
-         <sidebar>
-            <title>Backwards Compatibility</title>
-
-            <para>
-               Cedar Backup v1.0 did not allow the rcp command to be overridden
-               for remote peers.  It also did not allow the backup user from
-               the options section to be used as the default backup user for remote
-               peers.
-            </para>
-
-            <para>
-               To make the DTD more explicit and remove the need for the
-               <literal>type</literal> tag, it would make some sense to split
-               the <literal>peer</literal> section into
-               <literal>local_peer</literal> and <literal>remote_peer</literal>
-               sections.  However, doing that would break backwards
-               compatibility with v1.0, so I've chosen to leave it alone.
-            </para>
-         </sidebar>
-         -->
-
       </sect2>
 
       <!-- ################################################################# -->
@@ -1663,16 +1599,28 @@
                <listitem>
                   <para>SCSI id for writer device</para>
                   <para>
-                     Under Linux, CD burners generally only work through a SCSI
-                     or pseudo-SCSI interface.  This value is the SCSI id for
-                     the drive in the form <literal>scsibus,target,lun</literal>.  
-                     The <literal>ATA:</literal> or <literal>ATAPI:</literal> 
-                     prefixes are also allowed.
-                     <footnote id="cedar-config-foot-cdrom">
-                     <para>For more information on how to configure your
-                     CD-R/CD-RW device, see <ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO"/></para></footnote> 
-                     <footnote id="cedar-config-foot-ata"><para>See 
-                     <ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html"/></para></footnote>
+                     In order to execute the store action, your CD-R or CD-RW
+                     drive must either be a SCSI device or must be configured
+                     to act like a SCSI device from the perspective of the
+                     <command>cdrecord</command> and <command>mkisofs</command>
+                     commands.  This value configures the SCSI id that will be
+                     used to write to your device.
+                  </para>
+                  <para>
+                     For the purposes of Cedar Backup, a valid SCSI identifier
+                     must either be in the form
+                     <literal>scsibus,target,lun</literal>,
+                     <literal>ATA:scsibus,target,lun</literal>, or
+                     <literal>ATAPI:scsibus,target,lun</literal>.  For example,
+                     <literal>1,6,2</literal>, <literal>ATA:0,0,0</literal> and
+                     <literal>ATAPI:0,1,0</literal> are all valid identifiers.
+                  </para>
+                  <para>
+                     Technically, Mac OS X identifiers are also accepted, but
+                     the syntax is not documented here because the store action
+                     is not supported for that platform.  See <xref
+                     linkend="cedar-config-scsi"/> for more information on SCSI
+                     devices and how they are configured.
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be a valid SCSI identifier.
@@ -1756,25 +1704,6 @@
             </varlistentry>
 
          </variablelist>
-
-         <!--
-         <sidebar>
-            <title>Backwards Compatibility</title>
-
-            <para>
-               Cedar Backup v1.0 did not accept the device type field, which is
-               why it is optional.  The behavior based on defaults for these
-               values matches the only available behavior in v1.0.
-            </para>
-
-            <para>
-               Cedar Backup v2.0 does not require the drive speed field
-               (although v1.0 does) because the underlying writer functionality
-               is now smart enough to use the device default if no speed
-               is indicated.
-            </para>
-         </sidebar>
-         -->
 
       </sect2>
 
@@ -1946,16 +1875,16 @@
             Backup extension to back up a certain kind of database repository,
             and you wanted to map that extension to the <quote>database</quote>
             command-line action.  You have been told that this function is
-            called <quote>foobar.database</quote>.  You think of this backup as
-            a <quote>collect</quote> kind of action, so you want it to be
+            called <quote>foo.bar()</quote>.  You think of this backup as a
+            <quote>collect</quote> kind of action, so you want it to be
             performed after collect but before stage and purge if more than one
             action is specified on the command line.  
          </para>
 
          <para>
             To configure this extension, you would list an action with a name
-            <quote>database</quote>, a module <quote>foobar</quote>,
-            a function name <quote>database</quote> and an index of
+            <quote>database</quote>, a module <quote>foo</quote>,
+            a function name <quote>bar</quote> and an index of
             <quote>101</quote>.
          </para>
 
@@ -1967,8 +1896,8 @@
 &lt;extensions&gt;
    &lt;action&gt;
       &lt;name&gt;database&lt;/name&gt;
-      &lt;module&gt;foobar&lt;/module&gt;
-      &lt;function&gt;database&lt;/function&gt;
+      &lt;module&gt;foo&lt;/module&gt;
+      &lt;function&gt;bar&lt;/function&gt;
       &lt;index&gt;101&lt;/index&gt;
    &lt;/action&gt;
 &lt;/extensions&gt;
@@ -2049,16 +1978,6 @@
 
          </variablelist>
 
-         <!--
-         <sidebar>
-            <title>Backwards Compatibility</title>
-            <para>
-               Extensions functionality is new for Cedar Backup v2.0, so this
-               configuration section does not exist in v1.0.
-            </para>
-         </sidebar>
-         -->
-
       </sect2>
 
    </sect1>
@@ -2088,6 +2007,19 @@
          Note: all of these configuration steps should be run as the root user,
          unless otherwise indicated.
       </para>
+
+      <tip>
+         <para>
+            This setup procedure discusses how to set up Cedar Backup in the
+            <quote>normal case</quote> for a pool of one.  If you would like to
+            modify the way Cedar Backup works (for instance, by ignoring the
+            store stage and just letting your backup sit in a staging
+            directory), you can do that.  You'll just have to modify the
+            procedure below based on information in the remainder of the
+            manual.
+         </para>
+      </tip>
+
 
       <!-- ################################################################# -->
 
@@ -2124,34 +2056,26 @@
 
          <para>
             Your CD-R or CD-RW drive must either be a SCSI device or must be
-            configured to act like a Linux SCSI device.
-            <footnoteref linkend="cedar-config-foot-cdrom"/>
-            Regardless of what kind of drive you have, make sure you know its
-            SCSI address (in the form <literal>scsibus, target, lun</literal>)
-            and its device name (i.e. <literal>/dev/cdrw</literal>).  The SCSI
+            configured to act like a SCSI device from the perspective of the
+            <command>cdrecord</command> and <command>mkisofs</command>
+            commands.  Regardless of what kind of drive you have, make sure you
+            know its SCSI address and its filesystem device name.  The SCSI
             address will be used to write to media, and the device name will be
             used when Cedar Backup needs to mount the media (for instance, when
             a validation check must be run).
          </para>
 
          <para>
-            If you have an IDE drive rather than a SCSI drive and are using the
-            IDE-to-SCSI interface (which is the norm for most IDE drives under
-            Linux), then be prepared to enter the simulated SCSI device address,
-            which is often <literal>0,0,0</literal>.  Newer Linux kernels
-            (2.6.x) can also be compiled with support for other kinds of CD drive
-            interfaces.  If
-            you have configured your CD drive to use <firstterm>ATA</firstterm>
-            <footnoteref linkend="cedar-config-foot-ata"/>
-            or <firstterm>ATAPI</firstterm>, 
-            <footnote id="cedar-config-foot-atapi"><para>
-            As of kernel 2.6, you can use ATAPI directly, without SCSI emulation,
-            by prepending <literal>ATAPI:</literal> to the device address.
-            </para></footnote>
-            then include this prefix in your
-            simulated device address, i.e. <literal>ATA:0,0,0</literal> or
-            <literal>ATAPI:0,0,0</literal>.
+            See <xref linkend="cedar-config-scsi"/> for more
+            information on SCSI devices and how they are configured.
          </para>
+
+         <note>
+            <para>
+               There is no need to set up your CD-R or CD-RW device if you
+               have decided not to execute the store action.
+            </para>
+         </note>
 
       </sect2>
 
@@ -2162,9 +2086,9 @@
          <title>Step 3: Configure your backup user.</title>
 
          <para>
-             Choose a user to be used for backups. Some Linux distributions may
+             Choose a user to be used for backups. Some platforms may
              come with a <quote>ready made</quote> backup user. For other
-             distributions, you may have to create a user yourself. You may
+             platforms, you may have to create a user yourself. You may
              choose any id you like, but a descriptive name such as
              <literal>backup</literal> or <literal>cback</literal> is a good
              choice.  See your distribution's documentation for information on
@@ -2262,6 +2186,19 @@
             the backup only one day per week, three days per week, etc.
          </para>
 
+         <warning>
+            <para>
+               Because of the way Cedar Backup works, you must ensure that your
+               backup <emphasis>always</emphasis> run on the first day of your
+               configured week.  This is because Cedar Backup will only clear
+               incremental backup information and re-initialize your media when
+               running on the first day of the week.  If you skip running Cedar
+               Backup on the first day of the week, your backups will likely be
+               <quote>confused</quote> until either the next week, or until you
+               re-run the backup using the <option>--full</option> flag.
+            </para>
+         </warning>
+
          <para>
             Since Cedar Backup should be run as root, one way to configure the
             cron job is to add a line like this to your
@@ -2339,7 +2276,7 @@ cback all
                permissions on the file appropriately.  For instance, if you
                configure any extensions that require passwords or other similar
                information, you should make the file readable only to root or
-               to the file owner, if the owner is not root.
+               to the file owner (if the owner is not root).
             </para>
          </warning>
 
@@ -2494,10 +2431,10 @@ HgZooYqQ9pw+ZduXgmPcAAv2b5eTm07wRqFt/U84k6bhTzs= user@machine
          <title>Step 3: Configure your backup user.</title>
 
          <para>
-             Choose a user to be used for backups. Some Linux distributions may
-             come with a "ready made" backup user. For other distributions, you
-             may have to create a user yourself. You may choose any id you
-             like, but a descriptive name such as <literal>backup</literal> or
+             Choose a user to be used for backups. Some platforms may come with
+             a "ready made" backup user. For other platforms, you may have to
+             create a user yourself. You may choose any id you like, but a
+             descriptive name such as <literal>backup</literal> or
              <literal>cback</literal> is a good choice.  See your
              distribution's documentation for information on how to add a user.
          </para>
@@ -2636,6 +2573,20 @@ The key fingerprint is:
             etc.
          </para>
 
+         <warning>
+            <para>
+               Because of the way Cedar Backup works, you must ensure that at
+               least your collect action <emphasis>always</emphasis> runs on
+               the first day of your configured week.  This is because Cedar
+               Backup will only clear incremental backup information when
+               running on the first day of the week.  If you skip running the
+               collect action on the first day of the week, your backups will
+               likely be <quote>confused</quote> until either the next week, or
+               until you re-run the collect action backup using the
+               <option>--full</option> flag.
+            </para>
+         </warning>
+
          <para>
             Since Cedar Backup should be run as root, you should add a set of
             lines like this to your <filename>/etc/crontab</filename> file:
@@ -2713,7 +2664,7 @@ The key fingerprint is:
                permissions on the file appropriately.  For instance, if you
                configure any extensions that require passwords or other similar
                information, you should make the file readable only to root or
-               to the file owner, if the owner is not root.
+               to the file owner (if the owner is not root).
             </para>
          </warning>
 
@@ -2794,6 +2745,18 @@ The key fingerprint is:
          unless otherwise indicated.
       </para>
 
+      <tip>
+         <para>
+            This setup procedure discusses how to set up Cedar Backup in the
+            <quote>normal case</quote> for a master.  If you would like to
+            modify the way Cedar Backup works (for instance, by ignoring the
+            store stage and just letting your backup sit in a staging
+            directory), you can do that.  You'll just have to modify the
+            procedure below based on information in the remainder of the
+            manual.
+         </para>
+      </tip>
+
       <!-- ################################################################# -->
 
       <sect2>
@@ -2829,31 +2792,26 @@ The key fingerprint is:
 
          <para>
             Your CD-R or CD-RW drive must either be a SCSI device or must be
-            configured to act like a Linux SCSI device.
-            <footnoteref linkend="cedar-config-foot-cdrom"/>
-            Regardless of what kind of drive you have, make sure you know its
-            SCSI address (in the form <literal>scsibus, target, lun</literal>)
-            and its device name (i.e. <literal>/dev/cdrw</literal>).  The SCSI
+            configured to act like a SCSI device from the perspective of the
+            <command>cdrecord</command> and <command>mkisofs</command>
+            commands.  Regardless of what kind of drive you have, make sure you
+            know its SCSI address and its filesystem device name.  The SCSI
             address will be used to write to media, and the device name will be
             used when Cedar Backup needs to mount the media (for instance, when
             a validation check must be run).
          </para>
 
          <para>
-            If you have an IDE drive rather than a SCSI drive and are using the
-            IDE-to-SCSI interface (which is the norm for most IDE drives under
-            Linux), then be prepared to enter the simulated SCSI device address,
-            which is often <literal>0,0,0</literal>.  Newer Linux kernels
-            (2.6.x) can also be compiled with support for other kinds of CD drive
-            interfaces.  If
-            you have configured your CD drive to use <firstterm>ATA</firstterm>
-            <footnoteref linkend="cedar-config-foot-ata"/>
-            or <firstterm>ATAPI</firstterm>, 
-            <footnoteref linkend="cedar-config-foot-atapi"/>
-            then include this prefix in your
-            simulated device address, i.e. <literal>ATA:0,0,0</literal> or
-            <literal>ATAPI:0,0,0</literal>.
+            See <xref linkend="cedar-config-scsi"/> for more
+            information on SCSI devices and how they are configured.
          </para>
+
+         <note>
+            <para>
+               There is no need to set up your CD-R or CD-RW device if you
+               have decided not to execute the store action.
+            </para>
+         </note>
 
       </sect2>
 
@@ -2864,13 +2822,12 @@ The key fingerprint is:
          <title>Step 3: Configure your backup user.</title>
 
          <para>
-             Choose a user to be used for backups. Some Linux distributions may
-             come with a <quote>ready made</quote> backup user. For other
-             distributions, you may have to create a user yourself. You may
-             choose any id you like, but a descriptive name such as
-             <literal>backup</literal> or <literal>cback</literal> is a good
-             choice.  See your distribution's documentation for information on
-             how to add a user.
+             Choose a user to be used for backups. Some platforms may come with
+             a <quote>ready made</quote> backup user. For other platforms, you
+             may have to create a user yourself. You may choose any id you
+             like, but a descriptive name such as <literal>backup</literal> or
+             <literal>cback</literal> is a good choice.  See your
+             distribution's documentation for information on how to add a user.
          </para>
 
          <note>
@@ -2993,6 +2950,14 @@ The key fingerprint is:
             crontab(5).
          </para>
 
+         <note>
+            <para>
+               Keep in mind that you do not necessarily have to run the collect
+               action on the master.  See notes further below for more
+               information.
+            </para>
+         </note>
+
          <para>
             Backing up large directories and creating ISO CD images can be
             intensive operations, and could slow your computer down
@@ -3002,6 +2967,20 @@ The key fingerprint is:
             execute the backup only one day per week, three days per week,
             etc.
          </para>
+
+         <warning>
+            <para>
+               Because of the way Cedar Backup works, you must ensure that at
+               least your collect and store actions <emphasis>always</emphasis>
+               run on the first day of your configured week.  This is because
+               Cedar Backup will only clear incremental backup information and
+               re-initialize your media when running on the first day of the
+               week.  If you skip running Cedar Backup on the first day of the
+               week, your backups will likely be <quote>confused</quote> until
+               either the next week, or until you re-run the collect and store
+               actions using the <option>--full</option> flag.
+            </para>
+         </warning>
 
          <para>
             Since Cedar Backup should be run as root, you should add a set of
@@ -3053,12 +3032,30 @@ The key fingerprint is:
          <title>Step 6: Create the Cedar Backup configuration file.</title>
 
          <para>
-            Following the instructions in <xref
-            linkend="cedar-config-configfile"/> (above), create a configuration
-            file for your machine.  Since you are working with a master
-            machine, you must configure all four action-specific sections:
-            collect, stage, store and purge.
+            Following the instructions in 
+            <xref linkend="cedar-config-configfile"/> (above), create a
+            configuration file for your machine.  Since you are working with a
+            master machine, you would typically configure all four
+            action-specific sections: collect, stage, store and purge.
          </para>
+
+         <note>
+            <para>
+               Note that the master can treat itself as a <quote>client</quote>
+               peer for certain actions.  As an example, if you run the collect
+               action on the master, then you will stage that data by
+               configuring a local peer representing the master.
+            </para>
+
+            <para>
+               Something else to keep in mind is that you do not really have to
+               run the collect action on the master.  For instance, you may
+               prefer to just use your master machine as a <quote>consolidation
+               point</quote> machine that just collects data from the other
+               client machines in a backup pool.  In that case, there is no
+               need to collect data on the master itself.
+            </para>
+         </note>
             
          <para>
             The usual location for the Cedar Backup config file is
@@ -3080,7 +3077,7 @@ The key fingerprint is:
                permissions on the file appropriately.  For instance, if you
                configure any extensions that require passwords or other similar
                information, you should make the file readable only to root or
-               to the file owner, if the owner is not root.
+               to the file owner (if the owner is not root).
             </para>
          </warning>
 
@@ -3132,10 +3129,10 @@ The key fingerprint is:
          </para>
 
          <para>
-            If you are able to log in successfully without entering a password,
-            then things have been configured properly. Otherwise, double-check
-            that you followed the user setup instructions for the master and
-            the clients.
+            If you are able to log in successfully to each client without
+            entering a password, then things have been configured properly.
+            Otherwise, double-check that you followed the user setup
+            instructions for the master and the clients.
          </para>
 
       </sect2>
@@ -3180,6 +3177,109 @@ The key fingerprint is:
             <footnoteref linkend="cedar-config-foot-bugzilla"/>
             To be safe, always enable the consistency check option in the
             store configuration section.</emphasis>
+         </para>
+
+      </sect2>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-scsi">
+         
+      <title>Configuring your SCSI Device</title>
+
+      <sect2>
+
+         <title>SCSI Required</title>
+
+         <para>
+            In order to execute the store action, your CD-R or CD-RW drive must
+            either be a SCSI device or must be configured to act like a SCSI
+            device from the perspective of the <command>cdrecord</command> and
+            <command>mkisofs</command> commands.  Regardless of what kind of drive
+            you have, make sure you know its SCSI address and its filesystem
+            device name.  The SCSI address will be used to write to media, and the
+            device name will be used when Cedar Backup needs to mount the media
+            (for instance, when a validation check must be run).
+         </para>
+
+         <para>
+            A true SCSI device will always have an address
+            <literal>scsibus,target,lun</literal>, for instance
+            <literal>1,6,2</literal>.  This should hold true on most UNIX-like
+            systems including Linux and the various BSDs (although I do not have a
+            BSD system to test with currently).  The SCSI address represents the
+            location of your writer device on the one or more SCSI buses that you
+            have available on your system.  
+         </para>
+
+      </sect2>
+      
+      <sect2>
+
+         <title>Linux Notes</title>
+
+         <para>
+            On a Linux system, IDE writer devices often have a simulated SCSI
+            address, which allows SCSI-based software to access the device through
+            an IDE-to-SCSI interface.  Under these circumstances, the first IDE
+            writer device typically has an address <literal>0,0,0</literal>.
+            Newer Linux systems (kernel 2.6.x) can also be compiled with support
+            for other kinds of CD drive interfaces.  If your kernel supports it,
+            you can address <firstterm>ATA</firstterm> or
+            <firstterm>ATAPI</firstterm> drives without SCSI emulation by
+            prepending an indicator to the simulated device address, for instance
+            <literal>ATA:0,0,0</literal> or <literal>ATAPI:0,0,0</literal>.
+         </para>
+
+         <para>
+            A discussion of how to configure your CD writer hardware is outside
+            the scope of this document, but you may want to reference the
+            <citetitle>Linux CDROM HOWTO</citetitle> 
+            (<ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO"/>)
+            or the <citetitle>ATA RAID HOWTO</citetitle>
+            (<ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html"/>)
+            for more information.
+         </para>
+
+      </sect2>
+
+      <sect2>
+
+         <title>Mac OS X Notes</title>
+
+         <para>
+            On a Mac OS X (darwin) system, things get strange.  Apple has
+            abandoned traditional SCSI device identifiers in favor of a
+            system-wide resource id.  So, on a Mac, your writer device will
+            have a name something like <literal>IOCompactDiscServices</literal>
+            (for a CD writer) or <literal>IODVDServices</literal> (for a DVD
+            writer).  If you have multiple drives, the second drive probably
+            has a number appended, i.e. <literal>IODVDServices/2</literal> for
+            the second DVD writer.  You can try to figure out what the name of
+            your device is by grepping through the output of the command
+            <command>ioreg -l</command>.<footnote><para>Thanks to the
+            file README.macosX in the cdrtools-2.01+01a01 source tree
+            for this information</para></footnote>
+         </para>
+
+         <para>
+            Unfortunately, even if you can figure out what device to use, I
+            can't really support the store action on this platform.  In OS X,
+            the <quote>automount</quote> function of the Finder interferes
+            significantly with Cedar Backup's ability to mount and unmount
+            media and write to the CD or DVD hardware.  The Cedar Backup writer
+            and image functionality does work on this platform, but the effort
+            required to fight the operating system about who owns the media and
+            the device makes it nearly impossible to execute the store action
+            successfully.
+         </para>
+
+         <para>
+            If you are interested in some of my notes about what works and what
+            doesn't on this platform, check out the documentation in the
+            <filename>doc/osx</filename> directory in the source distribution.
          </para>
 
       </sect2>

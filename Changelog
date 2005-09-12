@@ -24,6 +24,15 @@ Version 2.6.0	unreleased
 	  - Tweak existing SCSI id pattern to allow spaces in a few other places
 	  - Add new regression tests for validateScsiId() utility function
 	  - Add code warnings and documentation in manual and in doc/osx 
+	* Update, clean up and extend Cedar Backup User Manual (closes: #21).
+	  - Work through document and copy-edit it now that it's matured
+	  - Add documentation for new options and subversion config items
+	  - Exorcise references to Linux which assumed it was "the" platform
+	  - Add platform-specific notes for non-Linux platforms (darwin, BSDs)
+	  - Clarify purpose of the 'collect' action on the master
+	  - Clarify how actions (i.e. 'store') are optional
+	  - Clarify that 'all' does not execute extensions
+	  - Add an appendix on restoring backups
 
 Version 2.5.0	12 Jul 2005
 

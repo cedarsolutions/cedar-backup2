@@ -43,6 +43,7 @@
 <!ENTITY extensions  SYSTEM "extensions.xml">
 <!ENTITY extenspec   SYSTEM "extenspec.xml">
 <!ENTITY depends     SYSTEM "depends.xml">
+<!ENTITY recovering  SYSTEM "recovering.xml">
 <!ENTITY copyright   SYSTEM "copyright.xml">
 ]>
 
@@ -114,6 +115,7 @@
    &extensions;
    &extenspec;
    &depends;
+   &recovering;
    &copyright;
 
 </book>

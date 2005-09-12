@@ -81,23 +81,33 @@
 
       <para>
          There are many different backup software implementations out there in
-         the free-and open-source world. Cedar Backup aims to fill a niche: it
-         aims to be a good fit for people who need to back up a limited amount
-         of important data to CD-R or CD-RW on a regular basis. Cedar Backup isn't
-         for you if you want to back up your MP3 collection every night, or if
-         you want to back up a few hundred machines. However, if you administer 
-         a small set machines and you want to run daily incremental backups
-         for things like system configuration, current email, small web sites,
-         or a CVS repository, then Cedar Backup is probably worth your time.
+         the free and open-source software world. Cedar Backup aims to fill a
+         niche: it aims to be a good fit for people who need to back up a
+         limited amount of important data to CD-R or CD-RW on a regular basis.
+         Cedar Backup isn't for you if you want to back up your MP3 collection
+         every night, or if you want to back up a few hundred machines.
+         However, if you administer a small set machines and you want to run
+         daily incremental backups for things like system configuration,
+         current email, small web sites, or a CVS repository, then Cedar Backup
+         is probably worth your time.
       </para>
 
       <para>
          Cedar Backup has been developed on a Debian GNU/Linux system and is
-         currently supported only on Debian and other Linux systems.  However,
-         since it is written in portable Python, it should in theory run
-         without too many problems on other UNIX-like systems which have a
-         working version of the <command>cdrecord</command> and
-         <command>mkisofs</command> utilities.
+         primarily supported on Debian and other Linux systems.  However, since
+         it is written in portable Python, it should run without problems on
+         just about any UNIX-like operating system.  In particular, full Cedar
+         Backup functionality is known to work on Debian and SuSE Linux
+         systems, and client functionality is also known to work on FreeBSD and
+         Mac OS X systems.
+      </para>
+
+      <para>
+         To run a Cedar Backup client, you really just need a working Python
+         installation.  To run a Cedar Backup master, you will also need a set
+         of other executables, most of which are related to building and
+         writing CD images.  A full list of dependencies is provided in 
+         <xref linkend="cedar-install-source-deps"/>.
       </para>
 
    </sect1>
@@ -216,9 +226,10 @@
          Python. <footnote><para>See <ulink url="http://www.python.org/"/>
          .</para></footnote> At the time, I chose Python mostly because I was
          interested in learning it, but in retrospect it turned out to be a
-         very good decision.  Python has almost all of the strengths of Perl,
-         but few of its inherent weaknesses (primarily, Python code often ends
-         up being much more readable than Perl code).
+         very good decision.  From my perspective, Python has almost all of the
+         strengths of Perl, but few of its inherent weaknesses (I feel that
+         primarily, Python code often ends up being much more readable than
+         Perl code).
       </para>
 
       <para>
@@ -271,7 +282,7 @@
          compact, better focused, and better documented than any release before
          it.  Utility code is less application-specific, and is now usable as a
          general-purpose library.  The 2.0 release also includes a complete
-         regression test suite of over 1900 tests, which will help to ensure
+         regression test suite of over 2000 tests, which will help to ensure
          that quality is maintained as development continues into the future.
          <footnote><para>Tests are implemented using Python's unit test
          framework.  See <ulink url="http://docs.python.org/lib/module-unittest.html"/>.</para></footnote> 
