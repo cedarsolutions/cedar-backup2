@@ -57,10 +57,10 @@
       <title>Audience</title>
     
       <para>
-         This manual has been written for computer-literate administrators who need to
-         use and configure Cedar Backup on their Linux system.  The examples in
-         this manual assume the reader is relatively comfortable with Unix and
-         command-line interfaces.
+         This manual has been written for computer-literate administrators who
+         need to use and configure Cedar Backup on their Linux or UNIX-like
+         system.  The examples in this manual assume the reader is relatively
+         comfortable with UNIX and command-line interfaces.
       </para>
 
    </sect1>
@@ -219,6 +219,18 @@
                   Provides some additional information about the packages which
                   Cedar Backup relies on, including information about how to
                   find documentation and packages on non-Debian systems.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><xref linkend="cedar-recovering"/></term>
+            <listitem>
+               <para>
+                  Cedar Backup provides no facility for restoring backups,
+                  assuming the administrator can handle this infrequent task.
+                  This appendix provides some notes for administrators to work
+                  from.
                </para>
             </listitem>
          </varlistentry>

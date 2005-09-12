@@ -14,6 +14,11 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+URGENT
+
+* Add <type> at <subversion> configuration level to provide defaults for repositories (we documented it!)
+* Add "-lower:upper-" into svnadmin dump name at the front as documented in user manual
+
 
 FUTURE FUNCTIONALITY
 

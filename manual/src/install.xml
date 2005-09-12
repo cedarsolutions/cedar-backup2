@@ -49,22 +49,34 @@
       </para>
 
       <para>
-         If you are running a Linux distribution other than Debian, then you
-         must use the Python source distribution to install Cedar Backup.  When
-         using this method, you need to manage all of the dependencies
-         yourself.
+         If you are running a Linux distribution other than Debian or you are
+         running some other platform like FreeBSD or Mac, then you must use the
+         Python source distribution to install Cedar Backup.  When using this
+         method, you need to manage all of the dependencies yourself.
       </para>
 
       <sidebar>
+
          <title>Non-Linux Platforms</title>
 
          <para>
-            Currently, Cedar Backup is only <quote>officially</quote> supported
-            on Linux platforms.  However, it should also run on other UNIX-like
-            systems where the <command>mkisofs</command> and
-            <command>cdrecord</command> commands are available.  
+            Cedar Backup has been developed on a Debian GNU/Linux system and is
+            primarily supported on Debian and other Linux systems.  However,
+            since it is written in portable Python, it should run without
+            problems on just about any UNIX-like operating system.  In
+            particular, full Cedar Backup functionality is known to work on
+            Debian and SuSE Linux systems, and client functionality is also
+            known to work on FreeBSD and Mac OS X systems.
          </para>
-            
+
+         <para>
+            To run a Cedar Backup client, you really just need a working Python
+            installation.  To run a Cedar Backup master, you will also need a set
+            of other executables, most of which are related to building and
+            writing CD images.  A full list of dependencies is provided further
+            on in this chapter.
+         </para>
+
          <para>
             If you would like to use Cedar Backup on a non-Linux system, you
             should install the Python source distribution along with all of the
@@ -74,6 +86,7 @@
             with information about your platform and any problems you
             encountered.
          </para>
+
       </sidebar>
 
    </sect1>
@@ -99,13 +112,28 @@
          Cedar Solutions APT data source to your
          <filename>/etc/apt/sources.list</filename> file.  <footnote><para>See
          <ulink url="http://cedar-solutions.com/debian.html"/>.</para></footnote>
-         Then, install the package using this set of commands:
+      </para>
+
+      <para>
+         After you have configured the proper APT data source, install Cedar
+         Backup using this set of commands:
       </para>
 
       <screen>
 $ apt-get update
 $ apt-get install cedar-backup2
       </screen>
+
+      <para>
+         Several of the Cedar Backup dependencies are listed as
+         <quote>recommended</quote> rather than required.  If you are
+         installing Cedar Backup on a master machine, you must install some or
+         all of the recommended dependencies, depending on which actions you
+         intend to execute.  The stage action normally requires ssh, and the
+         store action requires cdrecord, mkisofs and eject.  Clients must
+         typically also install some sort of ssh server if a remote master will
+         collect backups from them.
+      </para>
 
       <para>
          If you would prefer, you can also download the
@@ -142,23 +170,19 @@ $ apt-get install cedar-backup2
          On platforms other than Debian, Cedar Backup is installed from a
          Python source distribution. <footnote><para>See <ulink
          url="http://docs.python.org/lib/module-distutils.html"/>
-         .</para></footnote> A Python source distribution is much like a CPAN
-         Perl distribution, <footnote><para>See <ulink
-         url="http://cpan.org/"/>.</para></footnote> except that it typically
-         does not include dependency-checking information.  This means that you
-         will have to manage dependencies on your own.
+         .</para></footnote> You will have to manage dependencies on your own.
       </para>
 
       <tip>
          <para>
-            Most Linux distributions provide an automatic or semi-automatic
-            way to install packages like the ones Cedar Backup requires
-            (think RPMs for Mandrake or RedHat, or Gentoo's Portage system).
-            If you are not sure how to install these packages on your
-            system, you might want to check out 
-            <xref linkend="cedar-depends"/>.  This appendix provides links
-            to <quote>upstream</quote> source packages, plus as much
-            information as I have been able to gather about packages for
+            Many UNIX-like distributions provide an automatic or semi-automatic
+            way to install packages like the ones Cedar Backup requires (think
+            RPMs for Mandrake or RedHat, Gentoo's Portage system, the Fink
+            project for Mac OS X, or the BSD ports system).  If you are not
+            sure how to install these packages on your system, you might want
+            to check out <xref linkend="cedar-depends"/>.  This appendix
+            provides links to <quote>upstream</quote> source packages, plus as
+            much information as I have been able to gather about packages for
             non-Debian platforms.
          </para>
       </tip>
@@ -178,22 +202,26 @@ $ apt-get install cedar-backup2
          <para>
             Cedar Backup is written in Python and requires version 2.3 or
             greater of the language.  Version 2.3 was released on 29 July 2003,
-            so by now most current Linux distributions should include it.
-            Cedar Backup also requires one non-standard Python module, called
-            PyXML (version 0.8.2 or better).  You must install these Python
-            dependencies on every peer node in a pool (master or client).
+            so by now most current Linux and BSD distributions should include
+            it.  Cedar Backup also requires one non-standard Python module,
+            called PyXML (version 0.8.2 or better).  You must install these
+            Python dependencies on every peer node in a pool (master or
+            client).
          </para>
 
          <para>
             Additionally, remote client peer nodes must be running an
             <firstterm>RSH-compatible</firstterm> server, such as the
-            <command>ssh</command> server.  
+            <command>ssh</command> server, and master nodes must have an
+            RSH-compatible client installed if they need to connect to remote
+            peer machines.
          </para>
 
          <para>
-            Master machines require several other system utilities, most having
-            to do with writing and validating CD media.  On master machines,
-            you must make sure that these utilities are available:
+            Master machines also require several other system utilities, most
+            having to do with writing and validating CD media.  On master
+            machines, you must make sure that these utilities are available if
+            you want to to run the store action:
          </para>
 
          <itemizedlist>
@@ -203,7 +231,6 @@ $ apt-get install cedar-backup2
             <listitem><para><command>mount</command></para></listitem>
             <listitem><para><command>unmount</command></para></listitem>
             <listitem><para><command>volname</command></para></listitem>
-            <listitem><para>An RSH-compatible client, such as <command>ssh</command></para></listitem>
          </itemizedlist>
 
       </sect2>
@@ -251,6 +278,23 @@ $ python setup.py install
          <para>
             Make sure that you are using Python 2.3 or better to execute
             <filename>setup.py</filename>.
+         </para>
+
+         <para>
+            You may also wish to run the unit tests before actually installing
+            anything.  Run them like so:
+         </para>
+
+         <screen>
+python util/test.py
+         </screen>
+
+         <para>
+            If any unit test reports a failure on your system, please email me the
+            output from the unit test, so I can fix the problem.
+            <footnote><para><email>support@cedar-solutions.com</email></para></footnote>
+            This is particularly important for non-Linux platforms where I do
+            not have a test system available to me.
          </para>
 
          <para>

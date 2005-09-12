@@ -65,12 +65,6 @@
       </para>
 
       <para>
-         Cedar Backup provides no facility for restoring backups.  It is
-         assumed that the user can copy tarfiles off disc and use them to
-         restore missing files as needed.
-      </para>
-
-      <para>
          The <command>cback</command> script is configured via command-line
          options and an XML configuration file on disk.  The configuration file
          is normally stored in <filename>/etc/cback.conf</filename>, but this
@@ -89,6 +83,44 @@
       </warning>
 
    </sect1>
+
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-basic-datarecovery">
+
+      <title>Data Recovery</title>
+
+      <para>
+         Cedar Backup does not include any facility to restore backups.
+         Instead, it assumes that the administrator (using the procedures
+         and references in <xref linkend="cedar-recovering"/>) can handle the task of
+         restoring their own system, using the standard system tools at hand.
+      </para>
+
+      <para>
+         If I were to maintain recovery code in Cedar Backup, I would almost
+         certainly end up in one of two situations.  Either Cedar Backup would
+         only support simple recovery tasks, and those via an interface a lot
+         like that of the underlying system tools; or Cedar Backup would have
+         to include a hugely complicated interface to support more specialized
+         (and hence useful) recovery tasks like restoring individual files as
+         of a certain point in time.  In either case, I would end up trying to
+         maintain critical functionality that would be rarely used, and hence
+         would also be rarely tested by end-users.  I am uncomfortable asking
+         anyone to rely on functionality that falls into this category.
+      </para>
+
+      <para>
+         My primary goal is to keep the Cedar Backup codebase as simple and
+         focused as possible.  I hope you can understand how the choice of
+         providing documentation, but not code, seems to strike the best
+         balance between managing code complexity and providing the
+         functionality that end-users need.  
+      </para>
+         
+   </sect1>
+
 
    <!-- ################################################################# -->
 
@@ -161,12 +193,41 @@
          All of the various actions are discussed further below.
       </para>
 
-      <note>
+      <para>
+         See <xref linkend="cedar-config"/> for more information on how a
+         backup run is configured.
+      </para>
+
+      <sidebar>
+
+         <title>Flexibility</title>
+
          <para>
-            See <xref linkend="cedar-config"/> for more information on how a
-            backup run is configured.
+            Cedar Backup was designed to be flexible.  It allows you to decide
+            for yourself which backup steps you care about executing (and when
+            you execute them), based on your own situation and your own
+            priorities.
          </para>
-      </note>
+            
+         <para>
+            As an example, I always back up every machine I own.  I typically
+            keep 7-10 days of staging directories around, but switch CD media
+            mostly every week.  That way, I can periodically take a disc
+            off-site in case the machine gets stolen or damaged.  
+         </para>
+            
+         <para>
+            If you're not worried about these risks, then there's no need to
+            write to disc.  In fact, some users prefer to use their master
+            machine as a simple <quote>consolidation point</quote>.  They don't
+            back up any data on the master, and don't write to disc at all.
+            They just use Cedar Backup to handle the mechanics of moving
+            backed-up data to a central location.  This isn't quite what Cedar
+            Backup was written to do, but it is flexible enough to meet their
+            needs.
+         </para>
+
+      </sidebar>
 
       <!-- ################################################################# -->
 
@@ -208,6 +269,18 @@
             to be excluded.
          </para>
 
+         <para>
+            This action is optional on the master.  You only need to configure
+            and execute the collect action on the master if you have data to
+            back up on that machine.  If you plan to use the master only as a
+            <quote>consolidation point</quote> to collect data from other
+            machines, then there is no need to execute the collect action
+            there.  If you run the collect action on the master, it behaves the
+            same there as anywhere else, and you have to stage the master's
+            collected data just like any other client (typically by configuring
+            a local peer in the stage action).
+         </para>
+
       </sect2>
 
       <!-- ################################################################# -->
@@ -224,6 +297,13 @@
             name.
          </para>
 
+         <para>
+            For the purposes of this action, the master node can be configured
+            to treat itself as a client node.  If you intend to back up data on
+            the master, configure the master as a local peer.  Otherwise, just
+            configure each of the clients as a remote peer.
+         </para>
+
          <para> 
             Local and remote client peers are treated differently.  Local peer
             collect directories are assumed to be accessible via normal copy
@@ -237,6 +317,14 @@
             log an error, abort the backup for that peer, and then move on to
             its other peers.  This way, one broken peer cannot break a backup
             for other peers which are up and running.
+         </para>
+
+         <para>
+            Keep in mind that Cedar Backup is flexible about what actions must
+            be executed as part of a backup.  If you would prefer, you can stop
+            the backup process at this step, and skip the store step.  In this
+            case, the staged directories will represent your backup rather than
+            a disc.
          </para>
 
          <note>
@@ -276,6 +364,27 @@
             scratch.   Otherwise, a new ISO session will be added to the disc
             each day the backup runs.  
          </para>
+
+         <para>
+            This action is entirely optional.  If you would prefer to just
+            stage backup data from a set of peers to a master machine, and have
+            the staged directories represent your backup rather than a disc,
+            this is fine. 
+         </para>
+
+         <warning>
+            <para>
+               The store action is not supported on the Mac OS X (darwin)
+               platform.  On that platform, the <quote>automount</quote>
+               function of the Finder interferes significantly with Cedar
+               Backup's ability to mount and unmount media and write to the CD
+               or DVD hardware.  The Cedar Backup writer and image
+               functionality works on this platform, but the effort required to
+               fight the operating system about who owns the media and the
+               device makes it nearly impossible to execute the store action
+               successfully.
+            </para>
+         </warning>
 
          <sidebar>
             <title>Current Staging Directory</title>
@@ -351,8 +460,8 @@
             command line.  <footnote><para>Some users find this surprising,
             because extensions are configured with sequence numbers.  I did it
             this way because I felt that running extensions as part of the all
-            action would sometimes result in <quote>surprising</quote>
-            behavior.  Better to be definitive than confusing.</para></footnote>
+            action would sometimes result in surprising behavior.  I am not
+            planning to change the way this works.</para></footnote>
          </para>
 
          <para>
@@ -448,16 +557,15 @@
       </para>
 
       <para>
-         Some users are initially surprised that Cedar Backup does not manage
-         this coordination itself.  The reason is, this coordination step
-         usually doesn't take a lot of effort and is only imposed on the user
-         at configuration time.  However, to accomplish the same thing
-         <emphasis>dynamically</emphasis> in code would add quite a bit of
-         complexity to Cedar Backup.  This code would be difficult to test and
-         would initially be somewhat error-prone, at least until I worked out
-         all of the kinks.  Given that the current architecture has been proven
-         to work well, I don't think that it is worth adding complexity to the
-         code just to simplify the initial set-up process.
+         I decided to do it this way because this coordination step usually
+         doesn't take a lot of effort, and is only imposed on the user at
+         configuration time.  If instead, I wanted to to accomplish the same
+         thing <emphasis>dynamically</emphasis> in code, this would add quite a
+         bit of complexity to Cedar Backup.  This code would be difficult to
+         test and would initially be somewhat error-prone, at least until I
+         worked out all of the kinks.  Given that the current architecture has
+         been proven to work well, I don't think that it is worth adding
+         complexity to the code just to simplify the initial set-up process.
          <footnote><para>Feel free to write me or the user mailing list if you
          disagree <emphasis>and</emphasis> can come up with a straightforward
          implementation which can be easily verified and
@@ -479,16 +587,17 @@
          disc itself is referred to as the <firstterm>media</firstterm>, and
          the CD-R or CD-RW drive is referred to as the <firstterm>device</firstterm> 
          or sometimes the <firstterm>backup device</firstterm>.
-         <footnote><para>The backup device I develop against is a fairly old
-         Sony CRX140E 4X CD-RW drive.</para> </footnote>
+         <footnote><para>My original backup device was an old
+         Sony CRX140E 4X CD-RW drive.  It has since died, and I currently
+         develop using a Lite-On 1673S DVD&plusmn;RW drive.</para> </footnote>
       </para>
 
       <para>
          When using a new enough backup device, a new <quote>multisession</quote> 
          ISO image <footnote><para>An <firstterm>ISO image</firstterm> is the
          standard way of creating a filesystem to be copied to a CD.  It is
-         essentially a <quote>filesystem-within-a-file</quote> and most Linux
-         systems can actually mount ISO image files just like hard drives,
+         essentially a <quote>filesystem-within-a-file</quote> and many UNIX
+         operating systems can actually mount ISO image files just like hard drives,
          floppy disks or actual CDs.  See Wikipedia for more information: <ulink
          url="http://en.wikipedia.org/wiki/ISO_image"/>.</para></footnote> is
          written to the media on the first day of the week, and then additional
@@ -553,12 +662,11 @@
          as well as some minor changes to configuration code.  All
          writer-related access is through an abstract interface, so once the
          new writer is implemented, the rest of the code will be able to use it
-         without any changes.</para></footnote> However, this cannot
-         happen unless I can get access to hardware for development and
-         testing, or unless someone else is willing to do research and test
-         code on my behalf.   If you would like to see support for DVDs in
-         Cedar Backup and can offer some help, please write the Cedar Backup
-         Users mailing list.  
+         without any changes.</para></footnote> Now that I have my own
+         DVD&plusmn;RW hardware, this will happen when I get some time to work
+         on it and/or when someone else shows interest in it.  If you would
+         like to see support for DVDs in Cedar Backup and can offer some help,
+         please write the Cedar Backup Users mailing list.  
          <footnote><para>See <ulink url="http://cedar-solutions.com/listarchives/"/>.</para></footnote>
       </para>
 
@@ -644,13 +752,12 @@
          with a certain interface, and are allowed to add their own sections to
          the Cedar Backup configuration file, so that all backup configuration
          can be centralized.  Then, the action process function is associated
-         with an action name (i.e. <quote>database</quote>) which can be
-         executed from the <command>cback</command> command line like any other
-         action.
+         with an action name which can be executed from the
+         <command>cback</command> command line like any other action.
       </para>
 
       <para>
-         It is our hope that as use of Cedar Backup 2.0 grows, users will
+         Hopefully, as the Cedar Backup 2.0 user community grows, users will
          contribute their own extensions back to the community.  Well-written
          general-purpose extensions will be accepted into the official
          codebase.

@@ -107,14 +107,27 @@
       </para>
 
       <para>
-         There are two different kinds of Subversion repositories at this
-         writing: BDB (Berkeley Database) and fsfs (a more CVS-like "filesystem
-         within a filesystem").  This extension only works with BDB
-         repositories.  Each Subversion repository can be backed using the same
+         Each configured Subversion repository can be backed using the same
          collect modes allowed for filesystems in the standard Cedar Backup
          collect action (weekly, daily, incremental) and the output can be
          compressed using either <command>gzip</command> or
          <command>bzip2</command>.
+      </para>
+
+      <para>
+         There are two different kinds of Subversion repositories at this
+         writing: BDB (Berkeley Database) and FSFS (a "filesystem within a
+         filesystem").  This extension backs up both kinds of repositories in
+         the same way, using <command>svnadmin dump</command> in an incremental
+         mode.  It turns out that FSFS repositories can also be backed up just
+         like any other filesystem directory.  If you would rather do the
+         backup that way, then use the normal collect action rather than this
+         extension.  If you decide to do that, be sure to consult the 
+         Subversion documentation and make sure you understand the limitations
+         of this kind of backup. <footnote><para>For instance, see the
+         <quote>Backups</quote> section on this page: 
+         <ulink url="http://freehackers.org/~shlomif/svn-raweb-light/subversion.cgi/trunk/notes/fsfs"/>
+         </para></footnote>
       </para>
 
       <para>
@@ -143,12 +156,17 @@
       <programlisting>
 &lt;subversion&gt;
    &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
-   &lt;compress_mode&gt;none&lt;/compress_mode&gt;
+   &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
+   &lt;type&gt;FSFS&lt;/type&gt;
    &lt;repository&gt;
       &lt;abs_path&gt;/opt/public/svn/software&lt;/abs_path&gt;
       &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
    &lt;/repository&gt;
    &lt;repository&gt;
+      &lt;abs_path&gt;/opt/public/svn/docs&lt;/abs_path&gt;
+   &lt;/repository&gt;
+   &lt;repository&gt;
+      &lt;type&gt;BDB&lt;/type&gt;
       &lt;abs_path&gt;/opt/public/svn/web&lt;/abs_path&gt;
       &lt;compress_mode&gt;gzip&lt;/compress_mode&gt;
    &lt;/repository&gt;
@@ -221,6 +239,30 @@
          </varlistentry>
 
          <varlistentry>
+            <term><literal>type</literal></term>
+            <listitem>
+               <para>Default repository type.</para>
+               <para>
+                  The repository type indicates what kind of Subversion
+                  repository backend is in use.  The Subversion extension
+                  recognizes two kinds of backends: BDB and FSFS, as described
+                  above.
+               </para>
+               <para>
+                  This value is the repository type that will be used by
+                  default during the backup process.  Individual repositories
+                  (below) may override this value.  This value may be omitted.
+                  If no value is provided either on this level or at an
+                  individual repository, the default is assumed to be BDB.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be one of
+                  <literal>BDB</literal> or <literal>FSFS</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
             <term><literal>repository</literal></term>
             <listitem>
                <para>A Subversion repository be collected.</para>
@@ -280,6 +322,23 @@
                            <emphasis>Restrictions:</emphasis> Must be one of
                            <literal>none</literal>, <literal>gzip</literal> or
                            <literal>bzip2</literal>.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>type</literal></term>
+                     <listitem>
+                        <para>Repository type for this repository.</para>
+                        <para>
+                           This field is optional.  If it doesn't exist, the
+                           backup will use the default repository type
+                           configured above, or if that value doesn't exist,
+                           will assume the BDB type.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>BDB</literal> or <literal>FSFS</literal>.
                         </para>
                      </listitem>
                   </varlistentry>

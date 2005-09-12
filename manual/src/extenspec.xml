@@ -63,8 +63,8 @@
 &lt;extensions&gt;
    &lt;action&gt;
       &lt;name&gt;database&lt;/name&gt;
-      &lt;module&gt;foobar&lt;/module&gt;
-      &lt;function&gt;database&lt;/function&gt;
+      &lt;module&gt;foo&lt;/module&gt;
+      &lt;function&gt;bar&lt;/function&gt;
       &lt;index&gt;101&lt;/index&gt;
    &lt;/action&gt; 
 &lt;/extensions&gt;
@@ -72,7 +72,7 @@
 
       <para>
          In this case, the action <quote>database</quote> has been mapped to
-         the extension function <literal>foobar.database</literal>.  
+         the extension function <literal>foo.bar()</literal>.  
       </para>
 
       <para>
@@ -133,6 +133,9 @@
                advertised as being part of the public interface.  This means
                that extensions cannot directly make use of methods, functions
                or values starting with with the <literal>_</literal> character.
+               Furthermore, extensions should only rely on parts of the public
+               interface that are documented in the online Epydoc
+               documentation.
             </para>
          </listitem>
 
@@ -152,7 +155,7 @@
     
       <para>
          Extension functions take three arguments: the path to configuration on
-         disk, an <literal>CedarBackup2.cli.Options</literal> object
+         disk, a <literal>CedarBackup2.cli.Options</literal> object
          representing the command-line options in effect, and a
          <literal>CedarBackup2.config.Config</literal> object representing
          parsed standard configuration.   
