@@ -1609,11 +1609,11 @@
                   <para>
                      For the purposes of Cedar Backup, a valid SCSI identifier
                      must either be in the form
-                     <literal>scsibus,target,lun</literal>,
-                     <literal>ATA:scsibus,target,lun</literal>, or
-                     <literal>ATAPI:scsibus,target,lun</literal>.  For example,
-                     <literal>1,6,2</literal>, <literal>ATA:0,0,0</literal> and
-                     <literal>ATAPI:0,1,0</literal> are all valid identifiers.
+                     <quote>scsibus,target,lun</quote>,
+                     <quote>ATA:scsibus,target,lun</quote>, or
+                     <quote>ATAPI:scsibus,target,lun</quote>.  For example,
+                     <quote>1,6,2</quote>, <quote>ATA:0,0,0</quote> and
+                     <quote>ATAPI:0,1,0</quote> are all valid identifiers.
                   </para>
                   <para>
                      Technically, Mac OS X identifiers are also accepted, but
