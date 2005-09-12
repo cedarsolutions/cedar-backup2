@@ -5,6 +5,26 @@
       <revision>1.3</revision>
       <description>Sample</description>
    </reference>
+   <extensions>
+      <action>
+         <name>sysinfo</name>
+         <module>CedarBackup2.extend.sysinfo</module>
+         <function>executeAction</function>
+         <index>101</index>
+      </action>
+      <action>
+         <name>mysql</name>
+         <module>CedarBackup2.extend.mysql</module>
+         <function>executeAction</function>
+         <index>102</index>
+      </action>
+      <action>
+         <name>subversion</name>
+         <module>CedarBackup2.extend.subversion</module>
+         <function>executeAction</function>
+         <index>103</index>
+      </action>
+   </extensions>
    <options>
       <starting_day>tuesday</starting_day>
       <working_dir>/opt/backup/tmp</working_dir>
@@ -49,4 +69,18 @@
          <retain_days>0</retain_days>
       </dir>
    </purge>
+   <mysql>
+      <user>login</user>
+      <password>something</password>
+      <compress_mode>bzip2</compress_mode>
+      <all>Y</all>
+   </mysql>
+   <subversion>
+      <collect_mode>incr</collect_mode>
+      <compress_mode>bzip2</compress_mode>
+      <type>FSFS</type>
+      <repository>
+         <abs_path>/opt/svn/repo1</abs_path>
+      </repository>
+   </subversion>
 </cb_config>
