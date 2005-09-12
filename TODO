@@ -16,7 +16,6 @@
 
 URGENT
 
-* Add <type> at <subversion> configuration level to provide defaults for repositories (we documented it!)
 * Add information on new overrides section into options config section (missed it in my notes)
 
 

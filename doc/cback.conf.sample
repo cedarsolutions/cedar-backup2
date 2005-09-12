@@ -78,9 +78,13 @@
    <subversion>
       <collect_mode>incr</collect_mode>
       <compress_mode>bzip2</compress_mode>
-      <type>FSFS</type>
       <repository>
+         <type>FSFS</type>
          <abs_path>/opt/svn/repo1</abs_path>
+      </repository>
+      <repository>
+         <type>BDB</type>
+         <abs_path>/opt/svn/repo2</abs_path>
       </repository>
    </subversion>
 </cb_config>

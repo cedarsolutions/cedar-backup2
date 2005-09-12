@@ -157,12 +157,13 @@
 &lt;subversion&gt;
    &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
    &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
-   &lt;type&gt;FSFS&lt;/type&gt;
    &lt;repository&gt;
+      &lt;type&gt;FSFS&lt;/type&gt;
       &lt;abs_path&gt;/opt/public/svn/software&lt;/abs_path&gt;
       &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
    &lt;/repository&gt;
    &lt;repository&gt;
+      &lt;type&gt;FSFS&lt;/type&gt;
       &lt;abs_path&gt;/opt/public/svn/docs&lt;/abs_path&gt;
    &lt;/repository&gt;
    &lt;repository&gt;
@@ -239,30 +240,6 @@
          </varlistentry>
 
          <varlistentry>
-            <term><literal>type</literal></term>
-            <listitem>
-               <para>Default repository type.</para>
-               <para>
-                  The repository type indicates what kind of Subversion
-                  repository backend is in use.  The Subversion extension
-                  recognizes two kinds of backends: BDB and FSFS, as described
-                  above.
-               </para>
-               <para>
-                  This value is the repository type that will be used by
-                  default during the backup process.  Individual repositories
-                  (below) may override this value.  This value may be omitted.
-                  If no value is provided either on this level or at an
-                  individual repository, the default is assumed to be BDB.
-               </para>
-               <para>
-                  <emphasis>Restrictions:</emphasis> Must be one of
-                  <literal>BDB</literal> or <literal>FSFS</literal>.
-               </para>
-            </listitem>
-         </varlistentry>
-
-         <varlistentry>
             <term><literal>repository</literal></term>
             <listitem>
                <para>A Subversion repository be collected.</para>
@@ -282,14 +259,22 @@
                <variablelist>
 
                   <varlistentry>
-                     <term><literal>abs_path</literal></term>
+                     <term><literal>type</literal></term>
                      <listitem>
+                        <para>Repository type for this repository.</para>
                         <para>
-                           Absolute path of the Subversion repository to
-                           back up.
+                           The repository type indicates what kind of
+                           Subversion repository backend is in use.  The
+                           Subversion extension recognizes two kinds of
+                           backends: BDB and FSFS, as described above.
                         </para>
                         <para>
-                           <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           This field is optional.  If it doesn't exist, the
+                           backup will assume the BDB type.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>BDB</literal> or <literal>FSFS</literal>.
                         </para>
                      </listitem>
                   </varlistentry>
@@ -327,22 +312,17 @@
                   </varlistentry>
 
                   <varlistentry>
-                     <term><literal>type</literal></term>
+                     <term><literal>abs_path</literal></term>
                      <listitem>
-                        <para>Repository type for this repository.</para>
                         <para>
-                           This field is optional.  If it doesn't exist, the
-                           backup will use the default repository type
-                           configured above, or if that value doesn't exist,
-                           will assume the BDB type.
+                           Absolute path of the Subversion repository to
+                           back up.
                         </para>
                         <para>
-                           <emphasis>Restrictions:</emphasis> Must be one of
-                           <literal>BDB</literal> or <literal>FSFS</literal>.
+                           <emphasis>Restrictions:</emphasis> Must be an absolute path.
                         </para>
                      </listitem>
                   </varlistentry>
-
                </variablelist>
 
             </listitem>
