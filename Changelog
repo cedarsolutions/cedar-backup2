@@ -1,4 +1,4 @@
-Version 2.6.0	unreleased
+Version 2.6.0	12 Sep 2005
 
 	* Remove bogus check for remote collect directory on master (closes: #18).
 	* Fix testEncodePath_009 test failure on UTF-8 filesystems (closes: #19).
