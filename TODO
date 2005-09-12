@@ -14,14 +14,9 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-URGENT
-
-* Add information on new overrides section into options config section (missed it in my notes)
-
 
 FUTURE FUNCTIONALITY
 
-* Add in notes on configuration interface for extensions if they want 3rd parties to be able to deal with their configuration.
 * We should probably check the staging flag and refuse to stage if it's already been done...?
 * Add a config value or option for indicating whether backed-up files should be logged (if anyone cares).
 * Implement capacity mode functionality, i.e. what to do with a full disc. (bug #6)
@@ -37,7 +32,6 @@ TESTING IMPROVEMENTS
 
 * Create unit tests for the store/rebuild "find directories" functions in action.py (and maybe refactor)
 * Come up with non-PyUnit code to stress test high-level actions, etc. 
-* Fix the UTF-8 filesystem test case, testEncodePath_009, per Dag Rende's notes.
 
 
 DOCUMENTATION IMPROVEMENTS
@@ -54,115 +48,4 @@ to avoid duplication.  There is a lot of duplication there, but I'm kind of at a
 as to the best way to present it to the user.  I'm not sure if it's better to have
 completely different sections or one section with "if master, do this, if client do this"
 in it.
-
-Make sure to document the new overrides configuration section within options.
-
-Make sure that cdrtools URL is correct (note I tested with v2.0+ on Mac OS X..?
-
-Typo in "all" action's description:
-
-    Extensions can be executed as part of the all action. If you need to execute an 
-    extended action, you must specify the other actions you want to run individually 
-    on the command line.
-
-The "can" should be "can't".
-
-Some things from Dag Rende:
-
-   I miss some things in the documentation:
-     * how to restore from the backups when they are needed - small hints on
-       how to find the right files or the rigth subversion backup.
-     * how to act when changing CD. It should be possible to force a full
-       backup after each removal of CD, to keep each CD an indepenedent
-       backup set (not needing multiple CDs to restore a file). It would be
-       impractical to take the CD just before each full backup.
-     * clarification on how to use extensions
-          * where in the config file the two xml elements should be and on
-            what level (I guessed and it worked)
-          * that the all action doesn't include extensions (it should I
-            think, especially when there is a sequence number that puts the
-            extension action in the right order)
-
-Add notes on Dag's solution for I/O errors:
-
-   I have set up  my backup configuration now and got it working.  I had some 
-   problems that was reposrted as IO error when validating the burned files.  
-   i was misled by the system log by lines like
-
-     Aug 14 12:16:17 gong2 kernel: attempt to access beyond end of device
-     Aug 14 12:16:17 gong2 kernel: hda: rw=0, want=26076, limit=25856
-
-   after a cback logging of
-
-     2005-08-14T12:16:17 CEST --> [ERROR  ] I/O error encountered during consistency check.
-     2005-08-14T12:16:17 CEST --> [ERROR  ] Error executing backup: [Errno 5] Input/output error
-
-   It was solved by turning automounting CD off with:
-
-       - created a new file /usr/share/hal/fdi/95userpolicy/noautomountcd.fdi
-
-   containing:
-
-      <?xml version="1.0" encoding="ISO-8859-1"?> <!-- -*- SGML -*- -->
-      <!-- This .fdi file prevent automount for every media (storage devices)
-           e.g. floppy, CD/DVD, USB-Stick, USB-Disk, external harddisk. -->
-      <deviceinfo version="0.2">
-         <device>
-            <match key="block.device" string="/dev/hda">
-               <match key="storage.policy.should_mount" bool="true">
-                  <merge key="storage.policy.should_mount" type="bool">false</merge>
-               </match>
-            </match>
-         </device>
-      </deviceinfo>
-
-       - changed a line in /etc/fstab
-
-         /dev/cdrecorder /media/cdrecorder       subfs   noauto,fs=cdfss,ro,procuid,nosuid,nodev,exec,iocharset=utf8 0 0
-   to
-         /dev/cdrecorder /media/cdrecorder       auto    noauto,ro,user,exec,iocharset=utf8    0 0
-
-
-Maybe along with the FSFS notes, incorporate some of this:
-(really, we just need to note that the backup we're doing should
-be safe since it's being done via svnadmin dump - but it's possible
-that if operations are occurring, there could occassionally be
-inconsistencies)
-
-   Note: Backups
-   -------------
-
-   Naively copying an FSFS repository while a commit is taking place
-   could result in an easily-repaired inconsistency in the backed-up
-   repository.  The backed-up "current" file could wind up referring to a
-   new revision which wasn't copied, or which was only partially
-   populated when it was copied.
-
-   The "svnadmin hotcopy" command avoids this problem by copying the
-   "current" file before copying the revision files.  But a backup using
-   the hotcopy command isn't as efficient as a straight incremental
-   backup.  FSFS may evolve so that "svnadmin recover" (currently a
-   no-op) knows how to recover from the inconsistency which might result
-   from a naive backup.
-
-   Naively copying an FSFS repository might also copy in-progress
-   transactions, which would become stale and take up extra room until
-   manually removed.  "svnadmin hotcopy" does not copy in-progress
-   transactions from an FSFS repository, although that might need to
-   change if Subversion starts making use of long-lived transactions.
-
-   So, if you are using standard backup tools to make backups of a FSFS
-   repository, configure the software to copy the "current" file before
-   the numbered revision files, if possible, and configure it not to copy
-   the "transactions" directory.  If you can't do those things, use
-   "svnadmin hotcopy", or be prepared to cope with the very occasional
-   need for manual repair of the repository upon restoring it from
-   backup.
-
-It's from:
-
- http://freehackers.org/~shlomif/svn-raweb-light/subversion.cgi/trunk/notes/fsfs  
-
-Might also want to double-check whether our method of backing up BDB is really
-safe if there are ongoing commits, and then note that in the documentation.
 
