@@ -180,17 +180,21 @@ def buildNormalizedPath(absPath):
 
    A "normalized" path has its leading C{'/'} character removed, and then
    converts all remaining whitespace and C{'/'} characters to the C{'_'}
-   character.  
+   character.   As a special case, the absolute path C{/} will be normalized
+   to just C{'-'}.
 
    @param absPath: Absolute path
 
    @return: Normalized path.
    """
-   normalized = absPath
-   normalized = re.sub("^\/", "", normalized)
-   normalized = re.sub("\/", "-", normalized)
-   normalized = re.sub("\s", "_", normalized)
-   return normalized
+   if absPath == os.sep:
+      return "-"
+   else:
+      normalized = absPath
+      normalized = re.sub("^\/", "", normalized)
+      normalized = re.sub("\/", "-", normalized)
+      normalized = re.sub("\s", "_", normalized)
+      return normalized
 
 
 ########################################################################

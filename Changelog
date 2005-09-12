@@ -3,7 +3,7 @@ Version 2.6.0	unreleased
 	* Remove bogus check for remote collect directory on master (closes: #18).
 	* Fix testEncodePath_009 test failure on UTF-8 filesystems (closes: #19).
 	* Fixed several unit tests related to the CollectConfig class (all typos).
-	* Special case path "/" in the filesystem.normalize() function (closes: #24).
+	* Fix filesystem and action code to properly handle path "/" (closes: #24).
 	* Add extension configuration to cback.conf.sample, to clarify things.
 	* Place starting and ending revision numbers into Subversion dump filenames.
 	* Implement resolver mechanism to support paths to commands (closes: #22).
