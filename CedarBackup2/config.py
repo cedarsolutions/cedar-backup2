@@ -4121,7 +4121,7 @@ def readStringList(parent, name):
    lst = []
    result = readChildren(parent, name)
    for entry in result:
-      if entry.hasChildNodes:
+      if entry.hasChildNodes():
          for child in entry.childNodes:
             if child.nodeType == Node.TEXT_NODE:
                lst.append(child.nodeValue)

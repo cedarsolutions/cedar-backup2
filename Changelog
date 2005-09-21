@@ -1,3 +1,7 @@
+Version 2.6.1	unreleased
+
+	* Fix call to node.hasChildNodes (no parens) in Config.py.
+
 Version 2.6.0	12 Sep 2005
 
 	* Remove bogus check for remote collect directory on master (closes: #18).
