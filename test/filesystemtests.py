@@ -742,6 +742,19 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
+   def testAddFile_036(self):
+      """
+      Test for regressions of bug #25. 
+
+      This bug occurred when the list of exclude files was not empty,
+      and included unicode objects rather than strings.  Attempting to
+      add a file with a strange name caused a UnicodeDecodeError.
+      """
+      fsList = FilesystemList()
+      fsList.excludePaths = [u'/usr/share/doc/console-tools/examples',] # note: unicode path!
+      fsList.addFile('/usr/share/doc/console-tools/examples/\xe2\x99\xaa\xe2\x99\xac')
+      fsList.addFile(u'/usr/share/doc/console-tools/examples/\xe2\x99\xaa\xe2\x99\xac')
+
 
    ################
    # Test addDir()

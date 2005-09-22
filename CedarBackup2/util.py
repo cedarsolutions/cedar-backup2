@@ -252,6 +252,11 @@ class AbsolutePathList(UnorderedList):
 
    We override the C{append}, C{insert} and C{extend} methods to ensure that
    any item added to the list is an absolute path.  
+
+   Each item added to the list is encoded using L{encodePath}.  If we don't do
+   this, we have problems trying certain operations between strings and unicode
+   objects, particularly for "odd" filenames that can't be encoded in standard
+   ASCII.
    """
 
    def append(self, item):
@@ -261,7 +266,7 @@ class AbsolutePathList(UnorderedList):
       """
       if not os.path.isabs(item):
          raise ValueError("Item must be an absolute path.")
-      list.append(self, item)
+      list.append(self, encodePath(item))
 
    def insert(self, index, item):
       """
@@ -270,7 +275,7 @@ class AbsolutePathList(UnorderedList):
       """
       if not os.path.isabs(item):
          raise ValueError("Item must be an absolute path.")
-      list.insert(self, index, item)
+      list.insert(self, index, encodePath(item))
 
    def extend(self, seq):
       """
@@ -280,7 +285,8 @@ class AbsolutePathList(UnorderedList):
       for item in seq:
          if not os.path.isabs(item):
             raise ValueError("All items must be absolute paths.")
-      list.extend(self, seq)
+      for item in seq:
+         list.append(self, encodePath(item))
 
 
 ########################################################################
@@ -1148,16 +1154,23 @@ def encodePath(path):
    system with a "utf-8" encoding, the result is a completely different string:
    C{"\xc3\xa2\xc2\x99\xc2\xaa\xc3\xa2\xc2\x99\xc2\xac"}.  A quick test where I
    write to the first filename and open the second proves that the two strings
-   represent the same file on disk.  I just can't tell you exactly why.
-
-   @note: My Debian box (currently running "sarge") has an ISO-8859-1
-   filesystem.  I have found UTF-8 filesystems both on my iBook (Mac OS X 10.4)
-   and on a SuSE 9.3 box (as reported by Dag Rende).  Annoyingly, the Mac with
-   the fancy UTF-8 filesystem won't scp files with certain strange filenames
-   off the Debian box, which proves again how little I understand this stuff.
+   represent the same file on disk, which is all I really care about.
 
    @note: As a special case, if C{path} is C{None}, then this function will
    return C{None}.
+
+   @note: To provide several examples of encoding values, my Debian sarge box
+   with an ext3 filesystem has Python filesystem encoding C{ISO-8859-1}.  User
+   Anarcat's Debian box with a xfs filesystem has filesystem encoding
+   C{ANSI_X3.4-1968}.  Both my iBook G4 running Mac OS X 10.4 and user Dag
+   Rende's SuSE 9.3 box both have filesystem encoding C{UTF-8}.
+
+   @note: Just because a filesystem has C{UTF-8} encoding doesn't mean that it
+   will be able to handle all extended-character filenames.  For instance,
+   certain extended-character (but not UTF-8) filenames -- like the ones in the
+   regression test tar file C{test/data/tree13.tar.gz} -- are not valid under
+   Mac OS X, and it's not even possible to extract them from the tarfile on
+   that platform.
 
    @param path: Path to encode
 
