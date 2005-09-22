@@ -1,6 +1,7 @@
 Version 2.6.1	unreleased
 
 	* Fix call to node.hasChildNodes (no parens) in Config.py.
+	* Make "pre-existing collect indicator" error more obvious (closes: #26).
 
 Version 2.6.0	12 Sep 2005
 
