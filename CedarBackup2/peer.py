@@ -704,7 +704,7 @@ class RemotePeer(object):
             try:
                os.remove(targetFile)
             except:
-               raise Exception("Internal error: target existed before it should.")
+               raise Exception("Error: collect indicator [%s] already exists!" % targetFile)
          try:
             RemotePeer._copyRemoteFile(self.remoteUser, self.localUser, self.name, 
                                        self._rcpCommand, self._rcpCommandList, 
