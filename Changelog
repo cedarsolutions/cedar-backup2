@@ -1,8 +1,9 @@
-Version 2.6.1	unreleased
+Version 2.6.1	27 Sep 2005
 
 	* Fix broken call to node.hasChildNodes (no parens) in Config.py.
 	* Make "pre-existing collect indicator" error more obvious (closes: #26).
-	* Fix FilesystemList to encode excludeList items and avoid unicode failures.
+	* Avoid failures for UTF-8 filenames on certain filesystems (closes: #25).
+	* Fix FilesystemList to encode excludeList items, preventing UTF-8 failures.
 
 Version 2.6.0	12 Sep 2005
 
