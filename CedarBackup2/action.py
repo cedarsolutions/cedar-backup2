@@ -31,7 +31,6 @@
 # Purpose  : Provides implementation of various backup-related actions.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# This file was created with a width of 132 characters, and NO tabs.
 
 ########################################################################
 # Module documentation

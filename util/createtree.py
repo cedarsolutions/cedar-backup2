@@ -32,7 +32,6 @@
 # Purpose  : Create a random directory structure for testing
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# This file was created with a width of 132 characters, and NO tabs.
 
 ########################################################################
 # Notes

@@ -31,7 +31,6 @@
 # Purpose  : Provides command-line interface implementation.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# This file was created with a width of 132 characters, and NO tabs.
 
 ########################################################################
 # Module documentation

@@ -29,7 +29,6 @@ from CedarBackup2.release import AUTHOR, EMAIL, VERSION, COPYRIGHT, URL
 # Setup configuration
 ########################################################################
 
-
 LONG_DESCRIPTION = """
 Cedar Backup is a Python package that supports backups of files on local and
 remote hosts to CD-R or CD-RW media over a secure network connection.  Cedar
