@@ -14,7 +14,6 @@
 # Purpose  : Developer "private" makefile for CedarBackup2 package
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# This file was created with a width of 132 characters using 8-space tabs.
 
 ########
 # Notes
@@ -33,6 +32,7 @@
 CD                = cd
 CP                = cp
 EPYDOC            = epydoc
+FIND              = find
 MKDIR             = mkdir
 PYCHECKER         = PYTHONVER=2.3 pychecker
 PYTHON            = python2.3
@@ -65,7 +65,7 @@ MANUAL_DIR        = $(DOC_DIR)/manual
 all: 
 
 clean: docclean distribclean 
-	-@find . -name "*.pyc" | xargs rm -f
+	-@$(FIND) . -name "*.pyc" | xargs rm -f
 
 # This uses the "full" argument to get all tests
 test:
@@ -171,5 +171,10 @@ debdistclean:
 docdist: 
 	@$(TAR) -zcvf ../htmldocs.tar.gz doc/manual doc/interface
 
-.PHONY: all clean unittest test check pychecker pycheck doc docclean interface-doc manual-doc manual distrib sdist sdistclean debdist debdistclean
+
+##################################
+# Phony rules for use by GNU make
+##################################
+
+.PHONY: all clean test usertest check allcheck doc docs docclean docsclean epydoc interface interface-doc interface-html book validate manual manual-doc distrib distribclean sdist sdistclean debdist debdistclean docdist
 

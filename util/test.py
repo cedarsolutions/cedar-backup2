@@ -32,7 +32,6 @@
 # Purpose  : Run all of the unit tests for the project.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# This file was created with a width of 132 characters, and NO tabs.
 
 ########################################################################
 # Notes

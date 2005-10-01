@@ -31,7 +31,6 @@
 # Purpose  : Provides an extension to save off important system recovery information.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# This file was created with a width of 132 characters, and NO tabs.
 
 ########################################################################
 # Module documentation

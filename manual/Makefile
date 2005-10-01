@@ -14,7 +14,6 @@
 # Purpose  : Makefile used for building the Cedar Backup manual.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# This file was created with a width of 132 characters using 8-space tabs.
 
 ########
 # Notes

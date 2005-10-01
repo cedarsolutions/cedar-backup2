@@ -32,7 +32,6 @@
 # Purpose  : Tests configuration functionality.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# This file was created with a width of 132 characters, and NO tabs.
 
 ########################################################################
 # Module documentation
