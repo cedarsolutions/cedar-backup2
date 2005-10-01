@@ -1,3 +1,9 @@
+Version 2.6.2	unreleased
+
+	* Cleanup maintainer-only (non-distributed) makefile rules.
+	* Make changes to standardize file headers with other Cedar Backup code.
+	* Use minidom XML parser rather than PyExpat.reader (much faster).
+
 Version 2.6.1	27 Sep 2005
 
 	* Fix broken call to node.hasChildNodes (no parens) in Config.py.

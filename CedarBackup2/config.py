@@ -255,8 +255,6 @@ import logging
 from StringIO import StringIO
 
 # XML-related modules
-from xml.dom.ext.reader import PyExpat
-from xml.xpath import Evaluate
 from xml.parsers.expat import ExpatError
 from xml.dom.minidom import Node
 from xml.dom.minidom import getDOMImplementation
@@ -2940,7 +2938,7 @@ class Config(object):
       @raise ValueError: If the XML cannot be successfully parsed.
       """
       try:
-         xmlDom = PyExpat.Reader().fromString(xmlData)
+         xmlDom = parseString(xmlData)
          parent = readFirstChild(xmlDom, "cb_config")
          self._reference = Config._parseReference(parent)
          self._extensions = Config._parseExtensions(parent)
