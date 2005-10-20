@@ -889,7 +889,7 @@ class BackupFileList(FilesystemList):
             except: pass
          raise
 
-   def removeUnchanged(self, digestMap):
+   def removeUnchanged(self, digestMap, captureDigest=False):
       """
       Removes unchanged entries from the list.
    
@@ -900,40 +900,74 @@ class BackupFileList(FilesystemList):
 
       This method offers a convenient way for callers to filter unneeded
       entries from a list.  The idea is that a caller will capture a digest map
-      from C{generateDigestMap} immediately before beginning a backup, and will
-      save off that map using C{pickle} or some other method.  Then, the caller
-      could use this method sometime in the future to filter out any unchanged
-      files based on the saved-off map.
+      from C{generateDigestMap} at some point in time (perhaps the beginning of
+      the week), and will save off that map using C{pickle} or some other
+      method.  Then, the caller could use this method sometime in the future to
+      filter out any unchanged files based on the saved-off map.
 
-      For performance reasons, this method actually ends up rebuilding the list
-      from scratch.  First, we build a temporary dictionary containing all of
-      the items from the original list.  Then, we remove items as needed from
-      the dictionary (which is faster than the equivalent operation on a list).
-      Finally, we replace the contents of the current list based on the keys
-      left in the dictionary.  
-
-      We only generate a digest value for files we actually need to check, and
-      we'll ignore any entry in the list which isn't a file that currently
+      If C{captureDigest} is passed-in as C{True}, then digest information will
+      be captured for the entire list before the removal step occurs.  The
+      check will involve a lookup into the complete digest map.  Otherwise, we
+      will only generate a digest value for files we actually need to check,
+      and we'll ignore any entry in the list which isn't a file that currently
       exists on disk.
+
+      The return value varies depending on C{captureDigest}, as well.  To
+      preserve backwards compatibility, if C{captureDigest} is C{False}, then
+      we'll just return a single value representing the number of entries
+      removed.  Otherwise, we'll return a tuple of C{(entries removed, digest
+      map)}.  The returned digest map will be in exactly the form returned by
+      L{generateDigestMap}.
+
+      @note: For performance reasons, this method actually ends up rebuilding
+      the list from scratch.  First, we build a temporary dictionary containing
+      all of the items from the original list.  Then, we remove items as needed
+      from the dictionary (which is faster than the equivalent operation on a
+      list).  Finally, we replace the contents of the current list based on the
+      keys left in the dictionary.  This should be transparent to the caller.
 
       @param digestMap: Dictionary mapping file name to digest value.
       @type digestMap: Map as returned from L{generateDigestMap}.
 
+      @param captureDigest: Indicates that digest information should be captured.
+      @type captureDigest: Boolean
+
       @return: Number of entries removed
       """
-      removed = 0
-      table = {}
-      for entry in self:
-         table[entry] = None
-      for entry in digestMap.keys():
-         if table.has_key(entry):
+      if captureDigest:
+         removed = 0
+         table = {}
+         for entry in self:
             if os.path.isfile(entry) and not os.path.islink(entry):
-               digest = BackupFileList._generateDigest(entry)
-               if digest == digestMap[entry]:
-                  removed += 1
-                  del table[entry]
-      self[:] = table.keys()
-      return removed
+               table[entry] = BackupFileList._generateDigest(entry)
+            else:
+               table[entry] = None
+         for entry in digestMap.keys():
+            if table.has_key(entry):
+               if table[entry] is not None:  # equivalent to file/link check in other case
+                  digest = table[entry]
+                  if digest == digestMap[entry]:
+                     removed += 1
+                     del table[entry]
+         self[:] = table.keys()
+         for entry in table.keys():  # convert to form as from generateDigestMap()
+            if table[entry] is None:
+               del table[entry]
+         return (removed, table)
+      else:
+         removed = 0
+         table = {}
+         for entry in self:
+            table[entry] = None
+         for entry in digestMap.keys():
+            if table.has_key(entry):
+               if os.path.isfile(entry) and not os.path.islink(entry):
+                  digest = BackupFileList._generateDigest(entry)
+                  if digest == digestMap[entry]:
+                     removed += 1
+                     del table[entry]
+         self[:] = table.keys()
+         return removed
 
 
 ########################################################################
