@@ -642,8 +642,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
       else:
          logger.debug("Based on resetDigest flag, digest will loaded from disk.")
          oldDigest = _loadDigest(digestPath)
-      newDigest = backupList.generateDigestMap()   # be sure to do this before removing unchanged files!
-      removed = backupList.removeUnchanged(oldDigest)
+      (removed, newDigest) = backupList.removeUnchanged(oldDigest, captureDigest=True)
       logger.debug("Removed %d unchanged files based on digest values." % removed)
       logger.info("Backing up %d files in [%s] (%s)." % (len(backupList), absolutePath, displayBytes(backupList.totalSize())))
       if len(backupList) > 0:
