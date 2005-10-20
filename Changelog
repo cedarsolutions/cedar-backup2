@@ -3,7 +3,7 @@ Version 2.7.0	unreleased
 	* Cleanup maintainer-only (non-distributed) makefile rules.
 	* Make changes to standardize file headers with other Cedar Backup code.
 	* Use minidom XML parser rather than PyExpat.reader (much faster).
-	* Optimize incremental backup, and hopefully speed it up a big (closes: #29).
+	* Optimize incremental backup, and hopefully speed it up a bit (closes: #29).
 	  - Change BackupFileList.removeUnchanged() to accept a captureDigest flag
 	  - This avoids need to call both generateDigestMap() and removeUnchanged()
 	  - Note that interface to removeUnchanged was modified, but not broken
