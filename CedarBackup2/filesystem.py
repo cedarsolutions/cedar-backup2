@@ -281,6 +281,7 @@ class FilesystemList(list):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
+      logger.debug("Added file [%s] to list." % path)
       return 1
 
    def addDir(self, path):
@@ -319,6 +320,7 @@ class FilesystemList(list):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
+      logger.debug("Added directory [%s] to list." % path)
       return 1
 
    def addDirContents(self, path):
@@ -770,7 +772,9 @@ class BackupFileList(FilesystemList):
          s.update(readString)
          readBytes = len(readString)
       f.close()
-      return s.hexdigest()
+      digest = s.hexdigest()
+      logger.debug("Generated digest [%s] for file [%s]." % (digest, path))
+      return digest
    _generateDigest = staticmethod(_generateDigest)
 
    def generateFitted(self, capacity, algorithm="worst_fit"):
@@ -949,6 +953,7 @@ class BackupFileList(FilesystemList):
                   if digest == digestMap[entry]:
                      removed += 1
                      del table[entry]
+                     logger.debug("Discarded unchanged file [%s]." % entry)
          self[:] = table.keys()
          for entry in table.keys():  # convert to form as from generateDigestMap()
             if table[entry] is None:
@@ -966,6 +971,7 @@ class BackupFileList(FilesystemList):
                   if digest == digestMap[entry]:
                      removed += 1
                      del table[entry]
+                     logger.debug("Discarded unchanged file [%s]." % entry)
          self[:] = table.keys()
          return removed
 
