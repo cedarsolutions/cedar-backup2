@@ -69,6 +69,7 @@ there.
 ########################################################################
 
 # System modules
+import sys
 import re
 import logging
 import codecs
@@ -371,49 +372,70 @@ def addBooleanNode(xmlDom, parentNode, nodeName, nodeValue):
 def serializeDom(xmlDom, indent=3):
    """
    Serializes a DOM tree and returns the result in a string.
-
-   This is a customized serializer that I wrote (hacked!) myself based on what
-   I found in the PyXML distribution.  Basically, the only reason I still had
-   around a dependency on PyXML was for the PrettyPrint functionality, and that
-   seemed pointless.  So, I stripped the PrettyPrint code out of PyXML and 
-   hacked bits of it off until it did just what I needed and no more.
-
-   As a consequence, this can't quite be called a complete XML serializer and
-   more.  I ripped out support for HTML and XHTML, and there is also no longer
-   any support for namespaces.   However, everything else should pretty much
-   work as expected.
-
-   @copyright: Some of this code, prior to customization, was originally part
-   of the PyXML codebase, and before that was part of the 4DOM suite developed
-   by Fourthought, Inc.  This code is Copyright (c) 2000 Fourthought Inc, USA;
-   All Rights Reserved.
-
    @param xmlDom: XML DOM tree to serialize
-   @param indent: Number of spaces to indent
-
+   @param indent: Number of spaces to indent, as an integer
    @return: String form of DOM tree, pretty-printed.
    """
    xmlBuffer = StringIO()
-   visitor = PrintVisitor(xmlBuffer, "UTF-8", indent=indent*" ")
-   visitor.visit(xmlDom)
-   xmlBuffer.write("\n")
+   serializer = Serializer(xmlBuffer, "UTF-8", indent=indent)
+   serializer.serialize(xmlDom)
    xmlData = xmlBuffer.getvalue()
    xmlBuffer.close()
    return xmlData 
 
-class PrintVisitor(object):
+class Serializer(object):
+
    """
+   XML serializer class.
+
+   This is a customized serializer that I hacked together based on what I found
+   in the PyXML distribution.  Basically, around release 2.7.0, the only reason
+   I still had around a dependency on PyXML was for the PrettyPrint
+   functionality, and that seemed pointless.  So, I stripped the PrettyPrint
+   code out of PyXML and hacked bits of it off until it did just what I needed
+   and no more.  
+
+   This code started out being called PrintVisitor, but I decided it makes more
+   sense just calling it a serializer.  I've made nearly all of the methods
+   private, and I've added a new high-level serialize() method rather than
+   having clients call C{visit()}.
+
+   Anyway, as a consequence of my hacking with it, this can't quite be called a
+   complete XML serializer any more.  I ripped out support for HTML and XHTML,
+   and there is also no longer any support for namespaces (which I took out
+   because this dragged along a lot of extra code, and Cedar Backup doesn't use
+   namespaces).  However, everything else should pretty much work as expected.
+
+   @copyright: This code, prior to customization, was part of the PyXML
+   codebase, and before that was part of the 4DOM suite developed by
+   Fourthought, Inc.  It its original form, it was Copyright (c) 2000
+   Fourthought Inc, USA; All Rights Reserved.
    """
-   def __init__(self, stream, encoding, indent=''):
+
+   def __init__(self, stream=sys.stdout, encoding="UTF-8", indent=3):
+      """
+      Initialize a serializer.
+      @param stream: Stream to write output to.
+      @param encoding: Output encoding.
+      @param indent: Number of spaces to indent, as an integer
+      """
       self.stream = stream
       self.encoding = encoding
-      self._indent = indent
+      self._indent = indent * " "
       self._depth = 0
       self._inText = 0
-      return
+
+   def serialize(self, xmlDom):
+      """
+      Serialize the passed-in XML document.
+      @param xmlDom: XML DOM tree to serialize
+      @raise ValueError: If there's an unknown node type in the document.
+      """
+      self._visit(xmlDom)
+      self.stream.write("\n")
 
    def _write(self, text):
-      obj = utf8_to_code(text, self.encoding)
+      obj = _encodeText(text, self.encoding)
       self.stream.write(obj)
       return
 
@@ -422,88 +444,91 @@ class PrintVisitor(object):
          self._write('\n' + self._indent*self._depth)
       return
 
-   def visit(self, node):
+   def _visit(self, node):
+      """
+      @raise ValueError: If there's an unknown node type in the document.
+      """
       if node.nodeType == Node.ELEMENT_NODE:
-         return self.visitElement(node)
+         return self._visitElement(node)
 
       elif node.nodeType == Node.ATTRIBUTE_NODE:
-         return self.visitAttr(node)
+         return self._visitAttr(node)
 
       elif node.nodeType == Node.TEXT_NODE:
-         return self.visitText(node)
+         return self._visitText(node)
 
       elif node.nodeType == Node.CDATA_SECTION_NODE:
-         return self.visitCDATASection(node)
+         return self._visitCDATASection(node)
 
       elif node.nodeType == Node.ENTITY_REFERENCE_NODE:
-         return self.visitEntityReference(node)
+         return self._visitEntityReference(node)
 
       elif node.nodeType == Node.ENTITY_NODE:
-         return self.visitEntity(node)
+         return self._visitEntity(node)
 
       elif node.nodeType == Node.PROCESSING_INSTRUCTION_NODE:
-         return self.visitProcessingInstruction(node)
+         return self._visitProcessingInstruction(node)
 
       elif node.nodeType == Node.COMMENT_NODE:
-         return self.visitComment(node)
+         return self._visitComment(node)
 
       elif node.nodeType == Node.DOCUMENT_NODE:
-         return self.visitDocument(node)
+         return self._visitDocument(node)
 
       elif node.nodeType == Node.DOCUMENT_TYPE_NODE:
-         return self.visitDocumentType(node)
+         return self._visitDocumentType(node)
 
       elif node.nodeType == Node.DOCUMENT_FRAGMENT_NODE:
-         return self.visitDocumentFragment(node)
+         return self._visitDocumentFragment(node)
 
       elif node.nodeType == Node.NOTATION_NODE:
-         return self.visitNotation(node)
+         return self._visitNotation(node)
 
       # It has a node type, but we don't know how to handle it
-      raise Exception("Unknown node type: %s" % repr(node))
+      raise ValueError("Unknown node type: %s" % repr(node))
 
-   def visitNodeList(self, node, exclude=None):
+   def _visitNodeList(self, node, exclude=None):
       for curr in node:
-         curr is not exclude and self.visit(curr)
+         curr is not exclude and self._visit(curr)
       return
 
-   def visitNamedNodeMap(self, node):
+   def _visitNamedNodeMap(self, node):
       for item in node.values():
-         self.visit(item)
+         self._visit(item)
       return
 
-   def visitAttr(self, node):
+   def _visitAttr(self, node):
       self._write(' ' + node.name)
       value = node.value
-      text = TranslateCdata(value, self.encoding)
-      text, delimiter = TranslateCdataAttr(text)
+      text = _translateCDATA(value, self.encoding)
+      text, delimiter = _translateCDATAAttr(text)
       self.stream.write("=%s%s%s" % (delimiter, text, delimiter))
       return
 
-   def visitProlog(self):
+   def _visitProlog(self):
       self._write("<?xml version='1.0' encoding='%s'?>" % (self.encoding or 'utf-8'))
       self._inText = 0
       return
 
-   def visitDocument(self, node):
-      self.visitProlog()
-      node.doctype and self.visitDocumentType(node.doctype)
-      self.visitNodeList(node.childNodes, exclude=node.doctype)
+   def _visitDocument(self, node):
+      self._visitProlog()
+      node.doctype and self._visitDocumentType(node.doctype)
+      self._visitNodeList(node.childNodes, exclude=node.doctype)
       return
 
-   def visitDocumentFragment(self, node):
-      self.visitNodeList(node.childNodes)
+   def _visitDocumentFragment(self, node):
+      self._visitNodeList(node.childNodes)
       return
 
-   def visitElement(self, node):
+   def _visitElement(self, node):
       self._tryIndent()
       self._write('<%s' % node.tagName)
       for attr in node.attributes.values():
-         self.visitAttr(attr)
+         self._visitAttr(attr)
       if len(node.childNodes):
          self._write('>')
          self._depth = self._depth + 1
-         self.visitNodeList(node.childNodes)
+         self._visitNodeList(node.childNodes)
          self._depth = self._depth - 1
          not (self._inText) and self._tryIndent()
          self._write('</%s>' % node.tagName)
@@ -512,17 +537,17 @@ class PrintVisitor(object):
       self._inText = 0
       return
 
-   def visitText(self, node):
+   def _visitText(self, node):
       text = node.data
       if self._indent:
          text.strip()
       if text:
-         text = TranslateCdata(text, self.encoding)
+         text = _translateCDATA(text, self.encoding)
          self.stream.write(text)
          self._inText = 1
       return
 
-   def visitDocumentType(self, doctype):
+   def _visitDocumentType(self, doctype):
       if not doctype.systemId and not doctype.publicId: return
       self._tryIndent()
       self._write('<!DOCTYPE %s' % doctype.name)
@@ -544,8 +569,8 @@ class PrintVisitor(object):
       if doctype.entities or doctype.notations:
          self._write(' [')
          self._depth = self._depth + 1
-         self.visitNamedNodeMap(doctype.entities)
-         self.visitNamedNodeMap(doctype.notations)
+         self._visitNamedNodeMap(doctype.entities)
+         self._visitNamedNodeMap(doctype.notations)
          self._depth = self._depth - 1
          self._tryIndent()
          self._write(']>')
@@ -554,7 +579,7 @@ class PrintVisitor(object):
       self._inText = 0
       return
 
-   def visitEntity(self, node):
+   def _visitEntity(self, node):
       """Visited from a NamedNodeMap in DocumentType"""
       self._tryIndent()
       self._write('<!ENTITY %s' % (node.nodeName))
@@ -564,7 +589,7 @@ class PrintVisitor(object):
       self._write('>')
       return
 
-   def visitNotation(self, node):
+   def _visitNotation(self, node):
       """Visited from a NamedNodeMap in DocumentType"""
       self._tryIndent()
       self._write('<!NOTATION %s' % node.nodeName)
@@ -573,44 +598,50 @@ class PrintVisitor(object):
       self._write('>')
       return
 
-   def visitCDATASection(self, node):
+   def _visitCDATASection(self, node):
       self._tryIndent()
       self._write('<![CDATA[%s]]>' % (node.data))
       self._inText = 0
       return
 
-   def visitComment(self, node):
+   def _visitComment(self, node):
       self._tryIndent()
       self._write('<!--%s-->' % (node.data))
       self._inText = 0
       return
 
-   def visitEntityReference(self, node):
+   def _visitEntityReference(self, node):
       self._write('&%s;' % node.nodeName)
       self._inText = 1
       return
 
-   def visitProcessingInstruction(self, node):
+   def _visitProcessingInstruction(self, node):
       self._tryIndent()
       self._write('<?%s %s?>' % (node.target, node.data))
       self._inText = 0
       return
 
-#The following stanza courtesy Martin von Loewis
-def utf8_to_code(text, encoding):
+def _encodeText(text, encoding):
    """
-   charsetHandler is a function that takes a string or unicode object as the
-   first argument, representing the string to be procesed, and an encoding
-   specifier as the second argument.  It must return a string or unicode
-   object
+   @copyright: This code, prior to customization, was part of the PyXML
+   codebase, and before that was part of the 4DOM suite developed by
+   Fourthought, Inc.  It its original form, it was attributed to Martin v.
+   Löwis and was Copyright (c) 2000 Fourthought Inc, USA; All Rights Reserved.
    """
    encoder = codecs.lookup(encoding)[0] # encode,decode,reader,writer
    if type(text) is not UnicodeType:
       text = unicode(text, "utf-8")
    return encoder(text)[0] # result,size
 
-def TranslateCdataAttr(characters):
-   '''Handles normalization and some intelligence about quoting'''
+def _translateCDATAAttr(characters):
+   """
+   Handles normalization and some intelligence about quoting.
+
+   @copyright: This code, prior to customization, was part of the PyXML
+   codebase, and before that was part of the 4DOM suite developed by
+   Fourthought, Inc.  It its original form, it was Copyright (c) 2000
+   Fourthought Inc, USA; All Rights Reserved.
+   """
    if not characters:
       return '', "'"
    if "'" in characters:
@@ -627,7 +658,13 @@ def TranslateCdataAttr(characters):
    return new_chars, delimiter
 
 #Note: Unicode object only for now
-def TranslateCdata(characters, encoding='UTF-8', prev_chars='', markupSafe=0):
+def _translateCDATA(characters, encoding='UTF-8', prev_chars='', markupSafe=0):
+   """
+   @copyright: This code, prior to customization, was part of the PyXML
+   codebase, and before that was part of the 4DOM suite developed by
+   Fourthought, Inc.  It its original form, it was Copyright (c) 2000
+   Fourthought Inc, USA; All Rights Reserved.
+   """
    CDATA_CHAR_PATTERN = re.compile('[&<]|]]>')
    CHAR_TO_ENTITY = { '&': '&amp;', '<': '&lt;', ']]>': ']]&gt;', }
    ILLEGAL_LOW_CHARS = '[\x01-\x08\x0B-\x0C\x0E-\x1F]'
@@ -649,6 +686,6 @@ def TranslateCdata(characters, encoding='UTF-8', prev_chars='', markupSafe=0):
    #The UTF-8 for 0xFFFE and put out &#xFFFE;
    if XML_ILLEGAL_CHAR_PATTERN.search(new_string):
       new_string = XML_ILLEGAL_CHAR_PATTERN.subn(lambda m: '&#%i;' % ord(m.group()), new_string)[0]
-   new_string = utf8_to_code(new_string, encoding)
+   new_string = _encodeText(new_string, encoding)
    return new_string
 
