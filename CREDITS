@@ -50,6 +50,12 @@ Docbook XSL distribution.  These graphics are (c) 1999, 2000, 2001 Norman
 Walsh and were originally released under a BSD-style license as documented
 below.
 
+Source code annoted as "(c) 2000 Fourthought Inc, USA" was taken from or
+derived from code within the PyXML distribution and was originally part of
+the 4DOM suite developed by Fourthought, Inc.  Fourthought released the
+code under a BSD-like license.  Items under this license include the XML
+pretty-printing functionality implemented in xmlutil.py.
+
 
 ####################
 # CollabNet License
@@ -200,4 +206,29 @@ CONTRIBUTOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
+
+
+######################
+# Fourthought License
+######################
+
+Copyright (c) 2000 Fourthought Inc, USA
+
+                       All Rights Reserved
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation, and that the name of FourThought LLC not be
+used in advertising or publicity pertaining to distribution of the
+software without specific, written prior permission.
+
+FOURTHOUGHT LLC DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS,
+IN NO EVENT SHALL FOURTHOUGHT BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
+OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
+USE OR PERFORMANCE OF THIS SOFTWARE.
 
