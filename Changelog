@@ -2,7 +2,10 @@ Version 2.7.0	unreleased
 
 	* Cleanup maintainer-only (non-distributed) makefile rules.
 	* Make changes to standardize file headers with other Cedar Backup code.
-	* Use minidom XML parser rather than PyExpat.reader (much faster).
+	* Rework XML functionality and attempt to minimize need for PyXML package.
+	  - Refactor general XML utility code out of config.py into xmlutil.py
+	  - Interface does *not* break since config.py still imports these names
+	  - Use minidom XML parser rather than PyExpat.reader (much faster)
 	* Add debug statements to filesystem code (huge increase in debug log size).
 	* Optimize incremental backup, and hopefully speed it up a bit (closes: #29).
 	  - Change BackupFileList.removeUnchanged() to accept a captureDigest flag
