@@ -407,16 +407,10 @@ def _PrettyPrint(xmlDom, stream, indent='  '):
 import string
 import re
 
-XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace"
-XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/"
-XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml"
-
 class PrintVisitor(object):
     def __init__(self, stream, encoding, indent=''):
         self.stream = stream
         self.encoding = encoding
-        # Namespaces
-        self._namespaces = [{}]
         # PrettyPrint
         self._indent = indent
         self._depth = 0
@@ -484,9 +478,6 @@ class PrintVisitor(object):
         return
 
     def visitAttr(self, node):
-        if node.namespaceURI == XMLNS_NAMESPACE:
-            # Skip namespace declarations
-            return
         self._write(' ' + node.name)
         value = node.value
         text = TranslateCdata(value, self.encoding)
@@ -512,23 +503,8 @@ class PrintVisitor(object):
         return
 
     def visitElement(self, node):
-        self._namespaces.append(self._namespaces[-1].copy())
         self._tryIndent()
         self._write('<%s' % node.tagName)
-        namespaces = ''
-        nss = GetAllNs(node)
-        del nss['xml']
-        for prefix in nss.keys():
-            if not self._namespaces[-1].has_key(prefix) or self._namespaces[-1][prefix] != nss[prefix]:
-                nsuri, delimiter = TranslateCdataAttr(nss[prefix])
-                if prefix:
-                    xmlns = " xmlns:%s=%s%s%s" % (prefix, delimiter,nsuri,delimiter)
-                else:
-                    xmlns = " xmlns=%s%s%s" % (delimiter,nsuri,delimiter)
-                namespaces = namespaces + xmlns
-
-            self._namespaces[-1][prefix] = nss[prefix]
-        self._write(namespaces)
         for attr in node.attributes.values():
             self.visitAttr(attr)
         if len(node.childNodes):
@@ -540,7 +516,6 @@ class PrintVisitor(object):
             self._write('</%s>' % node.tagName)
         else:
             self._write('/>')
-        del self._namespaces[-1]
         self._inText = 0
         return
 
@@ -704,29 +679,4 @@ def TranslateCdata(characters, encoding='UTF-8', prev_chars='', markupSafe=0,
             new_string)[0]
     new_string = charsetHandler(new_string, encoding)
     return new_string
-
-HTML_FORBIDDEN_END = ['AREA', 'BASE', 'BASEFONT', 'BR', 'COL', 'FRAME', 'HR', 'IMG', 'INPUT', 'ISINDEX', 'LINK', 'META', 'PARAM']
-
-def GetAllNs(node):
-    #The xml namespace is implicit
-    nss = {'xml': XML_NAMESPACE}
-    if node.nodeType == Node.ATTRIBUTE_NODE and node.ownerElement:
-        return GetAllNs(node.ownerElement)
-    if node.nodeType == Node.ELEMENT_NODE:
-        if node.namespaceURI:
-            nss[node.prefix] = node.namespaceURI
-        for attr in node.attributes.values():
-            if attr.namespaceURI == XMLNS_NAMESPACE:
-                if attr.localName == 'xmlns':
-                    nss[None] = attr.value
-                else:
-                    nss[attr.localName] = attr.value
-            elif attr.namespaceURI:
-                nss[attr.prefix] = attr.namespaceURI
-    if node.parentNode:
-        #Inner NS/Prefix mappings take precedence over outer ones
-        parent_nss = GetAllNs(node.parentNode)
-        parent_nss.update(nss)
-        nss = parent_nss
-    return nss
 
