@@ -258,6 +258,237 @@ VALID_COMPRESS_MODES  = [ "none", "gzip", "bzip2", ]
 
 
 ########################################################################
+# ActionHook class definitions
+########################################################################
+
+class ActionHook(object):
+
+   """
+   Class representing a hook associated with an action.
+
+   A hook associated with an action is a shell command to be executed either
+   before or after a named action is executed.  
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   The following restrictions exist on data in this class:
+
+      - The action name must be a non-empty string consisting of lower-case letters and digits.
+      - The shell command must be a non-empty string.
+
+   The internal C{before} and C{after} instance variables are always set to
+   False in this parent class.
+
+   @sort: __init__, __repr__, __str__, __cmp__, action, command, before, after
+   """
+
+   def __init__(self, action=None, command=None):
+      """
+      Constructor for the C{ActionHook} class.
+
+      @param action: Action this hook is associated with
+      @param command: Shell command to execute
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      self._action = None
+      self._command = None
+      self._before = False
+      self._after = False
+      self.action = action
+      self.command = command
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "ActionHook(%s, %s, %s, %s)" % (self.action, self.command, self.before, self.after)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._action != other._action:
+         if self._action < other._action:
+            return -1
+         else:
+            return 1
+      if self._command != other._command: 
+         if self._command < other._command: 
+            return -1
+         else:
+            return 1
+      if self._before != other._before: 
+         if self._before < other._before: 
+            return -1
+         else:
+            return 1
+      if self._after != other._after: 
+         if self._after < other._after: 
+            return -1
+         else:
+            return 1
+      return 0
+
+   def _setAction(self, value):
+      """
+      Property target used to set the action name.
+      The value must be a non-empty string if it is not C{None}.
+      It must also consist only of lower-case letters and digits.
+      @raise ValueError: If the value is an empty string.
+      """
+      pattern = re.compile(r"^[a-z0-9]*$")
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The action name must be a non-empty string.")
+         if not pattern.search(value):
+            raise ValueError("The action name must consist of only lower-case letters and digits.")
+      self._action = value
+
+   def _getAction(self):
+      """
+      Property target used to get the action name.
+      """
+      return self._action
+
+   def _setCommand(self, value):
+      """
+      Property target used to set the command.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The command must be a non-empty string.")
+      self._command = value
+
+   def _getCommand(self):
+      """
+      Property target used to get the command.
+      """
+      return self._command
+
+   def _getBefore(self):
+      """
+      Property target used to get the before flag.
+      """
+      return self._before
+
+   def _getAfter(self):
+      """
+      Property target used to get the after flag.
+      """
+      return self._after
+
+   action = property(_getAction, _setAction, None, "Action this hook is associated with.")
+   command = property(_getCommand, _setCommand, None, "Shell command to execute.")
+   before = property(_getBefore, None, None, "Indicates whether command should be executed before action.")
+   after = property(_getAfter, None, None, "Indicates whether command should be executed after action.")
+
+class PreActionHook(ActionHook):
+
+   """
+   Class representing a pre-action hook associated with an action.
+
+   A hook associated with an action is a shell command to be executed either
+   before or after a named action is executed.  In this case, a pre-action hook
+   is executed before the named action.
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   The following restrictions exist on data in this class:
+
+      - The action name must be a non-empty string consisting of lower-case letters and digits.
+      - The shell command must be a non-empty string.
+
+   The internal C{before} instance variable is always set to True in this
+   class.
+
+   @sort: __init__, __repr__, __str__, __cmp__, action, command, before, after
+   """
+
+   def __init__(self, action=None, command=None):
+      """
+      Constructor for the C{PreActionHook} class.
+
+      @param action: Action this hook is associated with
+      @param command: Shell command to execute
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      ActionHook.__init__(self, action, command)
+      self._before = True
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "PreActionHook(%s, %s, %s, %s)" % (self.action, self.command, self.before, self.after)
+
+class PostActionHook(ActionHook):
+
+   """
+   Class representing a pre-action hook associated with an action.
+
+   A hook associated with an action is a shell command to be executed either
+   before or after a named action is executed.  In this case, a post-action hook
+   is executed after the named action.
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   The following restrictions exist on data in this class:
+
+      - The action name must be a non-empty string consisting of lower-case letters and digits.
+      - The shell command must be a non-empty string.
+
+   The internal C{before} instance variable is always set to True in this
+   class.
+
+   @sort: __init__, __repr__, __str__, __cmp__, action, command, before, after
+   """
+
+   def __init__(self, action=None, command=None):
+      """
+      Constructor for the C{PostActionHook} class.
+
+      @param action: Action this hook is associated with
+      @param command: Shell command to execute
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      ActionHook.__init__(self, action, command)
+      self._after = True
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "PostActionHook(%s, %s, %s, %s)" % (self.action, self.command, self.before, self.after)
+
+
+########################################################################
 # ExtendedAction class definition
 ########################################################################
 
@@ -284,7 +515,7 @@ class ExtendedAction(object):
       - The function must be an on-empty string and a valid Python identifier.
       - The index must be a positive integer.
 
-   @sort: __init__, __repr__, __str__, __cmp__, action, module, function, index
+   @sort: __init__, __repr__, __str__, __cmp__, name, module, function, index
    """
 
    def __init__(self, name=None, module=None, function=None, index=None):
@@ -1463,13 +1694,14 @@ class OptionsConfig(object):
       - The starting day must be a day of the week in English, i.e. C{"monday"}, C{"tuesday"}, etc.  
       - All of the other values must be non-empty strings if they are set to something other than C{None}.
       - The overrides list must be a list of C{CommandOverride} objects.
+      - The hooks list must be a list of C{ActionHook} objects.
 
    @sort: __init__, __repr__, __str__, __cmp__, startingDay, workingDir, 
          backupUser, backupGroup, rcpCommand, overrides
    """
 
    def __init__(self, startingDay=None, workingDir=None, backupUser=None, 
-                backupGroup=None, rcpCommand=None, overrides=None):
+                backupGroup=None, rcpCommand=None, overrides=None, hooks=None):
       """
       Constructor for the C{OptionsConfig} class.
 
@@ -1479,6 +1711,7 @@ class OptionsConfig(object):
       @param backupGroup: Effective group that backups should run as.
       @param rcpCommand: Default rcp-compatible copy command for staging.
       @param overrides: List of configured command path overrides, if any.
+      @param hooks: List of configured pre- and post-action hooks.
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -1488,19 +1721,23 @@ class OptionsConfig(object):
       self._backupGroup = None
       self._rcpCommand = None
       self._overrides = None
+      self._hooks = None
       self.startingDay = startingDay
       self.workingDir = workingDir
       self.backupUser = backupUser
       self.backupGroup = backupGroup
       self.rcpCommand = rcpCommand
       self.overrides = overrides
+      self.hooks = hooks
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "OptionsConfig(%s, %s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir, self.backupUser, 
-                                                        self.backupGroup, self.rcpCommand, self.overrides)
+      return "OptionsConfig(%s, %s, %s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir,  
+                                                            self.backupUser, self.backupGroup, 
+                                                            self.rcpCommand, self.overrides,
+                                                            self.hooks)
 
    def __str__(self):
       """
@@ -1543,6 +1780,11 @@ class OptionsConfig(object):
             return 1
       if self._overrides != other._overrides:
          if self._overrides < other._overrides:
+            return -1
+         else:
+            return 1
+      if self._hooks != other._hooks:
+         if self._hooks < other._hooks:
             return -1
          else:
             return 1
@@ -1659,12 +1901,36 @@ class OptionsConfig(object):
       """
       return self._overrides
 
+   def _setHooks(self, value):
+      """
+      Property target used to set the pre- and post-action hooks list.
+      Either the value must be C{None} or each element must be an C{ActionHook}.
+      @raise ValueError: If the value is not a C{CommandOverride}
+      """
+      if value is None:
+         self._hooks = None
+      else:
+         try:
+            saved = self._hooks
+            self._hooks = ObjectTypeList(ActionHook, "ActionHook")
+            self._hooks.extend(value)
+         except Exception, e:
+            self._hooks = saved
+            raise e
+
+   def _getHooks(self):
+      """
+      Property target used to get the command path hooks list.
+      """
+      return self._hooks
+
    startingDay = property(_getStartingDay, _setStartingDay, None, "Day that starts the week.")
    workingDir = property(_getWorkingDir, _setWorkingDir, None, "Working (temporary) directory to use for backups.")
    backupUser = property(_getBackupUser, _setBackupUser, None, "Effective user that backups should run as.")
    backupGroup = property(_getBackupGroup, _setBackupGroup, None, "Effective group that backups should run as.")
    rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "Default rcp-compatible copy command for staging.")
    overrides = property(_getOverrides, _setOverrides, None, "List of configured command path overrides, if any.")
+   hooks = property(_getHooks, _setHooks, None, "List of configured pre- and post-action hooks.")
 
 
 ########################################################################
@@ -2689,7 +2955,7 @@ class Config(object):
    def _setOptions(self, value):
       """
       Property target used to set the options configuration value.
-      If not C{None}, the value must be a C{OptionsConfig} object.
+      If not C{None}, the value must be an C{OptionsConfig} object.
       @raise ValueError: If the value is not a C{OptionsConfig}
       """
       if value is None:
@@ -3004,6 +3270,7 @@ class Config(object):
          options.backupGroup = readString(section, "backup_group")
          options.rcpCommand = readString(section, "rcp_command")
          options.overrides = Config._parseOverrides(section)
+         options.hooks = Config._parseHooks(section)
       return options
    _parseOptions = staticmethod(_parseOptions)
 
@@ -3221,6 +3488,38 @@ class Config(object):
          lst = None
       return lst
    _parseOverrides = staticmethod(_parseOverrides)
+
+   def _parseHooks(parentNode):
+      """
+      Reads a list of C{ActionHook} objects from immediately beneath the parent.
+
+      We read the following individual fields::
+
+         action                  action  
+         command                 command 
+
+      @param parentNode: Parent node to search beneath.
+
+      @return: List of C{ActionHook} objects or C{None} if none are found.
+      @raise ValueError: If some filled-in value is invalid.
+      """
+      lst = []
+      for entry in readChildren(parentNode, "pre_action_hook"):
+         if isElement(entry):
+            hook = PreActionHook()
+            hook.action = readString(entry, "action")
+            hook.command = readString(entry, "command")
+            lst.append(hook)
+      for entry in readChildren(parentNode, "post_action_hook"):
+         if isElement(entry):
+            hook = PostActionHook()
+            hook.action = readString(entry, "action")
+            hook.command = readString(entry, "command")
+            lst.append(hook)
+      if lst == []:
+         lst = None
+      return lst
+   _parseHooks = staticmethod(_parseHooks)
 
    def _parseCollectDirs(parentNode):
       """
@@ -3441,8 +3740,11 @@ class Config(object):
       item::
 
          overrides      //cb_config/options/override
+         hooks          //cb_config/options/pre_action_hook
+         hooks          //cb_config/options/post_action_hook
 
-      The individual collect directories are added by L{_addOverride}.
+      The individual override items are added by L{_addOverride}.  The
+      individual hook items are added by L{_addHook}.
 
       If C{optionsConfig} is C{None}, then no container will be added.
 
@@ -3460,6 +3762,9 @@ class Config(object):
          if optionsConfig.overrides is not None:
             for override in optionsConfig.overrides:
                Config._addOverride(xmlDom, sectionNode, override)
+         if optionsConfig.hooks is not None:
+            for hook in optionsConfig.hooks:
+               Config._addHook(xmlDom, sectionNode, hook)
    _addOptions = staticmethod(_addOptions)
 
    def _addCollect(xmlDom, parentNode, collectConfig):
@@ -3651,6 +3956,42 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "command", override.command)
          addStringNode(xmlDom, sectionNode, "abs_path", override.absolutePath)
    _addOverride = staticmethod(_addOverride)
+
+   def _addHook(xmlDom, parentNode, hook):
+      """
+      Adds an action hook container as the next child of a parent.
+
+      The behavior varies depending on the value of the C{before} and C{after}
+      flags on the hook.  If the C{before} flag is set, it's a pre-action hook,
+      and we'll add the following fields:
+
+         action                  pre_action_hook/action
+         command                 pre_action_hook/command
+
+      If the C{after} flag is set, it's a post-action hook, and we'll add the
+      following fields:
+
+         action                  post_action_hook/action
+         command                 post_action_hook/command
+   
+      The <pre_action_hook> or <post_action_hook> node itself is created as the
+      next child of the parent node.  This method only adds one hook node.  The
+      parent must loop for each hook in the C{OptionsConfig} object.
+
+      If C{hook} is C{None}, this method call will be a no-op.
+
+      @param xmlDom: DOM tree as from L{createOutputDom}.
+      @param parentNode: Parent that the section should be appended to.
+      @param hook: Command hook to be added to the document.
+      """
+      if hook is not None:
+         if hook.before:
+            sectionNode = addContainerNode(xmlDom, parentNode, "pre_action_hook")
+         else:
+            sectionNode = addContainerNode(xmlDom, parentNode, "post_action_hook")
+         addStringNode(xmlDom, sectionNode, "action", hook.action)
+         addStringNode(xmlDom, sectionNode, "command", hook.command)
+   _addHook = staticmethod(_addHook)
 
    def _addCollectDir(xmlDom, parentNode, collectDir):
       """

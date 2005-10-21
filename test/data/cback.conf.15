@@ -35,6 +35,18 @@
          <command>svnlook</command>
          <abs_path>/svnlook</abs_path>
       </override>
+      <pre_action_hook>
+         <action>collect</action>
+         <command>ls -l</command>
+      </pre_action_hook>
+      <pre_action_hook>
+         <action>subversion</action>
+         <command>mailx -S "hello"</command>
+      </pre_action_hook>
+      <post_action_hook>
+         <action>stage</action>
+         <command>df -k</command>
+      </post_action_hook>
    </options>
    <collect>
       <collect_dir>/opt/backup/collect</collect_dir>

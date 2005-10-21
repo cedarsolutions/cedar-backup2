@@ -8,6 +8,10 @@ Version 2.7.0	unreleased
 	  - Change BackupFileList.removeUnchanged() to accept a captureDigest flag
 	  - This avoids need to call both generateDigestMap() and removeUnchanged()
 	  - Note that interface to removeUnchanged was modified, but not broken
+	* Add support for pre- and post-action command hooks (closes: #27).
+	  - Added <pre_action_hook> and <post_action_hook> sections within <options>
+	  - Create new config.PreActionHook and PostActionHook classes to hold hooks
+	  - Added new hooks list field on config.OptionsConfig class
 	* Rework and abstract XML functionality, plus remove dependency on PyXML.
 	  - Refactor general XML utility code out of config.py into xmlutil.py
 	  - Create new isElement() function to eliminate need for Node references
