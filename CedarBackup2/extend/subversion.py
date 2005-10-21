@@ -75,18 +75,9 @@ import pickle
 from bz2 import BZ2File
 from gzip import GzipFile
 
-# XML-related modules
-from xml.dom.ext.reader import PyExpat
-from xml.xpath import Evaluate
-from xml.parsers.expat import ExpatError
-from xml.dom.minidom import Node
-from xml.dom.minidom import getDOMImplementation
-from xml.dom.minidom import parseString
-from xml.dom.ext import PrettyPrint
-
 # Cedar Backup modules
-from CedarBackup2.config import addContainerNode, addStringNode
-from CedarBackup2.config import readChildren, readFirstChild, readString
+from CedarBackup2.config import createInputDom, addContainerNode, addStringNode
+from CedarBackup2.config import isElement, readChildren, readFirstChild, readString
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
 from CedarBackup2.action import isStartOfWeek, buildNormalizedPath
 from CedarBackup2.util import resolveCommand, executeCommand
@@ -660,12 +651,8 @@ class LocalConfig(object):
 
       @raise ValueError: If the XML cannot be successfully parsed.
       """
-      try:
-         xmlDom = PyExpat.Reader().fromString(xmlData)
-         parent = readFirstChild(xmlDom, "cb_config")
-         self._subversion = LocalConfig._parseSubversion(parent)
-      except (IOError, ExpatError), e:
-         raise ValueError("Unable to parse XML document: %s" % e)
+      (xmlDom, parentNode) = createInputDom(xmlData)
+      self._subversion = LocalConfig._parseSubversion(parentNode)
 
    def _parseSubversion(parent):
       """
@@ -721,7 +708,7 @@ class LocalConfig(object):
       """
       lst = []
       for entry in readChildren(parent, "repository"):
-         if entry.nodeType == Node.ELEMENT_NODE:
+         if isElement(entry):
             repositoryType = readString(entry, "type")
             if repositoryType in [ None, "BDB", ]:    # BDB is the default type 
                repository = BDBRepository()

@@ -231,20 +231,14 @@ Validation
 import os
 import re
 import logging
-from StringIO import StringIO
-
-# XML-related modules
-from xml.parsers.expat import ExpatError
-from xml.dom.minidom import Node
-from xml.dom.minidom import getDOMImplementation
-from xml.dom.minidom import parseString
-from xml.dom.ext import PrettyPrint
 
 # Cedar Backup modules
 from CedarBackup2.writer import validateScsiId, validateDriveSpeed
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, encodePath
-from CedarBackup2.xmlutil import readChildren, readFirstChild, readStringList, readString, readInteger, readBoolean
+from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild
+from CedarBackup2.xmlutil import readStringList, readString, readInteger, readBoolean
 from CedarBackup2.xmlutil import addContainerNode, addStringNode, addIntegerNode, addBooleanNode
+from CedarBackup2.xmlutil import createInputDom, createOutputDom, serializeDom
 
 
 ########################################################################
@@ -2914,20 +2908,16 @@ class Config(object):
 
       @raise ValueError: If the XML cannot be successfully parsed.
       """
-      try:
-         xmlDom = parseString(xmlData)
-         parent = readFirstChild(xmlDom, "cb_config")
-         self._reference = Config._parseReference(parent)
-         self._extensions = Config._parseExtensions(parent)
-         self._options = Config._parseOptions(parent)
-         self._collect = Config._parseCollect(parent)
-         self._stage = Config._parseStage(parent)
-         self._store = Config._parseStore(parent)
-         self._purge = Config._parsePurge(parent)
-      except (IOError, ExpatError), e:
-         raise ValueError("Unable to parse XML document: %s" % e)
+      (xmlDom, parentNode) = createInputDom(xmlData)
+      self._reference = Config._parseReference(parentNode)
+      self._extensions = Config._parseExtensions(parentNode)
+      self._options = Config._parseOptions(parentNode)
+      self._collect = Config._parseCollect(parentNode)
+      self._stage = Config._parseStage(parentNode)
+      self._store = Config._parseStore(parentNode)
+      self._purge = Config._parsePurge(parentNode)
 
-   def _parseReference(parent):
+   def _parseReference(parentNode):
       """
       Parses a reference configuration section.
       
@@ -2938,13 +2928,13 @@ class Config(object):
          description    //cb_config/reference/description
          generator      //cb_config/reference/generator
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: C{ReferenceConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       reference = None
-      section = readFirstChild(parent, "reference")
+      section = readFirstChild(parentNode, "reference")
       if section is not None:
          reference = ReferenceConfig()
          reference.author = readString(section, "author")
@@ -2954,7 +2944,7 @@ class Config(object):
       return reference
    _parseReference = staticmethod(_parseReference)
 
-   def _parseExtensions(parent):
+   def _parseExtensions(parentNode):
       """
       Parses an extensions configuration section.
       
@@ -2967,20 +2957,20 @@ class Config(object):
    
       The extended actions are parsed by L{_parseExtendedActions}.
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: C{ExtensionsConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       extensions = None
-      section = readFirstChild(parent, "extensions")
+      section = readFirstChild(parentNode, "extensions")
       if section is not None:
          extensions = ExtensionsConfig()
          extensions.actions = Config._parseExtendedActions(section)
       return extensions
    _parseExtensions = staticmethod(_parseExtensions)
 
-   def _parseOptions(parent):
+   def _parseOptions(parentNode):
       """
       Parses a options configuration section.
 
@@ -2999,13 +2989,13 @@ class Config(object):
 
       The overrides are parsed by L{_parseOverrides}.
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: C{OptionsConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       options = None
-      section = readFirstChild(parent, "options")
+      section = readFirstChild(parentNode, "options")
       if section is not None:
          options = OptionsConfig()
          options.startingDay = readString(section, "starting_day")
@@ -3017,7 +3007,7 @@ class Config(object):
       return options
    _parseOptions = staticmethod(_parseOptions)
 
-   def _parseCollect(parent):
+   def _parseCollect(parentNode):
       """
       Parses a collect configuration section.
 
@@ -3038,13 +3028,13 @@ class Config(object):
       The exclusions are parsed by L{_parseExclusions} and the collect
       directories are parsed by L{_parseCollectDirs}.
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: C{CollectConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       collect = None
-      section = readFirstChild(parent, "collect")
+      section = readFirstChild(parentNode, "collect")
       if section is not None:
          collect = CollectConfig()
          collect.targetDir = readString(section, "collect_dir")
@@ -3056,7 +3046,7 @@ class Config(object):
       return collect
    _parseCollect = staticmethod(_parseCollect)
 
-   def _parseStage(parent):
+   def _parseStage(parentNode):
       """
       Parses a stage configuration section.
 
@@ -3072,13 +3062,13 @@ class Config(object):
 
       The individual peer entries are parsed by L{_parsePeers}.
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: C{StageConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       stage = None
-      section = readFirstChild(parent, "stage")
+      section = readFirstChild(parentNode, "stage")
       if section is not None:
          stage = StageConfig()
          stage.targetDir = readString(section, "staging_dir")
@@ -3086,7 +3076,7 @@ class Config(object):
       return stage
    _parseStage = staticmethod(_parseStage)
 
-   def _parseStore(parent):
+   def _parseStore(parentNode):
       """
       Parses a store configuration section.
 
@@ -3101,13 +3091,13 @@ class Config(object):
          checkData         //cb_config/store/check_data
          warnMidnite       //cb_config/store/warn_midnite
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: C{StoreConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       store = None
-      section = readFirstChild(parent, "store")
+      section = readFirstChild(parentNode, "store")
       if section is not None:
          store = StoreConfig()
          store.sourceDir = readString(section,  "source_dir")
@@ -3121,7 +3111,7 @@ class Config(object):
       return store
    _parseStore = staticmethod(_parseStore)
 
-   def _parsePurge(parent):
+   def _parsePurge(parentNode):
       """
       Parses a purge configuration section.
 
@@ -3132,20 +3122,20 @@ class Config(object):
 
       The individual directory entries are parsed by L{_parsePurgeDirs}.
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: C{PurgeConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       purge = None
-      section = readFirstChild(parent, "purge")
+      section = readFirstChild(parentNode, "purge")
       if section is not None:
          purge = PurgeConfig()
          purge.purgeDirs = Config._parsePurgeDirs(section)
       return purge
    _parsePurge = staticmethod(_parsePurge)
 
-   def _parseExtendedActions(parent):
+   def _parseExtendedActions(parentNode):
       """
       Reads extended actions data from immediately beneath the parent.
 
@@ -3156,14 +3146,14 @@ class Config(object):
          function    function
          index       index
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: List of extended actions.
       @raise ValueError: If the data at the location can't be read
       """
       lst = []
-      for entry in readChildren(parent, "action"):
-         if entry.nodeType == Node.ELEMENT_NODE:
+      for entry in readChildren(parentNode, "action"):
+         if isElement(entry):
             action = ExtendedAction()
             action.name = readString(entry, "name")
             action.module = readString(entry, "module")
@@ -3175,7 +3165,7 @@ class Config(object):
       return lst
    _parseExtendedActions = staticmethod(_parseExtendedActions)
 
-   def _parseExclusions(parent):
+   def _parseExclusions(parentNode):
       """
       Reads exclusions data from immediately beneath the parent.
 
@@ -3192,11 +3182,11 @@ class Config(object):
       configuration level and on the collect directory level within collect
       configuration.
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: Tuple of (absolute, relative, patterns) exclusions.
       """
-      section = readFirstChild(parent, "exclude")
+      section = readFirstChild(parentNode, "exclude")
       if section is None:
          return (None, None, None)
       else:
@@ -3206,7 +3196,7 @@ class Config(object):
          return (absolute, relative, patterns)
    _parseExclusions = staticmethod(_parseExclusions)
 
-   def _parseOverrides(parent):
+   def _parseOverrides(parentNode):
       """
       Reads a list of C{CommandOverride} objects from immediately beneath the parent.
 
@@ -3215,14 +3205,14 @@ class Config(object):
          command                 command 
          absolutePath            abs_path
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: List of C{CommandOverride} objects or C{None} if none are found.
       @raise ValueError: If some filled-in value is invalid.
       """
       lst = []
-      for entry in readChildren(parent, "override"):
-         if entry.nodeType == Node.ELEMENT_NODE:
+      for entry in readChildren(parentNode, "override"):
+         if isElement(entry):
             override = CommandOverride()
             override.command = readString(entry, "command")
             override.absolutePath = readString(entry, "abs_path")
@@ -3232,7 +3222,7 @@ class Config(object):
       return lst
    _parseOverrides = staticmethod(_parseOverrides)
 
-   def _parseCollectDirs(parent):
+   def _parseCollectDirs(parentNode):
       """
       Reads a list of C{CollectDir} objects from immediately beneath the parent.
 
@@ -3257,14 +3247,14 @@ class Config(object):
 
       The exclusions are parsed by L{_parseExclusions}.
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: List of C{CollectDir} objects or C{None} if none are found.
       @raise ValueError: If some filled-in value is invalid.
       """
       lst = []
-      for entry in readChildren(parent, "dir"):
-         if entry.nodeType == Node.ELEMENT_NODE:
+      for entry in readChildren(parentNode, "dir"):
+         if isElement(entry):
             cdir = CollectDir()
             cdir.absolutePath = readString(entry, "abs_path")
             cdir.collectMode = readString(entry, "mode")
@@ -3279,7 +3269,7 @@ class Config(object):
       return lst
    _parseCollectDirs = staticmethod(_parseCollectDirs)
 
-   def _parsePurgeDirs(parent):
+   def _parsePurgeDirs(parentNode):
       """
       Reads a list of C{PurgeDir} objects from immediately beneath the parent.
 
@@ -3288,14 +3278,14 @@ class Config(object):
          absolutePath            <baseExpr>/abs_path
          retainDays              <baseExpr>/retain_days
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: List of C{PurgeDir} objects or C{None} if none are found.
       @raise ValueError: If the data at the location can't be read
       """
       lst = []
-      for entry in readChildren(parent, "dir"):
-         if entry.nodeType == Node.ELEMENT_NODE:
+      for entry in readChildren(parentNode, "dir"):
+         if isElement(entry):
             cdir = PurgeDir()
             cdir.absolutePath = readString(entry, "abs_path")
             cdir.retainDays = readInteger(entry, "retain_days")
@@ -3305,7 +3295,7 @@ class Config(object):
       return lst
    _parsePurgeDirs = staticmethod(_parsePurgeDirs)
 
-   def _parsePeers(parent):
+   def _parsePeers(parentNode):
       """
       Reads remote and local peer data from immediately beneath the parent.
 
@@ -3328,15 +3318,15 @@ class Config(object):
       If there are none of one type of peer (i.e. no local peers) then C{None}
       will be returned for that item in the tuple.  
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: Tuple of (local, remote) peer lists.
       @raise ValueError: If the data at the location can't be read
       """
       localPeers = []
       remotePeers = []
-      for entry in readChildren(parent, "peer"):
-         if entry.nodeType == Node.ELEMENT_NODE:
+      for entry in readChildren(parentNode, "peer"):
+         if isElement(entry):
             peerType = readString(entry, "type")
             if peerType == "local":
                localPeer = LocalPeer()
@@ -3375,9 +3365,7 @@ class Config(object):
       filled based on lists - if the list is empty or C{None}, the container
       tag will be empty.
       """
-      impl = getDOMImplementation()
-      xmlDom = impl.createDocument(None, "cb_config", None)
-      parentNode = xmlDom.documentElement
+      (xmlDom, parentNode) = createOutputDom()
       Config._addReference(xmlDom, parentNode, self.reference)
       Config._addExtensions(xmlDom, parentNode, self.extensions)
       Config._addOptions(xmlDom, parentNode, self.options)
@@ -3385,10 +3373,7 @@ class Config(object):
       Config._addStage(xmlDom, parentNode, self.stage)
       Config._addStore(xmlDom, parentNode, self.store)
       Config._addPurge(xmlDom, parentNode, self.purge)
-      xmlBuffer = StringIO()
-      PrettyPrint(xmlDom, xmlBuffer)
-      xmlData = xmlBuffer.getvalue()
-      xmlBuffer.close()
+      xmlData = serializeDom(xmlDom)
       xmlDom.unlink()
       return xmlData
 
@@ -3405,7 +3390,7 @@ class Config(object):
 
       If C{referenceConfig} is C{None}, then no container will be added.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param referenceConfig: Reference configuration section to be added to the document.
       """
@@ -3429,7 +3414,7 @@ class Config(object):
 
       If C{extensionsConfig} is C{None}, then no container will be added.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param extensionsConfig: Extensions configuration section to be added to the document.
       """
@@ -3461,7 +3446,7 @@ class Config(object):
 
       If C{optionsConfig} is C{None}, then no container will be added.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param optionsConfig: Options configuration section to be added to the document.
       """
@@ -3499,7 +3484,7 @@ class Config(object):
    
       If C{collectConfig} is C{None}, then no container will be added.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param collectConfig: Collect configuration section to be added to the document.
       """
@@ -3542,7 +3527,7 @@ class Config(object):
 
       If C{stageConfig} is C{None}, then no container will be added.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param stageConfig: Stage configuration section to be added to the document.
       """
@@ -3574,7 +3559,7 @@ class Config(object):
 
       If C{storeConfig} is C{None}, then no container will be added.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param storeConfig: Store configuration section to be added to the document.
       """
@@ -3602,7 +3587,7 @@ class Config(object):
 
       If C{purgeConfig} is C{None}, then no container will be added.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param purgeConfig: Purge configuration section to be added to the document.
       """
@@ -3630,7 +3615,7 @@ class Config(object):
 
       If C{action} is C{None}, this method call will be a no-op.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param action: Purge directory to be added to the document.
       """
@@ -3657,7 +3642,7 @@ class Config(object):
 
       If C{override} is C{None}, this method call will be a no-op.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param override: Command override to be added to the document.
       """
@@ -3694,7 +3679,7 @@ class Config(object):
 
       If C{collectDir} is C{None}, this method call will be a no-op.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param collectDir: Collect directory to be added to the document.
       """
@@ -3737,7 +3722,7 @@ class Config(object):
 
       If C{localPeer} is C{None}, this method call will be a no-op.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param localPeer: Purge directory to be added to the document.
       """
@@ -3768,7 +3753,7 @@ class Config(object):
 
       If C{remotePeer} is C{None}, this method call will be a no-op.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param remotePeer: Purge directory to be added to the document.
       """
@@ -3796,7 +3781,7 @@ class Config(object):
 
       If C{purgeDir} is C{None}, this method call will be a no-op.
 
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param purgeDir: Purge directory to be added to the document.
       """
