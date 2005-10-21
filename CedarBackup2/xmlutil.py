@@ -69,7 +69,11 @@ there.
 ########################################################################
 
 # System modules
+import re
+import string
 import logging
+import codecs
+from types import UnicodeType
 from StringIO import StringIO
 
 # XML-related modules
@@ -404,9 +408,6 @@ def _PrettyPrint(xmlDom, stream, indent='  '):
    stream.write('\n')
    return
 
-import string
-import re
-
 class PrintVisitor(object):
     def __init__(self, stream, encoding, indent=''):
         self.stream = stream
@@ -604,8 +605,6 @@ class PrintVisitor(object):
         return
 
 #The following stanza courtesy Martin von Loewis
-import codecs # Python 1.6+ only
-from types import UnicodeType
 def utf8_to_code(text, encoding):
   encoder = codecs.lookup(encoding)[0] # encode,decode,reader,writer
   if type(text) is not UnicodeType:
@@ -619,17 +618,6 @@ def strobj_to_utf8str(text, encoding):
       text = unicode(text, "utf-8")
   #FIXME
   return str(encoder(text)[0])
-
-g_cdataCharPattern = re.compile('[&<]|]]>')
-g_charToEntity = {
-        '&': '&amp;',
-        '<': '&lt;',
-        ']]>': ']]&gt;',
-        }
-
-ILLEGAL_LOW_CHARS = '[\x01-\x08\x0B-\x0C\x0E-\x1F]'
-ILLEGAL_HIGH_CHARS = '\xEF\xBF[\xBE\xBF]'
-XML_ILLEGAL_CHAR_PATTERN = re.compile('%s|%s'%(ILLEGAL_LOW_CHARS, ILLEGAL_HIGH_CHARS))
 
 def TranslateCdataAttr(characters):
     '''Handles normalization and some intelligence about quoting'''
@@ -657,13 +645,17 @@ def TranslateCdata(characters, encoding='UTF-8', prev_chars='', markupSafe=0,
     specifier as the second argument.  It must return a string or unicode
     object
     """
+    CDATA_CHAR_PATTERN = re.compile('[&<]|]]>')
+    CHAR_TO_ENTITY = { '&': '&amp;', '<': '&lt;', ']]>': ']]&gt;', }
+    ILLEGAL_LOW_CHARS = '[\x01-\x08\x0B-\x0C\x0E-\x1F]'
+    ILLEGAL_HIGH_CHARS = '\xEF\xBF[\xBE\xBF]'
+    XML_ILLEGAL_CHAR_PATTERN = re.compile('%s|%s'%(ILLEGAL_LOW_CHARS, ILLEGAL_HIGH_CHARS))
+
     if not characters:
         return ''
     if not markupSafe:
-        if g_cdataCharPattern.search(characters):
-            new_string = g_cdataCharPattern.subn(
-                lambda m, d=g_charToEntity: d[m.group()],
-                characters)[0]
+        if CDATA_CHAR_PATTERN.search(characters):
+            new_string = CDATA_CHAR_PATTERN.subn( lambda m, d=CHAR_TO_ENTITY: d[m.group()], characters)[0]
         else:
             new_string = characters
         if prev_chars[-2:] == ']]' and characters[0] == '>':
