@@ -96,58 +96,6 @@
          </varlistentry>
 
          <varlistentry>
-            <term>PyXML</term>
-            <listitem>
-
-               <para>
-                  Cedar Backup should work with version 0.8.2 or better of this
-                  package.
-               </para>
-
-               <informaltable>
-                  <tgroup cols="2">
-                     <colspec colnum="1" colwidth="1*"/>
-                     <colspec colnum="2" colwidth="3.5*"/>
-                     <thead>
-                        <row>
-                           <entry>Source</entry>
-                           <entry>URL</entry>
-                        </row>
-                     </thead>
-                     <tbody>
-                        <row>
-                           <entry>upstream</entry>
-                           <entry><ulink url="http://pyxml.sourceforge.net/"/></entry>
-                        </row>
-                        <row>
-                           <entry>Debian</entry>
-                           <entry><ulink url="http://packages.debian.org/testing/python/python-xml"/></entry>
-                        </row>
-                        <row>
-                           <entry>Gentoo</entry>
-                           <entry><ulink url="http://packages.gentoo.org/packages/?category=dev-python;name=pyxml;"/></entry>
-                        </row>
-                        <row>
-                           <entry>RPM</entry>
-                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=pyxml"/></entry>
-                        </row>
-                        <row>
-                           <entry>Mac OS X (fink)</entry>
-                           <entry><ulink url="http://fink.sourceforge.net/pdb/package.php/pyxml-py23"/></entry>
-                        </row>
-                     </tbody>
-                  </tgroup>
-               </informaltable>
-
-               <para>
-                  If you can't find a package for your system, install from the package
-                  source, using the <quote>upstream</quote> link.
-               </para>
-
-            </listitem>
-         </varlistentry>
-
-         <varlistentry>
             <term>RSH Server and Client</term>
             <listitem>
 

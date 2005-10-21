@@ -8,12 +8,13 @@ Version 2.7.0	unreleased
 	  - Change BackupFileList.removeUnchanged() to accept a captureDigest flag
 	  - This avoids need to call both generateDigestMap() and removeUnchanged()
 	  - Note that interface to removeUnchanged was modified, but not broken
-	* Rework and abstract XML functionality, plus try to minimize need for PyXML.
+	* Rework and abstract XML functionality, plus remove dependency on PyXML.
 	  - Refactor general XML utility code out of config.py into xmlutil.py
-	  - Interface does *not* break since config.py still imports these names
 	  - Create new isElement() function to eliminate need for Node references
 	  - Create new createInputDom(), createOutputDom() and serializeDom() functions
 	  - Use minidom XML parser rather than PyExpat.reader (much faster)
+	  - Hack together xmlutil.Serializer based on xml.dom.ext.PrettyPrint
+	  - Remove references to PyXML in manual's depends.xml and install.xml files.
 
 Version 2.6.1	27 Sep 2005
 
