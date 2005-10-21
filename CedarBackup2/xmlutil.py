@@ -399,7 +399,7 @@ def _PrettyPrint(xmlDom, stream, indent='  '):
    @param stream: Output string to use (could be StringIO, even)
    @param indent: Indent string to use for each level of indentation
    """
-   visitor = PrintVisitor(stream, "UTF-8", indent, [], {})
+   visitor = PrintVisitor(stream, "UTF-8", indent)
    visitor.visit(xmlDom)
    stream.write('\n')
    return
@@ -412,29 +412,19 @@ XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/"
 XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml"
 
 class PrintVisitor(object):
-    def __init__(self, stream, encoding, indent='', plainElements=None,
-                 nsHints=None, isXhtml=0, force8bit=0):
+    def __init__(self, stream, encoding, indent=''):
         self.stream = stream
         self.encoding = encoding
         # Namespaces
         self._namespaces = [{}]
-        self._nsHints = nsHints or {}
         # PrettyPrint
         self._indent = indent
         self._depth = 0
         self._inText = 0
-        self._plainElements = plainElements or []
-        # HTML support
-        self._html = None
-        self._isXhtml = isXhtml
-        self.force8bit = force8bit
         return
 
     def _write(self, text):
-        if self.force8bit:
-            obj = strobj_to_utf8str(text, self.encoding)
-        else:
-            obj = utf8_to_code(text, self.encoding)
+        obj = utf8_to_code(text, self.encoding)
         self.stream.write(obj)
         return
 
@@ -444,10 +434,6 @@ class PrintVisitor(object):
         return
 
     def visit(self, node):
-        if self._html is None:
-            # Set HTMLDocument flag here for speed
-            self._html = hasattr(node.ownerDocument, 'getElementsByName')
-
         if node.nodeType == Node.ELEMENT_NODE:
             return self.visitElement(node)
 
@@ -503,10 +489,9 @@ class PrintVisitor(object):
             return
         self._write(' ' + node.name)
         value = node.value
-        if value or not self._html:
-            text = TranslateCdata(value, self.encoding)
-            text, delimiter = TranslateCdataAttr(text)
-            self.stream.write("=%s%s%s" % (delimiter, text, delimiter))
+        text = TranslateCdata(value, self.encoding)
+        text, delimiter = TranslateCdataAttr(text)
+        self.stream.write("=%s%s%s" % (delimiter, text, delimiter))
         return
 
     def visitProlog(self):
@@ -517,7 +502,7 @@ class PrintVisitor(object):
         return
 
     def visitDocument(self, node):
-        not self._html and self.visitProlog()
+        self.visitProlog()
         node.doctype and self.visitDocumentType(node.doctype)
         self.visitNodeList(node.childNodes, exclude=node.doctype)
         return
@@ -528,31 +513,22 @@ class PrintVisitor(object):
 
     def visitElement(self, node):
         self._namespaces.append(self._namespaces[-1].copy())
-        inline = node.tagName in self._plainElements
-        not inline and self._tryIndent()
+        self._tryIndent()
         self._write('<%s' % node.tagName)
-        if self._isXhtml or not self._html:
-            namespaces = ''
-            if self._isXhtml:
-                nss = {'xml': XML_NAMESPACE, None: XHTML_NAMESPACE}
-            else:
-                nss = GetAllNs(node)
-            if self._nsHints:
-                self._nsHints.update(nss)
-                nss = self._nsHints
-                self._nsHints = {}
-            del nss['xml']
-            for prefix in nss.keys():
-                if not self._namespaces[-1].has_key(prefix) or self._namespaces[-1][prefix] != nss[prefix]:
-                    nsuri, delimiter = TranslateCdataAttr(nss[prefix])
-                    if prefix:
-                        xmlns = " xmlns:%s=%s%s%s" % (prefix, delimiter,nsuri,delimiter)
-                    else:
-                        xmlns = " xmlns=%s%s%s" % (delimiter,nsuri,delimiter)
-                    namespaces = namespaces + xmlns
+        namespaces = ''
+        nss = GetAllNs(node)
+        del nss['xml']
+        for prefix in nss.keys():
+            if not self._namespaces[-1].has_key(prefix) or self._namespaces[-1][prefix] != nss[prefix]:
+                nsuri, delimiter = TranslateCdataAttr(nss[prefix])
+                if prefix:
+                    xmlns = " xmlns:%s=%s%s%s" % (prefix, delimiter,nsuri,delimiter)
+                else:
+                    xmlns = " xmlns=%s%s%s" % (delimiter,nsuri,delimiter)
+                namespaces = namespaces + xmlns
 
-                self._namespaces[-1][prefix] = nss[prefix]
-            self._write(namespaces)
+            self._namespaces[-1][prefix] = nss[prefix]
+        self._write(namespaces)
         for attr in node.attributes.values():
             self.visitAttr(attr)
         if len(node.childNodes):
@@ -560,15 +536,10 @@ class PrintVisitor(object):
             self._depth = self._depth + 1
             self.visitNodeList(node.childNodes)
             self._depth = self._depth - 1
-            if not self._html or (node.tagName not in HTML_FORBIDDEN_END):
-                not (self._inText and inline) and self._tryIndent()
-                self._write('</%s>' % node.tagName)
-        elif not self._html:
-            self._write('/>')
-        elif node.tagName not in HTML_FORBIDDEN_END:
-            self._write('></%s>' % node.tagName)
+            not (self._inText) and self._tryIndent()
+            self._write('</%s>' % node.tagName)
         else:
-            self._write('>')
+            self._write('/>')
         del self._namespaces[-1]
         self._inText = 0
         return
