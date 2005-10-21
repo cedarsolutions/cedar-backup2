@@ -1,20 +1,23 @@
 Version 2.7.0	unreleased
 
-	* Cleanup maintainer-only (non-distributed) makefile rules.
+	* Cleanup some maintainer-only (non-distributed) Makefile rules.
 	* Make changes to standardize file headers with other Cedar Backup code.
-	* Rework XML functionality and attempt to minimize need for PyXML package.
-	  - Refactor general XML utility code out of config.py into xmlutil.py
-	  - Interface does *not* break since config.py still imports these names
-	  - Use minidom XML parser rather than PyExpat.reader (much faster)
 	* Add debug statements to filesystem code (huge increase in debug log size).
+	* Standardize some config variable names ("parentNode" instead of "parent").
 	* Optimize incremental backup, and hopefully speed it up a bit (closes: #29).
 	  - Change BackupFileList.removeUnchanged() to accept a captureDigest flag
 	  - This avoids need to call both generateDigestMap() and removeUnchanged()
 	  - Note that interface to removeUnchanged was modified, but not broken
+	* Rework and abstract XML functionality, plus try to minimize need for PyXML.
+	  - Refactor general XML utility code out of config.py into xmlutil.py
+	  - Interface does *not* break since config.py still imports these names
+	  - Create new isElement() function to eliminate need for Node references
+	  - Create new createInputDom(), createOutputDom() and serializeDom() functions
+	  - Use minidom XML parser rather than PyExpat.reader (much faster)
 
 Version 2.6.1	27 Sep 2005
 
-	* Fix broken call to node.hasChildNodes (no parens) in Config.py.
+	* Fix broken call to node.hasChildNodes (no parens) in config.py.
 	* Make "pre-existing collect indicator" error more obvious (closes: #26).
 	* Avoid failures for UTF-8 filenames on certain filesystems (closes: #25).
 	* Fix FilesystemList to encode excludeList items, preventing UTF-8 failures.

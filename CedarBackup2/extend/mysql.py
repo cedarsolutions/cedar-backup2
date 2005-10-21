@@ -79,18 +79,9 @@ import logging
 from gzip import GzipFile
 from bz2 import BZ2File
 
-# XML-related modules
-from xml.dom.ext.reader import PyExpat
-from xml.xpath import Evaluate
-from xml.parsers.expat import ExpatError
-from xml.dom.minidom import Node
-from xml.dom.minidom import getDOMImplementation
-from xml.dom.minidom import parseString
-from xml.dom.ext import PrettyPrint
-
 # Cedar Backup modules
-from CedarBackup2.config import addContainerNode, addStringNode, addBooleanNode
-from CedarBackup2.config import readChildren, readFirstChild, readString, readStringList, readBoolean
+from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode, addBooleanNode
+from CedarBackup2.xmlutil import readChildren, readFirstChild, readString, readStringList, readBoolean
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import ObjectTypeList, changeOwnership
@@ -477,14 +468,10 @@ class LocalConfig(object):
 
       @raise ValueError: If the XML cannot be successfully parsed.
       """
-      try:
-         xmlDom = PyExpat.Reader().fromString(xmlData)
-         parent = readFirstChild(xmlDom, "cb_config")
-         self._mysql = LocalConfig._parseMysql(parent)
-      except (IOError, ExpatError), e:
-         raise ValueError("Unable to parse XML document: %s" % e)
+      (xmlDom, parentNode) = createInputDom(xmlData)
+      self._mysql = LocalConfig._parseMysql(parentNode)
 
-   def _parseMysql(parent):
+   def _parseMysql(parentNode):
       """
       Parses a mysql configuration section.
       
@@ -500,13 +487,13 @@ class LocalConfig(object):
 
          databases      //cb_config/mysql/database
 
-      @param parent: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
       @return: C{MysqlConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
       mysql = None
-      section = readFirstChild(parent, "mysql")
+      section = readFirstChild(parentNode, "mysql")
       if section is not None:
          mysql = MysqlConfig()
          mysql.user = readString(section, "user")
