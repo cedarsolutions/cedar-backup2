@@ -4,6 +4,7 @@ Version 2.7.0	unreleased
 	* Make changes to standardize file headers with other Cedar Backup code.
 	* Add debug statements to filesystem code (huge increase in debug log size).
 	* Standardize some config variable names ("parentNode" instead of "parent").
+	* No longer attempt to change ownership of files when not running as root.
 	* Optimize incremental backup, and hopefully speed it up a bit (closes: #29).
 	  - Change BackupFileList.removeUnchanged() to accept a captureDigest flag
 	  - This avoids need to call both generateDigestMap() and removeUnchanged()
