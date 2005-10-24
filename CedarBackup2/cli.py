@@ -88,7 +88,7 @@ import getopt
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
 from CedarBackup2.util import RestrictedContentList, PathResolverSingleton
-from CedarBackup2.util import splitCommandLine, getFunctionReference, getUidGid, encodePath
+from CedarBackup2.util import splitCommandLine, executeCommand, getFunctionReference, getUidGid, encodePath
 from CedarBackup2.config import Config
 from CedarBackup2.action import executeCollect, executeStage, executeStore, executePurge, executeRebuild, executeValidate
 
@@ -220,9 +220,9 @@ def cli():
       config = Config(xmlPath=configPath)
       _setupPathResolver(config)
       if config.extensions is not None:
-         actionSet = _ActionSet(options.actions, config.extensions.actions)
+         actionSet = _ActionSet(options.actions, config.extensions.actions, config.options.hooks)
       else:
-         actionSet = _ActionSet(options.actions, None)
+         actionSet = _ActionSet(options.actions, None, config.options.hooks)
    except Exception, e:
       logger.error("Error reading or handling configuration: %s" % e)
       logger.info("Cedar Backup run completed with status 4.")
@@ -259,15 +259,15 @@ class _ActionItem(object):
    """
    Class representing a single action to be executed.
 
-   This class represents a single action to be executed, and understands how to
-   execute those actions.   
+   This class represents a single named action to be executed, and understands
+   how to execute that action.   
 
    Standard actions ("built-in" actions like collect, stage, etc.) are
    instantiated in terms of a direct function reference, i.e.  to
    C{executeCollect}.  Extended actions are instantiated in terms of an
    C{ExtendedAction} object taken from configuration.
 
-   The two different actions are executed directly.  In the case of standard
+   The two different actions are executed differently.  In the case of standard
    actions, the function reference is called directly.  In the case of extended
    actions, a function reference is first derived (using
    L{getFunctionReference}) and then called.
@@ -276,6 +276,11 @@ class _ActionItem(object):
    also pass in the config path so that extensions modules can re-parse
    configuration if they want to, to add in extra information.
 
+   This class is also where pre-action and post-action hooks are executed.  An
+   action item is instantiated in terms of optional pre- and post-action hook
+   objects (config.ActionHook), which are then executed at the appropriate time
+   if set.
+
    @note: The comparison operators for this class have been implemented to only
    compare based on the index value, and ignore all other values.  This is so
    that the action set list can be easily sorted by index.
@@ -283,14 +288,25 @@ class _ActionItem(object):
    @sort: __init__, index, module, function 
    """
 
-   def __init__(self, index, function=None, extension=None):
+   def __init__(self, index, name, preHook, postHook, function=None, extension=None):
       """
       Default constructor.
+
+      You should pass either function or extension, but not both.  It's OK to
+      pass C{None} for C{index}, C{preHook} or C{postHook}, but not for
+      C{name}.
+
       @param index: Index of the item (or C{None}).
+      @param name: Name of the action that is being executed.
+      @param preHook: Pre-action hook in terms of an C{ActionHook} object, or C{None}.
+      @param postHook: Post-action hook in terms of an C{ActionHook} object, or C{None}.
       @param function: Reference to function associated with item.
       @param extension: C{ExtendedAction} object associated with item.
       """
       self.index = index
+      self.name = name
+      self.preHook = preHook
+      self.postHook = postHook
       self.function = function
       self.extension = extension
 
@@ -312,7 +328,7 @@ class _ActionItem(object):
 
    def executeAction(self, configPath, options, config):
       """
-      Executes the action associated with an item.
+      Executes the action associated with an item, including hooks.
 
       See class notes for more details on how the action is executed.
 
@@ -322,11 +338,37 @@ class _ActionItem(object):
 
       @raise Exception: If there is a problem executing the action.
       """
+      logger.debug("Executing [%s] action." % self.name)
+      if self.preHook is not None:
+         self._executeHook("pre-action", self.preHook)
+      self._executeAction(configPath, options, config)
+      if self.postHook is not None:
+         self._executeHook("post-action", self.postHook)
+      
+   def _executeAction(self, configPath, options, config):
+      """
+      Executes the action, specifically the function associated with the action.
+      @param configPath: Path to configuration file on disk.
+      @param options: Command-line options to be passed to action.
+      @param config: Parsed configuration to be passed to action.
+      """
       if self.function is not None:
+         logger.debug("Calling built-in action function [%s]." % self.function.__name__);
          self.function(configPath, options, config)
       else:
+         logger.debug("Calling extension function [%s.%s]." % self.extension.module, self.extension.function);
          function = getFunctionReference(self.extension.module, self.extension.function)
          function(configPath, options, config)
+
+   def _executeHook(self, type, hook):
+      """
+      Executes a hook command via L{util.executeCommand()}.
+      @param type: String describing the type of hook, for logging.
+      @param hook: Hook, in terms of a C{ActionHook} object.
+      """
+      logger.debug("Executing %s hook for action [%s]." % (type, hook.action))
+      fields = splitCommandLine(hook.command)
+      executeCommand(command=fields[0:1], args=fields[1:])
 
 
 ###################
@@ -338,7 +380,7 @@ class _ActionSet(object):
    """
    Class representing a set of actions to be executed.
 
-   This class does two different things.  First, it ensures that the actions
+   This class does three different things.  First, it ensures that the actions
    specified on the command-line are sensible.  The command-line can only list
    either standard actions or extended actions specified in configuration.
    Also, certain actions (in L{NONCOMBINE_ACTIONS}) cannot be combined with
@@ -348,24 +390,61 @@ class _ActionSet(object):
    actions are combined on the command line (either standard actions or
    extended actions), we must make sure they get executed in a sensible order.
 
+   Third, it ensures that any pre-action or post-action hooks are scheduled and
+   executed appropriately.  Hooks are configured by building a dictionary
+   mapping between hook action name and command.  Pre-action are executed
+   immediately before their associated action, and post-action hooks are
+   executed immediately after their associated action.
+
    @sort: __init__, executeActions
    """
 
-   def __init__(self, actions, extensions):
+   def __init__(self, actions, extensions, hooks):
       """
       Constructor for the C{_ActionSet} class.
 
+      The end-result is that we first validate the requested actions, and then
+      fill in the C{preHookDict}, C{postHookDict} and C{actionSet} instance
+      variables for later use.
+
       @param actions: Names of actions specified on the command-line.
       @param extensions: List of extended actions (i.e. config.extensions.actions)
+      @param hooks: List of pre- and post-action hooks (i.e. config.options.hooks)
 
       @raise ValueError: If one of the specified actions is invalid.
+      """
+      extensionDict = _ActionSet._buildExtensionDict(extensions)
+      (preHookDict, postHookDict) = _ActionSet._buildHookDicts(hooks)
+      _ActionSet._validateActions(actions, extensionDict.keys())
+      self.actionSet = _ActionSet._buildActionSet(actions, extensionDict, preHookDict, postHookDict)
+
+   def _buildHookDicts(hooks):
+      """
+      Build internal dictionaries mapping action name to hook.
+      @param hooks: List of pre- and post-action hooks (i.e. config.options.hooks)
+      """
+      preHookDict = {}
+      postHookDict = {}
+      if hooks is not None:
+         for hook in hooks:
+            if hook.before:
+               preHookDict[hook.action] = hook
+            elif hook.after:
+               postHookDict[hook.action] = hook
+      return (preHookDict, postHookDict)
+   _buildHookDicts = staticmethod(_buildHookDicts)
+
+   def _buildExtensionDict(extensions):
+      """
+      Builds dictionary mapping extension name to extension.
+      @return: Dictionary mapping extension name to extension.
       """
       extensionDict = {}
       if extensions is not None:
          for extension in extensions:
             extensionDict[extension.name] = extension
-      _ActionSet._validateActions(actions, extensionDict.keys())
-      self.actionSet = _ActionSet._buildActionSet(actions, extensionDict)
+      return extensionDict
+   _buildExtensionDict = staticmethod(_buildExtensionDict)
 
    def _validateActions(actions, extensionNames):
       """
@@ -392,7 +471,7 @@ class _ActionSet(object):
             raise ValueError("Action [%s] may not be combined with other actions." % action)
    _validateActions = staticmethod(_validateActions)
 
-   def _buildActionSet(actions, extensionDict):
+   def _buildActionSet(actions, extensionDict, preHookDict, postHookDict):
       """
       Build set of actions to be executed.
 
@@ -406,33 +485,63 @@ class _ActionSet(object):
 
       @param actions: Names of actions specified on the command-line.
       @param extensionDict: Dictionary mapping extension name to C{ExtendedAction} object.
+      @param preHookDict: Dictionary mapping action name to pre-action hook C{ActionSet} object.
+      @param postHookDict: Dictionary mapping action name to post-action hook C{ActionSet} object.
 
       @return: Set of action items in proper order.
       """
       actionSet = []
       for action in actions:
          if extensionDict.has_key(action):
-            actionSet.append(_ActionItem(extensionDict[action].index, extension=extensionDict[action]))
+            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
+            actionSet.append(_ActionItem(extensionDict[action].index, action, preHook, postHook, extension=extensionDict[action]))
          elif action == 'collect':
-            actionSet.append(_ActionItem(COLLECT_INDEX, function=executeCollect))
+            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
+            actionSet.append(_ActionItem(COLLECT_INDEX, action, preHook, postHook, function=executeCollect))
          elif action == 'stage':
-            actionSet.append(_ActionItem(STAGE_INDEX, function=executeStage))
+            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
+            actionSet.append(_ActionItem(STAGE_INDEX, action, preHook, postHook, function=executeStage))
          elif action == 'store':
-            actionSet.append(_ActionItem(STORE_INDEX, function=executeStore))
+            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
+            actionSet.append(_ActionItem(STORE_INDEX, action, preHook, postHook, function=executeStore))
          elif action == 'purge':
-            actionSet.append(_ActionItem(PURGE_INDEX, function=executePurge))
+            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
+            actionSet.append(_ActionItem(PURGE_INDEX, action, preHook, postHook, function=executePurge))
          elif action == 'rebuild':
-            actionSet.append(_ActionItem(None, function=executeRebuild))
+            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
+            actionSet.append(_ActionItem(None, action, preHook, postHook, function=executeRebuild))
          elif action == 'validate':
-            actionSet.append(_ActionItem(None, function=executeValidate))
+            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
+            actionSet.append(_ActionItem(None, action, function=executeValidate, preHook=preHook, postHook=postHook))
          elif action == 'all':
-            actionSet.append(_ActionItem(COLLECT_INDEX, function=executeCollect))
-            actionSet.append(_ActionItem(STAGE_INDEX, function=executeStage))
-            actionSet.append(_ActionItem(STORE_INDEX, function=executeStore))
-            actionSet.append(_ActionItem(PURGE_INDEX, function=executePurge))
+            (preHook, postHook) = _ActionSet._deriveHooks("collect", preHookDict, postHookDict)
+            actionSet.append(_ActionItem(COLLECT_INDEX, "collect", preHook, postHook, function=executeCollect))
+            (preHook, postHook) = _ActionSet._deriveHooks("stage", preHookDict, postHookDict)
+            actionSet.append(_ActionItem(STAGE_INDEX, "stage", preHook, postHook, function=executeStage))
+            (preHook, postHook) = _ActionSet._deriveHooks("store", preHookDict, postHookDict)
+            actionSet.append(_ActionItem(STORE_INDEX, "store", preHook, postHook, function=executeStore))
+            (preHook, postHook) = _ActionSet._deriveHooks("purge", preHookDict, postHookDict)
+            actionSet.append(_ActionItem(PURGE_INDEX, "purge", preHook, postHook, function=executePurge))
       actionSet.sort()  # sort the actions in order by index
       return actionSet
    _buildActionSet = staticmethod(_buildActionSet)
+
+   def _deriveHooks(action, preHookDict, postHookDict):
+      """
+      Derive pre- and post-action hooks, if any, associated with named action.
+      @param action: Name of action to look up
+      @param preHookDict: Dictionary mapping pre-action hooks to action name
+      @param postHookDict: Dictionary mapping post-action hooks to action name
+      @return Tuple (preHook, postHook) per mapping, with None values if there is no hook.
+      """
+      preHook = None
+      postHook = None
+      if preHookDict.has_key(action):
+         preHook = preHookDict[action]
+      if postHookDict.has_key(action):
+         postHook = postHookDict[action]
+      return (preHook, postHook)
+   _deriveHooks = staticmethod(_deriveHooks)
 
    def executeActions(self, configPath, options, config):
       """
