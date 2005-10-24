@@ -281,7 +281,7 @@ class FilesystemList(list):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
-      logger.debug("Added file [%s] to list." % path)
+      logger.debug("Added file to list: [%s]" % path)
       return 1
 
    def addDir(self, path):
@@ -320,7 +320,7 @@ class FilesystemList(list):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
-      logger.debug("Added directory [%s] to list." % path)
+      logger.debug("Added directory to list: [%s]" % path)
       return 1
 
    def addDirContents(self, path):
