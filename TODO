@@ -36,6 +36,8 @@ TESTING IMPROVEMENTS
 
 DOCUMENTATION IMPROVEMENTS
 
+Add documentation for new pre- and post-action hooks.
+
 Documentation in some places is difficult to read, especially in the config section.
 
 Add documentation for some common debugging methods (like how to find your CD drive)
