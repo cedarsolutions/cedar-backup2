@@ -764,11 +764,14 @@ def changeOwnership(path, user, group):
    @param user: User which owns file.
    @param group: Group which owns file.
    """
-   try:
-      (uid, gid) = getUidGid(user, group)
-      os.chown(path, uid, gid)
-   except Exception, e:
-      logger.error("Error changing ownership of [%s]: %s" % (path, e))
+   if os.getuid() != 0:
+      logger.debug("Not root, so not attempting to change owner on [%s]." % path)
+   else:
+      try:
+         (uid, gid) = getUidGid(user, group)
+         os.chown(path, uid, gid)
+      except Exception, e:
+         logger.error("Error changing ownership of [%s]: %s" % (path, e))
 
 
 ##############################
