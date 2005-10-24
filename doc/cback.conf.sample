@@ -39,6 +39,14 @@
          <command>mkisofs</command>
          <abs_path>/opt/local/bin/mkisofs</abs_path>
       </override>
+      <pre_action_hook>
+         <action>collect</action>
+         <command>echo "I AM A PRE-ACTION HOOK RELATED TO COLLECT"</command>
+      </pre_action_hook>
+      <post_action_hook>
+         <action>collect</action>
+         <command>echo "I AM A POST-ACTION HOOK RELATED TO COLLECT"</command>
+      </post_action_hook>
    </options>
    <collect>
       <collect_dir>/opt/backup/collect</collect_dir>

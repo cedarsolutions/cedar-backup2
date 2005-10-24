@@ -3963,13 +3963,13 @@ class Config(object):
 
       The behavior varies depending on the value of the C{before} and C{after}
       flags on the hook.  If the C{before} flag is set, it's a pre-action hook,
-      and we'll add the following fields:
+      and we'll add the following fields::
 
          action                  pre_action_hook/action
          command                 pre_action_hook/command
 
       If the C{after} flag is set, it's a post-action hook, and we'll add the
-      following fields:
+      following fields::
 
          action                  post_action_hook/action
          command                 post_action_hook/command
