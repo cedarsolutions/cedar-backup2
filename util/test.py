@@ -98,6 +98,7 @@ def main():
 
    """
    Main routine for program.
+   @return: Integer 0 upon success, integer 1 upon failure.
    """
 
    # Check the Python version.  We require 2.3 or greater.
@@ -180,8 +181,12 @@ def main():
                                mysqltests.suite(),
                                subversiontests.suite(),
                               ))
-   unittest.TextTestRunner(verbosity=1).run(suite)
+   result = unittest.TextTestRunner(verbosity=1).run(suite)
    print ""
+   if not result.wasSuccessful():
+      return 1
+   else:
+      return 0
 
 
 ########################################################################
@@ -190,5 +195,6 @@ def main():
 
 # Run the main routine if the module is executed rather than sourced
 if __name__ == '__main__':
-   main()
+   result = main()
+   sys.exit(result)
 
