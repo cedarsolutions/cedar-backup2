@@ -123,7 +123,7 @@ from CedarBackup2.extend.mysql import LocalConfig, MysqlConfig, _getOutputFile
 #######################################################################
 
 DATA_DIRS = [ "./data", "./test/data", ]
-RESOURCES = [ "mysql.conf.1", "mysql.conf.2", "mysql.conf.3", "mysql.conf.4", ]
+RESOURCES = [ "mysql.conf.1", "mysql.conf.2", "mysql.conf.3", "mysql.conf.4", "mysql.conf.5", ]
 
 
 #######################################################################
@@ -896,6 +896,30 @@ class TestLocalConfig(unittest.TestCase):
       config.mysql = MysqlConfig("user", "password", "gzip", False, ["whatever", ])
       config.validate()
 
+   def testValidate_009(self):
+      """
+      Test validate on a non-empty mysql section, with user=None.
+      """
+      config = LocalConfig()
+      config.mysql = MysqlConfig(None, "password", "gzip", True, None)
+      config.validate()
+
+   def testValidate_010(self):
+      """
+      Test validate on a non-empty mysql section, with password=None.
+      """
+      config = LocalConfig()
+      config.mysql = MysqlConfig("user", None, "gzip", True, None)
+      config.validate()
+
+   def testValidate_011(self):
+      """
+      Test validate on a non-empty mysql section, with user=None and password=None.
+      """
+      config = LocalConfig()
+      config.mysql = MysqlConfig(None, None, "gzip", True, None)
+      config.validate()
+
 
    ############################
    # Test parsing of documents
@@ -977,6 +1001,27 @@ class TestLocalConfig(unittest.TestCase):
       self.failUnlessEqual(False, config.mysql.all)
       self.failUnlessEqual(["database1", "database2", ], config.mysql.databases)
 
+   def testParse_006(self):
+      """
+      Parse config document containing only a mysql section, no user or password, multiple databases, all=False.
+      """
+      path = self.resources["mysql.conf.5"]
+      contents = open(path).read()
+      config = LocalConfig(xmlPath=path, validate=False)
+      self.failIfEqual(None, config.mysql)
+      self.failUnlessEqual(None, config.mysql.user)
+      self.failUnlessEqual(None, config.mysql.password)
+      self.failUnlessEqual("bzip2", config.mysql.compressMode)
+      self.failUnlessEqual(False, config.mysql.all)
+      self.failUnlessEqual(["database1", "database2", ], config.mysql.databases)
+      config = LocalConfig(xmlData=contents, validate=False)
+      self.failIfEqual(None, config.mysql)
+      self.failUnlessEqual(None, config.mysql.user)
+      self.failUnlessEqual(None, config.mysql.password)
+      self.failUnlessEqual("bzip2", config.mysql.compressMode)
+      self.failUnlessEqual(False, config.mysql.all)
+      self.failUnlessEqual(["database1", "database2", ], config.mysql.databases)
+
 
    ###################
    # Test addConfig()
@@ -1035,6 +1080,30 @@ class TestLocalConfig(unittest.TestCase):
       """
       config = LocalConfig()
       config.mysql = MysqlConfig("user", "password", "gzip", True, [ "database1", "database2", ])
+      self.validateAddConfig(config)
+
+   def testAddConfig_009(self):
+      """
+      Test with multiple databases, user=None but all other values filled in, all=False.
+      """
+      config = LocalConfig()
+      config.mysql = MysqlConfig(None, "password", "gzip", True, [ "database1", "database2", ])
+      self.validateAddConfig(config)
+
+   def testAddConfig_010(self):
+      """
+      Test with multiple databases, password=None but all other values filled in, all=False.
+      """
+      config = LocalConfig()
+      config.mysql = MysqlConfig("user", None, "gzip", True, [ "database1", "database2", ])
+      self.validateAddConfig(config)
+
+   def testAddConfig_011(self):
+      """
+      Test with multiple databases, user=None and password=None but all other values filled in, all=False.
+      """
+      config = LocalConfig()
+      config.mysql = MysqlConfig(None, None, "gzip", True, [ "database1", "database2", ])
       self.validateAddConfig(config)
 
 

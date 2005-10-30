@@ -345,33 +345,68 @@
          action.
       </para>
 
+      <note>
+         <para>
+            This extension always produces a full backup.  There is currently
+            no facility for making incremental backups.  If/when someone has a
+            need for this and can describe how to do it, I will update this
+            extension or provide another.
+         </para>
+      </note>
+
       <para>
          The backup is done via the <command>mysqldump</command> command
          included with the MySQL product.  Output can be compressed using
-         either <command>gzip</command> or <command>bzip2</command>.
-         Administrators can configure the extension either to back up all
-         databases or to back up only specific databases.  The extension
-         assumes that all databases can be backed up by a single user
-         (typically <literal>root</literal>).
+         <command>gzip</command> or <command>bzip2</command>.  Administrators
+         can configure the extension either to back up all databases or to back
+         up only specific databases.  
       </para>
 
       <para>
-         Note that this code always produces a full backup.  There is currently
-         no facility for making incremental backups.  If/when someone has a
-         need for this and can describe how to do it correctly, I'll update
-         this extension or provide another.
+         The extension assumes that all configured databases can be backed up
+         by a single user.  Often, the <quote>root</quote> database user will
+         be used.  An alternative is to create a separate MySQL
+         <quote>backup</quote> user and grant that user rights to read (but not
+         write) various databases as needed.  This second option is probably
+         your best choice.
       </para>
 
-      <para>
-         Unfortunately, use of this extension <emphasis>will</emphasis> expose
-         usernames and passwords in the process listing (via
-         <command>ps</command>) when the backup is running.  This is because
-         none of the official MySQL backup scripts provide a good way to
-         specify password other than via the <option>--password</option>
-         command-line option.  The only workaround I can come up with would be
-         to manipulate program I/O interactively through a pipe, which is a
-         real pain.
-      </para>
+      <warning>
+         <para>
+            The extension accepts a username and password in configuration.
+            However, you probably do not want to list those values in Cedar
+            Backup configuration.  This is because Cedar Backup will provide these
+            values to <command>mysqldump</command> via the command-line
+            <option>--user</option> and <option>--password</option> switches,
+            which will be visible to other users in the process listing.
+         </para>
+
+         <para>
+            Instead, you should configure the username and password in one of MySQL's
+            configuration files.  Typically, that would be done by putting a stanza like
+            this in <filename>/root/.my.cnf</filename>:
+         </para>
+
+         <programlisting>
+[mysqldump]
+user     = root
+password = &lt;secret&gt;
+         </programlisting>
+
+         <para>
+            Of course, if you are executing the backup as a user other than root, then
+            you would create the file in that user's home directory instead.
+         </para>
+
+         <para>
+            Regardless of whether you are using <filename>~/.my.cnf</filename> or
+            <filename>/etc/cback.conf</filename> to store database login and
+            password information, you should be careful about who is allowed to
+            view that information.  Typically, this means locking down permissions
+            so that only the file owner can read the file contents (i.e. use mode
+            <literal>0600</literal>).
+         </para>
+      </warning>
 
       <para>
          To enable this extension, add the following section to the Cedar Backup
@@ -398,19 +433,25 @@
 
       <programlisting>
 &lt;mysql&gt;
-   &lt;user&gt;root&lt;/user&gt;
-   &lt;password&gt;password&lt;/password&gt;
    &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
    &lt;all&gt;Y&lt;/all&gt;
 &lt;/mysql&gt;
       </programlisting>
 
       <para>
-         You should always make <filename>/etc/cback.conf</filename> unreadable
-         to non-root users once you place MySQL configuration into it, since it
-         contains information about available MySQL databases, usernames and
-         passwords.
+         If you have decided to configure login information in Cedar Backup
+         rather than using MySQL configuration, then you would add the username
+         and password fields to configuration:
       </para>
+
+      <programlisting>
+&lt;mysql&gt;
+   &lt;user&gt;root&lt;/user&gt;
+   &lt;password&gt;password&lt;/password&gt;
+   &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
+   &lt;all&gt;Y&lt;/all&gt;
+&lt;/mysql&gt;
+      </programlisting>
 
       <para>
          The following elements are part of the MySQL configuration section:
@@ -430,7 +471,13 @@
                   system root user).
                </para>
                <para>
-                  <emphasis>Restrictions:</emphasis> Must be non-empty.
+                  This value is optional.  You should probably configure the
+                  username and password in MySQL configuration instead, as
+                  discussed above.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> If provided, must be
+                  non-empty.
                </para>
             </listitem>
          </varlistentry>
@@ -440,12 +487,13 @@
             <listitem>
                <para>Password associated with the database user.</para>
                <para>
-                  Note that once you put this value into configuration, you
-                  should make sure that your configuration file cannot be read
-                  by users which should not see this password.
+                  This value is optional.  You should probably configure the
+                  username and password in MySQL configuration instead, as
+                  discussed above.
                </para>
                <para>
-                  <emphasis>Restrictions:</emphasis> Must be non-empty.
+                  <emphasis>Restrictions:</emphasis> If provided, must be
+                  non-empty.
                </para>
             </listitem>
          </varlistentry>
@@ -484,7 +532,8 @@
                   into one big dump file.  
                </para>
                <para>
-                  <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+                  <emphasis>Restrictions:</emphasis> Must be a boolean
+                  (<literal>Y</literal> or <literal>N</literal>).
                </para>
             </listitem>
          </varlistentry>
