@@ -559,8 +559,7 @@
 
          <para>
             The options configuration section contains configuration options
-            that are not specific to any one action.  All of the fields (other
-            than the overrides section) are required and must not be empty.
+            that are not specific to any one action.  
          </para>
 
          <para>
@@ -582,6 +581,14 @@
       &lt;command&gt;mkisofs&lt;/command&gt;
       &lt;abs_path&gt;/opt/local/bin/mkisofs&lt;/abs_path&gt;
    &lt;/override&gt;
+   &lt;pre_action_hook&gt;
+      &lt;action&gt;collect&lt;/action&gt;
+      &lt;command&gt;echo "I AM A PRE-ACTION HOOK RELATED TO COLLECT"&lt;/command&gt;
+   &lt;/pre_action_hook&gt;
+   &lt;post_action_hook&gt;
+      &lt;action&gt;collect&lt;/action&gt;
+      &lt;command&gt;echo "I AM A POST-ACTION HOOK RELATED TO COLLECT"&lt;/command&gt;
+   &lt;/post_action_hook&gt;
 &lt;/options&gt;
          </programlisting>
 
@@ -706,12 +713,11 @@
                      problem.
                   </para>
                   <para>
-                     This section is optional, and can be repeatd as many times
+                     This section is optional, and can be repeated as many times
                      as necessary.
                   </para>
                   <para>
-                     The override subsection must contain the following two
-                     fields:
+                     This subsection must contain the following two fields:
                   </para>
 
                   <variablelist>
@@ -740,6 +746,158 @@
                            <para>
                               <emphasis>Restrictions:</emphasis> Must be an
                               absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>pre_action_hook</literal></term>
+               <listitem>
+                  <para>Hook configuring a command to be executed before an action.</para>
+                  <para>
+                     This is a subsection which configures a command to be
+                     executed immediately before a named action.  It provides a
+                     way for administrators to associate their own custom
+                     functionality with standard Cedar Backup actions or with
+                     arbitrary extensions.
+                  </para>
+                  <para>
+                     This section is optional, and can be repeated as many times
+                     as necessary.
+                  </para>
+                  <para>
+                     This subsection must contain the following two fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>action</literal></term>
+                        <listitem>
+                           <para>
+                              Name of the Cedar Backup action that the hook is
+                              associated with.   The action can be a standard
+                              backup action (collect, stage, etc.) or can be an
+                              extension action.  No validation is done to
+                              ensure that the configured action actually
+                              exists.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a
+                              non-empty string.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>command</literal></term>
+                        <listitem>
+                           <para>
+                              Name of the command to be executed.  This item
+                              can either specify the path to a shell script of
+                              some sort (the recommended approach) or can include
+                              a complete shell command.  
+                           </para>
+                           <para>
+                              Note: if you choose to provide a complete shell
+                              command rather than the path to a script, you
+                              need to be aware of some limitations of Cedar
+                              Backup's command-line parser.  You cannot use a
+                              subshell (via the <literal>`command`</literal> or
+                              <literal>$(command)</literal> syntaxes) or any
+                              shell variable in your command line.
+                              Additionally, the command-line parser only
+                              recognizes the double-quote character
+                              (<literal>"</literal>) to delimit groupings or
+                              strings on the command-line.  The bottom line is,
+                              you are probably best off writing a shell script
+                              of some sort for anything more sophisticated than
+                              very simple shell commands.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a
+                              non-empty string.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>post_action_hook</literal></term>
+               <listitem>
+                  <para>Hook configuring a command to be executed after an action.</para>
+                  <para>
+                     This is a subsection which configures a command to be
+                     executed immediately after a named action.  It provides a
+                     way for administrators to associate their own custom
+                     functionality with standard Cedar Backup actions or with
+                     arbitrary extensions.
+                  </para>
+                  <para>
+                     This section is optional, and can be repeatd as many times
+                     as necessary.
+                  </para>
+                  <para>
+                     This subsection must contain the following two fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>action</literal></term>
+                        <listitem>
+                           <para>
+                              Name of the Cedar Backup action that the hook is
+                              associated with.   The action can be a standard
+                              backup action (collect, stage, etc.) or can be an
+                              extension action.  No validation is done to
+                              ensure that the configured action actually
+                              exists.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a
+                              non-empty string.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>command</literal></term>
+                        <listitem>
+                           <para>
+                              Name of the command to be executed.  This item
+                              can either specify the path to a shell script of
+                              some sort (the recommended approach) or can include
+                              a complete shell command.  
+                           </para>
+                           <para>
+                              Note: if you choose to provide a complete shell
+                              command rather than the path to a script, you
+                              need to be aware of some limitations of Cedar
+                              Backup's command-line parser.  You cannot use a
+                              subshell (via the <literal>`command`</literal> or
+                              <literal>$(command)</literal> syntaxes) or any
+                              shell variable in your command line.
+                              Additionally, the command-line parser only
+                              recognizes the double-quote character
+                              (<literal>"</literal>) to delimit groupings or
+                              strings on the command-line.  The bottom line is,
+                              you are probably best off writing a shell script
+                              of some sort for anything more sophisticated than
+                              very simple shell commands.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a
+                              non-empty string.
                            </para>
                         </listitem>
                      </varlistentry>
