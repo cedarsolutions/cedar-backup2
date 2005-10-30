@@ -6,7 +6,7 @@ Version 2.7.0	30 Oct 2005
 	* Standardize some config variable names ("parentNode" instead of "parent").
 	* Fix util/test.py to return proper (non-zero) return status upon failure.
 	* No longer attempt to change ownership of files when not running as root.
-	* Fix unit test for bug #25 (testAddFile_036) to work on non-Debian systems.
+	* Remove regression test for bug #25 (testAddFile_036) 'cause it's not portable.
 	* Modify use of user/password in MySQL extension (suggested by Matthias Urlichs).
 	  - Make user and password values optional in Cedar Backup configuration
 	  - Add a few regression tests to make sure configuration changes work
