@@ -356,7 +356,7 @@ class _ActionItem(object):
          logger.debug("Calling built-in action function [%s]." % self.function.__name__);
          self.function(configPath, options, config)
       else:
-         logger.debug("Calling extension function [%s.%s]." % self.extension.module, self.extension.function);
+         logger.debug("Calling extension function [%s.%s]." % (self.extension.module, self.extension.function));
          function = getFunctionReference(self.extension.module, self.extension.function)
          function(configPath, options, config)
 
