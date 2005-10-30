@@ -40,7 +40,7 @@
 Provides an extension to back up MySQL databases.
 
 This is a Cedar Backup extension used to back up MySQL databases via the Cedar
-Backup command line.  It requires a new configurations section <mysql> and is
+Backup command line.  It requires a new configuration section <mysql> and is
 intended to be run either immediately before or immediately after the standard
 collect action.  Aside from its own configuration, it requires the options and
 collect configuration sections in the standard Cedar Backup configuration file.
@@ -48,23 +48,36 @@ collect configuration sections in the standard Cedar Backup configuration file.
 The backup is done via the C{mysqldump} command included with the MySQL
 product.  Output can be compressed using C{gzip} or C{bzip2}.  Administrators
 can configure the extension either to back up all databases or to back up only
-specific databases.  The extension assumes that all databases can be backed up
-by a single user (typically "root").
+specific databases.  Note that this code always produces a full backup.  There
+is currently no facility for making incremental backups.  If/when someone has a
+need for this and can describe how to do it, I'll update this extension or
+provide another.
 
-Note that this code always produces a full backup.  There is currently no
-facility for making incremental backups.  If/when someone has a need for this
-and can describe how to do it, I'll update this extension or provide another.
+The extension assumes that all configured databases can be backed up by a
+single user.  Often, the "root" database user will be used.  An alternative is
+to create a separate MySQL "backup" user and grant that user rights to read
+(but not write) various databases as needed.  This second option is probably
+the best choice.
 
-You should always make C{/etc/cback.conf} unreadble to non-root users once you
-place mysql configuration into it, since mysql configuration will contain
-information about available MySQL databases, usernames and passwords.
+The extension accepts a username and password in configuration.  However, you
+probably do not want to provide those values in Cedar Backup configuration.
+This is because Cedar Backup will provide these values to C{mysqldump} via the
+command-line C{--user} and C{--password} switches, which will be visible to
+other users in the process listing.
 
-Unfortunately, use of this extension I{will} expose usernames and passwords in
-the process listing (via C{ps}) when the backup is running.  This is because
-none of the official MySQL backup scripts provide a good way to specify
-password other than via the C{--password} command-line option.  The only
-workaround I can come up with would be to manipulate program I/O interactively
-through a pipe, which is a real pain.
+Instead, you should configure the username and password in one of MySQL's
+configuration files.  Typically, that would be done by putting a stanza like
+this in C{/root/.my.cnf}:
+
+   [mysqldump]
+   user     = root
+   password = <secret>
+
+Regardless of whether you are using C{~/.my.cnf} or C{/etc/cback.conf} to store
+database login and password information, you should be careful about who is
+allowed to view that information.  Typically, this means locking down
+permissions so that only the file owner can read the file contents (i.e. use
+mode C{0600}).
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -108,7 +121,6 @@ class MysqlConfig(object):
 
    The following restrictions exist on data in this class:
 
-      - The user and password must always be filled in
       - The compress mode must be one of the values in L{VALID_COMPRESS_MODES}.
       - The 'all' flag must be 'Y' if no databases are defined.
       - The 'all' flag must be 'N' if any databases are defined.
@@ -403,18 +415,14 @@ class LocalConfig(object):
       """
       Validates configuration represented by the object.
 
-      The user, password and compress mode must be filled in.  Then, if the 'all'
-      flag I{is} set, no databases are allowed, and if the 'all' flag is I{not}
-      set, at least one database is required.
+      The compress mode must be filled in.  Then, if the 'all' flag I{is} set,
+      no databases are allowed, and if the 'all' flag is I{not} set, at least
+      one database is required.
 
       @raise ValueError: If one of the validations fails.
       """
       if self.mysql is None:
          raise ValueError("Mysql section is required.")
-      if self.mysql.user is None:
-         raise ValueError("Mysql user value is required.")
-      if self.mysql.password is None:
-         raise ValueError("Mysql password value is required.")
       if self.mysql.compressMode is None:
          raise ValueError("Compress mode value is required.")
       if self.mysql.all:
@@ -554,8 +562,8 @@ def _backupDatabase(targetDir, compressMode, user, password, backupUser, backupG
 
    @param targetDir:  Directory into which backups should be written.
    @param compressMode: Compress mode to be used for backed-up files.
-   @param user: User to use for connecting to the database.
-   @param password: Password associated with user.
+   @param user: User to use for connecting to the database (if any).
+   @param password: Password associated with user (if any).
    @param backupUser: User to own resulting file.
    @param backupGroup: Group to own resulting file.
    @param database: Name of database, or C{None} for all databases.
@@ -612,22 +620,44 @@ def backupDatabase(user, password, backupFile, database=None):
    Backs up an individual MySQL database, or all databases.
 
    This function backs up either a named local MySQL database or all local
-   MySQL databases, using the passed in user and password for connectivity.
-   This is I{always} a full backup.  There is no facility for incremental
-   backups.
+   MySQL databases, using the passed-in user and password (if provided) for
+   connectivity.  This function call I{always} results a full backup.  There is
+   no facility for incremental backups.
 
-   The backup data will be written into the passed-in back file.  Normally,
+   The backup data will be written into the passed-in backup file.  Normally,
    this would be an object as returned from C{open()}, but it is possible to
    use something like a C{GzipFile} to write compressed output.  The caller is
    responsible for closing the passed-in backup file.
 
-   @note: Typically, you would use the C{root} user to back up all databases.
+   Often, the "root" database user will be used when backing up all databases.
+   An alternative is to create a separate MySQL "backup" user and grant that
+   user rights to read (but not write) all of the databases that will be backed
+   up.
 
-   @param user: User to use for connecting to the database.
-   @type user: String representing MySQL username.
+   This function accepts a username and password.  However, you probably do not
+   want to pass those values in.  This is because they will be provided to
+   C{mysqldump} via the command-line C{--user} and C{--password} switches,
+   which will be visible to other users in the process listing.
 
-   @param password: Password associated with user.
-   @type password: String representing MySQL password.
+   Instead, you should configure the username and password in one of MySQL's
+   configuration files.  Typically, this would be done by putting a stanza like
+   this in C{/root/.my.cnf}, to provide C{mysqldump} with the root database
+   username and its password::
+
+      [mysqldump]
+      user     = root
+      password = <secret>
+
+   If you are executing this function as some system user other than root, then
+   the C{.my.cnf} file would be placed in the home directory of that user.  In
+   either case, make sure to set restrictive permissions (typically, mode
+   C{0600}) on C{.my.cnf} to make sure that other users cannot read the file.
+
+   @param user: User to use for connecting to the database (if any)
+   @type user: String representing MySQL username, or C{None}
+
+   @param password: Password associated with user (if any)
+   @type password: String representing MySQL password, or C{None}
 
    @param backupFile: File use for writing backup.
    @type backupFile: Python file object as from C{open()} or C{file()}.
@@ -638,9 +668,13 @@ def backupDatabase(user, password, backupFile, database=None):
    @raise ValueError: If some value is missing or invalid.
    @raise IOError: If there is a problem executing the MySQL dump.
    """
-   if user is None or password is None:
-      raise ValueError("User and password are required.")
-   args = [ "-all", "--flush-logs", "--opt", "--user=%s" % user, "--password=%s" % password, ]
+   args = [ "-all", "--flush-logs", "--opt", ]
+   if user is not None:
+      logger.warn("Warning: MySQL username will be visible in process listing (consider using ~/.my.cnf).")
+      args.append("--user=%s" % user)
+   if password is not None:
+      logger.warn("Warning: MySQL password will be visible in process listing (consider using ~/.my.cnf).")
+      args.append("--password=%s" % password)
    if database is None:
       args.insert(0, "--all-databases")
    else:

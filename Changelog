@@ -5,6 +5,12 @@ Version 2.7.0	unreleased
 	* Add debug statements to filesystem code (huge increase in debug log size).
 	* Standardize some config variable names ("parentNode" instead of "parent").
 	* No longer attempt to change ownership of files when not running as root.
+	* Modify use of user/password in MySQL extension (suggested by Matthias Urlichs).
+	  - Make user and password values optional in Cedar Backup configuration
+	  - Add a few regression tests to make sure configuration changes work
+	  - Add warning when user or password value(s) are visible in process listing
+	  - Document use of /root/.my.cnf or ~/.my.cnf in source code and user manual
+	  - Rework discussion of command line, file permissions, etc. in user manual
 	* Optimize incremental backup, and hopefully speed it up a bit (closes: #29).
 	  - Change BackupFileList.removeUnchanged() to accept a captureDigest flag
 	  - This avoids need to call both generateDigestMap() and removeUnchanged()
@@ -21,6 +27,7 @@ Version 2.7.0	unreleased
 	  - Use minidom XML parser rather than PyExpat.reader (much faster)
 	  - Hack together xmlutil.Serializer based on xml.dom.ext.PrettyPrint
 	  - Remove references to PyXML in manual's depends.xml and install.xml files.
+	  - Add notes about PyXML code sourced from Fourthought, Inc. in CREDITS.
 
 Version 2.6.1	27 Sep 2005
 
