@@ -109,12 +109,9 @@ from bz2 import BZ2File
 import os
 from StringIO import StringIO
 
-# XML-related modules
-from xml.dom.minidom import getDOMImplementation
-from xml.dom.ext import PrettyPrint
-
 # Cedar Backup modules
 from CedarBackup2.testutil import findResources, buildPath, removedir, failUnlessAssignRaises
+from CedarBackup2.xmlutil import createOutputDom, serializeDom
 from CedarBackup2.extend.mysql import LocalConfig, MysqlConfig, _getOutputFile
 
 
@@ -682,15 +679,9 @@ class TestLocalConfig(unittest.TestCase):
 
       @param origConfig: Original configuration.
       """
-      impl = getDOMImplementation()
-      xmlDom = impl.createDocument(None, "cb_config", None)
-      parentNode = xmlDom.documentElement
+      (xmlDom, parentNode) = createOutputDom()
       origConfig.addConfig(xmlDom, parentNode)
-      xmlBuffer = StringIO()
-      PrettyPrint(xmlDom, xmlBuffer)
-      xmlData = xmlBuffer.getvalue()
-      xmlBuffer.close()
-      xmlDom.unlink()
+      xmlData = serializeDom(xmlDom)
       newConfig = LocalConfig(xmlData=xmlData, validate=False)
       self.failUnlessEqual(origConfig, newConfig)
 

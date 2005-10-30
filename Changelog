@@ -27,8 +27,9 @@ Version 2.7.0	30 Oct 2005
 	  - Create new createInputDom(), createOutputDom() and serializeDom() functions
 	  - Use minidom XML parser rather than PyExpat.reader (much faster)
 	  - Hack together xmlutil.Serializer based on xml.dom.ext.PrettyPrint
-	  - Remove references to PyXML in manual's depends.xml and install.xml files.
-	  - Add notes about PyXML code sourced from Fourthought, Inc. in CREDITS.
+	  - Remove references to PyXML in manual's depends.xml and install.xml files
+	  - Add notes about PyXML code sourced from Fourthought, Inc. in CREDITS
+	  - Rework mysql and subversion unit tests in terms of new functions
 
 Version 2.6.1	27 Sep 2005
 
