@@ -17,6 +17,7 @@ Version 2.7.0	30 Oct 2005
 	  - Note that interface to removeUnchanged was modified, but not broken
 	* Add support for pre- and post-action command hooks (closes: #27).
 	  - Added <pre_action_hook> and <post_action_hook> sections within <options>
+	  - Updated user manual documentation for options configuration section
 	  - Create new config.PreActionHook and PostActionHook classes to hold hooks
 	  - Added new hooks list field on config.OptionsConfig class
 	  - Update ActionSet and ActionItem in cli to handle and execute hooks
