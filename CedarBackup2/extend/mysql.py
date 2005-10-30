@@ -67,7 +67,7 @@ other users in the process listing.
 
 Instead, you should configure the username and password in one of MySQL's
 configuration files.  Typically, that would be done by putting a stanza like
-this in C{/root/.my.cnf}:
+this in C{/root/.my.cnf}::
 
    [mysqldump]
    user     = root
