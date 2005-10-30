@@ -1,4 +1,4 @@
-Version 2.7.0	unreleased
+Version 2.7.0	30 Oct 2005
 
 	* Cleanup some maintainer-only (non-distributed) Makefile rules.
 	* Make changes to standardize file headers with other Cedar Backup code.
