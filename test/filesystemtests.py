@@ -749,10 +749,15 @@ class TestFilesystemList(unittest.TestCase):
       and included unicode objects rather than strings.  Attempting to
       add a file with a strange name caused a UnicodeDecodeError.
       """
+      self.extractTar("tree12")
+      stringDir = self.buildPath(["tree12", "unicode"])
+      unicodeDir = u'%s' % stringDir
+      stringFile = '%s/\xe2\x99\xaa\xe2\x99\xac' % stringDir
+      unicodeFile = u'%s/\xe2\x99\xaa\xe2\x99\xac' % stringDir
       fsList = FilesystemList()
-      fsList.excludePaths = [u'/usr/share/doc/console-tools/examples',] # note: unicode path!
-      fsList.addFile('/usr/share/doc/console-tools/examples/\xe2\x99\xaa\xe2\x99\xac')
-      fsList.addFile(u'/usr/share/doc/console-tools/examples/\xe2\x99\xaa\xe2\x99\xac')
+      fsList.excludePaths = [unicodeDir] # note: unicode path
+      fsList.addFile(stringFile)
+      fsList.addFile(unicodeFile)
 
 
    ################
