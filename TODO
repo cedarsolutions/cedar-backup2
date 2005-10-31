@@ -14,11 +14,6 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-SECURITY FIXES
-
-* Take Matthias Urlichs' suggestions about how to make MySQL extension more secure.
-
-
 FUTURE FUNCTIONALITY
 
 * We should probably check the staging flag and refuse to stage if it's already been done...?
@@ -39,8 +34,6 @@ TESTING IMPROVEMENTS
 
 
 DOCUMENTATION IMPROVEMENTS
-
-Add documentation for new pre- and post-action hooks.
 
 Documentation in some places is difficult to read, especially in the config section.
 
