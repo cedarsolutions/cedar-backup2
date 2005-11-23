@@ -396,9 +396,9 @@
                written to disc (i.e. there is no store indicator), then it will
                be used.  Otherwise, the store action will look for an unused
                staging directory for either the previous day or the next day,
-               in that order.  A warning will be written to the log if a
-               midnite boundary is crossed (controlled by the
-               &lt;warn_midnite&gt; configuration value).
+               in that order.  A warning will be written to the log under 
+               these circumstances (controlled by the &lt;warn_midnite&gt;
+               configuration value).
             </para>
 
             <para>
@@ -503,7 +503,7 @@
          <para>
             The rebuild action is an exception-handling action that is executed
             independent of a standard backup run.  It cannot be combined with
-            any outside actions on the command line.
+            any other actions on the command line.
          </para>
 
          <para>

@@ -1,3 +1,10 @@
+Version 2.7.1	unreleased
+
+	* Make some more updates to the user manual based on further proof-reading.
+	  - Rework description of "midnight boundary" warning slightly in basic.xml
+	  - Change "Which Linux Distribution?" to "Which Platform?" in config.xml
+	  - Fix a few typos and misspellings in basic.xml
+
 Version 2.7.0	30 Oct 2005
 
 	* Cleanup some maintainer-only (non-distributed) Makefile rules.
