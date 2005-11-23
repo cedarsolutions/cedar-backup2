@@ -83,26 +83,27 @@
 
       <sidebar>
 
-         <title>Which Linux Distribution?</title>
+         <title>Which Platform?</title>
 
          <para>
-            Cedar Backup has been designed for use on all Linux systems.
-            However, since it was developed on a Debian system, and because I
-            am a Debian developer, the packaging is prettier and the setup is
-            somewhat simpler on a Debian system than on a system where you
-            install from source.  
+            Cedar Backup has been designed for use on all UNIX-like systems.
+            However, since it was developed on a Debian GNU/Linux system, and
+            because I am a Debian developer, the packaging is prettier and the
+            setup is somewhat simpler on a Debian system than on a system where
+            you install from source.  
          </para>
 
          <para>
             The configuration instructions below have been generalized so they
-            should work well regardless of what distribution you are running
-            (i.e. RedHat, Gentoo, etc.).  If instructions vary for a particular
-            distribution, you will find a note related to that distribution.
+            should work well regardless of what platfomr you are running (i.e.
+            RedHat, Gentoo, FreeBSD, etc.).  If instructions vary for a
+            particular platform, you will find a note related to that
+            distribution.
          </para>
 
          <para>
-            I am always open to adding more distribution-specific hints and
-            notes, so write me if you find problems with these instructions.
+            I am always open to adding more platform-specific hints and notes,
+            so write me if you find problems with these instructions.
          </para>
 
       </sidebar>
