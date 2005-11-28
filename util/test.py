@@ -62,7 +62,7 @@ want to make sure we are running the correct 'test' package - not one found
 elsewhere on the user's path - since 'test' could be a relatively common name
 for a package.
 
-Finally, this script might be used people who won't have an environment that
+Finally, this script might be used by people who won't have an environment that
 allows running all of the tests, especially certain tests related to remote
 connectivity, loopback filesystems, etc.  Most people should run the script
 with no arguments.  This will result in a "reduced feature set" test suite with
@@ -105,11 +105,11 @@ def main():
    try:
       if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 3]:
          print "Python version 2.3 or greater required, sorry."
-         sys.exit(1)
+         return 1
    except:
       # sys.version_info isn't available before 2.0
       print "Python version 2.3 or greater required, sorry."
-      sys.exit(1)
+      return 1
 
    # Check for the correct CedarBackup2 location
    if os.path.exists(os.path.join(".", "CedarBackup2", "filesystem.py")):
@@ -147,7 +147,7 @@ def main():
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
       print "tree, or properly set the PYTHONPATH enviroment variable."
-      sys.exit(1)
+      return 1
 
    # Set flags in the environment to control tests
    if "full" in sys.argv:

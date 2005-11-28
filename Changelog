@@ -1,5 +1,7 @@
 Version 2.7.1	unreleased
 
+	* Tweak the CREDITS file to fix a few typos.
+	* Get rid of sys.exit() calls in util/test.py in favor of simple returns.
 	* Make some more updates to the user manual based on further proof-reading.
 	  - Rework description of "midnight boundary" warning slightly in basic.xml
 	  - Change "Which Linux Distribution?" to "Which Platform?" in config.xml
