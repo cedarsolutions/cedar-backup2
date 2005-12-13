@@ -1,7 +1,12 @@
 Version 2.7.1	unreleased
 
 	* Tweak the CREDITS file to fix a few typos.
+	* Remove completed tasks in TODO file and reorganize it slightly.
 	* Get rid of sys.exit() calls in util/test.py in favor of simple returns.
+	* Fix implementation of BackupFileList.removeUnchanged(captureDigest=True).
+	  - Since version 2.7.0, digest only included backed-up (unchanged) files
+	  - This release fixes code so digest is captured for all files in the list
+	  - Fixed captureDigest test cases, which were testing for wrong results
 	* Make some more updates to the user manual based on further proof-reading.
 	  - Rework description of "midnight boundary" warning slightly in basic.xml
 	  - Change "Which Linux Distribution?" to "Which Platform?" in config.xml
