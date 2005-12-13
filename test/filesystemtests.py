@@ -13387,7 +13387,13 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-      self.failUnlessEqual(0, len(newDigest))
+      self.failUnlessEqual(6, len(newDigest))
+      self.failUnlessEqual("4ff529531c7e897cd3df90ed76355de7e21e77ee", newDigest[self.buildPath([ "tree9", "dir001", "file001", ])])
+      self.failUnlessEqual("9d473094a22ecf2ae299c25932c941795d1d6cba", newDigest[self.buildPath([ "tree9", "dir001", "file002", ])])
+      self.failUnlessEqual("2f68cdda26b643ca0e53be6348ae1255b8786c4b", newDigest[self.buildPath([ "tree9", "dir002", "file001", ])])
+      self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", newDigest[self.buildPath([ "tree9", "dir002", "file002", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", newDigest[self.buildPath([ "tree9", "file001", ])])
+      self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", newDigest[self.buildPath([ "tree9", "file002", ])])
 
    def testRemoveUnchanged_016(self):
       """
@@ -13496,9 +13502,12 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-      self.failUnlessEqual(3, len(newDigest))
+      self.failUnlessEqual(6, len(newDigest))
+      self.failUnlessEqual("4ff529531c7e897cd3df90ed76355de7e21e77ee", newDigest[self.buildPath([ "tree9", "dir001", "file001", ])])
+      self.failUnlessEqual("9d473094a22ecf2ae299c25932c941795d1d6cba", newDigest[self.buildPath([ "tree9", "dir001", "file002", ])])
       self.failUnlessEqual("2f68cdda26b643ca0e53be6348ae1255b8786c4b", newDigest[self.buildPath([ "tree9", "dir002", "file001", ])])
       self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", newDigest[self.buildPath([ "tree9", "dir002", "file002", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", newDigest[self.buildPath([ "tree9", "file001", ])])
       self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", newDigest[self.buildPath([ "tree9", "file002", ])])
 
    def testRemoveUnchanged_018(self):
@@ -13550,11 +13559,14 @@ class TestBackupFileList(unittest.TestCase):
       self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
       self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-      self.failUnlessEqual(4, len(newDigest))
+      self.failUnlessEqual(6, len(newDigest))
       self.failUnlessEqual("4ff529531c7e897cd3df90ed76355de7e21e77ee", newDigest[self.buildPath([ "tree9", "dir001", "file001", ])])
+      self.failUnlessEqual("9d473094a22ecf2ae299c25932c941795d1d6cba", newDigest[self.buildPath([ "tree9", "dir001", "file002", ])])
       self.failUnlessEqual("2f68cdda26b643ca0e53be6348ae1255b8786c4b", newDigest[self.buildPath([ "tree9", "dir002", "file001", ])])
       self.failUnlessEqual("0cc03b3014d1ca7188264677cf01f015d72d26cb", newDigest[self.buildPath([ "tree9", "dir002", "file002", ])])
+      self.failUnlessEqual("3ef0b16a6237af9200b7a46c1987d6a555973847", newDigest[self.buildPath([ "tree9", "file001", ])])
       self.failUnlessEqual("fae89085ee97b57ccefa7e30346c573bb0a769db", newDigest[self.buildPath([ "tree9", "file002", ])])
+
 
 
    #########################

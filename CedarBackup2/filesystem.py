@@ -910,11 +910,13 @@ class BackupFileList(FilesystemList):
       filter out any unchanged files based on the saved-off map.
 
       If C{captureDigest} is passed-in as C{True}, then digest information will
-      be captured for the entire list before the removal step occurs.  The
-      check will involve a lookup into the complete digest map.  Otherwise, we
-      will only generate a digest value for files we actually need to check,
-      and we'll ignore any entry in the list which isn't a file that currently
-      exists on disk.
+      be captured for the entire list before the removal step occurs using the
+      same rules as in L{generateDigestMap}.  The check will involve a lookup
+      into the complete digest map.  
+
+      If C{captureDigest} is passed in as C{False}, we will only generate a
+      digest value for files we actually need to check, and we'll ignore any
+      entry in the list which isn't a file that currently exists on disk.
 
       The return value varies depending on C{captureDigest}, as well.  To
       preserve backwards compatibility, if C{captureDigest} is C{False}, then
@@ -941,9 +943,11 @@ class BackupFileList(FilesystemList):
       if captureDigest:
          removed = 0
          table = {}
+         captured = {}
          for entry in self:
             if os.path.isfile(entry) and not os.path.islink(entry):
                table[entry] = BackupFileList._generateDigest(entry)
+               captured[entry] = table[entry]
             else:
                table[entry] = None
          for entry in digestMap.keys():
@@ -955,10 +959,7 @@ class BackupFileList(FilesystemList):
                      del table[entry]
                      logger.debug("Discarded unchanged file [%s]." % entry)
          self[:] = table.keys()
-         for entry in table.keys():  # convert to form as from generateDigestMap()
-            if table[entry] is None:
-               del table[entry]
-         return (removed, table)
+         return (removed, captured)
       else:
          removed = 0
          table = {}
