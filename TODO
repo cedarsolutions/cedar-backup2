@@ -35,9 +35,9 @@ TESTING IMPROVEMENTS
 
 DOCUMENTATION IMPROVEMENTS
 
-Documentation in some places is difficult to read, especially in the config section.
-
 Add documentation for some common debugging methods (like how to find your CD drive)
+
+Documentation in some places is difficult to read, especially in the config section.
 
 Julie has some ideas for how I can fix it.  In particular, she suggests that I shouldn't
 duplicate description unless I have to (i.e. ignore file in two places) and she suggets
