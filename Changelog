@@ -1,3 +1,7 @@
+Version 2.7.2	unreleased
+
+	* Remove some bogus writer tests that depended on an arbitrary SCSI device.
+
 Version 2.7.1	13 Dec 2005
 
 	* Tweak the CREDITS file to fix a few typos.
