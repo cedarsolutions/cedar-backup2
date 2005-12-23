@@ -14,15 +14,16 @@ Some other links that might be useful to you:
    http://tldp.org/HOWTO/DocBook-Demystification-HOWTO/index.html
    http://www.vim.org/scripts/script.php?script_id=301
 
-This is the official Docbook XSL documentation.  This is where you want to
-look for stylesheet options, etc.  For instance, these are the docs I used
-when I wanted to figure out how to put <sect1> items on new pages in PDF
-output.
+This is the official Docbook XSL documentation.  
 
    http://wiki.docbook.org/topic/
    http://wiki.docbook.org/topic/DocBookDocumentation
    http://wiki.docbook.org/topic/DocBookXslStylesheetDocs
    http://docbook.sourceforge.net/release/xsl/current/doc/fo/
+
+These official Docbook documentation is where you want to look for
+stylesheet options, etc.  For instance, these are the docs I used when I
+wanted to figure out how to put <sect1> items on new pages in PDF output.
    
 The following items need to be installed to build the user manual:
 
@@ -44,7 +45,7 @@ and keeping local copies of things if the catalog can do that for you.
 However, if you don't have a catalog, you can probably force things to
 work.  See notes at the top of the various files in util/docbook.
 
-The util/validate script is a think wrapper around the nsgmls validating
+The util/validate script is a thin wrapper around the nsgmls validating
 parser.  I took the syntax directly from the Subversion book documentation.
 
    http://svn.collab.net/repos/svn/branches/1.0.x/doc/book/README

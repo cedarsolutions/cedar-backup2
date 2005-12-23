@@ -1,6 +1,7 @@
 Version 2.7.3	unreleased
 	
 	* Remove outdated comment in xmlutil.py about dependency on PyXML.
+	* Tweaked working in doc/docbook.txt to make it clearer.
 
 Version 2.7.2	22 Dec 2005
 
