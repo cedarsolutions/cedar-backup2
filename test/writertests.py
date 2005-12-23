@@ -80,6 +80,13 @@ Full vs. Reduced Tests
    variable to provide a "reduced feature set" test suite as for some of the
    other test modules.
 
+   I used to try and run tests against an actual device, to make sure that this
+   worked.  However, those tests ended up being kind of bogus, because my main
+   development environment doesn't have a writer, and even if it had one, any
+   device with the same name on another user's system wouldn't necessarily
+   return sensible results.  That's just pointless.  We'll just have to rely on
+   the other tests to make sure that things seem sensible.
+
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -307,49 +314,11 @@ class TestCdWriter(unittest.TestCase):
       pass
 
 
-   ##################
-   # Utility methods
-   ##################
-
-   def scsiAvailable(self):
-      """
-      Indicates whether SCSI is expected to be available on this box.
-
-      We work our way through the contents of the C{/proc/scsi/scsi} file.  If
-      we can find a device (0,0,0) then SCSI is considered to be available -
-      because that's the device we test with.  Otherwise, it's considered to
-      not be available, even if other devices exist.
-      """
-      try:
-         if os.path.exists("/proc/scsi/scsi"):
-            pattern = re.compile(r"^Host:.*Channel: 00.*Id: 00.*Lun: 00.*$")
-            lines = open("/proc/scsi/scsi").readlines()
-            for line in lines:
-               if pattern.match(line):
-                  return True
-      except: pass
-      return False
-
-
    ###################
    # Test constructor
    ###################
 
-   def testConstructor_001(self):
-      """
-      Test the constructor with device C{/dev/null}, which is writable and exists.
-      Use a valid non-ATA SCSI id and defaults for the remaining arguments.  Make
-      sure that C{unittest=False}.
-      """
-      if self.scsiAvailable():
-         writer = CdWriter(device="/dev/null", scsiId="0,0,0", unittest=False)
-         self.failUnlessEqual("/dev/null", writer.device)
-         self.failUnlessEqual("0,0,0", writer.scsiId)
-         self.failUnlessEqual(None, writer.driveSpeed)
-         self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
-         self.failUnlessEqual(True, writer.isRewritable())
-      else:
-         self.failUnlessRaises(IOError, CdWriter, device="/dev/null", scsiId="0,0,0", unittest=False)
+   # Note: testConstructor_001() has been removed 
 
    def testConstructor_002(self):
       """
@@ -457,21 +426,7 @@ class TestCdWriter(unittest.TestCase):
       """
       self.failUnlessRaises(ValueError, CdWriter, device="/dev/null", scsiId="0,0,0", driveSpeed=0, unittest=True)
 
-   def testConstructor_013(self):
-      """
-      Test the constructor with device C{/dev/null}, which is writable and
-      exists.  Use a valid SCSI id and a value of 1 for the drive speed.  Make
-      sure that C{unittest=False}.
-      """
-      if self.scsiAvailable():
-         writer = CdWriter(device="/dev/null", scsiId="0,0,0", driveSpeed=1, unittest=False)
-         self.failUnlessEqual("/dev/null", writer.device)
-         self.failUnlessEqual("0,0,0", writer.scsiId)
-         self.failUnlessEqual(1, writer.driveSpeed)
-         self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
-         self.failUnlessEqual(True, writer.isRewritable())
-      else:
-         self.failUnlessRaises(IOError, CdWriter, device="/dev/null", scsiId="0,0,0", driveSpeed=1, unittest=False)
+   # Note: testConstructor_013() has been removed
 
    def testConstructor_014(self):
       """
@@ -486,21 +441,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
 
-   def testConstructor_015(self):
-      """
-      Test the constructor with device C{/dev/null}, which is writable and
-      exists.  Use a valid SCSI id and a value of 5 for the drive speed.  Make
-      sure that C{unittest=False}.
-      """
-      if self.scsiAvailable():
-         writer = CdWriter(device="/dev/null", scsiId="0,0,0", driveSpeed=5, unittest=False)
-         self.failUnlessEqual("/dev/null", writer.device)
-         self.failUnlessEqual("0,0,0", writer.scsiId)
-         self.failUnlessEqual(5, writer.driveSpeed)
-         self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
-         self.failUnlessEqual(True, writer.isRewritable())
-      else:
-         self.failUnlessRaises(IOError, CdWriter, device="/dev/null", scsiId="0,0,0", driveSpeed=5, unittest=False)
+   # Note: testConstructor_015() has been removed 
 
    def testConstructor_016(self):
       """
@@ -531,21 +472,7 @@ class TestCdWriter(unittest.TestCase):
       """
       self.failUnlessRaises(ValueError, CdWriter, device="/dev/null", scsiId="0,0,0", mediaType=42, unittest=True)
 
-   def testConstructor_019(self):
-      """
-      Test the constructor with device C{/dev/null}, which is writable and
-      exists.  Use a valid SCSI id and a media type of MEDIA_CDR_74.  Make sure
-      that C{unittest=False}.
-      """
-      if self.scsiAvailable():
-         writer = CdWriter(device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDR_74, unittest=False)
-         self.failUnlessEqual("/dev/null", writer.device)
-         self.failUnlessEqual("0,0,0", writer.scsiId)
-         self.failUnlessEqual(None, writer.driveSpeed)
-         self.failUnlessEqual(MEDIA_CDR_74, writer.media.mediaType)
-         self.failUnlessEqual(False, writer.isRewritable())
-      else:
-         self.failUnlessRaises(IOError, CdWriter, device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDR_74, unittest=False)
+   # Note: testConstructor_019() has been removed
 
    def testConstructor_020(self):
       """
@@ -560,21 +487,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(MEDIA_CDR_74, writer.media.mediaType)
       self.failUnlessEqual(False, writer.isRewritable())
 
-   def testConstructor_021(self):
-      """
-      Test the constructor with device C{/dev/null}, which is writable and
-      exists.  Use a valid SCSI id and a media type of MEDIA_CDRW_74.  Make sure
-      that C{unittest=False}.
-      """
-      if self.scsiAvailable():
-         writer = CdWriter(device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDRW_74, unittest=False)
-         self.failUnlessEqual("/dev/null", writer.device)
-         self.failUnlessEqual("0,0,0", writer.scsiId)
-         self.failUnlessEqual(None, writer.driveSpeed)
-         self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
-         self.failUnlessEqual(True, writer.isRewritable())
-      else:
-         self.failUnlessRaises(IOError, CdWriter, device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDRW_74, unittest=False)
+   # Note: testConstructor_021() has been removed
 
    def testConstructor_022(self):
       """
@@ -589,21 +502,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
 
-   def testConstructor_023(self):
-      """
-      Test the constructor with device C{/dev/null}, which is writable and
-      exists.  Use a valid SCSI id and a media type of MEDIA_CDR_80.  Make sure
-      that C{unittest=False}.
-      """
-      if self.scsiAvailable():
-         writer = CdWriter(device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDR_80, unittest=False)
-         self.failUnlessEqual("/dev/null", writer.device)
-         self.failUnlessEqual("0,0,0", writer.scsiId)
-         self.failUnlessEqual(None, writer.driveSpeed)
-         self.failUnlessEqual(MEDIA_CDR_80, writer.media.mediaType)
-         self.failUnlessEqual(False, writer.isRewritable())
-      else:
-         self.failUnlessRaises(IOError, CdWriter, device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDR_80, unittest=False)
+   # Note: testConstructor_023() has been removed
 
    def testConstructor_024(self):
       """
@@ -618,21 +517,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(MEDIA_CDR_80, writer.media.mediaType)
       self.failUnlessEqual(False, writer.isRewritable())
 
-   def testConstructor_025(self):
-      """
-      Test the constructor with device C{/dev/null}, which is writable and
-      exists.  Use a valid SCSI id and a media type of MEDIA_CDRW_80.  Make sure
-      that C{unittest=False}.
-      """
-      if self.scsiAvailable():
-         writer = CdWriter(device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDRW_80, unittest=False)
-         self.failUnlessEqual("/dev/null", writer.device)
-         self.failUnlessEqual("0,0,0", writer.scsiId)
-         self.failUnlessEqual(None, writer.driveSpeed)
-         self.failUnlessEqual(MEDIA_CDRW_80, writer.media.mediaType)
-         self.failUnlessEqual(True, writer.isRewritable())
-      else:
-         self.failUnlessRaises(IOError, CdWriter, device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDRW_80, unittest=False)
+   # Note: testConstructor_025() has been removed
 
    def testConstructor_026(self):
       """
@@ -892,16 +777,7 @@ class TestCdWriter(unittest.TestCase):
       boundaries = writer._getBoundaries(entireDisc=False, useMulti=False)
       self.failUnlessEqual(None, boundaries)
 
-   def testCapacity_021(self):
-      """
-      Test _getBoundaries when self.deviceSupportsMulti is True; entireDisc=False, useMulti=True.
-      """
-      writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer._deviceSupportsMulti = True;
-      if self.scsiAvailable():
-         writer._getBoundaries(entireDisc=False, useMulti=True)   # don't care about result
-      else:
-         self.failUnlessRaises(IOError, writer._getBoundaries, entireDisc=False, useMulti=True)
+   # Note: testCapacity_021() has been removed
 
    def testCapacity_022(self):
       """
@@ -921,16 +797,7 @@ class TestCdWriter(unittest.TestCase):
       boundaries = writer._getBoundaries(entireDisc=True, useMulti=False)
       self.failUnlessEqual(None, boundaries)
 
-   def testCapacity_024(self):
-      """
-      Test _getBoundaries when self.deviceSupportsMulti is True; entireDisc=False, useMulti=False.
-      """
-      writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer._deviceSupportsMulti = True;
-      if self.scsiAvailable():
-         writer._getBoundaries(entireDisc=False, useMulti=True)
-      else:
-         self.failUnlessRaises(IOError, writer._getBoundaries, entireDisc=False, useMulti=True)
+   # Note: testCapacity_024() has been removed
 
    def testCapacity_025(self):
       """
