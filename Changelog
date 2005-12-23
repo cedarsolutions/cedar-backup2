@@ -1,4 +1,4 @@
-Version 2.7.2	unreleased
+Version 2.7.2	22 Dec 2005
 
 	* Remove some bogus writer tests that depended on an arbitrary SCSI device.
 
