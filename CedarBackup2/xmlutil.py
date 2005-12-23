@@ -47,11 +47,6 @@ accesses the DOM tree.  This is not so much to "protect" the other code from
 the DOM, but to standardize the way it's used.  It will also help extension
 authors write code that easily looks more like the rest of Cedar Backup.
 
-This module is one of the few pieces of code in the CedarBackup2 package that
-requires functionality outside of the Python 2.3 standard library.   It
-requires the PyXML package, mostly for the pretty-print functionality provided
-there.
-
 @sort: createInputDom, createOutputDom, serializeDom, isElement, readChildren, 
        readFirstChild, readStringList, readString, readInteger, readBoolean,
        addContainerNode, addStringNode, addIntegerNode, addBooleanNode,
