@@ -1,7 +1,13 @@
-Version 2.7.3	unreleased
+Version 2.8.0	unreleased
 	
 	* Remove outdated comment in xmlutil.py about dependency on PyXML.
-	* Tweaked working in doc/docbook.txt to make it clearer.
+	* Tweak wording in doc/docbook.txt to make it clearer.
+	* Add support for collecting individual files (closes: #30).
+	  - *** NEEDS TESTING VIA COMPLETE BACKUP RUN!!!! ***
+	  - Create new config.CollectFile class for use by other classes
+	  - Update config.CollectConfig class to contain a list of collect files
+	  - Update config.Config class to parse and emit collect file data
+	  - Modified collect process in action.py to handle collect files
 
 Version 2.7.2	22 Dec 2005
 
