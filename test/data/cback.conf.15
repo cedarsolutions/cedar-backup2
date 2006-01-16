@@ -83,6 +83,18 @@
             <abs_path>/opt/tmp</abs_path>
          </exclude>
       </dir>
+      <file>
+         <abs_path>/home/root/.profile</abs_path>
+      </file>
+      <file>
+         <abs_path>/home/root/.kshrc</abs_path>
+         <mode>weekly</mode>                   <!-- deprecated form -->
+      </file>
+      <file>
+         <abs_path>/home/root/.aliases</abs_path>
+         <collect_mode>daily</collect_mode>
+         <archive_mode>tarbz2</archive_mode>
+      </file>
    </collect>
    <stage>
       <staging_dir>/opt/backup/staging</staging_dir>

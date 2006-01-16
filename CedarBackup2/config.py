@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -205,9 +205,9 @@ Validation
    if desired.  All purge directories must contain a path and a retain days
    value.
 
-@sort: ExtendedAction, CollectDir, PurgeDir, LocalPeer, RemotePeer, 
-       ReferenceConfig, ExtensionsConfig, OptionsConfig CollectConfig, 
-       StageConfig, StoreConfig, PurgeConfig, Config,
+@sort: ExtendedAction, CollectFile, CollectDir, PurgeDir, LocalPeer, 
+       RemotePeer, ReferenceConfig, ExtensionsConfig, OptionsConfig,
+       CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config,
        DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE, 
        VALID_DEVICE_TYPES, VALID_MEDIA_TYPES, 
        VALID_COLLECT_MODES, VALID_ARCHIVE_MODES
@@ -779,7 +779,143 @@ class CommandOverride(object):
       return self._absolutePath
 
    command = property(_getCommand, _setCommand, None, doc="Name of command to be overridden.")
-   absolutePath = property(_getAbsolutePath, _setAbsolutePath, None, doc="Absolute path of the directory to collect.")
+   absolutePath = property(_getAbsolutePath, _setAbsolutePath, None, doc="Absolute path of the overrridden command.")
+
+
+########################################################################
+# CollectFile class definition
+########################################################################
+
+class CollectFile(object):
+
+   """
+   Class representing a Cedar Backup collect file.
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   The following restrictions exist on data in this class:
+
+      - Absolute paths must be absolute
+      - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
+      - The archive mode must be one of the values in L{VALID_ARCHIVE_MODES}.
+
+   @sort: __init__, __repr__, __str__, __cmp__, absolutePath, collectMode, archiveMode
+   """
+
+   def __init__(self, absolutePath=None, collectMode=None, archiveMode=None):
+      """
+      Constructor for the C{CollectFile} class.
+
+      @param absolutePath: Absolute path of the file to collect.
+      @param collectMode: Overridden collect mode for this file.
+      @param archiveMode: Overridden archive mode for this file.
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      self._absolutePath = None
+      self._collectMode = None
+      self._archiveMode = None
+      self.absolutePath = absolutePath
+      self.collectMode = collectMode
+      self.archiveMode = archiveMode
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "CollectFile(%s, %s, %s)" % (self.absolutePath, self.collectMode, self.archiveMode)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._absolutePath != other._absolutePath: 
+         if self._absolutePath < other.absolutePath:
+            return -1
+         else:
+            return 1 
+      if self._collectMode != other._collectMode: 
+         if self._collectMode < other._collectMode: 
+            return -1
+         else:
+            return 1 
+      if self._archiveMode != other._archiveMode: 
+         if self._archiveMode < other._archiveMode: 
+            return -1
+         else:
+            return 1 
+      return 0
+
+   def _setAbsolutePath(self, value):
+      """
+      Property target used to set the absolute path.
+      The value must be an absolute path if it is not C{None}.
+      It does not have to exist on disk at the time of assignment.
+      @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
+      """
+      if value is not None:
+         if not os.path.isabs(value):
+            raise ValueError("Absolute path must be, er, an absolute path.")
+      self._absolutePath = encodePath(value)
+
+   def _getAbsolutePath(self):
+      """
+      Property target used to get the absolute path.
+      """
+      return self._absolutePath
+
+   def _setCollectMode(self, value):
+      """
+      Property target used to set the collect mode.
+      If not C{None}, the mode must be one of the values in L{VALID_COLLECT_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_COLLECT_MODES:
+            raise ValueError("Collect mode must be one of %s." % VALID_COLLECT_MODES)
+      self._collectMode = value
+
+   def _getCollectMode(self):
+      """
+      Property target used to get the collect mode.
+      """
+      return self._collectMode
+
+   def _setArchiveMode(self, value):
+      """
+      Property target used to set the archive mode.
+      If not C{None}, the mode must be one of the values in L{VALID_ARCHIVE_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_ARCHIVE_MODES:
+            raise ValueError("Archive mode must be one of %s." % VALID_ARCHIVE_MODES)
+      self._archiveMode = value
+
+   def _getArchiveMode(self):
+      """
+      Property target used to get the archive mode.
+      """
+      return self._archiveMode
+
+   absolutePath = property(_getAbsolutePath, _setAbsolutePath, None, doc="Absolute path of the file to collect.")
+   collectMode = property(_getCollectMode, _setCollectMode, None, doc="Overridden collect mode for this file.")
+   archiveMode = property(_getArchiveMode, _setArchiveMode, None, doc="Overridden archive mode for this file.")
 
 
 ########################################################################
@@ -1955,25 +2091,27 @@ class CollectConfig(object):
       - The archive mode must be one of the values in L{VALID_ARCHIVE_MODES}.
       - The ignore file must be a non-empty string.
       - Each of the paths in C{absoluteExcludePaths} must be an absolute path
+      - The collect file list must be a list of C{CollectFile} objects.
       - The collect directory list must be a list of C{CollectDir} objects.
 
    For the C{absoluteExcludePaths} list, validation is accomplished through the
    L{util.AbsolutePathList} list implementation that overrides common list
    methods and transparently does the absolute path validation for us.
 
-   For the C{collectDirs} list, validation is accomplished through the
-   L{util.ObjectTypeList} list implementation that overrides common list
-   methods and transparently ensures that each element is a C{CollectDir}.
+   For the C{collectFiles} and C{collectDirs} list, validation is accomplished
+   through the L{util.ObjectTypeList} list implementation that overrides common
+   list methods and transparently ensures that each element has an appropriate
+   type.
 
    @note: Lists within this class are "unordered" for equality comparisons.
 
    @sort: __init__, __repr__, __str__, __cmp__, targetDir, 
           collectMode, archiveMode, ignoreFile, absoluteExcludePaths, 
-          excludePatterns, collectDirs
+          excludePatterns, collectFiles, collectDirs
    """
 
    def __init__(self, targetDir=None, collectMode=None, archiveMode=None, ignoreFile=None,
-                absoluteExcludePaths=None, excludePatterns=None, collectDirs=None):
+                absoluteExcludePaths=None, excludePatterns=None, collectFiles=None, collectDirs=None):
       """
       Constructor for the C{CollectConfig} class.
 
@@ -1983,6 +2121,7 @@ class CollectConfig(object):
       @param ignoreFile: Default ignore file name.
       @param absoluteExcludePaths: List of absolute paths to exclude.
       @param excludePatterns: List of regular expression patterns to exclude.
+      @param collectFiles: List of collect files.
       @param collectDirs: List of collect directories.
 
       @raise ValueError: If one of the values is invalid.
@@ -1993,6 +2132,7 @@ class CollectConfig(object):
       self._ignoreFile = None
       self._absoluteExcludePaths = None
       self._excludePatterns = None
+      self._collectFiles = None
       self._collectDirs = None
       self.targetDir = targetDir
       self.collectMode = collectMode
@@ -2000,15 +2140,16 @@ class CollectConfig(object):
       self.ignoreFile = ignoreFile
       self.absoluteExcludePaths = absoluteExcludePaths
       self.excludePatterns = excludePatterns
+      self.collectFiles = collectFiles
       self.collectDirs = collectDirs
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "CollectConfig(%s, %s, %s, %s, %s, %s, %s)" % (self.targetDir, self.collectMode, self.archiveMode, 
-                                                            self.ignoreFile, self.absoluteExcludePaths,
-                                                            self.excludePatterns, self.collectDirs)
+      return "CollectConfig(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.targetDir, self.collectMode, self.archiveMode, 
+                                                                self.ignoreFile, self.absoluteExcludePaths,
+                                                                self.excludePatterns, self.collectFiles, self.collectDirs)
 
    def __str__(self):
       """
@@ -2052,6 +2193,11 @@ class CollectConfig(object):
             return 1
       if self._excludePatterns != other._excludePatterns:
          if self._excludePatterns < other._excludePatterns:
+            return -1
+         else:
+            return 1
+      if self._collectFiles != other._collectFiles:
+         if self._collectFiles < other._collectFiles:
             return -1
          else:
             return 1
@@ -2178,6 +2324,29 @@ class CollectConfig(object):
       """
       return self._excludePatterns
 
+   def _setCollectFiles(self, value):
+      """
+      Property target used to set the collect files list.
+      Either the value must be C{None} or each element must be a C{CollectFile}.
+      @raise ValueError: If the value is not a C{CollectFile}
+      """
+      if value is None:
+         self._collectFiles = None
+      else:
+         try:
+            saved = self._collectFiles
+            self._collectFiles = ObjectTypeList(CollectFile, "CollectFile")
+            self._collectFiles.extend(value)
+         except Exception, e:
+            self._collectFiles = saved
+            raise e
+
+   def _getCollectFiles(self):
+      """
+      Property target used to get the collect files list.
+      """
+      return self._collectFiles
+
    def _setCollectDirs(self, value):
       """
       Property target used to set the collect dirs list.
@@ -2207,6 +2376,7 @@ class CollectConfig(object):
    ignoreFile = property(_getIgnoreFile, _setIgnoreFile, None, "Default ignore file name.")
    absoluteExcludePaths = property(_getAbsoluteExcludePaths, _setAbsoluteExcludePaths, None, "List of absolute paths to exclude.")
    excludePatterns = property(_getExcludePatterns, _setExcludePatterns, None, "List of regular expressions patterns to exclude.")
+   collectFiles = property(_getCollectFiles, _setCollectFiles, None, "List of collect files.")
    collectDirs = property(_getCollectDirs, _setCollectDirs, None, "List of collect directories.")
 
 
@@ -3290,10 +3460,12 @@ class Config(object):
 
          absoluteExcludePaths //cb_config/collect/exclude/abs_path
          excludePatterns      //cb_config/collect/exclude/pattern
+         collectFiles         //cb_config/collect/file
          collectDirs          //cb_config/collect/dir
    
-      The exclusions are parsed by L{_parseExclusions} and the collect
-      directories are parsed by L{_parseCollectDirs}.
+		The exclusions are parsed by L{_parseExclusions}, the collect files are
+		parsed by L{_parseCollectFiles}, and the directories are parsed by
+		L{_parseCollectDirs}.
 
       @param parentNode: Parent node to search beneath.
 
@@ -3309,6 +3481,7 @@ class Config(object):
          collect.archiveMode = readString(section, "archive_mode")
          collect.ignoreFile = readString(section, "ignore_file")
          (collect.absoluteExcludePaths, unused, collect.excludePatterns) = Config._parseExclusions(section)
+         collect.collectFiles = Config._parseCollectFiles(section)
          collect.collectDirs = Config._parseCollectDirs(section)
       return collect
    _parseCollect = staticmethod(_parseCollect)
@@ -3520,6 +3693,41 @@ class Config(object):
          lst = None
       return lst
    _parseHooks = staticmethod(_parseHooks)
+
+   def _parseCollectFiles(parentNode):
+		"""
+		Reads a list of C{CollectFile} objects from immediately beneath the parent.
+
+		We read the following individual fields::
+
+			absolutePath            abs_path
+			collectMode             mode I{or} collect_mode
+			archiveMode             archive_mode
+
+		The collect mode is a special case.  Just a C{mode} tag is accepted, but
+		we prefer C{collect_mode} for consistency with the rest of the config
+		file and to avoid confusion with the archive mode.  If both are provided,
+		only C{mode} will be used.
+
+		@param parentNode: Parent node to search beneath.
+
+		@return: List of C{CollectFile} objects or C{None} if none are found.
+		@raise ValueError: If some filled-in value is invalid.
+		"""
+		lst = []
+		for entry in readChildren(parentNode, "file"):
+			if isElement(entry):
+				cfile = CollectFile()
+				cfile.absolutePath = readString(entry, "abs_path")
+				cfile.collectMode = readString(entry, "mode")
+				if cfile.collectMode is None:
+					cfile.collectMode = readString(entry, "collect_mode")
+				cfile.archiveMode = readString(entry, "archive_mode")
+				lst.append(cfile)
+		if lst == []:
+			lst = None
+		return lst
+   _parseCollectFiles = staticmethod(_parseCollectFiles)
 
    def _parseCollectDirs(parentNode):
       """
@@ -3783,9 +3991,11 @@ class Config(object):
 
          absoluteExcludePaths //cb_config/collect/exclude/abs_path
          excludePatterns      //cb_config/collect/exclude/pattern
+         collectFiles         //cb_config/collect/file
          collectDirs          //cb_config/collect/dir
 
-      The individual collect directories are added by L{_addCollectDir}.
+      The individual collect files are added by L{_addCollectFile} and
+      individual collect directories are added by L{_addCollectDir}.
    
       If C{collectConfig} is C{None}, then no container will be added.
 
@@ -3808,6 +4018,9 @@ class Config(object):
             if collectConfig.excludePatterns is not None:
                for pattern in collectConfig.excludePatterns:
                   addStringNode(xmlDom, excludeNode, "pattern", pattern)
+         if collectConfig.collectFiles is not None:
+            for collectFile in collectConfig.collectFiles:
+               Config._addCollectFile(xmlDom, sectionNode, collectFile)
          if collectConfig.collectDirs is not None:
             for collectDir in collectConfig.collectDirs:
                Config._addCollectDir(xmlDom, sectionNode, collectDir)
@@ -3992,6 +4205,36 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "action", hook.action)
          addStringNode(xmlDom, sectionNode, "command", hook.command)
    _addHook = staticmethod(_addHook)
+
+   def _addCollectFile(xmlDom, parentNode, collectFile):
+		"""
+		Adds a collect file container as the next child of a parent.
+
+		We add the following fields to the document::
+
+			absolutePath            dir/abs_path
+			collectMode             dir/collect_mode
+			archiveMode             dir/archive_mode
+
+		Note that for consistency with collect directory handling we'll only emit
+		the preferred C{collect_mode} tag.
+
+		The <file> node itself is created as the next child of the parent node.
+		This method only adds one collect file node.  The parent must loop
+		for each collect file in the C{CollectConfig} object.
+
+		If C{collectFile} is C{None}, this method call will be a no-op.
+
+		@param xmlDom: DOM tree as from L{createOutputDom}.
+		@param parentNode: Parent that the section should be appended to.
+		@param collectFile: Collect file to be added to the document.
+		"""
+		if collectFile is not None:
+			sectionNode = addContainerNode(xmlDom, parentNode, "file")
+			addStringNode(xmlDom, sectionNode, "abs_path", collectFile.absolutePath)
+			addStringNode(xmlDom, sectionNode, "collect_mode", collectFile.collectMode)
+			addStringNode(xmlDom, sectionNode, "archive_mode", collectFile.archiveMode)
+   _addCollectFile = staticmethod(_addCollectFile)
 
    def _addCollectDir(xmlDom, parentNode, collectDir):
       """
@@ -4232,17 +4475,27 @@ class Config(object):
       if self.collect is not None:
          if self.collect.targetDir is None:
             raise ValueError("Collect section target directory must be filled in.")
-         if self.collect.collectDirs is None or len(self.collect.collectDirs) < 1:
-            raise ValueError("Collect section must contain at least one collect directory.")
-         for collectDir in self.collect.collectDirs:
-            if collectDir.absolutePath is None:
-               raise ValueError("Each collect directory must set an absolute path.")
-            if self.collect.collectMode is None and collectDir.collectMode is None:
-               raise ValueError("Collect mode must either be set in parent collect section or individual collect directory.")
-            if self.collect.archiveMode is None and collectDir.archiveMode is None:
-               raise ValueError("Archive mode must either be set in parent collect section or individual collect directory.")
-            if self.collect.ignoreFile is None and collectDir.ignoreFile is None:
-               raise ValueError("Ignore file must either be set in parent collect section or individual collect directory.")
+         if ((self.collect.collectFiles is None or len(self.collect.collectFiles) < 1) and
+             (self.collect.collectDirs is None or len(self.collect.collectDirs) < 1)):
+            raise ValueError("Collect section must contain at least one collect file or collect directory.")
+         if self.collect.collectFiles is not None:
+            for collectFile in self.collect.collectFiles:
+               if collectFile.absolutePath is None:
+                  raise ValueError("Each collect file must set an absolute path.")
+               if self.collect.collectMode is None and collectFile.collectMode is None:
+                  raise ValueError("Collect mode must either be set in parent collect section or individual collect file.")
+               if self.collect.archiveMode is None and collectFile.archiveMode is None:
+                  raise ValueError("Archive mode must either be set in parent collect section or individual collect file.")
+         if self.collect.collectDirs is not None:
+            for collectDir in self.collect.collectDirs:
+               if collectDir.absolutePath is None:
+                  raise ValueError("Each collect directory must set an absolute path.")
+               if self.collect.collectMode is None and collectDir.collectMode is None:
+                  raise ValueError("Collect mode must either be set in parent collect section or individual collect directory.")
+               if self.collect.archiveMode is None and collectDir.archiveMode is None:
+                  raise ValueError("Archive mode must either be set in parent collect section or individual collect directory.")
+               if self.collect.ignoreFile is None and collectDir.ignoreFile is None:
+                  raise ValueError("Ignore file must either be set in parent collect section or individual collect directory.")
 
    def _validateStage(self):
       """
