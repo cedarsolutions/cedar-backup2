@@ -3525,47 +3525,15 @@ class Config(object):
       """
       Reads a list of C{CollectDir} objects from immediately beneath the parent.
 
-      We read the following individual fields::
-
-         absolutePath            abs_path
-         collectMode             mode I{or} collect_mode
-         archiveMode             archive_mode
-         ignoreFile              ignore_file
-
-      The collect mode is a special case.  Just a C{mode} tag is accepted for
-      backwards compatibility, but we prefer C{collect_mode} for consistency
-      with the rest of the config file and to avoid confusion with the archive
-      mode.  If both are provided, only C{mode} will be used.
-
-      We also read groups of the following items, one list element per
-      item::
-
-         absoluteExcludePaths    exclude/abs_path
-         relativeExcludePaths    exclude/rel_path
-         excludePatterns         exclude/pattern
-
-      The exclusions are parsed by L{_parseExclusions}.
+      This method Implemented wholly in terms of the public L{parseCollectDirs}
+      utility function.  See that function for documentation.
 
       @param parentNode: Parent node to search beneath.
 
       @return: List of C{CollectDir} objects or C{None} if none are found.
       @raise ValueError: If some filled-in value is invalid.
       """
-      lst = []
-      for entry in readChildren(parentNode, "dir"):
-         if isElement(entry):
-            cdir = CollectDir()
-            cdir.absolutePath = readString(entry, "abs_path")
-            cdir.collectMode = readString(entry, "mode")
-            if cdir.collectMode is None:
-               cdir.collectMode = readString(entry, "collect_mode")
-            cdir.archiveMode = readString(entry, "archive_mode")
-            cdir.ignoreFile = readString(entry, "ignore_file")
-            (cdir.absoluteExcludePaths, cdir.relativeExcludePaths, cdir.excludePatterns) = Config._parseExclusions(entry)
-            lst.append(cdir)
-      if lst == []:
-         lst = None
-      return lst
+      return parseCollectDirs(parentNode)
    _parseCollectDirs = staticmethod(_parseCollectDirs)
 
    def _parsePurgeDirs(parentNode):
@@ -3997,52 +3965,16 @@ class Config(object):
       """
       Adds a collect directory container as the next child of a parent.
 
-      We add the following fields to the document::
+      The DOM tree is modified in place.
 
-         absolutePath            dir/abs_path
-         collectMode             dir/collect_mode
-         archiveMode             dir/archive_mode
-         ignoreFile              dir/ignore_file
-   
-      Note that an original XML document might have listed the collect mode
-      using the C{mode} tag, since we accept both C{collect_mode} and C{mode}.
-      However, here we'll only emit the preferred C{collect_mode} tag.
-
-      We also add groups of the following items, one list element per item::
-
-         absoluteExcludePaths    dir/exclude/abs_path
-         relativeExcludePaths    dir/exclude/rel_path
-         excludePatterns         dir/exclude/pattern
-
-      The <dir> node itself is created as the next child of the parent node.
-      This method only adds one collect directory node.  The parent must loop
-      for each collect directory in the C{CollectConfig} object.
-
-      If C{collectDir} is C{None}, this method call will be a no-op.
+      This method Implemented wholly in terms of the public L{addCollectDir}
+      utility function.  See that function for documentation.
 
       @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
       @param collectDir: Collect directory to be added to the document.
       """
-      if collectDir is not None:
-         sectionNode = addContainerNode(xmlDom, parentNode, "dir")
-         addStringNode(xmlDom, sectionNode, "abs_path", collectDir.absolutePath)
-         addStringNode(xmlDom, sectionNode, "collect_mode", collectDir.collectMode)
-         addStringNode(xmlDom, sectionNode, "archive_mode", collectDir.archiveMode)
-         addStringNode(xmlDom, sectionNode, "ignore_file", collectDir.ignoreFile)
-         if ((collectDir.absoluteExcludePaths is not None and collectDir.absoluteExcludePaths != []) or
-             (collectDir.relativeExcludePaths is not None and collectDir.relativeExcludePaths != []) or
-             (collectDir.excludePatterns is not None and collectDir.excludePatterns != [])):
-            excludeNode = addContainerNode(xmlDom, sectionNode, "exclude")
-            if collectDir.absoluteExcludePaths is not None:
-               for absolutePath in collectDir.absoluteExcludePaths:
-                  addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
-            if collectDir.relativeExcludePaths is not None:
-               for relativePath in collectDir.relativeExcludePaths:
-                  addStringNode(xmlDom, excludeNode, "rel_path", relativePath)
-            if collectDir.excludePatterns is not None:
-               for pattern in collectDir.excludePatterns:
-                  addStringNode(xmlDom, excludeNode, "pattern", pattern)
+      addCollectDir(xmlDom, parentNode, collectDir)
    _addCollectDir = staticmethod(_addCollectDir)
 
    def _addLocalPeer(xmlDom, parentNode, localPeer):
@@ -4333,4 +4265,108 @@ class Config(object):
                   raise ValueError("Each purge directory must set an absolute path.")
                if purgeDir.retainDays is None:
                   raise ValueError("Each purge directory must set a retain days value.")
+
+
+########################################################################
+# Utility functions
+########################################################################
+
+def addCollectDir(xmlDom, parentNode, collectDir):
+   """
+   Adds a collect directory container as the next child of a parent.
+
+   The DOM tree is modified in-place.
+
+   We add the following fields to the document::
+
+      absolutePath            dir/abs_path
+      collectMode             dir/collect_mode
+      archiveMode             dir/archive_mode
+      ignoreFile              dir/ignore_file
+
+   Note that an original XML document might have listed the collect mode
+   using the C{mode} tag, since we accept both C{collect_mode} and C{mode}.
+   However, here we'll only emit the preferred C{collect_mode} tag.
+
+   We also add groups of the following items, one list element per item::
+
+      absoluteExcludePaths    dir/exclude/abs_path
+      relativeExcludePaths    dir/exclude/rel_path
+      excludePatterns         dir/exclude/pattern
+
+   The <dir> node itself is created as the next child of the parent node.
+   This method only adds one collect directory node.  The parent must loop
+   for each collect directory in the C{CollectConfig} object.
+
+   If C{collectDir} is C{None}, this method call will be a no-op.
+
+   @param xmlDom: DOM tree as from L{createOutputDom}.
+   @param parentNode: Parent that the section should be appended to.
+   @param collectDir: Collect directory to be added to the document.
+   """
+   if collectDir is not None:
+      sectionNode = addContainerNode(xmlDom, parentNode, "dir")
+      addStringNode(xmlDom, sectionNode, "abs_path", collectDir.absolutePath)
+      addStringNode(xmlDom, sectionNode, "collect_mode", collectDir.collectMode)
+      addStringNode(xmlDom, sectionNode, "archive_mode", collectDir.archiveMode)
+      addStringNode(xmlDom, sectionNode, "ignore_file", collectDir.ignoreFile)
+      if ((collectDir.absoluteExcludePaths is not None and collectDir.absoluteExcludePaths != []) or
+          (collectDir.relativeExcludePaths is not None and collectDir.relativeExcludePaths != []) or
+          (collectDir.excludePatterns is not None and collectDir.excludePatterns != [])):
+         excludeNode = addContainerNode(xmlDom, sectionNode, "exclude")
+         if collectDir.absoluteExcludePaths is not None:
+            for absolutePath in collectDir.absoluteExcludePaths:
+               addStringNode(xmlDom, excludeNode, "abs_path", absolutePath)
+         if collectDir.relativeExcludePaths is not None:
+            for relativePath in collectDir.relativeExcludePaths:
+               addStringNode(xmlDom, excludeNode, "rel_path", relativePath)
+         if collectDir.excludePatterns is not None:
+            for pattern in collectDir.excludePatterns:
+               addStringNode(xmlDom, excludeNode, "pattern", pattern)
+
+def parseCollectDirs(parentNode):
+   """
+   Reads a list of C{CollectDir} objects from immediately beneath the parent.
+
+   We read the following individual fields::
+
+      absolutePath            abs_path
+      collectMode             mode I{or} collect_mode
+      archiveMode             archive_mode
+      ignoreFile              ignore_file
+
+   The collect mode is a special case.  Just a C{mode} tag is accepted for
+   backwards compatibility, but we prefer C{collect_mode} for consistency
+   with the rest of the config file and to avoid confusion with the archive
+   mode.  If both are provided, only C{mode} will be used.
+
+   We also read groups of the following items, one list element per
+   item::
+
+      absoluteExcludePaths    exclude/abs_path
+      relativeExcludePaths    exclude/rel_path
+      excludePatterns         exclude/pattern
+
+   The exclusions are parsed by L{_parseExclusions}.
+
+   @param parentNode: Parent node to search beneath.
+
+   @return: List of C{CollectDir} objects or C{None} if none are found.
+   @raise ValueError: If some filled-in value is invalid.
+   """
+   lst = []
+   for entry in readChildren(parentNode, "dir"):
+      if isElement(entry):
+         cdir = CollectDir()
+         cdir.absolutePath = readString(entry, "abs_path")
+         cdir.collectMode = readString(entry, "mode")
+         if cdir.collectMode is None:
+            cdir.collectMode = readString(entry, "collect_mode")
+         cdir.archiveMode = readString(entry, "archive_mode")
+         cdir.ignoreFile = readString(entry, "ignore_file")
+         (cdir.absoluteExcludePaths, cdir.relativeExcludePaths, cdir.excludePatterns) = Config._parseExclusions(entry)
+         lst.append(cdir)
+   if lst == []:
+      lst = None
+   return lst
 
