@@ -4,6 +4,7 @@ Version 2.8.0	unreleased
 	* Tweak wording in doc/docbook.txt to make it clearer.
 	* Add support for collecting individual files (closes: #30).
 	  - *** NEEDS TESTING VIA COMPLETE BACKUP RUN!!!! ***
+	  - *** NEED TO UPDATE USER MANUAL TO DOCUMENT NEW <file> OPTION ***
 	  - Create new config.CollectFile class for use by other classes
 	  - Update config.CollectConfig class to contain a list of collect files
 	  - Update config.Config class to parse and emit collect file data
