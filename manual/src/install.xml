@@ -121,7 +121,7 @@
 
       <screen>
 $ apt-get update
-$ apt-get install cedar-backup2
+$ apt-get install cedar-backup2 cedar-backup2-doc
       </screen>
 
       <para>
