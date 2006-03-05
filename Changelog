@@ -3,6 +3,8 @@ Version 2.8.0	unreleased
 	* Remove outdated comment in xmlutil.py about dependency on PyXML.
 	* Tweak wording in doc/docbook.txt to make it clearer.
 	* Consistently rework "project description" everywhere.
+	* Fix some simple typos in various comments and documentation.
+	* Created mbox extension in CedarBackup2.extend.mbox (closes: #31).
 	* Add support for collecting individual files (closes: #30).
 	  - *** NEEDS TESTING VIA COMPLETE BACKUP RUN!!!! ***
 	  - *** NEED TO UPDATE USER MANUAL TO DOCUMENT NEW <file> OPTION ***
