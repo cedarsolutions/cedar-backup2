@@ -44,7 +44,7 @@ Code Coverage
 =============
 
    This module contains individual tests for the many of the public functions
-   and classes implemented in extend/subversions.py.  There are also tests for
+   and classes implemented in extend/subversion.py.  There are also tests for
    several of the private methods.
 
    Unfortunately, it's rather difficult to test this code in an automated
@@ -81,7 +81,7 @@ Testing XML Extraction
    object is equal to the new object, we assume that the extract was
    successful.  
 
-   It would argumably be better if we could do a completely independent check -
+   It would arguably be better if we could do a completely independent check -
    but implementing that check would be equivalent to re-implementing all of
    the existing functionality that we're validating here!  After all, the most
    important thing is that data can move seamlessly from object to XML document
