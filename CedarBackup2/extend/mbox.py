@@ -1119,7 +1119,7 @@ def _getCompressMode(local, item):
 def _getRevisionPath(config, item):
    """
    Gets the path to the revision file associated with a repository.
-   @param local: LocalConfig object.
+   @param config: LocalConfig object.
    @param item: Mbox file or directory
    @return: Absolute path to the revision file associated with the repository.
    """
@@ -1137,7 +1137,7 @@ def _loadLastRevision(config, item, fullBackup, collectMode):
    reason, then C{None} is returned.  This indicates that there is no previous
    revision, so the entire mail file or directory should be backed up.
 
-   @param local: LocalConfig object.
+   @param config: LocalConfig object.
    @param item: Mbox file or directory
    @param fullBackup: Indicates whether this is a full backup
    @param collectMode: Indicates the collect mode for this item
