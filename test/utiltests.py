@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -80,7 +80,7 @@ import unittest
 import tempfile
 from os.path import isdir
 
-from CedarBackup2.testutil import removedir
+from CedarBackup2.testutil import removedir, platformHasEcho
 from CedarBackup2.util import UnorderedList, PathResolverSingleton
 from CedarBackup2.util import resolveCommand, executeCommand, getFunctionReference, encodePath
 
@@ -625,11 +625,12 @@ class TestFunctions(unittest.TestCase):
       Execute a command that should succeed, no arguments, returnOutput=False
       Command-line: echo
       """
-      command=["echo", ]
-      args=[]
-      (result, output) = executeCommand(command, args, returnOutput=False)
-      self.failUnlessEqual(0, result)
-      self.failUnlessEqual(None, output)
+      if platformHasEcho():
+         command=["echo", ]
+         args=[]
+         (result, output) = executeCommand(command, args, returnOutput=False)
+         self.failUnlessEqual(0, result)
+         self.failUnlessEqual(None, output)
 
    def testExecuteCommand_002(self):
       """
@@ -702,12 +703,13 @@ class TestFunctions(unittest.TestCase):
       Execute a command that should succeed, no arguments, returnOutput=True
       Command-line: echo
       """
-      command=["echo", ]
-      args=[]
-      (result, output) = executeCommand(command, args, returnOutput=True)
-      self.failUnlessEqual(0, result)
-      self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      if platformHasEcho():
+         command=["echo", ]
+         args=[]
+         (result, output) = executeCommand(command, args, returnOutput=True)
+         self.failUnlessEqual(0, result)
+         self.failUnlessEqual(1, len(output))
+         self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_009(self):
       """
@@ -731,7 +733,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_011(self):
       """
@@ -743,7 +745,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
 
    def testExecuteCommand_012(self):
       """
@@ -755,8 +757,8 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
    def testExecuteCommand_013(self):
       """
@@ -768,7 +770,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failIfEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_014(self):
       """
@@ -780,8 +782,8 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failIfEqual(0, result)
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
    def testExecuteCommand_015(self):
       """
@@ -789,11 +791,12 @@ class TestFunctions(unittest.TestCase):
       Do this all bundled into the command list, just to check that this works as expected.
       Command-line: echo
       """
-      command=["echo", ]
-      args=[]
-      (result, output) = executeCommand(command, args, returnOutput=False)
-      self.failUnlessEqual(0, result)
-      self.failUnlessEqual(None, output)
+      if platformHasEcho():
+         command=["echo", ]
+         args=[]
+         (result, output) = executeCommand(command, args, returnOutput=False)
+         self.failUnlessEqual(0, result)
+         self.failUnlessEqual(None, output)
 
    def testExecuteCommand_016(self):
       """
@@ -873,12 +876,13 @@ class TestFunctions(unittest.TestCase):
       Do this all bundled into the command list, just to check that this works as expected.
       Command-line: echo
       """
-      command=["echo", ]
-      args=[]
-      (result, output) = executeCommand(command, args, returnOutput=True)
-      self.failUnlessEqual(0, result)
-      self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      if platformHasEcho():
+         command=["echo", ]
+         args=[]
+         (result, output) = executeCommand(command, args, returnOutput=True)
+         self.failUnlessEqual(0, result)
+         self.failUnlessEqual(1, len(output))
+         self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_023(self):
       """
@@ -904,7 +908,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_025(self):
       """
@@ -917,7 +921,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
 
    def testExecuteCommand_026(self):
       """
@@ -930,8 +934,8 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
    def testExecuteCommand_027(self):
       """
@@ -944,7 +948,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failIfEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_028(self):
       """
@@ -957,19 +961,20 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True)
       self.failIfEqual(0, result)
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
    def testExecuteCommand_030(self):
       """
       Execute a command that should succeed, no arguments, returnOutput=False, ignoring stderr.
       Command-line: echo
       """
-      command=["echo", ]
-      args=[]
-      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
-      self.failUnlessEqual(0, result)
-      self.failUnlessEqual(None, output)
+      if platformHasEcho():
+         command=["echo", ]
+         args=[]
+         (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+         self.failUnlessEqual(0, result)
+         self.failUnlessEqual(None, output)
 
    def testExecuteCommand_031(self):
       """
@@ -1042,12 +1047,13 @@ class TestFunctions(unittest.TestCase):
       Execute a command that should succeed, no arguments, returnOutput=True, ignoring stderr.
       Command-line: echo
       """
-      command=["echo", ]
-      args=[]
-      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
-      self.failUnlessEqual(0, result)
-      self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      if platformHasEcho():
+         command=["echo", ]
+         args=[]
+         (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+         self.failUnlessEqual(0, result)
+         self.failUnlessEqual(1, len(output))
+         self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_038(self):
       """
@@ -1070,7 +1076,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_040(self):
       """
@@ -1082,7 +1088,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
 
    def testExecuteCommand_041(self):
       """
@@ -1094,8 +1100,8 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
    def testExecuteCommand_042(self):
       """
@@ -1107,7 +1113,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failIfEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_043(self):
       """
@@ -1119,8 +1125,8 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failIfEqual(0, result)
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
    def testExecuteCommand_044(self):
       """
@@ -1128,11 +1134,12 @@ class TestFunctions(unittest.TestCase):
       Do this all bundled into the command list, just to check that this works as expected.
       Command-line: echo
       """
-      command=["echo", ]
-      args=[]
-      (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
-      self.failUnlessEqual(0, result)
-      self.failUnlessEqual(None, output)
+      if platformHasEcho():
+         command=["echo", ]
+         args=[]
+         (result, output) = executeCommand(command, args, returnOutput=False, ignoreStderr=True)
+         self.failUnlessEqual(0, result)
+         self.failUnlessEqual(None, output)
 
    def testExecuteCommand_045(self):
       """
@@ -1212,12 +1219,13 @@ class TestFunctions(unittest.TestCase):
       Do this all bundled into the command list, just to check that this works as expected.
       Command-line: echo
       """
-      command=["echo", ]
-      args=[]
-      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
-      self.failUnlessEqual(0, result)
-      self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      if platformHasEcho():
+         command=["echo", ]
+         args=[]
+         (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+         self.failUnlessEqual(0, result)
+         self.failUnlessEqual(1, len(output))
+         self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_052(self):
       """
@@ -1242,7 +1250,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_054(self):
       """
@@ -1255,7 +1263,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
 
    def testExecuteCommand_055(self):
       """
@@ -1268,8 +1276,8 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failUnlessEqual(0, result)
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
    def testExecuteCommand_056(self):
       """
@@ -1282,7 +1290,7 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failIfEqual(0, result)
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_057(self):
       """
@@ -1295,8 +1303,8 @@ class TestFunctions(unittest.TestCase):
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       self.failIfEqual(0, result)
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
    def testExecuteCommand_058(self):
       """
@@ -1304,21 +1312,22 @@ class TestFunctions(unittest.TestCase):
       Do this all bundled into the command list, just to check that this works as expected.
       Command-line: echo
       """
-      command=["echo", ]
-      args=[]
+      if platformHasEcho():
+         command=["echo", ]
+         args=[]
 
-      filename = self.getTempfile()
-      outputFile = open(filename, "w")
-      try:
-         result = executeCommand(command, args, returnOutput=False, outputFile=outputFile)[0]
-      finally:
-         outputFile.close()
-      self.failUnlessEqual(0, result)
-      self.failUnless(os.path.exists(filename))
-      output = open(filename).readlines()
+         filename = self.getTempfile()
+         outputFile = open(filename, "w")
+         try:
+            result = executeCommand(command, args, returnOutput=False, outputFile=outputFile)[0]
+         finally:
+            outputFile.close()
+         self.failUnlessEqual(0, result)
+         self.failUnless(os.path.exists(filename))
+         output = open(filename).readlines()
 
-      self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+         self.failUnlessEqual(1, len(output))
+         self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_059(self):
       """
@@ -1362,7 +1371,7 @@ class TestFunctions(unittest.TestCase):
       output = open(filename).readlines()
 
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_061(self):
       """
@@ -1384,7 +1393,7 @@ class TestFunctions(unittest.TestCase):
       output = open(filename).readlines()
 
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("first\n", output[0])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
 
    def testExecuteCommand_062(self):
       """
@@ -1406,8 +1415,8 @@ class TestFunctions(unittest.TestCase):
       output = open(filename).readlines()
 
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
    def testExecuteCommand_063(self):
       """
@@ -1429,7 +1438,7 @@ class TestFunctions(unittest.TestCase):
       output = open(filename).readlines()
 
       self.failUnlessEqual(1, len(output))
-      self.failUnlessEqual("\n", output[0])
+      self.failUnlessEqual(os.linesep, output[0])
 
    def testExecuteCommand_064(self):
       """
@@ -1451,8 +1460,8 @@ class TestFunctions(unittest.TestCase):
       output = open(filename).readlines()
 
       self.failUnlessEqual(2, len(output))
-      self.failUnlessEqual("first\n", output[0])
-      self.failUnlessEqual("second\n", output[1])
+      self.failUnlessEqual("first%s" % os.linesep, output[0])
+      self.failUnlessEqual("second%s" % os.linesep, output[1])
 
 
    ####################
@@ -1531,7 +1540,7 @@ class TestFunctions(unittest.TestCase):
       seems to result in the exact same file on disk, so the test is valid.  
       """
       encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
-      if encoding.find("ANSI") != 0:    # test can't work on some filesystems
+      if encoding != 'mbcs' and encoding.find("ANSI") != 0:    # test can't work on some filesystems
          path = u"\xe2\x99\xaa\xe2\x99\xac"
          safePath = encodePath(path)
          self.failUnless(isinstance(safePath, str))
