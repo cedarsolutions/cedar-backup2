@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -525,7 +525,8 @@ class IsoImage(object):
          if entries[key] is None:
             dirEntries.append(key)
          else:
-            dirEntries.append("%s/=%s" % (entries[key].strip(os.sep), key))
+#            dirEntries.append("%s/=%s" % (entries[key].strip(os.sep), key))
+            dirEntries.append("%s/=%s" % (entries[key].strip("/"), key))
       return dirEntries
    _buildDirEntries = staticmethod(_buildDirEntries)
 

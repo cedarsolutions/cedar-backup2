@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -861,8 +861,10 @@ class RemotePeer(object):
       """
       beforeSet = RemotePeer._getDirContents(targetDir)
       if localUser is not None:
-         if os.getuid() != 0:
-            raise IOError("Only root can remote copy as another user.")
+         try:
+            if os.getuid() != 0:
+               raise IOError("Only root can remote copy as another user.")
+         except AttributeError: pass
          actualCommand = "%s %s@%s:%s/* %s" % (rcpCommand, remoteUser, remoteHost, sourceDir, targetDir)
          command = resolveCommand(SU_COMMAND)
          result = executeCommand(command, [localUser, "-c", actualCommand])[0]
@@ -952,8 +954,10 @@ class RemotePeer(object):
          if os.path.exists(targetFile):
             raise IOError("Target file [%s] already exists." % targetFile)
       if localUser is not None:
-         if os.getuid() != 0:
-            raise IOError("Only root can remote copy as another user.")
+         try:
+            if os.getuid() != 0:
+               raise IOError("Only root can remote copy as another user.")
+         except AttributeError: pass
          actualCommand = "%s %s@%s:%s %s" % (rcpCommand, remoteUser, remoteHost, sourceFile.replace(" ", "\\ "), targetFile)
          command = resolveCommand(SU_COMMAND) 
          result = executeCommand(command, [localUser, "-c", actualCommand])[0]
@@ -1021,8 +1025,10 @@ class RemotePeer(object):
          if os.path.exists(targetFile):
             raise IOError("Target file [%s] already exists." % targetFile)
       if localUser is not None:
-         if os.getuid() != 0:
-            raise IOError("Only root can remote copy as another user.")
+         try:
+            if os.getuid() != 0:
+               raise IOError("Only root can remote copy as another user.")
+         except AttributeError: pass
          actualCommand = '%s "%s" "%s@%s:%s"' % (rcpCommand, sourceFile, remoteUser, remoteHost, targetFile)
          command = resolveCommand(SU_COMMAND)
          result = executeCommand(command, [localUser, "-c", actualCommand])[0]

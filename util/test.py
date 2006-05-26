@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -111,16 +111,23 @@ def main():
       print "Python version 2.3 or greater required, sorry."
       return 1
 
-   # Check for the correct CedarBackup2 location
-   if os.path.exists(os.path.join(".", "CedarBackup2", "filesystem.py")):
-      sys.path.insert(0, ".")
-   elif os.path.basename(os.getcwd()) == "test" and os.path.exists(os.path.join("..", "CedarBackup2", "filesystem.py")):
-      sys.path.insert(0, "..")
-   else:
-      print "WARNING: CedarBackup2 modules were not found in the expected"
-      print "location.  If the import succeeds, you may be using an"
-      print "unexpected version of CedarBackup2."
-      print ""
+   # Check for the correct CedarBackup2 location and import utilities
+   try:
+      if os.path.exists(os.path.join(".", "CedarBackup2", "filesystem.py")):
+         sys.path.insert(0, ".")
+      elif os.path.basename(os.getcwd()) == "test" and os.path.exists(os.path.join("..", "CedarBackup2", "filesystem.py")):
+         sys.path.insert(0, "..")
+      else:
+         print "WARNING: CedarBackup2 modules were not found in the expected"
+         print "location.  If the import succeeds, you may be using an"
+         print "unexpected version of CedarBackup2."
+         print ""
+      from CedarBackup2.util import nullDevice
+   except ImportError, e:
+      print "Failed to import CedarBackup2 util module: %s" % e
+      print "You must either run the unit tests from the CedarBackup2 source"
+      print "tree, or properly set the PYTHONPATH enviroment variable."
+      return 1
 
    # Import the unit test modules
    try:
@@ -159,7 +166,8 @@ def main():
       os.environ["IMAGETESTS_FULL"] = "N"
 
    # Set up logging to discard everything
-   handler = logging.FileHandler(filename="/dev/null")
+   devnull = nullDevice()
+   handler = logging.FileHandler(filename=devnull)
    handler.setLevel(logging.NOTSET)
    logger = logging.getLogger("CedarBackup2")
    logger.setLevel(logging.NOTSET)

@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # Portions copyright (c) 2001, 2002 Python Software Foundation.
@@ -44,7 +44,7 @@ Provides general-purpose utilities.
 
 @sort: AbsolutePathList, ObjectTypeList, PathResolverSingleton, 
        convertSize, getUidGid, changeOwnership, splitCommandLine, 
-       resolveCommand, executeCommand, calculateFileAge, encodePath, 
+       resolveCommand, executeCommand, calculateFileAge, encodePath, nullDevice,
        ISO_SECTOR_SIZE, BYTES_PER_SECTOR, 
        BYTES_PER_KBYTE, BYTES_PER_MBYTE, BYTES_PER_GBYTE, KBYTES_PER_MBYTE, MBYTES_PER_GBYTE, 
        SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, SECONDS_PER_DAY, 
@@ -79,11 +79,25 @@ import math
 import os
 import re
 import time
-import popen2
 import logging
-import pwd
-import grp
 import string
+
+try:
+   import pwd
+   import grp
+   _UID_GID_AVAILABLE = True   
+except ImportError:
+   _UID_GID_AVAILABLE = False   
+
+try:
+   from subprocess import Popen
+   _PIPE_IMPLEMENTATION = "subprocess.Popen"
+except ImportError:
+   try:
+      from popen2 import Popen4
+      _PIPE_IMPLEMENTATION = "popen2.Popen4"
+   except ImportError:
+      raise ImportError("Unable to import either subprocess.Popen or popen2.Popen4 for use by Pipe class.")
 
 
 ########################################################################
@@ -113,7 +127,6 @@ UNIT_MBYTES        = 2
 UNIT_SECTORS       = 3
 
 MTAB_FILE          = "/etc/mtab"
-DEV_NULL_PATH      = "/dev/null"
 
 MOUNT_COMMAND      = [ "mount", ]
 UMOUNT_COMMAND     = [ "umount", ]
@@ -503,64 +516,99 @@ class PathResolverSingleton:
 # Pipe class definition
 ########################################################################
 
-class Pipe(popen2.Popen4):
+if _PIPE_IMPLEMENTATION == "subprocess.Popen":
 
-   """
-   Specialized pipe class for use by C{executeCommand}.
+   from subprocess import STDOUT, PIPE
 
-   The L{executeCommand} function needs a specialized way of interacting with a
-   pipe that isn't satisfied by the standard C{Popen3} and C{Popen4} classes in
-   C{popen2}.  First, C{executeCommand} only reads from the pipe, and never
-   writes to it.  Second, C{executeCommand} needs a way to discard all output
-   written to C{stderr}, as a means of simulating the shell C{2>/dev/null}
-   construct.  
+   class Pipe(Popen):
+      """
+      Specialized pipe class for use by C{executeCommand}.
 
-   This class inherits from C{Popen4}.  If the C{ignoreStderr} flag is passed in
-   as C{False}, then the standard C{Popen4} constructor will be called and
-   C{stdout} and C{stderr} will be intermingled in the output.  
+      The L{executeCommand} function needs a specialized way of interacting
+      with a pipe.  First, C{executeCommand} only reads from the pipe, and
+      never writes to it.  Second, C{executeCommand} needs a way to discard all
+      output written to C{stderr}, as a means of simulating the shell
+      C{2>/dev/null} construct.  
 
-   Otherwise, we'll call a custom version of the constructor which was
-   basically stolen from the real constructor in C{python2.3/Lib/popen2.py}.
-   This custom constructor will redirect the C{stderr} file descriptor to
-   C{/dev/null}.  I've done this based on a suggestion from Donn Cave on
-   comp.lang.python.
+      All of this functionality is provided (in Python 2.4 or later) by the
+      C{subprocess.Popen} class, so when that class is available, we'll use it.
+      Otherwise, there's another implementation based on L{popen2.Popen4},
+      which unfortunately only works on UNIX platforms.
+      """
+      def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
+         stderr = STDOUT
+         if ignoreStderr:
+            devnull = nullDevice()
+            stderr = os.open(devnull, os.O_RDWR) 
+         Popen.__init__(self, shell=False, args=cmd, bufsize=bufsize, stdin=None, stdout=PIPE, stderr=stderr)
+         self.fromchild = self.stdout  # for compatibility with original interface based on popen2.Popen4
 
-   In either case, the C{tochild} file object is always closed before returning
-   from the constructor, since it is never needed by C{executeCommand}.
+else: # _PIPE_IMPLEMENTATION == "popen2.Popen4" 
 
-   I really wish there were a prettier way to do this.  Unfortunately, I need
-   access to the guts of the constructor implementation because of the way the
-   pipe process is forked, etc.  It doesn't work to just call the superclass
-   constructor and then modify a few things afterwards.  Even worse, I have to
-   access private C{popen2} module members C{_cleanup} and C{_active} in order
-   to duplicate the implementation.  Hopefully that will continue to work. :(
-   
-   @copyright: Some of this code, prior to customization, was originally part
-   of the Python 2.3 codebase.  Python code is copyright (c) 2001, 2002 Python
-   Software Foundation; All Rights Reserved.
-   """
-   
-   def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
-      if not ignoreStderr:
-         popen2.Popen4.__init__(self, cmd, bufsize)
-      else:
-         popen2._cleanup()
-         p2cread, p2cwrite = os.pipe()
-         c2pread, c2pwrite = os.pipe()
-         self.pid = os.fork()
-         if self.pid == 0: # Child
-            os.dup2(p2cread, 0)
-            os.dup2(c2pwrite, 1)
-            null = os.open(DEV_NULL_PATH, os.O_RDWR)
-            os.dup2(null, 2)
-            os.close(null)
-            self._run_child(cmd)
-         os.close(p2cread)
-         self.tochild = os.fdopen(p2cwrite, 'w', bufsize)
-         os.close(c2pwrite)
-         self.fromchild = os.fdopen(c2pread, 'r', bufsize)
-         popen2._active.append(self)
-      self.tochild.close()       # we'll never write to it, and this way we don't confuse anything.
+   from popen2 import _cleanup, _active
+
+   class Pipe(Popen4):
+      """
+      Specialized pipe class for use by C{executeCommand}.
+
+      The L{executeCommand} function needs a specialized way of interacting with a
+      pipe that isn't satisfied by the standard C{Popen3} and C{Popen4} classes in
+      C{popen2}.  First, C{executeCommand} only reads from the pipe, and never
+      writes to it.  Second, C{executeCommand} needs a way to discard all output
+      written to C{stderr}, as a means of simulating the shell C{2>/dev/null}
+      construct.  
+
+      This class inherits from C{Popen4}.  If the C{ignoreStderr} flag is passed in
+      as C{False}, then the standard C{Popen4} constructor will be called and
+      C{stdout} and C{stderr} will be intermingled in the output.  
+
+      Otherwise, we'll call a custom version of the constructor which was
+      basically stolen from the real constructor in C{python2.3/Lib/popen2.py}.
+      This custom constructor will redirect the C{stderr} file descriptor to
+      C{/dev/null}.  I've done this based on a suggestion from Donn Cave on
+      comp.lang.python.
+
+      In either case, the C{tochild} file object is always closed before returning
+      from the constructor, since it is never needed by C{executeCommand}.
+
+      I really wish there were a prettier way to do this.  Unfortunately, I
+      need access to the guts of the constructor implementation because of the
+      way the pipe process is forked, etc.  It doesn't work to just call the
+      superclass constructor and then modify a few things afterwards.  Even
+      worse, I have to access private C{popen2} module members C{_cleanup} and
+      C{_active} in order to duplicate the implementation.  
+
+      Hopefully this whole thing will continue to work properly.  At least we
+      can use the other L{subprocess.Popen}-based implementation when that
+      class is available.
+      
+      @copyright: Some of this code, prior to customization, was originally part
+      of the Python 2.3 codebase.  Python code is copyright (c) 2001, 2002 Python
+      Software Foundation; All Rights Reserved.
+      """
+      
+      def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
+         if not ignoreStderr:
+            Popen4.__init__(self, cmd, bufsize)
+         else:
+            _cleanup()
+            p2cread, p2cwrite = os.pipe()
+            c2pread, c2pwrite = os.pipe()
+            self.pid = os.fork()
+            if self.pid == 0: # Child
+               os.dup2(p2cread, 0)
+               os.dup2(c2pwrite, 1)
+               devnull = nullDevice()
+               null = os.open(devnull, os.O_RDWR)
+               os.dup2(null, 2)
+               os.close(null)
+               self._run_child(cmd)
+            os.close(p2cread)
+            self.tochild = os.fdopen(p2cwrite, 'w', bufsize)
+            os.close(c2pwrite)
+            self.fromchild = os.fdopen(c2pread, 'r', bufsize)
+            _active.append(self)
+         self.tochild.close()       # we'll never write to it, and this way we don't confuse anything.
 
 
 ########################################################################
@@ -618,6 +666,7 @@ def convertSize(size, fromUnit, toUnit):
       return byteSize / BYTES_PER_SECTOR
    else:
       raise ValueError("Unknown 'to' unit %d." % toUnit)
+
 
 ##########################
 # displayBytes() function
@@ -734,6 +783,8 @@ def getUidGid(user, group):
    """
    Get the uid/gid associated with a user/group pair
 
+   This is a no-op if user/group functionality is not available on the platform.
+
    @param user: User name
    @type user: User name as a string
 
@@ -743,14 +794,17 @@ def getUidGid(user, group):
    @return: Tuple C{(uid, gid)} matching passed-in user and group.
    @raise ValueError: If the ownership user/group values are invalid
    """
-   try:
-      uid = pwd.getpwnam(user)[2]
-      gid = grp.getgrnam(group)[2]
-      logger.debug("Translated [%s:%s] into [%d:%d]." % (user, group, uid, gid))
-      return (uid, gid)
-   except Exception, e:
-      logger.debug("Error looking up uid and gid for [%s:%s]: %s" % (user, group, e))
-      raise ValueError("Unable to lookup up uid and gid for passed in user/group.")
+   if _UID_GID_AVAILABLE:
+      try:
+         uid = pwd.getpwnam(user)[2]
+         gid = grp.getgrnam(group)[2]
+         logger.debug("Translated [%s:%s] into [%d:%d]." % (user, group, uid, gid))
+         return (uid, gid)
+      except Exception, e:
+         logger.debug("Error looking up uid and gid for [%s:%s]: %s" % (user, group, e))
+         raise ValueError("Unable to lookup up uid and gid for passed in user/group.")
+   else:
+      return (0,0)
 
 
 #############################
@@ -760,18 +814,20 @@ def getUidGid(user, group):
 def changeOwnership(path, user, group):
    """
    Changes ownership of path to match the user and group.
+   This is a no-op if user/group functionality is not available on the platform.
    @param path: Path whose ownership to change.
    @param user: User which owns file.
    @param group: Group which owns file.
    """
-   if os.getuid() != 0:
-      logger.debug("Not root, so not attempting to change owner on [%s]." % path)
-   else:
-      try:
-         (uid, gid) = getUidGid(user, group)
-         os.chown(path, uid, gid)
-      except Exception, e:
-         logger.error("Error changing ownership of [%s]: %s" % (path, e))
+   if _UID_GID_AVAILABLE:
+      if os.getuid() != 0:
+         logger.debug("Not root, so not attempting to change owner on [%s]." % path)
+      else:
+         try:
+            (uid, gid) = getUidGid(user, group)
+            os.chown(path, uid, gid)
+         except Exception, e:
+            logger.error("Error changing ownership of [%s]: %s" % (path, e))
 
 
 ##############################
@@ -795,7 +851,7 @@ def splitCommandLine(commandLine):
    @param commandLine: Command line string
    @type commandLine: String, i.e. "cback --verbose stage store"
 
-   @return: List of arguments, suitable for passing to L{popen2.Popen4}.
+   @return: List of arguments, suitable for passing to L{popen2}.
    """
    fields = re.findall('[^ "]+|"[^"]+"', commandLine)
    fields = map(lambda field: field.replace('"', ''), fields)
@@ -849,7 +905,7 @@ def resolveCommand(command):
 
 def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotLog=False, outputFile=None):
    """
-   Executes a shell command, hopefully in a safe way (UNIX-specific).
+   Executes a shell command, hopefully in a safe way.
 
    This function exists to replace direct calls to L{os.popen()} in the Cedar
    Backup code.  It's not safe to call a function such as L{os.popen()} with
@@ -858,11 +914,9 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    C{$WHATEVER}, but C{$WHATEVER} contains something like C{"; rm -fR ~/;
    echo"} in the current environment).
 
-   It's safer to use C{popen4} (or C{popen2} or C{popen3}) and pass a list
-   rather than a string for the first argument.  When called this way,
-   C{popen4} will use the list's first item as the command and the remainder of
-   the list's items as arguments to that command.  What this function uses is
-   actually a customized L{Pipe} class that inherits from C{popen2.Popen4}.
+   Instead, it's safer to pass a list of arguments in the style supported bt
+   C{popen2} or C{popen4}.  This function actually uses a specialized C{Pipe}
+   class implemented using either C{subprocess.Popen} or C{popen2.Popen4}.
 
    Under the normal case, this function will return a tuple of C{(status,
    None)} where the status is the wait-encoded return status of the call per
@@ -926,21 +980,36 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    output = []
    fields = command[:]        # make sure to copy it so we don't destroy it
    fields.extend(args)
-   pipe = Pipe(fields, ignoreStderr=ignoreStderr)
-   while True:
-      line = pipe.fromchild.readline()
-      if not line: break
-      if returnOutput: output.append(line)
-      if outputFile is not None: outputFile.write(line)
-      if not doNotLog: outputLogger.info(line[:-1])  # this way the log will (hopefully) get updated in realtime
-   if outputFile is not None: 
-      try: # note, not every file-like object can be flushed
-         outputFile.flush()
-      except: pass
-   if returnOutput:
-      return (pipe.wait(), output)
-   else:
-      return (pipe.wait(), None)
+   try:
+      pipe = Pipe(fields, ignoreStderr=ignoreStderr)
+      while True:
+         line = pipe.fromchild.readline()
+         if not line: break
+         if returnOutput: output.append(line)
+         if outputFile is not None: outputFile.write(line)
+         if not doNotLog: outputLogger.info(line[:-1])  # this way the log will (hopefully) get updated in realtime
+      if outputFile is not None: 
+         try: # note, not every file-like object can be flushed
+            outputFile.flush()
+         except: pass
+      if returnOutput:
+         return (pipe.wait(), output)
+      else:
+         return (pipe.wait(), None)
+   except OSError, e:
+      try:
+         if returnOutput:
+            if output != []:
+               return (pipe.wait(), output)
+            else:
+               return (pipe.wait(), [ e, ])
+         else:
+            return (pipe.wait(), None)
+      except UnboundLocalError:  # pipe not set
+         if returnOutput:
+            return (256, [])
+         else:
+            return (256, None)
 
 
 ##############################
@@ -983,6 +1052,10 @@ def mount(devicePath, mountPoint, fsType):
    is C{None}, we'll attempt to let C{mount} auto-detect it.  This may or may
    not work on all systems.
 
+   @note: This only works on platforms that have a concept of "mounting" a
+   filesystem through a command-line C{"mount"} command, like UNIXes.  It
+   won't work on Windows.
+
    @param devicePath: Path of device to be mounted.
    @param mountPoint: Path that device should be mounted at.
    @param fsType: Type of the filesystem assumed to be available via the device.
@@ -1022,6 +1095,10 @@ def unmount(mountPoint, removeAfter=False, attempts=1, waitSeconds=0):
    If C{removeAfter} is C{True}, then the mount point will be removed using
    C{os.rmdir()} after the unmount action succeeds.  If for some reason the
    mount point is not a directory, then it will not be removed.
+
+   @note: This only works on platforms that have a concept of "mounting" a
+   filesystem through a command-line C{"mount"} command, like UNIXes.  It
+   won't work on Windows.
 
    @param mountPoint: Mount point to be unmounted.
    @param removeAfter: Remove the mount point after unmounting it.
@@ -1067,6 +1144,9 @@ def deviceMounted(devicePath):
    C{mtab} file.  This file shows every currently-mounted filesystem, ordered
    by device.  We only do the check if the C{mtab} file exists and is readable.
    Otherwise, we assume that the device is not mounted.
+
+   @note: This only works on platforms that have a concept of an mtab file
+   to show mounted volumes, like UNIXes.  It won't work on Windows.
 
    @param devicePath: Path of device to be checked
 
@@ -1189,4 +1269,29 @@ def encodePath(path):
    except UnicodeError:
       raise ValueError("Path could not be safely encoded as %s." % encoding)
 
+
+########################
+# nullDevice() function
+########################
+
+def nullDevice():
+   """
+   Attempts to portably return the null device on this system.
+
+   The null device is something like C{/dev/null} on a UNIX system.  The name
+   varies on other platforms.
+
+   In Python 2.4 and better, we can use C{os.devnull}.  Since we want to be
+   portable to python 2.3, getting the value in earlier versions of Python
+   takes some screwing around.  Basically, this function will only work on
+   either UNIX-like systems (the default) or Windows.
+   """
+   try:
+      return os.devnull
+   except AttributeError: 
+      import platform
+      if platform.platform().startswith("Windows"):
+         return "NUL"
+      else:
+         return "/dev/null"
 

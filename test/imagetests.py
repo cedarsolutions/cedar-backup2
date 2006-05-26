@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -99,6 +99,7 @@ import unittest
 import tempfile
 import tarfile
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
+from CedarBackup2.testutil import platformMacOsX, platformSupportsLinks
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.image import IsoImage
 from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYTES
@@ -183,7 +184,7 @@ class TestIsoImage(unittest.TestCase):
       @return: Path the image is mounted at.
       @raise IOError: If the command cannot be executed.
       """
-      if sys.platform == "darwin":
+      if platformMacOsX():
          return self.mountImageDarwin(imagePath)
       else:
          return self.mountImageGeneric(imagePath)
@@ -246,7 +247,7 @@ class TestIsoImage(unittest.TestCase):
 
       @raise IOError: If the command cannot be executed.
       """
-      if sys.platform == "darwin":
+      if platformMacOsX():
          self.unmountImageDarwin()
       else:
          self.unmountImageGeneric()
@@ -586,10 +587,11 @@ class TestIsoImage(unittest.TestCase):
       """
       Attempt to add a an entry that is a soft link to a file.
       """
-      self.extractTar("tree9")
-      file1 = self.buildPath([ "tree9", "dir002", "link003", ])
-      isoImage = IsoImage()
-      self.failUnlessRaises(ValueError, isoImage.addEntry, file1)
+      if platformSupportsLinks():
+         self.extractTar("tree9")
+         file1 = self.buildPath([ "tree9", "dir002", "link003", ])
+         isoImage = IsoImage()
+         self.failUnlessRaises(ValueError, isoImage.addEntry, file1)
 
    def testAddEntry_003(self):
       """

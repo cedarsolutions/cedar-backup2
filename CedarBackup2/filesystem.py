@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -106,6 +106,10 @@ class FilesystemList(list):
    @note: Regular expression patterns that apply to paths are assumed to be
    bounded at front and back by the beginning and end of the string, i.e. they
    are treated as if they begin with C{^} and end with C{$}.
+
+   @note: Some platforms, like Windows, do not support soft links.  On those
+   platforms, the ignore-soft-links flag can be set, but it won't do any good
+   because the operating system never reports a file as a soft link.
 
    @sort: __init__, addFile, addDir, addDirContents, removeFiles, removeDirs,
           removeLinks, removeMatch, removeInvalid, normalize, validate, 
@@ -748,8 +752,8 @@ class BackupFileList(FilesystemList):
       Python hashing algorithms.
 
       In my tests using a 110 MB file on CD, the original implementation
-      requires 111 seconds while this implementation requires only 40-45
-      seconds, which is a pretty substantial speed-up.  
+      requires 111 seconds.  This implementation requires only 40-45 seconds,
+      which is a pretty substantial speed-up.  
 
       Practice shows that reading in around 4kB (4096 bytes) at a time yields
       the best performance.  Smaller reads are quite a bit slower, and larger
@@ -765,7 +769,7 @@ class BackupFileList(FilesystemList):
       @raise OSError: If the file cannot be opened.
       """
       s = sha.new()
-      f = open(path)
+      f = open(path, mode="rb")  # in case platform cares about binary reads
       readBytes = 4096  # see notes above
       while(readBytes > 0):
          readString = f.read(readBytes)
@@ -878,20 +882,22 @@ class BackupFileList(FilesystemList):
          for entry in self:
             try:
                tar.add(entry, recursive=False)
-            except tarfile.TarError:
+            except tarfile.TarError, e:
                if not ignore:
-                  raise
+                  raise e
                logger.info("Unable to add file [%s]; going on anyway." % entry)
             except OSError, e:
                if not ignore:
                   raise tarfile.TarError(e)
                logger.info("Unable to add file [%s]; going on anyway." % entry)
          tar.close()
-      except tarfile.TarError:
+      except tarfile.TarError, e:
+         try: tar.close()
+         except: pass
          if os.path.exists(path): 
             try: os.remove(path) 
             except: pass
-         raise
+         raise e
 
    def removeUnchanged(self, digestMap, captureDigest=False):
       """

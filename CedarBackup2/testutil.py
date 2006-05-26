@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -50,7 +50,10 @@ L{removedir} do what they are supposed to, but I don't want responsibility for
 making them available to others.
 
 @sort: findResources, buildPath, removedir, extractTar, changeFileAge,
-       getMaskAsMode, getLogin, failUnlessAssignRaises
+       getMaskAsMode, getLogin, failUnlessAssignRaises, runningAsRoot,
+       platformMacOsX, platformWindows, platformHasEcho, 
+       platformSupportsLinks, platformSupportsPermissions,
+       platformRequiresBinaryRead
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -60,12 +63,14 @@ making them available to others.
 # Imported modules
 ########################################################################
 
+import sys
 import os
 import tarfile
 import time
 import getpass
 import random
 import string
+import platform
 
 from CedarBackup2.util import encodePath
 
@@ -282,4 +287,110 @@ def failUnlessAssignRaises(testCase, exception, object, property, value):
       testCase.fail("Expected assignment to raise %s, but got no exception." % (exception.__name__))
    if instead is not None:
       testCase.fail("Expected assignment to raise %s, but got %s instead." % (ValueError, instead.__class__.__name__))
+
+
+#########################
+# _isPlatform() function
+#########################
+
+def _isPlatform(name):
+   """
+   Returns boolean indicating whether we're running on the indicated platform.
+   @param platform: Platform, currently one of "windows" or "macosx"
+   """
+   if name == "windows":
+      return platform.platform(True, True).startswith("Windows")
+   elif name == "macosx":
+      return sys.platform == "darwin"
+   else:
+      raise ValueError("Unknown platform [%s]." % name)
+
+
+############################
+# platformMacOsX() function
+############################
+
+def platformMacOsX():
+   """
+   Returns boolean indicating whether this is the Mac OS X platform.
+   """
+   return _isPlatform("macosx")
+
+
+#############################
+# platformWindows() function
+#############################
+
+def platformWindows():
+   """
+   Returns boolean indicating whether this is the Windows platform.
+   """
+   return _isPlatform("windows")
+
+
+###################################
+# platformSupportsLinks() function
+###################################
+
+def platformSupportsLinks():
+   """
+   Returns boolean indicating whether the platform supports soft-links.
+   Some platforms, like Windows, do not support links, and tests need to take
+   this into account.
+   """
+   return not platformWindows()
+
+
+#########################################
+# platformSupportsPermissions() function
+#########################################
+
+def platformSupportsPermissions():
+   """
+   Returns boolean indicating whether the platform supports UNIX-style file permissions.
+   Some platforms, like Windows, do not support permissions, and tests need to take
+   this into account.
+   """
+   return not platformWindows()
+
+
+########################################
+# platformRequiresBinaryRead() function
+########################################
+
+def platformRequiresBinaryRead():
+   """
+   Returns boolean indicating whether the platform requires binary reads.
+   Some platforms, like Windows, require a special flag to read binary data
+   from files.
+   """
+   return platformWindows()
+
+
+#############################
+# platformHasEcho() function
+#############################
+
+def platformHasEcho():
+   """
+   Returns boolean indicating whether the platform has a sensible echo command.
+   On some platforms, like Windows, echo doesn't really work for tests.
+   """
+   return not platformWindows()
+   
+
+###########################
+# runningAsRoot() function
+###########################
+
+def runningAsRoot():
+   """
+   Returns boolean indicating whether the effective user id is root.
+   This is always true on platforms that have no concept of root, like Windows.
+   """
+   if platformWindows():
+      return True
+   else:
+      return os.geteuid() == 0
+
 

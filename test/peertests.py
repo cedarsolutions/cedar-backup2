@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -98,7 +98,9 @@ import unittest
 import tempfile
 import tarfile
 import getpass
-from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, getMaskAsMode, getLogin
+from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
+from CedarBackup2.testutil import getMaskAsMode, getLogin, runningAsRoot
+from CedarBackup2.testutil import platformSupportsPermissions, platformWindows
 from CedarBackup2.peer import LocalPeer, RemotePeer
 from CedarBackup2.peer import DEF_RCP_COMMAND, DEF_COLLECT_INDICATOR, DEF_STAGE_INDICATOR
 
@@ -153,7 +155,9 @@ class TestLocalPeer(unittest.TestCase):
          self.fail(e)
 
    def tearDown(self):
-      removedir(self.tmpdir)
+      try:
+         removedir(self.tmpdir)
+      except: pass
 
 
    ##################
@@ -317,8 +321,13 @@ class TestLocalPeer(unittest.TestCase):
       with spaces in the collect directory path and collect indicator file name.
       """
       name = "peer1"
-      collectDir = self.buildPath([" collect dir ", ])
-      collectIndicator = self.buildPath([" collect dir ", "different, file", ])
+      if platformWindows():
+         # os.listdir has problems with trailing spaces
+         collectDir = self.buildPath([" collect dir", ])
+         collectIndicator = self.buildPath([" collect dir", "different, file", ])
+      else:
+         collectDir = self.buildPath([" collect dir ", ])
+         collectIndicator = self.buildPath([" collect dir ", "different, file", ])
       os.mkdir(collectDir)
       open(collectIndicator, "w").write("")     # touch the file
       self.failUnless(os.path.exists(collectDir))
@@ -346,7 +355,7 @@ class TestLocalPeer(unittest.TestCase):
       """
       Attempt to write stage indicator with non-writable collect directory.
       """
-      if os.geteuid() != 0:  # root doesn't get this error
+      if not runningAsRoot():  # root doesn't get this error
          name = "peer1"
          collectDir = self.buildPath(["collect", ])
          os.mkdir(collectDir)
@@ -360,7 +369,7 @@ class TestLocalPeer(unittest.TestCase):
       """
       Attempt to write stage indicator with non-writable collect directory, custom name.
       """
-      if os.geteuid() != 0:  # root doesn't get this error
+      if not runningAsRoot():  # root doesn't get this error
          name = "peer1"
          collectDir = self.buildPath(["collect", ])
          os.mkdir(collectDir)
@@ -487,7 +496,7 @@ class TestLocalPeer(unittest.TestCase):
       """
       Attempt to stage files with non-writable target directory.
       """
-      if os.geteuid() != 0:  # root doesn't get this error
+      if not runningAsRoot():  # root doesn't get this error
          self.extractTar("tree1")
          name = "peer1"
          collectDir = self.buildPath(["tree1"])
@@ -526,7 +535,10 @@ class TestLocalPeer(unittest.TestCase):
       self.extractTar("tree2")
       name = "peer1"
       collectDir = self.buildPath(["tree2", "dir001", ])
-      targetDir = self.buildPath([" target directory ", ])
+      if platformWindows():
+         targetDir = self.buildPath([" target directory", ])  # os.listdir has problems with trailing spaces
+      else:
+         targetDir = self.buildPath([" target directory ", ])
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
@@ -605,37 +617,38 @@ class TestLocalPeer(unittest.TestCase):
       """
       Attempt to stage files with non-empty collect directory and attempt to set valid permissions.
       """
-      self.extractTar("tree1")
-      name = "peer1"
-      collectDir = self.buildPath(["tree1", ])
-      targetDir = self.buildPath(["target", ])
-      os.mkdir(targetDir)
-      self.failUnless(os.path.exists(collectDir))
-      self.failUnless(os.path.exists(targetDir))
-      self.failUnlessEqual(0, len(os.listdir(targetDir)))
-      peer = LocalPeer(name, collectDir)
-      if getMaskAsMode() == 0400:
-         permissions = 0642   # arbitrary, but different than umask would give
-      else:
-         permissions = 0400   # arbitrary
-      count = peer.stagePeer(targetDir=targetDir, permissions=permissions)
-      self.failUnlessEqual(7, count)
-      stagedFiles = os.listdir(targetDir)
-      self.failUnlessEqual(7, len(stagedFiles))
-      self.failUnless("file001" in stagedFiles)
-      self.failUnless("file002" in stagedFiles)
-      self.failUnless("file003" in stagedFiles)
-      self.failUnless("file004" in stagedFiles)
-      self.failUnless("file005" in stagedFiles)
-      self.failUnless("file006" in stagedFiles)
-      self.failUnless("file007" in stagedFiles)
-      self.failUnlessEqual(permissions, self.getFileMode(["target", "file001", ]))
-      self.failUnlessEqual(permissions, self.getFileMode(["target", "file002", ]))
-      self.failUnlessEqual(permissions, self.getFileMode(["target", "file003", ]))
-      self.failUnlessEqual(permissions, self.getFileMode(["target", "file004", ]))
-      self.failUnlessEqual(permissions, self.getFileMode(["target", "file005", ]))
-      self.failUnlessEqual(permissions, self.getFileMode(["target", "file006", ]))
-      self.failUnlessEqual(permissions, self.getFileMode(["target", "file007", ]))
+      if platformSupportsPermissions():
+         self.extractTar("tree1")
+         name = "peer1"
+         collectDir = self.buildPath(["tree1", ])
+         targetDir = self.buildPath(["target", ])
+         os.mkdir(targetDir)
+         self.failUnless(os.path.exists(collectDir))
+         self.failUnless(os.path.exists(targetDir))
+         self.failUnlessEqual(0, len(os.listdir(targetDir)))
+         peer = LocalPeer(name, collectDir)
+         if getMaskAsMode() == 0400:
+            permissions = 0642   # arbitrary, but different than umask would give
+         else:
+            permissions = 0400   # arbitrary
+         count = peer.stagePeer(targetDir=targetDir, permissions=permissions)
+         self.failUnlessEqual(7, count)
+         stagedFiles = os.listdir(targetDir)
+         self.failUnlessEqual(7, len(stagedFiles))
+         self.failUnless("file001" in stagedFiles)
+         self.failUnless("file002" in stagedFiles)
+         self.failUnless("file003" in stagedFiles)
+         self.failUnless("file004" in stagedFiles)
+         self.failUnless("file005" in stagedFiles)
+         self.failUnless("file006" in stagedFiles)
+         self.failUnless("file007" in stagedFiles)
+         self.failUnlessEqual(permissions, self.getFileMode(["target", "file001", ]))
+         self.failUnlessEqual(permissions, self.getFileMode(["target", "file002", ]))
+         self.failUnlessEqual(permissions, self.getFileMode(["target", "file003", ]))
+         self.failUnlessEqual(permissions, self.getFileMode(["target", "file004", ]))
+         self.failUnlessEqual(permissions, self.getFileMode(["target", "file005", ]))
+         self.failUnlessEqual(permissions, self.getFileMode(["target", "file006", ]))
+         self.failUnlessEqual(permissions, self.getFileMode(["target", "file007", ]))
 
 
 ######################
@@ -658,7 +671,9 @@ class TestRemotePeer(unittest.TestCase):
          self.fail(e)
 
    def tearDown(self):
-      removedir(self.tmpdir)
+      try:
+         removedir(self.tmpdir)
+      except: pass
 
 
    ##################
