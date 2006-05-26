@@ -12,6 +12,12 @@ Version 2.8.0	unreleased
 	  - Update config.CollectConfig class to contain a list of collect files
 	  - Update config.Config class to parse and emit collect file data
 	  - Modified collect process in action.py to handle collect files
+	* Port to Windows
+	  - *** NEEDS TESTING
+	  - *** NEEDS MORE COMMENTS
+	  - *** NEED TO UPDATE DOCUMENTATION TO MENTION THIS PLATFORM
+	* Switch to new stylesheet (dfferent version)
+	  - *** NEEDS CHECKING -- some formatting seems to have changed
 
 Version 2.7.2	22 Dec 2005
 
