@@ -37,7 +37,7 @@
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
 
-   <xsl:import href="http://docbook.sourceforge.net/release/xsl/1.67.2/fo/docbook.xsl"/>
+   <xsl:import href="http://docbook.sourceforge.net/release/xsl/1.68.1/fo/docbook.xsl"/>
 
    <xsl:param name="fop.extensions" select="1"/>
    <xsl:param name="variablelist.as.blocks" select="1"/>
