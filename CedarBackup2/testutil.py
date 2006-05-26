@@ -296,7 +296,7 @@ def failUnlessAssignRaises(testCase, exception, object, property, value):
 def _isPlatform(name):
    """
    Returns boolean indicating whether we're running on the indicated platform.
-   @param platform: Platform, currently one of "windows" or "macosx"
+   @param name: Platform name to check, currently one of "windows" or "macosx"
    """
    if name == "windows":
       return platform.platform(True, True).startswith("Windows")
