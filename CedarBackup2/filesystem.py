@@ -327,14 +327,15 @@ class FilesystemList(list):
       logger.debug("Added directory to list: [%s]" % path)
       return 1
 
-   def addDirContents(self, path):
+   def addDirContents(self, path, recursive=True):
       """
       Adds the contents of a directory to the list.
 
       The path must exist and must be a directory or a link to a directory.
       The contents of the directory (as well as the directory path itself) will
       be recursively added to the list, subject to any exclusions that are in
-      place.  
+      place.  If you only want the directory and its contents to be added,
+      then pass in C{recursive=False}.
 
       @note: If a directory's absolute path matches an exclude pattern or path,
       or if the directory contains the configured ignore file, then the
@@ -350,12 +351,11 @@ class FilesystemList(list):
       path itself is added to the list once it has been discovered.  It does
       I{not} modify any behavior related to directory recursion.
    
-      @note: The L{excludeDirs} flag only controls whether any given directory
-      path itself is added to the list once it has been discovered.  It does
-      I{not} modify any behavior related to directory recursion.
-
       @param path: Directory path whose contents should be added to the list
       @type path: String representing a path on disk
+
+      @param recursive: Indicates whether directory contents should be added recursively.
+      @type recursive: Boolean value
 
       @return: Number of items recursively added to the list
 
@@ -364,9 +364,9 @@ class FilesystemList(list):
       """
       path = encodePath(path)
       path = normalizeDir(path)
-      return self._addDirContentsRecursive(path)
+      return self._addDirContentsInternal(path, recursive=recursive)
 
-   def _addDirContentsRecursive(self, path, includePath=True):
+   def _addDirContentsInternal(self, path, includePath=True, recursive=True):
       """
       Internal implementation of C{addDirContents}.
 
@@ -380,6 +380,7 @@ class FilesystemList(list):
 
       @param path: Directory path whose contents should be added to the list.
       @param includePath: Indicates whether to include the path as well as contents.
+      @param recursive: Indicates whether directory contents should be added recursively.
 
       @return: Number of items recursively added to the list
 
@@ -409,7 +410,10 @@ class FilesystemList(list):
             if os.path.islink(entrypath):
                added += self.addDir(entrypath)
             else:
-               added += self._addDirContentsRecursive(entrypath)
+               if recursive:
+                  added += self._addDirContentsInternal(entrypath)
+               else:
+                  added += self.addDir(entrypath)
       return added
 
 
@@ -1021,14 +1025,15 @@ class PurgeItemList(FilesystemList):
    # Add methods
    ##############
 
-   def addDirContents(self, path):
+   def addDirContents(self, path, recursive=True):
       """
       Adds the contents of a directory to the list.
 
       The path must exist and must be a directory or a link to a directory.
       The contents of the directory (but I{not} the directory path itself) will
       be recursively added to the list, subject to any exclusions that are in
-      place.  
+      place.  If you only want the directory and its contents to be added, then
+      pass in C{recursive=False}.
 
       @note: If a directory's absolute path matches an exclude pattern or path,
       or if the directory contains the configured ignore file, then the
@@ -1051,6 +1056,9 @@ class PurgeItemList(FilesystemList):
       @param path: Directory path whose contents should be added to the list
       @type path: String representing a path on disk
 
+      @param recursive: Indicates whether directory contents should be added recursively.
+      @type recursive: Boolean value
+
       @return: Number of items recursively added to the list
 
       @raise ValueError: If path is not a directory or does not exist.
@@ -1058,7 +1066,7 @@ class PurgeItemList(FilesystemList):
       """
       path = encodePath(path)
       path = normalizeDir(path)
-      return super(PurgeItemList, self)._addDirContentsRecursive(path, includePath=False)
+      return super(PurgeItemList, self)._addDirContentsInternal(path, includePath=False, recursive=recursive)
 
 
    ##################
