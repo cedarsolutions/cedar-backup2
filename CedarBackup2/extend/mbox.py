@@ -1195,7 +1195,7 @@ def _writeNewRevision(config, item, newRevision):
       pickle.dump(newRevision, open(revisionPath, "w"))
       changeOwnership(revisionPath, config.options.backupUser, config.options.backupGroup)
       logger.debug("Wrote new revision file [%s] to disk: [%s]" % (revisionPath, newRevision))
-   except Exception, e:
+   except:
       logger.error("Failed to write revision file [%s] to disk." % revisionPath)
 
 def _getExclusions(config, mboxDir):
