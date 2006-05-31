@@ -820,7 +820,7 @@ class BackupFileList(FilesystemList):
       elif algorithm == "alternate_fit": return alternateFit(table, capacity)[0]
       else: raise ValueError("Algorithm [%s] is invalid." % algorithm);
 
-   def generateTarfile(self, path, mode='tar', ignore=False):
+   def generateTarfile(self, path, mode='tar', ignore=False, flat=False):
       """
       Creates a tar file containing the files in the list.
 
@@ -832,6 +832,10 @@ class BackupFileList(FilesystemList):
       file name lengths, etc.  Since GNU tar is so prevalent, I've decided that
       the extra functionality out-weighs the disadvantage of not being
       "standard".
+
+      If you pass in C{flat=True}, then a "flat" archive will be created, and
+      all of the files will be added to the root of the archive.  So, the file
+      C{/tmp/something/whatever.txt} would be added as just C{whatever.txt}.
 
       By default, the whole method call fails if there are problems adding any
       of the files to the archive, resulting in an exception.  Under these
@@ -869,6 +873,9 @@ class BackupFileList(FilesystemList):
       @param ignore: Indicates whether to ignore certain errors.
       @type ignore: Boolean
 
+      @param flat: Creates "flat" archive by putting all items in root 
+      @type flat: Boolean
+
       @raise ValueError: If mode is not valid
       @raise ValueError: If list is empty
       @raise ValueError: If the path could not be encoded properly.
@@ -885,7 +892,10 @@ class BackupFileList(FilesystemList):
          tar.posix = False    # make a GNU-compatible archive without file length limits
          for entry in self:
             try:
-               tar.add(entry, recursive=False)
+               if flat:
+                  tar.add(entry, arcname=os.path.basename(entry), recursive=False)
+               else:
+                  tar.add(entry, recursive=False)
             except tarfile.TarError, e:
                if not ignore:
                   raise e
