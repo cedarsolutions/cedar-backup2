@@ -5,6 +5,8 @@ Version 2.8.0	unreleased
 	* Consistently rework "project description" everywhere.
 	* Fix some simple typos in various comments and documentation.
 	* Added recursive flag (default True) to FilesystemList.addDirContents().
+	* Added flat flat (default False) to BackupFileList.generateTarfile().
+	- *** NEED TO ADD UNIT TEST(S) FOR THIS!
 	* Created mbox extension in CedarBackup2.extend.mbox (closes: #31).
 	* Add support for collecting individual files (closes: #30).
 	  - *** NEEDS TESTING VIA COMPLETE BACKUP RUN!!!! ***
