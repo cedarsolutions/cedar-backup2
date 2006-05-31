@@ -7,6 +7,7 @@ ignoreStandardLibrary = 1
 
 # int: warnings for code complexity, max value before generating a warning
 maxLocals = 50    # some test code has a lot of variables
+maxLines = 300    # some test code has some huge methods
 maxArgs = 15      # configuration code has a lot of method arguments
 maxReturns = 30   # configuration and cli code implement __cmp__ with lots of returns
 
