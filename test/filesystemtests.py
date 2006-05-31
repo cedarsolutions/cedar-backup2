@@ -3454,6 +3454,36 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree13", "Megaherz - Mistst\x81ck.MP3", ]) in fsList)
          self.failUnless(self.buildPath([ "tree13", "Rammstein - Mutter - B\x94se.mp3", ]) in fsList)
 
+   def testAddDirContents_073(self):
+      """
+      Attempt to add a large tree with recursive=False.
+      """
+      self.extractTar("tree6")
+      path = self.buildPath(["tree6"])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path, recursive=False)
+      if not platformSupportsLinks():
+         self.failUnlessEqual(7, count)
+         self.failUnlessEqual(7, len(fsList))
+         self.failUnless(self.buildPath([ "tree6", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "file001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
+      else:
+         self.failUnlessEqual(8, count)
+         self.failUnlessEqual(8, len(fsList))
+         self.failUnless(self.buildPath([ "tree6", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "file001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree6", "link002", ]) in fsList)
+
 
    #####################
    # Test removeFiles()
