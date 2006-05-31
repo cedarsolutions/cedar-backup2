@@ -78,7 +78,9 @@ What is this extension?
    The mbox action is conceptually similar to the standard collect action,
    except that mbox directories are not collected recursively.  This implies
    some configuration changes (i.e. there's no need for global exclusions or an
-   ignore file).
+   ignore file).  If you back up a directory, all of the mbox files in that
+   directory are backed up into a single tar file using the indicated
+   compression method.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -91,10 +93,13 @@ What is this extension?
 import os
 import logging
 import datetime
+import pickle
+import tempfile
 from bz2 import BZ2File
 from gzip import GzipFile
 
 # Cedar Backup modules
+from CedarBackup2.filesystem import FilesystemList, BackupFileList
 from CedarBackup2.config import createInputDom, addContainerNode, addStringNode
 from CedarBackup2.config import isElement, readChildren, readFirstChild, readString
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
@@ -1047,7 +1052,7 @@ def executeAction(configPath, options, config):
    @raise IOError: If a backup could not be written for some reason.
    """
    logger.debug("Executing mbox extended action.")
-   newRevision = datetime.today()  # mark here so all actions are after this date/time
+   newRevision = datetime.datetime.today()  # mark here so all actions are after this date/time
    if config.options is None or config.collect is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
@@ -1059,31 +1064,32 @@ def executeAction(configPath, options, config):
          logger.debug("Working with mbox file [%s]" % mboxFile.absolutePath)
          collectMode = _getCollectMode(local, mboxFile)
          compressMode = _getCompressMode(local, mboxFile)
-         lastRevision = _loadLastRevision(local, mboxFile, fullBackup, collectMode)
+         lastRevision = _loadLastRevision(config, mboxFile, fullBackup, collectMode)
          if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
             logger.debug("Mbox file meets criteria to be backed up today.")
-            _backupMboxFile(config, mboxFile.absolutePath, lastRevision, fullBackup, collectMode, compressMode)
+            _backupMboxFile(config, mboxFile.absolutePath, fullBackup, 
+                            collectMode, compressMode, lastRevision, newRevision)
          else:
             logger.debug("Mbox file will not be backed up, per collect mode.")
          if collectMode == 'incr':
-            _writeLastRevision(config, newRevision)
-         logger.info("Completed backing up mbox file [%s]." % mboxFile.absolutePath)
+            _writeNewRevision(config, mboxFile, newRevision)
    if local.mbox.mboxDirs is not None:
       for mboxDir in local.mbox.mboxDirs:
          logger.debug("Working with mbox directory [%s]" % mboxDir.absolutePath)
          collectMode = _getCollectMode(local, mboxDir)
          compressMode = _getCompressMode(local, mboxDir)
-         lastRevision = _loadLastRevision(local, mboxFile, fullBackup, collectMode)
+         lastRevision = _loadLastRevision(config, mboxDir, fullBackup, collectMode)
          (excludePaths, excludePatterns) = _getExclusions(config, mboxDir)
          if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
             logger.debug("Mbox directory meets criteria to be backed up today.")
-            _backupMboxDir(config, mboxDir.absolutePath, lastRevision, fullBackup, collectMode, 
-                           compressMode, excludePaths, excludePatterns)
+            _backupMboxDir(config, mboxDir.absolutePath, 
+                           fullBackup, collectMode, compressMode, 
+                           lastRevision, newRevision, 
+                           excludePaths, excludePatterns)
          else:
             logger.debug("Mbox directory will not be backed up, per collect mode.")
          if collectMode == 'incr':
-            _writeLastRevision(config, newRevision)
-         logger.info("Completed backing up mbox directory [%s]." % mboxDir.absolutePath)
+            _writeNewRevision(config, mboxDir, newRevision)
    logger.info("Executed the mbox extended action successfully.")
 
 def _getCollectMode(local, item):
@@ -1119,7 +1125,7 @@ def _getCompressMode(local, item):
 def _getRevisionPath(config, item):
    """
    Gets the path to the revision file associated with a repository.
-   @param config: LocalConfig object.
+   @param config: Cedar Backup configuration.
    @param item: Mbox file or directory
    @return: Absolute path to the revision file associated with the repository.
    """
@@ -1137,7 +1143,11 @@ def _loadLastRevision(config, item, fullBackup, collectMode):
    reason, then C{None} is returned.  This indicates that there is no previous
    revision, so the entire mail file or directory should be backed up.
 
-   @param config: LocalConfig object.
+   @note: We write the actual revision object to disk via pickle, so we don't
+   deal with the datetime precision or format at all.  Whatever's in the object
+   is what we write.
+
+   @param config: Cedar Backup configuration.
    @param item: Mbox file or directory
    @param fullBackup: Indicates whether this is a full backup
    @param collectMode: Indicates the collect mode for this item
@@ -1165,22 +1175,27 @@ def _loadLastRevision(config, item, fullBackup, collectMode):
             logger.error("Failed loading revision file [%s] from disk." % revisionPath)
    return revisionDate
 
-def _writeLastRevision(config, lastRevision):
+def _writeNewRevision(config, item, newRevision):
    """
-   Writes last revision to the revision file on disk.
+   Writes new revision information to disk.
 
    If we can't write the revision file successfully for any reason, we'll log
    the condition but won't throw an exception.
 
-   @param config: Config object.
-   @param lastRevision: Revision date as a datetime.datetime object.
+   @note: We write the actual revision object to disk via pickle, so we don't
+   deal with the datetime precision or format at all.  Whatever's in the object
+   is what we write.
+
+   @param config: Cedar Backup configuration.
+   @param item: Mbox file or directory
+   @param newRevision: Revision date as a datetime.datetime object.
    """
    revisionPath = _getRevisionPath(config, item)
    try:
-      pickle.dump(lastRevision, open(revisionPath, "w"))
+      pickle.dump(newRevision, open(revisionPath, "w"))
       changeOwnership(revisionPath, config.options.backupUser, config.options.backupGroup)
-      logger.debug("Wrote new revision file [%s] to disk: [%d]" % (revisionPath, lastRevision))
-   except:
+      logger.debug("Wrote new revision file [%s] to disk: [%s]" % (revisionPath, newRevision))
+   except Exception, e:
       logger.error("Failed to write revision file [%s] to disk." % revisionPath)
 
 def _getExclusions(config, mboxDir):
@@ -1195,7 +1210,7 @@ def _getExclusions(config, mboxDir):
    backup for a given directory.  It is derived from the mbox directory's list
    of patterns.
 
-   @param config: Config object.
+   @param config: Cedar Backup configuration.
    @param mboxDir: Mbox directory object.
 
    @return: Tuple (files, patterns) indicating what to exclude.
@@ -1211,39 +1226,176 @@ def _getExclusions(config, mboxDir):
    logger.debug("Exclude patterns: %s" % patterns)
    return(paths, patterns)
 
-def _backupMboxFile(config, absolutePath, lastRevision, fullBackup, 
-                    collectMode, compressMode):
+def _getBackupPath(config, mboxPath, compressMode, newRevision, targetDir=None):
+   """
+   Gets the backup file path (including correct extension) associated with an mbox path.
+
+   We assume that if the target directory is passed in, that we're backing up a
+   directory.  Under these circumstances, we'll just use the basename of the
+   individual path as the output file.
+
+   @note: The backup path only contains the current date in YYYYMMDD format,
+   but that's OK because the index information (stored elsewhere) is the actual
+   date object.
+
+   @param config: Cedar Backup configuration.
+   @param mboxPath: Path to the indicated mbox file or directory
+   @param compressMode: Compress mode to use for this mbox path
+   @param newRevision: Revision this backup path represents
+   @param targetDir: Target directory in which the path should exist
+
+   @return: Absolute path to the backup file associated with the repository.
+   """
+   if targetDir is None:
+      normalizedPath = buildNormalizedPath(mboxPath)
+      revisionDate = newRevision.strftime("%Y%m%d")
+      filename = "mbox-%s-%s" % (revisionDate, normalizedPath)
+   else:
+      filename = os.path.basename(mboxPath)
+   if compressMode == 'gzip':
+      filename = "%s.gz" % filename
+   elif compressMode == 'bzip2':
+      filename = "%s.bz2" % filename
+   if targetDir is None:
+      backupPath = os.path.join(config.collect.targetDir, filename)
+   else:
+      backupPath = os.path.join(targetDir, filename)
+   logger.debug("Backup file path is [%s]" % backupPath)
+   return backupPath
+
+def _getTarfilePath(config, mboxPath, compressMode, newRevision):
+   """
+   Gets the tarfile backup file path (including correct extension) associated
+   with an mbox path.
+
+   Along with the path, the tar archive mode is returned in a form that can
+   be used with L{BackupFileList.generateTarfile}.
+
+   @note: The tarfile path only contains the current date in YYYYMMDD format,
+   but that's OK because the index information (stored elsewhere) is the actual
+   date object.
+
+   @param config: Cedar Backup configuration.
+   @param mboxPath: Path to the indicated mbox file or directory
+   @param compressMode: Compress mode to use for this mbox path
+   @param newRevision: Revision this backup path represents
+
+   @return: Tuple of (absolute path to tarfile, tar archive mode)
+   """
+   normalizedPath = buildNormalizedPath(mboxPath)
+   revisionDate = newRevision.strftime("%Y%m%d")
+   filename = "mbox-%s-%s.tar" % (revisionDate, normalizedPath)
+   if compressMode == 'gzip':
+      filename = "%s.gz" % filename
+      archiveMode = "targz"
+   elif compressMode == 'bzip2':
+      filename = "%s.bz2" % filename
+      archiveMode = "tarbz2"
+   else:
+      archiveMode = "tar"
+   tarfilePath = os.path.join(config.collect.targetDir, filename)
+   logger.debug("Tarfile path is [%s]" % tarfilePath)
+   return (tarfilePath, archiveMode)
+
+def _getOutputFile(backupPath, compressMode):
+   """
+   Opens the output file used for saving backup information.
+
+   If the compress mode is "gzip", we'll open a C{GzipFile}, and if the
+   compress mode is "bzip2", we'll open a C{BZ2File}.  Otherwise, we'll just
+   return an object from the normal C{open()} method.
+
+   @param backupPath: Path to file to open.
+   @param compressMode: Compress mode of file ("none", "gzip", "bzip").
+
+   @return: Output file object.
+   """
+   if compressMode == "gzip":
+      return GzipFile(backupPath, "w")
+   elif compressMode == "bzip2":
+      return BZ2File(backupPath, "w")
+   else:
+      return open(backupPath, "w")
+
+def _backupMboxFile(config, absolutePath, 
+                    fullBackup, collectMode, compressMode, 
+                    lastRevision, newRevision, targetDir=None):
    """
    Backs up an individual mbox file.
 
    @param config: Cedar Backup configuration.
    @param absolutePath: Path to mbox file to back up.
-   @param lastRevision: Date of last backup as datetime.datetime
    @param fullBackup: Indicates whether this should be a full backup.
-   @param collectMode: Collect mode to use.
-   @param compressMode: Compress mode to use.
+   @param collectMode: Indicates the collect mode for this item
+   @param compressMode: Compress mode of file ("none", "gzip", "bzip")
+   @param lastRevision: Date of last backup as datetime.datetime
+   @param newRevision: Date of new (current) backup as datetime.datetime
+   @param targetDir: Target directory to write the backed-up file into
     
    @raise ValueError: If some value is missing or invalid.
    @raise IOError: If there is a problem backing up the mbox file.
    """
-   pass
+   backupPath = _getBackupPath(config, absolutePath, compressMode, newRevision, targetDir=targetDir)
+   outputFile = _getOutputFile(backupPath, compressMode)
+   if fullBackup or collectMode != "incr" or lastRevision is None:
+      args = [ "-a", "-u", absolutePath, ]  # remove duplicates but fetch entire mailbox
+   else:
+      revisionDate = lastRevision.strftime("%Y%m%d%H%M%S")
+      args = [ "-a", "-u", "-d", "since %s" % revisionDate, absolutePath, ]
+   command = resolveCommand(GREPMAIL_COMMAND)
+   result = executeCommand(command, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)[0]
+   if result != 0:
+      raise IOError("Error [%d] executing grepmail on [%s]." % (result, absolutePath))
+   logger.debug("Completed backing up mailbox [%s]." % absolutePath)
+   return backupPath
 
-def _backupMboxDir(config, absolutePath, lastRevision, fullBackup, collectMode, 
-                   compressMode, excludePaths, excludePatterns):
+def _backupMboxDir(config, absolutePath, 
+                   fullBackup, collectMode, compressMode,
+                   lastRevision, newRevision, 
+                   excludePaths, excludePatterns):
    """
    Backs up a directory containing mbox files.
 
    @param config: Cedar Backup configuration.
    @param absolutePath: Path to mbox directory to back up.
-   @param lastRevision: Date of last backup as datetime.datetime
    @param fullBackup: Indicates whether this should be a full backup.
-   @param collectMode: Collect mode to use.
-   @param compressMode: Compress mode to use.
+   @param collectMode: Indicates the collect mode for this item
+   @param compressMode: Compress mode of file ("none", "gzip", "bzip")
+   @param lastRevision: Date of last backup as datetime.datetime
+   @param newRevision: Date of new (current) backup as datetime.datetime
    @param excludePaths: List of absolute paths to exclude.
    @param excludePatterns: List of patterns to exclude.
     
    @raise ValueError: If some value is missing or invalid.
    @raise IOError: If there is a problem backing up the mbox file.
    """
-   pass
+   try:
+      tmpdir = tempfile.mkdtemp(dir=config.options.workingDir)
+      mboxList = FilesystemList()
+      mboxList.excludeDirs = True
+      mboxList.excludePaths = excludePaths
+      mboxList.excludePatterns = excludePatterns
+      mboxList.addDirContents(absolutePath, recursive=False)
+      tarList = BackupFileList()
+      for item in mboxList:
+         backupPath = _backupMboxFile(config, item, fullBackup, 
+                                      collectMode, "none",  # no need to compress inside compressed tar
+                                      lastRevision, newRevision, 
+                                      targetDir=tmpdir)
+         tarList.addFile(backupPath)
+      (tarfilePath, archiveMode) = _getTarfilePath(config, absolutePath, compressMode, newRevision)
+      tarList.generateTarfile(tarfilePath, archiveMode, ignore=True, flat=True)
+      changeOwnership(tarfilePath, config.options.backupUser, config.options.backupGroup) 
+      logger.debug("Completed backing up directory [%s]." % absolutePath)
+   finally:
+      try:
+         for item in tarList:
+            if os.path.exists(item):
+               try:
+                  os.remove(item)
+               except: pass
+      except: pass
+      try:
+         os.rmdir(tmpdir)
+      except: pass
 
