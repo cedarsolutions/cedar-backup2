@@ -5,23 +5,22 @@ Version 2.8.0	unreleased
 	* Consistently rework "project description" everywhere.
 	* Fix some simple typos in various comments and documentation.
 	* Added recursive flag (default True) to FilesystemList.addDirContents().
-	* Added flat flat (default False) to BackupFileList.generateTarfile().
-	- *** NEED TO ADD UNIT TEST(S) FOR THIS!
+	* Added flat flag (default False) to BackupFileList.generateTarfile().
 	* Created mbox extension in CedarBackup2.extend.mbox (closes: #31).
+	* Made most unit tests run properly on Windows platform, just for fun.
 	* Add support for collecting individual files (closes: #30).
-	  - *** NEEDS TESTING VIA COMPLETE BACKUP RUN!!!! ***
-	  - *** NEED TO UPDATE USER MANUAL TO DOCUMENT NEW <file> OPTION ***
 	  - Create new config.CollectFile class for use by other classes
 	  - Update config.CollectConfig class to contain a list of collect files
 	  - Update config.Config class to parse and emit collect file data
 	  - Modified collect process in action.py to handle collect files
-	* Port to Windows
-	  - *** NEEDS TESTING
-	  - *** NEEDS MORE COMMENTS
-	  - *** NEED TO UPDATE DOCUMENTATION TO MENTION THIS PLATFORM
-	  - *** NEED TO TEST PYTHON 2.4 IMPLEMENTATION
-	* Switch to new stylesheet (dfferent version)
-	  - *** NEEDS CHECKING -- some formatting seems to have changed
+	* Switch to newer version of Docbook XSL stylesheet for user manual
+	* THINGS WHICH NEED TO BE DONE YET
+	  - CONFIRM BEHAVIOR OF NEW XSL STYLESHEET
+	  - TEST PYTHON 2.4 PIPE IMPLEMENTATION
+	  - TEST INDIVIDUAL FILE BACKUP
+	  - TEST MBOX BACKUP
+	  - UPDATE USER MANUAL TO DOCUMENT NEW <file> OPTION
+	  - POSSIBLY INTEGRATE AND DOCUMENT THE POSTGRES EXTENSION
 
 Version 2.7.2	22 Dec 2005
 
