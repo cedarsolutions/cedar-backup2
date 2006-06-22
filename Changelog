@@ -8,17 +8,18 @@ Version 2.8.0	unreleased
 	* Added flat flag (default False) to BackupFileList.generateTarfile().
 	* Created mbox extension in CedarBackup2.extend.mbox (closes: #31).
 	* Made most unit tests run properly on Windows platform, just for fun.
+	* Switch to newer version of Docbook XSL stylesheet (old one isn't available)
 	* Add support for collecting individual files (closes: #30).
 	  - Create new config.CollectFile class for use by other classes
 	  - Update config.CollectConfig class to contain a list of collect files
 	  - Update config.Config class to parse and emit collect file data
 	  - Modified collect process in action.py to handle collect files
-	* Switch to newer version of Docbook XSL stylesheet for user manual
 	* THINGS WHICH NEED TO BE DONE YET
-	  - CONFIRM BEHAVIOR OF NEW XSL STYLESHEET
-	  - TEST PYTHON 2.4 PIPE IMPLEMENTATION
-	  - TEST INDIVIDUAL FILE BACKUP
-	  - TEST MBOX BACKUP
+	  - CONFIRM BEHAVIOR OF NEW XSL STYLESHEET IN GENERATING DOCS
+	  - CREATE UNIT TESTS FOR PIPE IMPLEMENTATION (LARGE OUTPUT, DISCARDING STDERR, ETC.)
+	  - CREATE UNIT TESTS FOR MBOX BACKUP PROCESS 
+	  - TEST INDIVIDUAL FILE BACKUP FROM COMMAND LINE
+	  - TEST MBOX BACKUP FROM COMMAND LINE
 	  - UPDATE USER MANUAL TO DOCUMENT NEW <file> OPTION
 	  - POSSIBLY INTEGRATE AND DOCUMENT THE POSTGRES EXTENSION
 
@@ -43,7 +44,7 @@ Version 2.7.1	13 Dec 2005
 Version 2.7.0	30 Oct 2005
 
 	* Cleanup some maintainer-only (non-distributed) Makefile rules.
-	* Make changes to standardize file headers with other Cedar Backup code.
+	* Make changes to standardize file headers with other Cedar Solutions code.
 	* Add debug statements to filesystem code (huge increase in debug log size).
 	* Standardize some config variable names ("parentNode" instead of "parent").
 	* Fix util/test.py to return proper (non-zero) return status upon failure.
