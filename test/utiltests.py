@@ -80,9 +80,17 @@ import unittest
 import tempfile
 from os.path import isdir
 
-from CedarBackup2.testutil import removedir, platformHasEcho
+from CedarBackup2.testutil import findResources, removedir, platformHasEcho
 from CedarBackup2.util import UnorderedList, PathResolverSingleton
 from CedarBackup2.util import resolveCommand, executeCommand, getFunctionReference, encodePath
+
+
+#######################################################################
+# Module-wide configuration and constants
+#######################################################################
+
+DATA_DIRS = [ "./data", "./test/data" ]
+RESOURCES = [ "lotsoflines.py", ]
 
 
 #######################################################################
@@ -499,6 +507,7 @@ class TestFunctions(unittest.TestCase):
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
+         self.resources = findResources(RESOURCES, DATA_DIRS)
       except Exception, e:
          self.fail(e)
 
@@ -1462,6 +1471,162 @@ class TestFunctions(unittest.TestCase):
       self.failUnlessEqual(2, len(output))
       self.failUnlessEqual("first%s" % os.linesep, output[0])
       self.failUnlessEqual("second%s" % os.linesep, output[1])
+
+   def testExecuteCommand_065(self):
+      """
+      Execute a command with a huge amount of output all on stdout.  The output
+      should contain only data on stdout, and ignoreStderr should be True.
+      This test helps confirm that the function doesn't hang when there is
+      either a lot of data or a lot of data to ignore.
+      """
+      lotsoflines = self.resources['lotsoflines.py']
+      command=["python", lotsoflines, "stdout", ]
+      args = []
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, ignoreStderr=True, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+
+      length = 0
+      contents = open(filename)
+      for line in contents:
+         length += 1
+
+      self.failUnlessEqual(100000, length)
+
+   def testExecuteCommand_066(self):
+      """
+      Execute a command with a huge amount of output all on stdout.  The output
+      should contain only data on stdout, and ignoreStderr should be False.
+      This test helps confirm that the function doesn't hang when there is
+      either a lot of data or a lot of data to ignore.
+      """
+      lotsoflines = self.resources['lotsoflines.py']
+      command=["python", lotsoflines, "stdout", ]
+      args = []
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, ignoreStderr=False, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+
+      length = 0
+      contents = open(filename)
+      for line in contents:
+         length += 1
+
+      self.failUnlessEqual(100000, length)
+
+   def testExecuteCommand_067(self):
+      """
+      Execute a command with a huge amount of output all on stdout.  The output
+      should contain only data on stderr, and ignoreStderr should be True.
+      This test helps confirm that the function doesn't hang when there is
+      either a lot of data or a lot of data to ignore.
+      """
+      lotsoflines = self.resources['lotsoflines.py']
+      command=["python", lotsoflines, "stderr", ]
+      args = []
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, ignoreStderr=True, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+
+      length = 0
+      contents = open(filename)
+      for line in contents:
+         length += 1
+
+      self.failUnlessEqual(0, length)
+
+   def testExecuteCommand_068(self):
+      """
+      Execute a command with a huge amount of output all on stdout.  The output
+      should contain only data on stdout, and ignoreStderr should be False.
+      This test helps confirm that the function doesn't hang when there is
+      either a lot of data or a lot of data to ignore.
+      """
+      lotsoflines = self.resources['lotsoflines.py']
+      command=["python", lotsoflines, "stderr", ]
+      args = []
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, ignoreStderr=False, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+
+      length = 0
+      contents = open(filename)
+      for line in contents:
+         length += 1
+
+      self.failUnlessEqual(100000, length)
+
+   def testExecuteCommand_069(self):
+      """
+      Execute a command with a huge amount of output all on stdout.  The output
+      should contain data on stdout and stderr, and ignoreStderr should be
+      True.  This test helps confirm that the function doesn't hang when there
+      is either a lot of data or a lot of data to ignore.
+      """
+      lotsoflines = self.resources['lotsoflines.py']
+      command=["python", lotsoflines, "both", ]
+      args = []
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, ignoreStderr=True, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+
+      length = 0
+      contents = open(filename)
+      for line in contents:
+         length += 1
+
+      self.failUnlessEqual(100000, length)
+
+   def testExecuteCommand_070(self):
+      """
+      Execute a command with a huge amount of output all on stdout.  The output
+      should contain data on stdout and stderr, and ignoreStderr should be
+      False.  This test helps confirm that the function doesn't hang when there
+      is either a lot of data or a lot of data to ignore.
+      """
+      lotsoflines = self.resources['lotsoflines.py']
+      command=["python", lotsoflines, "both", ]
+      args = []
+
+      filename = self.getTempfile()
+      outputFile = open(filename, "w")
+      try:
+         result = executeCommand(command, args, ignoreStderr=False, returnOutput=False, outputFile=outputFile)[0]
+      finally:
+         outputFile.close()
+      self.failUnlessEqual(0, result)
+
+      length = 0
+      contents = open(filename)
+      for line in contents:
+         length += 1
+
+      self.failUnlessEqual(100000*2, length)
 
 
    ####################
