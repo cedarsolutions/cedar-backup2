@@ -1493,7 +1493,7 @@ class TestFunctions(unittest.TestCase):
 
       length = 0
       contents = open(filename)
-      for line in contents:
+      for i in contents:
          length += 1
 
       self.failUnlessEqual(100000, length)
@@ -1519,7 +1519,7 @@ class TestFunctions(unittest.TestCase):
 
       length = 0
       contents = open(filename)
-      for line in contents:
+      for i in contents:
          length += 1
 
       self.failUnlessEqual(100000, length)
@@ -1545,7 +1545,7 @@ class TestFunctions(unittest.TestCase):
 
       length = 0
       contents = open(filename)
-      for line in contents:
+      for i in contents:
          length += 1
 
       self.failUnlessEqual(0, length)
@@ -1571,7 +1571,7 @@ class TestFunctions(unittest.TestCase):
 
       length = 0
       contents = open(filename)
-      for line in contents:
+      for i in contents:
          length += 1
 
       self.failUnlessEqual(100000, length)
@@ -1597,7 +1597,7 @@ class TestFunctions(unittest.TestCase):
 
       length = 0
       contents = open(filename)
-      for line in contents:
+      for i in contents:
          length += 1
 
       self.failUnlessEqual(100000, length)
@@ -1623,7 +1623,7 @@ class TestFunctions(unittest.TestCase):
 
       length = 0
       contents = open(filename)
-      for line in contents:
+      for i in contents:
          length += 1
 
       self.failUnlessEqual(100000*2, length)
