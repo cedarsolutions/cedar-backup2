@@ -4459,7 +4459,8 @@ class Config(object):
       The target directory must be filled in.  The collect mode, archive mode
       and ignore file are all optional.  The list of absolute paths to exclude
       and patterns to exclude may be either C{None} or an empty list C{[]} if
-      desired.  The collect directory list must contain at least one entry.  
+      desired.  Either the collect file list or the collect directory list must
+      contain at least one entry (there must be at least one thing to back up).
 
       Each collect directory entry must contain an absolute path to collect,
       and then must either be able to take collect mode, archive mode and
