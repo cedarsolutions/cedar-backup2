@@ -38,5 +38,5 @@ are officially supported along with Cedar Backup.
 # Using 'from CedarBackup2.extend import *' will just import the modules listed
 # in the __all__ variable.
 
-__all__ = [ 'mysql', 'sysinfo', 'subversion', 'mbox', ]
+__all__ = [ 'mysql', 'postgresql', 'sysinfo', 'subversion', 'mbox', ]
 
