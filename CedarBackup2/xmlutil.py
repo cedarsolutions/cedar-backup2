@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # Portions Copyright (c) 2000 Fourthought Inc, USA.
