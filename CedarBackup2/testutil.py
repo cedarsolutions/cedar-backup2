@@ -49,7 +49,8 @@ test work but are not robust enough to be real public functions.  Others (like
 L{removedir} do what they are supposed to, but I don't want responsibility for
 making them available to others.
 
-@sort: findResources, buildPath, removedir, extractTar, changeFileAge,
+@sort: findResources, commandAvailable,
+       buildPath, removedir, extractTar, changeFileAge,
        getMaskAsMode, getLogin, failUnlessAssignRaises, runningAsRoot,
        platformMacOsX, platformWindows, platformHasEcho, 
        platformSupportsLinks, platformSupportsPermissions,
@@ -101,6 +102,24 @@ def findResources(resources, dataDirs):
       else:
          raise Exception("Unable to find resource [%s]." % resource)
    return mapping
+
+
+##############################
+# commandAvailable() function
+##############################
+
+def commandAvailable(command):
+   """
+   Indicates whether a command is available on $PATH somewhere.
+   This should work on both Windows and UNIX platforms.
+   @param command: Commang to search for
+   @return: Boolean true/false depending on whether command is available.
+   """
+   if os.environ.has_key("PATH"):
+      for dir in os.environ["PATH"].split(os.sep):
+         if os.path.exists(os.path.join(dir, command)):
+            return True
+   return False
 
 
 #######################
