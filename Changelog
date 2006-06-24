@@ -1,3 +1,7 @@
+Version 2.8.1	not released
+
+	* Added documentation in manual about where to find grepmail utility.
+
 Version 2.8.0	24 Jun 2006
 	
 	* Remove outdated comment in xmlutil.py about dependency on PyXML.
