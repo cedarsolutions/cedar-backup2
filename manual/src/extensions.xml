@@ -333,6 +333,8 @@
 
    </sect1>
 
+   <!-- ################################################################# -->
+
    <sect1 id="cedar-extensions-mysql">
 
       <title>MySQL Extension</title>
@@ -558,6 +560,292 @@ password = &lt;secret&gt;
                   <emphasis>Restrictions:</emphasis> Must be non-empty.
                </para>
             </listitem>
+         </varlistentry>
+
+      </variablelist>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-extensions-mbox">
+
+      <title>Mbox Extension</title>
+
+      <para>
+         The Mbox Extension is a Cedar Backup extension used to incrementally
+         back up UNIX-style <quote>mbox</quote> mail folders via the Cedar
+         Backup command line.  It is intended to be run either immediately
+         before or immediately after the standard collect action.
+      </para>
+
+      <para>
+         Mbox mail folders are not well-suited to being backed up by the normal
+         Cedar Backup incremental backup process.  This is because active
+         folders are typically appended to on a daily basis.  This forces the
+         incremental backup process to back them up every day in order to avoid
+         losing data.  This can result in quite a bit of wasted space when
+         backing up large mail folders.
+      </para>
+
+      <para>
+         What the mbox extension does is leverage the
+         <command>grepmail</command> utility to back up only email messages
+         which have been received since the last incremental backup.  This way,
+         even if a folder is added to every day, only the recently-added
+         messages are backed up.  This can pontially save a lot of space.
+      </para>
+
+      <para>
+         Each configured mbox file or directory can be backed using the same
+         collect modes allowed for filesystems in the standard Cedar Backup
+         collect action (weekly, daily, incremental) and the output can be
+         compressed using either <command>gzip</command> or
+         <command>bzip2</command>.
+      </para>
+
+      <para>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </para>
+      
+      <programlisting>
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;mbox&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.mbox&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;101&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </programlisting>
+      
+      <para>
+         This extension relies on the options and collect configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <literal>mbox</literal> configuration
+         section.  This is an example mbox configuration section:
+      </para> 
+
+      <programlisting>
+&lt;mbox&gt;
+   &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
+   &lt;compress_mode&gt;gzip&lt;/compress_mode&gt;
+   &lt;file&gt;
+      &lt;abs_path&gt;/home/user1/mail/greylist&lt;/abs_path&gt;
+      &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
+   &lt;/file&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/home/user2/mail&lt;/abs_path&gt;
+   &lt;/dir&gt;
+&lt;/mbox&gt;
+      </programlisting>
+
+      <para>
+         Configuration is much like the standard collect action, except that
+         mbox directories are <emphasis>not</emphasis> collected recursively.
+         This means that no exclusion configuration is required.
+      </para>
+
+      <para>
+         The following elements are part of the mbox configuration section:
+      </para>
+
+      <variablelist>
+
+         <varlistentry>
+            <term><literal>collect_mode</literal></term>
+            <listitem>
+               <para>Default collect mode.</para>
+               <para>
+                  The collect mode describes how frequently an mbox file
+                  or directory is backed up.  The mbox extension
+                  recognizes the same collect modes as the standard Cedar
+                  Backup collect action (see <xref linkend="cedar-basic"/>).
+               </para>
+               <para>
+                  This value is the collect mode that will be used by default
+                  during the backup process.  Individual files or directories
+                  (below) may override this value.  If <emphasis>all</emphasis>
+                  individual files or directories provide their own value, then
+                  this default value may be omitted from configuration.
+               </para>
+               <para>
+                  Note: if your backup device does not suppport multisession
+                  discs, then you should probably use the
+                  <literal>daily</literal> collect mode to avoid losing
+                  data.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be one of
+                  <literal>daily</literal>, <literal>weekly</literal> or
+                  <literal>incr</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>compress_mode</literal></term>
+            <listitem>
+               <para>Default compress mode.</para>
+               <para>
+                  Mbox file or directory backups are just text, and often compress
+                  quite well using <command>gzip</command> or
+                  <command>bzip2</command>.  The compress mode describes how
+                  the backed-up data will be compressed, if at all.  
+               </para>
+               <para>
+                  This value is the compress mode that will be used by default
+                  during the backup process.  Individual files or directories
+                  (below) may override this value.  If <emphasis>all</emphasis>
+                  individual files or directories provide their own value, then
+                  this default value may be omitted from configuration.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be one of
+                  <literal>none</literal>, <literal>gzip</literal> or
+                  <literal>bzip2</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>file</literal></term>
+            <listitem>
+               <para>An individual mbox file to be collected.</para>
+               <para>
+                  This is a subsection which contains information about
+                  an individual mbox file to be backed up.
+               </para>
+               <para>
+                  This section can be repeated as many times as is necessary.
+                  At least one mbox file or directory must be configured.
+               </para>
+               <para>
+                  The file subsection contains the following fields:
+               </para>
+
+               <variablelist>
+
+                  <varlistentry>
+                     <term><literal>collect_mode</literal></term>
+                     <listitem>
+                        <para>Collect mode for this file.</para>
+                        <para>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default collect mode.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>daily</literal>, <literal>weekly</literal> or
+                           <literal>incr</literal>.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>compress_mode</literal></term>
+                     <listitem>
+                        <para>Compress mode for this file.</para>
+                        <para>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default compress mode.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>none</literal>, <literal>gzip</literal> or
+                           <literal>bzip2</literal>.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>abs_path</literal></term>
+                     <listitem>
+                        <para>
+                           Absolute path of the mbox file to back up.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+               </variablelist>
+
+            </listitem>
+
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>dir</literal></term>
+            <listitem>
+               <para>An mbox directory to be collected.</para>
+               <para>
+                  This is a subsection which contains information about an mbox
+                  directory to be backed up.  An mbox directory is a directory
+                  containing mbox files.  Every file in an mbox directory is
+                  assumed to be an mbox file.  Mbox directories are
+                  <emphasis>not</emphasis> collected recursively.  Only the
+                  files immediately within the configured directory will be
+                  backed-up and any subdirectories will be ignored.
+               </para>
+               <para>
+                  This section can be repeated as many times as is necessary.
+                  At least one mbox file or directory must be configured.
+               </para>
+               <para>
+                  The dir subsection contains the following fields:
+               </para>
+
+               <variablelist>
+
+                  <varlistentry>
+                     <term><literal>collect_mode</literal></term>
+                     <listitem>
+                        <para>Collect mode for this file.</para>
+                        <para>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default collect mode.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>daily</literal>, <literal>weekly</literal> or
+                           <literal>incr</literal>.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>compress_mode</literal></term>
+                     <listitem>
+                        <para>Compress mode for this file.</para>
+                        <para>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default compress mode.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>none</literal>, <literal>gzip</literal> or
+                           <literal>bzip2</literal>.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>abs_path</literal></term>
+                     <listitem>
+                        <para>
+                           Absolute path of the mbox directory to back up.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+               </variablelist>
+
+            </listitem>
+
          </varlistentry>
 
       </variablelist>
