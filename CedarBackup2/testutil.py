@@ -116,8 +116,8 @@ def commandAvailable(command):
    @return: Boolean true/false depending on whether command is available.
    """
    if os.environ.has_key("PATH"):
-      for dir in os.environ["PATH"].split(os.sep):
-         if os.path.exists(os.path.join(dir, command)):
+      for path in os.environ["PATH"].split(os.sep):
+         if os.path.exists(os.path.join(path, command)):
             return True
    return False
 
