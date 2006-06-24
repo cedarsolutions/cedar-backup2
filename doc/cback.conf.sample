@@ -57,6 +57,10 @@
          <abs_path>/etc</abs_path>
          <collect_mode>incr</collect_mode>
       </dir>
+      <file>
+         <abs_path>/home/root/.profile</abs_path>
+         <collect_mode>weekly</collect_mode>
+      </file>
    </collect>
    <stage>
       <staging_dir>/opt/backup/stage</staging_dir>
