@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005 Kenneth J. Pronovici.
+# Copyright (c) 2005-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -68,7 +68,7 @@
                         </row>
                         <row>
                            <entry>Debian</entry>
-                           <entry><ulink url="http://packages.debian.org/testing/python/python2.3"/></entry>
+                           <entry><ulink url="http://packages.debian.org/stable/python/python2.3"/></entry>
                         </row>
                         <row>
                            <entry>Gentoo</entry>
@@ -130,7 +130,7 @@
                         </row>
                         <row>
                            <entry>Debian</entry>
-                           <entry><ulink url="http://packages.debian.org/testing/net/ssh"/></entry>
+                           <entry><ulink url="http://packages.debian.org/stable/net/ssh"/></entry>
                         </row>
                         <row>
                            <entry>Gentoo</entry>
@@ -183,7 +183,7 @@
                         </row>
                         <row>
                            <entry>Debian</entry>
-                           <entry><ulink url="http://packages.debian.org/testing/otherosfs/mkisofs"/></entry>
+                           <entry><ulink url="http://packages.debian.org/stable/otherosfs/mkisofs"/></entry>
                         </row>
                         <row>
                            <entry>Gentoo</entry>
@@ -243,7 +243,7 @@
                         </row>
                         <row>
                            <entry>Debian</entry>
-                           <entry><ulink url="http://packages.debian.org/testing/otherosfs/cdrecord"/></entry>
+                           <entry><ulink url="http://packages.debian.org/stable/otherosfs/cdrecord"/></entry>
                         </row>
                         <row>
                            <entry>Gentoo</entry>
@@ -303,7 +303,7 @@
                         </row>
                         <row>
                            <entry>Debian</entry>
-                           <entry><ulink url="http://packages.debian.org/testing/utils/eject"/></entry>
+                           <entry><ulink url="http://packages.debian.org/stable/utils/eject"/></entry>
                         </row>
                         <row>
                            <entry>Gentoo</entry>
@@ -356,7 +356,7 @@
                         </row>
                         <row>
                            <entry>Debian</entry>
-                           <entry><ulink url="http://packages.debian.org/testing/base/mount"/></entry>
+                           <entry><ulink url="http://packages.debian.org/stable/base/mount"/></entry>
                         </row>
                         <row>
                            <entry>Gentoo</entry>
@@ -393,6 +393,59 @@
                   is closer to the <command>hdiutil</command> command.  However, there are
                   other issues related to that command, which is why the store action is
                   not really supported on Mac OS X.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><command>grepmail</command></term>
+            <listitem>
+
+               <para>
+                  The <command>grepmail</command> command is used by the mbox
+                  extension to pull out only recent messages from mbox mail
+                  folders. 
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://freshmeat.net/projects/grepmail/"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/stable/mail/grepmail"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><ulink url="http://packages.gentoo.org/packages/?category=net-mail;name=grepmail"/></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=grepmail"/></entry>
+                        </row>
+                        <row>
+                           <entry>Mac OS X</entry>
+                           <entry><ulink url="http://pdb.finkproject.org/pdb/package.php/grepmail"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
                </para>
 
             </listitem>
