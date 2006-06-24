@@ -81,18 +81,9 @@ import logging
 from gzip import GzipFile
 from bz2 import BZ2File
 
-# XML-related modules
-from xml.dom.ext.reader import PyExpat
-from xml.xpath import Evaluate
-from xml.parsers.expat import ExpatError
-from xml.dom.minidom import Node
-from xml.dom.minidom import getDOMImplementation
-from xml.dom.minidom import parseString
-from xml.dom.ext import PrettyPrint
-
 # Cedar Backup modules
-from CedarBackup2.config import addContainerNode, addStringNode, addBooleanNode
-from CedarBackup2.config import readChildren, readFirstChild, readString, readStringList, readBoolean
+from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode, addBooleanNode
+from CedarBackup2.xmlutil import readChildren, readFirstChild, readString, readStringList, readBoolean
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import ObjectTypeList, changeOwnership
@@ -114,9 +105,9 @@ POSTGRESQLDUMPALL_COMMAND = [ "pg_dumpall", ]
 class PostgresqlConfig(object):
 
    """
-   Class representing Postgresql configuration.
+   Class representing PostgreSQL configuration.
 
-   The Postgresql configuration information is used for backing up Postgresql databases.
+   The PostgreSQL configuration information is used for backing up PostgreSQL databases.
 
    The following restrictions exist on data in this class:
 
@@ -279,7 +270,7 @@ class LocalConfig(object):
 
    This is not a general-purpose configuration object like the main Cedar
    Backup configuration object.  Instead, it just knows how to parse and emit
-   Postgresql-specific configuration values.  Third parties who need to read and
+   PostgreSQL-specific configuration values.  Third parties who need to read and
    write configuration related to this extension should access it through the
    constructor, C{validate} and C{addConfig} methods.
 
@@ -397,12 +388,15 @@ class LocalConfig(object):
       @raise ValueError: If one of the validations fails.
       """
       if self.postgresql is None:
-         raise ValueError("Postgresql section is required.")
+         raise ValueError("PostgreSQL section is required.")
       if self.postgresql.compressMode is None:
          raise ValueError("Compress mode value is required.")
-      if not self.postgresql.all:
+      if self.postgresql.all:
+         if self.postgresql.databases is not None and self.postgresql.databases != []:
+            raise ValueError("Databases cannot be specified if 'all' flag is set.")
+      else:
          if self.postgresql.databases is None or len(self.postgresql.databases) < 1:
-            raise ValueError("At least one Postgresql database must be indicated if 'all' flag is not set.")
+            raise ValueError("At least one PostgreSQL database must be indicated if 'all' flag is not set.")
 
    def addConfig(self, xmlDom, parentNode):
       """
@@ -446,12 +440,8 @@ class LocalConfig(object):
 
       @raise ValueError: If the XML cannot be successfully parsed.
       """
-      try:
-         xmlDom = PyExpat.Reader().fromString(xmlData)
-         parent = readFirstChild(xmlDom, "cb_config")
-         self._postgresql = LocalConfig._parsePostgresql(parent)
-      except (IOError, ExpatError), e:
-         raise ValueError("Unable to parse XML document: %s" % e)
+      (xmlDom, parentNode) = createInputDom(xmlData)
+      self._postgresql = LocalConfig._parsePostgresql(parentNode)
 
    def _parsePostgresql(parent):
       """
@@ -495,7 +485,7 @@ class LocalConfig(object):
 
 def executeAction(configPath, options, config):
    """
-   Executes the Postgresql backup action.
+   Executes the PostgreSQL backup action.
 
    @param configPath: Path to configuration file on disk.
    @type configPath: String representing a path on disk.
@@ -509,7 +499,7 @@ def executeAction(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If a backup could not be written for some reason.
    """
-   logger.debug("Executing Postgresql extended action.")
+   logger.debug("Executing PostgreSQL extended action.")
    if config.options is None or config.collect is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
@@ -523,11 +513,11 @@ def executeAction(configPath, options, config):
          logger.info("Backing up database [%s]." % database)
          _backupDatabase(config.collect.targetDir, local.postgresql.compressMode, local.postgresql.user,
                          config.options.backupUser, config.options.backupGroup, database)
-   logger.info("Executed the Postgresql extended action successfully.")
+   logger.info("Executed the PostgreSQL extended action successfully.")
 
 def _backupDatabase(targetDir, compressMode, user, backupUser, backupGroup, database=None):
    """
-   Backs up an individual Postgresql database, or all databases.
+   Backs up an individual PostgreSQL database, or all databases.
 
    This internal method wraps the public method and adds some functionality,
    like figuring out a filename, etc.
@@ -542,7 +532,7 @@ def _backupDatabase(targetDir, compressMode, user, backupUser, backupGroup, data
    @return: Name of the generated backup file.
 
    @raise ValueError: If some value is missing or invalid.
-   @raise IOError: If there is a problem executing the Postgresql dump.
+   @raise IOError: If there is a problem executing the PostgreSQL dump.
    """
    (outputFile, filename) = _getOutputFile(targetDir, database, compressMode)
    try:
@@ -555,7 +545,7 @@ def _backupDatabase(targetDir, compressMode, user, backupUser, backupGroup, data
 
 def _getOutputFile(targetDir, database, compressMode):
    """
-   Opens the output file used for saving the Postgresql dump.
+   Opens the output file used for saving the PostgreSQL dump.
 
    The filename is either C{"postgresqldump.txt"} or
    C{"postgresqldump-<database>.txt"}.  The C{".gz"} or C{".bz2"} extension is
@@ -579,7 +569,7 @@ def _getOutputFile(targetDir, database, compressMode):
       outputFile = BZ2File(filename, "w")
    else:
       outputFile = open(filename, "w")
-   logger.debug("Postgresql dump file will be [%s]." % filename)
+   logger.debug("PostgreSQL dump file will be [%s]." % filename)
    return (outputFile, filename)
 
 
@@ -589,10 +579,10 @@ def _getOutputFile(targetDir, database, compressMode):
 
 def backupDatabase(user, backupFile, database=None):
    """
-   Backs up an individual Postgresql database, or all databases.
+   Backs up an individual PostgreSQL database, or all databases.
 
-   This function backs up either a named local Postgresql database or all local
-   Postgresql databases, using the passed in user for connectivity.
+   This function backs up either a named local PostgreSQL database or all local
+   PostgreSQL databases, using the passed in user for connectivity.
    This is I{always} a full backup.  There is no facility for incremental
    backups.
 
@@ -604,7 +594,7 @@ def backupDatabase(user, backupFile, database=None):
    @note: Typically, you would use the C{root} user to back up all databases.
 
    @param user: User to use for connecting to the database.
-   @type user: String representing Postgresql username.
+   @type user: String representing PostgreSQL username.
 
    @param backupFile: File use for writing backup.
    @type backupFile: Python file object as from C{open()} or C{file()}.
@@ -613,7 +603,7 @@ def backupDatabase(user, backupFile, database=None):
    @type database: String representing database name, or C{None} for all databases.
 
    @raise ValueError: If some value is missing or invalid.
-   @raise IOError: If there is a problem executing the Postgresql dump.
+   @raise IOError: If there is a problem executing the PostgreSQL dump.
    """
    args = []
    if user is not None:
@@ -629,7 +619,7 @@ def backupDatabase(user, backupFile, database=None):
    result = executeCommand(command, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
    if result != 0:
       if database is None:
-         raise IOError("Error [%d] executing Postgresql database dump for all databases." % result)
+         raise IOError("Error [%d] executing PostgreSQL database dump for all databases." % result)
       else:
-         raise IOError("Error [%d] executing Postgresql database dump for database [%s]." % (result, database))
+         raise IOError("Error [%d] executing PostgreSQL database dump for database [%s]." % (result, database))
 
