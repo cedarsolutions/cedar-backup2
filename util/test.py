@@ -149,6 +149,7 @@ def main():
       import test.configtests as configtests
       import test.clitests as clitests
       import test.mysqltests as mysqltests
+      import test.postgresqltests as postgresqltests
       import test.subversiontests as subversiontests
       import test.mboxtests as mboxtests
    except ImportError, e:
@@ -188,6 +189,7 @@ def main():
                                configtests.suite(),
                                clitests.suite(),
                                mysqltests.suite(),
+                               postgresqltests.suite(),
                                subversiontests.suite(),
                                mboxtests.suite(),
                               ))
