@@ -634,5 +634,91 @@ root:/tmp# bzcat svndump-786:800-opt-svn-repo1.txt.bz2 | svnadmin load testrepo
 
    </sect1>
 
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-recovering-mbox">
+
+      <title>Recovering Mailbox Data</title>
+
+      <para>
+         Mailbox data is gathered by the Cedar Backup mbox extension.
+         Cedar Backup will create either full or incremental backups, but
+         both kinds of backups are treated identically when restoring. 
+      </para>
+
+      <para>
+         Individual mbox files and mbox directories are treated a little
+         differently, since individual files are just compressed, but
+         directories are collected into a tar archive.
+      </para>
+
+      <para>
+         First, find the backup or backups you are interested in.  Typically,
+         you will need the full backup from the first day of the week and each
+         incremental backup from the other days of the week.  
+      </para>
+
+      <para>
+         The mbox extension creates files of the form
+         <filename>mbox-*</filename>.  Backup files for individual mbox files might have a
+         <filename>.gz</filename> or <filename>.bz2</filename> extension
+         depending on what kind of compression you specified in configuration.
+         Backup files for mbox directories will have a <filename>.tar</filename>,
+         <filename>.tar.gz</filename> or <filename>.tar.bz2</filename> extension,
+         again depending on what kind of compression you specified in configuration.
+      </para>
+         
+      <para>
+         There is one backup file for each configured mbox file or directory.
+         The backup file name represents the name of the file or directory and
+         the date it was backed up.  So, the file
+         <filename>mbox-20060624-home-user-mail-greylist</filename> represents
+         the backup for <filename>/home/user/mail/greylist</filename> run on 24
+         Jun 2006.  Likewise,
+         <filename>mbox-20060624-home-user-mail.tar</filename> represents the
+         backup for the <filename>/home/user/mail</filename> directory run on
+         that same date.
+      </para>
+
+      <para>
+         Once you have found the files you are looking for, the restoration
+         procedure is fairly simple.  First, concatenate all of the backup
+         files together.  Then, use grepmail to eliminate duplicate messages
+         (if any).  
+      </para>
+
+      <para>
+         Here is an example for a single backed-up file:
+      </para>
+
+      <screen>
+root:/tmp# rm restore.mbox # make sure it's not left over
+root:/tmp# cat mbox-20060624-home-user-mail-greylist >> restore.mbox
+root:/tmp# cat mbox-20060625-home-user-mail-greylist >> restore.mbox
+root:/tmp# cat mbox-20060626-home-user-mail-greylist >> restore.mbox
+root:/tmp# grepmail -a -u restore.mbox > nodups.mbox
+      </screen>
+
+      <para>
+         At this point, <filename>nodups.mbox</filename> contains all of the
+         backed-up messages from <filename>/home/user/mail/greylist</filename>.
+      </para>
+
+      <para>
+         Of course, if your backups are compressed, you'll have to use
+         <command>zcat</command> or <command>bzcat</command> rather than just
+         <command>cat</command>.
+      </para>
+
+      <para>
+         If you are backing up mbox directories rather than individual files,
+         see the filesystem instructions for notes on now to extract the
+         individual files from inside tar archives.  Extract the files you are
+         interested in, and then concatenate them together just like shown
+         above for the individual case.
+      </para>
+
+   </sect1>
+
 </appendix>
 

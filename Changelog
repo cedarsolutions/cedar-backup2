@@ -7,6 +7,7 @@ Version 2.8.0	unreleased
 	* Added recursive flag (default True) to FilesystemList.addDirContents().
 	* Added flat flag (default False) to BackupFileList.generateTarfile().
 	* Created mbox extension in CedarBackup2.extend.mbox (closes: #31).
+	  - Updated user manual to document the new extension and restore process.
 	* Made most unit tests run properly on Windows platform, just for fun.
 	* Re-implement Pipe class (under executeCommand) for Python 2.4+
 	  - After Python 2.4, cross-platform subprocess.Popen class is available
@@ -20,13 +21,6 @@ Version 2.8.0	unreleased
 	  - Update config.Config class to parse and emit collect file data
 	  - Modified collect process in action.py to handle collect files
 	  - Updated user manual to discuss new <file> configuraton 
-	* THINGS WHICH NEED TO BE DONE YET
-	  - MAKE SURE VALIDATION CHECKS THAT THERE'S EITHER ONE COLLECT DIR OR ONE FILE
-	  - UPDATE USER MANUAL TO DOCUMENT NEW <file> OPTION
-	  - CREATE UNIT TESTS FOR MBOX BACKUP PROCESS 
-	  - TEST INDIVIDUAL FILE BACKUP FROM COMMAND LINE (FILES, LINKS OF VARIOUS TYPES)
-	  - TEST MBOX BACKUP FROM COMMAND LINE
-	  - POSSIBLY INTEGRATE AND DOCUMENT THE POSTGRES EXTENSION
 
 Version 2.7.2	22 Dec 2005
 
