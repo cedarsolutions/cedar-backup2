@@ -8,6 +8,9 @@ Version 2.8.0	unreleased
 	* Added flat flag (default False) to BackupFileList.generateTarfile().
 	* Created mbox extension in CedarBackup2.extend.mbox (closes: #31).
 	* Made most unit tests run properly on Windows platform, just for fun.
+	* Re-implement Pipe class (under executeCommand) for Python 2.4+
+	  - After Python 2.4, cross-platform subprocess.Popen class is available
+	  - Added some new regression tests for executeCommand to stress new Pipe
 	* Switch to newer version of Docbook XSL stylesheet (1.68.1)
 	  - The old stylesheet isn't easily available any more (gone from sf.net)
 	  - Unfortunately, the PDF output changed somewhat with the new version
@@ -16,10 +19,12 @@ Version 2.8.0	unreleased
 	  - Update config.CollectConfig class to contain a list of collect files
 	  - Update config.Config class to parse and emit collect file data
 	  - Modified collect process in action.py to handle collect files
+	  - Updated user manual to discuss new <file> configuraton 
 	* THINGS WHICH NEED TO BE DONE YET
+	  - MAKE SURE VALIDATION CHECKS THAT THERE'S EITHER ONE COLLECT DIR OR ONE FILE
 	  - UPDATE USER MANUAL TO DOCUMENT NEW <file> OPTION
 	  - CREATE UNIT TESTS FOR MBOX BACKUP PROCESS 
-	  - TEST INDIVIDUAL FILE BACKUP FROM COMMAND LINE
+	  - TEST INDIVIDUAL FILE BACKUP FROM COMMAND LINE (FILES, LINKS OF VARIOUS TYPES)
 	  - TEST MBOX BACKUP FROM COMMAND LINE
 	  - POSSIBLY INTEGRATE AND DOCUMENT THE POSTGRES EXTENSION
 
