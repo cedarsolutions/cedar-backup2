@@ -69,6 +69,7 @@ C{ps}) when the backup is running if the username is specified in the
 configuration.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
+@author: Antoine Beaupre <anarcat@koumbit.org>
 """
 
 ########################################################################
