@@ -31,7 +31,7 @@ Provides location to maintain version information.
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
-AUTHOR      = "Kenneth J. Pronovici"
+AUTHOR      = "Kenneth J. Pronovici, et. al"
 EMAIL       = "pronovic@ieee.org"
 COPYRIGHT   = "2004-2005"
 VERSION     = "2.7.2"

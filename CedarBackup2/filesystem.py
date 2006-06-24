@@ -334,8 +334,8 @@ class FilesystemList(list):
       The path must exist and must be a directory or a link to a directory.
       The contents of the directory (as well as the directory path itself) will
       be recursively added to the list, subject to any exclusions that are in
-      place.  If you only want the directory and its contents to be added,
-      then pass in C{recursive=False}.
+      place.  If you only want the directory and its immediate contents to be
+      added, then pass in C{recursive=False}.
 
       @note: If a directory's absolute path matches an exclude pattern or path,
       or if the directory contains the configured ignore file, then the

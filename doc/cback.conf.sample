@@ -19,10 +19,22 @@
          <index>102</index>
       </action>
       <action>
+         <name>postgresql</name>
+         <module>CedarBackup2.extend.postgresql</module>
+         <function>executeAction</function>
+         <index>103</index>
+      </action>
+      <action>
          <name>subversion</name>
          <module>CedarBackup2.extend.subversion</module>
          <function>executeAction</function>
-         <index>103</index>
+         <index>104</index>
+      </action>
+      <action>
+         <name>mbox</name>
+         <module>CedarBackup2.extend.mbox</module>
+         <function>executeAction</function>
+         <index>105</index>
       </action>
    </extensions>
    <options>
@@ -90,11 +102,17 @@
       </dir>
    </purge>
    <mysql>
-      <user>login</user>
-      <password>something</password>
+      <user>mlogin</user>
       <compress_mode>bzip2</compress_mode>
       <all>Y</all>
    </mysql>
+   <postgresql>
+      <user>plogin</user>
+      <compress_mode>bzip2</compress_mode>
+      <all>N</all>
+      <database>db1</database>
+      <database>db2</database>
+   </postgresql>
    <subversion>
       <collect_mode>incr</collect_mode>
       <compress_mode>bzip2</compress_mode>
@@ -107,4 +125,16 @@
          <abs_path>/opt/svn/repo2</abs_path>
       </repository>
    </subversion>
+   <mbox>
+      <collect_mode>incr</collect_mode>
+      <compress_mode>bzip2</compress_mode>
+      <file>
+         <abs_path>/home/user1/mail/greylist</abs_path>
+         <collect_mode>daily</collect_mode>
+      </file>
+      <dir>
+         <abs_path>/home/user2/mail</abs_path>
+         <compress_mode>gzip</compress_mode>
+      </dir>
+   </mbox>
 </cb_config>

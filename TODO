@@ -16,8 +16,6 @@
 
 FUTURE FUNCTIONALITY
 
-* Integrate user-contributed Postgres functionality
-
 * We should probably check the staging flag and refuse to stage if it's already been done...?
 * Add a config value or option for indicating whether backed-up files should be logged (if anyone cares).
 * Implement capacity mode functionality, i.e. what to do with a full disc. (bug #6)
