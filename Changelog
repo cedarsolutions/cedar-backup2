@@ -8,7 +8,7 @@ Version 2.8.0	24 Jun 2006
 	* Added flat flag (default False) to BackupFileList.generateTarfile().
 	* Created mbox extension in CedarBackup2.extend.mbox (closes: #31).
 	  - Updated user manual to document the new extension and restore process.
-	* Added PostgreSQL extension in CedarBackup2.extend.postgressql (closes: #32).
+	* Added PostgreSQL extension in CedarBackup2.extend.postgresql (closes: #32).
 	  - This code was contributed by user Antoine Beaupre ("The Anarcat").
 	  - I tweaked it slightly, added configuration tests, and updated the manual.
 	  - I have no PostgreSQL databases on which to test the functionality.
