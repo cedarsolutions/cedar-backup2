@@ -443,6 +443,10 @@
          &lt;abs_path&gt;/etc&lt;/abs_path&gt;
          &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
       &lt;/dir&gt;
+      &lt;file&gt;
+         &lt;abs_path&gt;/home/root/.profile&lt;/abs_path&gt;
+         &lt;collect_mode&gt;weekly&lt;/collect_mode&gt;
+      &lt;/file&gt;
    &lt;/collect&gt;
    &lt;stage&gt;
       &lt;staging_dir&gt;/opt/backup/staging&lt;/staging_dir&gt;
@@ -939,6 +943,9 @@
       &lt;abs_path&gt;/etc&lt;/abs_path&gt;
       &lt;pattern&gt;.*\.conf&lt;/pattern&gt;
    &lt;/exclude&gt;
+   &lt;file&gt;
+      &lt;abs_path&gt;/home/root/.profile&lt;/abs_path&gt;
+   &lt;/file&gt;
    &lt;dir&gt;
       &lt;abs_path&gt;/etc&lt;/abs_path&gt;
    &lt;/dir&gt;
@@ -1168,6 +1175,95 @@
                     
                   </variablelist>
 
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>file</literal></term>
+               <listitem>
+                  <para>A file to be collected.</para>
+                  <para>
+                     This is a subsection which contains information about
+                     a specific file to be collected (backed up).
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one collect directory or collect file
+                     must be configured.
+                  </para>
+                  <para>
+                     The collect file subsection contains the following
+                     fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>abs_path</literal></term>
+                        <listitem>
+                           <para>
+                              Absolute path of the file to collect.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>collect_mode</literal></term> 
+                        <listitem>
+                           <para>Collect mode for this file</para>
+                           <para>
+                              The collect mode describes how frequently a
+                              file is backed up.   See <xref
+                              linkend="cedar-basic-process-collect"/> (in <xref
+                              linkend="cedar-basic"/>) for more information.
+                           </para>
+                           <para>
+                              This field is optional.  If it doesn't exist, the
+                              backup will use the default collect mode.  
+                           </para>
+                           <para>
+                              Note: if your backup device does not suppport
+                              multisession discs, then you should probably
+                              confine yourself to the <literal>daily</literal>
+                              collect mode, to avoid losing data.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be one of
+                              <literal>daily</literal>, <literal>weekly</literal> or
+                              <literal>incr</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>archive_mode</literal></term>
+                        <listitem>
+                           <para>Archive mode for this file.</para>
+                           <para>
+                              The archive mode maps to the way that a backup
+                              file is stored.  A value <literal>tar</literal>
+                              means just a tarfile
+                              (<filename>file.tar</filename>); a value
+                              <literal>targz</literal> means a gzipped tarfile
+                              (<filename>file.tar.gz</filename>); and a value
+                              <literal>tarbz2</literal> means a bzipped tarfile
+                              (<filename>file.tar.bz2</filename>)
+                           </para>
+                           <para>
+                              This field is optional.  if it doesn't exist, the
+                              backup will use the default archive mode.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be one of
+                              <literal>tar</literal>, <literal>targz</literal> or
+                              <literal>tarbz2</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+                  </variablelist>
                </listitem>
             </varlistentry>
 
