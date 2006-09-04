@@ -5,6 +5,8 @@ Version 2.8.1	not released
 	  - Tweak manual-generation rules to work around XSL toolchain issues
 	  - Document where to find grepmail utility in Appendix B
 	  - Create missing documentation for mbox exclusions configuration
+	  - Bumped copyright dates to show "(c) 2005-2006" where needed
+	  - Made minor changes to some sections based on proofreading
 
 Version 2.8.0	24 Jun 2006
 	

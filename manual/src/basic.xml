@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005 Kenneth J. Pronovici.
+# Copyright (c) 2005-2006 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it 
@@ -43,9 +43,9 @@
       <title>General Architecture</title>
 
       <para>
-         Cedar Backup is architected as a Python package (library) and single
+         Cedar Backup is architected as a Python package (library) and a single
          executable (a Python script).  The Python package provides both
-         application-specific code and general utilities which can be used by
+         application-specific code and general utilities that can be used by
          programs other than Cedar Backup.  It also includes modules that can
          be used by third parties to extend Cedar Backup or provide related
          functionality.
@@ -333,9 +333,7 @@
                staged by Cedar Backup.  If the file
                <filename>cback.collect</filename> exists in a collect directory
                when the stage action is taken, then that directory will be
-               staged.  Just beware that when staged, everything for a given
-               host will reside in the same directory &mdash; so be careful to
-               avoid namespace clash.  
+               staged.
             </para>
          </note>
 

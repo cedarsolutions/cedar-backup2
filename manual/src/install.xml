@@ -50,7 +50,7 @@
 
       <para>
          If you are running a Linux distribution other than Debian or you are
-         running some other platform like FreeBSD or Mac, then you must use the
+         running some other platform like FreeBSD or Mac OS X, then you must use the
          Python source distribution to install Cedar Backup.  When using this
          method, you need to manage all of the dependencies yourself.
       </para>
@@ -105,12 +105,11 @@
 
       <para>
          If you are running a Debian release which contains Cedar Backup, you
-         can use your normal Debian mirror as an APT data source. (Currently,
-         only the unstable and testing branches for the <quote>etch</quote>
-         release contain Cedar Backup packages.)  Otherwise, you need to
-         install from the Cedar Solutions APT data source.  To do this, add the
-         Cedar Solutions APT data source to your
-         <filename>/etc/apt/sources.list</filename> file.  <footnote><para>See
+         can use your normal Debian mirror as an APT data source. (The Debian
+         <quot>etch</quote> release is the first release to contain Cedar
+         Backup.) Otherwise, you need to install from the Cedar Solutions APT
+         data source.  To do this, add the Cedar Solutions APT data source to
+         your <filename>/etc/apt/sources.list</filename> file.  <footnote><para>See
          <ulink url="http://cedar-solutions.com/debian.html"/>.</para></footnote>
       </para>
 
@@ -137,7 +136,7 @@ $ apt-get install cedar-backup2 cedar-backup2-doc
 
       <para>
          If you would prefer, you can also download the
-         <filename>.deb</filename> files any install them by hand with a tool
+         <filename>.deb</filename> files and install them by hand with a tool
          such as <command>dpkg</command>.  You can find a link to the
          <filename>.deb</filename> files on the Cedar Solutions website.
          <footnote id="cedar-install-foot-software"><para>See <ulink
