@@ -1,4 +1,4 @@
-Version 2.8.1	not released
+Version 2.8.1	04 Sep 2006
 
 	* Changes to fix, update and properly build Cedar Backup manual
 	  - Change DocBook XSL configuration to use "current" stylesheet
