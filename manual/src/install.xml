@@ -106,7 +106,7 @@
       <para>
          If you are running a Debian release which contains Cedar Backup, you
          can use your normal Debian mirror as an APT data source. (The Debian
-         <quot>etch</quote> release is the first release to contain Cedar
+         <quote>etch</quote> release is the first release to contain Cedar
          Backup.) Otherwise, you need to install from the Cedar Solutions APT
          data source.  To do this, add the Cedar Solutions APT data source to
          your <filename>/etc/apt/sources.list</filename> file.  <footnote><para>See
