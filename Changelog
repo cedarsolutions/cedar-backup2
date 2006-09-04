@@ -1,11 +1,8 @@
 Version 2.8.1	not released
 
-	* User manual updates, corrections and improvements
-	  - Added documentation about where to find grepmail utility.
-	* Reworked Docbook XSL configuration for Cedar Backup Manual
-	  - Bumped nwalsh stylesheet version again, from "1.68.1" to "current"
-	  - Got latest Subversion stylesheets, because mine no longer worked
-	  - Tweaked CREDITS file to reflect new CollabNet copyright info
+	* Added documentation in manual about where to find grepmail utility.
+	* Change DocBook XSL configuration to use "current" stylesheet.
+	* Tweak manual-generation rules to work around XSL toolchain issues.
 
 Version 2.8.0	24 Jun 2006
 	

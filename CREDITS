@@ -30,8 +30,8 @@ found in the LICENSE file, or can be downloaded from http://www.gnu.org/.
 Minor code snippets derived from newsgroup and mailing list postings are
 not generally attributed unless I used someone else's source code verbatim.
 
-The PostgreSQL extension was contributed by Antoine Beaupre, based on the
-existing MySQL extension.
+The PostgreSQL extension was contributed by Antoine Beaupre, based on
+the existing MySQL extension.
 
 Source code annotated as "(c) 2001, 2002 Python Software Foundation" was
 originally taken from or derived from code within the Python 2.3 codebase.
@@ -39,13 +39,13 @@ This code was released under the Python 2.3 license, which an MIT-style
 academic license.  Items under this license include the util.Pipe
 implementation based on popen2.Popen4.
 
-Source code annotated as "(c) 2000-2004 CollabNet" or "(c) 2000-2006
-CollabNet" was originally released under the CollabNet License, which is an
-Apache/BSD-style license.  Items under this license include basic markup
-and stylesheets used in creating the user manual.  The dblite.dtd and
-readme-dblite.html files are also assumed to be under the CollabNet
-License, since they were found as part of the Subversion source tree and
-did not specify an explicit copyright notice. 
+Source code annotated as "(c) 2000-2004 CollabNet" was originally released
+under the CollabNet License, which is an Apache/BSD-style license.  Items
+under this license include basic markup and stylesheets used in creating
+the user manual.  The dblite.dtd and readme-dblite.html files are also
+assumed to be under the CollabNet License, since they were found as part of
+the Subversion source tree and did not specify an explicit copyright
+notice. 
 
 Some of the PDF-specific graphics in the user manual were either directly
 taken from or were derived from images distributed in Norman Walsh's
@@ -65,7 +65,7 @@ pretty-printing functionality implemented in xmlutil.py.
 ####################
 
 /* ================================================================
- * Copyright (c) 2000-2006 CollabNet.  All rights reserved.
+ * Copyright (c) 2000-2004 CollabNet.  All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are

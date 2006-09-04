@@ -20,7 +20,7 @@
    (http://svnbook.red-bean.com/) and has been modifed for use with Cedar
    Backup.
 
-   The original stylesheet was (c) 2000-2006 CollabNet (see CREDITS).
+   The original stylesheet was (c) 2000-2004 CollabNet (see CREDITS).
 
    The major change that I have made to the stylesheet is to use Debian's
    catalog system for locating the official Docbook stylesheet, rather than
@@ -29,10 +29,30 @@
    stylesheet below where html/docbook.xsl is imported (or switch to a real
    operating system).
 -->
+
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
 
-  <xsl:import href="http://docbook.sourceforge.net/release/xsl/current/html/docbook.xsl"/>
+   <xsl:import href="http://docbook.sourceforge.net/release/xsl/current/html/docbook.xsl"/>
 
-  <xsl:include href="base-html-stylesheet.xsl"/>
+   <xsl:param name="html.stylesheet">styles.css</xsl:param>
+   <xsl:param name="toc.section.depth">3</xsl:param>
+   <xsl:param name="annotate.toc">0</xsl:param>
+
+   <xsl:template match="sect1" mode="toc">
+      <xsl:param name="toc-context" select="."/>
+      <xsl:call-template name="subtoc">
+         <xsl:with-param name="toc-context" select="$toc-context"/>
+         <xsl:with-param name="nodes" select="sect2|refentry|bridgehead[$bridgehead.in.toc != 0]"/>
+      </xsl:call-template>
+   </xsl:template>
+
+   <xsl:template match="sect2" mode="toc">
+      <xsl:param name="toc-context" select="."/>
+
+      <xsl:call-template name="subtoc">
+         <xsl:with-param name="toc-context" select="$toc-context"/>
+         <xsl:with-param name="nodes" select="sect3|refentry|bridgehead[$bridgehead.in.toc != 0]"/>
+      </xsl:call-template>
+   </xsl:template>
 
 </xsl:stylesheet>
