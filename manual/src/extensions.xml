@@ -799,7 +799,7 @@ password = &lt;secret&gt;
          <command>grepmail</command> utility to back up only email messages
          which have been received since the last incremental backup.  This way,
          even if a folder is added to every day, only the recently-added
-         messages are backed up.  This can pontially save a lot of space.
+         messages are backed up.  This can potentially save a lot of space.
       </para>
 
       <para>
@@ -844,13 +844,27 @@ password = &lt;secret&gt;
    &lt;dir&gt;
       &lt;abs_path&gt;/home/user2/mail&lt;/abs_path&gt;
    &lt;/dir&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/home/user3/mail&lt;/abs_path&gt;
+      &lt;exclude&gt;
+         &lt;rel_path&gt;spam&lt;/rel_path&gt;
+         &lt;pattern&gt;.*debian.*&lt;/pattern&gt;
+      &lt;/exclude&gt;
+   &lt;/dir&gt;
 &lt;/mbox&gt;
       </programlisting>
 
       <para>
-         Configuration is much like the standard collect action, except that
-         mbox directories are <emphasis>not</emphasis> collected recursively.
-         This means that no exclusion configuration is required.
+         Configuration is much like the standard collect action.  Differences
+         come from the fact that mbox directories are <emphasis>not</emphasis>
+         collected recursively.
+      </para>
+
+      <para>
+         Unlike collect configuration, exclusion information can only be
+         configured at the mbox directory level (there are no global
+         exclusions).  Another difference is that no absolute exclusion
+         paths are allowed &mdash; only relative path exclusions and patterns.
       </para>
 
       <para>
@@ -1048,6 +1062,83 @@ password = &lt;secret&gt;
                         </para>
                      </listitem>
                   </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>exclude</literal></term>
+                     <listitem>
+                        <para>List of paths or patterns to exclude from the backup.</para>
+                        <para>
+                           This is a subsection which contains a set of paths
+                           and patterns to be excluded within this mbox
+                           directory.
+                        </para>
+                        <para>
+                           This section is entirely optional, and if it exists can
+                           also be empty.  
+                        </para>
+                        <para>
+                           The exclude subsection can contain one or more of each of
+                           the following fields:
+                        </para>
+
+                        <variablelist>
+
+                           <varlistentry>
+                              <term><literal>rel_path</literal></term>
+                              <listitem>
+                                 <para>
+                                    A relative path to be excluded from the
+                                    backup.
+                                 </para>
+                                 <para>
+                                    The path is assumed to be relative to the
+                                    mbox directory itself.  For instance, if
+                                    the configured mbox directory is
+                                    <filename>/home/user2/mail</filename> a
+                                    configured relative path of
+                                    <filename>SPAM</filename> would exclude the
+                                    path <filename>/home/user2/mail/SPAM</filename>.
+                                 </para>
+                                 <para>
+                                    This field can be repeated as many times as
+                                    is necessary.
+                                 </para>
+                                 <para>
+                                    <emphasis>Restrictions:</emphasis> Must be non-empty.
+                                 </para>
+                              </listitem>
+                           </varlistentry>
+
+                           <varlistentry>
+                              <term><literal>pattern</literal></term>
+                              <listitem>
+                                 <para>
+                                    A pattern to be excluded from the backup.
+                                 </para>
+                                 <para>
+                                    The pattern must be a Python regular
+                                    expression.  <footnoteref linkend="cedar-config-foot-regex"/> 
+                                    It is assumed to be bounded at front and
+                                    back by the beginning and end of the
+                                    string (i.e. it is treated as if it
+                                    begins with <literal>^</literal> and
+                                    ends with <literal>$</literal>).
+                                 </para>
+                                 <para>
+                                    This field can be repeated as many times as
+                                    is necessary.
+                                 </para>
+                                 <para>
+                                    <emphasis>Restrictions:</emphasis> Must be non-empty
+                                 </para>
+                              </listitem>
+                           </varlistentry>
+                          
+                        </variablelist>
+
+                     </listitem>
+                  </varlistentry>
+
                </variablelist>
 
             </listitem>
