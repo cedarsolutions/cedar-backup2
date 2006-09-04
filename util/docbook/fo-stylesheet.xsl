@@ -33,8 +33,6 @@
    warning, tip, note, etc.) in the PDF output, and I now use my own greyscale
    images for PDF and Postscript (taken from nwalsh's originals and modified)
    rather than converting the color images from O'Reilly.
-
-   Other minor tweaks include forcing page breaks at the top of <sect1>.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
 
@@ -42,7 +40,6 @@
 
   <xsl:param name="fop.extensions" select="1" />
   <xsl:param name="variablelist.as.blocks" select="1" />
-  <xsl:param name="refentry.pagebreak" select="1" />
 
   <xsl:param name="admon.graphics" select="1"/>
   <xsl:param name="admon.graphics.extension" select="'.png'"/>
