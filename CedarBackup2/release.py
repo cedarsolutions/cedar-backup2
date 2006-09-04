@@ -34,7 +34,7 @@ Provides location to maintain version information.
 AUTHOR      = "Kenneth J. Pronovici, et. al"
 EMAIL       = "pronovic@ieee.org"
 COPYRIGHT   = "2004-2006"
-VERSION     = "2.8.0"
-DATE        = "24 Jun 2006"
+VERSION     = "2.8.1"
+DATE        = "04 Sep 2006"
 URL         = "http://cedar-solutions.com/software/cedar-backup"
 
