@@ -20,7 +20,7 @@
    (http://svnbook.red-bean.com/) and has been modifed for use with Cedar
    Backup.
 
-   The original stylesheet was (c) 2000-2004 CollabNet (see CREDITS).
+   The original stylesheet was (c) 2000-2006 CollabNet (see CREDITS).
 
    The major change that I have made to the stylesheet is to use Debian's
    catalog system for locating the official Docbook stylesheet, rather than
@@ -33,26 +33,19 @@
    warning, tip, note, etc.) in the PDF output, and I now use my own greyscale
    images for PDF and Postscript (taken from nwalsh's originals and modified)
    rather than converting the color images from O'Reilly.
--->
 
+   Other minor tweaks include forcing page breaks at the top of <sect1>.
+-->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
 
-   <xsl:import href="http://docbook.sourceforge.net/release/xsl/1.68.1/fo/docbook.xsl"/>
+  <xsl:import href="http://docbook.sourceforge.net/release/xsl/current/fo/docbook.xsl"/>
 
-   <xsl:param name="fop.extensions" select="1"/>
-   <xsl:param name="variablelist.as.blocks" select="1"/>
+  <xsl:param name="fop.extensions" select="1" />
+  <xsl:param name="variablelist.as.blocks" select="1" />
+  <xsl:param name="refentry.pagebreak" select="1" />
 
-   <xsl:param name="hyphenate">false</xsl:param>
-
-   <xsl:param name="paper.type" select="'USletter'"/>
-
-   <xsl:param name="page.margin.bottom" select="'0.8in'"/>
-   <xsl:param name="page.margin.top" select="'0.8in'"/>
-
-   <xsl:param name="footer.rule" select="0"/>
-
-   <xsl:param name="admon.graphics" select="1"/>
-   <xsl:param name="admon.graphics.extension" select="'.png'"/>
-   <xsl:param name="admon.graphics.path">images/pdf/</xsl:param>
+  <xsl:param name="admon.graphics" select="1"/>
+  <xsl:param name="admon.graphics.extension" select="'.png'"/>
+  <xsl:param name="admon.graphics.path">images/pdf/</xsl:param>
 
 </xsl:stylesheet>
