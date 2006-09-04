@@ -143,7 +143,9 @@ install-manual-text: $(MANUAL_TEXT_TARGET) $(INSTALL_DIR)
 manual-pdf: $(MANUAL_PDF_TARGET)
 
 $(MANUAL_PDF_TARGET): $(MANUAL_ALL_SOURCE) $(MANUAL_PDF_IMAGES)
-	$(XSLTPROC) --output $(MANUAL_FO_TARGET) $(XSL_FO) $(MANUAL_XML_SOURCE)
+	# For some reason --output conflicts with admon.graphics.path ?!?!
+	# $(XSLTPROC) --output $(MANUAL_FO_TARGET) $(XSL_FO) $(MANUAL_XML_SOURCE)
+	$(XSLTPROC) $(XSL_FO) $(MANUAL_XML_SOURCE) > $(MANUAL_FO_TARGET)
 	$(FOP) $(MANUAL_TOP) -fo $(MANUAL_FO_TARGET) -pdf $(MANUAL_PDF_TARGET)
 
 install-manual-pdf: $(MANUAL_PDF_TARGET) $(INSTALL_DIR)
