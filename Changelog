@@ -1,3 +1,9 @@
+Version 2.8.2	unreleased
+	
+	* Update Cedar Backup user manual
+	  - Fix minor typos and misspellings
+	  - Add discussion about proper ordering of extension actions
+
 Version 2.8.1	04 Sep 2006
 
 	* Changes to fix, update and properly build Cedar Backup manual
