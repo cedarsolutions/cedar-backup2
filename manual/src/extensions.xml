@@ -78,7 +78,7 @@
       &lt;name&gt;sysinfo&lt;/name&gt;
       &lt;module&gt;CedarBackup2.extend.sysinfo&lt;/module&gt;
       &lt;function&gt;executeAction&lt;/function&gt;
-      &lt;index&gt;101&lt;/index&gt;
+      &lt;index&gt;99&lt;/index&gt;
    &lt;/action&gt;
 &lt;/extensions&gt;
       </programlisting>
@@ -141,7 +141,7 @@
       &lt;name&gt;subversion&lt;/name&gt;
       &lt;module&gt;CedarBackup2.extend.subversion&lt;/module&gt;
       &lt;function&gt;executeAction&lt;/function&gt;
-      &lt;index&gt;101&lt;/index&gt;
+      &lt;index&gt;99&lt;/index&gt;
    &lt;/action&gt;
 &lt;/extensions&gt;
       </programlisting>
@@ -421,7 +421,7 @@ password = &lt;secret&gt;
       &lt;name&gt;mysql&lt;/name&gt;
       &lt;module&gt;CedarBackup2.extend.mysql&lt;/module&gt;
       &lt;function&gt;executeAction&lt;/function&gt;
-      &lt;index&gt;101&lt;/index&gt;
+      &lt;index&gt;99&lt;/index&gt;
    &lt;/action&gt;
 &lt;/extensions&gt;
       </programlisting>
@@ -639,7 +639,7 @@ password = &lt;secret&gt;
       &lt;name&gt;postgresql&lt;/name&gt;
       &lt;module&gt;CedarBackup2.extend.postgresql&lt;/module&gt;
       &lt;function&gt;executeAction&lt;/function&gt;
-      &lt;index&gt;101&lt;/index&gt;
+      &lt;index&gt;99&lt;/index&gt;
    &lt;/action&gt;
 &lt;/extensions&gt;
       </programlisting>
@@ -821,7 +821,7 @@ password = &lt;secret&gt;
       &lt;name&gt;mbox&lt;/name&gt;
       &lt;module&gt;CedarBackup2.extend.mbox&lt;/module&gt;
       &lt;function&gt;executeAction&lt;/function&gt;
-      &lt;index&gt;101&lt;/index&gt;
+      &lt;index&gt;99&lt;/index&gt;
    &lt;/action&gt;
 &lt;/extensions&gt;
       </programlisting>

@@ -95,7 +95,7 @@
 
          <para>
             The configuration instructions below have been generalized so they
-            should work well regardless of what platfomr you are running (i.e.
+            should work well regardless of what platform you are running (i.e.
             RedHat, Gentoo, FreeBSD, etc.).  If instructions vary for a
             particular platform, you will find a note related to that
             platform.
@@ -848,7 +848,7 @@
                      arbitrary extensions.
                   </para>
                   <para>
-                     This section is optional, and can be repeatd as many times
+                     This section is optional, and can be repeated as many times
                      as necessary.
                   </para>
                   <para>
@@ -1066,7 +1066,7 @@
                   </para>
                   <para>
                      The ignore file provides a way for individual users (who
-                     might not have access to Cedar backup configuration) to
+                     might not have access to Cedar Backup configuration) to
                      control which of their own directories get backed up.  For
                      instance, users with a <filename>~/tmp</filename>
                      directory might not want it backed up.  If they create an
@@ -1383,7 +1383,7 @@
                            </para>
                            <para>
                               The ignore file provides a way for individual
-                              users (who might not have access to Cedar backup
+                              users (who might not have access to Cedar Backup
                               configuration) to control which of their own
                               directories get backed up.  For instance, users
                               with a <filename>~/tmp</filename> directory might
@@ -1597,7 +1597,7 @@
                      enough free space to stage all of the files collected from
                      all of the various machines in a backup pool.  Many
                      administrators set up purging to keep staging directories
-                     around for a week or more, which require even more space.
+                     around for a week or more, which requires even more space.
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be an absolute path
@@ -2190,9 +2190,31 @@
             has action 200, the store action has index 300 and the purge
             action has index 400.
          </para>
+
+         <warning>
+            <para>
+               Extended actions should always be configured to run
+               <emphasis>before</emphasis> the standard action they are
+               associated with.  This is because of the way indicator files are
+               used in Cedar Backup.  For instance, the staging process
+               considers the collect action to be complete for a peer if the
+               file <filename>cback.collect</filename> can be found in that
+               peer's collect directory.  
+            </para>
+            
+            <para>
+               If you were to run the standard collect action before your other
+               collect-like actions, the indicator file would be written after
+               the collect action completes but <emphasis>before</emphasis> all
+               of the other actions even run.  Because of this, there's a
+               chance the stage process might back up the collect directory
+               before the entire set of collect-like actions have completed
+               &mdash; and you would get no warning about this in your email!
+            </para>
+         </warning>
          
          <para>
-            For instance, imagine that a third-party developer provided a Cedar
+            So, imagine that a third-party developer provided a Cedar
             Backup extension to back up a certain kind of database repository,
             and you wanted to map that extension to the <quote>database</quote>
             command-line action.  You have been told that this function is
@@ -2206,7 +2228,7 @@
             To configure this extension, you would list an action with a name
             <quote>database</quote>, a module <quote>foo</quote>,
             a function name <quote>bar</quote> and an index of
-            <quote>101</quote>.
+            <quote>99</quote>.
          </para>
 
          <para>
@@ -2219,7 +2241,7 @@
       &lt;name&gt;database&lt;/name&gt;
       &lt;module&gt;foo&lt;/module&gt;
       &lt;function&gt;bar&lt;/function&gt;
-      &lt;index&gt;101&lt;/index&gt;
+      &lt;index&gt;99&lt;/index&gt;
    &lt;/action&gt;
 &lt;/extensions&gt;
          </programlisting>
