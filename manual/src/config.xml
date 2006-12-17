@@ -314,7 +314,7 @@
                      Dump a Python stack trace instead of swallowing
                      exceptions.  This forces Cedar Backup to dump the entire
                      Python stack trace associated with an error, rather than
-                     just progating last message it received back up to the
+                     just propagating last message it received back up to the
                      user interface.  Under some circumstances, this is useful
                      information to include along with a bug report.
                   </para>
