@@ -905,6 +905,13 @@ class BackupFileList(FilesystemList):
                   raise tarfile.TarError(e)
                logger.info("Unable to add file [%s]; going on anyway." % entry)
          tar.close()
+      except tarfile.ReadError, e:
+         try: tar.close()
+         except: pass
+         if os.path.exists(path): 
+            try: os.remove(path) 
+            except: pass
+         raise tarfile.ReadError("Unable to open [%s]; maybe directory doesn't exist?" % path)
       except tarfile.TarError, e:
          try: tar.close()
          except: pass
