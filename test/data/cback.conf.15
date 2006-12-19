@@ -126,7 +126,6 @@
       <media_type>cdrw-74</media_type>
       <device_type>cdwriter</device_type>
       <target_device>/dev/cdrw</target_device>
-      <target_scsi_id>0,0,0</target_scsi_id>
       <drive_speed>4</drive_speed>
       <check_data>Y</check_data>
       <warn_midnite>Y</warn_midnite>

@@ -2552,7 +2552,7 @@ class StoreConfig(object):
       - The media type must be one of the values in L{VALID_MEDIA_TYPES}.
       - The device type must be one of the values in L{VALID_DEVICE_TYPES}.
       - The device path must be an absolute path.
-      - The SCSI id must be in the form specified by L{writer.validateScsiId}.
+      - The SCSI id, if provided, must be in the form specified by L{writer.validateScsiId}.
       - The drive speed must be an integer >= 1
 
    The device type field mostly exists for planned future extensions, such as
@@ -2801,7 +2801,7 @@ class StoreConfig(object):
    mediaType = property(_getMediaType, _setMediaType, None, "Type of the media (see notes above).")
    deviceType = property(_getDeviceType, _setDeviceType, None, "Type of the device (optional, see notes above).")
    devicePath = property(_getDevicePath, _setDevicePath, None, "Filesystem device name for writer device.")
-   deviceScsiId = property(_getDeviceScsiId, _setDeviceScsiId, None, "SCSI id for writer device.")
+   deviceScsiId = property(_getDeviceScsiId, _setDeviceScsiId, None, "SCSI id for writer device (optional, see notes above).")
    driveSpeed = property(_getDriveSpeed, _setDriveSpeed, None, "Speed of the drive.")
    checkData = property(_getCheckData, _setCheckData, None, "Whether resulting image should be validated.")
    warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
@@ -4567,8 +4567,6 @@ class Config(object):
             raise ValueError("Store section media type must be filled in.")
          if self.store.devicePath is None:
             raise ValueError("Store section device path must be filled in.")
-         if self.store.deviceScsiId is None:
-            raise ValueError("Store section SCSI id must be filled in.")
 
    def _validatePurge(self):
       """

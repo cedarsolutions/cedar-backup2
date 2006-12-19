@@ -115,11 +115,12 @@ def validateScsiId(scsiId):
    @return: SCSI id as a string, suitable for assignment to C{CdWriter.scsiId}.
    @raise ValueError: If the SCSI id string is invalid.
    """
-   pattern = re.compile(r"^\s*(.*:)?\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
-   if not pattern.search(scsiId):
-      pattern = re.compile(r"^\s*IO.*Services(\/[0-9][0-9]*)?\s*$")
+   if scsiId is not None:
+      pattern = re.compile(r"^\s*(.*:)?\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
       if not pattern.search(scsiId):
-         raise ValueError("SCSI id is not in a valid form.")
+         pattern = re.compile(r"^\s*IO.*Services(\/[0-9][0-9]*)?\s*$")
+         if not pattern.search(scsiId):
+            raise ValueError("SCSI id is not in a valid form.")
    return scsiId
 
 def validateDriveSpeed(driveSpeed):
@@ -357,6 +358,32 @@ class CdWriter(object):
       constant over the life of an object, while media attributes can be
       retrieved through method calls.
 
+   Talking to Hardware
+   ===================
+
+      This class needs to talk to CD writer hardware in two different ways:
+      through cdrecord to actually write to the media, and through the
+      filesystem to do things like open and close the tray.
+
+      Historically, CdWriter has interacted with cdrecord using the scsiId
+      attribute, and with most other utilities using the device attribute.
+      This changed somewhat in Cedar Backup 2.9.0.
+
+      When Cedar Backup was first written, the only way to interact with
+      cdrecord was by using a SCSI device id.  IDE devices were mapped to
+      pseudo-SCSI devices through the kernel.  Later, extended SCSI "methods"
+      arrived, and it became common to see C{ATA:1,0,0} or C{ATAPI:0,0,0} as a
+      way to address IDE hardware.  By late 2006, C{ATA} and C{ATAPI} had
+      apparently been deprecated in favor of just addressing the IDE device
+      directly by name, i.e. C{/dev/cdrw}.
+
+      Because of this latest development, it no longer makes sense to require a
+      CdWriter to be created with a SCSI id -- there might not be one.  So, the
+      passed-in SCSI id is now optional.  Also, there is now a hardwareId
+      attribute.  This attribute is filled in with either the SCSI id (if
+      provided) or the device (otherwise).  The hardware id is the value that
+      will be passed to cdrecord in the C{dev=} argument.
+
    Testing
    =======
 
@@ -380,8 +407,8 @@ class CdWriter(object):
           _blankMedia, _parsePropertiesOutput, _parseBoundariesOutput, 
           _buildOpenTrayArgs, _buildCloseTrayArgs, _buildPropertiesArgs, 
           _buildBoundariesArgs, _buildBlankArgs, _buildWriteArgs,
-          device, scsiId, driveSpeed, media, deviceType, deviceVendor, deviceId, 
-          deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject
+          device, scsiId, hardwareId, driveSpeed, media, deviceType, deviceVendor, 
+          deviceId, deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject
    """
 
    ##############
@@ -402,10 +429,9 @@ class CdWriter(object):
       etc. might be C{None}, if we're unable to parse this specific information
       from the C{cdrecord} output.  This information is just for reference.
 
-      The device and SCSI id are both required because some commands (like
-      C{eject}) need the device, and other commands (like C{cdrecord}) need the
-      SCSI id.  It's also nice to be able to track both of them in once place
-      for reference by other pieces of functionality outside of this module.
+      The SCSI id is optional, but the device path is required.  If the SCSI id
+      is passed in, then the hardware id attribute will be taken from the SCSI
+      id.  Otherwise, the hardware id will be taken from the device.
 
       @note: The C{unittest} parameter should never be set to C{True}
       outside of Cedar Backup code.  It is intended for use in unit testing
@@ -414,8 +440,8 @@ class CdWriter(object):
       @param device: Filesystem device associated with this writer.
       @type device: Absolute path to a filesystem device, i.e. C{/dev/cdrw}
 
-      @param scsiId: SCSI id for the device.
-      @type scsiId: SCSI id in the form C{[<something>:]scsibus,target,lun}
+      @param scsiId: SCSI id for the device (optional).
+      @type scsiId: If provided, SCSI id in the form C{[<something>:]scsibus,target,lun}
 
       @param driveSpeed: Speed at which the drive writes.
       @type driveSpeed: Use C{2} for 2x device, etc. or C{None} to use device default.
@@ -459,6 +485,14 @@ class CdWriter(object):
       """
       Property target used to get the SCSI id value.
       """
+      return self._scsiId
+
+   def _getHardwareId(self):
+      """
+      Property target used to get the hardware id value.
+      """
+      if self._scsiId is None:
+         return self._device
       return self._scsiId
 
    def _getDriveSpeed(self):
@@ -517,6 +551,7 @@ class CdWriter(object):
 
    device = property(_getDevice, None, None, doc="Filesystem device name for this writer.")
    scsiId = property(_getScsiId, None, None, doc="SCSI id for the device, in the form C{[<something>:]scsibus,target,lun}.")
+   hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer, either SCSI id or device path.");
    driveSpeed = property(_getDriveSpeed, None, None, doc="Speed at which the drive writes.")
    media = property(_getMedia, None, None, doc="Definition of media that is expected to be in the device.")
    deviceType = property(_getDeviceType, None, None, doc="Type of the device, as returned from C{cdrecord -prcap}.")
@@ -548,7 +583,7 @@ class CdWriter(object):
       @return: Results tuple as described above.
       @raise IOError: If there is a problem talking to the device.
       """
-      args = CdWriter._buildPropertiesArgs(self._scsiId)
+      args = CdWriter._buildPropertiesArgs(self.hardwareId)
       command = resolveCommand(CDRECORD_COMMAND)
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
       if result != 0:
@@ -617,7 +652,7 @@ class CdWriter(object):
          logger.debug("Entire disc flag is True; returning boundaries None.")
          return None
       else:
-         args = CdWriter._buildBoundariesArgs(self._scsiId)
+         args = CdWriter._buildBoundariesArgs(self.hardwareId)
          command = resolveCommand(CDRECORD_COMMAND)
          (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
          if result != 0:
@@ -757,7 +792,7 @@ class CdWriter(object):
          raise ValueError("Image path must be absolute.")
       if newDisc:
          self._blankMedia()
-      args = CdWriter._buildWriteArgs(self._scsiId, imagePath, self._driveSpeed, writeMulti and self._deviceSupportsMulti)
+      args = CdWriter._buildWriteArgs(self.hardwareId, imagePath, self._driveSpeed, writeMulti and self._deviceSupportsMulti)
       command = resolveCommand(CDRECORD_COMMAND)
       result = executeCommand(command, args)[0]
       if result != 0:
@@ -770,7 +805,7 @@ class CdWriter(object):
       @raise IOError: If the media could not be written to for some reason.
       """
       if self.isRewritable():
-         args = CdWriter._buildBlankArgs(self._scsiId)
+         args = CdWriter._buildBlankArgs(self.hardwareId)
          command = resolveCommand(CDRECORD_COMMAND)
          result = executeCommand(command, args)[0]
          if result != 0:
@@ -940,24 +975,24 @@ class CdWriter(object):
       return args
    _buildCloseTrayArgs = staticmethod(_buildCloseTrayArgs)
 
-   def _buildPropertiesArgs(scsiId):
+   def _buildPropertiesArgs(hardwareId):
       """
       Builds a list of arguments to be passed to a C{cdrecord} command.
 
       The arguments will cause the C{cdrecord} command to ask the device
       for a list of its capacities via the C{-prcap} switch.
 
-      @param scsiId: SCSI id for the device, in the form C{[something>:]scsibus,target,lun}.
+      @param hardwareId: Hardware id for the device (either SCSI id or device path)
 
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
       """
       args = []
       args.append("-prcap")
-      args.append("dev=%s" % scsiId)
+      args.append("dev=%s" % hardwareId)
       return args
    _buildPropertiesArgs = staticmethod(_buildPropertiesArgs)
 
-   def _buildBoundariesArgs(scsiId):
+   def _buildBoundariesArgs(hardwareId):
       """
       Builds a list of arguments to be passed to a C{cdrecord} command.
 
@@ -965,26 +1000,26 @@ class CdWriter(object):
       the current multisession boundaries of the media using the C{-msinfo}
       switch.
 
-      @param scsiId: SCSI id for the device, in the form C{[<something>:]scsibus,target,lun}.
+      @param hardwareId: Hardware id for the device (either SCSI id or device path)
 
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
       """
       args = []
       args.append("-msinfo")
-      args.append("dev=%s" % scsiId)
+      args.append("dev=%s" % hardwareId)
       return args
    _buildBoundariesArgs = staticmethod(_buildBoundariesArgs)
 
-   def _buildBlankArgs(scsiId, driveSpeed=None):
+   def _buildBlankArgs(hardwareId, driveSpeed=None):
       """
       Builds a list of arguments to be passed to a C{cdrecord} command.
 
       The arguments will cause the C{cdrecord} command to blank the media in
-      the device identified by C{scsiId}.  No validation is done by this method
+      the device identified by C{hardwareId}.  No validation is done by this method
       as to whether the action makes sense (i.e. to whether the media even can
       be blanked).
 
-      @param scsiId: SCSI id for the device, in the form C{[<something>:]scsibus,target,lun}.
+      @param hardwareId: Hardware id for the device (either SCSI id or device path)
       @param driveSpeed: Speed at which the drive writes.
 
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
@@ -994,22 +1029,22 @@ class CdWriter(object):
       args.append("blank=fast")
       if driveSpeed is not None:
          args.append("speed=%d" % driveSpeed)
-      args.append("dev=%s" % scsiId)
+      args.append("dev=%s" % hardwareId)
       return args
    _buildBlankArgs = staticmethod(_buildBlankArgs)
 
-   def _buildWriteArgs(scsiId, imagePath, driveSpeed=None, writeMulti=True):
+   def _buildWriteArgs(hardwareId, imagePath, driveSpeed=None, writeMulti=True):
       """
       Builds a list of arguments to be passed to a C{cdrecord} command.
 
       The arguments will cause the C{cdrecord} command to write the indicated
       ISO image (C{imagePath}) to the media in the device identified by
-      C{scsiId}.  The C{writeMulti} argument controls whether to write a
+      C{hardwareId}.  The C{writeMulti} argument controls whether to write a
       multisession disc.  No validation is done by this method as to whether
       the action makes sense (i.e. to whether the device even can write
       multisession discs, for instance).
 
-      @param scsiId: SCSI id for the device, in the form C{[<something>:]scsibus,target,lun}.
+      @param hardwareId: Hardware id for the device (either SCSI id or device path)
       @param imagePath: Path to an ISO image on disk.
       @param driveSpeed: Speed at which the drive writes.
       @param writeMulti: Indicates whether to write a multisession disc.
@@ -1020,7 +1055,7 @@ class CdWriter(object):
       args.append("-v")
       if driveSpeed is not None:
          args.append("speed=%d" % driveSpeed)
-      args.append("dev=%s" % scsiId)
+      args.append("dev=%s" % hardwareId)
       if writeMulti:
          args.append("-multi")
       args.append("-data")

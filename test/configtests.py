@@ -6773,16 +6773,6 @@ class TestConfig(unittest.TestCase):
       config.store.warnMidnite = True
       self.failUnlessRaises(ValueError, config._validateStore)
 
-      config.store = StoreConfig()
-      config.store.sourceDir = "/source"
-      config.store.mediaType = "cdr-74"
-      config.store.deviceType = "cdwriter"
-      config.store.devicePath = "/dev/cdrw"
-      config.store.driveSpeed = 4
-      config.store.checkData = True
-      config.store.warnMidnite = True
-      self.failUnlessRaises(ValueError, config._validateStore)
-
    def testValidate_039(self):
       """
       Test validate on store section missing one each of device type, drive
@@ -7171,7 +7161,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.11"]
       config = Config(xmlPath=path, validate=False)
       expected = Config()
-      expected.store = StoreConfig("/opt/backup/staging", mediaType="cdrw-74", devicePath="/dev/cdrw", deviceScsiId="0,0,0")
+      expected.store = StoreConfig("/opt/backup/staging", mediaType="cdrw-74", devicePath="/dev/cdrw", deviceScsiId=None)
       self.failUnlessEqual(expected, config)
 
    def testParse_024(self):
@@ -7297,7 +7287,7 @@ class TestConfig(unittest.TestCase):
       expected.store.mediaType = "cdrw-74"
       expected.store.deviceType = "cdwriter"
       expected.store.devicePath = "/dev/cdrw"
-      expected.store.deviceScsiId = "0,0,0"
+      expected.store.deviceScsiId = None
       expected.store.driveSpeed = 4
       expected.store.checkData = True
       expected.store.warnMidnite = True
@@ -7353,7 +7343,7 @@ class TestConfig(unittest.TestCase):
       expected.store.mediaType = "cdrw-74"
       expected.store.deviceType = "cdwriter"
       expected.store.devicePath = "/dev/cdrw"
-      expected.store.deviceScsiId = "0,0,0"
+      expected.store.deviceScsiId = None
       expected.store.driveSpeed = 4
       expected.store.checkData = True
       expected.store.warnMidnite = True
