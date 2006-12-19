@@ -4,6 +4,8 @@
 if [[ $# != 1 || ${1} == "--help" ]]
 then
    print "Usage: diff <version>"
+   print "Diffs working copy against a named revision."
+   print "For example, 'diff 2.8.2' to diff against CEDAR_BACKUP_V2.8.2."
    exit 1
 fi
 
