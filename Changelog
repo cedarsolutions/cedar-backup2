@@ -2,13 +2,14 @@ Version 2.9.0	unreleased
 	
 	* Fix error-handling in generateTarfile() when target dir is missing.
 	* Tweak pycheckrc to find fewer expected errors (from standard library).
-	* Fix Debian bug #403546, to support more CD writer configurations.
+	* Fix Debian bug #403546 by supporting more CD writer configurations.
 	  - Be looser with SCSI "methods" allowed in valid SCSI id (update regex)
 	  - Make <store> config section's <target_scsi_id> parameter optional
 	  - Change CdWriter to support "hardware id" as either SCSI id or device
 	  - Implement cdrecord commands in terms of hardware id instead of SCSI id
-	  - Add documentation in writer.py about talking to hardware
+	  - Add documentation in writer.py to discussion how we talk to hardware
 	* Update Cedar Backup user manual.
+	  - Re-order setup procedures to modify cron last (Debian #403662)
 	  - Fix minor typos and misspellings (Debian #403448 among others)
 	  - Add discussion about proper ordering of extension actions
 
