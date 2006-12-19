@@ -1340,7 +1340,7 @@ def _backupMboxFile(config, absolutePath,
    if fullBackup or collectMode != "incr" or lastRevision is None:
       args = [ "-a", "-u", absolutePath, ]  # remove duplicates but fetch entire mailbox
    else:
-      revisionDate = lastRevision.strftime("%Y%m%d%H%M%S")
+      revisionDate = lastRevision.strftime("%Y-%m-%dT%H:%M:%S")  # ISO-8601 format; grepmail calls Date::Parse::str2time()
       args = [ "-a", "-u", "-d", "since %s" % revisionDate, absolutePath, ]
    command = resolveCommand(GREPMAIL_COMMAND)
    result = executeCommand(command, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=outputFile)[0]
