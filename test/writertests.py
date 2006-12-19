@@ -203,18 +203,27 @@ class TestFunctions(unittest.TestCase):
       scsiId = "1,2"
       self.failUnlessRaises(ValueError, validateScsiId, scsiId)
 
-   def testValidateScsiId_011(self):
-      """
-      Test with an invalid address with an invalid prefix.
-      """
-      scsiId = "ATABI:1,2,3"
-      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
+   # Removed testValidateScsiId_011, because we're now looser on allowed syntax
 
    def testValidateScsiId_012(self):
       """
       Test with an invalid Mac-style address with a backslash.
       """
       scsiId = "IOCompactDiscServices\\3"
+      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
+
+   def testValidateScsiId_013(self):
+      """
+      Test with an invalid address with an invalid prefix separator.
+      """
+      scsiId = "ATAPI;1,2,3"
+      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
+
+   def testValidateScsiId_014(self):
+      """
+      Test with an invalid address with an invalid prefix separator.
+      """
+      scsiId = "ATA-1,2,3"
       self.failUnlessRaises(ValueError, validateScsiId, scsiId)
 
 

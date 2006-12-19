@@ -2573,7 +2573,7 @@ class StoreConfig(object):
       @param mediaType: Type of the media (see notes above).
       @param deviceType: Type of the device (optional, see notes above).
       @param devicePath: Filesystem device name for writer device, i.e. C{/dev/cdrw}.
-      @param deviceScsiId: SCSI id for writer device, i.e. C{[ATA|ATAPI]:scsibus,target,lun}.
+      @param deviceScsiId: SCSI id for writer device, i.e. C{[<something>:]scsibus,target,lun}.
       @param driveSpeed: Speed of the drive, i.e. C{2} for 2x drive, etc.
       @param checkData: Whether resulting image should be validated.
       @param warnMidnite: Whether to generate warnings for crossing midnite.

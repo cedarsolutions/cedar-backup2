@@ -5001,7 +5001,9 @@ class TestStoreConfig(unittest.TestCase):
       """
       store = StoreConfig()
       self.failUnlessEqual(None, store.deviceScsiId)
-      self.failUnlessAssignRaises(ValueError, store, "deviceScsiId", "ATB:0,0,0")
+      self.failUnlessAssignRaises(ValueError, store, "deviceScsiId", "ATA;0,0,0")
+      self.failUnlessEqual(None, store.deviceScsiId)
+      self.failUnlessAssignRaises(ValueError, store, "deviceScsiId", "ATAPI-0,0,0")
       self.failUnlessEqual(None, store.deviceScsiId)
       self.failUnlessAssignRaises(ValueError, store, "deviceScsiId", "1:2:3")
       self.failUnlessEqual(None, store.deviceScsiId)
