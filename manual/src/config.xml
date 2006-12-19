@@ -2363,12 +2363,49 @@
          </para>
       </tip>
 
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 1: Decide when you will run your backup.</title>
+
+         <para>
+            There are four parts to a Cedar Backup run: collect, stage, store
+            and purge. The usual way of setting off these steps is through a
+            set of cron jobs.  Although you won't create your cron jobs just
+            yet, you should decide now when you will run your backup so you are
+            prepared for later.
+         </para>
+
+         <para>
+            Backing up large directories and creating ISO CD images can be
+            intensive operations, and could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            occur every day, but it is possible to configure cron to execute
+            the backup only one day per week, three days per week, etc.
+         </para>
+
+         <warning>
+            <para>
+               Because of the way Cedar Backup works, you must ensure that your
+               backup <emphasis>always</emphasis> runs son the first day of your
+               configured week.  This is because Cedar Backup will only clear
+               incremental backup information and re-initialize your media when
+               running on the first day of the week.  If you skip running Cedar
+               Backup on the first day of the week, your backups will likely be
+               <quote>confused</quote> until the next week begins, or until you
+               re-run the backup using the <option>--full</option> flag.
+            </para>
+         </warning>
+
+      </sect2>
 
       <!-- ################################################################# -->
 
       <sect2>
 
-         <title>Step 1: Make sure email works.</title>
+         <title>Step 2: Make sure email works.</title>
 
          <para>
             Cedar Backup relies on email for problem notification.  This
@@ -2395,7 +2432,7 @@
 
       <sect2>
 
-         <title>Step 2: Configure your CD-R or CD-RW drive.</title>
+         <title>Step 3: Configure your CD-R or CD-RW drive.</title>
 
          <para>
             Your CD-R or CD-RW drive must either be a SCSI device or must be
@@ -2426,7 +2463,7 @@
 
       <sect2>
 
-         <title>Step 3: Configure your backup user.</title>
+         <title>Step 4: Configure your backup user.</title>
 
          <para>
              Choose a user to be used for backups. Some platforms may
@@ -2452,7 +2489,7 @@
 
       <sect2>
 
-         <title>Step 4: Create your backup tree.</title>
+         <title>Step 5: Create your backup tree.</title>
 
          <para>
             Cedar Backup requires a backup directory tree on disk. This
@@ -2511,84 +2548,6 @@
 
       <sect2>
 
-         <title>Step 5: Modify the backup cron jobs.</title>
-
-         <para>
-            There are four parts to a Cedar Backup run: collect, stage, store
-            and purge. The usual way of setting off these steps is through a
-            cron job.  For more information on using cron, see the manpage for
-            crontab(5).
-         </para>
-
-         <para>
-            Backing up large directories and creating ISO CD images can be
-            intensive operations, and could slow your computer down
-            significantly. Choose a backup time that will not interfere with
-            normal use of your computer.  Usually, you will want the backup to
-            occur every day, but it is possible to configure cron to execute
-            the backup only one day per week, three days per week, etc.
-         </para>
-
-         <warning>
-            <para>
-               Because of the way Cedar Backup works, you must ensure that your
-               backup <emphasis>always</emphasis> run on the first day of your
-               configured week.  This is because Cedar Backup will only clear
-               incremental backup information and re-initialize your media when
-               running on the first day of the week.  If you skip running Cedar
-               Backup on the first day of the week, your backups will likely be
-               <quote>confused</quote> until either the next week, or until you
-               re-run the backup using the <option>--full</option> flag.
-            </para>
-         </warning>
-
-         <para>
-            Since Cedar Backup should be run as root, one way to configure the
-            cron job is to add a line like this to your
-            <filename>/etc/crontab</filename> file:
-         </para>
-
-         <programlisting>
-30 00 * * * root  cback all
-         </programlisting>
-                          
-         <para>
-            Or, you can create an executable script containing just these lines
-            and place that file in the <filename>/etc/cron.daily</filename>
-            directory:
-         </para>
-
-         <programlisting>
-#/bin/sh
-cback all
-         </programlisting>
-
-         <para>
-            You should consider adding the <option>--output</option> or
-            <option>-O</option> switch to your <command>cback</command>
-            command-line in cron.  This will result in larger logs, but could
-            help diagnose problems when commands like
-            <command>cdrecord</command> or <command>mkisofs</command> fail
-            mysteriously.
-         </para>
-
-         <note>
-            <para>
-               On a Debian system, execution of daily backups is controlled by
-               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
-               installed, this file contains several different settings, all
-               commented out.  Uncomment the <quote>Single machine (pool of
-               one)</quote> entry in the file, and change the line so that the
-               backup goes off when you want it to.
-            </para>
-         </note>
-
-      </sect2>
-
-      <!-- ################################################################# -->
-
-      <sect2>
-
          <title>Step 6: Create the Cedar Backup configuration file.</title>
 
          <para>
@@ -2602,7 +2561,7 @@ cback all
          <para>
             The usual location for the Cedar Backup config file is
             <filename>/etc/cback.conf</filename>.  If you change the location,
-            make sure you edit your cronjobs (step 5) to point the
+            make sure you edit your cronjobs (below) to point the
             <command>cback</command> script at the correct config file (using
             the <option>--config</option> option).
          </para>
@@ -2676,6 +2635,60 @@ cback all
 
       </sect2>
 
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 9: Modify the backup cron jobs.</title>
+
+         <para>
+            Since Cedar Backup should be run as root, one way to configure the
+            cron job is to add a line like this to your
+            <filename>/etc/crontab</filename> file:
+         </para>
+
+         <programlisting>
+30 00 * * * root  cback all
+         </programlisting>
+                          
+         <para>
+            Or, you can create an executable script containing just these lines
+            and place that file in the <filename>/etc/cron.daily</filename>
+            directory:
+         </para>
+
+         <programlisting>
+#/bin/sh
+cback all
+         </programlisting>
+
+         <para>
+            You should consider adding the <option>--output</option> or
+            <option>-O</option> switch to your <command>cback</command>
+            command-line in cron.  This will result in larger logs, but could
+            help diagnose problems when commands like
+            <command>cdrecord</command> or <command>mkisofs</command> fail
+            mysteriously.
+         </para>
+
+         <note>
+            <para>
+               For general information about using cron, see the manpage for
+               crontab(5).
+            </para>
+
+            <para>
+               On a Debian system, execution of daily backups is controlled by
+               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <quote>Single machine (pool of
+               one)</quote> entry in the file, and change the line so that the
+               backup goes off when you want it to.
+            </para>
+         </note>
+
+      </sect2>
+
    </sect1>
 
    <!-- ################################################################# -->
@@ -2716,7 +2729,44 @@ cback all
 
       <sect2>
 
-         <title>Step 1: Make sure email works.</title>
+         <title>Step 1: Decide when you will run your backup.</title>
+
+         <para>
+            There are four parts to a Cedar Backup run: collect, stage, store
+            and purge. The usual way of setting off these steps is through a
+            set of cron jobs.  Although you won't create your cron jobs just
+            yet, you should decide now when you will run your backup so you are
+            prepared for later.
+         </para>
+
+         <para>
+            Backing up large directories and creating ISO CD images can be
+            intensive operations, and could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            occur every day, but it is possible to configure cron to execute
+            the backup only one day per week, three days per week, etc.
+         </para>
+
+         <warning>
+            <para>
+               Because of the way Cedar Backup works, you must ensure that your
+               backup <emphasis>always</emphasis> runs on the first day of your
+               configured week.  This is because Cedar Backup will only clear
+               incremental backup information and re-initialize your media when
+               running on the first day of the week.  If you skip running Cedar
+               Backup on the first day of the week, your backups will likely be
+               <quote>confused</quote> until the next week begins, or until you
+               re-run the backup using the <option>--full</option> flag.
+            </para>
+         </warning>
+
+      </sect2>
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 2: Make sure email works.</title>
 
          <para>
             Cedar Backup relies on email for problem notification.  This
@@ -2743,7 +2793,7 @@ cback all
 
       <sect2>
 
-         <title>Step 2: Configure the master in your backup pool.</title>
+         <title>Step 3: Configure the master in your backup pool.</title>
 
          <para>
             You will not be able to complete the client configuration until at
@@ -2771,7 +2821,7 @@ HgZooYqQ9pw+ZduXgmPcAAv2b5eTm07wRqFt/U84k6bhTzs= user@machine
 
       <sect2>
 
-         <title>Step 3: Configure your backup user.</title>
+         <title>Step 4: Configure your backup user.</title>
 
          <para>
              Choose a user to be used for backups. Some platforms may come with
@@ -2844,7 +2894,7 @@ The key fingerprint is:
 
       <sect2>
 
-         <title>Step 4: Create your backup tree.</title>
+         <title>Step 5: Create your backup tree.</title>
 
          <para>
             Cedar Backup requires a backup directory tree on disk. This
@@ -2898,85 +2948,6 @@ The key fingerprint is:
 
       <sect2>
 
-         <title>Step 5: Modify the backup cron jobs.</title>
-
-         <para>
-            There are two parts to a Cedar Backup run on a client: collect
-            and purge. The usual way of setting off these steps is through a
-            cron job.  For more information on using cron, see the manpage for
-            crontab(5).
-         </para>
-
-         <para>
-            Backing up large directories could slow your computer down
-            significantly. Choose a backup time that will not interfere with
-            normal use of your computer.  Usually, you will want the backup to
-            go occur every day, but it is possible to configure cron to 
-            execute the backup only one day per week, three days per week,
-            etc.
-         </para>
-
-         <warning>
-            <para>
-               Because of the way Cedar Backup works, you must ensure that at
-               least your collect action <emphasis>always</emphasis> runs on
-               the first day of your configured week.  This is because Cedar
-               Backup will only clear incremental backup information when
-               running on the first day of the week.  If you skip running the
-               collect action on the first day of the week, your backups will
-               likely be <quote>confused</quote> until either the next week, or
-               until you re-run the collect action backup using the
-               <option>--full</option> flag.
-            </para>
-         </warning>
-
-         <para>
-            Since Cedar Backup should be run as root, you should add a set of
-            lines like this to your <filename>/etc/crontab</filename> file:
-         </para>
-
-         <programlisting>
-30 00 * * * root  cback collect
-30 06 * * * root  cback purge
-         </programlisting>
-
-         <para>
-            You should consider adding the <option>--output</option> or
-            <option>-O</option> switch to your <command>cback</command>
-            command-line in cron.  This will result in larger logs, but could
-            help diagnose problems when commands like
-            <command>cdrecord</command> or <command>mkisofs</command> fail
-            mysteriously.
-         </para>
-
-         <para>
-            You will need to coordinate the collect and purge actions on the
-            client so that the collect action completes before the master
-            attempts to stage, and so that the purge action does not begin
-            until after the master has completed staging.  Usually, allowing an
-            hour or two between steps should be sufficient.  <footnote
-            id="cedar-config-foot-coordinate"><para>See <xref
-            linkend="cedar-basic-coordinate"/> in <xref
-            linkend="cedar-basic"/>.</para></footnote>
-         </para>
-
-         <note>
-            <para>
-               On a Debian system, execution of daily backups is controlled by
-               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
-               installed, this file contains several different settings, all
-               commented out.  Uncomment the <quote>Client machine</quote>
-               entries in the file, and change the lines so that the backup
-               goes off when you want it to.
-            </para>
-         </note>
-
-      </sect2>
-
-      <!-- ################################################################# -->
-
-      <sect2>
-
          <title>Step 6: Create the Cedar Backup configuration file.</title>
 
          <para>
@@ -2990,7 +2961,7 @@ The key fingerprint is:
          <para>
             The usual location for the Cedar Backup config file is
             <filename>/etc/cback.conf</filename>.  If you change the location,
-            make sure you edit your cronjobs (step 5) to point the
+            make sure you edit your cronjobs (below) to point the
             <command>cback</command> script at the correct config file (using
             the <option>--config</option> option).
          </para>
@@ -3051,6 +3022,60 @@ The key fingerprint is:
 
       </sect2>
 
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 9: Modify the backup cron jobs.</title>
+
+         <para>
+            Since Cedar Backup should be run as root, you should add a set of
+            lines like this to your <filename>/etc/crontab</filename> file:
+         </para>
+
+         <programlisting>
+30 00 * * * root  cback collect
+30 06 * * * root  cback purge
+         </programlisting>
+
+         <para>
+            You should consider adding the <option>--output</option> or
+            <option>-O</option> switch to your <command>cback</command>
+            command-line in cron.  This will result in larger logs, but could
+            help diagnose problems when commands like
+            <command>cdrecord</command> or <command>mkisofs</command> fail
+            mysteriously.
+         </para>
+
+         <para>
+            You will need to coordinate the collect and purge actions on the
+            client so that the collect action completes before the master
+            attempts to stage, and so that the purge action does not begin
+            until after the master has completed staging.  Usually, allowing an
+            hour or two between steps should be sufficient.  <footnote
+            id="cedar-config-foot-coordinate"><para>See <xref
+            linkend="cedar-basic-coordinate"/> in <xref
+            linkend="cedar-basic"/>.</para></footnote>
+         </para>
+
+         <note>
+            <para>
+               For general information about using cron, see the manpage for
+               crontab(5).
+            </para>
+
+            <para>
+               On a Debian system, execution of daily backups is controlled by
+               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <quote>Client machine</quote>
+               entries in the file, and change the lines so that the backup
+               goes off when you want it to.
+            </para>
+         </note>
+
+      </sect2>
+
    </sect1>
 
    <!-- ################################################################# -->
@@ -3104,7 +3129,50 @@ The key fingerprint is:
 
       <sect2>
 
-         <title>Step 1: Make sure email works.</title>
+         <title>Step 1: Decide when you will run your backup.</title>
+
+         <para>
+            There are four parts to a Cedar Backup run: collect, stage, store
+            and purge. The usual way of setting off these steps is through a
+            set of cron jobs.  Although you won't create your cron jobs just
+            yet, you should decide now when you will run your backup so you are
+            prepared for later.
+         </para>
+         
+         <para>
+            Keep in mind that you do not necessarily have to run the collect
+            action on the master.  See notes further below for more
+            information.
+         </para>
+
+         <para>
+            Backing up large directories and creating ISO CD images can be
+            intensive operations, and could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            occur every day, but it is possible to configure cron to execute
+            the backup only one day per week, three days per week, etc.
+         </para>
+
+         <warning>
+            <para>
+               Because of the way Cedar Backup works, you must ensure that your
+               backup <emphasis>always</emphasis> runs on the first day of your
+               configured week.  This is because Cedar Backup will only clear
+               incremental backup information and re-initialize your media when
+               running on the first day of the week.  If you skip running Cedar
+               Backup on the first day of the week, your backups will likely be
+               <quote>confused</quote> until the next week begins, or until you
+               re-run the backup using the <option>--full</option> flag.
+            </para>
+         </warning>
+
+      </sect2>
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 2: Make sure email works.</title>
 
          <para>
             Cedar Backup relies on email for problem notification.  This
@@ -3131,7 +3199,7 @@ The key fingerprint is:
 
       <sect2>
 
-         <title>Step 2: Configure your CD-R or CD-RW drive.</title>
+         <title>Step 3: Configure your CD-R or CD-RW drive.</title>
 
          <para>
             Your CD-R or CD-RW drive must either be a SCSI device or must be
@@ -3162,7 +3230,7 @@ The key fingerprint is:
 
       <sect2>
 
-         <title>Step 3: Configure your backup user.</title>
+         <title>Step 4: Configure your backup user.</title>
 
          <para>
              Choose a user to be used for backups. Some platforms may come with
@@ -3225,7 +3293,7 @@ The key fingerprint is:
 
       <sect2>
 
-         <title>Step 4: Create your backup tree.</title>
+         <title>Step 5: Create your backup tree.</title>
 
          <para>
             Cedar Backup requires a backup directory tree on disk. This
@@ -3284,94 +3352,6 @@ The key fingerprint is:
 
       <sect2>
 
-         <title>Step 5: Modify the backup cron jobs.</title>
-
-         <para>
-            There are four parts to a Cedar Backup run: collect, stage, store
-            and purge. The usual way of setting off these steps is through a
-            cron job.  For more information on using cron, see the manpage for
-            crontab(5).
-         </para>
-
-         <note>
-            <para>
-               Keep in mind that you do not necessarily have to run the collect
-               action on the master.  See notes further below for more
-               information.
-            </para>
-         </note>
-
-         <para>
-            Backing up large directories and creating ISO CD images can be
-            intensive operations, and could slow your computer down
-            significantly. Choose a backup time that will not interfere with
-            normal use of your computer.  Usually, you will want the backup to
-            go occur every day, but it is possible to configure cron to 
-            execute the backup only one day per week, three days per week,
-            etc.
-         </para>
-
-         <warning>
-            <para>
-               Because of the way Cedar Backup works, you must ensure that at
-               least your collect and store actions <emphasis>always</emphasis>
-               run on the first day of your configured week.  This is because
-               Cedar Backup will only clear incremental backup information and
-               re-initialize your media when running on the first day of the
-               week.  If you skip running Cedar Backup on the first day of the
-               week, your backups will likely be <quote>confused</quote> until
-               either the next week, or until you re-run the collect and store
-               actions using the <option>--full</option> flag.
-            </para>
-         </warning>
-
-         <para>
-            Since Cedar Backup should be run as root, you should add a set of
-            lines like this to your <filename>/etc/crontab</filename> file:
-         </para>
-
-         <programlisting>
-30 00 * * * root  cback collect
-30 02 * * * root  cback stage
-30 04 * * * root  cback store
-30 06 * * * root  cback purge
-         </programlisting>
-
-         <para>
-            You should consider adding the <option>--output</option> or
-            <option>-O</option> switch to your <command>cback</command>
-            command-line in cron.  This will result in larger logs, but could
-            help diagnose problems when commands like
-            <command>cdrecord</command> or <command>mkisofs</command> fail
-            mysteriously.
-         </para>
-                          
-         <para>
-            You will need to coordinate the collect and purge actions on
-            clients so that their collect actions complete before the master
-            attempts to stage, and so that their purge actions do not begin
-            until after the master has completed staging.  Usually, allowing
-            an hour or two between steps should be sufficient.
-            <footnoteref linkend="cedar-config-foot-coordinate"/>
-         </para>
-
-         <note>
-            <para>
-               On a Debian system, execution of daily backups is controlled by
-               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
-               installed, this file contains several different settings, all
-               commented out.  Uncomment the <quote>Master machine</quote>
-               entries in the file, and change the lines so that the backup
-               goes off when you want it to.
-            </para>
-         </note>
-
-      </sect2>
-
-      <!-- ################################################################# -->
-
-      <sect2>
-
          <title>Step 6: Create the Cedar Backup configuration file.</title>
 
          <para>
@@ -3403,7 +3383,7 @@ The key fingerprint is:
          <para>
             The usual location for the Cedar Backup config file is
             <filename>/etc/cback.conf</filename>.  If you change the location,
-            make sure you edit your cronjobs (step 5) to point the
+            make sure you edit your cronjobs (below) to point the
             <command>cback</command> script at the correct config file (using
             the <option>--config</option> option).
          </para>
@@ -3521,6 +3501,60 @@ The key fingerprint is:
             To be safe, always enable the consistency check option in the
             store configuration section.</emphasis>
          </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2>
+
+         <title>Step 10: Modify the backup cron jobs.</title>
+
+         <para>
+            Since Cedar Backup should be run as root, you should add a set of
+            lines like this to your <filename>/etc/crontab</filename> file:
+         </para>
+
+         <programlisting>
+30 00 * * * root  cback collect
+30 02 * * * root  cback stage
+30 04 * * * root  cback store
+30 06 * * * root  cback purge
+         </programlisting>
+
+         <para>
+            You should consider adding the <option>--output</option> or
+            <option>-O</option> switch to your <command>cback</command>
+            command-line in cron.  This will result in larger logs, but could
+            help diagnose problems when commands like
+            <command>cdrecord</command> or <command>mkisofs</command> fail
+            mysteriously.
+         </para>
+                          
+         <para>
+            You will need to coordinate the collect and purge actions on
+            clients so that their collect actions complete before the master
+            attempts to stage, and so that their purge actions do not begin
+            until after the master has completed staging.  Usually, allowing
+            an hour or two between steps should be sufficient.
+            <footnoteref linkend="cedar-config-foot-coordinate"/>
+         </para>
+
+         <note>
+            <para>
+               For general information about using cron, see the manpage for
+               crontab(5).
+            </para>
+
+            <para>
+               On a Debian system, execution of daily backups is controlled by
+               the file <filename>/etc/cron.d/cedar-backup2</filename>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <quote>Master machine</quote>
+               entries in the file, and change the lines so that the backup
+               goes off when you want it to.
+            </para>
+         </note>
 
       </sect2>
 
