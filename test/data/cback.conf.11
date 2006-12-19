@@ -5,6 +5,5 @@
       <source_dir>/opt/backup/staging</source_dir>
       <media_type>cdrw-74</media_type>
       <target_device>/dev/cdrw</target_device>
-      <target_scsi_id>0,0,0</target_scsi_id>
    </store>
 </cb_config>

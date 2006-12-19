@@ -226,6 +226,14 @@ class TestFunctions(unittest.TestCase):
       scsiId = "ATA-1,2,3"
       self.failUnlessRaises(ValueError, validateScsiId, scsiId)
 
+   def testValidateScsiId_015(self):
+      """
+      Test with a None SCSI id.
+      """
+      scsiId = None
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
 
 ############################
 # TestMediaDefinition class
@@ -338,6 +346,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/null", scsiId="0,0,0", unittest=True)
       self.failUnlessEqual("/dev/null", writer.device)
       self.failUnlessEqual("0,0,0", writer.scsiId)
+      self.failUnlessEqual("0,0,0", writer.hardwareId)
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
@@ -351,6 +360,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/null", scsiId="ATA:0,0,0", unittest=True)
       self.failUnlessEqual("/dev/null", writer.device)
       self.failUnlessEqual("ATA:0,0,0", writer.scsiId)
+      self.failUnlessEqual("ATA:0,0,0", writer.hardwareId)
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
@@ -364,6 +374,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/null", scsiId="ATAPI:0,0,0", unittest=True)
       self.failUnlessEqual("/dev/null", writer.device)
       self.failUnlessEqual("ATAPI:0,0,0", writer.scsiId)
+      self.failUnlessEqual("ATAPI:0,0,0", writer.hardwareId)
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
@@ -415,6 +426,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/bogus", scsiId="0,0,0", unittest=True)
       self.failUnlessEqual("/bogus", writer.device)
       self.failUnlessEqual("0,0,0", writer.scsiId)
+      self.failUnlessEqual("0,0,0", writer.hardwareId)
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
@@ -446,6 +458,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/null", scsiId="0,0,0", driveSpeed=1, unittest=True)
       self.failUnlessEqual("/dev/null", writer.device)
       self.failUnlessEqual("0,0,0", writer.scsiId)
+      self.failUnlessEqual("0,0,0", writer.hardwareId)
       self.failUnlessEqual(1, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
@@ -461,6 +474,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/null", scsiId="0,0,0", driveSpeed=5, unittest=True)
       self.failUnlessEqual("/dev/null", writer.device)
       self.failUnlessEqual("0,0,0", writer.scsiId)
+      self.failUnlessEqual("0,0,0", writer.hardwareId)
       self.failUnlessEqual(5, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
@@ -492,6 +506,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDR_74, unittest=True)
       self.failUnlessEqual("/dev/null", writer.device)
       self.failUnlessEqual("0,0,0", writer.scsiId)
+      self.failUnlessEqual("0,0,0", writer.hardwareId)
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDR_74, writer.media.mediaType)
       self.failUnlessEqual(False, writer.isRewritable())
@@ -507,6 +522,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDRW_74, unittest=True)
       self.failUnlessEqual("/dev/null", writer.device)
       self.failUnlessEqual("0,0,0", writer.scsiId)
+      self.failUnlessEqual("0,0,0", writer.hardwareId)
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
@@ -522,6 +538,7 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDR_80, unittest=True)
       self.failUnlessEqual("/dev/null", writer.device)
       self.failUnlessEqual("0,0,0", writer.scsiId)
+      self.failUnlessEqual("0,0,0", writer.hardwareId)
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDR_80, writer.media.mediaType)
       self.failUnlessEqual(False, writer.isRewritable())
@@ -537,6 +554,21 @@ class TestCdWriter(unittest.TestCase):
       writer = CdWriter(device="/dev/null", scsiId="0,0,0", mediaType=MEDIA_CDRW_80, unittest=True)
       self.failUnlessEqual("/dev/null", writer.device)
       self.failUnlessEqual("0,0,0", writer.scsiId)
+      self.failUnlessEqual("0,0,0", writer.hardwareId)
+      self.failUnlessEqual(None, writer.driveSpeed)
+      self.failUnlessEqual(MEDIA_CDRW_80, writer.media.mediaType)
+      self.failUnlessEqual(True, writer.isRewritable())
+
+   def testConstructor_027(self):
+      """
+      Test the constructor with device C{/dev/null}, which is writable and
+      exists.  Use None for SCSI id and a media type of MEDIA_CDRW_80.  Make
+      sure that C{unittest=True}.
+      """
+      writer = CdWriter(device="/dev/null", scsiId=None, mediaType=MEDIA_CDRW_80, unittest=True)
+      self.failUnlessEqual("/dev/null", writer.device)
+      self.failUnlessEqual(None, writer.scsiId)
+      self.failUnlessEqual("/dev/null", writer.hardwareId)
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_80, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
@@ -859,119 +891,119 @@ class TestCdWriter(unittest.TestCase):
       """
       Test _buildPropertiesArgs().
       """
-      args = CdWriter._buildPropertiesArgs(scsiId="0,0,0")
+      args = CdWriter._buildPropertiesArgs(hardwareId="0,0,0")
       self.failUnlessEqual(["-prcap", "dev=0,0,0", ], args)
 
    def testBuildArgs_004(self):
       """
       Test _buildBoundariesArgs().
       """
-      args = CdWriter._buildBoundariesArgs(scsiId="ATA:0,0,0")
+      args = CdWriter._buildBoundariesArgs(hardwareId="ATA:0,0,0")
       self.failUnlessEqual(["-msinfo", "dev=ATA:0,0,0", ], args)
 
    def testBuildArgs_005(self):
       """
       Test _buildBoundariesArgs().
       """
-      args = CdWriter._buildBoundariesArgs(scsiId="ATAPI:0,0,0")
+      args = CdWriter._buildBoundariesArgs(hardwareId="ATAPI:0,0,0")
       self.failUnlessEqual(["-msinfo", "dev=ATAPI:0,0,0", ], args)
 
    def testBuildArgs_006(self):
       """
       Test _buildBlankArgs(), default drive speed.
       """
-      args = CdWriter._buildBlankArgs(scsiId="ATA:0,0,0")
+      args = CdWriter._buildBlankArgs(hardwareId="ATA:0,0,0")
       self.failUnlessEqual(["-v", "blank=fast", "dev=ATA:0,0,0", ], args)
 
    def testBuildArgs_007(self):
       """
       Test _buildBlankArgs(), default drive speed.
       """
-      args = CdWriter._buildBlankArgs(scsiId="ATAPI:0,0,0")
+      args = CdWriter._buildBlankArgs(hardwareId="ATAPI:0,0,0")
       self.failUnlessEqual(["-v", "blank=fast", "dev=ATAPI:0,0,0", ], args)
 
    def testBuildArgs_008(self):
       """
       Test _buildBlankArgs(), with None for drive speed.
       """
-      args = CdWriter._buildBlankArgs(scsiId="0,0,0", driveSpeed=None)
+      args = CdWriter._buildBlankArgs(hardwareId="0,0,0", driveSpeed=None)
       self.failUnlessEqual(["-v", "blank=fast", "dev=0,0,0", ], args)
 
    def testBuildArgs_009(self):
       """
       Test _buildBlankArgs(), with 1 for drive speed.
       """
-      args = CdWriter._buildBlankArgs(scsiId="0,0,0", driveSpeed=1)
+      args = CdWriter._buildBlankArgs(hardwareId="0,0,0", driveSpeed=1)
       self.failUnlessEqual(["-v", "blank=fast", "speed=1", "dev=0,0,0", ], args)
 
    def testBuildArgs_010(self):
       """
       Test _buildBlankArgs(), with 5 for drive speed.
       """
-      args = CdWriter._buildBlankArgs(scsiId="ATA:1,2,3", driveSpeed=5)
+      args = CdWriter._buildBlankArgs(hardwareId="ATA:1,2,3", driveSpeed=5)
       self.failUnlessEqual(["-v", "blank=fast", "speed=5", "dev=ATA:1,2,3", ], args)
 
    def testBuildArgs_011(self):
       """
       Test _buildBlankArgs(), with 5 for drive speed.
       """
-      args = CdWriter._buildBlankArgs(scsiId="ATAPI:1,2,3", driveSpeed=5)
+      args = CdWriter._buildBlankArgs(hardwareId="ATAPI:1,2,3", driveSpeed=5)
       self.failUnlessEqual(["-v", "blank=fast", "speed=5", "dev=ATAPI:1,2,3", ], args)
 
    def testBuildArgs_012(self):
       """
       Test _buildWriteArgs(), default drive speed and writeMulti.
       """
-      args = CdWriter._buildWriteArgs(scsiId="0,0,0", imagePath="/whatever")
+      args = CdWriter._buildWriteArgs(hardwareId="0,0,0", imagePath="/whatever")
       self.failUnlessEqual(["-v", "dev=0,0,0", "-multi", "-data", "/whatever" ], args)
 
    def testBuildArgs_013(self):
       """
       Test _buildWriteArgs(), None for drive speed, True for writeMulti.
       """
-      args = CdWriter._buildWriteArgs(scsiId="0,0,0", imagePath="/whatever", driveSpeed=None, writeMulti=True)
+      args = CdWriter._buildWriteArgs(hardwareId="0,0,0", imagePath="/whatever", driveSpeed=None, writeMulti=True)
       self.failUnlessEqual(["-v", "dev=0,0,0", "-multi", "-data", "/whatever" ], args)
 
    def testBuildArgs_014(self):
       """
       Test _buildWriteArgs(), None for drive speed, False for writeMulti.
       """
-      args = CdWriter._buildWriteArgs(scsiId="0,0,0", imagePath="/whatever", driveSpeed=None, writeMulti=False)
+      args = CdWriter._buildWriteArgs(hardwareId="0,0,0", imagePath="/whatever", driveSpeed=None, writeMulti=False)
       self.failUnlessEqual(["-v", "dev=0,0,0", "-data", "/whatever" ], args)
 
    def testBuildArgs_015(self):
       """
       Test _buildWriteArgs(), 1 for drive speed, True for writeMulti.
       """
-      args = CdWriter._buildWriteArgs(scsiId="0,0,0", imagePath="/whatever", driveSpeed=1, writeMulti=True)
+      args = CdWriter._buildWriteArgs(hardwareId="0,0,0", imagePath="/whatever", driveSpeed=1, writeMulti=True)
       self.failUnlessEqual(["-v", "speed=1", "dev=0,0,0", "-multi", "-data", "/whatever" ], args)
 
    def testBuildArgs_016(self):
       """
       Test _buildWriteArgs(), 5 for drive speed, True for writeMulti.
       """
-      args = CdWriter._buildWriteArgs(scsiId="0,1,2", imagePath="/whatever", driveSpeed=5, writeMulti=True)
+      args = CdWriter._buildWriteArgs(hardwareId="0,1,2", imagePath="/whatever", driveSpeed=5, writeMulti=True)
       self.failUnlessEqual(["-v", "speed=5", "dev=0,1,2", "-multi", "-data", "/whatever" ], args)
 
    def testBuildArgs_017(self):
       """
       Test _buildWriteArgs(), 1 for drive speed, False for writeMulti.
       """
-      args = CdWriter._buildWriteArgs(scsiId="0,0,0", imagePath="/dvl/stuff/whatever/more", driveSpeed=1, writeMulti=False)
+      args = CdWriter._buildWriteArgs(hardwareId="0,0,0", imagePath="/dvl/stuff/whatever/more", driveSpeed=1, writeMulti=False)
       self.failUnlessEqual(["-v", "speed=1", "dev=0,0,0", "-data", "/dvl/stuff/whatever/more" ], args)
 
    def testBuildArgs_018(self):
       """
       Test _buildWriteArgs(), 5 for drive speed, False for writeMulti.
       """
-      args = CdWriter._buildWriteArgs(scsiId="ATA:1,2,3", imagePath="/whatever", driveSpeed=5, writeMulti=False)
+      args = CdWriter._buildWriteArgs(hardwareId="ATA:1,2,3", imagePath="/whatever", driveSpeed=5, writeMulti=False)
       self.failUnlessEqual(["-v", "speed=5", "dev=ATA:1,2,3", "-data", "/whatever" ], args)
 
    def testBuildArgs_019(self):
       """
       Test _buildWriteArgs(), 5 for drive speed, False for writeMulti.
       """
-      args = CdWriter._buildWriteArgs(scsiId="ATAPI:1,2,3", imagePath="/whatever", driveSpeed=5, writeMulti=False)
+      args = CdWriter._buildWriteArgs(hardwareId="ATAPI:1,2,3", imagePath="/whatever", driveSpeed=5, writeMulti=False)
       self.failUnlessEqual(["-v", "speed=5", "dev=ATAPI:1,2,3", "-data", "/whatever" ], args)
 
 
