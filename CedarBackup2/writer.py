@@ -108,7 +108,7 @@ def _validateDevice(device, unittest=False):
 def validateScsiId(scsiId):
    """
    Validates a SCSI id string.
-   SCSI id must be a string in the form C{[<something>:]scsibus,target,lun}.
+   SCSI id must be a string in the form C{[<method>:]scsibus,target,lun}.
    For Mac OS X (Darwin), we also accept the form C{IO.*Services[/N]}.
    @note: For consistency, if C{None} is passed in, C{None} will be returned.
    @param scsiId: SCSI id for the device.
@@ -441,7 +441,7 @@ class CdWriter(object):
       @type device: Absolute path to a filesystem device, i.e. C{/dev/cdrw}
 
       @param scsiId: SCSI id for the device (optional).
-      @type scsiId: If provided, SCSI id in the form C{[<something>:]scsibus,target,lun}
+      @type scsiId: If provided, SCSI id in the form C{[<method>:]scsibus,target,lun}
 
       @param driveSpeed: Speed at which the drive writes.
       @type driveSpeed: Use C{2} for 2x device, etc. or C{None} to use device default.
@@ -550,7 +550,7 @@ class CdWriter(object):
       return self._deviceCanEject
 
    device = property(_getDevice, None, None, doc="Filesystem device name for this writer.")
-   scsiId = property(_getScsiId, None, None, doc="SCSI id for the device, in the form C{[<something>:]scsibus,target,lun}.")
+   scsiId = property(_getScsiId, None, None, doc="SCSI id for the device, in the form C{[<method>:]scsibus,target,lun}.")
    hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer, either SCSI id or device path.");
    driveSpeed = property(_getDriveSpeed, None, None, doc="Speed at which the drive writes.")
    media = property(_getMedia, None, None, doc="Definition of media that is expected to be in the device.")
