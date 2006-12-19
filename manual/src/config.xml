@@ -1918,33 +1918,44 @@
             <varlistentry>
                <term><literal>target_scsi_id</literal></term>
                <listitem>
-                  <para>SCSI id for writer device</para>
+                  <para>SCSI id for the writer device.</para>
                   <para>
-                     In order to execute the store action, your CD-R or CD-RW
-                     drive must either be a SCSI device or must be configured
-                     to act like a SCSI device from the perspective of the
-                     <command>cdrecord</command> and <command>mkisofs</command>
-                     commands.  This value configures the SCSI id that will be
-                     used to write to your device.
+                     This value is optional.  If you have configured your CD
+                     writer hardware to work through the normal filesystem
+                     device path, then you can leave this parameter unset.
+                     Cedar Backup will just use the target device (above) when
+                     talking to <command>cdrecord</command>.
+                  </para>
+                  <para>
+                     Otherwise, if you have SCSI CD writer hardware or you have
+                     configured your non-SCSI hardware to operate like a SCSI
+                     device, then you need to provide Cedar Backup with a SCSI
+                     id it can use when talking with
+                     <command>cdrecord</command>.
                   </para>
                   <para>
                      For the purposes of Cedar Backup, a valid SCSI identifier
-                     must either be in the form
-                     <quote>scsibus,target,lun</quote>,
-                     <quote>ATA:scsibus,target,lun</quote>, or
-                     <quote>ATAPI:scsibus,target,lun</quote>.  For example,
-                     <quote>1,6,2</quote>, <quote>ATA:0,0,0</quote> and
-                     <quote>ATAPI:0,1,0</quote> are all valid identifiers.
+                     must either be in the standard SCSI identifier form
+                     <literal>scsibus,target,lun</literal> or in the
+                     specialized-method form
+                     <literal>&lt;method&gt;:scsibus,target,lun</literal>.
                   </para>
                   <para>
-                     Technically, Mac OS X identifiers are also accepted, but
-                     the syntax is not documented here because the store action
-                     is not supported for that platform.  See <xref
-                     linkend="cedar-config-scsi"/> for more information on SCSI
-                     devices and how they are configured.
+                     An example of a standard SCSI identifier is
+                     <literal>1,6,2</literal>. Today, the two most common examples
+                     of the specialized-method form are
+                     <literal>ATA:scsibus,target,lun</literal> and
+                     <literal>ATAPI:scsibus,target,lun</literal>, but you may
+                     occassionally see other values (like
+                     <literal>OLDATAPI</literal> in some forks of
+                     <command>cdrecord</command>).
                   </para>
                   <para>
-                     <emphasis>Restrictions:</emphasis> Must be a valid SCSI identifier.
+                     See <xref linkend="cedar-config-writer"/> for more
+                     information on writer devices and how they are configured.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> If set, must be a valid SCSI identifier.
                   </para>
                </listitem>
             </varlistentry>
@@ -2435,19 +2446,27 @@
          <title>Step 3: Configure your CD-R or CD-RW drive.</title>
 
          <para>
-            Your CD-R or CD-RW drive must either be a SCSI device or must be
-            configured to act like a SCSI device from the perspective of the
-            <command>cdrecord</command> and <command>mkisofs</command>
-            commands.  Regardless of what kind of drive you have, make sure you
-            know its SCSI address and its filesystem device name.  The SCSI
-            address will be used to write to media, and the device name will be
-            used when Cedar Backup needs to mount the media (for instance, when
-            a validation check must be run).
+            Before using Cedar Backup, your writer device must be properly
+            configured.  If you have configured your CD writer hardware to work
+            through the normal filesystem device path, then you just need to
+            know the path to the device on disk (something like
+            <filename>/dev/cdrw</filename>).  Cedar Backup will use the this
+            device path both when talking to <command>cdrecord</command> and
+            when doing filesystem operations like running media validation.
          </para>
 
          <para>
-            See <xref linkend="cedar-config-scsi"/> for more
-            information on SCSI devices and how they are configured.
+            Your other option is to configure your writer hardware like a SCSI
+            device (either because it <emphasis>is</emphasis> a SCSI device or
+            because you are using some sort of interface that makes it look
+            like one).  In this case, Cedar Backup will use the SCSI id when
+            talking to <command>cdrecord</command> and the device path when
+            running filesystem operations.
+         </para>
+
+         <para>
+            See <xref linkend="cedar-config-writer"/> for more information on
+            writer devices and how they are configured.
          </para>
 
          <note>
@@ -3202,19 +3221,27 @@ The key fingerprint is:
          <title>Step 3: Configure your CD-R or CD-RW drive.</title>
 
          <para>
-            Your CD-R or CD-RW drive must either be a SCSI device or must be
-            configured to act like a SCSI device from the perspective of the
-            <command>cdrecord</command> and <command>mkisofs</command>
-            commands.  Regardless of what kind of drive you have, make sure you
-            know its SCSI address and its filesystem device name.  The SCSI
-            address will be used to write to media, and the device name will be
-            used when Cedar Backup needs to mount the media (for instance, when
-            a validation check must be run).
+            Before using Cedar Backup, your writer device must be properly
+            configured.  If you have configured your CD writer hardware to work
+            through the normal filesystem device path, then you just need to
+            know the path to the device on disk (something like
+            <filename>/dev/cdrw</filename>).  Cedar Backup will use the this
+            device path both when talking to <command>cdrecord</command> and
+            when doing filesystem operations like running media validation.
          </para>
 
          <para>
-            See <xref linkend="cedar-config-scsi"/> for more
-            information on SCSI devices and how they are configured.
+            Your other option is to configure your writer hardware like a SCSI
+            device (either because it <emphasis>is</emphasis> a SCSI device or
+            because you are using some sort of interface that makes it look
+            like one).  In this case, Cedar Backup will use the SCSI id when
+            talking to <command>cdrecord</command> and the device path when
+            running filesystem operations.
+         </para>
+
+         <para>
+            See <xref linkend="cedar-config-writer"/> for more information on
+            writer devices and how they are configured.
          </para>
 
          <note>
@@ -3562,23 +3589,23 @@ The key fingerprint is:
 
    <!-- ################################################################# -->
 
-   <sect1 id="cedar-config-scsi">
+   <sect1 id="cedar-config-writer">
          
-      <title>Configuring your SCSI Device</title>
+      <title>Configuring your Writer Device</title>
 
       <sect2>
 
-         <title>SCSI Required</title>
+         <title>SCSI Devices</title>
 
          <para>
-            In order to execute the store action, your CD-R or CD-RW drive must
-            either be a SCSI device or must be configured to act like a SCSI
-            device from the perspective of the <command>cdrecord</command> and
-            <command>mkisofs</command> commands.  Regardless of what kind of drive
-            you have, make sure you know its SCSI address and its filesystem
-            device name.  The SCSI address will be used to write to media, and the
-            device name will be used when Cedar Backup needs to mount the media
-            (for instance, when a validation check must be run).
+            In order to execute the store action for a SCSI writer device, you
+            need to know the device's SCSI address and
+            <emphasis>also</emphasis> its filesystem device name.  The SCSI id
+            (&lt;target_scsi_id&gt;) will be used to write to media using
+            <command>cdrecord</command>; and the device name
+            (&lt;target_device&gt;) will be used for other filesystem
+            operations &mdash; for instance, when the media needs to be mounted
+            to run the consistency check.
          </para>
 
          <para>
@@ -3592,6 +3619,36 @@ The key fingerprint is:
          </para>
 
       </sect2>
+
+      <sect2>
+
+         <title>Non-SCSI Devices</title>
+
+         <para>
+            On some platforms, it is possible to reference non-SCSI writer
+            devices (like IDE CD writers) using an emulated SCSI id.  If you
+            have configured your non-SCSI writer device to have an emulated
+            SCSI id, provide the filesystem device path in
+            &lt;target_device&gt; and the SCSI id in &lt;target_scsi_id&gt;,
+            just like for a real SCSI device.
+         </para>
+
+         <para>
+            On other platforms, it is possible to reference non-SCSI writer
+            devices directly by filesystem device path rather than through SCSI
+            emulation.  On these platforms, you should configure Cedar Backup
+            with a &lt;target_device&gt; value but not a &lt;target_scsi_id&gt;
+            value.
+         </para>
+
+         <para>
+            You should note that in some cases, an emulated SCSI id takes the
+            same form as a normal SCSI id (<quote>scsibus,target,lun</quote>),
+            while in other cases you might see a method name prepended to the
+            normal SCSI id.
+         </para>
+
+      </sect2>
       
       <sect2>
 
@@ -3601,22 +3658,103 @@ The key fingerprint is:
             On a Linux system, IDE writer devices often have a simulated SCSI
             address, which allows SCSI-based software to access the device through
             an IDE-to-SCSI interface.  Under these circumstances, the first IDE
-            writer device typically has an address <literal>0,0,0</literal>.
-            Newer Linux systems (kernel 2.6.x) can also be compiled with support
-            for other kinds of CD drive interfaces.  If your kernel supports it,
-            you can address <firstterm>ATA</firstterm> or
+            writer device typically has an address <literal>0,0,0</literal>.  However,
+            support for the IDE-to-SCSI interface has been deprecated and is not
+            well-supported in newer kernels (kernel 2.6.x and later).
+         </para> 
+
+         <para>
+            Newer Linux kernels can address <firstterm>ATA</firstterm> or
             <firstterm>ATAPI</firstterm> drives without SCSI emulation by
-            prepending an indicator to the simulated device address, for instance
-            <literal>ATA:0,0,0</literal> or <literal>ATAPI:0,0,0</literal>.
+            prepending a <quote>method</quote> indicator to the simulated
+            device address.  For instance, <literal>ATA:0,0,0</literal> or
+            <literal>ATAPI:0,0,0</literal> are typical values.
          </para>
 
          <para>
-            A discussion of how to configure your CD writer hardware is outside
-            the scope of this document, but you may want to reference the
-            <citetitle>Linux CDROM HOWTO</citetitle> 
-            (<ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO"/>)
-            or the <citetitle>ATA RAID HOWTO</citetitle>
-            (<ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html"/>)
+            However, even this interface is deprecated as of late 2006, so with
+            relatively new kernels you may be better off using the filesystem
+            device path directly rather than relying on any SCSI emulation, as
+            discussed above.
+         </para>
+
+         <para>
+            Here are some hints about how to find your Linux hardware.  First, try to
+            reference your device using the filesystem device path:
+         </para>
+
+         <screen>
+cdrecord -prcap dev=/dev/cdrom
+         </screen>
+
+         <para>
+            Running this command on my hardware gives output that looks like
+            this (just the top few lines):
+         </para>
+         
+         <screen>
+Device type    : Removable CD-ROM
+Version        : 0
+Response Format: 2
+Capabilities   : 
+Vendor_info    : 'LITE-ON '
+Identification : 'DVDRW SOHW-1673S'
+Revision       : 'JS02'
+Device seems to be: Generic mmc2 DVD-R/DVD-RW.
+
+Drive capabilities, per MMC-3 page 2A:
+         </screen>
+
+         <para>
+            If this works, and the identifying information at the top of the
+            output looks like your CD writer device, you've probably found a
+            working configuration.  Place the device path into
+            &lt;target_device&gt; and leave &lt;target_scsi_id&gt; blank.
+         </para>
+
+         <para>
+            If this doesn't work, you should try to find an ATA or ATAPI
+            device:
+         </para>
+
+         <screen>
+cdrecord -scanbus dev=ATA
+cdrecord -scanbus dev=ATAPI
+         </screen>
+
+         <para>
+            On my development system, I get a result that looks something like
+            this for ATA:
+         </para>
+
+         <screen>
+scsibus1:
+        1,0,0   100) 'LITE-ON ' 'DVDRW SOHW-1673S' 'JS02' Removable CD-ROM
+        1,1,0   101) *
+        1,2,0   102) *
+        1,3,0   103) *
+        1,4,0   104) *
+        1,5,0   105) *
+        1,6,0   106) *
+        1,7,0   107) *
+         </screen>
+
+         <para>
+            Again, if you get a result that you recognize, you have again
+            probably found a working configuraton.  Place the associated device
+            path (in my case, <literal>/dev/cdrom</literal>) into
+            &lt;target_device&gt; and put the emulated SCSI id
+            (in this case, <literal>ATA:1,0,0</literal>) into &lt;target_scsi_id&gt;.
+         </para>
+
+         <para>
+            Any further discussion of how to configure your CD writer hardware
+            is outside the scope of this document.  If you have tried the hints
+            above and still can't get things working, you may want to reference
+            the <citetitle>Linux CDROM HOWTO</citetitle> 
+            (<ulink url="http://www.tldp.org/HOWTO/CDROM-HOWTO"/>) 
+            or the <citetitle>ATA RAID HOWTO</citetitle> 
+            (<ulink url="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html"/>) 
             for more information.
          </para>
 
