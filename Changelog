@@ -7,7 +7,8 @@ Version 2.9.0	unreleased
 	  - Make <store> config section's <target_scsi_id> parameter optional
 	  - Change CdWriter to support "hardware id" as either SCSI id or device
 	  - Implement cdrecord commands in terms of hardware id instead of SCSI id
-	  - Add documentation in writer.py to discussion how we talk to hardware
+	  - Add documentation in writer.py to discuss how we talk to hardware
+	  - Rework user manual's discussion of how to configure SCSI devices
 	* Update Cedar Backup user manual.
 	  - Re-order setup procedures to modify cron last (Debian #403662)
 	  - Fix minor typos and misspellings (Debian #403448 among others)
