@@ -400,10 +400,10 @@ def executeAction(configPath, options, config):
    @raise IOError: If there are I/O problems reading or writing files
    """
    logger.debug("Executing encrypt extended action.")
-   if config.options is None or config.staging is None:
+   if config.options is None or config.stage is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
-   dailyDirs = _findDailyDirs(stagingDir=config.staging.targetDir)
+   dailyDirs = _findDailyDirs(stagingDir=config.stage.targetDir)
    for dailyDir in dailyDirs:
       _encryptDailyDir(dailyDir, local.encrypt.encryptMode, local.encrypt.encryptTarget, 
                        config.options.backupUser, config.options.backupGroup)
