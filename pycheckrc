@@ -1,5 +1,5 @@
 # list of strings: ignore unused locals/arguments if name is one of
-unusedNames = [ 'i', 'object', 'value', 'config', 'options', 'configPath', ]
+unusedNames = [ 'i', 'object', 'value', 'config', 'options', 'configPath', 'addSelf', ]
 
 # bool:  ignore all warnings from standard library components
 #   (this includes anything under the standard library, eg, site-packages)
@@ -7,7 +7,7 @@ ignoreStandardLibrary = 1
 
 # int: warnings for code complexity, max value before generating a warning
 maxLocals = 50    # some test code has a lot of variables
-maxLines = 300    # some test code has some huge methods
+maxLines = 350    # some test code has some huge methods
 maxArgs = 15      # configuration code has a lot of method arguments
 maxReturns = 30   # configuration and cli code implement __cmp__ with lots of returns
 
