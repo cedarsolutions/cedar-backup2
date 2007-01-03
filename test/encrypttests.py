@@ -120,7 +120,8 @@ from CedarBackup2.extend.encrypt import _encryptFileWithGpg, _encryptFile, _encr
 
 DATA_DIRS = [ "./data", "./test/data", ]
 RESOURCES = [ "encrypt.conf.1", "encrypt.conf.2", "tree1.tar.gz", "tree2.tar.gz", 
-              "tree8.tar.gz", "tree15.tar.gz", "tree16.tar.gz" ]
+              "tree8.tar.gz", "tree15.tar.gz", "tree16.tar.gz", "tree17.tar.gz",
+              "tree18.tar.gz", "tree19.tar.gz", "tree20.tar.gz", ]
 
 VALID_GPG_RECIPIENT = "Kenneth J. Pronovici"
 INVALID_GPG_RECIPIENT = "Bogus J. User"
@@ -681,51 +682,58 @@ class TestFunctions(unittest.TestCase):
 
    def testFindDailyDirs_005(self):
       """
-      Test with a staging directory containing non-empty directories that do
-      NOT contain the encrypt indicator.
+      Test with a valid staging directory, where the daily directories do NOT
+      contain the encrypt indicator.
       """
-      self.extractTar("tree16")  
-      stagingDir = self.buildPath(["tree16", "dir001", ])
+      self.extractTar("tree17")  
+      stagingDir = self.buildPath(["tree17" ])
       dailyDirs = _findDailyDirs(stagingDir)
-      self.failUnlessEqual(3, len(dailyDirs))
-      self.failUnless(self.buildPath([ "tree16", "dir001", "dir001", ]) in dailyDirs)
-      self.failUnless(self.buildPath([ "tree16", "dir001", "dir002", ]) in dailyDirs)
-      self.failUnless(self.buildPath([ "tree16", "dir001", "dir003", ]) in dailyDirs)
+      self.failUnlessEqual(6, len(dailyDirs))
+      self.failUnless(self.buildPath([ "tree17", "2006", "12", "29", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree17", "2006", "12", "30", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree17", "2006", "12", "31", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree17", "2007", "01", "01", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree17", "2007", "01", "02", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree17", "2007", "01", "03", ]) in dailyDirs)
 
    def testFindDailyDirs_006(self):
       """
-      Test with a staging directory containing non-empty directories that DO
+      Test with a valid staging directory, where the daily directories DO
       contain the encrypt indicator.
       """
-      self.extractTar("tree16")
-      stagingDir = self.buildPath(["tree16", "dir002", ])
+      self.extractTar("tree18")
+      stagingDir = self.buildPath(["tree18" ])
       dailyDirs = _findDailyDirs(stagingDir)
       self.failUnlessEqual([], dailyDirs)
 
    def testFindDailyDirs_007(self):
       """
-      Test with a staging directory containing non-empty directories, where some
-      directories contain the indicator and other directories do not.
+      Test with a valid staging directory, where some daily directories contain
+      the encrypt indicator and others do not.
       """
-      self.extractTar("tree16")
-      stagingDir = self.buildPath(["tree16", "dir003", ])
+      self.extractTar("tree19")
+      stagingDir = self.buildPath(["tree19" ])
       dailyDirs = _findDailyDirs(stagingDir)
-      self.failUnlessEqual(1, len(dailyDirs))
-      self.failUnless(self.buildPath([ "tree16", "dir003", "dir001", ]) in dailyDirs)
+      self.failUnlessEqual(3, len(dailyDirs))
+      self.failUnless(self.buildPath([ "tree19", "2006", "12", "30", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree19", "2007", "01", "01", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree19", "2007", "01", "03", ]) in dailyDirs)
 
    def testFindDailyDirs_008(self):
       """
-      Test with a staging directory containing non-empty directories, where some
-      directories contain the indicator and other directories do not, plus where
-      the staging directory itself contains the indicator.
+      Test for case where directories other than daily directories contain the
+      encrypt indicator (the indicator should be ignored).
       """
-      self.extractTar("tree16")
-      stagingDir = self.buildPath(["tree16", "dir004", ])
+      self.extractTar("tree20")
+      stagingDir = self.buildPath(["tree20", ])
       dailyDirs = _findDailyDirs(stagingDir)
-      self.failUnlessEqual(3, len(dailyDirs))
-      self.failUnless(self.buildPath([ "tree16", "dir004", "dir001", ]) in dailyDirs)
-      self.failUnless(self.buildPath([ "tree16", "dir004", "dir004", ]) in dailyDirs)
-      self.failUnless(self.buildPath([ "tree16", "dir004", "dir005", ]) in dailyDirs)
+      self.failUnlessEqual(6, len(dailyDirs))
+      self.failUnless(self.buildPath([ "tree20", "2006", "12", "29", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree20", "2006", "12", "30", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree20", "2006", "12", "31", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree20", "2007", "01", "01", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree20", "2007", "01", "02", ]) in dailyDirs)
+      self.failUnless(self.buildPath([ "tree20", "2007", "01", "03", ]) in dailyDirs)
 
 
    #########################
