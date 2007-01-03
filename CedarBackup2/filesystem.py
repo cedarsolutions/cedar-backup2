@@ -1083,7 +1083,7 @@ class PurgeItemList(FilesystemList):
    # Add methods
    ##############
 
-   def addDirContents(self, path, recursive=True):
+   def addDirContents(self, path, recursive=True, addSelf=False):
       """
       Adds the contents of a directory to the list.
 
@@ -1116,6 +1116,8 @@ class PurgeItemList(FilesystemList):
 
       @param recursive: Indicates whether directory contents should be added recursively.
       @type recursive: Boolean value
+   
+      @param addSelf: Ignored in this subclass.
 
       @return: Number of items recursively added to the list
 
