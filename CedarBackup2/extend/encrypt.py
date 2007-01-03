@@ -407,7 +407,7 @@ def executeAction(configPath, options, config):
    for dailyDir in dailyDirs:
       _encryptDailyDir(dailyDir, local.encrypt.encryptMode, local.encrypt.encryptTarget, 
                        config.options.backupUser, config.options.backupGroup)
-      _writeIndicator(dailyDir, config.options.backupUser, config.options.BackupGroup)
+      _writeIndicator(dailyDir, config.options.backupUser, config.options.backupGroup)
    logger.info("Executed the encrypt extended action successfully.")
 
 
