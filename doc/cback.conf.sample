@@ -38,7 +38,7 @@
       </action>
       <action>
          <name>encrypt</name>
-         <module>CedarBackup2.extend.sysinfo</module>
+         <module>CedarBackup2.extend.encrypt</module>
          <function>executeAction</function>
          <index>199</index>   <!-- immediately before store -->
       </action>
