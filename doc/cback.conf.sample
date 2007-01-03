@@ -10,31 +10,31 @@
          <name>sysinfo</name>
          <module>CedarBackup2.extend.sysinfo</module>
          <function>executeAction</function>
-         <index>101</index>
+         <index>95</index>
       </action>
       <action>
          <name>mysql</name>
          <module>CedarBackup2.extend.mysql</module>
          <function>executeAction</function>
-         <index>102</index>
+         <index>96</index>
       </action>
       <action>
          <name>postgresql</name>
          <module>CedarBackup2.extend.postgresql</module>
          <function>executeAction</function>
-         <index>103</index>
+         <index>97</index>
       </action>
       <action>
          <name>subversion</name>
          <module>CedarBackup2.extend.subversion</module>
          <function>executeAction</function>
-         <index>104</index>
+         <index>98</index>
       </action>
       <action>
          <name>mbox</name>
          <module>CedarBackup2.extend.mbox</module>
          <function>executeAction</function>
-         <index>105</index>
+         <index>99</index>
       </action>
    </extensions>
    <options>
