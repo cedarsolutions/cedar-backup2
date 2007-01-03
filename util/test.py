@@ -183,18 +183,18 @@ def main():
    # Create and run the test suite
    print ""
    suite = unittest.TestSuite((
-#                               utiltests.suite(),
-#                               knapsacktests.suite(), 
-#                               filesystemtests.suite(),
-#                               peertests.suite(),
-#                               imagetests.suite(),
-#                               writertests.suite(),
-#                               configtests.suite(),
-#                               clitests.suite(),
-#                               mysqltests.suite(),
-#                               postgresqltests.suite(),
-#                               subversiontests.suite(),
-#                               mboxtests.suite(),
+                               utiltests.suite(),
+                               knapsacktests.suite(), 
+                               filesystemtests.suite(),
+                               peertests.suite(),
+                               imagetests.suite(),
+                               writertests.suite(),
+                               configtests.suite(),
+                               clitests.suite(),
+                               mysqltests.suite(),
+                               postgresqltests.suite(),
+                               subversiontests.suite(),
+                               mboxtests.suite(),
                                encrypttests.suite(),
                               ))
    result = unittest.TextTestRunner(verbosity=1).run(suite)
