@@ -12,5 +12,5 @@ fi
 VERSION=${1}
 
 svn diff svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP2_V${VERSION} \
-         svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/trunk
+         svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/trunk | gvim -
 
