@@ -422,21 +422,32 @@ def _findDailyDirs(stagingDir):
 
    The encrypt indicator file C{cback.encrypt} will be written to a daily
    staging directory once that directory is encrypted.  So, this function looks
-   for each daily staging directory within the configured staging directory
-   which does not contain the indicator file.
+   at each daily staging directory within the configured staging directory, and
+   returns a list of those which do not contain the indicator file.
 
    @param stagingDir: Configured staging directory (config.targetDir)
 
    @return: List of absolute paths to daily staging directories.
    """
-   dailyDirs = FilesystemList()
-   dailyDirs.excludeFiles = True
-   dailyDirs.excludeLinks = True
-   dailyDirs.addDirContents(path=stagingDir, recursive=False, addSelf=False)
-   for dailyDir in dailyDirs[:]:
-      if os.path.exists(os.path.join(dailyDir, ENCRYPT_INDICATOR)):
-         dailyDirs.remove(dailyDir)
-   return dailyDirs
+   results = FilesystemList()
+   yearDirs = FilesystemList()
+   yearDirs.excludeFiles = True
+   yearDirs.excludeLinks = True
+   yearDirs.addDirContents(path=stagingDir, recursive=False, addSelf=False)
+   for yearDir in yearDirs:
+      monthDirs = FilesystemList()
+      monthDirs.excludeFiles = True
+      monthDirs.excludeLinks = True
+      monthDirs.addDirContents(path=yearDir, recursive=False, addSelf=False)
+      for monthDir in monthDirs:
+         dailyDirs = FilesystemList()
+         dailyDirs.excludeFiles = True
+         dailyDirs.excludeLinks = True
+         dailyDirs.addDirContents(path=monthDir, recursive=False, addSelf=False)
+         for dailyDir in dailyDirs:
+            if not os.path.exists(os.path.join(dailyDir, ENCRYPT_INDICATOR)):
+               results.append(dailyDir) # just put it in the list, no fancy operations
+   return results
 
 
 #################################
