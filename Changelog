@@ -3,6 +3,8 @@ Version 2.10.0	unreleased
 	* Enhance functionality in filesystem.FilesystemList.
 	  - Add new excludeBasenamePatterns flag to FilesystemList
 	  - Add new addSelf flag to FilesystemList.addDirContents()
+	* Support encrypted staging directories (closes: #33).
+	  - Create new 'encrypt' extension and associated unit tests
 
 Version 2.9.0	18 Dec 2006
 	

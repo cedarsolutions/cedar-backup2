@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -152,6 +152,7 @@ def main():
       import test.postgresqltests as postgresqltests
       import test.subversiontests as subversiontests
       import test.mboxtests as mboxtests
+      import test.encrypttests as encrypttests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -162,9 +163,11 @@ def main():
    if "full" in sys.argv:
       os.environ["PEERTESTS_FULL"] = "Y"
       os.environ["IMAGETESTS_FULL"] = "Y"
+      os.environ["ENCRYPTTESTS_FULL"] = "Y"
    else:
       os.environ["PEERTESTS_FULL"] = "N"
       os.environ["IMAGETESTS_FULL"] = "N"
+      os.environ["ENCRYPTTESTS_FULL"] = "N"
 
    # Set up logging to discard everything
    devnull = nullDevice()
@@ -192,6 +195,7 @@ def main():
                                postgresqltests.suite(),
                                subversiontests.suite(),
                                mboxtests.suite(),
+                               encrypttests.suite(),
                               ))
    result = unittest.TextTestRunner(verbosity=1).run(suite)
    print ""
