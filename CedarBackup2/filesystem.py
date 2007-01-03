@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -84,10 +84,10 @@ class FilesystemList(list):
    can add individual files or directories to the list, or can recursively add
    the contents of a directory.  The class also allows for up-front exclusions
    in several forms (all files, all directories, all items matching a pattern,
-   or all directories containing a specific "ignore file").  Symbolic links are
-   typically backed up non-recursively, i.e. the link to a directory is backed
-   up, but not the contents of that link (we don't want to deal with recursive
-   loops, etc.).
+   all items whose basename matches a pattern, or all directories containing a
+   specific "ignore file").  Symbolic links are typically backed up
+   non-recursively, i.e. the link to a directory is backed up, but not the
+   contents of that link (we don't want to deal with recursive loops, etc.).
 
    The custom methods such as L{addFile} will only add items if they exist on
    the filesystem and do not match any exclusions that are already in place.
@@ -105,7 +105,8 @@ class FilesystemList(list):
 
    @note: Regular expression patterns that apply to paths are assumed to be
    bounded at front and back by the beginning and end of the string, i.e. they
-   are treated as if they begin with C{^} and end with C{$}.
+   are treated as if they begin with C{^} and end with C{$}.  This is true
+   whether we are matching a complete path or a basename.
 
    @note: Some platforms, like Windows, do not support soft links.  On those
    platforms, the ignore-soft-links flag can be set, but it won't do any good
@@ -114,7 +115,7 @@ class FilesystemList(list):
    @sort: __init__, addFile, addDir, addDirContents, removeFiles, removeDirs,
           removeLinks, removeMatch, removeInvalid, normalize, validate, 
           excludeFiles, excludeDirs, excludeLinks, excludePaths, 
-          excludePatterns, ignoreFile 
+          excludePatterns, excludeBasenamePatterns, ignoreFile 
    """
 
 
@@ -130,12 +131,14 @@ class FilesystemList(list):
       self._excludeLinks = False
       self._excludePaths = None
       self._excludePatterns = None
+      self._excludeBasenamePatterns = None
       self._ignoreFile = None
       self.excludeFiles = False
       self.excludeLinks = False
       self.excludeDirs = False
       self.excludePaths = []
       self.excludePatterns = []
+      self.excludeBasenamePatterns = []
       self.ignoreFile = None
 
 
@@ -223,6 +226,21 @@ class FilesystemList(list):
       """
       return self._excludePatterns
 
+   def _setExcludeBasenamePatterns(self, value):
+      """
+      Property target used to set the exclude basename patterns list.
+      A C{None} value is converted to an empty list.
+      """
+      self._excludeBasenamePatterns = []
+      if value is not None:
+         self._excludeBasenamePatterns.extend(value)
+
+   def _getExcludeBasenamePatterns(self):
+      """
+      Property target used to get the exclude basename patterns list.
+      """
+      return self._excludeBasenamePatterns
+
    def _setIgnoreFile(self, value):
       """
       Property target used to set the ignore file.
@@ -244,7 +262,10 @@ class FilesystemList(list):
    excludeDirs = property(_getExcludeDirs, _setExcludeDirs, None, "Boolean indicating whether directories should be excluded.")
    excludeLinks = property(_getExcludeLinks, _setExcludeLinks, None, "Boolean indicating whether soft links should be excluded.")
    excludePaths = property(_getExcludePaths, _setExcludePaths, None, "List of absolute paths to be excluded.")
-   excludePatterns = property(_getExcludePatterns, _setExcludePatterns, None, "List of regular expression patterns to be excluded.")
+   excludePatterns = property(_getExcludePatterns, _setExcludePatterns, None, 
+                              "List of regular expression patterns (matching complete path) to be excluded.")
+   excludeBasenamePatterns = property(_getExcludeBasenamePatterns, _setExcludeBasenamePatterns, 
+                                      None, "List of regular expression patterns (matching basename) to be excluded.")
    ignoreFile = property(_getIgnoreFile, _setIgnoreFile, None, "Name of file which will cause directory contents to be ignored.")
    
 
@@ -283,6 +304,10 @@ class FilesystemList(list):
       for pattern in self.excludePatterns:
          if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
+            return 0
+      for pattern in self.excludeBasenamePatterns:
+         if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
+            logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
             return 0
       self.append(path)
       logger.debug("Added file to list: [%s]" % path)
@@ -323,6 +348,10 @@ class FilesystemList(list):
          if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
+      for pattern in self.excludeBasenamePatterns:
+         if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
+            logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
+            return 0
       self.append(path)
       logger.debug("Added directory to list: [%s]" % path)
       return 1
@@ -347,7 +376,7 @@ class FilesystemList(list):
       only be added by name, not recursively.   Any invalid soft links (i.e.
       soft links that point to non-existent items) will be silently ignored.
 
-      @note: The L{excludeDirs} flag only controls whether any given soft link
+      @note: The L{excludeDirs} flag only controls whether any given directory
       path itself is added to the list once it has been discovered.  It does
       I{not} modify any behavior related to directory recursion.
    
@@ -396,6 +425,10 @@ class FilesystemList(list):
       for pattern in self.excludePatterns:
          if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
+            return added
+      for pattern in self.excludeBasenamePatterns:
+         if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
+            logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
             return added
       if self.ignoreFile is not None and os.path.exists(os.path.join(path, self.ignoreFile)):
          logger.debug("Path [%s] is excluded based on ignore file." % path)
@@ -540,7 +573,12 @@ class FilesystemList(list):
       is faster to call this method than to call the L{removeFiles},
       L{removeDirs} or L{removeLinks} methods individually.  If you know which
       patterns you will want to remove ahead of time, you may be better off
-      setting L{excludePatterns} before adding items to the list.
+      setting L{excludePatterns} or L{excludeBasenamePatterns} before adding
+      items to the list.
+
+      @note: Unlike when using the exclude lists, the pattern here is I{not}
+      bounded at the front and the back of the string.  You can use any pattern
+      you want.
 
       @param pattern: Regular expression pattern representing entries to remove
 
