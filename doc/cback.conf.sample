@@ -36,6 +36,12 @@
          <function>executeAction</function>
          <index>99</index>
       </action>
+      <action>
+         <name>encrypt</name>
+         <module>CedarBackup2.extend.sysinfo</module>
+         <function>executeAction</function>
+         <index>199</index>   <!-- immediately before store -->
+      </action>
    </extensions>
    <options>
       <starting_day>tuesday</starting_day>
@@ -137,4 +143,8 @@
          <compress_mode>gzip</compress_mode>
       </dir>
    </mbox>
+   <encrypt>
+      <encrypt_mode>gpg</encrypt_mode>
+      <encrypt_target>Backup User</encrypt_target>
+   </encrypt>
 </cb_config>
