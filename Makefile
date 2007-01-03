@@ -66,6 +66,7 @@ all:
 
 clean: docclean distribclean 
 	-@$(FIND) . -name "*.pyc" | xargs rm -f
+	-@rm -f PKG-INFO
 
 # This uses the "full" argument to get all tests
 test:
