@@ -445,7 +445,10 @@ def _findDailyDirs(stagingDir):
          dailyDirs.excludeLinks = True
          dailyDirs.addDirContents(path=monthDir, recursive=False, addSelf=False)
          for dailyDir in dailyDirs:
-            if not os.path.exists(os.path.join(dailyDir, ENCRYPT_INDICATOR)):
+            if os.path.exists(os.path.join(dailyDir, ENCRYPT_INDICATOR)):
+               logger.debug("Skipping directory [%s]; already encrypted." % dailyDir)
+            else:
+               logger.debug("Adding [%s] to list of directories to operate on." % dailyDir)
                results.append(dailyDir) # just put it in the list, no fancy operations
    return results
 
