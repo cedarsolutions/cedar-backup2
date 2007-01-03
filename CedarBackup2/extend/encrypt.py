@@ -448,7 +448,7 @@ def _findDailyDirs(stagingDir):
             if os.path.exists(os.path.join(dailyDir, ENCRYPT_INDICATOR)):
                logger.debug("Skipping directory [%s]; already encrypted." % dailyDir)
             else:
-               logger.debug("Adding [%s] to list of directories to operate on." % dailyDir)
+               logger.debug("Adding [%s] to list of directories to encrypt." % dailyDir)
                results.append(dailyDir) # just put it in the list, no fancy operations
    return results
 
