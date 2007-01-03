@@ -356,7 +356,7 @@ class FilesystemList(list):
       logger.debug("Added directory to list: [%s]" % path)
       return 1
 
-   def addDirContents(self, path, recursive=True):
+   def addDirContents(self, path, recursive=True, addSelf=True):
       """
       Adds the contents of a directory to the list.
 
@@ -386,6 +386,9 @@ class FilesystemList(list):
       @param recursive: Indicates whether directory contents should be added recursively.
       @type recursive: Boolean value
 
+      @param addSelf: Indicates whether the directory itself should be added to the list.
+      @type addSelf: Boolean value
+
       @return: Number of items recursively added to the list
 
       @raise ValueError: If path is not a directory or does not exist.
@@ -393,7 +396,7 @@ class FilesystemList(list):
       """
       path = encodePath(path)
       path = normalizeDir(path)
-      return self._addDirContentsInternal(path, recursive=recursive)
+      return self._addDirContentsInternal(path, recursive=recursive, includePath=addSelf)
 
    def _addDirContentsInternal(self, path, includePath=True, recursive=True):
       """

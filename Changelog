@@ -1,3 +1,9 @@
+Version 2.10.0	unreleased
+
+	* Enhance functionality in filesystem.FilesystemList.
+	  - Add new excludeBasenamePatterns flag to FilesystemList
+	  - Add new addSelf flag to FilesystemList.addDirContents()
+
 Version 2.9.0	18 Dec 2006
 	
 	* Change mbox extension to use ISO-8601 date format when calling grepmail.
