@@ -1,5 +1,6 @@
 Version 2.10.0	unreleased
 
+	* Clean up xmlutil imports in mbox and subversion extensions.
 	* Enhance functionality in filesystem.FilesystemList.
 	  - Add new excludeBasenamePatterns flag to FilesystemList
 	  - Add new addSelf flag to FilesystemList.addDirContents()
