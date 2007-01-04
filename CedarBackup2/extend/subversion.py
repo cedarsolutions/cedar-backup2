@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005 Kenneth J. Pronovici.
+# Copyright (c) 2005,2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -76,8 +76,8 @@ from bz2 import BZ2File
 from gzip import GzipFile
 
 # Cedar Backup modules
-from CedarBackup2.config import createInputDom, addContainerNode, addStringNode
-from CedarBackup2.config import isElement, readChildren, readFirstChild, readString
+from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
+from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild, readString
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
 from CedarBackup2.action import isStartOfWeek, buildNormalizedPath
 from CedarBackup2.util import resolveCommand, executeCommand
