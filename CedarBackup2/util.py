@@ -612,7 +612,7 @@ else: # _PIPE_IMPLEMENTATION == "popen2.Popen4"
 
 
 ########################################################################
-# Public functions
+# General utility functions
 ########################################################################
 
 #########################
@@ -1294,4 +1294,80 @@ def nullDevice():
          return "NUL"
       else:
          return "/dev/null"
+
+
+########################################################################
+# Functions used to portably validate certain kinds of values
+########################################################################
+
+############################
+# validateDevice() function
+############################
+
+def validateDevice(device, unittest=False):
+   """
+   Validates a configured device.
+   The device must be an absolute path, must exist, and must be writable.
+   The unittest flag turns off validation of the device on disk.
+   @param device: Filesystem device path.
+   @param unittest: Indicates whether we're unit testing.
+   @return: Device as a string, for instance C{"/dev/cdrw"}
+   @raise ValueError: If the device value is invalid.
+   @raise ValueError: If some path cannot be encoded properly.
+   """
+   device = encodePath(device)
+   if not os.path.isabs(device):
+      raise ValueError("Backup device must be an absolute path.")
+   if not unittest and not os.path.exists(device):
+      raise ValueError("Backup device must exist on disk.")
+   if not unittest and not os.access(device, os.W_OK):
+      raise ValueError("Backup device is not writable by the current user.")
+   return device
+
+
+############################
+# validateScsiId() function
+############################
+
+def validateScsiId(scsiId):
+   """
+   Validates a SCSI id string.
+   SCSI id must be a string in the form C{[<method>:]scsibus,target,lun}.
+   For Mac OS X (Darwin), we also accept the form C{IO.*Services[/N]}.
+   @note: For consistency, if C{None} is passed in, C{None} will be returned.
+   @param scsiId: SCSI id for the device.
+   @return: SCSI id as a string, for instance C{"ATA:1,0,0"}
+   @raise ValueError: If the SCSI id string is invalid.
+   """
+   if scsiId is not None:
+      pattern = re.compile(r"^\s*(.*:)?\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
+      if not pattern.search(scsiId):
+         pattern = re.compile(r"^\s*IO.*Services(\/[0-9][0-9]*)?\s*$")
+         if not pattern.search(scsiId):
+            raise ValueError("SCSI id is not in a valid form.")
+   return scsiId
+
+
+################################
+# validateDriveSpeed() function
+################################
+
+def validateDriveSpeed(driveSpeed):
+   """
+   Validates a drive speed value.
+   Drive speed must be an integer which is >= 1.
+   @note: For consistency, if C{None} is passed in, C{None} will be returned.
+   @param driveSpeed: Speed at which the drive writes.
+   @return: Drive speed as an integer
+   @raise ValueError: If the drive speed value is invalid.
+   """
+   if driveSpeed is None:
+      return None
+   try:
+      intSpeed = int(driveSpeed)
+   except TypeError:
+      raise ValueError("Drive speed must be an integer >= 1.")
+   if intSpeed < 1:
+      raise ValueError("Drive speed must an integer >= 1.")
+   return intSpeed
 

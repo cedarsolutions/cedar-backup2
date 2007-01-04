@@ -144,8 +144,7 @@ def main():
       import test.knapsacktests as knapsacktests
       import test.filesystemtests as filesystemtests
       import test.peertests as peertests
-      import test.imagetests as imagetests
-      import test.writertests as writertests
+      import test.cdwritertests as cdwritertests
       import test.configtests as configtests
       import test.clitests as clitests
       import test.mysqltests as mysqltests
@@ -162,12 +161,10 @@ def main():
    # Set flags in the environment to control tests
    if "full" in sys.argv:
       os.environ["PEERTESTS_FULL"] = "Y"
-      os.environ["IMAGETESTS_FULL"] = "Y"
-      os.environ["ENCRYPTTESTS_FULL"] = "Y"
+      os.environ["CDWRITERTESTS_FULL"] = "Y"
    else:
       os.environ["PEERTESTS_FULL"] = "N"
-      os.environ["IMAGETESTS_FULL"] = "N"
-      os.environ["ENCRYPTTESTS_FULL"] = "N"
+      os.environ["CDWRITERTESTS_FULL"] = "N"
 
    # Set up logging to discard everything
    devnull = nullDevice()
@@ -187,8 +184,7 @@ def main():
                                knapsacktests.suite(), 
                                filesystemtests.suite(),
                                peertests.suite(),
-                               imagetests.suite(),
-                               writertests.suite(),
+                               cdwritertests.suite(),
                                configtests.suite(),
                                clitests.suite(),
                                mysqltests.suite(),
