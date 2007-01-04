@@ -5,6 +5,11 @@ Version 2.10.0	unreleased
 	  - Add new addSelf flag to FilesystemList.addDirContents()
 	* Support encrypted staging directories (closes: #33).
 	  - Create new 'encrypt' extension and associated unit tests
+	* Refactor CD writer functionality and clean up code.
+	  - Combine most of image.py and writer.py into cdwriter.py
+	  - Move validate functions from writer.py to util.py
+	  - Merge writertests.py and imagetests.py into cdwritertests.py
+	  - Preserve public interface via imports in otherwise empty files
 
 Version 2.9.0	18 Dec 2006
 	

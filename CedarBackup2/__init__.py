@@ -51,6 +51,6 @@ written in the Python programming language.
 # in the __all__ variable.
 
 __all__ = [ 'release', 'cli', 'actions', 'util', 'knapsack', 
-            'filesystem', 'peer', 'image', 'writer', 'config', 
+            'filesystem', 'peer', 'cdwriter', 'config', 
             'extend', ] 
 

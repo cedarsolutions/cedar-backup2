@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -80,9 +80,9 @@ import datetime
 
 # Cedar Backup modules
 from CedarBackup2.peer import RemotePeer, LocalPeer
-from CedarBackup2.image import IsoImage
-from CedarBackup2.writer import CdWriter
-from CedarBackup2.writer import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
+from CedarBackup2.cdwriter import IsoImage
+from CedarBackup2.cdwriter import CdWriter
+from CedarBackup2.cdwriter import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 from CedarBackup2.filesystem import BackupFileList, PurgeItemList, compareContents
 from CedarBackup2.util import getUidGid, changeOwnership, mount, unmount
 from CedarBackup2.util import getFunctionReference, deviceMounted, displayBytes
