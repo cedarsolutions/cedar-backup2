@@ -58,6 +58,7 @@ Provides functionality related to CD writer devices.
 import os
 import re
 import logging
+import tempfile
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
@@ -261,6 +262,20 @@ class CdWriter(object):
       This class is implemented in terms of the C{eject} and C{cdrecord}
       programs, both of which should be available on most UN*X platforms.
 
+   Image Writer Interface
+   ======================
+
+      The following methods make up the "image writer" interface shared
+      with other kinds of writers (such as DVD writers)::
+
+         __init__
+         initializeImage()
+         addImageEntry()
+         writeImage()
+
+      Only these methods will be used by other Cedar Backup functionality
+      that expects a compatible image writer.
+
    Media Types
    ===========
 
@@ -344,14 +359,30 @@ class CdWriter(object):
           _buildOpenTrayArgs, _buildCloseTrayArgs, _buildPropertiesArgs, 
           _buildBoundariesArgs, _buildBlankArgs, _buildWriteArgs,
           device, scsiId, hardwareId, driveSpeed, media, deviceType, deviceVendor, 
-          deviceId, deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject
+          deviceId, deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject,
+          initializeImage, addImageEntry, writeImage
    """
+
+   ##############################
+   # ImageProperties inner class
+   ##############################
+
+   class ImageProperties(object):
+      """
+      Simple value object to hold image properties from L{initializeImage}.
+      """
+      def __init__(self):
+         self.entireDisc = False
+         self.tmpdir = None
+         self.capacity = None
+         self.image = None
+
 
    ##############
    # Constructor
    ##############
 
-   def __init__(self, device, scsiId, driveSpeed=None, mediaType=MEDIA_CDRW_74, unittest=False):
+   def __init__(self, device, scsiId=None, driveSpeed=None, mediaType=MEDIA_CDRW_74, unittest=False):
       """
       Initializes a CD writer object.
 
@@ -393,6 +424,7 @@ class CdWriter(object):
       @raise ValueError: If the drive speed is not an integer >= 1.
       @raise IOError: If device properties could not be read for some reason.
       """
+      self._image = None  # optionally filled in by initializeImage()
       self._device = validateDevice(device, unittest)
       self._scsiId = validateScsiId(scsiId)
       self._driveSpeed = validateDriveSpeed(driveSpeed)
@@ -631,6 +663,58 @@ class CdWriter(object):
    _calculateCapacity = staticmethod(_calculateCapacity)
 
 
+   #######################################################
+   # Methods used for working with the internal ISO image
+   #######################################################
+
+   def initializeImage(self, entireDisc, tmpdir):
+      """
+      Initializes the writer's associated ISO image.
+
+      This method initializes the C{image} instance variable so that the caller
+      can use the C{addImageEntry} method.  Once entries have been added, the
+      C{writeImage} method can be called with no arguments.
+
+      @param entireDisc: Indicates whether to return capacity for entire disc.
+      @type entireDisc: Boolean true/false
+
+      @param tmpdir: Temporary directory to use if needed
+      @type tmpdir: String representing a directory path on disk
+      """
+      self._image = CdWriter.ImageProperties()
+      self._image.entireDisc = entireDisc
+      self._image.tmpdir = encodePath(tmpdir)
+      self._image.capacity = self.retrieveCapacity(entireDisc=entireDisc)
+      logger.debug("Media capacity: %s" % displayBytes(self._image.capacity.bytesAvailable))
+      self._image.image = IsoImage(self.device, self._image.capacity.boundaries)  
+
+   def addImageEntry(self, path, graftPoint):
+      """
+      Adds a filepath entry to the writer's associated ISO image.
+
+      Underneath, this calls L{IsoImage.addEntry} with the C{override=False}
+      and C{contentsOnly=True} arguments.  Using these arguments, the contents
+      of the passed-in path -- but not the path itself -- will be added to the
+      ISO image.
+
+      See the documentation by L{IsoImage.addEntry} for more information on how
+      a graft point path is defined.
+
+      @note: Before calling this method, you must call L{initializeImage}.
+
+      @param path: File or directory to be added to the image
+      @type path: String representing a path on disk
+
+      @param graftPoint: Graft point to be used when adding this entry
+      @type graftPoint: String representing a graft point path, as described above
+
+      @raise ValueError: If initializeImage() was not previously called
+      """
+      if self._image is None:
+         raise ValueError("Must call initializeImage() before using this method.")
+      self._image.image.addEntry(path, graftPoint, override=False, contentsOnly=True)
+
+
    ######################################
    # Methods which expose device actions
    ######################################
@@ -693,24 +777,28 @@ class CdWriter(object):
       self.openTray()
       self.closeTray()
 
-   def writeImage(self, imagePath, newDisc=False, writeMulti=True):
+   def writeImage(self, imagePath=None, newDisc=False, writeMulti=True):
       """
-      Writes an ISO image to the media in the device.
+      Writes an ISO image to the media in the device.  
 
       If C{newDisc} is passed in as C{True}, we assume that the entire disc
       will be overwritten, and the media will be blanked before writing it if
-      possible (i.e. if the media is rewritable).
+      possible (i.e. if the media is rewritable).  
 
       If C{writeMulti} is passed in as C{True}, then a multisession disc will
       be written if possible (i.e. if the drive supports writing multisession
-      discs.
+      discs).
+
+      if C{imagePath} is passed in as C{None}, then the existing image
+      configured with C{initializeImage} will be used.  Under these
+      circumstances, the passed-in C{newDisc} flag will be ignored.
 
       By default, we assume that the disc can be written multisession and that
       we should append to the current contents of the disc.  In any case, the
-      ISO image must be generated appropriately (must take into account any
-      existing session boundaries, etc.)
+      ISO image must be generated appropriately (i.e. must take into account
+      any existing session boundaries, etc.)
 
-      @param imagePath: Path to an ISO image on disk.
+      @param imagePath: Path to an ISO image on disk, or C{None} to use writer's image
       @type imagePath: String representing a path on disk
 
       @param newDisc: Indicates whether the entire disc will overwritten.
@@ -722,11 +810,61 @@ class CdWriter(object):
       @raise ValueError: If the image path is not absolute.
       @raise ValueError: If some path cannot be encoded properly.
       @raise IOError: If the media could not be written to for some reason.
+      @raise ValueError: If no image is passed in and initializeImage() was not previously called
       """
-      imagePath = encodePath(imagePath)
-      if not os.path.isabs(imagePath):
-         raise ValueError("Image path must be absolute.")
-      if newDisc:
+      if imagePath is None:
+         if self._image is None:
+            raise ValueError("Must call initializeImage() before using this method with no image path.")
+         try:
+            imagePath = self._createImage()
+            self._writeImage(imagePath, writeMulti, self._image.entireDisc)
+         finally:
+            if imagePath is not None and os.path.exists(imagePath):
+               try: os.unlink(imagePath)
+               except: pass
+      else:
+         imagePath = encodePath(imagePath)
+         if not os.path.isabs(imagePath):
+            raise ValueError("Image path must be absolute.")
+         self._writeImage(imagePath, writeMulti, newDisc)
+
+   def _createImage(self):
+      """
+      Creates an ISO image based on configuration in self._image.
+      @return: Path to the newly-created ISO image on disk.
+      @raise IOError: If there is an error writing the image to disk.
+      @raise ValueError: If there are no filesystem entries in the image
+      @raise ValueError: If a path cannot be encoded properly.
+      """
+      path = None
+      size = self._image.image.getEstimatedSize()
+      logger.info("Image size will be %s." % displayBytes(size))
+      available = self._image.capacity.bytesAvailable
+      if size > available:
+         logger.error("Image [%s] does not fit in available capacity [%s]." % (displayBytes(size), displayBytes(available)))
+         raise IOError("Media does not contain enough capacity to store image.")
+      try:
+         (handle, path) = tempfile.mkstemp(dir=self._image.tmpdir)
+         try: os.close(handle)
+         except: pass
+         self._image.image.writeImage(path)
+         logger.debug("Completed creating image [%s]." % path)
+         return path
+      except Exception, e:
+         if path is not None and os.path.exists(path):
+            try: os.unlink(path)
+            except: pass
+         raise e
+
+   def _writeImage(self, imagePath, writeMulti, newDisc):
+      """
+      Write an ISO image to disc using cdrecord.
+      The disc is blanked first if C{newDisc} is C{True}.
+      @param imagePath: Path to an ISO image on disk
+      @param writeMulti: Indicates whether a multisession disc should be written, if possible.
+      @param newDisc: Indicates whether the entire disc will overwritten.
+      """
+      if newDisc: 
          self._blankMedia()
       args = CdWriter._buildWriteArgs(self.hardwareId, imagePath, self._driveSpeed, writeMulti and self._deviceSupportsMulti)
       command = resolveCommand(CDRECORD_COMMAND)
