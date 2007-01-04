@@ -80,7 +80,6 @@ import datetime
 
 # Cedar Backup modules
 from CedarBackup2.peer import RemotePeer, LocalPeer
-from CedarBackup2.cdwriter import IsoImage
 from CedarBackup2.cdwriter import CdWriter
 from CedarBackup2.cdwriter import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 from CedarBackup2.filesystem import BackupFileList, PurgeItemList, compareContents
@@ -1031,33 +1030,12 @@ def _writeImage(config, entireDisc, stagingDirs):
    @raise IOError: If there is a problem writing the image to disc.
    """
    writer = _getWriter(config)
-   capacity = writer.retrieveCapacity(entireDisc=entireDisc)
-   logger.debug("Media capacity: %s" % displayBytes(capacity.bytesAvailable))
-   image = IsoImage(writer.device, capacity.boundaries)
+   writer.initializeImage(entireDisc, config.options.workingDir)
    for stageDir in stagingDirs.keys():
       logger.debug("Adding stage directory [%s]." % stageDir)
       dateSuffix = stagingDirs[stageDir]
-      image.addEntry(path=stageDir, graftPoint=dateSuffix, contentsOnly=True)
-   imageSize = image.getEstimatedSize()
-   logger.info("Image size will be %s." % displayBytes(imageSize))
-   if imageSize > capacity.bytesAvailable:
-      logger.error("Image (%s) does not fit in available capacity (%s)." % (displayBytes(imageSize), 
-                                                                            displayBytes(capacity.bytesAvailable)))
-      raise IOError("Media does not contain enough capacity to store image.")
-   try:
-      (handle, imagePath) = tempfile.mkstemp(dir=config.options.workingDir)
-      try:
-         os.close(handle)
-      except: pass
-      image.writeImage(imagePath)
-      logger.debug("Completed creating image.")
-      writer.writeImage(imagePath, entireDisc)
-      logger.debug("Completed writing image to disc.")
-   finally:
-      if os.path.exists(imagePath): 
-         try:
-            os.unlink(imagePath)
-         except: pass
+      writer.addImageEntry(stageDir, dateSuffix)
+   writer.writeImage()
 
 def _consistencyCheck(config, stagingDirs):
    """

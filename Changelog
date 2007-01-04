@@ -11,6 +11,10 @@ Version 2.10.0	unreleased
 	  - Move validate functions from writer.py to util.py
 	  - Merge writertests.py and imagetests.py into cdwritertests.py
 	  - Preserve public interface via imports in otherwise empty files
+	* Revise and simplify the implied "image writer" interface in CdWriter.
+	  - Add the new initializeImage() and addImageEntry() methods
+	  - Interface is now initializeImage(), addImageEntry() and writeImage()
+	  - Rework _writeImage() method in action.py to use new interface
 
 Version 2.9.0	18 Dec 2006
 	
