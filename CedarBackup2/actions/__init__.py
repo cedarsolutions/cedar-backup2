@@ -10,9 +10,9 @@
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 # Language : Python (>= 2.3)
-# Project  : Cedar Backup, release 2
+# Project  : Official Cedar Backup Extensions
 # Revision : $Id$
-# Purpose  : Provides implementation of various backup-related actions.
+# Purpose  : Provides package initialization
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -21,26 +21,28 @@
 ########################################################################
 
 """
-Provides interface backwards compatibility.
+Cedar Backup actions.
 
-In Cedar Backup 2.10.0, a refactoring effort took place to reorganize the code
-for the standard actions.  The code formerly in action.py was split into
-various other files in the CedarBackup2.actions package.  This mostly-empty
-file remains to preserve the Cedar Backup 2 library interface.
+This package code related to the offical Cedar Backup actions (collect,
+stage, store, purge, rebuild, and validate).
 
-@deprecated: This functionality has been moved to the actions package.
+The action modules consist of mostly "glue" code that uses other lower-level
+functionality to actually implement a backup.  There is one module for each
+high-level backup action, plus a module that provides shared constants.
+
+All of the public action function implement the Cedar Backup Extension
+Architecture Interface, i.e. the same interface that extensions implement.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
+
 ########################################################################
-# Imported modules
+# Package initialization
 ########################################################################
 
-from CedarBackup2.actions.collect import executeCollect
-from CedarBackup2.actions.stage import executeStage
-from CedarBackup2.actions.store import executeStore
-from CedarBackup2.actions.purge import executePurge
-from CedarBackup2.actions.rebuild import executeRebuild
-from CedarBackup2.actions.validate import executeValidate
+# Using 'from CedarBackup2.actions import *' will just import the modules listed
+# in the __all__ variable.
+
+__all__ = [ 'constants', 'collect', 'stage', 'store', 'purge', 'rebuild', 'validate', ]
 

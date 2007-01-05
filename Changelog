@@ -1,20 +1,28 @@
 Version 2.10.0	unreleased
 
 	* Clean up xmlutil imports in mbox and subversion extensions.
+	* Fix rebuild action to look at store config instead of stage.
+	* Copy Mac OS X (darwin) errors from store action into rebuild action.
 	* Enhance functionality in filesystem.FilesystemList.
 	  - Add new excludeBasenamePatterns flag to FilesystemList
 	  - Add new addSelf flag to FilesystemList.addDirContents()
 	* Support encrypted staging directories (closes: #33).
 	  - Create new 'encrypt' extension and associated unit tests
+	* Refactor and clean up code that implements standard actions.
+	  - Split action.py into various other files in the actions package
+	  - Move a few of the more generic utility functions into util.py
+	  - Preserve public interface via imports in otherwise empty action.py
+	  - Change various files to import from the new module locations
 	* Refactor CD writer functionality and clean up code.
 	  - Combine most of image.py and writer.py into cdwriter.py
 	  - Move validate functions from writer.py to util.py
 	  - Merge writertests.py and imagetests.py into cdwritertests.py
 	  - Preserve public interface via imports in otherwise empty files
+	  - Change various files to import from the new module locations
 	* Revise and simplify the implied "image writer" interface in CdWriter.
 	  - Add the new initializeImage() and addImageEntry() methods
 	  - Interface is now initializeImage(), addImageEntry() and writeImage()
-	  - Rework _writeImage() method in action.py to use new interface
+	  - Rework actions.store.writeImage() to use new writer interface
 
 Version 2.9.0	18 Dec 2006
 	

@@ -90,7 +90,12 @@ from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
 from CedarBackup2.util import RestrictedContentList, PathResolverSingleton
 from CedarBackup2.util import splitCommandLine, executeCommand, getFunctionReference, getUidGid, encodePath
 from CedarBackup2.config import Config
-from CedarBackup2.action import executeCollect, executeStage, executeStore, executePurge, executeRebuild, executeValidate
+from CedarBackup2.actions.collect import executeCollect
+from CedarBackup2.actions.stage import executeStage
+from CedarBackup2.actions.store import executeStore
+from CedarBackup2.actions.purge import executePurge
+from CedarBackup2.actions.rebuild import executeRebuild
+from CedarBackup2.actions.validate import executeValidate
 
 
 ########################################################################

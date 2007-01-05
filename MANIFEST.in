@@ -7,6 +7,7 @@ include LICENSE
 include README
 include TODO
 include CedarBackup2/*.py
+include CedarBackup2/actions/*.py
 include CedarBackup2/extend/*.py
 include util/test.py
 include util/knapsackdemo.py
