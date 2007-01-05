@@ -87,10 +87,13 @@ usertest:
 # code in the system.
 
 check: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/actions/*.py CedarBackup2/extend/*.py
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/actions/*.py \
+	                                  CedarBackup2/extend/*.py CedarBackup2/writers/*.py
 
 allcheck: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/actions/*.py CedarBackup2/extend/*.py test/*.py util/*.py
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/actions/*.py \
+	                                  CedarBackup2/extend/*.py CedarBackup2/writers/*.py \
+	                                  test/*.py util/*.py
 
 
 ################
@@ -143,8 +146,7 @@ $(INTERFACE_TEMPDIR):
 # The rules in this section build a Python source distribution, and then
 # also that same source distribution named appropriately for Debian (the
 # Debian packages are maintained via cvs-buildpackage as usual).  This
-# keeps cedar-backup2 from being a Debian native package, and also making
-# it easier for someone to do an NMU if/when this ends up in Debian proper.
+# keeps cedar-backup2 from being a Debian-native package.
 
 distrib: doc sdist debdist docdist
 

@@ -14,7 +14,8 @@ Version 2.10.0	unreleased
 	  - Preserve public interface via imports in otherwise empty action.py
 	  - Change various files to import from the new module locations
 	* Refactor CD writer functionality and clean up code.
-	  - Combine most of image.py and writer.py into cdwriter.py
+	  - Create new writers package to hold all image writers
+	  - Combine most of image.py and writer.py into writers/cdwriter.py
 	  - Move validate functions from writer.py to util.py
 	  - Merge writertests.py and imagetests.py into cdwritertests.py
 	  - Preserve public interface via imports in otherwise empty files

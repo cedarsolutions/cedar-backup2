@@ -72,7 +72,7 @@ from CedarBackup2.util import validateDevice, validateScsiId, validateDriveSpeed
 # Module-wide constants and variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.log.cdwriter")
+logger = logging.getLogger("CedarBackup2.log.writers.cdwriter")
 
 MEDIA_CDRW_74  = 1
 MEDIA_CDR_74   = 2
