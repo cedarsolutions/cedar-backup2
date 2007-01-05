@@ -12,7 +12,7 @@
 # Language : Python (>= 2.3)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Provides implementation of various backup-related actions.
+# Purpose  : Provides common constants used by standard actions.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -21,26 +21,19 @@
 ########################################################################
 
 """
-Provides interface backwards compatibility.
-
-In Cedar Backup 2.10.0, a refactoring effort took place to reorganize the code
-for the standard actions.  The code formerly in action.py was split into
-various other files in the CedarBackup2.actions package.  This mostly-empty
-file remains to preserve the Cedar Backup 2 library interface.
-
-@deprecated: This functionality has been moved to the actions package.
-
+Provides common constants used by standard actions.
+@sort: DIR_TIME_FORMAT, DIGEST_EXTENSION, COLLECT_INDICATOR, STAGE_INDICATOR, STORE_INDICATOR
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
 ########################################################################
-# Imported modules
+# Module-wide constants and variables
 ########################################################################
 
-from CedarBackup2.actions.collect import executeCollect
-from CedarBackup2.actions.stage import executeStage
-from CedarBackup2.actions.store import executeStore
-from CedarBackup2.actions.purge import executePurge
-from CedarBackup2.actions.rebuild import executeRebuild
-from CedarBackup2.actions.validate import executeValidate
+DIR_TIME_FORMAT      = "%Y/%m/%d"
+DIGEST_EXTENSION     = ".sha"
+COLLECT_INDICATOR    = "cback.collect"
+STAGE_INDICATOR      = "cback.stage"
+STORE_INDICATOR      = "cback.store"
+
 

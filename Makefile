@@ -87,10 +87,10 @@ usertest:
 # code in the system.
 
 check: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/extend/*.py
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/actions/*.py CedarBackup2/extend/*.py
 
 allcheck: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/extend/*.py test/*.py util/*.py
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/actions/*.py CedarBackup2/extend/*.py test/*.py util/*.py
 
 
 ################

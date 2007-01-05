@@ -45,6 +45,8 @@ Provides general-purpose utilities.
 @sort: AbsolutePathList, ObjectTypeList, PathResolverSingleton, 
        convertSize, getUidGid, changeOwnership, splitCommandLine, 
        resolveCommand, executeCommand, calculateFileAge, encodePath, nullDevice,
+       deriveDayOfWeek, isStartOfWeek, buildNormalizedPath, 
+       validateScsiId, validateDevice, validateDriveSpeed,
        ISO_SECTOR_SIZE, BYTES_PER_SECTOR, 
        BYTES_PER_KBYTE, BYTES_PER_MBYTE, BYTES_PER_GBYTE, KBYTES_PER_MBYTE, MBYTES_PER_GBYTE, 
        SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, SECONDS_PER_DAY, 
@@ -923,7 +925,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    the L{popen2.Popen4} documentation.  If C{returnOutput} is passed in as
    C{True}, the function will return a tuple of C{(status, output)} where
    C{output} is a list of strings, one entry per line in the output from the
-   command.  Output is always logged to the C{ouputLogger.info()} target,
+   command.  Output is always logged to the C{outputLogger.info()} target,
    regardless of whether it's returned.
 
    By default, C{stdout} and C{stderr} will be intermingled in the output.
@@ -1295,6 +1297,91 @@ def nullDevice():
       else:
          return "/dev/null"
 
+
+##############################
+# deriveDayOfWeek() function
+##############################
+
+def deriveDayOfWeek(dayName):
+   """
+   Converts English day name to numeric day of week as from C{time.localtime}.
+
+   For instance, the day C{monday} would be converted to the number C{0}.
+
+   @param dayName: Day of week to convert
+   @type dayName: string, i.e. C{"monday"}, C{"tuesday"}, etc.
+
+   @returns: Integer, where Monday is 0 and Sunday is 6; or -1 if no conversion is possible.
+   """
+   if dayName.lower() == "monday":
+      return 0
+   elif dayName.lower() == "tuesday":
+      return 1
+   elif dayName.lower() == "wednesday":
+      return 2
+   elif dayName.lower() == "thursday":
+      return 3
+   elif dayName.lower() == "friday":
+      return 4
+   elif dayName.lower() == "saturday":
+      return 5
+   elif dayName.lower() == "sunday":
+      return 6
+   else:
+      return -1  # What else can we do??  Thrown an exception, I guess.
+
+
+###########################
+# isStartOfWeek() function
+###########################
+
+def isStartOfWeek(startingDay):
+   """
+   Indicates whether "today" is the backup starting day per configuration.
+
+   If the current day's English name matches the indicated starting day, then
+   today is a starting day.
+
+   @param startingDay: Configured starting day.
+   @type startingDay: string, i.e. C{"monday"}, C{"tuesday"}, etc.
+
+   @return: Boolean indicating whether today is the starting day.
+   """
+   value = time.localtime().tm_wday == deriveDayOfWeek(startingDay)
+   if value:
+      logger.debug("Today is the start of the week.")
+   else:
+      logger.debug("Today is NOT the start of the week.")
+   return value
+
+
+#################################
+# buildNormalizedPath() function
+#################################
+
+def buildNormalizedPath(absPath):
+   """
+   Returns a "normalized" path based on an absolute path.
+
+   A "normalized" path has its leading C{'/'} or C{'.'} characters removed, and
+   then converts all remaining whitespace and C{'/'} characters to the C{'_'}
+   character.   As a special case, the absolute path C{/} will be normalized to
+   just C{'-'}.
+
+   @param absPath: Absolute path
+
+   @return: Normalized path.
+   """
+   if absPath == os.sep:
+      return "-"
+   else:
+      normalized = absPath
+      normalized = re.sub("^\.", "", normalized)
+      normalized = re.sub("^\/", "", normalized)
+      normalized = re.sub("\/", "-", normalized)
+      normalized = re.sub("\s", "_", normalized)
+      return normalized
+   
 
 ########################################################################
 # Functions used to portably validate certain kinds of values
