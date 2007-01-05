@@ -9,6 +9,7 @@ include TODO
 include CedarBackup2/*.py
 include CedarBackup2/actions/*.py
 include CedarBackup2/extend/*.py
+include CedarBackup2/writers/*.py
 include util/test.py
 include util/knapsackdemo.py
 include util/docbook/*

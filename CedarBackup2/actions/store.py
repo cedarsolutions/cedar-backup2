@@ -58,8 +58,8 @@ import tempfile
 from CedarBackup2.filesystem import compareContents
 from CedarBackup2.util import isStartOfWeek, getUidGid, changeOwnership
 from CedarBackup2.util import deviceMounted, mount, unmount
-from CedarBackup2.cdwriter import CdWriter
-from CedarBackup2.cdwriter import MEDIA_CDR_74, MEDIA_CDR_80, MEDIA_CDRW_74, MEDIA_CDRW_80
+from CedarBackup2.writers.cdwriter import CdWriter
+from CedarBackup2.writers.cdwriter import MEDIA_CDR_74, MEDIA_CDR_80, MEDIA_CDRW_74, MEDIA_CDRW_80
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR, STORE_INDICATOR
 from CedarBackup2.config import DEFAULT_MEDIA_TYPE, DEFAULT_DEVICE_TYPE
 

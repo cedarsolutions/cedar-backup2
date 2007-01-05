@@ -10,9 +10,9 @@
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 # Language : Python (>= 2.3)
-# Project  : Cedar Backup, release 2
+# Project  : Official Cedar Backup Extensions
 # Revision : $Id$
-# Purpose  : Provides interface backwards compatibility.
+# Purpose  : Provides package initialization
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -21,22 +21,21 @@
 ########################################################################
 
 """
-Provides interface backwards compatibility.
+Cedar Backup writers.
 
-In Cedar Backup 2.10.0, a refactoring effort took place while adding code to
-support DVD hardware.  Since the ISO image functionality (image.py) was
-more-or-less directly tied to the CD writer implementation (writer.py), that
-functionality was consolidated into writers/cdwriter.py.  This mostly-empty
-file remains to preserve the Cedar Backup 2 library interface.
-
-@deprecated: This functionality has been moved to the writers.cdwriter module.
+This package consolidates all of the modules that implenent "image writer"
+functionality.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
+
 ########################################################################
-# Imported modules
+# Package initialization
 ########################################################################
 
-from CedarBackup2.writers.cdwriter import IsoImage
+# Using 'from CedarBackup2.writers import *' will just import the modules listed
+# in the __all__ variable.
+
+__all__ = [ 'cdwriter', ]
 

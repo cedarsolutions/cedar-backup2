@@ -26,11 +26,11 @@ Provides interface backwards compatibility.
 In Cedar Backup 2.10.0, a refactoring effort took place while adding code to
 support DVD hardware.  Since the ISO image functionality (image.py) was
 more-or-less directly tied to the CD writer implementation (writer.py), that
-functionality was consolidated into cdwriter.py.  (A few utilities were placed
-into util.py instead).  This mostly-empty file remains to preserve the Cedar
-Backup 2 library interface.
+functionality was consolidated into writers/cdwriter.py.  (A few utilities were
+placed into util.py instead).  This mostly-empty file remains to preserve the
+Cedar Backup 2 library interface.
 
-@deprecated: This functionality has been moved to the cdwriter and util modules.
+@deprecated: This functionality has been moved to the writers.cdwriter and util modules.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -40,6 +40,6 @@ Backup 2 library interface.
 ########################################################################
 
 from CedarBackup2.util import validateScsiId, validateDriveSpeed
-from CedarBackup2.cdwriter import MediaDefinition, MediaCapacity, CdWriter
-from CedarBackup2.cdwriter import MEDIA_CDRW_74, MEDIA_CDR_74, MEDIA_CDRW_80, MEDIA_CDR_80
+from CedarBackup2.writers.cdwriter import MediaDefinition, MediaCapacity, CdWriter
+from CedarBackup2.writers.cdwriter import MEDIA_CDRW_74, MEDIA_CDR_74, MEDIA_CDRW_80, MEDIA_CDR_80
 

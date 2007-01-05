@@ -38,7 +38,7 @@
 ########################################################################
 
 """
-Unit tests for CedarBackup2/cdwriter.py.
+Unit tests for CedarBackup2/writers/cdwriter.py.
 
 This code was consolidated from writertests.py and imagetests.py at the same
 time cdwriter.py was created.
@@ -116,9 +116,9 @@ import unittest
 import tempfile
 import tarfile
 
-from CedarBackup2.cdwriter import validateScsiId
-from CedarBackup2.cdwriter import MediaDefinition, MediaCapacity, CdWriter, IsoImage
-from CedarBackup2.cdwriter import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
+from CedarBackup2.writers.cdwriter import validateScsiId
+from CedarBackup2.writers.cdwriter import MediaDefinition, MediaCapacity, CdWriter, IsoImage
+from CedarBackup2.writers.cdwriter import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYTES
