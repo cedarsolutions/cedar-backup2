@@ -250,7 +250,7 @@ logger = logging.getLogger("CedarBackup2.log.config")
 DEFAULT_DEVICE_TYPE   = "cdwriter"
 DEFAULT_MEDIA_TYPE    = "cdrw-74"
 
-VALID_DEVICE_TYPES    = [ "cdwriter", ]
+VALID_DEVICE_TYPES    = [ "cdwriter", "dvdwriter", ]
 VALID_MEDIA_TYPES     = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
 VALID_COLLECT_MODES   = [ "daily", "weekly", "incr", ]
 VALID_ARCHIVE_MODES   = [ "tar", "targz", "tarbz2", ]

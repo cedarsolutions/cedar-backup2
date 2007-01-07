@@ -60,6 +60,8 @@ from CedarBackup2.util import isStartOfWeek, getUidGid, changeOwnership
 from CedarBackup2.util import deviceMounted, mount, unmount
 from CedarBackup2.writers.cdwriter import CdWriter
 from CedarBackup2.writers.cdwriter import MEDIA_CDR_74, MEDIA_CDR_80, MEDIA_CDRW_74, MEDIA_CDRW_80
+from CedarBackup2.writers.dvdwriter import DvdWriter
+from CedarBackup2.writers.dvdwriter import MEDIA_DVDPLUSR, MEDIA_DVDPLUSRW
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR, STORE_INDICATOR
 from CedarBackup2.config import DEFAULT_MEDIA_TYPE, DEFAULT_DEVICE_TYPE
 
@@ -112,10 +114,10 @@ def executeStore(configPath, options, config):
    rebuildMedia = options.full
    logger.debug("Rebuild media flag [%s]" % rebuildMedia)
    todayIsStart = isStartOfWeek(config.options.startingDay)
-   entireDisc = rebuildMedia or todayIsStart
-   logger.debug("Entire disc flag [%s]" % entireDisc)
+   newDisc = rebuildMedia or todayIsStart
+   logger.debug("New disc flag [%s]" % newDisc)
    stagingDirs = _findCorrectDailyDir(options, config)
-   writeImage(config, entireDisc, stagingDirs)
+   writeImage(config, newDisc, stagingDirs)
    if config.store.checkData:
       if sys.platform == "darwin":
          logger.warn("Warning: consistency check cannot be run successfully on Mac OS X.")
@@ -140,9 +142,8 @@ def createWriter(config):
    use.  Since all writers implement the same interface, there's no need for
    actions to care which one they're working with.
 
-   Right now, only the C{cdwriter} device type is allowed, which results in a
-   L{CdWriter} object.  An exception will be raised if any other device type is
-   used.
+   Currently, the C{cdwriter} and C{dvdwriter} device types are allowed.  An
+   exception will be raised if any other device type is used.
 
    This function also checks to make sure that the device isn't mounted before
    creating a writer object for it.  Experience shows that sometimes if the
@@ -162,6 +163,8 @@ def createWriter(config):
       raise IOError("Device [%s] is currently mounted." % (config.store.devicePath))
    if deviceType == "cdwriter":
       return CdWriter(config.store.devicePath, config.store.deviceScsiId, config.store.driveSpeed, mediaType)
+   elif deviceType == "dvdwriter":
+      return DvdWriter(config.store.devicePath, config.store.deviceScsiId, config.store.driveSpeed, mediaType)
    else:
       raise ValueError("Device type [%s] is invalid." % config.store.deviceType)
 
@@ -170,7 +173,7 @@ def createWriter(config):
 # writeImage() function
 ########################
 
-def writeImage(config, entireDisc, stagingDirs):
+def writeImage(config, newDisc, stagingDirs):
    """
    Builds and writes an ISO image containing the indicated stage directories.
 
@@ -180,14 +183,14 @@ def writeImage(config, entireDisc, stagingDirs):
    disc at C{/2005/02/10}.
 
    @param config: Config object.
-   @param entireDisc: Indicates whether entire disc should be used
+   @param newDisc: Indicates whether the disc should be re-initialized
    @param stagingDirs: Dictionary mapping directory path to date suffix.
 
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there is a problem writing the image to disc.
    """
    writer = createWriter(config)
-   writer.initializeImage(entireDisc, config.options.workingDir)
+   writer.initializeImage(newDisc, config.options.workingDir)
    for stageDir in stagingDirs.keys():
       logger.debug("Adding stage directory [%s]." % stageDir)
       dateSuffix = stagingDirs[stageDir]
@@ -379,9 +382,15 @@ def _getMediaType(config):
    Use the configured media type if not C{None}, otherwise use
    C{DEFAULT_MEDIA_TYPE}.
 
-   Once we figure out what configuration value to use, we return a media
-   type value that is valid in C{writer.py}, one of C{MEDIA_CDR_74},
-   C{MEDIA_CDRW_74}, C{MEDIA_CDR_80} or C{MEDIA_CDRW_80}.
+   Once we figure out what configuration value to use, we return a media type
+   value that is valid in one of the supported writers::
+
+      MEDIA_CDR_74
+      MEDIA_CDRW_74
+      MEDIA_CDR_80
+      MEDIA_CDRW_80
+      MEDIA_DVDPLUSR
+      MEDIA_DVDPLUSRW
 
    @param config: Config object.
 
@@ -404,6 +413,12 @@ def _getMediaType(config):
    elif mediaType == "cdrw-80":
       logger.debug("Media type is MEDIA_CDRW_80.")
       return MEDIA_CDRW_80
+   elif mediaType == "dvd+r":
+      logger.debug("Media type is MEDIA_DVDPLUSR.")
+      return MEDIA_DVDPLUSR
+   elif mediaType == "dvd+rw":
+      logger.debug("Media type is MEDIA_DVDPLUSRW.")
+      return MEDIA_DVDPLUSR
    else:
       raise ValueError("Media type [%s] is not valid." % mediaType)
 

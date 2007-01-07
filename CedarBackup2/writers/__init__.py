@@ -37,5 +37,5 @@ functionality.
 # Using 'from CedarBackup2.writers import *' will just import the modules listed
 # in the __all__ variable.
 
-__all__ = [ 'cdwriter', ]
+__all__ = [ 'cdwriter', 'dvdwriter', ]
 
