@@ -50,7 +50,7 @@ Provides general-purpose utilities.
        ISO_SECTOR_SIZE, BYTES_PER_SECTOR, 
        BYTES_PER_KBYTE, BYTES_PER_MBYTE, BYTES_PER_GBYTE, KBYTES_PER_MBYTE, MBYTES_PER_GBYTE, 
        SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY, SECONDS_PER_DAY, 
-       UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_SECTORS
+       UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES, UNIT_SECTORS
 
 @var ISO_SECTOR_SIZE: Size of an ISO image sector, in bytes.
 @var BYTES_PER_SECTOR: Number of bytes (B) per ISO sector.
@@ -66,6 +66,7 @@ Provides general-purpose utilities.
 @var UNIT_BYTES: Constant representing the byte (B) unit for conversion.
 @var UNIT_KBYTES: Constant representing the kilobyte (kB) unit for conversion.
 @var UNIT_MBYTES: Constant representing the megabyte (MB) unit for conversion.
+@var UNIT_GBYTES: Constant representing the gigabyte (GB) unit for conversion.
 @var UNIT_SECTORS: Constant representing the ISO sector unit for conversion.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
@@ -126,6 +127,7 @@ SECONDS_PER_DAY    = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY
 UNIT_BYTES         = 0
 UNIT_KBYTES        = 1
 UNIT_MBYTES        = 2
+UNIT_GBYTES        = 4
 UNIT_SECTORS       = 3
 
 MTAB_FILE          = "/etc/mtab"
@@ -632,9 +634,10 @@ def convertSize(size, fromUnit, toUnit):
    The available units are:
 
       - C{UNIT_BYTES} - Bytes
-      - C{UNIT_KBYTES} - Kilobytes, where 1kB = 1024B
-      - C{UNIT_MBYTES} - Megabytes, where 1MB = 1024kB
-      - C{UNIT_SECTORS} - Sectors, where 1 sector = 2048B
+      - C{UNIT_KBYTES} - Kilobytes, where 1 kB = 1024 B
+      - C{UNIT_MBYTES} - Megabytes, where 1 MB = 1024 kB
+      - C{UNIT_GBYTES} - Gigabytes, where 1 GB = 1024 MB
+      - C{UNIT_SECTORS} - Sectors, where 1 sector = 2048 B
 
    @param size: Size to convert
    @type size: Integer or float value in units of C{fromUnit} 
@@ -654,6 +657,8 @@ def convertSize(size, fromUnit, toUnit):
       byteSize = float(size) * BYTES_PER_KBYTE
    elif fromUnit == UNIT_MBYTES:
       byteSize = float(size) * BYTES_PER_MBYTE
+   elif fromUnit == UNIT_GBYTES:
+      byteSize = float(size) * BYTES_PER_GBYTE
    elif fromUnit == UNIT_SECTORS:
       byteSize = float(size) * BYTES_PER_SECTOR
    else:
@@ -664,6 +669,8 @@ def convertSize(size, fromUnit, toUnit):
       return byteSize / BYTES_PER_KBYTE
    elif toUnit == UNIT_MBYTES:
       return byteSize / BYTES_PER_MBYTE
+   elif toUnit == UNIT_GBYTES:
+      return byteSize / BYTES_PER_GBYTE
    elif toUnit == UNIT_SECTORS:
       return byteSize / BYTES_PER_SECTOR
    else:
