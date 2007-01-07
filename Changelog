@@ -24,6 +24,9 @@ Version 2.10.0	unreleased
 	  - Add the new initializeImage() and addImageEntry() methods
 	  - Interface is now initializeImage(), addImageEntry() and writeImage()
 	  - Rework actions.store.writeImage() to use new writer interface
+	* Add support for DVD writers and DVD+R/DVD+RW media.
+	  - Create new writers.dvdwriter module and DvdWriter class
+	  - Support 'dvdwriter' device type  target in configuration
 
 Version 2.9.0	18 Dec 2006
 	
