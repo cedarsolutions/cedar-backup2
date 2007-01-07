@@ -28,8 +28,6 @@ for the standard actions.  The code formerly in action.py was split into
 various other files in the CedarBackup2.actions package.  This mostly-empty
 file remains to preserve the Cedar Backup 2 library interface.
 
-@deprecated: This functionality has been moved to the actions package.
-
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 

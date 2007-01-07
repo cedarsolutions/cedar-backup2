@@ -29,8 +29,6 @@ more-or-less directly tied to the CD writer implementation (writer.py), that
 functionality was consolidated into writers/cdwriter.py.  This mostly-empty
 file remains to preserve the Cedar Backup 2 library interface.
 
-@deprecated: This functionality has been moved to the writers.cdwriter module.
-
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
