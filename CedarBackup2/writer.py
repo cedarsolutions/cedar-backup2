@@ -30,8 +30,6 @@ functionality was consolidated into writers/cdwriter.py.  (A few utilities were
 placed into util.py instead).  This mostly-empty file remains to preserve the
 Cedar Backup 2 library interface.
 
-@deprecated: This functionality has been moved to the writers.cdwriter and util modules.
-
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
