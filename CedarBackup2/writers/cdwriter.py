@@ -238,6 +238,21 @@ class MediaCapacity(object):
 
 
 ########################################################################
+# _ImageProperties class definition
+########################################################################
+
+class _ImageProperties(object):
+   """
+   Simple value object to hold image properties for C{DvdWriter}.
+   """
+   def __init__(self):
+      self.newDisc = False
+      self.tmpdir = None
+      self.capacity = None
+      self.image = None
+
+
+########################################################################
 # CdWriter class definition
 ########################################################################
 
@@ -362,21 +377,6 @@ class CdWriter(object):
           deviceId, deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject,
           initializeImage, addImageEntry, writeImage
    """
-
-   ##############################
-   # ImageProperties inner class
-   ##############################
-
-   class ImageProperties(object):
-      """
-      Simple value object to hold image properties from L{initializeImage}.
-      """
-      def __init__(self):
-         self.entireDisc = False
-         self.tmpdir = None
-         self.capacity = None
-         self.image = None
-
 
    ##############
    # Constructor
@@ -667,7 +667,7 @@ class CdWriter(object):
    # Methods used for working with the internal ISO image
    #######################################################
 
-   def initializeImage(self, entireDisc, tmpdir):
+   def initializeImage(self, newDisc, tmpdir):
       """
       Initializes the writer's associated ISO image.
 
@@ -675,16 +675,16 @@ class CdWriter(object):
       can use the C{addImageEntry} method.  Once entries have been added, the
       C{writeImage} method can be called with no arguments.
 
-      @param entireDisc: Indicates whether to return capacity for entire disc.
-      @type entireDisc: Boolean true/false
+      @param newDisc: Indicates whether the disc should be re-initialized
+      @type newDisc: Boolean true/false.
 
       @param tmpdir: Temporary directory to use if needed
       @type tmpdir: String representing a directory path on disk
       """
-      self._image = CdWriter.ImageProperties()
-      self._image.entireDisc = entireDisc
+      self._image = _ImageProperties()
+      self._image.newDisc = newDisc
       self._image.tmpdir = encodePath(tmpdir)
-      self._image.capacity = self.retrieveCapacity(entireDisc=entireDisc)
+      self._image.capacity = self.retrieveCapacity(entireDisc=newDisc)
       logger.debug("Media capacity: %s" % displayBytes(self._image.capacity.bytesAvailable))
       self._image.image = IsoImage(self.device, self._image.capacity.boundaries)  
 
@@ -817,7 +817,7 @@ class CdWriter(object):
             raise ValueError("Must call initializeImage() before using this method with no image path.")
          try:
             imagePath = self._createImage()
-            self._writeImage(imagePath, writeMulti, self._image.entireDisc)
+            self._writeImage(imagePath, writeMulti, self._image.newDisc)
          finally:
             if imagePath is not None and os.path.exists(imagePath):
                try: os.unlink(imagePath)
