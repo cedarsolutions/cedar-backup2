@@ -145,6 +145,7 @@ def main():
       import test.filesystemtests as filesystemtests
       import test.peertests as peertests
       import test.cdwritertests as cdwritertests
+      import test.dvdwritertests as dvdwritertests
       import test.configtests as configtests
       import test.clitests as clitests
       import test.mysqltests as mysqltests
@@ -185,6 +186,7 @@ def main():
                                filesystemtests.suite(),
                                peertests.suite(),
                                cdwritertests.suite(),
+                               dvdwritertests.suite(),
                                configtests.suite(),
                                clitests.suite(),
                                mysqltests.suite(),
