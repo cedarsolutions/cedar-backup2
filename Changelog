@@ -3,6 +3,7 @@ Version 2.10.0	unreleased
 	* Clean up xmlutil imports in mbox and subversion extensions.
 	* Fix rebuild action to look at store config instead of stage.
 	* Copy Mac OS X (darwin) errors from store action into rebuild action.
+	* Check arguments to validateScsiId better (no None path allowed now).
 	* Enhance functionality in filesystem.FilesystemList.
 	  - Add new excludeBasenamePatterns flag to FilesystemList
 	  - Add new addSelf flag to FilesystemList.addDirContents()
