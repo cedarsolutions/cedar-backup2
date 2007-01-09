@@ -1409,6 +1409,8 @@ def validateDevice(device, unittest=False):
    @raise ValueError: If the device value is invalid.
    @raise ValueError: If some path cannot be encoded properly.
    """
+   if device is None:
+      raise ValueError("Device must be filled in.")
    device = encodePath(device)
    if not os.path.isabs(device):
       raise ValueError("Backup device must be an absolute path.")
