@@ -46,9 +46,8 @@ time cdwriter.py was created.
 Code Coverage
 =============
 
-   This module contains individual tests for the public functions and classes
-   implemented in cdwriter.py.  There are also tests for some of the private
-   methods.
+   This module contains individual tests for the public classes implemented in
+   cdwriter.py.
 
    Unfortunately, it's rather difficult to test this code in an automated
    fashion, even if you have access to a physical CD writer drive.  It's even
@@ -116,7 +115,6 @@ import unittest
 import tempfile
 import tarfile
 
-from CedarBackup2.writers.cdwriter import validateScsiId
 from CedarBackup2.writers.cdwriter import MediaDefinition, MediaCapacity, CdWriter, IsoImage
 from CedarBackup2.writers.cdwriter import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
 
@@ -159,123 +157,6 @@ def runAllTests():
 #######################################################################
 # Test Case Classes
 #######################################################################
-
-######################
-# TestFunctions class
-######################
-
-class TestFunctions(unittest.TestCase):
-
-   """Tests various functions in cdwriter.py."""
-
-   def testValidateScsiId_001(self):
-      """
-      Test with simple scsibus,target,lun address.
-      """
-      scsiId = "0,0,0"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_002(self):
-      """
-      Test with simple scsibus,target,lun address containing spaces.
-      """
-      scsiId = " 0,   0, 0 "
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_003(self):
-      """
-      Test with simple ATA address.
-      """
-      scsiId = "ATA:3,2,1"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_004(self):
-      """
-      Test with simple ATA address containing spaces.
-      """
-      scsiId = "ATA: 3, 2,1  "
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_005(self):
-      """
-      Test with simple ATAPI address.
-      """
-      scsiId = "ATAPI:1,2,3"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_006(self):
-      """
-      Test with simple ATAPI address containing spaces.
-      """
-      scsiId = "  ATAPI:1,   2, 3"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_007(self):
-      """
-      Test with default-device Mac address.
-      """
-      scsiId = "IOCompactDiscServices"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_008(self):
-      """
-      Test with an alternate-device Mac address.
-      """
-      scsiId = "IOCompactDiscServices/2"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_009(self):
-      """
-      Test with an alternate-device Mac address.
-      """
-      scsiId = "IOCompactDiscServices/12"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_010(self):
-      """
-      Test with an invalid address with a missing field.
-      """
-      scsiId = "1,2"
-      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
-
-   def testValidateScsiId_011(self):
-      """
-      Test with an invalid Mac-style address with a backslash.
-      """
-      scsiId = "IOCompactDiscServices\\3"
-      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
-
-   def testValidateScsiId_012(self):
-      """
-      Test with an invalid address with an invalid prefix separator.
-      """
-      scsiId = "ATAPI;1,2,3"
-      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
-
-   def testValidateScsiId_013(self):
-      """
-      Test with an invalid address with an invalid prefix separator.
-      """
-      scsiId = "ATA-1,2,3"
-      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
-
-   def testValidateScsiId_014(self):
-      """
-      Test with a None SCSI id.
-      """
-      scsiId = None
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
 
 ############################
 # TestMediaDefinition class
@@ -3121,7 +3002,6 @@ def suite():
    """Returns a suite containing all the test cases in this module."""
    if runAllTests():
       return unittest.TestSuite((
-                                 unittest.makeSuite(TestFunctions, 'test'),
                                  unittest.makeSuite(TestMediaDefinition, 'test'),
                                  unittest.makeSuite(TestMediaCapacity, 'test'),
                                  unittest.makeSuite(TestCdWriter, 'test'),
@@ -3129,7 +3009,6 @@ def suite():
                                ))
    else:
       return unittest.TestSuite((
-                                 unittest.makeSuite(TestFunctions, 'test'),
                                  unittest.makeSuite(TestMediaDefinition, 'test'),
                                  unittest.makeSuite(TestMediaCapacity, 'test'),
                                  unittest.makeSuite(TestCdWriter, 'test'),
