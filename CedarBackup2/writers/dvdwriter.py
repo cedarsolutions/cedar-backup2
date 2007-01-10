@@ -61,7 +61,7 @@ from CedarBackup2.filesystem import BackupFileList
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, displayBytes, encodePath
 from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES, UNIT_GBYTES
-from CedarBackup2.util import validateDevice, validateScsiId, validateDriveSpeed
+from CedarBackup2.util import validateDevice, validateDriveSpeed
 
 
 ########################################################################
@@ -202,6 +202,11 @@ class DvdWriter(object):
       Only these methods will be used by other Cedar Backup functionality
       that expects a compatible image writer.
 
+      Unlike the C{CdWriter}, the C{DvdWriter} can only operate in terms of
+      filesystem devices, not SCSI devices.  So, although the constructor
+      interface accepts a SCSI device parameter for the sake of compatibility,
+      it's not used.
+
    Media Types
    ===========
 
@@ -280,9 +285,9 @@ class DvdWriter(object):
       """
       Initializes a DVD writer object.
 
-      The SCSI id is optional, but the device path is required.  If the SCSI id
-      is passed in, then the hardware id attribute will be taken from the SCSI
-      id.  Otherwise, the hardware id will be taken from the device.
+      Since C{growisofs} can only address devices using the device path (i.e.
+      C{/dev/dvd}), the hardware id will always be set based on the device.  If
+      passed in, it will be saved for reference purposes only.
 
       @note: The C{unittest} parameter should never be set to C{True}
       outside of Cedar Backup code.  It is intended for use in unit testing
@@ -291,7 +296,7 @@ class DvdWriter(object):
       @param device: Filesystem device associated with this writer.
       @type device: Absolute path to a filesystem device, i.e. C{/dev/dvd}
 
-      @param scsiId: SCSI id for the device (optional).
+      @param scsiId: SCSI id for the device (optional, for reference only).
       @type scsiId: If provided, SCSI id in the form C{[<method>:]scsibus,target,lun}
 
       @param driveSpeed: Speed at which the drive writes.
@@ -307,9 +312,11 @@ class DvdWriter(object):
       @raise ValueError: If the SCSI id is not in a valid form.
       @raise ValueError: If the drive speed is not an integer >= 1.
       """
+      if scsiId is not None:
+         logger.warn("SCSI id [%s] will be ignored by DvdWriter.")
       self._image = None  # optionally filled in by initializeImage()
       self._device = validateDevice(device, unittest)
-      self._scsiId = validateScsiId(scsiId)
+      self._scsiId = scsiId  # not validated, because it's just for reference
       self._driveSpeed = validateDriveSpeed(driveSpeed)
       self._media = MediaDefinition(mediaType)
       self._deviceHasTray = True   # just default it
@@ -336,9 +343,7 @@ class DvdWriter(object):
       """
       Property target used to get the hardware id value.
       """
-      if self._scsiId is None:
-         return self._device
-      return self._scsiId
+      return self._device
 
    def _getDriveSpeed(self):
       """
@@ -365,8 +370,8 @@ class DvdWriter(object):
       return self._deviceCanEject
 
    device = property(_getDevice, None, None, doc="Filesystem device name for this writer.")
-   scsiId = property(_getScsiId, None, None, doc="SCSI id for the device, in the form C{[<method>:]scsibus,target,lun}.")
-   hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer, either SCSI id or device path.");
+   scsiId = property(_getScsiId, None, None, doc="SCSI id for the device (saved for reference only).")
+   hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer (always the device path).");
    driveSpeed = property(_getDriveSpeed, None, None, doc="Speed at which the drive writes.")
    media = property(_getMedia, None, None, doc="Definition of media that is expected to be in the device.")
    deviceHasTray = property(_getDeviceHasTray, None, None, doc="Indicates whether the device has a media tray.")
@@ -422,9 +427,12 @@ class DvdWriter(object):
       @type graftPoint: String representing a graft point path, as described above
 
       @raise ValueError: If initializeImage() was not previously called
+      @raise ValueError: If the path is not a valid file or directory
       """
       if self._image is None:
          raise ValueError("Must call initializeImage() before using this method.")
+      if not os.path.exists(path):
+         raise ValueError("Path [%s] does not exist." % path)
       self._image.entries[path] = graftPoint
 
 
@@ -621,17 +629,22 @@ class DvdWriter(object):
 
       @raise IOError: If an overburn condition is found.
       """
-      pattern = re.compile(r"(^)(:-[(])(\s*\/.*:\s*)(.* )(blocks are free, )(.* )(to be written!)")
+      if output is None:
+         return
+      pattern = re.compile(r"(^)(:-[(])(\s*.*:\s*)(.* )(blocks are free, )(.* )(to be written!)")
       for line in output:
          match = pattern.search(line)
          if match is not None:
-            available = convertSize(float(match.group(4).strip()), UNIT_SECTORS, UNIT_BYTES)
-            size = convertSize(float(match.group(6).strip()), UNIT_SECTORS, UNIT_BYTES)
-            logger.error("Image [%s] does not fit in available capacity [%s]." % (displayBytes(size), displayBytes(available)))
+            try:
+               available = convertSize(float(match.group(4).strip()), UNIT_SECTORS, UNIT_BYTES)
+               size = convertSize(float(match.group(6).strip()), UNIT_SECTORS, UNIT_BYTES)
+               logger.error("Image [%s] does not fit in available capacity [%s]." % (displayBytes(size), displayBytes(available)))
+            except ValueError: 
+               logger.error("Image does not fit in available capacity (no useful capacity info available).")
             raise IOError("Media does not contain enough capacity to store image.")
    _searchForOverburn = staticmethod(_searchForOverburn)
          
-   def _buildWriteArgs(newDisc, hardwareId, driveSpeed=None, imagePath=None, entries=None, dryRun=False):
+   def _buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun=False):
       """
       Builds a list of arguments to be passed to a C{growisofs} command.
 
@@ -642,10 +655,11 @@ class DvdWriter(object):
       The disc will always be written with Rock Ridge extensions (-r).
 
       @param newDisc: Indicates whether the disc should be re-initialized
-      @param hardwareId: Hardware id for the device (either SCSI id or device path)
+      @param hardwareId: Hardware id for the device 
       @param driveSpeed: Speed at which the drive writes.
       @param imagePath: Path to an ISO image on disk, or c{None} to use C{entries}
       @param entries: Mapping from path to graft point, or C{None} to use C{imagePath}
+      @param dryRun: Says whether to make this a dry run (for checking capacity)
 
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
 
@@ -668,7 +682,9 @@ class DvdWriter(object):
          args.append(hardwareId)
          args.append("-r")    # Rock Ridge extensions with sane ownership and permissions
          args.append("-graft-points")
-         for key in entries.keys():
+         keys = entries.keys()
+         keys.sort() # just so we get consistent results
+         for key in keys:
             # Same syntax as when calling mkisofs in cdwriter.IsoImage
             if entries[key] is None:
                args.append(key)
