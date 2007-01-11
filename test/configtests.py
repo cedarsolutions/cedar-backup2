@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -102,7 +102,8 @@ Full vs. Reduced Tests
 import os
 import unittest
 from CedarBackup2.testutil import findResources, removedir, failUnlessAssignRaises
-from CedarBackup2.config import ActionHook, PreActionHook, PostActionHook, ExtendedAction, CommandOverride
+from CedarBackup2.config import ActionHook, PreActionHook, PostActionHook, CommandOverride
+from CedarBackup2.config import ExtendedAction, ActionDependencies
 from CedarBackup2.config import CollectFile, CollectDir, PurgeDir, LocalPeer, RemotePeer
 from CedarBackup2.config import ReferenceConfig, ExtensionsConfig, OptionsConfig
 from CedarBackup2.config import CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config
@@ -117,12 +118,871 @@ RESOURCES = [ "cback.conf.1", "cback.conf.2", "cback.conf.3", "cback.conf.4",
               "cback.conf.5", "cback.conf.6", "cback.conf.7", "cback.conf.8", 
               "cback.conf.9", "cback.conf.10", "cback.conf.11", "cback.conf.12", 
               "cback.conf.13", "cback.conf.14", "cback.conf.15", "cback.conf.16", 
-              "cback.conf.17", ]
+              "cback.conf.17", "cback.conf.18", "cback.conf.19", "cback.conf.20", ]
 
 
 #######################################################################
 # Test Case Classes
 #######################################################################
+
+###############################
+# TestActionDependencies class
+###############################
+
+class TestActionDependencies(unittest.TestCase):
+
+   """Tests for the ActionDependencies class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = ActionDependencies()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      dependencies = ActionDependencies()
+      self.failUnlessEqual(None, dependencies.beforeList)
+      self.failUnlessEqual(None, dependencies.afterList)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values.
+      """
+      dependencies = ActionDependencies(["b", ], ["a", ])
+      self.failUnlessEqual(["b", ], dependencies.beforeList)
+      self.failUnlessEqual(["a", ], dependencies.afterList)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of beforeList attribute, None value.
+      """
+      dependencies = ActionDependencies(beforeList=[])
+      self.failUnlessEqual([], dependencies.beforeList)
+      dependencies.beforeList = None
+      self.failUnlessEqual(None, dependencies.beforeList)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of beforeList attribute, empty list.
+      """
+      dependencies = ActionDependencies()
+      self.failUnlessEqual(None, dependencies.beforeList)
+      dependencies.beforeList = []
+      self.failUnlessEqual([], dependencies.beforeList)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of beforeList attribute, non-empty list, valid values.
+      """
+      dependencies = ActionDependencies()
+      self.failUnlessEqual(None, dependencies.beforeList)
+      dependencies.beforeList = ['a', 'b', ]
+      self.failUnlessEqual(['a', 'b'], dependencies.beforeList)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of beforeList attribute, non-empty list, invalid value.
+      """
+      dependencies = ActionDependencies()
+      self.failUnlessEqual(None, dependencies.beforeList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "beforeList", ["KEN", ])
+      self.failUnlessEqual(None, dependencies.beforeList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "beforeList", ["hello, world" ])
+      self.failUnlessEqual(None, dependencies.beforeList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "beforeList", ["dash-word", ])
+      self.failUnlessEqual(None, dependencies.beforeList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "beforeList", ["", ])
+      self.failUnlessEqual(None, dependencies.beforeList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "beforeList", [None, ])
+      self.failUnlessEqual(None, dependencies.beforeList)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of beforeList attribute, non-empty list, mixed values.
+      """
+      dependencies = ActionDependencies()
+      self.failUnlessEqual(None, dependencies.beforeList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "beforeList", ["ken", "dash-word", ])
+
+   def testConstructor_008(self):
+      """
+      Test assignment of afterList attribute, None value.
+      """
+      dependencies = ActionDependencies(afterList=[])
+      self.failUnlessEqual([], dependencies.afterList)
+      dependencies.afterList = None
+      self.failUnlessEqual(None, dependencies.afterList)
+
+   def testConstructor_009(self):
+      """
+      Test assignment of afterList attribute, non-empty list, valid values.
+      """
+      dependencies = ActionDependencies()
+      self.failUnlessEqual(None, dependencies.afterList)
+      dependencies.afterList = ['a', 'b', ]
+      self.failUnlessEqual(['a', 'b'], dependencies.afterList)
+
+   def testConstructor_010(self):
+      """
+      Test assignment of afterList attribute, non-empty list, invalid values.
+      """
+      dependencies = ActionDependencies()
+      self.failUnlessEqual(None, dependencies.afterList)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of afterList attribute, non-empty list, mixed values.
+      """
+      dependencies = ActionDependencies()
+      self.failUnlessEqual(None, dependencies.afterList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "afterList", ["KEN", ])
+      self.failUnlessEqual(None, dependencies.afterList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "afterList", ["hello, world" ])
+      self.failUnlessEqual(None, dependencies.afterList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "afterList", ["dash-word", ])
+      self.failUnlessEqual(None, dependencies.afterList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "afterList", ["", ])
+      self.failUnlessEqual(None, dependencies.afterList)
+      self.failUnlessAssignRaises(ValueError, dependencies, "afterList", [None, ])
+      self.failUnlessEqual(None, dependencies.afterList)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      dependencies1 = ActionDependencies()
+      dependencies2 = ActionDependencies()
+      self.failUnlessEqual(dependencies1, dependencies2)
+      self.failUnless(dependencies1 == dependencies2)
+      self.failUnless(not dependencies1 < dependencies2)
+      self.failUnless(dependencies1 <= dependencies2)
+      self.failUnless(not dependencies1 > dependencies2)
+      self.failUnless(dependencies1 >= dependencies2)
+      self.failUnless(not dependencies1 != dependencies2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      dependencies1 = ActionDependencies(beforeList=["a", ], afterList=["b", ])
+      dependencies2 = ActionDependencies(beforeList=["a", ], afterList=["b", ])
+      self.failUnlessEqual(dependencies1, dependencies2)
+      self.failUnless(dependencies1 == dependencies2)
+      self.failUnless(not dependencies1 < dependencies2)
+      self.failUnless(dependencies1 <= dependencies2)
+      self.failUnless(not dependencies1 > dependencies2)
+      self.failUnless(dependencies1 >= dependencies2)
+      self.failUnless(not dependencies1 != dependencies2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two differing objects, beforeList differs (one None).
+      """
+      dependencies1 = ActionDependencies(beforeList=None, afterList=["b", ])
+      dependencies2 = ActionDependencies(beforeList=["a", ], afterList=["b", ])
+      self.failUnless(not dependencies1 == dependencies2)
+      self.failUnless(dependencies1 < dependencies2)
+      self.failUnless(dependencies1 <= dependencies2)
+      self.failUnless(not dependencies1 > dependencies2)
+      self.failUnless(not dependencies1 >= dependencies2)
+      self.failUnless(dependencies1 != dependencies2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two differing objects, beforeList differs (one empty).
+      """
+      dependencies1 = ActionDependencies(beforeList=[], afterList=["b", ])
+      dependencies2 = ActionDependencies(beforeList=["a", ], afterList=["b", ])
+      self.failUnless(not dependencies1 == dependencies2)
+      self.failUnless(dependencies1 < dependencies2)
+      self.failUnless(dependencies1 <= dependencies2)
+      self.failUnless(not dependencies1 > dependencies2)
+      self.failUnless(not dependencies1 >= dependencies2)
+      self.failUnless(dependencies1 != dependencies2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two differing objects, beforeList differs.
+      """
+      dependencies1 = ActionDependencies(beforeList=["a", ], afterList=["b", ])
+      dependencies2 = ActionDependencies(beforeList=["b", ], afterList=["b", ])
+      self.failUnless(not dependencies1 == dependencies2)
+      self.failUnless(dependencies1 < dependencies2)
+      self.failUnless(dependencies1 <= dependencies2)
+      self.failUnless(not dependencies1 > dependencies2)
+      self.failUnless(not dependencies1 >= dependencies2)
+      self.failUnless(dependencies1 != dependencies2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two differing objects, afterList differs (one None).
+      """
+      dependencies1 = ActionDependencies(beforeList=["a", ], afterList=["b", ])
+      dependencies2 = ActionDependencies(beforeList=["a", ], afterList=None)
+      self.failIfEqual(dependencies1, dependencies2)
+      self.failUnless(not dependencies1 == dependencies2)
+      self.failUnless(not dependencies1 < dependencies2)
+      self.failUnless(not dependencies1 <= dependencies2)
+      self.failUnless(dependencies1 > dependencies2)
+      self.failUnless(dependencies1 >= dependencies2)
+      self.failUnless(dependencies1 != dependencies2)
+
+   def testComparison_007(self):
+      """
+      Test comparison of two differing objects, afterList differs (one empty).
+      """
+      dependencies1 = ActionDependencies(beforeList=["a", ], afterList=["b", ])
+      dependencies2 = ActionDependencies(beforeList=["a", ], afterList=[])
+      self.failIfEqual(dependencies1, dependencies2)
+      self.failUnless(not dependencies1 == dependencies2)
+      self.failUnless(not dependencies1 < dependencies2)
+      self.failUnless(not dependencies1 <= dependencies2)
+      self.failUnless(dependencies1 > dependencies2)
+      self.failUnless(dependencies1 >= dependencies2)
+      self.failUnless(dependencies1 != dependencies2)
+
+   def testComparison_008(self):
+      """
+      Test comparison of two differing objects, afterList differs.
+      """
+      dependencies1 = ActionDependencies(beforeList=["a", ], afterList=["b", ])
+      dependencies2 = ActionDependencies(beforeList=["a", ], afterList=["a", ])
+      self.failIfEqual(dependencies1, dependencies2)
+      self.failUnless(not dependencies1 == dependencies2)
+      self.failUnless(not dependencies1 < dependencies2)
+      self.failUnless(not dependencies1 <= dependencies2)
+      self.failUnless(dependencies1 > dependencies2)
+      self.failUnless(dependencies1 >= dependencies2)
+      self.failUnless(dependencies1 != dependencies2)
+
+
+#######################
+# TestActionHook class
+#######################
+
+class TestActionHook(unittest.TestCase):
+
+   """Tests for the ActionHook class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = ActionHook()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      hook = ActionHook()
+      self.failUnlessEqual(False, hook._before)
+      self.failUnlessEqual(False, hook._after)
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessEqual(None, hook.command)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values.
+      """
+      hook = ActionHook(action="action", command="command")
+      self.failUnlessEqual(False, hook._before)
+      self.failUnlessEqual(False, hook._after)
+      self.failUnlessEqual("action", hook.action)
+      self.failUnlessEqual("command", hook.command)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of action attribute, None value.
+      """
+      hook = ActionHook(action="action")
+      self.failUnlessEqual("action", hook.action)
+      hook.action = None
+      self.failUnlessEqual(None, hook.action)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of action attribute, valid value.
+      """
+      hook = ActionHook()
+      self.failUnlessEqual(None, hook.action)
+      hook.action = "action"
+      self.failUnlessEqual("action", hook.action)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of action attribute, invalid value.
+      """
+      hook = ActionHook()
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "KEN")
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "dash-word")
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "hello, world")
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "")
+      self.failUnlessEqual(None, hook.action)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of command attribute, None value.
+      """
+      hook = ActionHook(command="command")
+      self.failUnlessEqual("command", hook.command)
+      hook.command = None
+      self.failUnlessEqual(None, hook.command)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of command attribute, valid valid.
+      """
+      hook = ActionHook()
+      self.failUnlessEqual(None, hook.command)
+      hook.command = "command"
+      self.failUnlessEqual("command", hook.command)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of command attribute, invalid valid.
+      """
+      hook = ActionHook()
+      self.failUnlessEqual(None, hook.command)
+      self.failUnlessAssignRaises(ValueError, hook, "command", "")
+      self.failUnlessEqual(None, hook.command)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      hook1 = ActionHook()
+      hook2 = ActionHook()
+      self.failUnlessEqual(hook1, hook2)
+      self.failUnless(hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(not hook1 != hook2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      hook1 = ActionHook(action="action", command="command")
+      hook2 = ActionHook(action="action", command="command")
+      self.failUnlessEqual(hook1, hook2)
+      self.failUnless(hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(not hook1 != hook2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two different objects, action differs (one None).
+      """
+      hook1 = ActionHook(action="action", command="command")
+      hook2 = ActionHook(action=None, command="command")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(not hook1 <= hook2)
+      self.failUnless(hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two different objects, action differs.
+      """
+      hook1 = ActionHook(action="action2", command="command")
+      hook2 = ActionHook(action="action1", command="command")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(not hook1 <= hook2)
+      self.failUnless(hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two different objects, command differs (one None).
+      """
+      hook1 = ActionHook(action="action", command=None)
+      hook2 = ActionHook(action="action", command="command")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(not hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two different objects, command differs.
+      """
+      hook1 = ActionHook(action="action", command="command1")
+      hook2 = ActionHook(action="action", command="command2")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(not hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+
+##########################
+# TestPreActionHook class
+##########################
+
+class TestPreActionHook(unittest.TestCase):
+
+   """Tests for the PreActionHook class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = PreActionHook()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      hook = PreActionHook()
+      self.failUnlessEqual(True, hook._before)
+      self.failUnlessEqual(False, hook._after)
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessEqual(None, hook.command)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values.
+      """
+      hook = PreActionHook(action="action", command="command")
+      self.failUnlessEqual(True, hook._before)
+      self.failUnlessEqual(False, hook._after)
+      self.failUnlessEqual("action", hook.action)
+      self.failUnlessEqual("command", hook.command)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of action attribute, None value.
+      """
+      hook = PreActionHook(action="action")
+      self.failUnlessEqual("action", hook.action)
+      hook.action = None
+      self.failUnlessEqual(None, hook.action)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of action attribute, valid value.
+      """
+      hook = PreActionHook()
+      self.failUnlessEqual(None, hook.action)
+      hook.action = "action"
+      self.failUnlessEqual("action", hook.action)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of action attribute, invalid value.
+      """
+      hook = PreActionHook()
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "KEN")
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "dash-word")
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "hello, world")
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "")
+      self.failUnlessEqual(None, hook.action)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of command attribute, None value.
+      """
+      hook = PreActionHook(command="command")
+      self.failUnlessEqual("command", hook.command)
+      hook.command = None
+      self.failUnlessEqual(None, hook.command)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of command attribute, valid valid.
+      """
+      hook = PreActionHook()
+      self.failUnlessEqual(None, hook.command)
+      hook.command = "command"
+      self.failUnlessEqual("command", hook.command)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of command attribute, invalid valid.
+      """
+      hook = PreActionHook()
+      self.failUnlessEqual(None, hook.command)
+      self.failUnlessAssignRaises(ValueError, hook, "command", "")
+      self.failUnlessEqual(None, hook.command)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      hook1 = PreActionHook()
+      hook2 = PreActionHook()
+      self.failUnlessEqual(hook1, hook2)
+      self.failUnless(hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(not hook1 != hook2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      hook1 = PreActionHook(action="action", command="command")
+      hook2 = PreActionHook(action="action", command="command")
+      self.failUnlessEqual(hook1, hook2)
+      self.failUnless(hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(not hook1 != hook2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two different objects, action differs (one None).
+      """
+      hook1 = PreActionHook(action="action", command="command")
+      hook2 = PreActionHook(action=None, command="command")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(not hook1 <= hook2)
+      self.failUnless(hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two different objects, action differs.
+      """
+      hook1 = PreActionHook(action="action2", command="command")
+      hook2 = PreActionHook(action="action1", command="command")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(not hook1 <= hook2)
+      self.failUnless(hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two different objects, command differs (one None).
+      """
+      hook1 = PreActionHook(action="action", command=None)
+      hook2 = PreActionHook(action="action", command="command")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(not hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two different objects, command differs.
+      """
+      hook1 = PreActionHook(action="action", command="command1")
+      hook2 = PreActionHook(action="action", command="command2")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(not hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+
+###########################
+# TestPostActionHook class
+###########################
+
+class TestPostActionHook(unittest.TestCase):
+
+   """Tests for the PostActionHook class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = PostActionHook()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      hook = PostActionHook()
+      self.failUnlessEqual(False, hook._before)
+      self.failUnlessEqual(True, hook._after)
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessEqual(None, hook.command)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values.
+      """
+      hook = PostActionHook(action="action", command="command")
+      self.failUnlessEqual(False, hook._before)
+      self.failUnlessEqual(True, hook._after)
+      self.failUnlessEqual("action", hook.action)
+      self.failUnlessEqual("command", hook.command)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of action attribute, None value.
+      """
+      hook = PostActionHook(action="action")
+      self.failUnlessEqual("action", hook.action)
+      hook.action = None
+      self.failUnlessEqual(None, hook.action)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of action attribute, valid value.
+      """
+      hook = PostActionHook()
+      self.failUnlessEqual(None, hook.action)
+      hook.action = "action"
+      self.failUnlessEqual("action", hook.action)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of action attribute, invalid value.
+      """
+      hook = PostActionHook()
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "KEN")
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "dash-word")
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "hello, world")
+      self.failUnlessEqual(None, hook.action)
+      self.failUnlessAssignRaises(ValueError, hook, "action", "")
+      self.failUnlessEqual(None, hook.action)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of command attribute, None value.
+      """
+      hook = PostActionHook(command="command")
+      self.failUnlessEqual("command", hook.command)
+      hook.command = None
+      self.failUnlessEqual(None, hook.command)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of command attribute, valid valid.
+      """
+      hook = PostActionHook()
+      self.failUnlessEqual(None, hook.command)
+      hook.command = "command"
+      self.failUnlessEqual("command", hook.command)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of command attribute, invalid valid.
+      """
+      hook = PostActionHook()
+      self.failUnlessEqual(None, hook.command)
+      self.failUnlessAssignRaises(ValueError, hook, "command", "")
+      self.failUnlessEqual(None, hook.command)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      hook1 = PostActionHook()
+      hook2 = PostActionHook()
+      self.failUnlessEqual(hook1, hook2)
+      self.failUnless(hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(not hook1 != hook2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      hook1 = PostActionHook(action="action", command="command")
+      hook2 = PostActionHook(action="action", command="command")
+      self.failUnlessEqual(hook1, hook2)
+      self.failUnless(hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(not hook1 != hook2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two different objects, action differs (one None).
+      """
+      hook1 = PostActionHook(action="action", command="command")
+      hook2 = PostActionHook(action=None, command="command")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(not hook1 <= hook2)
+      self.failUnless(hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two different objects, action differs.
+      """
+      hook1 = PostActionHook(action="action2", command="command")
+      hook2 = PostActionHook(action="action1", command="command")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(not hook1 < hook2)
+      self.failUnless(not hook1 <= hook2)
+      self.failUnless(hook1 > hook2)
+      self.failUnless(hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two different objects, command differs (one None).
+      """
+      hook1 = PostActionHook(action="action", command=None)
+      hook2 = PostActionHook(action="action", command="command")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(not hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two different objects, command differs.
+      """
+      hook1 = PostActionHook(action="action", command="command1")
+      hook2 = PostActionHook(action="action", command="command2")
+      self.failUnless(not hook1 == hook2)
+      self.failUnless(hook1 < hook2)
+      self.failUnless(hook1 <= hook2)
+      self.failUnless(not hook1 > hook2)
+      self.failUnless(not hook1 >= hook2)
+      self.failUnless(hook1 != hook2)
+
 
 ###########################
 # TestExtendedAction class
@@ -167,16 +1027,18 @@ class TestExtendedAction(unittest.TestCase):
       self.failUnlessEqual(None, action.module)
       self.failUnlessEqual(None, action.function)
       self.failUnlessEqual(None, action.index)
+      self.failUnlessEqual(None, action.dependencies)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      action = ExtendedAction("one", "two", "three", 4)
+      action = ExtendedAction("one", "two", "three", 4, ActionDependencies())
       self.failUnlessEqual("one", action.name)
       self.failUnlessEqual("two", action.module)
       self.failUnlessEqual("three", action.function)
       self.failUnlessEqual(4, action.index)
+      self.failUnlessEqual(ActionDependencies(), action.dependencies)
 
    def testConstructor_003(self):
       """
@@ -328,6 +1190,60 @@ class TestExtendedAction(unittest.TestCase):
       self.failUnlessAssignRaises(ValueError, action, "function", "/BOGUS")
       self.failUnlessEqual(None, action.function)
 
+   def testConstructor_015(self):
+      """
+      Test assignment of index attribute, None value.
+      """
+      action = ExtendedAction(index=1)
+      self.failUnlessEqual(1, action.index)
+      action.index = None
+      self.failUnlessEqual(None, action.index)
+
+   def testConstructor_016(self):
+      """
+      Test assignment of index attribute, valid value.
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.index)
+      action.index = 1
+      self.failUnlessEqual(1, action.index)
+
+   def testConstructor_017(self):
+      """
+      Test assignment of index attribute, invalid value.
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.index)
+      self.failUnlessAssignRaises(ValueError, action, "index", "ken")
+      self.failUnlessEqual(None, action.index)
+
+   def testConstructor_018(self):
+      """
+      Test assignment of dependencies attribute, None value.
+      """
+      action = ExtendedAction(dependencies=ActionDependencies())
+      self.failUnlessEqual(ActionDependencies(), action.dependencies)
+      action.dependencies = None
+      self.failUnlessEqual(None, action.dependencies)
+
+   def testConstructor_019(self):
+      """
+      Test assignment of dependencies attribute, valid value.
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.dependencies)
+      action.dependencies = ActionDependencies()
+      self.failUnlessEqual(ActionDependencies(), action.dependencies)
+
+   def testConstructor_020(self):
+      """
+      Test assignment of dependencies attribute, invalid value.
+      """
+      action = ExtendedAction()
+      self.failUnlessEqual(None, action.dependencies)
+      self.failUnlessAssignRaises(ValueError, action, "dependencies", "ken")
+      self.failUnlessEqual(None, action.dependencies)
+
 
    ############################
    # Test comparison operators
@@ -351,8 +1267,8 @@ class TestExtendedAction(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      action1 = ExtendedAction("one", "two", "three", 4)
-      action2 = ExtendedAction("one", "two", "three", 4)
+      action1 = ExtendedAction("one", "two", "three", 4, ActionDependencies())
+      action2 = ExtendedAction("one", "two", "three", 4, ActionDependencies())
       self.failUnless(action1 == action2)
       self.failUnless(not action1 < action2)
       self.failUnless(action1 <= action2)
@@ -471,6 +1387,226 @@ class TestExtendedAction(unittest.TestCase):
       self.failUnless(action1 > action2)
       self.failUnless(action1 >= action2)
       self.failUnless(action1 != action2)
+
+   def testComparison_011(self):
+      """
+      Test comparison of two differing objects, dependencies differs (one None).
+      """
+      action1 = ExtendedAction()
+      action2 = ExtendedAction(dependencies=ActionDependencies())
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(action1 < action2)
+      self.failUnless(action1 <= action2)
+      self.failUnless(not action1 > action2)
+      self.failUnless(not action1 >= action2)
+      self.failUnless(action1 != action2)
+
+   def testComparison_012(self):
+      """
+      Test comparison of two differing objects, dependencies differs.
+      """
+      action1 = ExtendedAction("one", "two", "three", 99, ActionDependencies(beforeList=[]))
+      action2 = ExtendedAction("one", "two", "three", 99, ActionDependencies(beforeList=["ken", ]))
+      self.failIfEqual(action1, action2)
+      self.failUnless(not action1 == action2)
+      self.failUnless(action1 < action2)
+      self.failUnless(action1 <= action2)
+      self.failUnless(not action1 > action2)
+      self.failUnless(not action1 >= action2)
+      self.failUnless(action1 != action2)
+
+
+############################
+# TestCommandOverride class
+############################
+
+class TestCommandOverride(unittest.TestCase):
+
+   """Tests for the CommandOverride class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = CommandOverride()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      override = CommandOverride()
+      self.failUnlessEqual(None, override.command)
+      self.failUnlessEqual(None, override.absolutePath)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values.
+      """
+      override = CommandOverride(command="command", absolutePath="/path/to/something")
+      self.failUnlessEqual("command", override.command)
+      self.failUnlessEqual("/path/to/something", override.absolutePath)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of command attribute, None value.
+      """
+      override = CommandOverride(command="command")
+      self.failUnlessEqual("command", override.command)
+      override.command = None
+      self.failUnlessEqual(None, override.command)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of command attribute, valid value.
+      """
+      override = CommandOverride()
+      self.failUnlessEqual(None, override.command)
+      override.command = "command"
+      self.failUnlessEqual("command", override.command)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of command attribute, invalid value.
+      """
+      override = CommandOverride()
+      override.command = None
+      self.failUnlessAssignRaises(ValueError, override, "command", "")
+      override.command = None
+
+   def testConstructor_006(self):
+      """
+      Test assignment of absolutePath attribute, None value.
+      """
+      override = CommandOverride(absolutePath="/path/to/something")
+      self.failUnlessEqual("/path/to/something", override.absolutePath)
+      override.absolutePath = None
+      self.failUnlessEqual(None, override.absolutePath)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of absolutePath attribute, valid value.
+      """
+      override = CommandOverride()
+      self.failUnlessEqual(None, override.absolutePath)
+      override.absolutePath = "/path/to/something"
+      self.failUnlessEqual("/path/to/something", override.absolutePath)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of absolutePath attribute, invalid value.
+      """
+      override = CommandOverride()
+      override.command = None
+      self.failUnlessAssignRaises(ValueError, override, "absolutePath", "path/to/something/relative")
+      override.command = None
+      self.failUnlessAssignRaises(ValueError, override, "absolutePath", "")
+      override.command = None
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      override1 = CommandOverride()
+      override2 = CommandOverride()
+      self.failUnlessEqual(override1, override2)
+      self.failUnless(override1 == override2)
+      self.failUnless(not override1 < override2)
+      self.failUnless(override1 <= override2)
+      self.failUnless(not override1 > override2)
+      self.failUnless(override1 >= override2)
+      self.failUnless(not override1 != override2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      override1 = CommandOverride(command="command", absolutePath="/path/to/something")
+      override2 = CommandOverride(command="command", absolutePath="/path/to/something")
+      self.failUnlessEqual(override1, override2)
+      self.failUnless(override1 == override2)
+      self.failUnless(not override1 < override2)
+      self.failUnless(override1 <= override2)
+      self.failUnless(not override1 > override2)
+      self.failUnless(override1 >= override2)
+      self.failUnless(not override1 != override2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of differing objects, command differs (one None).
+      """
+      override1 = CommandOverride(command=None, absolutePath="/path/to/something")
+      override2 = CommandOverride(command="command", absolutePath="/path/to/something")
+      self.failUnless(not override1 == override2)
+      self.failUnless(override1 < override2)
+      self.failUnless(override1 <= override2)
+      self.failUnless(not override1 > override2)
+      self.failUnless(not override1 >= override2)
+      self.failUnless(override1 != override2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of differing objects, command differs.
+      """
+      override1 = CommandOverride(command="command2", absolutePath="/path/to/something")
+      override2 = CommandOverride(command="command1", absolutePath="/path/to/something")
+      self.failUnless(not override1 == override2)
+      self.failUnless(not override1 < override2)
+      self.failUnless(not override1 <= override2)
+      self.failUnless(override1 > override2)
+      self.failUnless(override1 >= override2)
+      self.failUnless(override1 != override2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of differing objects, absolutePath differs (one None).
+      """
+      override1 = CommandOverride(command="command", absolutePath="/path/to/something")
+      override2 = CommandOverride(command="command", absolutePath=None)
+      self.failUnless(not override1 == override2)
+      self.failUnless(not override1 < override2)
+      self.failUnless(not override1 <= override2)
+      self.failUnless(override1 > override2)
+      self.failUnless(override1 >= override2)
+      self.failUnless(override1 != override2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of differing objects, absolutePath differs.
+      """
+      override1 = CommandOverride(command="command", absolutePath="/path/to/something1")
+      override2 = CommandOverride(command="command", absolutePath="/path/to/something2")
+      self.failUnless(not override1 == override2)
+      self.failUnless(override1 < override2)
+      self.failUnless(override1 <= override2)
+      self.failUnless(not override1 > override2)
+      self.failUnless(not override1 >= override2)
+      self.failUnless(override1 != override2)
 
 
 ########################
@@ -2604,20 +3740,35 @@ class TestExtensionsConfig(unittest.TestCase):
       Test constructor with no values filled in.
       """
       extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.orderMode)
       self.failUnlessEqual(None, extensions.actions)
 
    def testConstructor_002(self):
       """
-      Test constructor with all values filled in, with valid values (empty list).
+      Test constructor with all values filled in, with valid values (empty list), positional arguments.
       """
-      extensions = ExtensionsConfig([])
+      extensions = ExtensionsConfig([], None)
+      self.failUnlessEqual(None, extensions.orderMode)
+      self.failUnlessEqual([], extensions.actions)
+      extensions = ExtensionsConfig([], "index")
+      self.failUnlessEqual("index", extensions.orderMode)
+      self.failUnlessEqual([], extensions.actions)
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessEqual("dependency", extensions.orderMode)
       self.failUnlessEqual([], extensions.actions)
 
    def testConstructor_003(self):
       """
-      Test constructor with all values filled in, with valid values (non-empty list).
+      Test constructor with all values filled in, with valid values (non-empty list), named arguments.
       """
-      extensions = ExtensionsConfig([ExtendedAction(), ])
+      extensions = ExtensionsConfig(orderMode=None, actions=[ExtendedAction(), ])
+      self.failUnlessEqual(None, extensions.orderMode)
+      self.failUnlessEqual([ExtendedAction(), ], extensions.actions)
+      extensions = ExtensionsConfig(orderMode="index", actions=[ExtendedAction(), ])
+      self.failUnlessEqual("index", extensions.orderMode)
+      self.failUnlessEqual([ExtendedAction(), ], extensions.actions)
+      extensions = ExtensionsConfig(orderMode="dependency", actions=[ExtendedAction(), ])
+      self.failUnlessEqual("dependency", extensions.orderMode)
       self.failUnlessEqual([ExtendedAction(), ], extensions.actions)
 
    def testConstructor_004(self):
@@ -2625,6 +3776,7 @@ class TestExtensionsConfig(unittest.TestCase):
       Test assignment of actions attribute, None value.
       """
       extensions = ExtensionsConfig([])
+      self.failUnlessEqual(None, extensions.orderMode)
       self.failUnlessEqual([], extensions.actions)
       extensions.actions = None
       self.failUnlessEqual(None, extensions.actions)
@@ -2634,6 +3786,7 @@ class TestExtensionsConfig(unittest.TestCase):
       Test assignment of actions attribute, [] value.
       """
       extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.orderMode)
       self.failUnlessEqual(None, extensions.actions)
       extensions.actions = []
       self.failUnlessEqual([], extensions.actions)
@@ -2643,6 +3796,7 @@ class TestExtensionsConfig(unittest.TestCase):
       Test assignment of actions attribute, single valid entry.
       """
       extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.orderMode)
       self.failUnlessEqual(None, extensions.actions)
       extensions.actions = [ExtendedAction(), ]
       self.failUnlessEqual([ExtendedAction(), ], extensions.actions)
@@ -2652,6 +3806,7 @@ class TestExtensionsConfig(unittest.TestCase):
       Test assignment of actions attribute, multiple valid entries.
       """
       extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.orderMode)
       self.failUnlessEqual(None, extensions.actions)
       extensions.actions = [ExtendedAction("a", "b", "c", 1), ExtendedAction("d", "e", "f", 2), ]
       self.failUnlessEqual([ExtendedAction("a", "b", "c", 1), ExtendedAction("d", "e", "f", 2), ], extensions.actions)
@@ -2662,6 +3817,7 @@ class TestExtensionsConfig(unittest.TestCase):
       ExtendedAction).
       """
       extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.orderMode)
       self.failUnlessEqual(None, extensions.actions)
       self.failUnlessAssignRaises(ValueError, extensions, "actions", [ RemotePeer(), ])
       self.failUnlessEqual(None, extensions.actions)
@@ -2671,9 +3827,45 @@ class TestExtensionsConfig(unittest.TestCase):
       Test assignment of actions attribute, mixed valid and invalid entries.
       """
       extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.orderMode)
       self.failUnlessEqual(None, extensions.actions)
       self.failUnlessAssignRaises(ValueError, extensions, "actions", [ ExtendedAction(), RemotePeer(), ])
       self.failUnlessEqual(None, extensions.actions)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of orderMode attribute, None value.
+      """
+      extensions = ExtensionsConfig(orderMode="index")
+      self.failUnlessEqual("index", extensions.orderMode)
+      self.failUnlessEqual(None, extensions.actions)
+      extensions.orderMode = None
+      self.failUnlessEqual(None, extensions.orderMode)
+
+   def testConstructor_012(self):
+      """
+      Test assignment of orderMode attribute, valid values.
+      """
+      extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.orderMode)
+      self.failUnlessEqual(None, extensions.actions)
+      extensions.orderMode = "index"
+      self.failUnlessEqual("index", extensions.orderMode)
+      extensions.orderMode = "dependency"
+      self.failUnlessEqual("dependency", extensions.orderMode)
+
+   def testConstructor_013(self):
+      """
+      Test assignment of orderMode attribute, invalid values.
+      """
+      extensions = ExtensionsConfig()
+      self.failUnlessEqual(None, extensions.orderMode)
+      self.failUnlessEqual(None, extensions.actions)
+      self.failUnlessAssignRaises(ValueError, extensions, "orderMode", "")
+      self.failUnlessAssignRaises(ValueError, extensions, "orderMode", "bogus")
+      self.failUnlessAssignRaises(ValueError, extensions, "orderMode", "indexes")
+      self.failUnlessAssignRaises(ValueError, extensions, "orderMode", "indices")
+      self.failUnlessAssignRaises(ValueError, extensions, "orderMode", "dependencies")
 
 
    ############################
@@ -2699,8 +3891,8 @@ class TestExtensionsConfig(unittest.TestCase):
       Test comparison of two identical objects, all attributes non-None (empty
       lists).
       """
-      extensions1 = ExtensionsConfig([])
-      extensions2 = ExtensionsConfig([])
+      extensions1 = ExtensionsConfig([], "index")
+      extensions2 = ExtensionsConfig([], "index")
       self.failUnlessEqual(extensions1, extensions2)
       self.failUnless(extensions1 == extensions2)
       self.failUnless(not extensions1 < extensions2)
@@ -2714,8 +3906,8 @@ class TestExtensionsConfig(unittest.TestCase):
       Test comparison of two identical objects, all attributes non-None
       (non-empty lists).
       """
-      extensions1 = ExtensionsConfig([ExtendedAction(), ])
-      extensions2 = ExtensionsConfig([ExtendedAction(), ])
+      extensions1 = ExtensionsConfig([ExtendedAction(), ], "index")
+      extensions2 = ExtensionsConfig([ExtendedAction(), ], "index")
       self.failUnlessEqual(extensions1, extensions2)
       self.failUnless(extensions1 == extensions2)
       self.failUnless(not extensions1 < extensions2)
@@ -2776,6 +3968,34 @@ class TestExtensionsConfig(unittest.TestCase):
       """
       extensions1 = ExtensionsConfig([ExtendedAction(name="one"), ])
       extensions2 = ExtensionsConfig([ExtendedAction(name="two"), ])
+      self.failIfEqual(extensions1, extensions2)
+      self.failUnless(not extensions1 == extensions2)
+      self.failUnless(extensions1 < extensions2)
+      self.failUnless(extensions1 <= extensions2)
+      self.failUnless(not extensions1 > extensions2)
+      self.failUnless(not extensions1 >= extensions2)
+      self.failUnless(extensions1 != extensions2)
+
+   def testComparison_008(self):
+      """
+      Test comparison of differing objects, orderMode differs (one None).
+      """
+      extensions1 = ExtensionsConfig([], None)
+      extensions2 = ExtensionsConfig([], "index")
+      self.failIfEqual(extensions1, extensions2)
+      self.failUnless(not extensions1 == extensions2)
+      self.failUnless(extensions1 < extensions2)
+      self.failUnless(extensions1 <= extensions2)
+      self.failUnless(not extensions1 > extensions2)
+      self.failUnless(not extensions1 >= extensions2)
+      self.failUnless(extensions1 != extensions2)
+
+   def testComparison_009(self):
+      """
+      Test comparison of differing objects, orderMode differs.
+      """
+      extensions1 = ExtensionsConfig([], "dependency")
+      extensions2 = ExtensionsConfig([], "index")
       self.failIfEqual(extensions1, extensions2)
       self.failUnless(not extensions1 == extensions2)
       self.failUnless(extensions1 < extensions2)
@@ -6235,6 +7455,56 @@ class TestConfig(unittest.TestCase):
       self.failUnless(config1 != config2)
 
 
+   #########################
+   # Test certain utilities 
+   #########################
+
+   def testUtilities_001(self):
+      """
+      Test _parseCommaSeparatedString() for a None string.
+      """
+      actual = Config._parseCommaSeparatedString(None)
+      self.failUnlessEqual(None, actual)
+
+   def testUtilities_002(self):
+      """
+      Test _parseCommaSeparatedString() for an empty string.
+      """
+      actual = Config._parseCommaSeparatedString("")
+      self.failUnlessEqual([], actual)
+
+   def testUtilities_003(self):
+      """
+      Test _parseCommaSeparatedString() for a string with one value.
+      """
+      actual = Config._parseCommaSeparatedString("ken")
+      self.failUnlessEqual(["ken", ], actual)
+
+   def testUtilities_004(self):
+      """ 
+      Test _parseCommaSeparatedString() for a string with multiple values, no
+      spaces.
+      """
+      actual = Config._parseCommaSeparatedString("a,b,c")
+      self.failUnlessEqual(["a", "b", "c", ], actual)
+
+   def testUtilities_005(self):
+      """ 
+      Test _parseCommaSeparatedString() for a string with multiple values, with
+      spaces.
+      """
+      actual = Config._parseCommaSeparatedString("a, b, c")
+      self.failUnlessEqual(["a", "b", "c", ], actual)
+
+   def testUtilities_006(self):
+      """ 
+      Test _parseCommaSeparatedString() for a string with multiple values,
+      worst-case kind of value.
+      """
+      actual = Config._parseCommaSeparatedString("   one,  two,three,   four , five   , six,   seven,,eight    ,")
+      self.failUnlessEqual(["one", "two", "three", "four", "five", "six", "seven", "eight", ], actual)
+
+
    ######################
    # Test validate logic 
    ######################
@@ -6261,6 +7531,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = None
       config.extensions.actions = None
       config._validateExtensions()
 
@@ -6270,6 +7541,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = None
       config.extensions.actions = []
       config._validateExtensions()
 
@@ -6279,6 +7551,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = None
       config.extensions.actions = [ExtendedAction(), ]
       self.failUnlessRaises(ValueError, config._validateExtensions)
 
@@ -6289,6 +7562,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = None
       config.extensions.actions = [ExtendedAction(name="name"), ]
       self.failUnlessRaises(ValueError, config._validateExtensions)
 
@@ -6299,6 +7573,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = None
       config.extensions.actions = [ExtendedAction(module="module"), ]
       self.failUnlessRaises(ValueError, config._validateExtensions)
 
@@ -6309,6 +7584,7 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = None
       config.extensions.actions = [ExtendedAction(function="function"), ]
       self.failUnlessRaises(ValueError, config._validateExtensions)
 
@@ -6319,38 +7595,90 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = None
       config.extensions.actions = [ExtendedAction(index=12), ]
       self.failUnlessRaises(ValueError, config._validateExtensions)
 
    def testValidate_010(self):
       """
       Test validate on an a extensions section, with one extended action that
-      makes sense, no index.
+      makes sense, index order mode.
       """
       config = Config()
       config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = "index"
       config.extensions.actions = [ ExtendedAction("one", "two", "three", 100) ]
       config._validateExtensions()
 
    def testValidate_011(self):
       """
       Test validate on an a extensions section, with one extended action that
-      makes sense, with an index.
+      makes sense, dependency order mode.
       """
       config = Config()
       config.extensions = ExtensionsConfig()
-      config.extensions.actions = [ ExtendedAction("one", "two", "three", 4) ]
+      config.extensions.orderMode = "dependency"
+      config.extensions.actions = [ ExtendedAction("one", "two", "three", dependencies=ActionDependencies()) ]
       config._validateExtensions()
 
    def testValidate_012(self):
       """
       Test validate on an a extensions section, with several extended actions
-      that make sense.
+      that make sense for various kinds of order modes.
       """
       config = Config()
+
       config.extensions = ExtensionsConfig()
-      config.extensions.actions = [ ExtendedAction("a", "b", "c", 1), ExtendedAction("e", "f", "g", 10) ]
+      config.extensions.orderMode = None
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", 1), ExtendedAction("e", "f", "g", 10), ]
       config._validateExtensions()
+
+      config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = "index"
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", 1), ExtendedAction("e", "f", "g", 10), ]
+      config._validateExtensions()
+
+      config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = "dependency"
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", dependencies=ActionDependencies()), 
+                                    ExtendedAction("e", "f", "g", dependencies=ActionDependencies()), ]
+      config._validateExtensions()
+
+   def testValidate_012a(self):
+      """
+      Test validate on an a extensions section, with several extended actions
+      that don't have the proper ordering modes.
+      """
+      config = Config()
+
+      config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = None
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", dependencies=ActionDependencies()), 
+                                    ExtendedAction("e", "f", "g", dependencies=ActionDependencies()), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+      config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = "index"
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", dependencies=ActionDependencies()), 
+                                    ExtendedAction("e", "f", "g", dependencies=ActionDependencies()), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+      config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = "dependency"
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", 100), ExtendedAction("e", "f", "g", 12), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+      config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = "index"
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", 12), 
+                                    ExtendedAction("e", "f", "g", dependencies=ActionDependencies()), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+      config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = "dependency"
+      config.extensions.actions = [ ExtendedAction("a", "b", "c", dependencies=ActionDependencies()), 
+                                    ExtendedAction("e", "f", "g", 12), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
 
    def testValidate_013(self):
       """
@@ -6970,7 +8298,7 @@ class TestConfig(unittest.TestCase):
    def testParse_007(self):
       """
       Parse config document containing only a extensions section, containing
-      all fields, validate=False.
+      only required fields, validate=False.
       """
       path = self.resources["cback.conf.16"]
       config = Config(xmlPath=path, validate=False)
@@ -6983,13 +8311,74 @@ class TestConfig(unittest.TestCase):
    def testParse_008(self):
       """
       Parse config document containing only a extensions section, containing
-      all fields, validate=True.
+      only required fields, validate=True.
       """
       path = self.resources["cback.conf.16"]
       self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
-   # testParse_009 has been removed
-   # testParse_010 has been removed
+   def testParse_009(self):
+      """
+      Parse config document containing only a extensions section, containing
+      all fields, order mode is "index", validate=False.
+      """
+      path = self.resources["cback.conf.18"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.extensions = ExtensionsConfig()
+      expected.extensions.orderMode = "index"
+      expected.extensions.actions = []
+      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 1))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_009a(self):
+      """
+      Parse config document containing only a extensions section, containing
+      all fields, order mode is "dependency", validate=False.
+      """
+      path = self.resources["cback.conf.19"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.extensions = ExtensionsConfig()
+      expected.extensions.orderMode = "dependency"
+      expected.extensions.actions = []
+      expected.extensions.actions.append(ExtendedAction("sysinfo", "CedarBackup2.extend.sysinfo", "executeAction", 
+                                                        index=None, 
+                                                        dependencies=ActionDependencies()))
+      expected.extensions.actions.append(ExtendedAction("mysql", "CedarBackup2.extend.mysql", "executeAction", 
+                                                        index=None, 
+                                                        dependencies=ActionDependencies()))
+      expected.extensions.actions.append(ExtendedAction("postgresql", "CedarBackup2.extend.postgresql", "executeAction", 
+                                                        index=None, 
+                                                        dependencies=ActionDependencies(beforeList=["one",])))
+      expected.extensions.actions.append(ExtendedAction("subversion", "CedarBackup2.extend.subversion", "executeAction", 
+                                                        index=None, 
+                                                        dependencies=ActionDependencies(afterList=["one",])))
+      expected.extensions.actions.append(ExtendedAction("mbox", "CedarBackup2.extend.mbox", "executeAction", 
+                                                        index=None, 
+                                                        dependencies=ActionDependencies(beforeList=["one",], afterList=["one",])))
+      expected.extensions.actions.append(ExtendedAction("encrypt", "CedarBackup2.extend.encrypt", "executeAction", 
+                                                        index=None, 
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c", "d",],
+                                                                                        afterList=["one", "two", "three",
+                                                                                                   "four", "five", "six",
+                                                                                                   "seven", "eight",])))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_010(self):
+      """
+      Parse config document containing only a extensions section, containing
+      all fields, order mode is "index", validate=True.
+      """
+      path = self.resources["cback.conf.18"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_010a(self):
+      """
+      Parse config document containing only a extensions section, containing
+      all fields, order mode is "dependency", validate=True.
+      """
+      path = self.resources["cback.conf.19"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
 
    def testParse_011(self):
       """
@@ -7244,7 +8633,7 @@ class TestConfig(unittest.TestCase):
 
    def testParse_031(self):
       """
-      Parse complete document containing all required and optional fields,
+      Parse complete document containing all required and optional fields, "index" extensions,
       validate=False.
       """
       path = self.resources["cback.conf.15"]
@@ -7252,6 +8641,7 @@ class TestConfig(unittest.TestCase):
       expected = Config()
       expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration", "Generated by hand.")
       expected.extensions = ExtensionsConfig()
+      expected.extensions.orderMode = "index"
       expected.extensions.actions = []
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
@@ -7298,9 +8688,69 @@ class TestConfig(unittest.TestCase):
       expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
       self.failUnlessEqual(expected, config)
 
+   def testParse_031a(self):
+      """
+      Parse complete document containing all required and optional fields, "dependency" extensions,
+      validate=False.
+      """
+      path = self.resources["cback.conf.20"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration", "Generated by hand.")
+      expected.extensions = ExtensionsConfig()
+      expected.extensions.orderMode = "dependency"
+      expected.extensions.actions = []
+      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", index=None,
+                                                        dependencies=ActionDependencies()))
+      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
+                                                                                        afterList=["one",])))
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
+      expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
+      expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
+      expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
+      expected.collect.collectFiles = []
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectDirs = []
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      collectDir = CollectDir(absolutePath="/opt")
+      collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
+      collectDir.relativeExcludePaths = [ "large", "backup", ]
+      collectDir.excludePatterns = [ ".*\.doc\.*", ".*\.xls\.*", ]
+      expected.collect.collectDirs.append(collectDir)
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = []
+      expected.stage.remotePeers = []
+      expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
+      expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      expected.store = StoreConfig()
+      expected.store.sourceDir = "/opt/backup/staging"
+      expected.store.mediaType = "cdrw-74"
+      expected.store.deviceType = "cdwriter"
+      expected.store.devicePath = "/dev/cdrw"
+      expected.store.deviceScsiId = None
+      expected.store.driveSpeed = 4
+      expected.store.checkData = True
+      expected.store.warnMidnite = True
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = []
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
+      expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
+      self.failUnlessEqual(expected, config)
+
    def testParse_032(self):
       """
-      Parse complete document containing all required and optional fields,
+      Parse complete document containing all required and optional fields, "index" extensions,
       validate=True.
       """
       path = self.resources["cback.conf.15"]
@@ -7308,6 +8758,7 @@ class TestConfig(unittest.TestCase):
       expected = Config()
       expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration", "Generated by hand.")
       expected.extensions = ExtensionsConfig()
+      expected.extensions.orderMode = "index"
       expected.extensions.actions = []
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
@@ -7326,6 +8777,66 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
+      collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
+      collectDir.relativeExcludePaths = [ "large", "backup", ]
+      collectDir.excludePatterns = [ ".*\.doc\.*", ".*\.xls\.*", ]
+      expected.collect.collectDirs.append(collectDir)
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = []
+      expected.stage.remotePeers = []
+      expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
+      expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      expected.store = StoreConfig()
+      expected.store.sourceDir = "/opt/backup/staging"
+      expected.store.mediaType = "cdrw-74"
+      expected.store.deviceType = "cdwriter"
+      expected.store.devicePath = "/dev/cdrw"
+      expected.store.deviceScsiId = None
+      expected.store.driveSpeed = 4
+      expected.store.checkData = True
+      expected.store.warnMidnite = True
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = []
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
+      expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_032a(self):
+      """
+      Parse complete document containing all required and optional fields, "dependency" extensions,
+      validate=True.
+      """
+      path = self.resources["cback.conf.20"]
+      config = Config(xmlPath=path, validate=True)
+      expected = Config()
+      expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration", "Generated by hand.")
+      expected.extensions = ExtensionsConfig()
+      expected.extensions.orderMode = "dependency"
+      expected.extensions.actions = []
+      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", index=None,
+                                                        dependencies=ActionDependencies()))
+      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
+                                                                                        afterList=["one",])))
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
+      expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
+      expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
+      expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
+      expected.collect.collectFiles = []
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectDirs = []
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      collectDir = CollectDir(absolutePath="/opt") 
       collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
       collectDir.relativeExcludePaths = [ "large", "backup", ]
       collectDir.excludePatterns = [ ".*\.doc\.*", ".*\.xls\.*", ]
@@ -7474,28 +8985,43 @@ class TestConfig(unittest.TestCase):
    def testExtractXml_005(self):
       """
       Extract document containing only a valid extensions section, empty list,
-      validate=True.
+      orderMode=None, validate=True.
       """
       before = Config()
       before.extensions = ExtensionsConfig()
+      before.extensions.orderMode = None
       before.extensions.actions = []
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
    def testExtractXml_006(self):
       """
       Extract document containing only a valid extensions section,
-      validate=True.
+      non-empty list and orderMode="index", validate=True.
       """
       before = Config()
       before.extensions = ExtensionsConfig()
+      before.extensions.orderMode = "index"
       before.extensions.actions = []
       before.extensions.actions.append(ExtendedAction("name", "module", "function", 1))
+      self.failUnlessRaises(ValueError, before.extractXml, validate=True)
+
+   def testExtractXml_006a(self):
+      """
+      Extract document containing only a valid extensions section,
+      non-empty list and orderMode="dependency", validate=True.
+      """
+      before = Config()
+      before.extensions = ExtensionsConfig()
+      before.extensions.orderMode = "dependency"
+      before.extensions.actions = []
+      before.extensions.actions.append(ExtendedAction("name", "module", "function", 
+                                                      dependencies=ActionDependencies(beforeList=["b",], afterList=["a",])))
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
    def testExtractXml_007(self):
       """
       Extract document containing only a valid extensions section, empty list,
-      validate=False.
+      orderMode=None, validate=False.
       """
       before = Config()
       before.extensions = ExtensionsConfig()
@@ -7506,10 +9032,11 @@ class TestConfig(unittest.TestCase):
    def testExtractXml_008(self):
       """
       Extract document containing only a valid extensions section,
-      validate=False.
+      orderMode="index", validate=False.
       """
       before = Config()
       before.extensions = ExtensionsConfig()
+      before.extensions.orderMode = "index"
       before.extensions.actions = []
       before.extensions.actions.append(ExtendedAction("name", "module", "function", 1))
       beforeXml = before.extractXml(validate=False)
@@ -7911,7 +9438,7 @@ class TestConfig(unittest.TestCase):
 
    def testExtractXml_037(self):
       """
-      Extract complete document containing all required and optional fields,
+      Extract complete document containing all required and optional fields, "index" extensions,
       validate=False.
       """
       path = self.resources["cback.conf.15"]
@@ -7920,12 +9447,34 @@ class TestConfig(unittest.TestCase):
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
 
+   def testExtractXml_037a(self):
+      """
+      Extract complete document containing all required and optional fields, "dependency" extensions,
+      validate=False.
+      """
+      path = self.resources["cback.conf.20"]
+      before = Config(xmlPath=path, validate=False)
+      beforeXml = before.extractXml(validate=False)
+      after = Config(xmlData=beforeXml, validate=False)
+      self.failUnlessEqual(before, after)
+
    def testExtractXml_038(self):
       """
-      Extract complete document containing all required and optional fields,
+      Extract complete document containing all required and optional fields, "index" extensions,
       validate=True.
       """
       path = self.resources["cback.conf.15"]
+      before = Config(xmlPath=path, validate=True)
+      beforeXml = before.extractXml(validate=True)
+      after = Config(xmlData=beforeXml, validate=True)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_038a(self):
+      """
+      Extract complete document containing all required and optional fields, "dependency" extensions,
+      validate=True.
+      """
+      path = self.resources["cback.conf.20"]
       before = Config(xmlPath=path, validate=True)
       beforeXml = before.extractXml(validate=True)
       after = Config(xmlData=beforeXml, validate=True)
@@ -7961,7 +9510,12 @@ class TestConfig(unittest.TestCase):
 def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
+                              unittest.makeSuite(TestActionDependencies, 'test'), 
+                              unittest.makeSuite(TestActionHook, 'test'), 
+                              unittest.makeSuite(TestPreActionHook, 'test'), 
+                              unittest.makeSuite(TestPostActionHook, 'test'), 
                               unittest.makeSuite(TestExtendedAction, 'test'), 
+                              unittest.makeSuite(TestCommandOverride, 'test'), 
                               unittest.makeSuite(TestCollectFile, 'test'), 
                               unittest.makeSuite(TestCollectDir, 'test'), 
                               unittest.makeSuite(TestPurgeDir, 'test'), 

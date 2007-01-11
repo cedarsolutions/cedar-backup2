@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -152,8 +152,9 @@ Validation
    I{Extensions Validations}
 
    The list of actions may be either C{None} or an empty list C{[]} if desired.
-   Each extended action must include a name, a module and a function.  The index
-   value is optional.
+   Each extended action must include a name, a module and a function.  Then, an
+   extended action must include either an index or dependency information.
+   Which one is required depends on which order mode is configured.
 
    I{Options Validations}
 
@@ -205,12 +206,14 @@ Validation
    if desired.  All purge directories must contain a path and a retain days
    value.
 
-@sort: ExtendedAction, CollectFile, CollectDir, PurgeDir, LocalPeer, 
+@sort: ActionDependencies, ActionHook, PreActionHook, PostActionHook,
+       ExtendedAction, CommandOverride, CollectFile, CollectDir, PurgeDir, LocalPeer, 
        RemotePeer, ReferenceConfig, ExtensionsConfig, OptionsConfig,
        CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config,
        DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE, 
        VALID_DEVICE_TYPES, VALID_MEDIA_TYPES, 
-       VALID_COLLECT_MODES, VALID_ARCHIVE_MODES
+       VALID_COLLECT_MODES, VALID_ARCHIVE_MODES,
+       VALID_ORDER_MODES
 
 @var DEFAULT_DEVICE_TYPE: The default device type.
 @var DEFAULT_MEDIA_TYPE: The default media type.
@@ -219,6 +222,7 @@ Validation
 @var VALID_COLLECT_MODES: List of valid collect modes.
 @var VALID_COMPRESS_MODES: List of valid compress modes.
 @var VALID_ARCHIVE_MODES: List of valid archive modes.
+@var VALID_ORDER_MODES: List of valid extension order modes.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -234,7 +238,7 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.util import validateScsiId, validateDriveSpeed
-from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, encodePath
+from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, RegexMatchList, encodePath
 from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild
 from CedarBackup2.xmlutil import readStringList, readString, readInteger, readBoolean
 from CedarBackup2.xmlutil import addContainerNode, addStringNode, addIntegerNode, addBooleanNode
@@ -255,10 +259,136 @@ VALID_MEDIA_TYPES     = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
 VALID_COLLECT_MODES   = [ "daily", "weekly", "incr", ]
 VALID_ARCHIVE_MODES   = [ "tar", "targz", "tarbz2", ]
 VALID_COMPRESS_MODES  = [ "none", "gzip", "bzip2", ]
+VALID_ORDER_MODES     = [ "index", "dependency", ]
+
+ACTION_NAME_REGEX     = r"^[a-z0-9]*$"
 
 
 ########################################################################
-# ActionHook class definitions
+# ActionDependencies class definition
+########################################################################
+
+class ActionDependencies(object):
+
+   """
+   Class representing dependencies associated with an extended action.
+
+   Execution ordering for extended actions is done in one of two ways: either by using
+   index values (lower index gets run first) or by having the extended action specify
+   dependencies in terms of other named actions.  This class encapsulates the dependency
+   information for an extended action.
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   The following restrictions exist on data in this class:
+
+      - Any action name must be a non-empty string matching C{ACTION_NAME_REGEX}
+
+   @sort: __init__, __repr__, __str__, __cmp__, action, command, before, after
+   """
+
+   def __init__(self, beforeList=None, afterList=None):
+      """
+      Constructor for the C{ActionHook} class.
+
+      @param beforeList: List of named actions that this action must be run before
+      @param afterList: List of named actions that this action must be run after
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      self._beforeList = None
+      self._afterList = None
+      self.beforeList = beforeList
+      self.afterList = afterList
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "ActionDependencies(%s, %s)" % (self.beforeList, self.afterList)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._beforeList != other._beforeList:
+         if self._beforeList < other._beforeList:
+            return -1
+         else:
+            return 1
+      if self._afterList != other._afterList:
+         if self._afterList < other._afterList:
+            return -1
+         else:
+            return 1
+      return 0
+
+   def _setBeforeList(self, value):
+      """
+      Property target used to set the "run before" list.
+      Either the value must be C{None} or each element must be a string matching ACTION_REGEX.
+      @raise ValueError: If the value does not match the regular expression.
+      """
+      if value is None:
+         self._beforeList = None
+      else:
+         try:
+            saved = self._beforeList
+            self._beforeList = RegexMatchList(ACTION_NAME_REGEX, emptyAllowed=False)
+            self._beforeList.extend(value)
+         except Exception, e:
+            self._beforeList = saved
+            raise e
+
+   def _getBeforeList(self):
+      """
+      Property target used to get the "run before" list.
+      """
+      return self._beforeList
+
+   def _setAfterList(self, value):
+      """
+      Property target used to set the "run after" list.
+      Either the value must be C{None} or each element must be a string matching ACTION_REGEX.
+      @raise ValueError: If the value does not match the regular expression.
+      """
+      if value is None:
+         self._afterList = None
+      else:
+         try:
+            saved = self._afterList
+            self._afterList = RegexMatchList(ACTION_NAME_REGEX, emptyAllowed=False)
+            self._afterList.extend(value)
+         except Exception, e:
+            self._afterList = saved
+            raise e
+
+   def _getAfterList(self):
+      """
+      Property target used to get the "run after" list.
+      """
+      return self._afterList
+
+   beforeList = property(_getBeforeList, _setBeforeList, None, "List of named actions that this action must be run before.")
+   afterList = property(_getAfterList, _setAfterList, None, "List of named actions that this action must be run after.")
+
+
+########################################################################
+# ActionHook class definition
 ########################################################################
 
 class ActionHook(object):
@@ -277,7 +407,7 @@ class ActionHook(object):
 
    The following restrictions exist on data in this class:
 
-      - The action name must be a non-empty string consisting of lower-case letters and digits.
+      - The action name must be a non-empty string matching C{ACTION_NAME_REGEX}
       - The shell command must be a non-empty string.
 
    The internal C{before} and C{after} instance variables are always set to
@@ -351,7 +481,7 @@ class ActionHook(object):
       It must also consist only of lower-case letters and digits.
       @raise ValueError: If the value is an empty string.
       """
-      pattern = re.compile(r"^[a-z0-9]*$")
+      pattern = re.compile(ACTION_NAME_REGEX)
       if value is not None:
          if len(value) < 1:
             raise ValueError("The action name must be a non-empty string.")
@@ -513,19 +643,21 @@ class ExtendedAction(object):
       - The action name must be a non-empty string consisting of lower-case letters and digits.
       - The module must be a non-empty string and a valid Python identifier.
       - The function must be an on-empty string and a valid Python identifier.
-      - The index must be a positive integer.
+      - If set, the index must be a positive integer.
+      - If set, the dependencies attribute must be an C{ActionDependencies} object.
 
-   @sort: __init__, __repr__, __str__, __cmp__, name, module, function, index
+   @sort: __init__, __repr__, __str__, __cmp__, name, module, function, index, dependencies
    """
 
-   def __init__(self, name=None, module=None, function=None, index=None):
+   def __init__(self, name=None, module=None, function=None, index=None, dependencies=None):
       """
       Constructor for the C{ExtendedAction} class.
 
       @param name: Name of the extended action
       @param module: Name of the module containing the extended action function
       @param function: Name of the extended action function
-      @param index: Index of action, for execution ordering
+      @param index: Index of action, used for execution ordering
+      @param dependencies: Dependencies for action, used for execution ordering
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -533,16 +665,18 @@ class ExtendedAction(object):
       self._module = None
       self._function = None
       self._index = None
+      self._dependencies = None
       self.name = name
       self.module = module
       self.function = function
       self.index = index
+      self.dependencies = dependencies
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "ExtendedAction(%s, %s, %s, %s)" % (self.name, self.module, self.function, self.index)
+      return "ExtendedAction(%s, %s, %s, %s, %s)" % (self.name, self.module, self.function, self.index, self.dependencies)
 
    def __str__(self):
       """
@@ -578,6 +712,11 @@ class ExtendedAction(object):
             return -1
          else:
             return 1
+      if self._dependencies != other._dependencies:
+         if self._dependencies < other._dependencies:
+            return -1
+         else:
+            return 1
       return 0
 
    def _setName(self, value):
@@ -587,7 +726,7 @@ class ExtendedAction(object):
       It must also consist only of lower-case letters and digits.
       @raise ValueError: If the value is an empty string.
       """
-      pattern = re.compile(r"^[a-z0-9]*$")
+      pattern = re.compile(ACTION_NAME_REGEX)
       if value is not None:
          if len(value) < 1:
             raise ValueError("The action name must be a non-empty string.")
@@ -666,10 +805,30 @@ class ExtendedAction(object):
       """
       return self._index
 
+   def _setDependencies(self, value):
+      """
+      Property target used to set the action dependencies information.
+      If not C{None}, the value must be a C{ActionDependecies} object.
+      @raise ValueError: If the value is not a C{ActionDependencies} object.
+      """
+      if value is None:
+         self._dependencies = None
+      else:
+         if not isinstance(value, ActionDependencies):
+            raise ValueError("Value must be a C{ActionDependencies} object.")
+         self._dependencies = value
+
+   def _getDependencies(self):
+      """
+      Property target used to get action dependencies information.
+      """
+      return self._dependencies
+
    name = property(_getName, _setName, None, "Name of the extended action.")
    module = property(_getModule, _setModule, None, "Name of the module containing the extended action function.")
    function = property(_getFunction, _setFunction, None, "Name of the extended action function.")
-   index = property(_getIndex, _setIndex, None, "Index of action, for execution ordering.")
+   index = property(_getIndex, _setIndex, None, "Index of action, used for execution ordering.")
+   dependencies = property(_getDependencies, _setDependencies, None, "Dependencies for action, used for execution ordering.")
 
 
 ########################################################################
@@ -1727,9 +1886,9 @@ class ExtensionsConfig(object):
 
    Extensions configuration is used to specify "extended actions" implemented
    by code external to Cedar Backup.  For instance, a hypothetical third party
-   might write extension code to collect Subversion repository data.  If they
+   might write extension code to collect database repository data.  If they
    write a properly-formatted extension function, they can use the extension
-   configuration to map a command-line Cedar Backup action (i.e. "subversion")
+   configuration to map a command-line Cedar Backup action (i.e. "database")
    to their function.
    
    As with all of the other classes that represent configuration sections, all
@@ -1740,24 +1899,27 @@ class ExtensionsConfig(object):
 
    The following restrictions exist on data in this class:
 
+      - If set, the order mode must be one of the values in C{VALID_ORDER_MODES}
       - The actions list must be a list of C{ExtendedAction} objects.
 
-   @sort: __init__, __repr__, __str__, __cmp__, actions
+   @sort: __init__, __repr__, __str__, __cmp__, orderMode, actions
    """
 
-   def __init__(self, actions=None):
+   def __init__(self, actions=None, orderMode=None):
       """
       Constructor for the C{ExtensionsConfig} class.
       @param actions: List of extended actions
       """
+      self._orderMode = None
       self._actions = None
+      self.orderMode = orderMode
       self.actions = actions
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "ExtensionsConfig(%s)" % self.actions
+      return "ExtensionsConfig(%s, %s)" % (self.orderMode, self.actions)
 
    def __str__(self):
       """
@@ -1773,12 +1935,34 @@ class ExtensionsConfig(object):
       """
       if other is None:
          return 1
+      if self._orderMode != other._orderMode:
+         if self._orderMode < other._orderMode:
+            return -1
+         else:
+            return 1
       if self._actions != other._actions:
          if self._actions < other._actions:
             return -1
          else:
             return 1
       return 0
+
+   def _setOrderMode(self, value):
+      """
+      Property target used to set the order mode.
+      The value must be one of L{VALID_ORDER_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_ORDER_MODES:
+            raise ValueError("Order mode must be one of %s." % VALID_ORDER_MODES)
+      self._orderMode = value
+
+   def _getOrderMode(self):
+      """
+      Property target used to get the order mode.
+      """
+      return self._orderMode
 
    def _setActions(self, value):
       """
@@ -1803,6 +1987,7 @@ class ExtensionsConfig(object):
       """
       return self._actions
 
+   orderMode = property(_getOrderMode, _setOrderMode, None, "Order mode for extensions, to control execution ordering.")
    actions = property(_getActions, _setActions, None, "List of extended actions.")
 
 
@@ -2701,7 +2886,6 @@ class StoreConfig(object):
       """
       Property target used to set the device type.
       The value must be one of L{VALID_DEVICE_TYPES}.
-      This field mostly exists to support future functionality.
       @raise ValueError: If the value is not valid.
       """
       if value is not None:
@@ -3370,28 +3554,33 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       reference = None
-      section = readFirstChild(parentNode, "reference")
-      if section is not None:
+      sectionNode = readFirstChild(parentNode, "reference")
+      if sectionNode is not None:
          reference = ReferenceConfig()
-         reference.author = readString(section, "author")
-         reference.revision = readString(section, "revision")
-         reference.description = readString(section, "description")
-         reference.generator = readString(section, "generator")
+         reference.author = readString(sectionNode, "author")
+         reference.revision = readString(sectionNode, "revision")
+         reference.description = readString(sectionNode, "description")
+         reference.generator = readString(sectionNode, "generator")
       return reference
    _parseReference = staticmethod(_parseReference)
 
    def _parseExtensions(parentNode):
       """
       Parses an extensions configuration section.
+
+      We read the following fields::
+
+         orderMode            //cb_config/extensions/order_mode
       
-      We read groups of the following items, one list element per item::
+      We also read groups of the following items, one list element per item::
 
          name                 //cb_config/extensions/action/name
          module               //cb_config/extensions/action/module
          function             //cb_config/extensions/action/function
          index                //cb_config/extensions/action/index
+         dependencies         //cb_config/extensions/action/depends
    
-      The extended actions are parsed by L{_parseExtendedActions}.
+      The extended actions are parsed by L{_parseExtendedActions}.  
 
       @param parentNode: Parent node to search beneath.
 
@@ -3399,10 +3588,11 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       extensions = None
-      section = readFirstChild(parentNode, "extensions")
-      if section is not None:
+      sectionNode = readFirstChild(parentNode, "extensions")
+      if sectionNode is not None:
          extensions = ExtensionsConfig()
-         extensions.actions = Config._parseExtendedActions(section)
+         extensions.orderMode = readString(sectionNode, "order_mode")
+         extensions.actions = Config._parseExtendedActions(sectionNode)
       return extensions
    _parseExtensions = staticmethod(_parseExtensions)
 
@@ -3431,16 +3621,16 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       options = None
-      section = readFirstChild(parentNode, "options")
-      if section is not None:
+      sectionNode = readFirstChild(parentNode, "options")
+      if sectionNode is not None:
          options = OptionsConfig()
-         options.startingDay = readString(section, "starting_day")
-         options.workingDir = readString(section, "working_dir")
-         options.backupUser = readString(section, "backup_user")
-         options.backupGroup = readString(section, "backup_group")
-         options.rcpCommand = readString(section, "rcp_command")
-         options.overrides = Config._parseOverrides(section)
-         options.hooks = Config._parseHooks(section)
+         options.startingDay = readString(sectionNode, "starting_day")
+         options.workingDir = readString(sectionNode, "working_dir")
+         options.backupUser = readString(sectionNode, "backup_user")
+         options.backupGroup = readString(sectionNode, "backup_group")
+         options.rcpCommand = readString(sectionNode, "rcp_command")
+         options.overrides = Config._parseOverrides(sectionNode)
+         options.hooks = Config._parseHooks(sectionNode)
       return options
    _parseOptions = staticmethod(_parseOptions)
 
@@ -3473,16 +3663,16 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       collect = None
-      section = readFirstChild(parentNode, "collect")
-      if section is not None:
+      sectionNode = readFirstChild(parentNode, "collect")
+      if sectionNode is not None:
          collect = CollectConfig()
-         collect.targetDir = readString(section, "collect_dir")
-         collect.collectMode = readString(section, "collect_mode")
-         collect.archiveMode = readString(section, "archive_mode")
-         collect.ignoreFile = readString(section, "ignore_file")
-         (collect.absoluteExcludePaths, unused, collect.excludePatterns) = Config._parseExclusions(section)
-         collect.collectFiles = Config._parseCollectFiles(section)
-         collect.collectDirs = Config._parseCollectDirs(section)
+         collect.targetDir = readString(sectionNode, "collect_dir")
+         collect.collectMode = readString(sectionNode, "collect_mode")
+         collect.archiveMode = readString(sectionNode, "archive_mode")
+         collect.ignoreFile = readString(sectionNode, "ignore_file")
+         (collect.absoluteExcludePaths, unused, collect.excludePatterns) = Config._parseExclusions(sectionNode)
+         collect.collectFiles = Config._parseCollectFiles(sectionNode)
+         collect.collectDirs = Config._parseCollectDirs(sectionNode)
       return collect
    _parseCollect = staticmethod(_parseCollect)
 
@@ -3508,11 +3698,11 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       stage = None
-      section = readFirstChild(parentNode, "stage")
-      if section is not None:
+      sectionNode = readFirstChild(parentNode, "stage")
+      if sectionNode is not None:
          stage = StageConfig()
-         stage.targetDir = readString(section, "staging_dir")
-         (stage.localPeers, stage.remotePeers) = Config._parsePeers(section)
+         stage.targetDir = readString(sectionNode, "staging_dir")
+         (stage.localPeers, stage.remotePeers) = Config._parsePeers(sectionNode)
       return stage
    _parseStage = staticmethod(_parseStage)
 
@@ -3537,17 +3727,17 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       store = None
-      section = readFirstChild(parentNode, "store")
-      if section is not None:
+      sectionNode = readFirstChild(parentNode, "store")
+      if sectionNode is not None:
          store = StoreConfig()
-         store.sourceDir = readString(section,  "source_dir")
-         store.mediaType = readString(section,  "media_type")
-         store.deviceType = readString(section,  "device_type")
-         store.devicePath = readString(section,  "target_device")
-         store.deviceScsiId = readString(section,  "target_scsi_id")
-         store.driveSpeed = readInteger(section, "drive_speed")
-         store.checkData = readBoolean(section, "check_data")
-         store.warnMidnite = readBoolean(section, "warn_midnite")
+         store.sourceDir = readString(sectionNode,  "source_dir")
+         store.mediaType = readString(sectionNode,  "media_type")
+         store.deviceType = readString(sectionNode,  "device_type")
+         store.devicePath = readString(sectionNode,  "target_device")
+         store.deviceScsiId = readString(sectionNode,  "target_scsi_id")
+         store.driveSpeed = readInteger(sectionNode, "drive_speed")
+         store.checkData = readBoolean(sectionNode, "check_data")
+         store.warnMidnite = readBoolean(sectionNode, "warn_midnite")
       return store
    _parseStore = staticmethod(_parseStore)
 
@@ -3568,10 +3758,10 @@ class Config(object):
       @raise ValueError: If some filled-in value is invalid.
       """
       purge = None
-      section = readFirstChild(parentNode, "purge")
-      if section is not None:
+      sectionNode = readFirstChild(parentNode, "purge")
+      if sectionNode is not None:
          purge = PurgeConfig()
-         purge.purgeDirs = Config._parsePurgeDirs(section)
+         purge.purgeDirs = Config._parsePurgeDirs(sectionNode)
       return purge
    _parsePurge = staticmethod(_parsePurge)
 
@@ -3581,10 +3771,13 @@ class Config(object):
 
       We read the following individual fields from each extended action::
 
-         name        name
-         module      module
-         function    function
-         index       index
+         name           name
+         module         module
+         function       function
+         index          index
+         dependencies   depends
+
+      Dependency information is parsed by the C{_parseDependencies} method.
 
       @param parentNode: Parent node to search beneath.
 
@@ -3598,7 +3791,8 @@ class Config(object):
             action.name = readString(entry, "name")
             action.module = readString(entry, "module")
             action.function = readString(entry, "function")
-            action.index = readString(entry, "index")
+            action.index = readInteger(entry, "index")
+            action.dependencies = Config._parseDependencies(entry)
             lst.append(action);
       if lst == []:
          lst = None
@@ -3626,13 +3820,13 @@ class Config(object):
 
       @return: Tuple of (absolute, relative, patterns) exclusions.
       """
-      section = readFirstChild(parentNode, "exclude")
-      if section is None:
+      sectionNode = readFirstChild(parentNode, "exclude")
+      if sectionNode is None:
          return (None, None, None)
       else:
-         absolute = readStringList(section, "abs_path")
-         relative = readStringList(section, "rel_path")
-         patterns = readStringList(section, "pattern")
+         absolute = readStringList(sectionNode, "abs_path")
+         relative = readStringList(sectionNode, "rel_path")
+         patterns = readStringList(sectionNode, "pattern")
          return (absolute, relative, patterns)
    _parseExclusions = staticmethod(_parseExclusions)
 
@@ -3854,6 +4048,62 @@ class Config(object):
       return (localPeers, remotePeers)
    _parsePeers = staticmethod(_parsePeers)
 
+   def _parseDependencies(parentNode):
+      """
+      Reads extended action dependency information from a parent node.
+
+      We read the following individual fields::
+
+         runBefore   depends/run_before
+         runAfter    depends/run_after
+
+      Each of these fields is a comma-separated list of action names.
+   
+      The result is placed into an C{ActionDependencies} object.
+      
+      If the dependencies parent node does not exist, C{None} will be returned.
+      Otherwise, an C{ActionDependencies} object will always be created, even
+      if it does not contain any actual dependencies in it.
+
+      @param parentNode: Parent node to search beneath.
+
+      @return: C{ActionDependencies} object or C{None}.
+      @raise ValueError: If the data at the location can't be read
+      """
+      sectionNode = readFirstChild(parentNode, "depends")
+      if sectionNode is None:
+         return None
+      else:
+         runBefore = readString(sectionNode, "run_before")
+         runAfter = readString(sectionNode, "run_after")
+         beforeList = Config._parseCommaSeparatedString(runBefore)
+         afterList = Config._parseCommaSeparatedString(runAfter)
+         return ActionDependencies(beforeList, afterList)
+   _parseDependencies = staticmethod(_parseDependencies)
+   
+   def _parseCommaSeparatedString(commaString):
+      """
+      Parses a list of values out of a comma-separated string.
+
+      The items in the list are split by comma, and then have whitespace
+      stripped.  As a special case, if C{commaString} is C{None}, then C{None}
+      will be returned.
+
+      @param commaString List of values in comma-separated string format.
+      @return Values from commaString split into a list, or C{None}.
+      """
+      if commaString is None:
+         return None
+      else:
+         pass1 = commaString.split(",")
+         pass2 = []
+         for item in pass1:
+            item = item.strip()
+            if len(item) > 0:
+               pass2.append(item)
+         return pass2
+   _parseCommaSeparatedString = staticmethod(_parseCommaSeparatedString)
+
 
    ########################################
    # High-level methods for generating XML
@@ -3913,13 +4163,17 @@ class Config(object):
       """
       Adds an <extensions> configuration section as the next child of a parent.
 
-      We add groups of the following items, one list element per item::
+      We add the following fields to the document::
+
+         order_mode     //cb_config/extensions/order_mode
+
+      We also add groups of the following items, one list element per item::
 
          actions        //cb_config/extensions/action
 
       The extended action entries are added by L{_addExtendedAction}.
 
-      If C{extensionsConfig} is C{None}, then no container will be added.
+      If C{extensionsConfig} is C{None}, then no container will be added.  
 
       @param xmlDom: DOM tree as from L{createOutputDom}.
       @param parentNode: Parent that the section should be appended to.
@@ -3927,6 +4181,7 @@ class Config(object):
       """
       if extensionsConfig is not None:
          sectionNode = addContainerNode(xmlDom, parentNode, "extensions")
+         addStringNode(xmlDom, sectionNode, "order_mode", extensionsConfig.orderMode)
          if extensionsConfig.actions is not None:
             for action in extensionsConfig.actions:
                Config._addExtendedAction(xmlDom, sectionNode, action)
@@ -4122,10 +4377,13 @@ class Config(object):
 
       We add the following fields to the document::
 
-         name        action/name
-         module      action/module
-         function    action/function
-         index       action/index
+         name           action/name
+         module         action/module
+         function       action/function
+         index          action/index
+         dependencies   action/depends
+
+      Dependencies are added by the L{_addDependencies} method.
 
       The <action> node itself is created as the next child of the parent node.
       This method only adds one action node.  The parent must loop for each action
@@ -4143,6 +4401,7 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "module", action.module)
          addStringNode(xmlDom, sectionNode, "function", action.function)
          addIntegerNode(xmlDom, sectionNode, "index", action.index)
+         Config._addDependencies(xmlDom, sectionNode, action.dependencies)
    _addExtendedAction = staticmethod(_addExtendedAction)
 
    def _addOverride(xmlDom, parentNode, override):
@@ -4375,6 +4634,45 @@ class Config(object):
          addIntegerNode(xmlDom, sectionNode, "retain_days", purgeDir.retainDays)
    _addPurgeDir = staticmethod(_addPurgeDir)
 
+   def _addDependencies(xmlDom, parentNode, dependencies):
+      """
+      Adds a extended action dependencies to parent node.
+
+      We add the following fields to the document::
+   
+         runBefore      depends/run_before
+         runAfter       depends/run_after
+
+      If C{dependencies} is C{None}, this method call will be a no-op.
+
+      @param xmlDom: DOM tree as from L{createOutputDom}.
+      @param parentNode: Parent that the section should be appended to.
+      @param dependencies: C{ActionDependencies} object to be added to the document
+      """
+      if dependencies is not None:
+         sectionNode = addContainerNode(xmlDom, parentNode, "depends")
+         runBefore = Config._buildCommaSeparatedString(dependencies.beforeList)
+         runAfter = Config._buildCommaSeparatedString(dependencies.afterList)
+         addStringNode(xmlDom, sectionNode, "run_before", runBefore)
+         addStringNode(xmlDom, sectionNode, "run_after", runAfter)
+   _addDependencies = staticmethod(_addDependencies)
+
+   def _buildCommaSeparatedString(valueList):
+      """
+      Creates a comma-separated string from a list of values.
+
+      As a special case, if C{valueList} is C{None}, then C{None} will be
+      returned.
+
+      @param valueList List of values to be placed into a string
+
+      @return Values from valueList as a comma-separated string.
+      """
+      if valueList is None:
+         return None
+      return ",".join(valueList)
+   _buildCommaSeparatedString = staticmethod(_buildCommaSeparatedString)
+
 
    #################################################
    # High-level methods used for validating content
@@ -4413,8 +4711,11 @@ class Config(object):
       Validates extensions configuration.
 
       The list of actions may be either C{None} or an empty list C{[]} if
-      desired.  Each extended action must include a name, a module, a 
-      function and an index.
+      desired.  Each extended action must include a name, a module, and a 
+      function.  
+
+      Then, if the order mode is None or "index", an index is required; and if
+      the order mode is "dependency", dependency information is required.
 
       @raise ValueError: If reference configuration is invalid.
       """
@@ -4427,8 +4728,12 @@ class Config(object):
                   raise ValueError("Each extended action must set a module.")
                if action.function is None:
                   raise ValueError("Each extended action must set a function.")
-               if action.index is None:
-                  raise ValueError("Each extended action must set an index.")
+               if self.extensions.orderMode is None or self.extensions.orderMode == "index":
+                  if action.index is None:
+                     raise ValueError("Each extended action must set an index, based on order mode.")
+               elif self.extensions.orderMode == "dependency":
+                  if action.dependencies is None:
+                     raise ValueError("Each extended action must set dependency information, based on order mode.")
 
    def _validateOptions(self):
       """
