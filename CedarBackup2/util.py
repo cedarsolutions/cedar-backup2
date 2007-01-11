@@ -380,6 +380,13 @@ class RestrictedContentList(UnorderedList):
 
    The C{valuesDescr} value will be used in exceptions, i.e. C{"Item must be
    one of values in VALID_ACTIONS"} if C{valuesDescr} is C{"VALID_ACTIONS"}.
+
+   @note:  This class doesn't make any attempt to trap for nonsensical
+   arguments.  All of the values in the values list should be of the same type
+   (i.e. strings).  Then, all list operations also need to be of that type
+   (i.e. you should always insert or append just strings).  If you mix types --
+   for instance lists and strings -- you will likely see AttributeError
+   exceptions or other problems.
    """
    
    def __init__(self, valuesList, valuesDescr):
@@ -417,6 +424,80 @@ class RestrictedContentList(UnorderedList):
       for item in seq:
          if item not in self.valuesList:
             raise ValueError("Item must be one of values in %s." % self.valuesDescr)
+      list.extend(self, seq)
+
+
+########################################################################
+# RegexMatchList class definition
+########################################################################
+
+class RegexMatchList(UnorderedList):
+
+   """
+   Class representing a list containing only strings that match a regular expression.
+
+   If C{emptyAllowed} is passed in as C{False}, then empty strings are
+   explicitly disallowed, even if they happen to match the regular expression.
+   (C{None} values are always disallowed, since string operations are not
+   permitted on C{None}.)
+
+   This is an unordered list.
+
+   We override the C{append}, C{insert} and C{extend} methods to ensure that
+   any item added to the list matches the indicated regular expression.  
+
+   @note: If you try to put values that are not strings into the list, you will
+   likely get either TypeError or AttributeError exceptions as a result.
+   """
+   
+   def __init__(self, valuesRegex, emptyAllowed=True):
+      """
+      Initializes a list restricted to containing certain values.
+      @param valuesRegex: Regular expression that must be matched, as a string
+      @param emptyAllowed: Indicates whether empty or None values are allowed.
+      """
+      self.valuesRegex = valuesRegex
+      self.emptyAllowed = emptyAllowed
+      self.pattern = re.compile(self.valuesRegex)
+
+   def append(self, item):
+      """
+      Overrides the standard C{append} method.
+      @raise ValueError: If item is None
+      @raise ValueError: If item is empty and empty values are not allowed
+      @raise ValueError: If item does not match the configured regular expression
+      """
+      if item is None or (not self.emptyAllowed and item == ""):
+         raise ValueError("Item must be non-empty.")
+      if not self.pattern.search(item):
+         raise ValueError("Item must match regular expression [%s]." % self.valuesRegex)
+      list.append(self, item)
+
+   def insert(self, index, item):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If item is None
+      @raise ValueError: If item is empty and empty values are not allowed
+      @raise ValueError: If item does not match the configured regular expression
+      """
+      if item is None or (not self.emptyAllowed and item == ""):
+         raise ValueError("Item must be non-empty.")
+      if not self.pattern.search(item):
+         raise ValueError("Item must match regular expression [%s]." % self.valuesRegex)
+      list.insert(self, index, item)
+
+   def extend(self, seq):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If any item is None
+      @raise ValueError: If any item is empty and empty values are not allowed
+      @raise ValueError: If any item does not match the configured regular expression
+      """
+      for item in seq:
+         if item is None or (not self.emptyAllowed and item == ""):
+            raise ValueError("Item must be non-empty.")
+         if not self.pattern.search(item):
+            raise ValueError("Item must match regular expression [%s]." % self.valuesRegex)
       list.extend(self, seq)
 
 
