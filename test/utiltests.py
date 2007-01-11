@@ -81,7 +81,8 @@ import tempfile
 from os.path import isdir
 
 from CedarBackup2.testutil import findResources, removedir, platformHasEcho
-from CedarBackup2.util import UnorderedList, PathResolverSingleton
+from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, RestrictedContentList, RegexMatchList
+from CedarBackup2.util import PathResolverSingleton
 from CedarBackup2.util import resolveCommand, executeCommand, getFunctionReference, encodePath, validateScsiId
 
 
@@ -359,6 +360,559 @@ class TestUnorderedList(unittest.TestCase):
       self.failUnlessEqual(list2, list1)
 
 
+#############################
+# TestAbsolutePathList class
+#############################
+
+class TestAbsolutePathList(unittest.TestCase):
+
+   """Tests for the AbsolutePathList class."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   #######################
+   # Test list operations
+   #######################
+
+   def testListOperations_001(self):
+      """
+      Test append() for a valid absolute path.
+      """
+      list1 = AbsolutePathList()
+      list1.append("/path/to/something/absolute")
+      self.failUnlessEqual(list1, [ "/path/to/something/absolute", ])
+      self.failUnlessEqual(list1[0], "/path/to/something/absolute")
+      list1.append("/path/to/something/else")
+      self.failUnlessEqual(list1, [ "/path/to/something/absolute", "/path/to/something/else", ])
+      self.failUnlessEqual(list1[0], "/path/to/something/absolute")
+      self.failUnlessEqual(list1[1], "/path/to/something/else")
+
+   def testListOperations_002(self):
+      """
+      Test append() for an invalid, non-absolute path.
+      """
+      list1 = AbsolutePathList()
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "path/to/something/relative")
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_003(self):
+      """
+      Test insert() for a valid absolute path.
+      """
+      list1 = AbsolutePathList()
+      list1.insert(0, "/path/to/something/absolute")
+      self.failUnlessEqual(list1, [ "/path/to/something/absolute", ])
+      self.failUnlessEqual(list1[0], "/path/to/something/absolute")
+      list1.insert(0, "/path/to/something/else")
+      self.failUnlessEqual(list1, [ "/path/to/something/else", "/path/to/something/absolute", ])
+      self.failUnlessEqual(list1[0], "/path/to/something/else")
+      self.failUnlessEqual(list1[1], "/path/to/something/absolute")
+
+   def testListOperations_004(self):
+      """
+      Test insert() for an invalid, non-absolute path.
+      """
+      list1 = AbsolutePathList()
+      self.failUnlessRaises(ValueError, list1.insert, 0, "path/to/something/relative")
+
+   def testListOperations_005(self):
+      """
+      Test extend() for a valid absolute path.
+      """
+      list1 = AbsolutePathList()
+      list1.extend(["/path/to/something/absolute", ])
+      self.failUnlessEqual(list1, [ "/path/to/something/absolute", ])
+      self.failUnlessEqual(list1[0], "/path/to/something/absolute")
+      list1.extend(["/path/to/something/else", ])
+      self.failUnlessEqual(list1, [ "/path/to/something/absolute", "/path/to/something/else", ])
+      self.failUnlessEqual(list1[0], "/path/to/something/absolute")
+      self.failUnlessEqual(list1[1], "/path/to/something/else")
+
+   def testListOperations_006(self):
+      """
+      Test extend() for an invalid, non-absolute path.
+      """
+      list1 = AbsolutePathList()
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ "path/to/something/relative", ])
+      self.failUnlessEqual(list1, [])
+
+
+###########################
+# TestObjectTypeList class
+###########################
+
+class TestObjectTypeList(unittest.TestCase):
+
+   """Tests for the ObjectTypeList class."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   #######################
+   # Test list operations
+   #######################
+
+   def testListOperations_001(self):
+      """
+      Test append() for a valid object type.
+      """
+      list1 = ObjectTypeList(str, "str")
+      list1.append("string")
+      self.failUnlessEqual(list1, [ "string", ])
+      self.failUnlessEqual(list1[0], "string")
+      list1.append("string2")
+      self.failUnlessEqual(list1, [ "string", "string2", ])
+      self.failUnlessEqual(list1[0], "string")
+      self.failUnlessEqual(list1[1], "string2")
+
+   def testListOperations_002(self):
+      """
+      Test append() for an invalid object type.
+      """
+      list1 = ObjectTypeList(str, "str")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, 1)
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_003(self):
+      """
+      Test insert() for a valid object type.
+      """
+      list1 = ObjectTypeList(str, "str")
+      list1.insert(0, "string")
+      self.failUnlessEqual(list1, [ "string", ])
+      self.failUnlessEqual(list1[0], "string")
+      list1.insert(0, "string2")
+      self.failUnlessEqual(list1, [ "string2", "string", ])
+      self.failUnlessEqual(list1[0], "string2")
+      self.failUnlessEqual(list1[1], "string")
+
+   def testListOperations_004(self):
+      """
+      Test insert() for an invalid object type.
+      """
+      list1 = ObjectTypeList(str, "str")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, AbsolutePathList())
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_005(self):
+      """
+      Test extend() for a valid object type.
+      """
+      list1 = ObjectTypeList(str, "str")
+      list1.extend(["string", ])
+      self.failUnlessEqual(list1, [ "string", ])
+      self.failUnlessEqual(list1[0], "string")
+      list1.extend(["string2", ])
+      self.failUnlessEqual(list1, [ "string", "string2", ])
+      self.failUnlessEqual(list1[0], "string")
+      self.failUnlessEqual(list1[1], "string2")
+
+   def testListOperations_006(self):
+      """
+      Test extend() for an invalid object type.
+      """
+      list1 = ObjectTypeList(str, "str")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ 12.0, ])
+      self.failUnlessEqual(list1, [])
+
+
+##################################
+# TestRestrictedContentList class
+##################################
+
+class TestRestrictedContentList(unittest.TestCase):
+
+   """Tests for the RestrictedContentList class."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   #######################
+   # Test list operations
+   #######################
+
+   def testListOperations_001(self):
+      """
+      Test append() for a valid value.
+      """
+      list1 = RestrictedContentList([ "a", "b", "c", ], "values")
+      list1.append("a")
+      self.failUnlessEqual(list1, [ "a", ])
+      self.failUnlessEqual(list1[0], "a")
+      list1.append("b")
+      self.failUnlessEqual(list1, [ "a", "b", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "b")
+      list1.append("c")
+      self.failUnlessEqual(list1, [ "a", "b", "c", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "b")
+      self.failUnlessEqual(list1[2], "c")
+
+   def testListOperations_002(self):
+      """
+      Test append() for an invalid value.
+      """
+      list1 = RestrictedContentList([ "a", "b", "c", ], "values")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "d")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, 1)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(AttributeError, list1.append, UnorderedList())
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_003(self):
+      """
+      Test insert() for a valid value.
+      """
+      list1 = RestrictedContentList([ "a", "b", "c", ], "values")
+      list1.insert(0, "a")
+      self.failUnlessEqual(list1, [ "a", ])
+      self.failUnlessEqual(list1[0], "a")
+      list1.insert(0, "b")
+      self.failUnlessEqual(list1, [ "b", "a", ])
+      self.failUnlessEqual(list1[0], "b")
+      self.failUnlessEqual(list1[1], "a")
+      list1.insert(0, "c")
+      self.failUnlessEqual(list1, [ "c", "b", "a", ])
+      self.failUnlessEqual(list1[0], "c")
+      self.failUnlessEqual(list1[1], "b")
+      self.failUnlessEqual(list1[2], "a")
+
+   def testListOperations_004(self):
+      """
+      Test insert() for an invalid value.
+      """
+      list1 = RestrictedContentList([ "a", "b", "c", ], "values")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, "d")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, 1)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(AttributeError, list1.insert, 0, UnorderedList())
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_005(self):
+      """
+      Test extend() for a valid value.
+      """
+      list1 = RestrictedContentList([ "a", "b", "c", ], "values")
+      list1.extend(["a", ])
+      self.failUnlessEqual(list1, [ "a", ])
+      self.failUnlessEqual(list1[0], "a")
+      list1.extend(["b", ])
+      self.failUnlessEqual(list1, [ "a", "b", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "b")
+      list1.extend(["c", ])
+      self.failUnlessEqual(list1, [ "a", "b", "c", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "b")
+      self.failUnlessEqual(list1[2], "c")
+
+   def testListOperations_006(self):
+      """
+      Test extend() for an invalid value.
+      """
+      list1 = RestrictedContentList([ "a", "b", "c", ], "values")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, ["d", ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [1, ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(AttributeError, list1.extend, [ UnorderedList(), ])
+      self.failUnlessEqual(list1, [])
+
+
+###########################
+# TestRegexMatchList class
+###########################
+
+class TestRegexMatchList(unittest.TestCase):
+
+   """Tests for the RegexMatchList class."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   #######################
+   # Test list operations
+   #######################
+
+   def testListOperations_001(self):
+      """
+      Test append() for a valid value, emptyAllowed=True.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=True)
+      list1.append("a")
+      self.failUnlessEqual(list1, [ "a", ])
+      self.failUnlessEqual(list1[0], "a")
+      list1.append("1")
+      self.failUnlessEqual(list1, [ "a", "1", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      list1.append("abcd12345")
+      self.failUnlessEqual(list1, [ "a", "1", "abcd12345", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      self.failUnlessEqual(list1[2], "abcd12345")
+      list1.append("")
+      self.failUnlessEqual(list1, [ "a", "1", "abcd12345", "", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      self.failUnlessEqual(list1[2], "abcd12345")
+      self.failUnlessEqual(list1[3], "")
+
+   def testListOperations_002(self):
+      """
+      Test append() for an invalid value, emptyAllowed=True.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=True)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "A")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "ABC")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(TypeError, list1.append, 12)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "KEN_12")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, None)
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_003(self):
+      """
+      Test insert() for a valid value, emptyAllowed=True.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=True)
+      list1.insert(0, "a")
+      self.failUnlessEqual(list1, [ "a", ])
+      self.failUnlessEqual(list1[0], "a")
+      list1.insert(0, "1")
+      self.failUnlessEqual(list1, [ "1", "a", ])
+      self.failUnlessEqual(list1[0], "1")
+      self.failUnlessEqual(list1[1], "a")
+      list1.insert(0, "abcd12345")
+      self.failUnlessEqual(list1, [ "abcd12345", "1", "a", ])
+      self.failUnlessEqual(list1[0], "abcd12345")
+      self.failUnlessEqual(list1[1], "1")
+      self.failUnlessEqual(list1[2], "a")
+      list1.insert(0, "")
+      self.failUnlessEqual(list1, [ "abcd12345", "1", "a", "", ])
+      self.failUnlessEqual(list1[0], "")
+      self.failUnlessEqual(list1[1], "abcd12345")
+      self.failUnlessEqual(list1[2], "1")
+      self.failUnlessEqual(list1[3], "a")
+
+   def testListOperations_004(self):
+      """
+      Test insert() for an invalid value, emptyAllowed=True.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=True)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, "A")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, "ABC")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(TypeError, list1.insert, 0, 12)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, "KEN_12")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, None)
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_005(self):
+      """
+      Test extend() for a valid value, emptyAllowed=True.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=True)
+      list1.extend(["a",])
+      self.failUnlessEqual(list1, [ "a", ])
+      self.failUnlessEqual(list1[0], "a")
+      list1.extend(["1",])
+      self.failUnlessEqual(list1, [ "a", "1", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      list1.extend(["abcd12345",])
+      self.failUnlessEqual(list1, [ "a", "1", "abcd12345", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      self.failUnlessEqual(list1[2], "abcd12345")
+      list1.extend(["",])
+      self.failUnlessEqual(list1, [ "a", "1", "abcd12345", "", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      self.failUnlessEqual(list1[2], "abcd12345")
+      self.failUnlessEqual(list1[3], "")
+
+   def testListOperations_006(self):
+      """
+      Test extend() for an invalid value, emptyAllowed=True.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=True)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ "A", ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ "ABC", ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(TypeError, list1.extend, [ 12, ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ "KEN_12", ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ None, ])
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_007(self):
+      """
+      Test append() for a valid value, emptyAllowed=False.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=False)
+      list1.append("a")
+      self.failUnlessEqual(list1, [ "a", ])
+      self.failUnlessEqual(list1[0], "a")
+      list1.append("1")
+      self.failUnlessEqual(list1, [ "a", "1", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      list1.append("abcd12345")
+      self.failUnlessEqual(list1, [ "a", "1", "abcd12345", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      self.failUnlessEqual(list1[2], "abcd12345")
+
+   def testListOperations_008(self):
+      """
+      Test append() for an invalid value, emptyAllowed=False.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=False)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "A")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "ABC")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(TypeError, list1.append, 12)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "KEN_12")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, None)
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_009(self):
+      """
+      Test insert() for a valid value, emptyAllowed=False.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=False)
+      list1.insert(0, "a")
+      self.failUnlessEqual(list1, [ "a", ])
+      self.failUnlessEqual(list1[0], "a")
+      list1.insert(0, "1")
+      self.failUnlessEqual(list1, [ "1", "a", ])
+      self.failUnlessEqual(list1[0], "1")
+      self.failUnlessEqual(list1[1], "a")
+      list1.insert(0, "abcd12345")
+      self.failUnlessEqual(list1, [ "abcd12345", "1", "a", ])
+      self.failUnlessEqual(list1[0], "abcd12345")
+      self.failUnlessEqual(list1[1], "1")
+      self.failUnlessEqual(list1[2], "a")
+
+   def testListOperations_010(self):
+      """
+      Test insert() for an invalid value, emptyAllowed=False.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=False)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, "A")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, "ABC")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(TypeError, list1.insert, 0, 12)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, "KEN_12")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, "")
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.insert, 0, None)
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_011(self):
+      """
+      Test extend() for a valid value, emptyAllowed=False.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=False)
+      list1.extend(["a",])
+      self.failUnlessEqual(list1, [ "a", ])
+      self.failUnlessEqual(list1[0], "a")
+      list1.extend(["1",])
+      self.failUnlessEqual(list1, [ "a", "1", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      list1.extend(["abcd12345",])
+      self.failUnlessEqual(list1, [ "a", "1", "abcd12345", ])
+      self.failUnlessEqual(list1[0], "a")
+      self.failUnlessEqual(list1[1], "1")
+      self.failUnlessEqual(list1[2], "abcd12345")
+
+   def testListOperations_012(self):
+      """
+      Test extend() for an invalid value, emptyAllowed=False.
+      """
+      list1 = RegexMatchList(r"^[a-z0-9]*$", emptyAllowed=False)
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ "A", ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ "ABC", ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(TypeError, list1.extend, [ 12, ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ "KEN_12", ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ "", ])
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ None, ])
+      self.failUnlessEqual(list1, [])
+
+
 ##################################
 # TestPathResolverSingleton class
 ##################################
@@ -459,7 +1013,7 @@ class TestPathResolverSingleton(unittest.TestCase):
       """
       Test that lookup() returns proper values when singleton is not empty.
       """
-      mappings = { "one" : "/path/to/one", "two" : "/path/to/two" };
+      mappings = { "one" : "/path/to/one", "two" : "/path/to/two" }
       PathResolverSingleton._instance = None
       singleton = PathResolverSingleton()
       singleton.fill(mappings)
@@ -581,7 +1135,7 @@ class TestFunctions(unittest.TestCase):
       Test that the command is echoed back unchanged when mapping is not found.
       """
       PathResolverSingleton._instance = None
-      mappings = { "one" : "/path/to/one", "two" : "/path/to/two" };
+      mappings = { "one" : "/path/to/one", "two" : "/path/to/two" }
       singleton = PathResolverSingleton()
       singleton.fill(mappings)
 
@@ -605,7 +1159,7 @@ class TestFunctions(unittest.TestCase):
       Test that the command is echoed back changed appropriately when mapping is found.
       """
       PathResolverSingleton._instance = None
-      mappings = { "one" : "/path/to/one", "two" : "/path/to/two" };
+      mappings = { "one" : "/path/to/one", "two" : "/path/to/two" }
       singleton = PathResolverSingleton()
       singleton.fill(mappings)
 
@@ -1836,6 +2390,10 @@ def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
                               unittest.makeSuite(TestUnorderedList, 'test'),
+                              unittest.makeSuite(TestAbsolutePathList, 'test'),
+                              unittest.makeSuite(TestObjectTypeList, 'test'),
+                              unittest.makeSuite(TestRestrictedContentList, 'test'),
+                              unittest.makeSuite(TestRegexMatchList, 'test'),
                               unittest.makeSuite(TestPathResolverSingleton, 'test'),
                               unittest.makeSuite(TestFunctions, 'test'),
                             ))
