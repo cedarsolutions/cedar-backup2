@@ -1,12 +1,17 @@
 Version 2.10.0	unreleased
 
-	* Clean up xmlutil imports in mbox and subversion extensions.
 	* Fix rebuild action to look at store config instead of stage.
-	* Copy Mac OS X (darwin) errors from store action into rebuild action.
-	* Check arguments to validateScsiId better (no None path allowed now).
-	* Enhance functionality in filesystem.FilesystemList.
+	* Code cleanup and minor enhancements.
+	  - Clean up xmlutil imports in mbox and subversion extensions
+	  - Copy Mac OS X (darwin) errors from store action into rebuild action
+	  - Check arguments to validateScsiId better (no None path allowed now)
+	  - Rename variables in config.py to be more consistent with each other 
 	  - Add new excludeBasenamePatterns flag to FilesystemList
 	  - Add new addSelf flag to FilesystemList.addDirContents()
+	  - Create new RegexMatchList class in util.py, and add tests
+	* Create unit tests for functionality that was not explictly tested before.
+	  - ActionHook, PreActionHook, PostActionHook, CommandOverride (config.py)
+	  - AbsolutePathList, ObjectTypeList, RestrictedContentList (util.py)
 	* Support encrypted staging directories (closes: #33).
 	  - Create new 'encrypt' extension and associated unit tests
 	* Refactor and clean up code that implements standard actions.
