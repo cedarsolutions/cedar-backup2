@@ -44,7 +44,7 @@ Provides general-purpose utilities.
 
 @sort: AbsolutePathList, ObjectTypeList, RestrictedValueList, RegexMatchList,
        _Vertex, DirectedGraph, PathResolverSingleton, 
-       convertSize, getUidGid, changeOwnership, splitCommandLine,
+       sortDict, convertSize, getUidGid, changeOwnership, splitCommandLine,
        resolveCommand, executeCommand, calculateFileAge, encodePath, nullDevice,
        deriveDayOfWeek, isStartOfWeek, buildNormalizedPath, 
        validateScsiId, validateDevice, validateDriveSpeed,
@@ -880,6 +880,22 @@ else: # _PIPE_IMPLEMENTATION == "popen2.Popen4"
 ########################################################################
 # General utility functions
 ########################################################################
+
+######################
+# sortDict() function
+######################
+
+def sortDict(d):
+   """
+   Returns the keys of the dictionary sorted by value.
+   There are cuter ways to do this in Python 2.4, but we're compatible with 2.3.
+   @param d: Dictionary to operate on
+   @return: List of dictionary keys sorted in order by dictionary value.
+   """
+   items = d.items()
+   items.sort(lambda x, y: cmp(x[1], y[1]))
+   return [key for key, value in items]
+
 
 #########################
 # convertSize() function
