@@ -1954,6 +1954,51 @@ class TestFunctions(unittest.TestCase):
       return name
 
 
+   ##################
+   # Test sortDict() 
+   ##################
+         
+   def testSortDict_001(self):
+      """
+      Test for empty dictionary.
+      """
+      d = {}
+      result = sortDict(d) 
+      self.failUnlessEqual([], result)
+
+   def testSortDict_002(self):
+      """
+      Test for dictionary with one item.
+      """
+      d = {'a':1}
+      result = sortDict(d) 
+      self.failUnlessEqual(['a', ], result)
+
+   def testSortDict_003(self):
+      """
+      Test for dictionary with two items, same value.
+      """
+      d = {'a':1, 'b':1, }
+      result = sortDict(d) 
+      self.failUnlessEqual(['a', 'b', ], result)
+
+   def testSortDict_004(self):
+      """
+      Test for dictionary with two items, different values.
+      """
+      d = {'a':1, 'b':2, }
+      result = sortDict(d) 
+      self.failUnlessEqual(['a', 'b', ], result)
+
+   def testSortDict_005(self):
+      """
+      Test for dictionary with many items, same and different values.
+      """
+      d = {'rebuild': 0, 'purge': 400, 'collect': 100, 'validate': 0, 'store': 300, 'stage': 200}
+      result = sortDict(d) 
+      self.failUnlessEqual(['rebuild', 'validate', 'collect', 'stage', 'store', 'purge', ], result)
+
+
    ##############################
    # Test getFunctionReference() 
    ##############################
