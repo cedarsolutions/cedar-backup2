@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2005,2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -78,6 +78,7 @@ Full vs. Reduced Tests
 ########################################################################
 
 import unittest
+from os.path import isdir, isfile, islink, isabs, exists
 from StringIO import StringIO
 from getopt import GetoptError
 from CedarBackup2.testutil import failUnlessAssignRaises
@@ -3769,9 +3770,9 @@ class TestActionSet(unittest.TestCase):
       pass
 
 
-   ###################
-   # Test constructor 
-   ###################
+   #######################################
+   # Test constructor, "index" order mode
+   #######################################
 
    def testActionSet_001(self):
       """
@@ -3811,7 +3812,6 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_005(self):
       """
@@ -3827,7 +3827,6 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_006(self):
       """
@@ -3843,7 +3842,6 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_007(self):
       """
@@ -3859,7 +3857,6 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_008(self):
       """
@@ -3875,25 +3872,21 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(200, actionSet.actionSet[1].index)
       self.failUnlessEqual("stage", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
       self.failUnlessEqual(300, actionSet.actionSet[2].index)
       self.failUnlessEqual("store", actionSet.actionSet[2].name)
       self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
-      self.failUnlessEqual(None, actionSet.actionSet[2].extension)
       self.failUnlessEqual(400, actionSet.actionSet[3].index)
       self.failUnlessEqual("purge", actionSet.actionSet[3].name)
       self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
-      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
 
    def testActionSet_009(self):
       """
@@ -3903,12 +3896,11 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 1)
-      self.failUnlessEqual(None, actionSet.actionSet[0].index)
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
       self.failUnlessEqual("rebuild", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeRebuild, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_010(self):
       """
@@ -3918,12 +3910,11 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 1)
-      self.failUnlessEqual(None, actionSet.actionSet[0].index)
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
       self.failUnlessEqual("validate", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeValidate, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_011(self):
       """
@@ -3938,13 +3929,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_012(self):
       """
@@ -3959,13 +3948,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(200, actionSet.actionSet[1].index)
       self.failUnlessEqual("stage", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_013(self):
       """
@@ -3980,13 +3967,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(300, actionSet.actionSet[1].index)
       self.failUnlessEqual("store", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_014(self):
       """
@@ -4001,13 +3986,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_015(self):
       """
@@ -4046,13 +4029,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(200, actionSet.actionSet[1].index)
       self.failUnlessEqual("stage", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_019(self):
       """
@@ -4067,13 +4048,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(200, actionSet.actionSet[1].index)
       self.failUnlessEqual("stage", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_020(self):
       """
@@ -4088,13 +4067,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(300, actionSet.actionSet[1].index)
       self.failUnlessEqual("store", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_021(self):
       """
@@ -4109,13 +4086,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_022(self):
       """
@@ -4154,13 +4129,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(300, actionSet.actionSet[1].index)
       self.failUnlessEqual("store", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_026(self):
       """
@@ -4175,13 +4148,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(300, actionSet.actionSet[1].index)
       self.failUnlessEqual("store", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_027(self):
       """
@@ -4196,13 +4167,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(300, actionSet.actionSet[1].index)
       self.failUnlessEqual("store", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_028(self):
       """
@@ -4217,13 +4186,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_029(self):
       """
@@ -4262,13 +4229,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_033(self):
       """
@@ -4283,13 +4248,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_034(self):
       """
@@ -4304,13 +4267,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_035(self):
       """
@@ -4325,13 +4286,11 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_036(self):
       """
@@ -4594,91 +4553,83 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "collect", "one",  ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_069(self):
       """
       Test with actions=[ stage, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "stage", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
       self.failUnlessEqual(200, actionSet.actionSet[1].index)
       self.failUnlessEqual("stage", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_070(self):
       """
       Test with actions=[ store, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "store", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(300, actionSet.actionSet[1].index)
       self.failUnlessEqual("store", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_071(self):
       """
       Test with actions=[ purge, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "purge", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_072(self):
       """
       Test with actions=[ all, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "all", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_073(self):
@@ -4686,7 +4637,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_074(self):
@@ -4694,7 +4645,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "validate", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_075(self):
@@ -4702,7 +4653,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "collect", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4710,83 +4661,75 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(150, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 150), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_076(self):
       """
       Test with actions=[ stage, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "stage", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 150), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(200, actionSet.actionSet[1].index)
       self.failUnlessEqual("stage", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_077(self):
       """
       Test with actions=[ store, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "store", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 150), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(300, actionSet.actionSet[1].index)
       self.failUnlessEqual("store", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_078(self):
       """
       Test with actions=[ purge, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "purge", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 150), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_079(self):
       """
       Test with actions=[ all, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "all", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_080(self):
@@ -4794,7 +4737,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_081(self):
@@ -4802,7 +4745,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "validate", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_082(self):
@@ -4810,7 +4753,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "collect", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4818,20 +4761,18 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(250, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 250), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_083(self):
       """
       Test with actions=[ stage, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "stage", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4839,62 +4780,56 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(250, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 250), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_084(self):
       """
       Test with actions=[ store, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "store", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(250, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 250), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(300, actionSet.actionSet[1].index)
       self.failUnlessEqual("store", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_085(self):
       """
       Test with actions=[ purge, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "purge", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(250, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 250), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_086(self):
       """
       Test with actions=[ all, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "all", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_087(self):
@@ -4902,7 +4837,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_088(self):
@@ -4910,7 +4845,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "validate", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_089(self):
@@ -4918,7 +4853,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "collect", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4926,20 +4861,18 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(350, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 350), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_090(self):
       """
       Test with actions=[ stage, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "stage", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4947,20 +4880,18 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(350, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 350), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_091(self):
       """
       Test with actions=[ store, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "store", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
@@ -4968,41 +4899,37 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(350, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 350), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_092(self):
       """
       Test with actions=[ purge, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "purge", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(350, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 350), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(400, actionSet.actionSet[1].index)
       self.failUnlessEqual("purge", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_093(self):
       """
       Test with actions=[ all, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "all", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_094(self):
@@ -5010,7 +4937,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_095(self):
@@ -5018,7 +4945,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "validate", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_096(self):
@@ -5026,7 +4953,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "collect", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -5034,20 +4961,18 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(450, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_097(self):
       """
       Test with actions=[ stage, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "stage", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -5055,20 +4980,18 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(450, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_098(self):
       """
       Test with actions=[ store, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "store", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
@@ -5076,20 +4999,18 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(450, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_099(self):
       """
       Test with actions=[ purge, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "purge", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(400, actionSet.actionSet[0].index)
@@ -5097,20 +5018,18 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(450, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_100(self):
       """
       Test with actions=[ all, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "all", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_101(self):
@@ -5118,7 +5037,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_102(self):
@@ -5126,7 +5045,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "validate", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_103(self):
@@ -5134,21 +5053,19 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "one", "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(450, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(450, actionSet.actionSet[1].index)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[1].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 450), actionSet.actionSet[1].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
 
    def testActionSet_104(self):
       """
@@ -5163,25 +5080,21 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(200, actionSet.actionSet[1].index)
       self.failUnlessEqual("stage", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
       self.failUnlessEqual(300, actionSet.actionSet[2].index)
       self.failUnlessEqual("store", actionSet.actionSet[2].name)
       self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
-      self.failUnlessEqual(None, actionSet.actionSet[2].extension)
       self.failUnlessEqual(400, actionSet.actionSet[3].index)
       self.failUnlessEqual("purge", actionSet.actionSet[3].name)
       self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
-      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
 
    def testActionSet_105(self):
       """
@@ -5196,170 +5109,147 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
       self.failUnlessEqual(200, actionSet.actionSet[1].index)
       self.failUnlessEqual("stage", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
       self.failUnlessEqual(300, actionSet.actionSet[2].index)
       self.failUnlessEqual("store", actionSet.actionSet[2].name)
       self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
-      self.failUnlessEqual(None, actionSet.actionSet[2].extension)
       self.failUnlessEqual(400, actionSet.actionSet[3].index)
       self.failUnlessEqual("purge", actionSet.actionSet[3].name)
       self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
-      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
 
    def testActionSet_106(self):
       """
       Test with actions=[ collect, stage, store, purge, one, two, three, four, five ], extensions=[ (index 50, 150, 250, 350, 450)].
       """
       actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ExtendedAction("two", "a", "b", 150), 
-                     ExtendedAction("three", "a", "b", 250), ExtendedAction("four", "a", "b", 350), 
-                     ExtendedAction("five", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 9)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
       self.failUnlessEqual(150, actionSet.actionSet[2].index)
       self.failUnlessEqual("two", actionSet.actionSet[2].name)
       self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[2].function)
-      self.failUnlessEqual(ExtendedAction("two", "a", "b", 150), actionSet.actionSet[2].extension)
+      self.failUnlessEqual(isfile, actionSet.actionSet[2].function)
       self.failUnlessEqual(200, actionSet.actionSet[3].index)
       self.failUnlessEqual("stage", actionSet.actionSet[3].name)
       self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[3].function)
-      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
       self.failUnlessEqual(250, actionSet.actionSet[4].index)
       self.failUnlessEqual("three", actionSet.actionSet[4].name)
       self.failUnlessEqual(None, actionSet.actionSet[4].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[4].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[4].function)
-      self.failUnlessEqual(ExtendedAction("three", "a", "b", 250), actionSet.actionSet[4].extension)
+      self.failUnlessEqual(islink, actionSet.actionSet[4].function)
       self.failUnlessEqual(300, actionSet.actionSet[5].index)
       self.failUnlessEqual("store", actionSet.actionSet[5].name)
       self.failUnlessEqual(None, actionSet.actionSet[5].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[5].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[5].function)
-      self.failUnlessEqual(None, actionSet.actionSet[5].extension)
       self.failUnlessEqual(350, actionSet.actionSet[6].index)
       self.failUnlessEqual("four", actionSet.actionSet[6].name)
       self.failUnlessEqual(None, actionSet.actionSet[6].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[6].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[6].function)
-      self.failUnlessEqual(ExtendedAction("four", "a", "b", 350), actionSet.actionSet[6].extension)
+      self.failUnlessEqual(isabs, actionSet.actionSet[6].function)
       self.failUnlessEqual(400, actionSet.actionSet[7].index)
       self.failUnlessEqual("purge", actionSet.actionSet[7].name)
       self.failUnlessEqual(None, actionSet.actionSet[7].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[7].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[7].function)
-      self.failUnlessEqual(None, actionSet.actionSet[7].extension)
       self.failUnlessEqual(450, actionSet.actionSet[8].index)
       self.failUnlessEqual("five", actionSet.actionSet[8].name)
       self.failUnlessEqual(None, actionSet.actionSet[8].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[8].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[8].function)
-      self.failUnlessEqual(ExtendedAction("five", "a", "b", 450), actionSet.actionSet[8].extension)
+      self.failUnlessEqual(exists, actionSet.actionSet[8].function)
 
    def testActionSet_107(self):
       """
       Test with actions=[ one, five, collect, store, three, stage, four, purge, two ], extensions=[ (index 50, 150, 250, 350, 450)].
       """
       actions = [ "one", "five", "collect", "store", "three", "stage", "four", "purge", "two", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ExtendedAction("two", "a", "b", 150), 
-                     ExtendedAction("three", "a", "b", 250), ExtendedAction("four", "a", "b", 350), 
-                     ExtendedAction("five", "a", "b", 450), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 9)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
       self.failUnlessEqual(150, actionSet.actionSet[2].index)
       self.failUnlessEqual("two", actionSet.actionSet[2].name)
       self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[2].function)
-      self.failUnlessEqual(ExtendedAction("two", "a", "b", 150), actionSet.actionSet[2].extension)
+      self.failUnlessEqual(isfile, actionSet.actionSet[2].function)
       self.failUnlessEqual(200, actionSet.actionSet[3].index)
       self.failUnlessEqual("stage", actionSet.actionSet[3].name)
       self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
       self.failUnlessEqual(executeStage, actionSet.actionSet[3].function)
-      self.failUnlessEqual(None, actionSet.actionSet[3].extension)
       self.failUnlessEqual(250, actionSet.actionSet[4].index)
       self.failUnlessEqual("three", actionSet.actionSet[4].name)
       self.failUnlessEqual(None, actionSet.actionSet[4].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[4].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[4].function)
-      self.failUnlessEqual(ExtendedAction("three", "a", "b", 250), actionSet.actionSet[4].extension)
+      self.failUnlessEqual(islink, actionSet.actionSet[4].function)
       self.failUnlessEqual(300, actionSet.actionSet[5].index)
       self.failUnlessEqual("store", actionSet.actionSet[5].name)
       self.failUnlessEqual(None, actionSet.actionSet[5].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[5].postHook)
       self.failUnlessEqual(executeStore, actionSet.actionSet[5].function)
-      self.failUnlessEqual(None, actionSet.actionSet[5].extension)
       self.failUnlessEqual(350, actionSet.actionSet[6].index)
       self.failUnlessEqual("four", actionSet.actionSet[6].name)
       self.failUnlessEqual(None, actionSet.actionSet[6].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[6].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[6].function)
-      self.failUnlessEqual(ExtendedAction("four", "a", "b", 350), actionSet.actionSet[6].extension)
+      self.failUnlessEqual(isabs, actionSet.actionSet[6].function)
       self.failUnlessEqual(400, actionSet.actionSet[7].index)
       self.failUnlessEqual("purge", actionSet.actionSet[7].name)
       self.failUnlessEqual(None, actionSet.actionSet[7].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[7].postHook)
       self.failUnlessEqual(executePurge, actionSet.actionSet[7].function)
-      self.failUnlessEqual(None, actionSet.actionSet[7].extension)
       self.failUnlessEqual(450, actionSet.actionSet[8].index)
       self.failUnlessEqual("five", actionSet.actionSet[8].name)
       self.failUnlessEqual(None, actionSet.actionSet[8].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[8].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[8].function)
-      self.failUnlessEqual(ExtendedAction("five", "a", "b", 450), actionSet.actionSet[8].extension)
+      self.failUnlessEqual(exists, actionSet.actionSet[8].function)
 
    def testActionSet_108(self):
       """
       Test with actions=[ one ], extensions=[ (one, index 50) ].
       """
       actions = [ "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
 
    def testActionSet_109(self):
       """
@@ -5376,7 +5266,6 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_110(self):
       """
@@ -5393,7 +5282,6 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_111(self):
       """
@@ -5410,7 +5298,6 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_112(self):
       """
@@ -5427,7 +5314,6 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(PreActionHook("collect", "something"), actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_113(self):
       """
@@ -5444,7 +5330,6 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(PostActionHook("collect", "something"), actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_114(self):
       """
@@ -5461,14 +5346,13 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(PreActionHook("collect", "something1"), actionSet.actionSet[0].preHook)
       self.failUnlessEqual(PostActionHook("collect", "something2"), actionSet.actionSet[0].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
-      self.failUnlessEqual(None, actionSet.actionSet[0].extension)
 
    def testActionSet_115(self):
       """
       Test with actions=[ one ], extensions=[ (one, index 50) ], hooks=[]
       """
       actions = [ "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = []
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5476,15 +5360,14 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
 
    def testActionSet_116(self):
       """
       Test with actions=[ one ], extensions=[ (one, index 50) ], pre-hook on "store" action.
       """
       actions = [ "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PreActionHook("store", "whatever"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5492,15 +5375,14 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
 
    def testActionSet_117(self):
       """
       Test with actions=[ one ], extensions=[ (one, index 50) ], post-hook on "store" action.
       """
       actions = [ "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PostActionHook("store", "whatever"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5508,15 +5390,14 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
 
    def testActionSet_118(self):
       """
       Test with actions=[ one ], extensions=[ (one, index 50) ], pre-hook on "one" action.
       """
       actions = [ "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PreActionHook("one", "extension"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5524,15 +5405,14 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(PreActionHook("one", "extension"), actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
 
    def testActionSet_119(self):
       """
       Test with actions=[ one ], extensions=[ (one, index 50) ], post-hook on "one" action.
       """
       actions = [ "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PostActionHook("one", "extension"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5540,15 +5420,14 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(PostActionHook("one", "extension"), actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
 
    def testActionSet_120(self):
       """
       Test with actions=[ one ], extensions=[ (one, index 50) ], pre- and post-hook on "one" action.
       """
       actions = [ "one", ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PostActionHook("one", "extension2"), PreActionHook("one", "extension1"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5556,15 +5435,14 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(PreActionHook("one", "extension1"), actionSet.actionSet[0].preHook)
       self.failUnlessEqual(PostActionHook("one", "extension2"), actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
 
    def testActionSet_121(self):
       """
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], hooks=[]
       """
       actions = [ "collect", "one",  ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = []
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5572,21 +5450,19 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_122(self):
       """
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], pre-hook on "purge" action
       """
       actions = [ "collect", "one",  ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PreActionHook("purge", "rm -f"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5594,21 +5470,19 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_123(self):
       """
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], post-hook on "purge" action
       """
       actions = [ "collect", "one",  ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PostActionHook("purge", "rm -f"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5616,21 +5490,19 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_124(self):
       """
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], pre-hook on "collect" action
       """
       actions = [ "collect", "one",  ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PreActionHook("collect", "something"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5638,21 +5510,19 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(PreActionHook("collect", "something"), actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_125(self):
       """
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], post-hook on "collect" action
       """
       actions = [ "collect", "one",  ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PostActionHook("collect", "something"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5660,21 +5530,19 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(PostActionHook("collect", "something"), actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_126(self):
       """
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], pre-hook on "one" action
       """
       actions = [ "collect", "one",  ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PreActionHook("one", "extension"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5682,21 +5550,19 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(PreActionHook("one", "extension"), actionSet.actionSet[0].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_127(self):
       """
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], post-hook on "one" action
       """
       actions = [ "collect", "one",  ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PostActionHook("one", "extension"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5704,21 +5570,19 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(PostActionHook("one", "extension"), actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
    def testActionSet_128(self):
       """
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], set of various pre- and post hooks.
       """
       actions = [ "collect", "one",  ]
-      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       hooks = [ PostActionHook("one", "extension"), PreActionHook("collect", "something"), PostActionHook("stage", "whatever"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5726,14 +5590,12 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
       self.failUnlessEqual(PostActionHook("one", "extension"), actionSet.actionSet[0].postHook)
-      self.failUnlessEqual(None, actionSet.actionSet[0].function)
-      self.failUnlessEqual(ExtendedAction("one", "a", "b", 50), actionSet.actionSet[0].extension)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual(100, actionSet.actionSet[1].index)
       self.failUnlessEqual("collect", actionSet.actionSet[1].name)
       self.failUnlessEqual(PreActionHook("collect", "something"), actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
-      self.failUnlessEqual(None, actionSet.actionSet[1].extension)
 
 
 #######################################################################
