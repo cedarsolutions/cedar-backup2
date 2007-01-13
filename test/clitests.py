@@ -82,7 +82,7 @@ from os.path import isdir, isfile, islink, isabs, exists
 from StringIO import StringIO
 from getopt import GetoptError
 from CedarBackup2.testutil import failUnlessAssignRaises
-from CedarBackup2.config import ExtensionsConfig, ExtendedAction, PreActionHook, PostActionHook
+from CedarBackup2.config import ExtensionsConfig, ExtendedAction, ActionDependencies, PreActionHook, PostActionHook
 from CedarBackup2.cli import _usage, _version
 from CedarBackup2.cli import Options
 from CedarBackup2.cli import _ActionSet
@@ -5596,6 +5596,2032 @@ class TestActionSet(unittest.TestCase):
       self.failUnlessEqual(PreActionHook("collect", "something"), actionSet.actionSet[1].preHook)
       self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
       self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+
+   ############################################
+   # Test constructor, "dependency" order mode
+   ############################################
+
+   def testDependencyMode_001(self):
+      """
+      Test with actions=None, extensions=None.
+      """
+      actions = None
+      extensions = ExtensionsConfig(None, "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_002(self):
+      """
+      Test with actions=[], extensions=None.
+      """
+      actions = []
+      extensions = ExtensionsConfig(None, "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_003(self):
+      """
+      Test with actions=[], extensions=[].
+      """
+      actions = []
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_004(self):
+      """
+      Test with actions=[ collect ], extensions=[].
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testDependencyMode_005(self):
+      """
+      Test with actions=[ stage ], extensions=[].
+      """
+      actions = [ "stage", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+
+   def testDependencyMode_006(self):
+      """
+      Test with actions=[ store ], extensions=[].
+      """
+      actions = [ "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual("store", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+
+   def testDependencyMode_007(self):
+      """
+      Test with actions=[ purge ], extensions=[].
+      """
+      actions = [ "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+
+   def testDependencyMode_008(self):
+      """
+      Test with actions=[ all ], extensions=[].
+      """
+      actions = [ "all", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[3].name)
+      self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+
+   def testDependencyMode_009(self):
+      """
+      Test with actions=[ rebuild ], extensions=[].
+      """
+      actions = [ "rebuild", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
+      self.failUnlessEqual("rebuild", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeRebuild, actionSet.actionSet[0].function)
+
+   def testDependencyMode_010(self):
+      """
+      Test with actions=[ validate ], extensions=[].
+      """
+      actions = [ "validate", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
+      self.failUnlessEqual("validate", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeValidate, actionSet.actionSet[0].function)
+
+   def testDependencyMode_011(self):
+      """
+      Test with actions=[ collect, collect ], extensions=[].
+      """
+      actions = [ "collect", "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_012(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[].
+      """
+      actions = [ "collect", "stage", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testDependencyMode_013(self):
+      """
+      Test with actions=[ collect, store ], extensions=[].
+      """
+      actions = [ "collect", "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_014(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[].
+      """
+      actions = [ "collect", "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_015(self):
+      """
+      Test with actions=[ collect, all ], extensions=[].
+      """
+      actions = [ "collect", "all", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_016(self):
+      """
+      Test with actions=[ collect, rebuild ], extensions=[].
+      """
+      actions = [ "collect", "rebuild", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_017(self):
+      """
+      Test with actions=[ collect, validate ], extensions=[].
+      """
+      actions = [ "collect", "validate", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_018(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[].
+      """
+      actions = [ "stage", "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testDependencyMode_019(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[].
+      """
+      actions = [ "stage", "stage", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testDependencyMode_020(self):
+      """
+      Test with actions=[ stage, store ], extensions=[].
+      """
+      actions = [ "stage", "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_021(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[].
+      """
+      actions = [ "stage", "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_022(self):
+      """
+      Test with actions=[ stage, all ], extensions=[].
+      """
+      actions = [ "stage", "all", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_023(self):
+      """
+      Test with actions=[ stage, rebuild ], extensions=[].
+      """
+      actions = [ "stage", "rebuild", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_024(self):
+      """
+      Test with actions=[ stage, validate ], extensions=[].
+      """
+      actions = [ "stage", "validate", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_025(self):
+      """
+      Test with actions=[ store, collect ], extensions=[].
+      """
+      actions = [ "store", "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_026(self):
+      """
+      Test with actions=[ store, stage ], extensions=[].
+      """
+      actions = [ "store", "stage", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_027(self):
+      """
+      Test with actions=[ store, store ], extensions=[].
+      """
+      actions = [ "store", "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual("store", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_028(self):
+      """
+      Test with actions=[ store, purge ], extensions=[].
+      """
+      actions = [ "store", "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual("store", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_029(self):
+      """
+      Test with actions=[ store, all ], extensions=[].
+      """
+      actions = [ "store", "all", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_030(self):
+      """
+      Test with actions=[ store, rebuild ], extensions=[].
+      """
+      actions = [ "store", "rebuild", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_031(self):
+      """
+      Test with actions=[ store, validate ], extensions=[].
+      """
+      actions = [ "store", "validate", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_032(self):
+      """
+      Test with actions=[ purge, collect ], extensions=[].
+      """
+      actions = [ "purge", "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_033(self):
+      """
+      Test with actions=[ purge, stage ], extensions=[].
+      """
+      actions = [ "purge", "stage", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_034(self):
+      """
+      Test with actions=[ purge, store ], extensions=[].
+      """
+      actions = [ "purge", "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual("store", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_035(self):
+      """
+      Test with actions=[ purge, purge ], extensions=[].
+      """
+      actions = [ "purge", "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_036(self):
+      """
+      Test with actions=[ purge, all ], extensions=[].
+      """
+      actions = [ "purge", "all", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_037(self):
+      """
+      Test with actions=[ purge, rebuild ], extensions=[].
+      """
+      actions = [ "purge", "rebuild", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_038(self):
+      """
+      Test with actions=[ purge, validate ], extensions=[].
+      """
+      actions = [ "purge", "validate", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_039(self):
+      """
+      Test with actions=[ all, collect ], extensions=[].
+      """
+      actions = [ "all", "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_040(self):
+      """
+      Test with actions=[ all, stage ], extensions=[].
+      """
+      actions = [ "all", "stage", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_041(self):
+      """
+      Test with actions=[ all, store ], extensions=[].
+      """
+      actions = [ "all", "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_042(self):
+      """
+      Test with actions=[ all, purge ], extensions=[].
+      """
+      actions = [ "all", "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_043(self):
+      """
+      Test with actions=[ all, all ], extensions=[].
+      """
+      actions = [ "all", "all", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_044(self):
+      """
+      Test with actions=[ all, rebuild ], extensions=[].
+      """
+      actions = [ "all", "rebuild", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_045(self):
+      """
+      Test with actions=[ all, validate ], extensions=[].
+      """
+      actions = [ "all", "validate", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_046(self):
+      """
+      Test with actions=[ rebuild, collect ], extensions=[].
+      """
+      actions = [ "rebuild", "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_047(self):
+      """
+      Test with actions=[ rebuild, stage ], extensions=[].
+      """
+      actions = [ "rebuild", "stage", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_048(self):
+      """
+      Test with actions=[ rebuild, store ], extensions=[].
+      """
+      actions = [ "rebuild", "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_049(self):
+      """
+      Test with actions=[ rebuild, purge ], extensions=[].
+      """
+      actions = [ "rebuild", "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_050(self):
+      """
+      Test with actions=[ rebuild, all ], extensions=[].
+      """
+      actions = [ "rebuild", "all", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_051(self):
+      """
+      Test with actions=[ rebuild, rebuild ], extensions=[].
+      """
+      actions = [ "rebuild", "rebuild", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_052(self):
+      """
+      Test with actions=[ rebuild, validate ], extensions=[].
+      """
+      actions = [ "rebuild", "validate", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_053(self):
+      """
+      Test with actions=[ validate, collect ], extensions=[].
+      """
+      actions = [ "validate", "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_054(self):
+      """
+      Test with actions=[ validate, stage ], extensions=[].
+      """
+      actions = [ "validate", "stage", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_055(self):
+      """
+      Test with actions=[ validate, store ], extensions=[].
+      """
+      actions = [ "validate", "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_056(self):
+      """
+      Test with actions=[ validate, purge ], extensions=[].
+      """
+      actions = [ "validate", "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_057(self):
+      """
+      Test with actions=[ validate, all ], extensions=[].
+      """
+      actions = [ "validate", "all", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_058(self):
+      """
+      Test with actions=[ validate, rebuild ], extensions=[].
+      """
+      actions = [ "validate", "rebuild", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_059(self):
+      """
+      Test with actions=[ validate, validate ], extensions=[].
+      """
+      actions = [ "validate", "validate", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_060(self):
+      """
+      Test with actions=[ bogus ], extensions=[].
+      """
+      actions = [ "bogus", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_061(self):
+      """
+      Test with actions=[ bogus, collect ], extensions=[].
+      """
+      actions = [ "bogus", "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_062(self):
+      """
+      Test with actions=[ bogus, stage ], extensions=[].
+      """
+      actions = [ "bogus", "stage", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_063(self):
+      """
+      Test with actions=[ bogus, store ], extensions=[].
+      """
+      actions = [ "bogus", "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_064(self):
+      """
+      Test with actions=[ bogus, purge ], extensions=[].
+      """
+      actions = [ "bogus", "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_065(self):
+      """
+      Test with actions=[ bogus, all ], extensions=[].
+      """
+      actions = [ "bogus", "all", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_066(self):
+      """
+      Test with actions=[ bogus, rebuild ], extensions=[].
+      """
+      actions = [ "bogus", "rebuild", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_067(self):
+      """
+      Test with actions=[ bogus, validate ], extensions=[].
+      """
+      actions = [ "bogus", "validate", ]
+      extensions = ExtensionsConfig([], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_068(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before collect) ].
+      """
+      actions = [ "collect", "one",  ]
+      dependencies = ActionDependencies(["collect",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_069(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, before stage) ].
+      """
+      actions = [ "stage", "one", ]
+      dependencies = ActionDependencies(["stage",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testDependencyMode_070(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, before store) ].
+      """
+      actions = [ "store", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_071(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, before purge) ].
+      """
+      actions = [ "purge", "one", ]
+      dependencies = ActionDependencies(["purge",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_072(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, before collect) ].
+      """
+      actions = [ "all", "one", ]
+      dependencies = ActionDependencies(["collect",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_073(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, before collect) ].
+      """
+      actions = [ "rebuild", "one", ]
+      dependencies = ActionDependencies(["collect",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_074(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, before collect) ].
+      """
+      actions = [ "validate", "one", ]
+      dependencies = ActionDependencies(["stage",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_075(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, after collect) ].
+      """
+      actions = [ "collect", "one", ]
+      dependencies = ActionDependencies([], ["collect", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+
+   def testDependencyMode_076(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, after collect) ].
+      """
+      actions = [ "stage", "one", ]
+      dependencies = ActionDependencies([], ["collect", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testDependencyMode_077(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, after collect) ].
+      """
+      actions = [ "store", "one", ]
+      dependencies = ActionDependencies([], ["collect", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_078(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, after collect) ].
+      """
+      actions = [ "purge", "one", ]
+      dependencies = ActionDependencies([], ["collect", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_079(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, before stage) ].
+      """
+      actions = [ "stage", "one", ]
+      dependencies = ActionDependencies(["stage", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testDependencyMode_080(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, before stage ) ].
+      """
+      actions = [ "store", "one", ]
+      dependencies = ActionDependencies(["stage", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_081(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, before stage) ].
+      """
+      actions = [ "purge", "one", ]
+      dependencies = ActionDependencies(["stage", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_082(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, after collect) ].
+      """
+      actions = [ "all", "one", ]
+      dependencies = ActionDependencies([], ["collect", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_083(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, after collect) ].
+      """
+      actions = [ "rebuild", "one", ]
+      dependencies = ActionDependencies([], ["collect", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_084(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, after collect) ].
+      """
+      actions = [ "validate", "one", ]
+      dependencies = ActionDependencies([], ["collect", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_085(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, after stage) ].
+      """
+      actions = [ "collect", "one", ]
+      dependencies = ActionDependencies([], ["stage", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+
+   def testDependencyMode_086(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, after stage) ].
+      """
+      actions = [ "stage", "one", ]
+      dependencies = ActionDependencies([], ["stage", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+
+   def testDependencyMode_087(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, after stage) ].
+      """
+      actions = [ "store", "one", ]
+      dependencies = ActionDependencies([], ["stage", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_088(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, after stage) ].
+      """
+      actions = [ "purge", "one", ]
+      dependencies = ActionDependencies([], ["stage", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_089(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before store) ].
+      """
+      actions = [ "collect", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_090(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, before store) ].
+      """
+      actions = [ "stage", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testDependencyMode_091(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, before store) ].
+      """
+      actions = [ "store", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_092(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, before store) ].
+      """
+      actions = [ "purge", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_093(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, after stage) ].
+      """
+      actions = [ "all", "one", ]
+      dependencies = ActionDependencies([], ["stage", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_094(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, after stage) ].
+      """
+      actions = [ "rebuild", "one", ]
+      dependencies = ActionDependencies([], ["stage", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_095(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, after stage) ].
+      """
+      actions = [ "validate", "one", ]
+      dependencies = ActionDependencies([], ["stage", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_096(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, after store) ].
+      """
+      actions = [ "collect", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_097(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, after store) ].
+      """
+      actions = [ "stage", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testDependencyMode_098(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, after store) ].
+      """
+      actions = [ "store", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testDependencyMode_099(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, after store) ].
+      """
+      actions = [ "purge", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testDependencyMode_100(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before purge) ].
+      """
+      actions = [ "collect", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testDependencyMode_101(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, before purge) ].
+      """
+      actions = [ "stage", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+
+   def testDependencyMode_102(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, before purge) ].
+      """
+      actions = [ "store", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+      self.failUnlessEqual("store", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+
+   def testDependencyMode_103(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, before purge) ].
+      """
+      actions = [ "purge", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+
+   def testDependencyMode_104(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, after store) ].
+      """
+      actions = [ "all", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_105(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, after store) ].
+      """
+      actions = [ "rebuild", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_106(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, after store) ].
+      """
+      actions = [ "validate", "one", ]
+      dependencies = ActionDependencies(["store",], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_107(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, after purge) ].
+      """
+      actions = [ "collect", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testDependencyMode_108(self):
+      """
+      Test with actions=[ stage, one ], extensions=[ (one, after purge) ].
+      """
+      actions = [ "stage", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+
+   def testDependencyMode_109(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, after purge) ].
+      """
+      actions = [ "store", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+      self.failUnlessEqual("store", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+
+   def testDependencyMode_110(self):
+      """
+      Test with actions=[ purge, one ], extensions=[ (one, after purge) ].
+      """
+      actions = [ "purge", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+
+   def testDependencyMode_111(self):
+      """
+      Test with actions=[ all, one ], extensions=[ (one, after purge) ].
+      """
+      actions = [ "all", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_112(self):
+      """
+      Test with actions=[ rebuild, one ], extensions=[ (one, after purge) ].
+      """
+      actions = [ "rebuild", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_113(self):
+      """
+      Test with actions=[ validate, one ], extensions=[ (one, after purge) ].
+      """
+      actions = [ "validate", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
+   def testDependencyMode_114(self):
+      """
+      Test with actions=[ one, one ], extensions=[ (one, after purge) ].
+      """
+      actions = [ "one", "one", ]
+      dependencies = ActionDependencies([], ["purge", ])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+
+   def testDependencyMode_115(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[].
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[3].name)
+      self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+
+   def testDependencyMode_116(self):
+      """
+      Test with actions=[ stage, purge, collect, store ], extensions=[].
+      """
+      actions = [ "stage", "purge", "collect", "store", ]
+      extensions = ExtensionsConfig([], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[3].name)
+      self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+
+   def testDependencyMode_117(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four, five ], 
+      extensions=[ one before collect, two before stage, etc. ].
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
+      dependencies1 = ActionDependencies(["collect", "stage", "store", "purge", ], [])
+      dependencies2 = ActionDependencies(["stage", "store", "purge", ], ["collect", ])
+      dependencies3 = ActionDependencies(["store", "purge", ], ["collect", "stage", ])
+      dependencies4 = ActionDependencies(["purge", ], ["collect", "stage", "store", ])
+      dependencies5 = ActionDependencies([], ["collect", "stage", "store", "purge", ])
+      eaction1 = ExtendedAction("one", "os.path", "isdir", dependencies=dependencies1)
+      eaction2 = ExtendedAction("two", "os.path", "isfile", dependencies=dependencies2)
+      eaction3 = ExtendedAction("three", "os.path", "islink", dependencies=dependencies2)
+      eaction4 = ExtendedAction("four", "os.path", "isabs", dependencies=dependencies4)
+      eaction5 = ExtendedAction("five", "os.path", "exists", dependencies=dependencies5)
+      extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 9)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+      self.failUnlessEqual("three", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(islink, actionSet.actionSet[2].function)
+      self.failUnlessEqual("two", actionSet.actionSet[3].name)
+      self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
+      self.failUnlessEqual(isfile, actionSet.actionSet[3].function)
+      self.failUnlessEqual("stage", actionSet.actionSet[4].name)
+      self.failUnlessEqual(None, actionSet.actionSet[4].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[4].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[4].function)
+      self.failUnlessEqual("store", actionSet.actionSet[5].name)
+      self.failUnlessEqual(None, actionSet.actionSet[5].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[5].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[5].function)
+      self.failUnlessEqual("four", actionSet.actionSet[6].name)
+      self.failUnlessEqual(None, actionSet.actionSet[6].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[6].postHook)
+      self.failUnlessEqual(isabs, actionSet.actionSet[6].function)
+      self.failUnlessEqual("purge", actionSet.actionSet[7].name)
+      self.failUnlessEqual(None, actionSet.actionSet[7].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[7].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[7].function)
+      self.failUnlessEqual("five", actionSet.actionSet[8].name)
+      self.failUnlessEqual(None, actionSet.actionSet[8].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[8].postHook)
+      self.failUnlessEqual(exists, actionSet.actionSet[8].function)
+
+   def testDependencyMode_118(self):
+      """
+      Test with actions=[ one, five, collect, store, three, stage, four, purge, two ],
+      extensions=[ one before collect, two before stage, etc. ].
+      """
+      actions = [ "one", "five", "collect", "store", "three", "stage", "four", "purge", "two", ]
+      dependencies1 = ActionDependencies(["collect", "stage", "store", "purge", ], [])
+      dependencies2 = ActionDependencies(["stage", "store", "purge", ], ["collect", ])
+      dependencies3 = ActionDependencies(["store", "purge", ], ["collect", "stage", ])
+      dependencies4 = ActionDependencies(["purge", ], ["collect", "stage", "store", ])
+      dependencies5 = ActionDependencies([], ["collect", "stage", "store", "purge", ])
+      eaction1 = ExtendedAction("one", "os.path", "isdir", dependencies=dependencies1)
+      eaction2 = ExtendedAction("two", "os.path", "isfile", dependencies=dependencies2)
+      eaction3 = ExtendedAction("three", "os.path", "islink", dependencies=dependencies2)
+      eaction4 = ExtendedAction("four", "os.path", "isabs", dependencies=dependencies4)
+      eaction5 = ExtendedAction("five", "os.path", "exists", dependencies=dependencies5)
+      extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 9)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+      self.failUnlessEqual("three", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(islink, actionSet.actionSet[2].function)
+      self.failUnlessEqual("two", actionSet.actionSet[3].name)
+      self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
+      self.failUnlessEqual(isfile, actionSet.actionSet[3].function)
+      self.failUnlessEqual("stage", actionSet.actionSet[4].name)
+      self.failUnlessEqual(None, actionSet.actionSet[4].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[4].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[4].function)
+      self.failUnlessEqual("store", actionSet.actionSet[5].name)
+      self.failUnlessEqual(None, actionSet.actionSet[5].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[5].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[5].function)
+      self.failUnlessEqual("four", actionSet.actionSet[6].name)
+      self.failUnlessEqual(None, actionSet.actionSet[6].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[6].postHook)
+      self.failUnlessEqual(isabs, actionSet.actionSet[6].function)
+      self.failUnlessEqual("purge", actionSet.actionSet[7].name)
+      self.failUnlessEqual(None, actionSet.actionSet[7].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[7].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[7].function)
+      self.failUnlessEqual("five", actionSet.actionSet[8].name)
+      self.failUnlessEqual(None, actionSet.actionSet[8].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[8].postHook)
+      self.failUnlessEqual(exists, actionSet.actionSet[8].function)
+
+   def testDependencyMode_119(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, before collect) ].
+      """
+      actions = [ "one", ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      actionSet = _ActionSet(actions, extensions, None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+   def testDependencyMode_120(self):
+      """
+      Test with actions=[ collect ], extensions=[], hooks=[]
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      hooks = []
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testDependencyMode_121(self):
+      """
+      Test with actions=[ collect ], extensions=[], pre-hook on 'stage' action.
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      hooks = [ PreActionHook("stage", "something") ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testDependencyMode_122(self):
+      """
+      Test with actions=[ collect ], extensions=[], post-hook on 'stage' action.
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      hooks = [ PostActionHook("stage", "something") ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testDependencyMode_123(self):
+      """
+      Test with actions=[ collect ], extensions=[], pre-hook on 'collect' action.
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      hooks = [ PreActionHook("collect", "something") ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(PreActionHook("collect", "something"), actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testDependencyMode_124(self):
+      """
+      Test with actions=[ collect ], extensions=[], post-hook on 'collect' action.
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      hooks = [ PostActionHook("collect", "something") ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(PostActionHook("collect", "something"), actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testDependencyMode_125(self):
+      """
+      Test with actions=[ collect ], extensions=[], pre- and post-hook on 'collect' action.
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], "dependency")
+      hooks = [ PreActionHook("collect", "something1"), PostActionHook("collect", "something2") ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(PreActionHook("collect", "something1"), actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(PostActionHook("collect", "something2"), actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testDependencyMode_126(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, before collect) ], hooks=[]
+      """
+      actions = [ "one", ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = []
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+   def testDependencyMode_127(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, before collect) ], pre-hook on "store" action.
+      """
+      actions = [ "one", ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PreActionHook("store", "whatever"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+   def testDependencyMode_128(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, before collect) ], post-hook on "store" action.
+      """
+      actions = [ "one", ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PostActionHook("store", "whatever"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+   def testDependencyMode_129(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, before collect) ], pre-hook on "one" action.
+      """
+      actions = [ "one", ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PreActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(PreActionHook("one", "extension"), actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+   def testDependencyMode_130(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, before collect) ], post-hook on "one" action.
+      """
+      actions = [ "one", ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PostActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(PostActionHook("one", "extension"), actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+   def testDependencyMode_131(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, before collect) ], pre- and post-hook on "one" action.
+      """
+      actions = [ "one", ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PostActionHook("one", "extension2"), PreActionHook("one", "extension1"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(PreActionHook("one", "extension1"), actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(PostActionHook("one", "extension2"), actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+   def testDependencyMode_132(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before collect) ], hooks=[]
+      """
+      actions = [ "collect", "one",  ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = []
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_133(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before collect) ], pre-hook on "purge" action
+      """
+      actions = [ "collect", "one",  ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PreActionHook("purge", "rm -f"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_134(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before collect) ], post-hook on "purge" action
+      """
+      actions = [ "collect", "one",  ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PostActionHook("purge", "rm -f"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_135(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before collect) ], pre-hook on "collect" action
+      """
+      actions = [ "collect", "one",  ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PreActionHook("collect", "something"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(PreActionHook("collect", "something"), actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_136(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before collect) ], post-hook on "collect" action
+      """
+      actions = [ "collect", "one",  ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PostActionHook("collect", "something"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(PostActionHook("collect", "something"), actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_137(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before collect) ], pre-hook on "one" action
+      """
+      actions = [ "collect", "one",  ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PreActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(PreActionHook("one", "extension"), actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_138(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before collect) ], post-hook on "one" action
+      """
+      actions = [ "collect", "one",  ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PostActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(PostActionHook("one", "extension"), actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_139(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, before collect) ], set of various pre- and post hooks.
+      """
+      actions = [ "collect", "one",  ]
+      dependencies = ActionDependencies(["collect", ], [])
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
+      hooks = [ PostActionHook("one", "extension"), PreActionHook("collect", "something"), PostActionHook("stage", "whatever"), ]
+      actionSet = _ActionSet(actions, extensions, hooks)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(PostActionHook("one", "extension"), actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(PreActionHook("collect", "something"), actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testDependencyMode_140(self):
+      """
+      Test with actions=[ one, five, collect, store, three, stage, four, purge, two ],
+      extensions= [recursive loop].
+      """
+      actions = [ "one", "five", "collect", "store", "three", "stage", "four", "purge", "two", ]
+      dependencies1 = ActionDependencies(["collect", "stage", "store", "purge", ], [])
+      dependencies2 = ActionDependencies(["stage", "store", "purge", ], ["collect", ])
+      dependencies3 = ActionDependencies(["store", "purge", ], ["collect", "stage", ])
+      dependencies4 = ActionDependencies(["purge", ], ["collect", "stage", "store", ])
+      dependencies5 = ActionDependencies(["one", ], ["collect", "stage", "store", "purge", ])
+      eaction1 = ExtendedAction("one", "os.path", "isdir", dependencies=dependencies1)
+      eaction2 = ExtendedAction("two", "os.path", "isfile", dependencies=dependencies2)
+      eaction3 = ExtendedAction("three", "os.path", "islink", dependencies=dependencies2)
+      eaction4 = ExtendedAction("four", "os.path", "isabs", dependencies=dependencies4)
+      eaction5 = ExtendedAction("five", "os.path", "exists", dependencies=dependencies5)
+      extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
 
 #######################################################################

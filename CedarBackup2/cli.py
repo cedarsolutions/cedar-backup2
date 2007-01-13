@@ -520,9 +520,12 @@ class _ActionSet(object):
             graph.createVertex("purge")
             for action in extensions.actions:
                graph.createVertex(action.name)
-            graph.createEdge("collect", "stage")
-            graph.createEdge("stage", "store")
-            graph.createEdge("store", "purge")
+            graph.createEdge("collect", "stage")   # Collect must run before stage, store or purge
+            graph.createEdge("collect", "store")
+            graph.createEdge("collect", "purge")
+            graph.createEdge("stage", "store")     # Stage must run before store or purge
+            graph.createEdge("stage", "purge")
+            graph.createEdge("store", "purge")     # Store must run before purge
             for action in extensions.actions:
                for vertex in action.dependencies.beforeList:
                   graph.createEdge(action.name, vertex)   # actions that this action must be run before
@@ -530,7 +533,7 @@ class _ActionSet(object):
                   graph.createEdge(vertex, action.name)   # actions that this action must be run after
             try:
                ordering = graph.topologicalSort()
-               indexMap = dict([(ordering[i], i) for i in range(0, len(ordering))])
+               indexMap = dict([(ordering[i], i+1) for i in range(0, len(ordering))])
                logger.info("Action order will be: %s" % ordering)
             except ValueError:
                logger.error("Unable to determine proper action order due to dependency recursion.")
