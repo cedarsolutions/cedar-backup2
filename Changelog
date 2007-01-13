@@ -10,11 +10,16 @@ Version 2.10.0	unreleased
 	  - Add new addSelf flag to FilesystemList.addDirContents()
 	  - Create new RegexMatchList class in util.py, and add tests
 	  - Create new DirectedGraph class in util.py, and add tests
+	  - Create new sortDict() function in util.py
 	* Create unit tests for functionality that was not explictly tested before.
 	  - ActionHook, PreActionHook, PostActionHook, CommandOverride (config.py)
 	  - AbsolutePathList, ObjectTypeList, RestrictedContentList (util.py)
 	* Support encrypted staging directories (closes: #33).
 	  - Create new 'encrypt' extension and associated unit tests
+	* Support new action ordering mechanism for extensions.
+	  - Extensions can now specify dependencies rather than indexes
+	  - Cedar Backup will determine the proper execution order
+	  - Rewrote cli._ActionSet() to use DirectedGraph for dependencies
 	* Refactor and clean up code that implements standard actions.
 	  - Split action.py into various other files in the actions package
 	  - Move a few of the more generic utility functions into util.py
@@ -33,7 +38,7 @@ Version 2.10.0	unreleased
 	  - Rework actions.store.writeImage() to use new writer interface
 	* Add support for DVD writers and DVD+R/DVD+RW media.
 	  - Create new writers.dvdwriter module and DvdWriter class
-	  - Support 'dvdwriter' device type  target in configuration
+	  - Support 'dvdwriter' device type, and 'dvd+r' and 'dvd+rw' media types
 
 Version 2.9.0	18 Dec 2006
 	

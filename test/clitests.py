@@ -7623,7 +7623,7 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
-   def testDependencyMode_118(self):
+   def testDependencyMode_141(self):
       """
       Test with actions=[ one, five, collect, store, three, stage, four, purge, two ],
       and one extension for which a dependency does not exist.
