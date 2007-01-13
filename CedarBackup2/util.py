@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # Portions copyright (c) 2001, 2002 Python Software Foundation.
@@ -42,8 +42,9 @@
 """
 Provides general-purpose utilities. 
 
-@sort: AbsolutePathList, ObjectTypeList, PathResolverSingleton, 
-       convertSize, getUidGid, changeOwnership, splitCommandLine, 
+@sort: AbsolutePathList, ObjectTypeList, RestrictedValueList, RegexMatchList,
+       _Vertex, DirectedGraph, PathResolverSingleton, 
+       convertSize, getUidGid, changeOwnership, splitCommandLine,
        resolveCommand, executeCommand, calculateFileAge, encodePath, nullDevice,
        deriveDayOfWeek, isStartOfWeek, buildNormalizedPath, 
        validateScsiId, validateDevice, validateDriveSpeed,
@@ -502,7 +503,187 @@ class RegexMatchList(UnorderedList):
 
 
 ########################################################################
-# PathResolverSingleton class definition
+# Directed graph implementation
+########################################################################
+
+class _Vertex(object):
+
+   """
+   Represents a vertex (or node) in a directed graph.
+   """
+
+   def __init__(self, name):
+      """
+      Constructor.
+      @param name: Name of this graph vertex.
+      @type name: String value.
+      """
+      self.name = name
+      self.endpoints = []
+      self.state = None
+
+class DirectedGraph(object):
+
+   """
+   Represents a directed graph.
+
+   A graph B{G=(V,E)} consists of a set of vertices B{V} together with a set
+   B{E} of vertex pairs or edges.  In a directed graph, each edge also has an
+   associated direction (from vertext B{v1} to vertex B{v2}).  A C{DirectedGraph} 
+   object provides a way to construct a directed graph and execute a depth-
+   first search.
+
+   This data structure was designed based on the graphing chapter in
+   U{The Algorithm Design Manual<http://www2.toki.or.id/book/AlgDesignManual/>},
+   by Steven S. Skiena.  
+
+   This class is intended to be used by Cedar Backup for dependency ordering.
+   Because of this, it's not quite general-purpose.  Unlike a "general" graph,
+   every vertex in this graph has at least one edge pointing to it, from a
+   special "start" vertex.  This is so no vertices get "lost" either because
+   they have no dependencies or because nothing depends on them.
+   """
+
+   _UNDISCOVERED = 0
+   _DISCOVERED   = 1
+   _EXPLORED     = 2
+
+   def __init__(self, name):
+      """
+      Directed graph constructor.
+
+      @param name: Name of this graph.
+      @type name: String value.
+      """
+      if name is None or name == "":
+         raise ValueError("Graph name must be non-empty.")
+      self._name = name
+      self._vertices = {}
+      self._startVertex = _Vertex(None)  # start vertex is only vertex with no name
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "DirectedGraph(%s)" % self.name
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._name != other._name:
+         if self._name < other._name:
+            return -1
+         else:
+            return 1
+      if self._vertices != other._vertices:
+         if self._vertices < other._vertices:
+            return -1
+         else:
+            return 1
+      return 0
+
+   def _getName(self):
+      """
+      Property target used to get the graph name.
+      """
+      return self._name
+
+   name = property(_getName, None, None, "Name of the graph.")
+
+   def createVertex(self, name):
+      """
+      Creates a named vertex.
+      @param name: vertex name
+      @raise ValueError: If the vertex name is C{None} or empty.
+      """
+      if name is None or name == "":
+         raise ValueError("Vertex name must be non-empty.")
+      vertex = _Vertex(name)
+      self._startVertex.endpoints.append(vertex)  # so every vertex is connected at least once
+      self._vertices[name] = vertex
+
+   def createEdge(self, start, finish):
+      """
+      Adds an edge with an associated direction, from C{start} vertex to C{finish} vertex.
+      @param start: Name of start vertex.
+      @param finish: Name of finish vertex.
+      @raise ValueError: If one of the named vertices is unknown.
+      """
+      try:
+         startVertex = self._vertices[start]
+         finishVertex = self._vertices[finish]
+         startVertex.endpoints.append(finishVertex)
+      except KeyError, e:
+         raise ValueError("Vertex [%s] could not be found." % e)
+
+   def topologicalSort(self):
+      """
+      Implements a topological sort of the graph.
+
+      This method also enforces that the graph is a directed acyclic graph,
+      which is a requirement of a topological sort.
+
+      A directed acyclic graph (or "DAG") is a directed graph with no directed
+      cycles.  A topological sort of a DAG is an ordering on the vertices such
+      that all edges go from left to right.  Only an acyclic graph can have a
+      topological sort, but any DAG has at least one topological sort.  
+
+      Since a topological sort only makes sense for an acyclic graph, this 
+      method throws an exception if a cycle is found.
+
+      A depth-first search only makes sense if the graph is acyclic.  If the
+      graph contains any cycles, it is not possible to determine a consistent
+      ordering for the vertices.
+
+      @note: If a particular vertex has no edges, then its position in the
+      final list depends on the order in which the vertices were created in the
+      graph.  If you're using this method to determine a dependency order, this
+      makes sense: a vertex with no dependencies can go anywhere (and will).
+
+      @return: Ordering on the vertices so that all edges go from left to right.
+
+      @raise ValueError: If a cycle is found in the graph.
+      """
+      ordering = []
+      for key in self._vertices:
+         vertex = self._vertices[key]
+         vertex.state = self._UNDISCOVERED
+      for key in self._vertices:
+         vertex = self._vertices[key]
+         if vertex.state == self._UNDISCOVERED:
+            self._topologicalSort(self._startVertex, ordering)
+      return ordering
+
+   def _topologicalSort(self, vertex, ordering):
+      """
+      Recursive depth first search function implementing topological sort.
+      @param vertex: Vertex to search
+      @param ordering: List of vertices in proper order
+      """
+      vertex.state = self._DISCOVERED
+      for endpoint in vertex.endpoints:
+         if endpoint.state == self._UNDISCOVERED:
+            self._topologicalSort(endpoint, ordering)
+         elif endpoint.state != self._EXPLORED:
+            raise ValueError("Cycle found in graph (found '%s' while searching '%s')." % (vertex.name, endpoint.name))
+      if vertex.name is not None:
+         ordering.insert(0, vertex.name) 
+      vertex.state = self._EXPLORED
+
+
+########################################################################
+# PathResolverSingleton class defkinition
 ########################################################################
 
 class PathResolverSingleton:

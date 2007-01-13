@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -82,7 +82,7 @@ from os.path import isdir
 
 from CedarBackup2.testutil import findResources, removedir, platformHasEcho
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, RestrictedContentList, RegexMatchList
-from CedarBackup2.util import PathResolverSingleton
+from CedarBackup2.util import DirectedGraph, PathResolverSingleton
 from CedarBackup2.util import resolveCommand, executeCommand, getFunctionReference, encodePath, validateScsiId
 
 
@@ -911,6 +911,878 @@ class TestRegexMatchList(unittest.TestCase):
       self.failUnlessEqual(list1, [])
       self.failUnlessRaises(ValueError, list1.extend, [ None, ])
       self.failUnlessEqual(list1, [])
+
+
+##########################
+# TestDirectedGraph class
+##########################
+
+class TestDirectedGraph(unittest.TestCase):
+
+   """Tests for the DirectedGraph class."""
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = DirectedGraph("test")
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with a valid name filled in.
+      """
+      graph = DirectedGraph("Ken")
+      self.failUnlessEqual("Ken", graph.name)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with a C{None} name filled in.
+      """
+      self.failUnlessRaises(ValueError, DirectedGraph, None)
+
+
+   ##########################
+   # Test depth first search
+   ##########################
+
+   def testTopologicalSort_001(self):
+      """
+      Empty graph.
+      """
+      graph = DirectedGraph("test")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([], path)
+
+   def testTopologicalSort_002(self):
+      """
+      Graph with 1 vertex, no edges.
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", ], path)
+
+   def testTopologicalSort_003(self):
+      """
+      Graph with 2 vertices, no edges.
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", ], path)
+
+   def testTopologicalSort_004(self):
+      """
+      Graph with 3 vertices, no edges.
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_005(self):
+      """
+      Graph with 4 vertices, no edges.
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("4")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "4", "2", "1", "3", ], path)
+
+   def testTopologicalSort_006(self):
+      """
+      Graph with 4 vertices, no edges.
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("4")
+      graph.createVertex("5")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "5", "4", "2", "1", "3", ], path)
+
+   def testTopologicalSort_007(self):
+      """
+      Graph with 3 vertices, in a chain (1->2->3), create order (1,2,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("1", "2")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_008(self):
+      """
+      Graph with 3 vertices, in a chain (1->2->3), create order (1,3,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createEdge("1", "2")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_009(self):
+      """
+      Graph with 3 vertices, in a chain (1->2->3), create order (2,3,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createEdge("1", "2")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_010(self):
+      """
+      Graph with 3 vertices, in a chain (1->2->3), create order (2,1,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createEdge("1", "2")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_011(self):
+      """
+      Graph with 3 vertices, in a chain (1->2->3), create order (3,1,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createEdge("1", "2")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_012(self):
+      """
+      Graph with 3 vertices, in a chain (1->2->3), create order (3,2,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createEdge("1", "2")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_013(self):
+      """
+      Graph with 3 vertices, in a chain (3->2->1), create order (1,2,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("3", "2")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_014(self):
+      """
+      Graph with 3 vertices, in a chain (3->2->1), create order (1,3,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createEdge("3", "2")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_015(self):
+      """
+      Graph with 3 vertices, in a chain (3->2->1), create order (2,3,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createEdge("3", "2")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_016(self):
+      """
+      Graph with 3 vertices, in a chain (3->2->1), create order (2,1,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createEdge("3", "2")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_017(self):
+      """
+      Graph with 3 vertices, in a chain (3->2->1), create order (3,1,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createEdge("3", "2")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_018(self):
+      """
+      Graph with 3 vertices, in a chain (3->2->1), create order (3,2,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createEdge("3", "2")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_019(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->2,3), create order (1,2,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("1", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "1", "2", ], path)
+
+   def testTopologicalSort_020(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->2,3), create order (1,3,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createEdge("1", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "1", "2", ], path)
+
+   def testTopologicalSort_021(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->2,3), create order (2,3,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createEdge("1", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "3", "2", ], path)
+
+   def testTopologicalSort_022(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->2,3), create order (2,1,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createEdge("1", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "1", "2", ], path)
+
+   def testTopologicalSort_023(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->2,3), create order (3,1,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createEdge("1", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_024(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->2,3), create order (3,2,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createEdge("1", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_025(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->3,2), create order (1,2,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("1", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "3", ], path)
+
+   def testTopologicalSort_026(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->3,2), create order (1,3,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createEdge("1", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "3", ], path)
+
+   def testTopologicalSort_027(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->3,2), create order (2,3,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createEdge("1", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "3", "2", ], path)
+
+   def testTopologicalSort_028(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->3,2), create order (2,1,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createEdge("1", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "3", "2", ], path)
+
+   def testTopologicalSort_029(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->3,2), create order (3,1,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createEdge("1", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "3", ], path)
+
+   def testTopologicalSort_030(self):
+      """
+      Graph with 3 vertices, chain and orphan (1->3,2), create order (3,2,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createEdge("1", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_031(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->3,1), create order (1,2,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "3", "1", ], path)
+
+   def testTopologicalSort_032(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->3,1), create order (1,3,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "3", "1", ], path)
+
+   def testTopologicalSort_033(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->3,1), create order (2,3,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_034(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->3,1), create order (2,1,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_035(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->3,1), create order (3,1,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "3", ], path)
+
+   def testTopologicalSort_036(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->3,1), create order (3,2,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createEdge("2", "3")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", ], path)
+
+   def testTopologicalSort_037(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->1,3), create order (1,2,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_038(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->1,3), create order (1,3,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "3", "1", ], path)
+
+   def testTopologicalSort_039(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->1,3), create order (2,3,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_040(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->1,3), create order (2,1,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_041(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->1,3), create order (3,1,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "3", ], path)
+
+   def testTopologicalSort_042(self):
+      """
+      Graph with 3 vertices, chain and orphan (2->1,3), create order (3,2,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createEdge("2", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "3", ], path)
+
+   def testTopologicalSort_043(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->1,2), create order (1,2,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("3", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_044(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->1,2), create order (1,3,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createEdge("3", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "3", "1", ], path)
+
+   def testTopologicalSort_045(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->1,2), create order (2,3,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createEdge("3", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "1", "2", ], path)
+
+   def testTopologicalSort_046(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->1,2), create order (2,1,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createEdge("3", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "1", "2", ], path)
+
+   def testTopologicalSort_047(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->1,2), create order (3,1,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createEdge("3", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "3", "1", ], path)
+
+   def testTopologicalSort_048(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->1,2), create order (3,2,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createEdge("3", "1")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "3", "1", ], path)
+
+   def testTopologicalSort_049(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->2,1), create order (1,2,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("3", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_050(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->2,1), create order (1,3,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createEdge("3", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "2", "1", ], path)
+
+   def testTopologicalSort_051(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->2,1), create order (2,3,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createEdge("3", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "3", "2", ], path)
+
+   def testTopologicalSort_052(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->2,1), create order (2,1,3)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createVertex("3")
+      graph.createEdge("3", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "3", "1", "2", ], path)
+
+   def testTopologicalSort_053(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->2,1), create order (3,1,2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createEdge("3", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "3", "2", ], path)
+
+   def testTopologicalSort_054(self):
+      """
+      Graph with 3 vertices, chain and orphan (3->2,1), create order (3,2,1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("3")
+      graph.createVertex("2")
+      graph.createVertex("1")
+      graph.createEdge("3", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "3", "2" ], path)
+
+   def testTopologicalSort_055(self):
+      """
+      Graph with 1 vertex, with an edge to itself (1->1).
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createEdge("1", "1")
+      self.failUnlessRaises(ValueError, graph.topologicalSort)
+
+   def testTopologicalSort_056(self):
+      """
+      Graph with 2 vertices, each with an edge to itself (1->1, 2->2).
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createEdge("1", "1")
+      graph.createEdge("2", "2")
+      self.failUnlessRaises(ValueError, graph.topologicalSort)
+
+   def testTopologicalSort_057(self):
+      """
+      Graph with 3 vertices, each with an edge to itself (1->1, 2->2, 3->3).
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("1", "1")
+      graph.createEdge("2", "2")
+      graph.createEdge("3", "3")
+      self.failUnlessRaises(ValueError, graph.topologicalSort)
+
+   def testTopologicalSort_058(self):
+      """
+      Graph with 3 vertices, in a loop (1->2->3->1).
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createEdge("1", "2")
+      graph.createEdge("2", "3")
+      graph.createEdge("3", "1")
+      self.failUnlessRaises(ValueError, graph.topologicalSort)
+
+   def testTopologicalSort_059(self):
+      """
+      Graph with 5 vertices, (2, 1->3, 1->4, 1->5)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("4")
+      graph.createVertex("5")
+      graph.createEdge("1", "3")
+      graph.createEdge("1", "4")
+      graph.createEdge("1", "5")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "5", "4", "3", ], path)
+
+   def testTopologicalSort_060(self):
+      """
+      Graph with 5 vertices, (1->3, 1->4, 1->5, 2->5)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("4")
+      graph.createVertex("5")
+      graph.createEdge("1", "3")
+      graph.createEdge("1", "4")
+      graph.createEdge("1", "5")
+      graph.createEdge("2", "5")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "5", "4", "3", ], path)
+
+   def testTopologicalSort_061(self):
+      """
+      Graph with 5 vertices, (1->3, 1->4, 1->5, 2->5, 3->4)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("4")
+      graph.createVertex("5")
+      graph.createEdge("1", "3")
+      graph.createEdge("1", "4")
+      graph.createEdge("1", "5")
+      graph.createEdge("2", "5")
+      graph.createEdge("3", "4")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "5", "3", "4", ], path)
+
+   def testTopologicalSort_062(self):
+      """
+      Graph with 5 vertices, (1->3, 1->4, 1->5, 2->5, 3->4, 5->4)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("4")
+      graph.createVertex("5")
+      graph.createEdge("1", "3")
+      graph.createEdge("1", "4")
+      graph.createEdge("1", "5")
+      graph.createEdge("2", "5")
+      graph.createEdge("3", "4")
+      graph.createEdge("5", "4")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "2", "1", "5", "3", "4", ], path)
+
+   def testTopologicalSort_063(self):
+      """
+      Graph with 5 vertices, (1->3, 1->4, 1->5, 2->5, 3->4, 5->4, 1->2)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("4")
+      graph.createVertex("5")
+      graph.createEdge("1", "3")
+      graph.createEdge("1", "4")
+      graph.createEdge("1", "5")
+      graph.createEdge("2", "5")
+      graph.createEdge("3", "4")
+      graph.createEdge("5", "4")
+      graph.createEdge("1", "2")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "5", "3", "4", ], path)
+
+   def testTopologicalSort_064(self):
+      """
+      Graph with 5 vertices, (1->3, 1->4, 1->5, 2->5, 3->4, 5->4, 1->2, 3->5)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("4")
+      graph.createVertex("5")
+      graph.createEdge("1", "3")
+      graph.createEdge("1", "4")
+      graph.createEdge("1", "5")
+      graph.createEdge("2", "5")
+      graph.createEdge("3", "4")
+      graph.createEdge("5", "4")
+      graph.createEdge("1", "2")
+      graph.createEdge("3", "5")
+      path = graph.topologicalSort()
+      self.failUnlessEqual([ "1", "2", "3", "5", "4", ], path)
+
+   def testTopologicalSort_065(self):
+      """
+      Graph with 5 vertices, (1->3, 1->4, 1->5, 2->5, 3->4, 5->4, 5->1)
+      """
+      graph = DirectedGraph("test")
+      graph.createVertex("1")
+      graph.createVertex("2")
+      graph.createVertex("3")
+      graph.createVertex("4")
+      graph.createVertex("5")
+      graph.createEdge("1", "3")
+      graph.createEdge("1", "4")
+      graph.createEdge("1", "5")
+      graph.createEdge("2", "5")
+      graph.createEdge("3", "4")
+      graph.createEdge("5", "4")
+      graph.createEdge("5", "1")
+      self.failUnlessRaises(ValueError, graph.topologicalSort)
 
 
 ##################################
@@ -2394,6 +3266,7 @@ def suite():
                               unittest.makeSuite(TestObjectTypeList, 'test'),
                               unittest.makeSuite(TestRestrictedContentList, 'test'),
                               unittest.makeSuite(TestRegexMatchList, 'test'),
+                              unittest.makeSuite(TestDirectedGraph, 'test'),
                               unittest.makeSuite(TestPathResolverSingleton, 'test'),
                               unittest.makeSuite(TestFunctions, 'test'),
                             ))

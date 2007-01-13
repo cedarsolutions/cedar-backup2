@@ -9,6 +9,7 @@ Version 2.10.0	unreleased
 	  - Add new excludeBasenamePatterns flag to FilesystemList
 	  - Add new addSelf flag to FilesystemList.addDirContents()
 	  - Create new RegexMatchList class in util.py, and add tests
+	  - Create new DirectedGraph class in util.py, and add tests
 	* Create unit tests for functionality that was not explictly tested before.
 	  - ActionHook, PreActionHook, PostActionHook, CommandOverride (config.py)
 	  - AbsolutePathList, ObjectTypeList, RestrictedContentList (util.py)
