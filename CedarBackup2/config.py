@@ -4089,8 +4089,8 @@ class Config(object):
       stripped.  As a special case, if C{commaString} is C{None}, then C{None}
       will be returned.
 
-      @param commaString List of values in comma-separated string format.
-      @return Values from commaString split into a list, or C{None}.
+      @param commaString: List of values in comma-separated string format.
+      @return: Values from commaString split into a list, or C{None}.
       """
       if commaString is None:
          return None
@@ -4664,9 +4664,9 @@ class Config(object):
       As a special case, if C{valueList} is C{None}, then C{None} will be
       returned.
 
-      @param valueList List of values to be placed into a string
+      @param valueList: List of values to be placed into a string
 
-      @return Values from valueList as a comma-separated string.
+      @return: Values from valueList as a comma-separated string.
       """
       if valueList is None:
          return None
