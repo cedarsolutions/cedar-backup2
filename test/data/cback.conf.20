@@ -127,10 +127,10 @@
    </stage>
    <store>
       <source_dir>/opt/backup/staging</source_dir>
-      <media_type>cdrw-74</media_type>
-      <device_type>cdwriter</device_type>
+      <media_type>dvd+rw</media_type>
+      <device_type>dvdwriter</device_type>
       <target_device>/dev/cdrw</target_device>
-      <drive_speed>4</drive_speed>
+      <drive_speed>1</drive_speed>
       <check_data>Y</check_data>
       <warn_midnite>Y</warn_midnite>
    </store>
