@@ -7623,6 +7623,25 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
+   def testDependencyMode_118(self):
+      """
+      Test with actions=[ one, five, collect, store, three, stage, four, purge, two ],
+      and one extension for which a dependency does not exist.
+      """
+      actions = [ "one", "five", "collect", "store", "three", "stage", "four", "purge", "two", ]
+      dependencies1 = ActionDependencies(["collect", "stage", "store", "purge", ], [])
+      dependencies2 = ActionDependencies(["stage", "store", "purge", ], ["collect", ])
+      dependencies3 = ActionDependencies(["store", "bogus", ], ["collect", "stage", ])
+      dependencies4 = ActionDependencies(["purge", ], ["collect", "stage", "store", ])
+      dependencies5 = ActionDependencies([], ["collect", "stage", "store", "purge", ])
+      eaction1 = ExtendedAction("one", "os.path", "isdir", dependencies=dependencies1)
+      eaction2 = ExtendedAction("two", "os.path", "isfile", dependencies=dependencies2)
+      eaction3 = ExtendedAction("three", "os.path", "islink", dependencies=dependencies3)
+      eaction4 = ExtendedAction("four", "os.path", "isabs", dependencies=dependencies4)
+      eaction5 = ExtendedAction("five", "os.path", "exists", dependencies=dependencies5)
+      extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+
 
 #######################################################################
 # Suite definition
