@@ -6095,6 +6095,10 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual("cdr-80", store.mediaType)
       store.mediaType = "cdrw-80"
       self.failUnlessEqual("cdrw-80", store.mediaType)
+      store.mediaType = "dvd+r"
+      self.failUnlessEqual("dvd+r", store.mediaType)
+      store.mediaType = "dvd+rw"
+      self.failUnlessEqual("dvd+rw", store.mediaType)
 
    def testConstructor_009(self):
       """
@@ -6131,6 +6135,8 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual(None, store.deviceType)
       store.deviceType = "cdwriter"
       self.failUnlessEqual("cdwriter", store.deviceType)
+      store.deviceType = "dvdwriter"
+      self.failUnlessEqual("dvdwriter", store.deviceType)
 
    def testConstructor_013(self):
       """
@@ -8066,6 +8072,66 @@ class TestConfig(unittest.TestCase):
       config.store.warnMidnite = True
       config._validateStore()
 
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdrw-74"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      config._validateStore()
+
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-80"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      config._validateStore()
+
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdrw-80"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      config._validateStore()
+
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "dvd+r"
+      config.store.deviceType = "dvdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      config._validateStore()
+
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "dvd+rw"
+      config.store.deviceType = "dvdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      config._validateStore()
+
    def testValidate_038(self):
       """
       Test validate on store section missing one each of required fields.
@@ -8169,6 +8235,82 @@ class TestConfig(unittest.TestCase):
       config.store.checkData = True
       config.store.warnMidnite = True
       config._validateStore()
+
+   def testValidate_039a(self):
+      """
+      Test validate on store section with everything filled in, but mismatch device/media.
+      """
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-74"
+      config.store.deviceType = "dvdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdrw-74"
+      config.store.deviceType = "dvdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdr-80"
+      config.store.deviceType = "dvdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "cdrw-80"
+      config.store.deviceType = "dvdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "dvd+rw"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      self.failUnlessRaises(ValueError, config._validateStore)
+
+      config = Config()
+      config.store = StoreConfig()
+      config.store.sourceDir = "/source"
+      config.store.mediaType = "dvd+r"
+      config.store.deviceType = "cdwriter"
+      config.store.devicePath = "/dev/cdrw"
+      config.store.deviceScsiId = "0,0,0"
+      config.store.driveSpeed = 4
+      config.store.checkData = True
+      config.store.warnMidnite = True
+      self.failUnlessRaises(ValueError, config._validateStore)
 
    def testValidate_040(self):
       """
