@@ -528,9 +528,17 @@ class _ActionSet(object):
             graph.createEdge("store", "purge")     # Store must run before purge
             for action in extensions.actions:
                for vertex in action.dependencies.beforeList:
-                  graph.createEdge(action.name, vertex)   # actions that this action must be run before
+                  try: 
+                     graph.createEdge(action.name, vertex)   # actions that this action must be run before
+                  except ValueError:
+                     logger.error("Dependency [%s] on extension [%s] is unknown." % (vertex, action.name))
+                     raise ValueError("Unable to determine proper action order due to invalid dependency.")
                for vertex in action.dependencies.afterList:
-                  graph.createEdge(vertex, action.name)   # actions that this action must be run after
+                  try: 
+                     graph.createEdge(vertex, action.name)   # actions that this action must be run after
+                  except ValueError:
+                     logger.error("Dependency [%s] on extension [%s] is unknown." % (vertex, action.name))
+                     raise ValueError("Unable to determine proper action order due to invalid dependency.")
             try:
                ordering = graph.topologicalSort()
                indexMap = dict([(ordering[i], i+1) for i in range(0, len(ordering))])
