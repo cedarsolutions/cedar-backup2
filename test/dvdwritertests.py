@@ -755,7 +755,7 @@ class TestDvdWriter(unittest.TestCase):
       imagePath = "/path/to/image"
       entries = None
       dryRun = False
-      expected = [ "-M", "-speed=1", "/dev/dvd=/path/to/image", ]
+      expected = [ "-speed=1", "-M", "/dev/dvd=/path/to/image", ]
       actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
       self.failUnlessEqual(actual, expected)
 
@@ -769,7 +769,7 @@ class TestDvdWriter(unittest.TestCase):
       imagePath = "/path/to/image"
       entries = None
       dryRun = True
-      expected = [ "--dry-run", "-M", "-speed=2", "/dev/dvd=/path/to/image", ]
+      expected = [ "--dry-run", "-speed=2", "-M", "/dev/dvd=/path/to/image", ]
       actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
       self.failUnlessEqual(actual, expected)
 
@@ -783,7 +783,7 @@ class TestDvdWriter(unittest.TestCase):
       imagePath = "/path/to/image"
       entries = None
       dryRun = False
-      expected = [ "-Z", "-speed=3", "/dev/dvd=/path/to/image", ]
+      expected = [ "-speed=3", "-Z", "/dev/dvd=/path/to/image", ]
       actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
       self.failUnlessEqual(actual, expected)
 
@@ -797,7 +797,7 @@ class TestDvdWriter(unittest.TestCase):
       imagePath = "/path/to/image"
       entries = None
       dryRun = True
-      expected = [ "--dry-run", "-Z", "-speed=4", "/dev/dvd=/path/to/image", ]
+      expected = [ "--dry-run", "-speed=4", "-Z", "/dev/dvd=/path/to/image", ]
       actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
       self.failUnlessEqual(actual, expected)
 
@@ -867,7 +867,7 @@ class TestDvdWriter(unittest.TestCase):
       imagePath = None
       entries = { "path1":None, "path2":"graft2", }
       dryRun = False
-      expected = [ "-M", "-speed=1", "/dev/dvd", "-r", "-graft-points", "path1", "graft2/=path2", ]
+      expected = [ "-speed=1", "-M", "/dev/dvd", "-r", "-graft-points", "path1", "graft2/=path2", ]
       actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
       self.failUnlessEqual(actual, expected)
 
@@ -881,7 +881,7 @@ class TestDvdWriter(unittest.TestCase):
       imagePath = None
       entries = { "path1":None, "path2":"graft2", }
       dryRun = True
-      expected = [ "--dry-run", "-M", "-speed=2", "/dev/dvd", "-r", "-graft-points", "path1", "graft2/=path2", ]
+      expected = [ "--dry-run", "-speed=2", "-M", "/dev/dvd", "-r", "-graft-points", "path1", "graft2/=path2", ]
       actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
       self.failUnlessEqual(actual, expected)
 
@@ -895,7 +895,7 @@ class TestDvdWriter(unittest.TestCase):
       imagePath = None
       entries = { "path1":None, "/path/to/path2":None, "/path/to/path3/":"/path/to/graft3/", }
       dryRun = False
-      expected = [ "-Z", "-speed=3", "/dev/dvd", "-r", "-graft-points", 
+      expected = [ "-speed=3", "-Z", "/dev/dvd", "-r", "-graft-points", 
                    "/path/to/path2", "path/to/graft3/=/path/to/path3/", "path1", ]  # sorted order
       actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
       self.failUnlessEqual(actual, expected)
@@ -910,7 +910,7 @@ class TestDvdWriter(unittest.TestCase):
       imagePath = None
       entries = { "path1":None, "/path/to/path2":None, "/path/to/path3/":"/path/to/graft3/", }
       dryRun = True
-      expected = [ "--dry-run", "-Z", "-speed=4", "/dev/dvd", "-r", "-graft-points", 
+      expected = [ "--dry-run", "-speed=4", "-Z", "/dev/dvd", "-r", "-graft-points", 
                    "/path/to/path2", "path/to/graft3/=/path/to/path3/", "path1", ]  # sorted order
       actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
       self.failUnlessEqual(actual, expected)

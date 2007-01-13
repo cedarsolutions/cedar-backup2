@@ -573,6 +573,7 @@ class DvdWriter(object):
       if result != 0:
          DvdWriter._searchForOverburn(output) # throws own exception if overburn condition is found
          raise IOError("Error (%d) executing dry run to check media capacity." % result)
+      logger.debug("Dry run succeeded, so image size should be OK.")
       args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, dryRun=False)
       result = executeCommand(command, args)[0]
       if result != 0:
@@ -670,12 +671,12 @@ class DvdWriter(object):
          raise ValueError("Must use either imagePath or entries.")
       if dryRun:
          args.append("--dry-run")
+      if driveSpeed is not None:
+         args.append("-speed=%d" % driveSpeed)
       if newDisc:
          args.append("-Z")
       else:
          args.append("-M")
-      if driveSpeed is not None:
-         args.append("-speed=%d" % driveSpeed)
       if imagePath is not None:
          args.append("%s=%s" % (hardwareId, imagePath))
       else:
