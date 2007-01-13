@@ -255,7 +255,9 @@ DEFAULT_DEVICE_TYPE   = "cdwriter"
 DEFAULT_MEDIA_TYPE    = "cdrw-74"
 
 VALID_DEVICE_TYPES    = [ "cdwriter", "dvdwriter", ]
-VALID_MEDIA_TYPES     = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
+VALID_CD_MEDIA_TYPES  = [ "cdr-74", "cdrw-74", "cdr-80", "cdrw-80", ]
+VALID_DVD_MEDIA_TYPES = [ "dvd+r", "dvd+rw", ]
+VALID_MEDIA_TYPES     = VALID_CD_MEDIA_TYPES + VALID_DVD_MEDIA_TYPES
 VALID_COLLECT_MODES   = [ "daily", "weekly", "incr", ]
 VALID_ARCHIVE_MODES   = [ "tar", "targz", "tarbz2", ]
 VALID_COMPRESS_MODES  = [ "none", "gzip", "bzip2", ]
@@ -4859,9 +4861,13 @@ class Config(object):
       required (missing booleans will be set to defaults, which is OK).
 
       The image writer functionality in the C{writer} module is supposed to be
-      able to handle a device speed of C{None}.  Any caller which needs a
-      "real" (non-C{None}) value for the device type can use
-      C{DEFAULT_DEVICE_TYPE}, which is guaranteed to be sensible.
+      able to handle a device speed of C{None}.  
+
+      Any caller which needs a "real" (non-C{None}) value for the device type
+      can use C{DEFAULT_DEVICE_TYPE}, which is guaranteed to be sensible.
+
+      This is also where we make sure that the media type -- which is already a
+      valid type -- matches up properly with the device type.
 
       @raise ValueError: If store configuration is invalid.
       """
@@ -4872,6 +4878,12 @@ class Config(object):
             raise ValueError("Store section media type must be filled in.")
          if self.store.devicePath is None:
             raise ValueError("Store section device path must be filled in.")
+         if self.store.deviceType == None or self.store.deviceType == "cdwriter":
+            if self.store.mediaType not in VALID_CD_MEDIA_TYPES:
+               raise ValueError("Media type must match device type.")
+         elif self.store.deviceType == "dvdwriter":
+            if self.store.mediaType not in VALID_DVD_MEDIA_TYPES:
+               raise ValueError("Media type must match device type.")
 
    def _validatePurge(self):
       """
