@@ -87,7 +87,7 @@ import getopt
 
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
-from CedarBackup2.util import RestrictedContentList, PathResolverSingleton
+from CedarBackup2.util import RestrictedContentList, DirectedGraph, PathResolverSingleton
 from CedarBackup2.util import splitCommandLine, executeCommand, getFunctionReference, getUidGid, encodePath
 from CedarBackup2.config import Config
 from CedarBackup2.actions.collect import executeCollect
@@ -115,6 +115,8 @@ DEFAULT_LOGFILE    = "/var/log/cback.log"
 DEFAULT_OWNERSHIP  = [ "root", "adm", ]
 DEFAULT_MODE       = 0640
 
+REBUILD_INDEX      = 0        # can't run with anything else, anyway
+VALIDATE_INDEX     = 0        # can't run with anything else, anyway
 COLLECT_INDEX      = 100
 STAGE_INDEX        = 200
 STORE_INDEX        = 300
@@ -147,12 +149,12 @@ def cli():
    indicated actions.
 
    As a general rule, only the actions indicated on the command line will be
-   executed.   We will accept any of the standard actions and any of the
+   executed.   We will accept any of the built-in actions and any of the
    configured extended actions (which makes action list verification a two-
    step process).
 
    The C{'all'} action has a special meaning.  Normally, it means that the
-   standard set of actions (collect, stage, store, purge) will all be executed,
+   built-in set of actions (collect, stage, store, purge) will all be executed,
    in that order.  Extended actions will be ignored as part of the C{'all'}
    action.
 
@@ -224,10 +226,7 @@ def cli():
       logger.info("Configuration path is [%s]" % configPath)
       config = Config(xmlPath=configPath)
       _setupPathResolver(config)
-      if config.extensions is not None:
-         actionSet = _ActionSet(options.actions, config.extensions.actions, config.options.hooks)
-      else:
-         actionSet = _ActionSet(options.actions, None, config.options.hooks)
+      actionSet = _ActionSet(options.actions, config.extensions, config.options.hooks)
    except Exception, e:
       logger.error("Error reading or handling configuration: %s" % e)
       logger.info("Cedar Backup run completed with status 4.")
@@ -267,24 +266,14 @@ class _ActionItem(object):
    This class represents a single named action to be executed, and understands
    how to execute that action.   
 
-   Standard actions ("built-in" actions like collect, stage, etc.) are
-   instantiated in terms of a direct function reference, i.e.  to
-   C{executeCollect}.  Extended actions are instantiated in terms of an
-   C{ExtendedAction} object taken from configuration.
-
-   The two different actions are executed differently.  In the case of standard
-   actions, the function reference is called directly.  In the case of extended
-   actions, a function reference is first derived (using
-   L{getFunctionReference}) and then called.
-
-   The standard actions will generally use the options and config values.  We
-   also pass in the config path so that extensions modules can re-parse
-   configuration if they want to, to add in extra information.
+   The built-in actions will use only the options and config values.  We also
+   pass in the config path so that extension modules can re-parse configuration
+   if they want to, to add in extra information.
 
    This class is also where pre-action and post-action hooks are executed.  An
    action item is instantiated in terms of optional pre- and post-action hook
    objects (config.ActionHook), which are then executed at the appropriate time
-   if set.
+   (if set).
 
    @note: The comparison operators for this class have been implemented to only
    compare based on the index value, and ignore all other values.  This is so
@@ -293,27 +282,24 @@ class _ActionItem(object):
    @sort: __init__, index, module, function 
    """
 
-   def __init__(self, index, name, preHook, postHook, function=None, extension=None):
+   def __init__(self, index, name, preHook, postHook, function):
       """
       Default constructor.
 
-      You should pass either function or extension, but not both.  It's OK to
-      pass C{None} for C{index}, C{preHook} or C{postHook}, but not for
-      C{name}.
+      It's OK to pass C{None} for C{index}, C{preHook} or C{postHook}, but not
+      for C{name}.
 
       @param index: Index of the item (or C{None}).
       @param name: Name of the action that is being executed.
       @param preHook: Pre-action hook in terms of an C{ActionHook} object, or C{None}.
       @param postHook: Post-action hook in terms of an C{ActionHook} object, or C{None}.
       @param function: Reference to function associated with item.
-      @param extension: C{ExtendedAction} object associated with item.
       """
       self.index = index
       self.name = name
       self.preHook = preHook
       self.postHook = postHook
       self.function = function
-      self.extension = extension
 
    def __cmp__(self, other):
       """
@@ -357,13 +343,9 @@ class _ActionItem(object):
       @param options: Command-line options to be passed to action.
       @param config: Parsed configuration to be passed to action.
       """
-      if self.function is not None:
-         logger.debug("Calling built-in action function [%s]." % self.function.__name__);
-         self.function(configPath, options, config)
-      else:
-         logger.debug("Calling extension function [%s.%s]." % (self.extension.module, self.extension.function));
-         function = getFunctionReference(self.extension.module, self.extension.function)
-         function(configPath, options, config)
+      name = "%s.%s" % (self.function.__module__, self.function.__name__)
+      logger.debug("Calling action function [%s], execution index [%d]" % (name, self.index))
+      self.function(configPath, options, config)
 
    def _executeHook(self, type, hook):
       """
@@ -387,19 +369,19 @@ class _ActionSet(object):
 
    This class does three different things.  First, it ensures that the actions
    specified on the command-line are sensible.  The command-line can only list
-   either standard actions or extended actions specified in configuration.
+   either built-in actions or extended actions specified in configuration.
    Also, certain actions (in L{NONCOMBINE_ACTIONS}) cannot be combined with
    other actions.  
 
-   Second, it enforces an execution order on the specified actions.  Any time
-   actions are combined on the command line (either standard actions or
+   Second, the class enforces an execution order on the specified actions.  Any
+   time actions are combined on the command line (either built-in actions or
    extended actions), we must make sure they get executed in a sensible order.
 
-   Third, it ensures that any pre-action or post-action hooks are scheduled and
-   executed appropriately.  Hooks are configured by building a dictionary
-   mapping between hook action name and command.  Pre-action are executed
-   immediately before their associated action, and post-action hooks are
-   executed immediately after their associated action.
+   Third, the class ensures that any pre-action or post-action hooks are
+   scheduled and executed appropriately.  Hooks are configured by building a
+   dictionary mapping between hook action name and command.  Pre-action hooks
+   are executed immediately before their associated action, and post-action
+   hooks are executed immediately after their associated action.
 
    @sort: __init__, executeActions
    """
@@ -408,128 +390,184 @@ class _ActionSet(object):
       """
       Constructor for the C{_ActionSet} class.
 
-      The end-result is that we first validate the requested actions, and then
-      fill in the C{preHookDict}, C{postHookDict} and C{actionSet} instance
-      variables for later use.
+      This is kind of ugly, because the constructor has to set up a lot of data
+      before being able to do anything useful.  The following data structures
+      are initialized based on the input:
+   
+         - C{extensionNames}: List of extensions available in configuration
+         - C{preHookMap}: Mapping from action name to pre C{ActionHook}
+         - C{preHookMap}: Mapping from action name to post C{ActionHook}
+         - C{functionMap}: Mapping from action name to Python function
+         - C{indexMap}: Mapping from action name to execution index
+         - C{actionMap}: Mapping from action name to C{_ActionItem}
+
+      Once these data structures are set up, the command line is validated to
+      make sure only valid actions have been requested, and in a sensible
+      combination.  Then, all of the data is used to build C{self.actionSet},
+      the set of C{_ActionItem} object to be executed by C{executeActions()}.
 
       @param actions: Names of actions specified on the command-line.
-      @param extensions: List of extended actions (i.e. config.extensions.actions)
+      @param extensions: Extended action configuration (i.e. config.extensions)
       @param hooks: List of pre- and post-action hooks (i.e. config.options.hooks)
 
       @raise ValueError: If one of the specified actions is invalid.
+      @raise ValueError: 
       """
-      extensionDict = _ActionSet._buildExtensionDict(extensions)
-      (preHookDict, postHookDict) = _ActionSet._buildHookDicts(hooks)
-      _ActionSet._validateActions(actions, extensionDict.keys())
-      self.actionSet = _ActionSet._buildActionSet(actions, extensionDict, preHookDict, postHookDict)
+      extensionNames = _ActionSet._deriveExtensionNames(extensions)
+      (preHookMap, postHookMap) = _ActionSet._buildHookMaps(hooks)
+      functionMap = _ActionSet._buildFunctionMap(extensions)
+      indexMap = _ActionSet._buildIndexMap(extensions)
+      actionMap = _ActionSet._buildActionMap(extensionNames, functionMap, indexMap, preHookMap, postHookMap)
+      _ActionSet._validateActions(actions, extensionNames)
+      self.actionSet = _ActionSet._buildActionSet(actions, actionMap)
 
-   def _buildHookDicts(hooks):
+   def _deriveExtensionNames(extensions):
       """
-      Build internal dictionaries mapping action name to hook.
+      Builds a list of extended actions that are available in configuration.
+      @param extensions: Extended action configuration (i.e. config.extensions)
+      @return: List of extended action names.
+      """
+      extensionNames = []
+      if extensions is not None and extensions.actions is not None:
+         for action in extensions.actions:
+            extensionNames.append(action.name)
+      return extensionNames
+   _deriveExtensionNames = staticmethod(_deriveExtensionNames)
+
+   def _buildHookMaps(hooks):
+      """
+      Build two mappings from action name to configured C{ActionHook}.
       @param hooks: List of pre- and post-action hooks (i.e. config.options.hooks)
+      @return: Tuple of (pre hook dictionary, post hook dictionary).
       """
-      preHookDict = {}
-      postHookDict = {}
+      preHookMap = {}
+      postHookMap = {}
       if hooks is not None:
          for hook in hooks:
             if hook.before:
-               preHookDict[hook.action] = hook
+               preHookMap[hook.action] = hook
             elif hook.after:
-               postHookDict[hook.action] = hook
-      return (preHookDict, postHookDict)
-   _buildHookDicts = staticmethod(_buildHookDicts)
+               postHookMap[hook.action] = hook
+      return (preHookMap, postHookMap)
+   _buildHookMaps = staticmethod(_buildHookMaps)
 
-   def _buildExtensionDict(extensions):
+   def _buildFunctionMap(extensions):
       """
-      Builds dictionary mapping extension name to extension.
-      @return: Dictionary mapping extension name to extension.
+      Builds a mapping from named action to action function.
+      @param extensions: Extended action configuration (i.e. config.extensions)
+      @return: Dictionary mapping action to function.
       """
-      extensionDict = {}
-      if extensions is not None:
-         for extension in extensions:
-            extensionDict[extension.name] = extension
-      return extensionDict
-   _buildExtensionDict = staticmethod(_buildExtensionDict)
+      functionMap = {}
+      functionMap['rebuild'] = executeRebuild
+      functionMap['validate'] = executeValidate
+      functionMap['collect'] = executeCollect
+      functionMap['stage'] = executeStage
+      functionMap['store'] = executeStore
+      functionMap['purge'] = executePurge
+      if extensions is not None and extensions.actions is not None:
+         for action in extensions.actions:
+            functionMap[action.name] = getFunctionReference(action.module, action.function)
+      return functionMap
+   _buildFunctionMap = staticmethod(_buildFunctionMap)
 
-   def _validateActions(actions, extensionNames):
+   def _buildIndexMap(extensions):
       """
-      Validate that the set of specified actions is sensible.
+      Builds a mapping from action name to proper execution index.
 
-      Any specified action must either be a standard action or must be among
-      the extended actions defined in configuration.  The actions from within
-      L{NONCOMBINE_ACTIONS} may not be combined with other actions.
+      If extensions configuration is C{None}, or there are no configured
+      extended actions, the ordering dictionary will only include the built-in
+      actions and their standard indices.
 
-      @param actions: Names of actions specified on the command-line.
-      @param extensionNames: Names of extensions specified in configuration.
+      Otherwise, if the extensions order mode is C{None} or C{"index"}, actions
+      will scheduled by explicit index; and if the extensions order mode is
+      C{"dependency"}, actions will be scheduled using a dependency graph.
 
-      @raise ValueError: If one or more configured actions are not valid.
+      @param extensions: Extended action configuration (i.e. config.extensions)
+
+      @return: Dictionary mapping action name to integer execution index.
       """
-      if extensionNames is None: 
-         extensionNames = []
-      if actions is None or actions == []:
-         raise ValueError("No actions specified.")
-      for action in actions:
-         if action not in VALID_ACTIONS and action not in extensionNames:
-            raise ValueError("Action [%s] is not a valid action or extended action." % action)
-      for action in NONCOMBINE_ACTIONS:
-         if action in actions and actions != [ action, ]:
-            raise ValueError("Action [%s] may not be combined with other actions." % action)
-   _validateActions = staticmethod(_validateActions)
+      indexMap = {}
+      if extensions is None or extensions.actions is None or extensions.actions == []:
+         logger.info("Action ordering will use 'index' order mode.")
+         indexMap['rebuild'] = REBUILD_INDEX;
+         indexMap['validate'] = VALIDATE_INDEX;
+         indexMap['collect'] = COLLECT_INDEX;
+         indexMap['stage'] = STAGE_INDEX;
+         indexMap['store'] = STORE_INDEX;
+         indexMap['purge'] = PURGE_INDEX;
+         logger.debug("Completed filling in action indices for built-in actions.")
+      else:
+         if extensions.orderMode is None or extensions.orderMode == "index":
+            logger.info("Action ordering will use 'index' order mode.")
+            indexMap['rebuild'] = REBUILD_INDEX;
+            indexMap['validate'] = VALIDATE_INDEX;
+            indexMap['collect'] = COLLECT_INDEX;
+            indexMap['stage'] = STAGE_INDEX;
+            indexMap['store'] = STORE_INDEX;
+            indexMap['purge'] = PURGE_INDEX;
+            logger.debug("Completed filling in action indices for built-in actions.")
+            for action in extensions.actions:
+               indexMap[action.name] = action.index
+            logger.debug("Completed filling in action indices for extended actions.")
+         else:
+            logger.info("Action ordering will use 'dependency' order mode.")
+            graph = DirectedGraph("dependencies")
+            graph.createVertex("rebuild")
+            graph.createVertex("validate")
+            graph.createVertex("collect")
+            graph.createVertex("stage")
+            graph.createVertex("store")
+            graph.createVertex("purge")
+            for action in extensions.actions:
+               graph.createVertex(action.name)
+            graph.createEdge("collect", "stage")
+            graph.createEdge("stage", "store")
+            graph.createEdge("store", "purge")
+            for action in extensions.actions:
+               for vertex in action.dependencies.beforeList:
+                  graph.createEdge(action.name, vertex)   # actions that this action must be run before
+               for vertex in action.dependencies.afterList:
+                  graph.createEdge(vertex, action.name)   # actions that this action must be run after
+            try:
+               ordering = graph.topologicalSort()
+               indexMap = dict([(ordering[i], i) for i in range(0, len(ordering))])
+               logger.info("Action order will be: %s" % ordering)
+            except ValueError:
+               logger.error("Unable to determine proper action order due to dependency recursion.")
+               logger.error("Extensions configuration is invalid (check for loops).")
+               raise ValueError("Unable to determine proper action order due to dependency recursion.")
+      return indexMap
+   _buildIndexMap = staticmethod(_buildIndexMap)
 
-   def _buildActionSet(actions, extensionDict, preHookDict, postHookDict):
+   def _buildActionMap(extensionNames, functionMap, indexMap, preHookMap, postHookMap):
       """
-      Build set of actions to be executed.
+      Builds a mapping from action name to list of C{_ActionItem} objects.
 
-      The set of actions is built in the proper order, so C{executeActions}
-      spin through the set without thinking about it.  Since we've already validated
-      that the set of actions is sensible, we don't take any precautions here to
-      make sure things are combined properly.  If the action is listed, it will
-      be "scheduled" for implementation.
+      In most cases, the mapping from action name to C{_ActionItem} is 1:1.  The exception
+      is the "all" action, which is a special case.  However, a list is returned in all
+      cases, just for consistency later.
 
-      Every item in the action set is an C{_ActionItem}.
+      Each C{_ActionItem} will be created with a proper function reference and
+      index value for execution ordering.
 
-      @param actions: Names of actions specified on the command-line.
-      @param extensionDict: Dictionary mapping extension name to C{ExtendedAction} object.
-      @param preHookDict: Dictionary mapping action name to pre-action hook C{ActionSet} object.
-      @param postHookDict: Dictionary mapping action name to post-action hook C{ActionSet} object.
+      @param extensionNames: List of valid extended action names 
+      @param functionMap: Dictionary mapping action name to Python function
+      @param indexMap: Dictionary mapping action name to integer execution index
+      @param preHookMap: Dictionary mapping action name to pre hooks (if any) for the action
+      @param postHookMap: Dictionary mapping action name to post hooks (if any) for the action
 
-      @return: Set of action items in proper order.
+      @return: Dictionary mapping action name to list of C{_ActionItem} objects.
       """
-      actionSet = []
-      for action in actions:
-         if extensionDict.has_key(action):
-            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
-            actionSet.append(_ActionItem(extensionDict[action].index, action, preHook, postHook, extension=extensionDict[action]))
-         elif action == 'collect':
-            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
-            actionSet.append(_ActionItem(COLLECT_INDEX, action, preHook, postHook, function=executeCollect))
-         elif action == 'stage':
-            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
-            actionSet.append(_ActionItem(STAGE_INDEX, action, preHook, postHook, function=executeStage))
-         elif action == 'store':
-            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
-            actionSet.append(_ActionItem(STORE_INDEX, action, preHook, postHook, function=executeStore))
-         elif action == 'purge':
-            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
-            actionSet.append(_ActionItem(PURGE_INDEX, action, preHook, postHook, function=executePurge))
-         elif action == 'rebuild':
-            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
-            actionSet.append(_ActionItem(None, action, preHook, postHook, function=executeRebuild))
-         elif action == 'validate':
-            (preHook, postHook) = _ActionSet._deriveHooks(action, preHookDict, postHookDict)
-            actionSet.append(_ActionItem(None, action, function=executeValidate, preHook=preHook, postHook=postHook))
-         elif action == 'all':
-            (preHook, postHook) = _ActionSet._deriveHooks("collect", preHookDict, postHookDict)
-            actionSet.append(_ActionItem(COLLECT_INDEX, "collect", preHook, postHook, function=executeCollect))
-            (preHook, postHook) = _ActionSet._deriveHooks("stage", preHookDict, postHookDict)
-            actionSet.append(_ActionItem(STAGE_INDEX, "stage", preHook, postHook, function=executeStage))
-            (preHook, postHook) = _ActionSet._deriveHooks("store", preHookDict, postHookDict)
-            actionSet.append(_ActionItem(STORE_INDEX, "store", preHook, postHook, function=executeStore))
-            (preHook, postHook) = _ActionSet._deriveHooks("purge", preHookDict, postHookDict)
-            actionSet.append(_ActionItem(PURGE_INDEX, "purge", preHook, postHook, function=executePurge))
-      actionSet.sort()  # sort the actions in order by index
-      return actionSet
-   _buildActionSet = staticmethod(_buildActionSet)
+      actionMap = {}
+      for name in extensionNames + VALID_ACTIONS:
+         if name != 'all': # do this one later
+            function = functionMap[name]
+            index = indexMap[name]
+            (preHook, postHook) = _ActionSet._deriveHooks(name, preHookMap, postHookMap)
+            actionMap[name] = [ _ActionItem(index, name, preHook, postHook, function), ]
+      actionMap['all'] = actionMap['collect'] + actionMap['stage'] + actionMap['store'] + actionMap['purge']
+      return actionMap
+   _buildActionMap = staticmethod(_buildActionMap)
 
    def _deriveHooks(action, preHookDict, postHookDict):
       """
@@ -548,13 +586,59 @@ class _ActionSet(object):
       return (preHook, postHook)
    _deriveHooks = staticmethod(_deriveHooks)
 
+   def _validateActions(actions, extensionNames):
+      """
+      Validate that the set of specified actions is sensible.
+
+      Any specified action must either be a built-in action or must be among
+      the extended actions defined in configuration.  The actions from within
+      L{NONCOMBINE_ACTIONS} may not be combined with other actions.
+
+      @param actions: Names of actions specified on the command-line.
+      @param extensionNames: Names of extensions specified in configuration.
+
+      @raise ValueError: If one or more configured actions are not valid.
+      """
+      if actions is None or actions == []:
+         raise ValueError("No actions specified.")
+      for action in actions:
+         if action not in VALID_ACTIONS and action not in extensionNames:
+            raise ValueError("Action [%s] is not a valid action or extended action." % action)
+      for action in NONCOMBINE_ACTIONS:
+         if action in actions and actions != [ action, ]:
+            raise ValueError("Action [%s] may not be combined with other actions." % action)
+   _validateActions = staticmethod(_validateActions)
+
+   def _buildActionSet(actions, actionMap):
+      """
+      Build set of actions to be executed.
+
+      The set of actions is built in the proper order, so C{executeActions} can
+      spin through the set without thinking about it.  Since we've already validated
+      that the set of actions is sensible, we don't take any precautions here to
+      make sure things are combined properly.  If the action is listed, it will
+      be "scheduled" for execution.
+
+      @param actions: Names of actions specified on the command-line.
+      @param actionMap: Dictionary mapping action name to C{_ActionItem} object.
+
+      @return: Set of action items in proper order.
+      """
+      actionSet = []
+      for action in actions:
+         actionSet.extend(actionMap[action])
+      actionSet.sort()  # sort the actions in order by index
+      return actionSet
+   _buildActionSet = staticmethod(_buildActionSet)
+
    def executeActions(self, configPath, options, config):
       """
       Executes all actions and extended actions, in the proper order.
-   
-      The built-in actions will generally use the options and config values.
-      We also pass in the config path so that extensions modules can re-parse
-      configuration if they want to, to add in extra information.
+
+      Each action (whether built-in or extension) is executed in an identical
+      manner.  The built-in actions will use only the options and config
+      values.  We also pass in the config path so that extension modules can
+      re-parse configuration if they want to, to add in extra information.
 
       @param configPath: Path to configuration file on disk.
       @param options: Command-line options to be passed to action functions.
