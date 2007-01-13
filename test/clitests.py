@@ -81,7 +81,7 @@ import unittest
 from StringIO import StringIO
 from getopt import GetoptError
 from CedarBackup2.testutil import failUnlessAssignRaises
-from CedarBackup2.config import ExtendedAction, PreActionHook, PostActionHook
+from CedarBackup2.config import ExtensionsConfig, ExtendedAction, PreActionHook, PostActionHook
 from CedarBackup2.cli import _usage, _version
 from CedarBackup2.cli import Options
 from CedarBackup2.cli import _ActionSet
@@ -3778,7 +3778,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=None, extensions=None.
       """
       actions = None
-      extensions = None
+      extensions = ExtensionsConfig(None, None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_002(self):
@@ -3786,7 +3786,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[], extensions=None.
       """
       actions = []
-      extensions = None
+      extensions = ExtensionsConfig(None, None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_003(self):
@@ -3794,7 +3794,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[], extensions=[].
       """
       actions = []
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_004(self):
@@ -3802,7 +3802,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect ], extensions=[].
       """
       actions = [ "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -3818,7 +3818,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage ], extensions=[].
       """
       actions = [ "stage", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -3834,7 +3834,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store ], extensions=[].
       """
       actions = [ "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -3850,7 +3850,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge ], extensions=[].
       """
       actions = [ "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -3866,7 +3866,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all ], extensions=[].
       """
       actions = [ "all", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 4)
@@ -3900,7 +3900,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild ], extensions=[].
       """
       actions = [ "rebuild", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(None, actionSet.actionSet[0].index)
@@ -3915,7 +3915,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate ], extensions=[].
       """
       actions = [ "validate", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(None, actionSet.actionSet[0].index)
@@ -3930,7 +3930,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, collect ], extensions=[].
       """
       actions = [ "collect", "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -3951,7 +3951,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, stage ], extensions=[].
       """
       actions = [ "collect", "stage", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -3972,7 +3972,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, store ], extensions=[].
       """
       actions = [ "collect", "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -3993,7 +3993,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, purge ], extensions=[].
       """
       actions = [ "collect", "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4014,7 +4014,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, all ], extensions=[].
       """
       actions = [ "collect", "all", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_016(self):
@@ -4022,7 +4022,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, rebuild ], extensions=[].
       """
       actions = [ "collect", "rebuild", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_017(self):
@@ -4030,7 +4030,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, validate ], extensions=[].
       """
       actions = [ "collect", "validate", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_018(self):
@@ -4038,7 +4038,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, collect ], extensions=[].
       """
       actions = [ "stage", "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4059,7 +4059,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, stage ], extensions=[].
       """
       actions = [ "stage", "stage", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4080,7 +4080,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, store ], extensions=[].
       """
       actions = [ "stage", "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4101,7 +4101,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, purge ], extensions=[].
       """
       actions = [ "stage", "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4122,7 +4122,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, all ], extensions=[].
       """
       actions = [ "stage", "all", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_023(self):
@@ -4130,7 +4130,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, rebuild ], extensions=[].
       """
       actions = [ "stage", "rebuild", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_024(self):
@@ -4138,7 +4138,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, validate ], extensions=[].
       """
       actions = [ "stage", "validate", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_025(self):
@@ -4146,7 +4146,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, collect ], extensions=[].
       """
       actions = [ "store", "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4167,7 +4167,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, stage ], extensions=[].
       """
       actions = [ "store", "stage", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4188,7 +4188,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, store ], extensions=[].
       """
       actions = [ "store", "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
@@ -4209,7 +4209,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, purge ], extensions=[].
       """
       actions = [ "store", "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
@@ -4230,7 +4230,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, all ], extensions=[].
       """
       actions = [ "store", "all", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_030(self):
@@ -4238,7 +4238,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, rebuild ], extensions=[].
       """
       actions = [ "store", "rebuild", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_031(self):
@@ -4246,7 +4246,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, validate ], extensions=[].
       """
       actions = [ "store", "validate", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_032(self):
@@ -4254,7 +4254,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, collect ], extensions=[].
       """
       actions = [ "purge", "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4275,7 +4275,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, stage ], extensions=[].
       """
       actions = [ "purge", "stage", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4296,7 +4296,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, store ], extensions=[].
       """
       actions = [ "purge", "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
@@ -4317,7 +4317,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, purge ], extensions=[].
       """
       actions = [ "purge", "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(400, actionSet.actionSet[0].index)
@@ -4338,7 +4338,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, all ], extensions=[].
       """
       actions = [ "purge", "all", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_037(self):
@@ -4346,7 +4346,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, rebuild ], extensions=[].
       """
       actions = [ "purge", "rebuild", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_038(self):
@@ -4354,7 +4354,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, validate ], extensions=[].
       """
       actions = [ "purge", "validate", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_039(self):
@@ -4362,7 +4362,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, collect ], extensions=[].
       """
       actions = [ "all", "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_040(self):
@@ -4370,7 +4370,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, stage ], extensions=[].
       """
       actions = [ "all", "stage", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_041(self):
@@ -4378,7 +4378,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, store ], extensions=[].
       """
       actions = [ "all", "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_042(self):
@@ -4386,7 +4386,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, purge ], extensions=[].
       """
       actions = [ "all", "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_043(self):
@@ -4394,7 +4394,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, all ], extensions=[].
       """
       actions = [ "all", "all", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_044(self):
@@ -4402,7 +4402,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, rebuild ], extensions=[].
       """
       actions = [ "all", "rebuild", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_045(self):
@@ -4410,7 +4410,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, validate ], extensions=[].
       """
       actions = [ "all", "validate", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_046(self):
@@ -4418,7 +4418,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, collect ], extensions=[].
       """
       actions = [ "rebuild", "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_047(self):
@@ -4426,7 +4426,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, stage ], extensions=[].
       """
       actions = [ "rebuild", "stage", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_048(self):
@@ -4434,7 +4434,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, store ], extensions=[].
       """
       actions = [ "rebuild", "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_049(self):
@@ -4442,7 +4442,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, purge ], extensions=[].
       """
       actions = [ "rebuild", "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_050(self):
@@ -4450,7 +4450,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, all ], extensions=[].
       """
       actions = [ "rebuild", "all", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_051(self):
@@ -4458,7 +4458,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, rebuild ], extensions=[].
       """
       actions = [ "rebuild", "rebuild", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_052(self):
@@ -4466,7 +4466,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, validate ], extensions=[].
       """
       actions = [ "rebuild", "validate", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_053(self):
@@ -4474,7 +4474,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, collect ], extensions=[].
       """
       actions = [ "validate", "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_054(self):
@@ -4482,7 +4482,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, stage ], extensions=[].
       """
       actions = [ "validate", "stage", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_055(self):
@@ -4490,7 +4490,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, store ], extensions=[].
       """
       actions = [ "validate", "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_056(self):
@@ -4498,7 +4498,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, purge ], extensions=[].
       """
       actions = [ "validate", "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_057(self):
@@ -4506,7 +4506,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, all ], extensions=[].
       """
       actions = [ "validate", "all", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_058(self):
@@ -4514,7 +4514,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, rebuild ], extensions=[].
       """
       actions = [ "validate", "rebuild", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_059(self):
@@ -4522,7 +4522,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, validate ], extensions=[].
       """
       actions = [ "validate", "validate", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_060(self):
@@ -4530,7 +4530,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ bogus ], extensions=[].
       """
       actions = [ "bogus", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_061(self):
@@ -4538,7 +4538,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ bogus, collect ], extensions=[].
       """
       actions = [ "bogus", "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_062(self):
@@ -4546,7 +4546,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ bogus, stage ], extensions=[].
       """
       actions = [ "bogus", "stage", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_063(self):
@@ -4554,7 +4554,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ bogus, store ], extensions=[].
       """
       actions = [ "bogus", "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_064(self):
@@ -4562,7 +4562,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ bogus, purge ], extensions=[].
       """
       actions = [ "bogus", "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_065(self):
@@ -4570,7 +4570,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ bogus, all ], extensions=[].
       """
       actions = [ "bogus", "all", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_066(self):
@@ -4578,7 +4578,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ bogus, rebuild ], extensions=[].
       """
       actions = [ "bogus", "rebuild", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_067(self):
@@ -4586,7 +4586,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ bogus, validate ], extensions=[].
       """
       actions = [ "bogus", "validate", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_068(self):
@@ -4594,7 +4594,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "collect", "one",  ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
@@ -4615,7 +4615,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "stage", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
@@ -4636,7 +4636,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "store", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
@@ -4657,7 +4657,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "purge", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
@@ -4678,7 +4678,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "all", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_073(self):
@@ -4686,7 +4686,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 50) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_074(self):
@@ -4702,7 +4702,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "collect", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4723,7 +4723,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "stage", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
@@ -4744,7 +4744,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "store", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
@@ -4765,7 +4765,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "purge", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
@@ -4786,7 +4786,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "all", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_080(self):
@@ -4794,7 +4794,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_081(self):
@@ -4802,7 +4802,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, one ], extensions=[ (one, index 150) ].
       """
       actions = [ "validate", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 150), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 150), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_082(self):
@@ -4810,7 +4810,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "collect", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4831,7 +4831,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "stage", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4852,7 +4852,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "store", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(250, actionSet.actionSet[0].index)
@@ -4873,7 +4873,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "purge", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(250, actionSet.actionSet[0].index)
@@ -4894,7 +4894,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "all", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_087(self):
@@ -4902,7 +4902,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_088(self):
@@ -4910,7 +4910,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, one ], extensions=[ (one, index 250) ].
       """
       actions = [ "validate", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 250), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 250), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_089(self):
@@ -4918,7 +4918,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "collect", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4939,7 +4939,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "stage", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4960,7 +4960,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "store", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
@@ -4981,7 +4981,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "purge", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(350, actionSet.actionSet[0].index)
@@ -5002,7 +5002,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "all", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_094(self):
@@ -5010,7 +5010,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_095(self):
@@ -5018,7 +5018,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, one ], extensions=[ (one, index 350) ].
       """
       actions = [ "validate", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 350), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 350), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_096(self):
@@ -5026,7 +5026,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "collect", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -5047,7 +5047,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "stage", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -5068,7 +5068,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ store, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "store", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
@@ -5089,7 +5089,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ purge, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "purge", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(400, actionSet.actionSet[0].index)
@@ -5110,7 +5110,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ all, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "all", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_101(self):
@@ -5118,7 +5118,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ rebuild, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "rebuild", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_102(self):
@@ -5126,7 +5126,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ validate, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "validate", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
 
    def testActionSet_103(self):
@@ -5134,7 +5134,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one, one ], extensions=[ (one, index 450) ].
       """
       actions = [ "one", "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 450), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(450, actionSet.actionSet[0].index)
@@ -5155,7 +5155,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, stage, store, purge ], extensions=[].
       """
       actions = [ "collect", "stage", "store", "purge", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 4)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -5188,7 +5188,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ stage, purge, collect, store ], extensions=[].
       """
       actions = [ "stage", "purge", "collect", "store", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 4)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -5221,9 +5221,9 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, stage, store, purge, one, two, three, four, five ], extensions=[ (index 50, 150, 250, 350, 450)].
       """
       actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ExtendedAction("two", "a", "b", 150), 
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ExtendedAction("two", "a", "b", 150), 
                      ExtendedAction("three", "a", "b", 250), ExtendedAction("four", "a", "b", 350), 
-                     ExtendedAction("five", "a", "b", 450), ]
+                     ExtendedAction("five", "a", "b", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 9)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
@@ -5286,9 +5286,9 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one, five, collect, store, three, stage, four, purge, two ], extensions=[ (index 50, 150, 250, 350, 450)].
       """
       actions = [ "one", "five", "collect", "store", "three", "stage", "four", "purge", "two", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ExtendedAction("two", "a", "b", 150), 
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ExtendedAction("two", "a", "b", 150), 
                      ExtendedAction("three", "a", "b", 250), ExtendedAction("four", "a", "b", 350), 
-                     ExtendedAction("five", "a", "b", 450), ]
+                     ExtendedAction("five", "a", "b", 450), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 9)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
@@ -5351,7 +5351,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one ], extensions=[ (one, index 50) ].
       """
       actions = [ "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       actionSet = _ActionSet(actions, extensions, None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
@@ -5366,7 +5366,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect ], extensions=[], hooks=[]
       """
       actions = [ "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       hooks = []
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failIf(actionSet.actionSet is None)
@@ -5383,7 +5383,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect ], extensions=[], pre-hook on 'stage' action.
       """
       actions = [ "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       hooks = [ PreActionHook("stage", "something") ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failIf(actionSet.actionSet is None)
@@ -5400,7 +5400,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect ], extensions=[], post-hook on 'stage' action.
       """
       actions = [ "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       hooks = [ PostActionHook("stage", "something") ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failIf(actionSet.actionSet is None)
@@ -5417,7 +5417,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect ], extensions=[], pre-hook on 'collect' action.
       """
       actions = [ "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       hooks = [ PreActionHook("collect", "something") ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failIf(actionSet.actionSet is None)
@@ -5434,7 +5434,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect ], extensions=[], post-hook on 'collect' action.
       """
       actions = [ "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       hooks = [ PostActionHook("collect", "something") ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failIf(actionSet.actionSet is None)
@@ -5451,7 +5451,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect ], extensions=[], pre- and post-hook on 'collect' action.
       """
       actions = [ "collect", ]
-      extensions = []
+      extensions = ExtensionsConfig([], None)
       hooks = [ PreActionHook("collect", "something1"), PostActionHook("collect", "something2") ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failIf(actionSet.actionSet is None)
@@ -5468,7 +5468,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one ], extensions=[ (one, index 50) ], hooks=[]
       """
       actions = [ "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = []
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5484,7 +5484,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one ], extensions=[ (one, index 50) ], pre-hook on "store" action.
       """
       actions = [ "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PreActionHook("store", "whatever"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5500,7 +5500,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one ], extensions=[ (one, index 50) ], post-hook on "store" action.
       """
       actions = [ "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PostActionHook("store", "whatever"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5516,7 +5516,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one ], extensions=[ (one, index 50) ], pre-hook on "one" action.
       """
       actions = [ "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PreActionHook("one", "extension"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5532,7 +5532,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one ], extensions=[ (one, index 50) ], post-hook on "one" action.
       """
       actions = [ "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PostActionHook("one", "extension"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5548,7 +5548,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ one ], extensions=[ (one, index 50) ], pre- and post-hook on "one" action.
       """
       actions = [ "one", ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PostActionHook("one", "extension2"), PreActionHook("one", "extension1"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -5564,7 +5564,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], hooks=[]
       """
       actions = [ "collect", "one",  ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = []
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5586,7 +5586,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], pre-hook on "purge" action
       """
       actions = [ "collect", "one",  ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PreActionHook("purge", "rm -f"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5608,7 +5608,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], post-hook on "purge" action
       """
       actions = [ "collect", "one",  ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PostActionHook("purge", "rm -f"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5630,7 +5630,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], pre-hook on "collect" action
       """
       actions = [ "collect", "one",  ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PreActionHook("collect", "something"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5652,7 +5652,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], post-hook on "collect" action
       """
       actions = [ "collect", "one",  ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PostActionHook("collect", "something"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5674,7 +5674,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], pre-hook on "one" action
       """
       actions = [ "collect", "one",  ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PreActionHook("one", "extension"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5696,7 +5696,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], post-hook on "one" action
       """
       actions = [ "collect", "one",  ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PostActionHook("one", "extension"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
@@ -5718,7 +5718,7 @@ class TestActionSet(unittest.TestCase):
       Test with actions=[ collect, one ], extensions=[ (one, index 50) ], set of various pre- and post hooks.
       """
       actions = [ "collect", "one",  ]
-      extensions = [ ExtendedAction("one", "a", "b", 50), ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "a", "b", 50), ], None)
       hooks = [ PostActionHook("one", "extension"), PreActionHook("collect", "something"), PostActionHook("stage", "whatever"), ]
       actionSet = _ActionSet(actions, extensions, hooks)
       self.failUnless(len(actionSet.actionSet) == 2)
