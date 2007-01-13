@@ -8876,11 +8876,11 @@ class TestConfig(unittest.TestCase):
       expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.store = StoreConfig()
       expected.store.sourceDir = "/opt/backup/staging"
-      expected.store.mediaType = "cdrw-74"
-      expected.store.deviceType = "cdwriter"
+      expected.store.mediaType = "dvd+rw"
+      expected.store.deviceType = "dvdwriter"
       expected.store.devicePath = "/dev/cdrw"
       expected.store.deviceScsiId = None
-      expected.store.driveSpeed = 4
+      expected.store.driveSpeed = 1
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.purge = PurgeConfig()
@@ -8993,11 +8993,11 @@ class TestConfig(unittest.TestCase):
       expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.store = StoreConfig()
       expected.store.sourceDir = "/opt/backup/staging"
-      expected.store.mediaType = "cdrw-74"
-      expected.store.deviceType = "cdwriter"
+      expected.store.mediaType = "dvd+rw"
+      expected.store.deviceType = "dvdwriter"
       expected.store.devicePath = "/dev/cdrw"
       expected.store.deviceScsiId = None
-      expected.store.driveSpeed = 4
+      expected.store.driveSpeed = 1
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.purge = PurgeConfig()
