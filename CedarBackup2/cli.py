@@ -88,7 +88,7 @@ import getopt
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
 from CedarBackup2.util import RestrictedContentList, DirectedGraph, PathResolverSingleton
-from CedarBackup2.util import splitCommandLine, executeCommand, getFunctionReference, getUidGid, encodePath
+from CedarBackup2.util import sortDict, splitCommandLine, executeCommand, getFunctionReference, getUidGid, encodePath
 from CedarBackup2.config import Config
 from CedarBackup2.actions.collect import executeCollect
 from CedarBackup2.actions.stage import executeStage
@@ -496,6 +496,7 @@ class _ActionSet(object):
          indexMap['store'] = STORE_INDEX;
          indexMap['purge'] = PURGE_INDEX;
          logger.debug("Completed filling in action indices for built-in actions.")
+         logger.info("Action order will be: %s" % sortDict(indexMap))
       else:
          if extensions.orderMode is None or extensions.orderMode == "index":
             logger.info("Action ordering will use 'index' order mode.")
@@ -509,6 +510,7 @@ class _ActionSet(object):
             for action in extensions.actions:
                indexMap[action.name] = action.index
             logger.debug("Completed filling in action indices for extended actions.")
+            logger.info("Action order will be: %s" % sortDict(indexMap))
          else:
             logger.info("Action ordering will use 'dependency' order mode.")
             graph = DirectedGraph("dependencies")
@@ -527,18 +529,20 @@ class _ActionSet(object):
             graph.createEdge("stage", "purge")
             graph.createEdge("store", "purge")     # Store must run before purge
             for action in extensions.actions:
-               for vertex in action.dependencies.beforeList:
-                  try: 
-                     graph.createEdge(action.name, vertex)   # actions that this action must be run before
-                  except ValueError:
-                     logger.error("Dependency [%s] on extension [%s] is unknown." % (vertex, action.name))
-                     raise ValueError("Unable to determine proper action order due to invalid dependency.")
-               for vertex in action.dependencies.afterList:
-                  try: 
-                     graph.createEdge(vertex, action.name)   # actions that this action must be run after
-                  except ValueError:
-                     logger.error("Dependency [%s] on extension [%s] is unknown." % (vertex, action.name))
-                     raise ValueError("Unable to determine proper action order due to invalid dependency.")
+               if action.dependencies.beforeList is not None:
+                  for vertex in action.dependencies.beforeList:
+                     try: 
+                        graph.createEdge(action.name, vertex)   # actions that this action must be run before
+                     except ValueError:
+                        logger.error("Dependency [%s] on extension [%s] is unknown." % (vertex, action.name))
+                        raise ValueError("Unable to determine proper action order due to invalid dependency.")
+               if action.dependencies.afterList is not None:
+                  for vertex in action.dependencies.afterList:
+                     try: 
+                        graph.createEdge(vertex, action.name)   # actions that this action must be run after
+                     except ValueError:
+                        logger.error("Dependency [%s] on extension [%s] is unknown." % (vertex, action.name))
+                        raise ValueError("Unable to determine proper action order due to invalid dependency.")
             try:
                ordering = graph.topologicalSort()
                indexMap = dict([(ordering[i], i+1) for i in range(0, len(ordering))])
