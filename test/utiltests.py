@@ -83,7 +83,7 @@ from os.path import isdir
 from CedarBackup2.testutil import findResources, removedir, platformHasEcho
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, RestrictedContentList, RegexMatchList
 from CedarBackup2.util import DirectedGraph, PathResolverSingleton
-from CedarBackup2.util import resolveCommand, executeCommand, getFunctionReference, encodePath, validateScsiId
+from CedarBackup2.util import sortDict, resolveCommand, executeCommand, getFunctionReference, encodePath, validateScsiId
 
 
 #######################################################################
