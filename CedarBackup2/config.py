@@ -2742,9 +2742,6 @@ class StoreConfig(object):
       - The SCSI id, if provided, must be in the form specified by L{util.validateScsiId}.
       - The drive speed must be an integer >= 1
 
-   The device type field mostly exists for planned future extensions, such as
-   support for DVD writers.
-
    @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
           mediaType, deviceType, devicePath, deviceScsiId, 
           driveSpeed, checkData, warnMidnite
@@ -3429,12 +3426,6 @@ class Config(object):
       configuration before extracting the XML.  If configuration is not valid,
       then an XML document will not be extracted.
    
-      @note: This function is not particularly fast.  This is most noticable
-      when running the regression tests, where the 30 or so extract-related
-      tests take nearly 6 seconds on my Duron 850 (over half the total
-      config-related test time).  However, I think the performance is adequate
-      for our purposes.
-
       @note: It is strongly suggested that the C{validate} option always be set
       to C{True} (the default) unless there is a specific need to write an
       invalid configuration file to disk.
@@ -3518,12 +3509,6 @@ class Config(object):
       validation as to whether required elements actually exist unless we have
       to to make sense of the document (instead, that's the job of the
       L{validate} method).
-
-      @note: This function is not particularly fast.  This is most noticable
-      when running the regression tests, where the 30 or so parse- related
-      tests take nearly 5 seconds on my Duron 850 (nearly half the total
-      config-related test time).  However, I think the performance is adequate
-      for our purposes.
 
       @param xmlData: XML data to be parsed
       @type xmlData: String data

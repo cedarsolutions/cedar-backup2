@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2005 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -153,10 +153,9 @@ def cli():
    configured extended actions (which makes action list verification a two-
    step process).
 
-   The C{'all'} action has a special meaning.  Normally, it means that the
-   built-in set of actions (collect, stage, store, purge) will all be executed,
-   in that order.  Extended actions will be ignored as part of the C{'all'}
-   action.
+   The C{'all'} action has a special meaning: it means that the built-in set of
+   actions (collect, stage, store, purge) will all be executed, in that order.
+   Extended actions will be ignored as part of the C{'all'} action.
 
    Raised exceptions always result in an immediate return.  Otherwise, we
    generally return when all specified actions have been completed.  Actions
