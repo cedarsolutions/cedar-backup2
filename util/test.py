@@ -38,9 +38,9 @@
 ########################################################################
 
 """
-Run all of the CedarBackup2 unit tests.
+Run the CedarBackup2 unit tests.
 
-We run all of the unit tests here at once so we can get one big success or
+This script runs all of the unit tests at once so we can get one big success or
 failure result, rather than 20 different smaller results that we somehow have
 to aggregate together to get the "big picture".  This is done by creating and
 running one big unit test suite based on the suites in the individual unit test
@@ -62,15 +62,20 @@ want to make sure we are running the correct 'test' package - not one found
 elsewhere on the user's path - since 'test' could be a relatively common name
 for a package.
 
-Finally, this script might be used by people who won't have an environment that
-allows running all of the tests, especially certain tests related to remote
-connectivity, loopback filesystems, etc.  Most people should run the script
-with no arguments.  This will result in a "reduced feature set" test suite with
-no surprising system, kernel or network dependencies.  People who understand
-what they're doing can put "full" as one of the arguments on the command-line,
-and they'll get all of the available tests (or they can dig further and
-explicitly set certain environment variables to get more precise control over
-what will be tested).
+Most people will want to run the script with no arguments.  This will result in
+a "reduced feature set" test suite that covers all of the available test
+suites, but executes only those tests with no surprising system, kernel or
+network dependencies.
+
+If "full" is specified as one of the command-line arguments, then all of the
+unit tests will be run, including those that require a specialized environment.
+For instance, some tests require remote connectivity, a loopback filesystem,
+etc.
+
+Other arguments on the command line are assumed to be named tests, so for
+instance passing "config" runs only the tests for config.py.  Any number of
+individual tests may be listed on the command line, and unknown values will
+simply be ignored.
 
 @note: Even if you run this test with the C{python2.3} interpreter, some of the
 individual unit tests require the C{python} interpreter.  In particular, the
@@ -159,14 +164,6 @@ def main():
       print "tree, or properly set the PYTHONPATH enviroment variable."
       return 1
 
-   # Set flags in the environment to control tests
-   if "full" in sys.argv:
-      os.environ["PEERTESTS_FULL"] = "Y"
-      os.environ["CDWRITERTESTS_FULL"] = "Y"
-   else:
-      os.environ["PEERTESTS_FULL"] = "N"
-      os.environ["CDWRITERTESTS_FULL"] = "N"
-
    # Set up logging to discard everything
    devnull = nullDevice()
    handler = logging.FileHandler(filename=devnull)
@@ -175,26 +172,41 @@ def main():
    logger.setLevel(logging.NOTSET)
    logger.addHandler(handler)
 
+   # Get a list of program arguments
+   args = sys.argv[1:]
+
+   # Set flags in the environment to control tests
+   if "full" in args:
+      os.environ["PEERTESTS_FULL"] = "Y"
+      os.environ["CDWRITERTESTS_FULL"] = "Y"
+      args.remove("full") # remainder of list will be specific tests to run
+   else:
+      os.environ["PEERTESTS_FULL"] = "N"
+      os.environ["CDWRITERTESTS_FULL"] = "N"
+
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."
 
+   # Make a list of tests to run
+   unittests = { }
+   if args == [] or "util" in args: unittests["util"] = utiltests.suite()
+   if args == [] or "knapsack" in args: unittests["knapsack"] = knapsacktests.suite()
+   if args == [] or "filesystem" in args: unittests["filesystem"] = filesystemtests.suite()
+   if args == [] or "peer" in args: unittests["peer"] = peertests.suite()
+   if args == [] or "cdwriter" in args: unittests["cdwriter"] = cdwritertests.suite()
+   if args == [] or "dvdwriter" in args: unittests["dvdwriter"] = dvdwritertests.suite()
+   if args == [] or "config" in args: unittests["config"] = configtests.suite()
+   if args == [] or "cli" in args: unittests["cli"] = clitests.suite()
+   if args == [] or "mysql" in args: unittests["mysql"] = mysqltests.suite()
+   if args == [] or "postgresql" in args: unittests["postgresql"] = postgresqltests.suite()
+   if args == [] or "subversion" in args: unittests["subversion"] = subversiontests.suite()
+   if args == [] or "mbox" in args: unittests["mbox"] = mboxtests.suite()
+   if args == [] or "encrypt" in args: unittests["encrypt"] = encrypttests.suite()
+   if args != []: print "*** Executing specific tests: %s" % unittests.keys()
+
    # Create and run the test suite
    print ""
-   suite = unittest.TestSuite((
-                               utiltests.suite(),
-                               knapsacktests.suite(), 
-                               filesystemtests.suite(),
-                               peertests.suite(),
-                               cdwritertests.suite(),
-                               dvdwritertests.suite(),
-                               configtests.suite(),
-                               clitests.suite(),
-                               mysqltests.suite(),
-                               postgresqltests.suite(),
-                               subversiontests.suite(),
-                               mboxtests.suite(),
-                               encrypttests.suite(),
-                              ))
+   suite = unittest.TestSuite(unittests.values())
    result = unittest.TextTestRunner(verbosity=1).run(suite)
    print ""
    if not result.wasSuccessful():
