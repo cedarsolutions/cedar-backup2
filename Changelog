@@ -1,7 +1,8 @@
 Version 2.10.0	unreleased
 
-	* Fix rebuild action to look at store config instead of stage.
 	* Code cleanup and minor enhancements.
+	  - Modify util/test.py to accept named tests on command line
+	  - Fix rebuild action to look at store config instead of stage.
 	  - Clean up xmlutil imports in mbox and subversion extensions
 	  - Copy Mac OS X (darwin) errors from store action into rebuild action
 	  - Check arguments to validateScsiId better (no None path allowed now)
@@ -10,7 +11,7 @@ Version 2.10.0	unreleased
 	  - Add new addSelf flag to FilesystemList.addDirContents()
 	  - Create new RegexMatchList class in util.py, and add tests
 	  - Create new DirectedGraph class in util.py, and add tests
-	  - Create new sortDict() function in util.py
+	  - Create new sortDict() function in util.py, and add tests
 	* Create unit tests for functionality that was not explictly tested before.
 	  - ActionHook, PreActionHook, PostActionHook, CommandOverride (config.py)
 	  - AbsolutePathList, ObjectTypeList, RestrictedContentList (util.py)
@@ -19,7 +20,7 @@ Version 2.10.0	unreleased
 	* Support new action ordering mechanism for extensions.
 	  - Extensions can now specify dependencies rather than indexes
 	  - Cedar Backup will determine the proper execution order
-	  - Rewrote cli._ActionSet() to use DirectedGraph for dependencies
+	  - Rewrote cli._ActionSet class to use DirectedGraph for dependencies
 	* Refactor and clean up code that implements standard actions.
 	  - Split action.py into various other files in the actions package
 	  - Move a few of the more generic utility functions into util.py

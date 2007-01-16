@@ -40,7 +40,7 @@
          <name>encrypt</name>
          <module>CedarBackup2.extend.encrypt</module>
          <function>executeAction</function>
-         <index>199</index>   <!-- immediately before store -->
+         <index>299</index>   <!-- immediately before store -->
       </action>
    </extensions>
    <options>

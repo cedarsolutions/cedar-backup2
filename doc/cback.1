@@ -31,11 +31,11 @@ filesystem data as well as MySQL and PostgreSQL databases and Subversion
 repositories.  It can also be easily extended to support other kinds of
 data sources.  
 .PP
-Cedar Backup is focused around weekly backups to a single CD-R or CD-RW
-disc, with the expectation that the disc will be changed or overwritten at
-the beginning of each week.  If your hardware is new enough, Cedar Backup
-can write multisession discs, allowing you to add incremental data to a
-disc on a daily basis.
+Cedar Backup is focused around weekly backups to a single CD or DVD disc,
+with the expectation that the disc will be changed or overwritten at the
+beginning of each week.  If your hardware is new enough, Cedar Backup can
+write multisession discs, allowing you to add incremental data to a disc on
+a daily basis.
 .PP
 There are two kinds of machines in a Cedar Backup pool.  One machine (the
 \fImaster\fR) has a CD-R or CD-RW drive on it and is where the backup is
@@ -164,10 +164,10 @@ Backup was interrupted with a CTRL-C or similar.
 Error executing specified backup actions.
 .SH NOTES
 .PP
-The script is designed to run as root, since otherwise it's difficult to back
-up system directories or write the CD-R/CD-RW device.  However, pains are taken
-to use a backup user's effective user id (specified in configuration) when
-appropriate.
+The script is designed to run as root, since otherwise it's difficult to
+back up system directories or write the CD or DVD device.  However, pains
+are taken to use a backup user's effective user id (specified in
+configuration) when appropriate.
 .PP
 To use the script, you must specify at least one action to take.  More than one
 of the "collect", "stage", "store" or "purge" actions may be specified, in any
@@ -186,10 +186,10 @@ Note that there is no facility for restoring backups.  It is assumed that the
 user can deal with copying tarfiles off disc and using them to restore missing
 files as needed.
 .PP
-Finally, you should be aware that backups to CD-R can probably be read by any
-user which has permissions to mount the CD-R drive.  If you intend to leave the
-backup disc in the drive at all times, you may want to consider this when
-setting up device permissions on your machine.
+Finally, you should be aware that backups to CD or DVD can probably be read
+by any user which has permissions to mount the CD or DVD drive.  If you
+intend to leave the backup disc in the drive at all times, you may want to
+consider this when setting up device permissions on your machine.
 .SH FILES
 .TP
 \fI/etc/cback.conf\fR - Default configuration file
@@ -208,7 +208,7 @@ Report bugs to <support@cedar-solutions.com>.
 .SH AUTHOR
 Written by Kenneth J. Pronovici <pronovic@ieee.org>.
 .SH COPYRIGHT
-Copyright (c) 2004-2005 Kenneth J. Pronovici.
+Copyright (c) 2004-2007 Kenneth J. Pronovici.
 .br
 This is free software; see the source for copying conditions.  There is
 NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
