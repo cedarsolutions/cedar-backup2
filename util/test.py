@@ -149,6 +149,7 @@ def main():
       import test.knapsacktests as knapsacktests
       import test.filesystemtests as filesystemtests
       import test.peertests as peertests
+      import test.imagetests as imagetests
       import test.cdwritertests as cdwritertests
       import test.dvdwritertests as dvdwritertests
       import test.configtests as configtests
@@ -178,11 +179,11 @@ def main():
    # Set flags in the environment to control tests
    if "full" in args:
       os.environ["PEERTESTS_FULL"] = "Y"
-      os.environ["CDWRITERTESTS_FULL"] = "Y"
+      os.environ["IMAGETESTS_FULL"] = "Y"
       args.remove("full") # remainder of list will be specific tests to run
    else:
       os.environ["PEERTESTS_FULL"] = "N"
-      os.environ["CDWRITERTESTS_FULL"] = "N"
+      os.environ["IMAGETESTS_FULL"] = "N"
 
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."
@@ -193,6 +194,7 @@ def main():
    if args == [] or "knapsack" in args: unittests["knapsack"] = knapsacktests.suite()
    if args == [] or "filesystem" in args: unittests["filesystem"] = filesystemtests.suite()
    if args == [] or "peer" in args: unittests["peer"] = peertests.suite()
+   if args == [] or "image" in args: unittests["image"] = imagetests.suite()
    if args == [] or "cdwriter" in args: unittests["cdwriter"] = cdwritertests.suite()
    if args == [] or "dvdwriter" in args: unittests["dvdwriter"] = dvdwritertests.suite()
    if args == [] or "config" in args: unittests["config"] = configtests.suite()
