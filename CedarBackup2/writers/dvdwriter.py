@@ -58,7 +58,7 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import BackupFileList
-from CedarBackup2.writers.cdwriter import IsoImage
+from CedarBackup2.writers.image import IsoImage
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, displayBytes, encodePath
 from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES, UNIT_GBYTES
@@ -683,11 +683,11 @@ class DvdWriter(object):
       """
       Gets the estimated size of a set of image entries.
 
-      This is implemented in terms of the C{IsoImage} class implemented by
-      C{cdwriter.py}.  The returned value is calculated by adding a "fudge
-      factor" to the value from C{IsoImage}.  This fudge factor was determined
-      by experimentation and is conservative -- the actual image could be as
-      much as 400 blocks smaller under some circumstances.
+      This is implemented in terms of the C{IsoImage} class.  The returned
+      value is calculated by adding a "fudge factor" to the value from
+      C{IsoImage}.  This fudge factor was determined by experimentation and is
+      conservative -- the actual image could be as much as 400 blocks smaller
+      under some circumstances.
 
       @param entries: Dictionary mapping path to graft point.
 
@@ -810,7 +810,7 @@ class DvdWriter(object):
          keys = entries.keys()
          keys.sort() # just so we get consistent results
          for key in keys:
-            # Same syntax as when calling mkisofs in cdwriter.IsoImage
+            # Same syntax as when calling mkisofs in IsoImage
             if entries[key] is None:
                args.append(key)
             else:

@@ -55,14 +55,14 @@ from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.knapsack import worstFit
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, encodePath
-from CedarBackup2.writer import validateScsiId
+from CedarBackup2.util import validateScsiId
 
 
 ########################################################################
 # Module-wide constants and variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.log.image")
+logger = logging.getLogger("CedarBackup2.log.writers.image")
 
 MKISOFS_COMMAND      = [ "mkisofs", ]
 

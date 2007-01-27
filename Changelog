@@ -19,8 +19,8 @@ Version 2.10.0	unreleased
 	  - Create new 'encrypt' extension and associated unit tests
 	* Support new action ordering mechanism for extensions.
 	  - Extensions can now specify dependencies rather than indexes
-	  - Cedar Backup will determine the proper execution order
 	  - Rewrote cli._ActionSet class to use DirectedGraph for dependencies
+	  - This functionality is not yet "official"; that will happen later
 	* Refactor and clean up code that implements standard actions.
 	  - Split action.py into various other files in the actions package
 	  - Move a few of the more generic utility functions into util.py
@@ -28,9 +28,10 @@ Version 2.10.0	unreleased
 	  - Change various files to import from the new module locations
 	* Refactor CD writer functionality and clean up code.
 	  - Create new writers package to hold all image writers
-	  - Combine most of image.py and writer.py into writers/cdwriter.py
+	  - Move image.py into writers/ package
+	  - Move most of writer.py into writers/cdwriter.py
 	  - Move validate functions from writer.py to util.py
-	  - Merge writertests.py and imagetests.py into cdwritertests.py
+	  - Move writertests.py into cdwritertests.py
 	  - Preserve public interface via imports in otherwise empty files
 	  - Change various files to import from the new module locations
 	* Revise and simplify the implied "image writer" interface in CdWriter.

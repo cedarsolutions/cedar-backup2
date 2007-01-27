@@ -36,7 +36,5 @@ interface.
 # Imported modules
 ########################################################################
 
-from CedarBackup2.util import validateScsiId, validateDriveSpeed
-from CedarBackup2.writers.cdwriter import MediaDefinition, MediaCapacity, CdWriter
-from CedarBackup2.writers.cdwriter import MEDIA_CDRW_74, MEDIA_CDR_74, MEDIA_CDRW_80, MEDIA_CDR_80
+from CedarBackup2.writers.image import IsoImage
 
