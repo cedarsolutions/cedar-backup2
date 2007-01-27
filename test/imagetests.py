@@ -101,7 +101,7 @@ import tarfile
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.testutil import platformMacOsX, platformSupportsLinks
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.image import IsoImage
+from CedarBackup2.writers.image import IsoImage
 from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYTES
 
 
