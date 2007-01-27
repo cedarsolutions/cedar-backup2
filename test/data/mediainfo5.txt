@@ -1,0 +1,63 @@
+INQUIRY:                [LITE-ON ][DVDRW SOHW-1673S][JS02]
+GET [CURRENT] CONFIGURATION:
+ Mounted Media:         1Bh, DVD+R
+ Media ID:              MCC/004
+ Current Write Speed:   16.0x1385=22160KB/s
+ Write Speed #0:        16.0x1385=22160KB/s
+ Write Speed #1:        12.0x1385=16620KB/s
+ Write Speed #2:        8.0x1385=11080KB/s
+ Write Speed #3:        6.0x1385=8310KB/s
+GET [CURRENT] PERFORMANCE:
+ Write Performance:     6.4x1385=8864KB/s@0 -> 7.2x1385=10032KB/s@201999
+ Speed Descriptor#0:    00/201999 R@3.6x1385=5016KB/s W@16.0x1385=22160KB/s
+ Speed Descriptor#1:    00/201999 R@3.6x1385=5016KB/s W@12.0x1385=16620KB/s
+ Speed Descriptor#2:    00/201999 R@3.6x1385=5016KB/s W@8.0x1385=11080KB/s
+ Speed Descriptor#3:    00/201999 R@3.6x1385=5016KB/s W@6.0x1385=8310KB/s
+READ DVD STRUCTURE[#0h]:
+ Media Book Type:       00h, DVD-ROM book [revision 0]
+ Legacy lead-out at:    2295104*2KB=4700372992
+READ DISC INFORMATION:
+ Disc status:           appendable
+ Number of Sessions:    5
+ State of Last Session: empty
+ "Next" Track:          5
+ Number of Tracks:      5
+READ TRACK INFORMATION[#1]:
+ Track State:           invisible
+ Track Start Address:   0*2KB
+ Free Blocks:           0*2KB
+ Track Size:            30592*2KB
+ ROM Compatibility LBA: 262144
+READ TRACK INFORMATION[#2]:
+ Track State:           invisible
+ Track Start Address:   32640*2KB
+ Free Blocks:           0*2KB
+ Track Size:            84240*2KB
+ ROM Compatibility LBA: 262144
+READ TRACK INFORMATION[#3]:
+ Track State:           invisible
+ Track Start Address:   118928*2KB
+ Free Blocks:           0*2KB
+ Track Size:            24496*2KB
+ ROM Compatibility LBA: 262144
+READ TRACK INFORMATION[#4]:
+ Track State:           invisible
+ Track Start Address:   145472*2KB
+ Free Blocks:           0*2KB
+ Track Size:            56528*2KB
+ ROM Compatibility LBA: 262144
+READ TRACK INFORMATION[#5]:
+ Track State:           blank
+ Track Start Address:   204048*2KB
+ Next Writable Address: 204048*2KB
+ Free Blocks:           2091056*2KB
+ Track Size:            2091056*2KB
+ ROM Compatibility LBA: 262144
+FABRICATED TOC:
+ Track#1  :             14@0
+ Track#2  :             14@32640
+ Track#3  :             14@118928
+ Track#4  :             14@145472
+ Track#AA :             14@202000
+ Multi-session Info:    #4@145472
+READ CAPACITY:          202000*2048=413696000

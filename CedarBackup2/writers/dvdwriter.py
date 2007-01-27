@@ -58,6 +58,7 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import BackupFileList
+from CedarBackup2.writers.cdwriter import IsoImage
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, displayBytes, encodePath
 from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES, UNIT_GBYTES
@@ -75,6 +76,7 @@ MEDIA_DVDPLUSRW = 2
 
 GROWISOFS_COMMAND = [ "growisofs", ]
 EJECT_COMMAND     = [ "eject", ]
+MEDIAINFO_COMMAND = [ "dvd+rw-mediainfo", ]
 
 
 ########################################################################
@@ -152,6 +154,45 @@ class MediaDefinition(object):
 
 
 ########################################################################
+# MediaCapacity class definition
+########################################################################
+
+class MediaCapacity(object):
+
+   """
+   Class encapsulating information about DVD media capacity.
+
+   Space used and space available do not include any information about media
+   lead-in or other overhead.
+
+   @sort: __init__, bytesUsed, bytesAvailable
+   """
+
+   def __init__(self, bytesUsed, bytesAvailable):
+      """
+      Initializes a capacity object.
+      @raise ValueError: If the bytes used and available values are not floats.
+      """
+      self._bytesUsed = float(bytesUsed)
+      self._bytesAvailable = float(bytesAvailable)
+
+   def _getBytesUsed(self):
+      """
+      Property target used to get the bytes-used value.
+      """
+      return self._bytesUsed
+
+   def _getBytesAvailable(self):
+      """
+      Property target available to get the bytes-available value.
+      """
+      return self._bytesAvailable
+
+   bytesUsed = property(_getBytesUsed, None, None, doc="Space used on disc, in bytes.")
+   bytesAvailable = property(_getBytesAvailable, None, None, doc="Space available on disc, in bytes.")
+
+
+########################################################################
 # _ImageProperties class definition
 ########################################################################
 
@@ -185,8 +226,9 @@ class DvdWriter(object):
       of DVD media.  It provides common operations for the device, such as
       ejecting the media and writing data to the media.
 
-      This class is implemented in terms of the C{eject} and C{growisofs}
-      programs, both of which should be available on most UN*X platforms.
+      This class is implemented in terms of the C{eject}, C{growisofs} and
+      C{dvd+rw-mediainfo} utilities, all of which should be available on most
+      UN*X platforms.
 
    Image Writer Interface
    ======================
@@ -229,29 +271,47 @@ class DvdWriter(object):
       of media because I haven't had any opportunity to work with them.  The
       same goes for dual-layer media of any type.
 
-   Device and Media Attributes
-   ===========================
+   Device Attributes vs. Media Attributes
+   ======================================
 
-      The C{growisofs} utility that underlies this functionality is easier to
-      use in some ways than C{cdrecord} and C{mkisofs}, which are used by
-      C{CdWriter}.  However, in other ways, C{growisofs} and its associated
-      command-line tools are less capable.
+      As with the cdwriter functionality, a given dvdwriter instance has two
+      different kinds of attributes associated with it.  I call these device
+      attributes and media attributes.
 
-      In particular, there does not appeear to be good way to coax the DVD+RW
-      tools to document remaining media capacity.  Similarly, none of the tools
-      seem to provide information about device attributes, such as whether the
-      writer device has a tray.
-   
-      To work around the capacity limitation, C{DvdWriter} just relies on the
-      default behavior of C{growisofs}, which is to report a failure (but not
-      actually perform a write) if there is not enough capacity on the media.
+      Device attributes are things which can be determined without looking at
+      the media.  Media attributes are attributes which vary depending on the
+      state of the media.  In general, device attributes are available via
+      instance variables and are constant over the life of an object, while
+      media attributes can be retrieved through method calls.
 
-      I am not quite sure what to do about the device attributes issue.  I
-      haven't actually seen a DVD writer without a tray, so for the time being
-      I am going to assume a tray open/close operation is generally safe; the
-      C{deviceHasTray} and C{deviceCanEject} attributes are always defaulted to
-      C{True}.  I have removed all of the other attributes that are there for
-      reference in C{CdWriter} since I have no way to fill them in.
+      Compared to cdwriters, dvdwriters have very few attributes.  This is due
+      to differences between the way C{growisofs} works relative to
+      C{cdrecord}.
+
+   Media Capacity
+   ==============
+
+      One major difference between the C{cdrecord}/C{mkisofs} utilities used by
+      the cdwriter class and the C{growisofs} utility used here is that the
+      process of estimating remaining capacity and image size is more
+      straightforward with C{cdrecord}/C{mkisofs} than with C{growisofs}.
+
+      In this class, remaining capacity is calculated by asking
+      C{dvd+rw-mediainfo} for the "READ CAPACITY" of the disc (which seems to
+      be more-or-less the size of the data written previously to the disc), and
+      subtracting that from the capacity on the C{MediaDefinition}.  Image size
+      is estimated by asking the C{IsoImage} class for an estimate and then
+      adding on a "fudge factor" determined through experimentation.
+
+   Device Tray
+   ===========
+
+      It does not seem to be possible to get C{growisofs} to indicate whether a
+      given writer device has a tray.  I am not quite sure what to do about
+      this.  I haven't actually seen a DVD writer without a tray, so for the
+      time being I am going to assume a tray open/close operation is generally
+      safe; the C{deviceHasTray} and C{deviceCanEject} attributes are always
+      defaulted to C{True}. 
 
    Testing
    =======
@@ -386,6 +446,40 @@ class DvdWriter(object):
       """Indicates whether the media is rewritable per configuration."""
       return self._media.rewritable
 
+   def retrieveCapacity(self, entireDisc=False):
+      """
+      Retrieves capacity for the current media in terms of a C{MediaCapacity}
+      object.
+
+      If C{entireDisc} is passed in as C{True}, the capacity will be for the
+      entire disc, as if it were to be rewritten from scratch.  Otherwise, the
+      capacity will be calculated by subtracting the "READ CAPACITY" (reported
+      by C{dvd+rw-mediainfo}) from the total capacity of the disc.
+
+      @note: This is only an estimate, because C{growisofs} does not provide a
+      good way to calculate the capacity precisely.  In practice, you might
+      expect slightly less data to fit on the media than indicated by this
+      method.
+
+      @param entireDisc: Indicates whether to return capacity for entire disc.
+      @type entireDisc: Boolean true/false
+
+      @return: C{MediaCapacity} object describing the capacity of the media.
+      @raise IOError: If the media could not be read for some reason.
+      """
+      sectorsUsed = 0
+      if not entireDisc:
+         command = resolveCommand(MEDIAINFO_COMMAND)
+         args = [ self.hardwareId, ]
+         (result, output) = executeCommand(command, args, returnOutput=True)
+         if result != 0:
+            raise IOError("Error (%d) reading media capacity." % result)
+         sectorsUsed = DvdWriter._getReadCapacity(output)
+      sectorsAvailable = self._media.capacity - sectorsUsed  # both are in sectors
+      bytesUsed = convertSize(sectorsUsed, UNIT_SECTORS, UNIT_BYTES)
+      bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
+      return MediaCapacity(bytesUsed, bytesAvailable)
+
 
    #######################################################
    # Methods used for working with the internal ISO image
@@ -511,10 +605,15 @@ class DvdWriter(object):
       If C{imagePath} is passed in as C{None}, then the existing image
       configured with C{initializeImage()} will be used.  Under these
       circumstances, the passed-in C{newDisc} flag will be ignored and the
-      value passed in to C{initializeImage()} will apply.
+      value passed in to C{initializeImage()} will apply instead.
 
       The C{writeMulti} argument is ignored.  It exists for compatibility with
       the Cedar Backup image writer interface.
+
+      @note: The image size indicated in the log ("Image size will be...") is
+      only an estimate.  If C{growisofs} fails with a a capacity problem, the
+      image size indicated in that error message might differ from the image
+      size that was initially logged.
 
       @param imagePath: Path to an ISO image on disk, or C{None} to use writer's image
       @type imagePath: String representing a path on disk
@@ -536,7 +635,7 @@ class DvdWriter(object):
          if self._image is None:
             raise ValueError("Must call initializeImage() before using this method with no image path.")
          size = DvdWriter._getEstimatedImageSize(self._image.entries)
-         logger.info("Estimated image size is %s (not including lead-in and other overhead)." % displayBytes(size)) 
+         logger.info("Image size will be %s (estimated)." % displayBytes(size))
          self._writeImage(self._image.newDisc, None, self._image.entries)
       else:
          if not os.path.isabs(imagePath):
@@ -545,9 +644,9 @@ class DvdWriter(object):
          self._writeImage(newDisc, imagePath, None)
 
 
-   #############################################
-   # Utility methods for dealing with growisofs
-   #############################################
+   ##################################################################
+   # Utility methods for dealing with growisofs and dvd+rw-mediainfo
+   ##################################################################
 
    def _writeImage(self, newDisc, imagePath, entries):
       """
@@ -584,30 +683,55 @@ class DvdWriter(object):
       """
       Gets the estimated size of a set of image entries.
 
-      The estimated image size only covers the actual size of the files to be
-      written.  It does not include an estimate for image lead-in or any other
-      image-writing overhead.  It doesn't seem to be possible to get this
-      information from C{growisofs} ahead of time.
+      This is implemented in terms of the C{IsoImage} class implemented by
+      C{cdwriter.py}.  The returned value is calculated by adding a "fudge
+      factor" to the value from C{IsoImage}.  This fudge factor was determined
+      by experimentation and is conservative -- the actual image could be as
+      much as 400 blocks smaller under some circumstances.
 
       @param entries: Dictionary mapping path to graft point.
 
-      @return: Total estimated size of image entries, in bytes
+      @return: Total estimated size of image, in bytes.
 
       @raise ValueError: If there are no entries in the dictionary
       @raise ValueError: If any path in the dictionary does not exist
+      @raise IOError: If there is a problem calling C{mkisofs}.
       """
+      FUDGE_FACTOR = 2450.0  # determined through experimentation
       if len(entries.keys()) == 0:
          raise ValueError("Must add at least one entry with addImageEntry().")
-      bfList = BackupFileList()
+      image = IsoImage()
       for path in entries.keys():
-         if not os.path.exists(path):
-            raise ValueError("Path [%s] does not exist." % path);
-         if os.path.isdir(path):
-            bfList.addDirContents(path)
-         elif os.path.isfile(path):
-            bfList.addFile(path)
-      return bfList.totalSize()
+         image.addEntry(path, entries[path], override=False, contentsOnly=True)
+      estimatedSize = image.getEstimatedSize() + FUDGE_FACTOR
+      return estimatedSize
    _getEstimatedImageSize = staticmethod(_getEstimatedImageSize)
+
+   def _getReadCapacity(output):
+      """
+      Parse "READ CAPACITY" in sectors out of C{dvd+rw-mediainfo} output.
+
+      The "READ CAPACITY" line looks like this::
+
+         READ CAPACITY:          30592*2048=62652416
+
+      The first value is the number of sectors used, the second value is the
+      sector size (which should be standard at 2048 bytes) and the third value
+      is the number of bytes.  This method returns the number of sectors.
+
+      If the "READ CAPACITY" line is not found or does not make sense, then
+      zero will be returned.
+
+      @return: Read capacity of media in sectors, as a float.
+      """
+      if output is not None:
+         pattern = re.compile(r"(^)(READ CAPACITY:\s*)([0-9]*)([*])([0-9]*)(=)([0-9]*)")
+         for line in output:
+            match = pattern.search(line)
+            if match is not None:
+               return float(match.group(3).strip())
+      return 0.0
+   _getReadCapacity = staticmethod(_getReadCapacity)
 
    def _searchForOverburn(output):
       """

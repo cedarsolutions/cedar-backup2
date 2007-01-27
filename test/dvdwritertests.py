@@ -44,7 +44,7 @@ Code Coverage
 =============
 
    This module contains individual tests for the public classes implemented in
-   cdwriter.py.
+   dvdwriter.py.
 
    Unfortunately, it's rather difficult to test this code in an automated
    fashion, even if you have access to a physical DVD writer drive.  It's even
@@ -94,7 +94,7 @@ import unittest
 import tempfile
 import tarfile
 
-from CedarBackup2.writers.dvdwriter import MediaDefinition, DvdWriter
+from CedarBackup2.writers.dvdwriter import MediaDefinition, MediaCapacity, DvdWriter
 from CedarBackup2.writers.dvdwriter import MEDIA_DVDPLUSR, MEDIA_DVDPLUSRW
 
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, platformSupportsLinks
@@ -108,7 +108,8 @@ GB44        = (4.4*1024.0*1024.0*1024.0)  # 4.4 GB
 GB44SECTORS = GB44/2048.0                 # 4.4 GB in 2048-byte sectors
 
 DATA_DIRS = [ "./data", "./test/data", ]
-RESOURCES = [ "tree9.tar.gz", ]
+RESOURCES = [ "tree9.tar.gz", "mediainfo1.txt", "mediainfo2.txt", "mediainfo3.txt",
+              "mediainfo4.txt", "mediainfo5.txt", "mediainfo6.txt", "mediainfo7.txt", ]
 
 
 #######################################################################
@@ -148,6 +149,43 @@ class TestMediaDefinition(unittest.TestCase):
       self.failUnlessEqual(GB44SECTORS, media.capacity)
 
 
+##########################
+# TestMediaCapacity class
+##########################
+
+class TestMediaCapacity(unittest.TestCase):
+
+   """Tests for the MediaCapacity class."""
+
+   def testConstructor_001(self):
+      """
+      Test the constructor with valid, zero values
+      """
+      capacity = MediaCapacity(0.0, 0.0)
+      self.failUnlessEqual(0.0, capacity.bytesUsed)
+      self.failUnlessEqual(0.0, capacity.bytesAvailable)
+
+   def testConstructor_002(self):
+      """
+      Test the constructor with valid, non-zero values.
+      """
+      capacity = MediaCapacity(1.1, 2.2)
+      self.failUnlessEqual(1.1, capacity.bytesUsed)
+      self.failUnlessEqual(2.2, capacity.bytesAvailable)
+
+   def testConstructor_003(self):
+      """
+      Test the constructor with bytesUsed that is not a float.
+      """
+      self.failUnlessRaises(ValueError, MediaCapacity, 0.0, "ken")
+
+   def testConstructor_004(self):
+      """
+      Test the constructor with bytesAvailable that is not a float.
+      """
+      self.failUnlessRaises(ValueError, MediaCapacity, "a", 0.0)
+
+
 ######################
 # TestDvdWriter class
 ######################
@@ -183,6 +221,11 @@ class TestDvdWriter(unittest.TestCase):
       """Builds a complete search path from a list of components."""
       components.insert(0, self.tmpdir)
       return buildPath(components)
+
+   def getFileContents(self, resource):
+      """Gets contents of named resource as a list of strings."""
+      path = self.resources[resource]
+      return open(path).readlines()
 
 
    ###################
@@ -502,26 +545,6 @@ class TestDvdWriter(unittest.TestCase):
       self.failUnlessEqual({ path1:None, path2:"ken", path3:"another", }, dvdwriter._image.entries)
 
 
-   ################################
-   # Test _getEstimatedImageSize()
-   ################################
-
-   def testGetEstimatedImageSize_001(self):
-      """
-      Test for tree9, where size is known from filesystemtest.TestBackupFileList.testTotalSize_006()
-      """
-      self.extractTar("tree9")
-      path = self.buildPath([ "tree9", ])
-      dvdwriter = DvdWriter("/dev/dvd", unittest=True)
-      dvdwriter.initializeImage(False, None)
-      dvdwriter.addImageEntry(path, None)
-      size = DvdWriter._getEstimatedImageSize(dvdwriter._image.entries)
-      if not platformSupportsLinks():
-         self.failUnlessEqual(1835, size)
-      else:
-         self.failUnlessEqual(1116, size)
-
-
    ############################
    # Test _searchForOverburn()
    ############################
@@ -659,6 +682,115 @@ class TestDvdWriter(unittest.TestCase):
       output.append(":-( /dev/cdrom: 894048 blocks are free, 2033746 to be written!")
       output.append(":-( /dev/cdrom: 894048 blocks are free, 2033746 to be written!")
       self.failUnlessRaises(IOError, DvdWriter._searchForOverburn, output)
+
+
+   ##########################
+   # Test _getReadCapacity()
+   ##########################
+
+   def testGetReadCapacity_001(self):
+      """
+      Test with output=None.
+      """
+      output = None
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(0.0, readCapacity)
+
+   def testGetReadCapacity_002(self):
+      """
+      Test with output=[].
+      """
+      output = []
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(0.0, readCapacity)
+
+   def testGetReadCapacity_003(self):
+      """
+      Test with one-line output, not containing the pattern.
+      """
+      output = [ "This line does not contain the pattern", ]
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(0.0, readCapacity)
+
+      output = [ "READ CAPACITY:          30592*2048*62652416", ] # star instead of equals
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(0.0, readCapacity)
+
+      output = [ "    READ CAPACITY:          30592*2048*62652416", ] # not in front of line
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(0.0, readCapacity)
+
+   def testGetReadCapacity_004(self):
+      """
+      Test with one-line output(s), containing the pattern.
+      """
+      output = [ "READ CAPACITY:          30592*2048=62652416", ]
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(30592.0, readCapacity)
+
+      output = [ "READ CAPACITY:30592*2048=62652416", ]
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(30592.0, readCapacity)
+
+      output = [ "READ CAPACITY:30592*2048=62652416                 ", ]
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(30592.0, readCapacity)
+
+   def testGetReadCapacity_005(self):
+      """
+      Test with output from an empty disc.
+      """
+      output = self.getFileContents("mediainfo1.txt")
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(0.0, readCapacity)
+
+   def testGetReadCapacity_006(self):
+      """
+      Test with output from a disc with 1 session.
+      """
+      output = self.getFileContents("mediainfo2.txt")
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(30592.0, readCapacity)
+
+   def testGetReadCapacity_007(self):
+      """
+      Test with output from a disc with 2 sessions.
+      """
+      output = self.getFileContents("mediainfo3.txt")
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(116880.0, readCapacity)
+
+   def testGetReadCapacity_008(self):
+      """
+      Test with output from a disc with 3 sessions.
+      """
+      output = self.getFileContents("mediainfo4.txt")
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(143424.0, readCapacity)
+
+   def testGetReadCapacity_009(self):
+      """
+      Test with output from a disc with 4 sessions.
+      """
+      output = self.getFileContents("mediainfo5.txt")
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(202000.0, readCapacity)
+
+   def testGetReadCapacity_010(self):
+      """
+      Test with output from a disc with 5 sessions.
+      """
+      output = self.getFileContents("mediainfo6.txt")
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(660816.0, readCapacity)
+
+   def testGetReadCapacity_011(self):
+      """
+      Test with output from a disc with 6 sessions.
+      """
+      output = self.getFileContents("mediainfo7.txt")
+      readCapacity = DvdWriter._getReadCapacity(output)
+      self.failUnlessEqual(1673920.0, readCapacity)
 
 
    #########################
@@ -924,6 +1056,7 @@ def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
                               unittest.makeSuite(TestMediaDefinition, 'test'),
+                              unittest.makeSuite(TestMediaCapacity, 'test'),
                               unittest.makeSuite(TestDvdWriter, 'test'),
                             ))
 
