@@ -50,7 +50,7 @@ written in the Python programming language.
 setup (
    name             = 'CedarBackup2',
    version          = VERSION,
-   description      = 'Implements local and remote backups to CD-R/CD-RW media.',
+   description      = 'Implements local and remote backups to CD/DVD media.',
    long_description = LONG_DESCRIPTION,
    keywords         = ('local', 'remote', 'backup', 'scp', 'CD-R', 'CD-RW', 'DVD+R', 'DVD+RW',), 
    author           = AUTHOR,

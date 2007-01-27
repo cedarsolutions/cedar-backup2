@@ -57,13 +57,13 @@
       <para>
          Regardless of the data source you choose, you will find the data
          organized in the same way.  The remainder of these examples will work
-         off an example backup CD, but the contents of the staging directory
-         will look pretty much like the contents of the CD, with data organized
-         first by date and then by backup peer name.
+         off an example backup disc, but the contents of the staging directory
+         will look pretty much like the contents of the disc, with data
+         organized first by date and then by backup peer name.
       </para>
 
       <para>
-         This is the root directory of my example CD:
+         This is the root directory of my example disc:
       </para>
 
       <screen>

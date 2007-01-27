@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2006 Kenneth J. Pronovici.
+# Copyright (c) 2005-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -162,7 +162,7 @@
             <listitem>
 
                <para>
-                  The <command>mkisofs</command> command is used create ISO CD
+                  The <command>mkisofs</command> command is used create ISO filesystem
                   images that can later be written to backup media.
                </para>
 
@@ -223,7 +223,7 @@
 
                <para>
                   The <command>cdrecord</command> command is used to write
-                  ISO images to media in a backup device.  
+                  ISO images to CD media in a backup device.  
                </para>
 
                <informaltable>
@@ -256,6 +256,63 @@
                         <row>
                            <entry>Mac OS X (fink)</entry>
                            <entry><ulink url="http://fink.sourceforge.net/pdb/search.php?summary=cdrecord"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><command>dvd+rw-tools</command></term>
+            <listitem>
+
+               <para>
+                  The dvd+rw-tools package provides the
+                  <command>growisofs</command> and
+                  <command>dvd+rw-mediainfo</command> utilities.  The
+                  <command>growisofs</command> utility is used to write ISO
+                  images to DVD media in a backup device.  The
+                  <command>dvd+rw-mediainfo</command> utility is used to get
+                  information about DVD media sitting in a writer device.
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://fy.chalmers.se/~appro/linux/DVD+RW/"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/stable/utils/dvd+rw-tools"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><ulink url="http://packages.gentoo.org/packages/?category=app-cdr;name=dvd%2Brw-tools"/></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=dvd+rw-tools"/></entry>
+                        </row>
+                        <row>
+                           <entry>Mac OS X (fink)</entry>
+                           <entry><ulink url="http://pdb.finkproject.org/pdb/package.php/dvd+rw-tools"/></entry>
                         </row>
                      </tbody>
                   </tgroup>
@@ -335,7 +392,7 @@
 
                <para>
                   The <command>mount</command> and <command>umount</command>
-                  commands are used to mount and unmount CD media after it has
+                  commands are used to mount and unmount CD/DVD media after it has
                   been written, in order to run a consistency check.
                </para>
 
