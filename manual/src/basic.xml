@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2006 Kenneth J. Pronovici.
+# Copyright (c) 2005-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it 
@@ -54,7 +54,7 @@
       <para>
          The <command>cback</command> script is designed to run as root, since
          otherwise it's difficult to back up system directories or write to the
-         CD-R/CD-RW device.  However, pains are taken to use the backup user's
+         CD/DVD device.  However, pains are taken to use the backup user's
          effective user id (specified in configuration) when appropriate.
          Note: this does not mean that <command>cback</command> runs
          <firstterm>setuid</firstterm><footnote><para>See <ulink
@@ -74,11 +74,11 @@
 
       <warning>
          <para>
-            You should be aware that backups to CD media can probably be read
-            by any user which has permissions to mount the CD writer.  If you
+            You should be aware that backups to CD/DVD media can probably be read
+            by any user which has permissions to mount the CD/DVD writer.  If you
             intend to leave the backup disc in the drive at all times, you may
             want to consider this when setting up device permissions on your
-            machine.
+            machine.  See also <xref linkend="cedar-extensions-encrypt"/>.
          </para>
       </warning>
 
@@ -130,7 +130,7 @@
 
       <para>
          There are two kinds of machines in a Cedar Backup pool.  One machine
-         (the <firstterm>master</firstterm>) has a CD-R or CD-RW drive on it
+         (the <firstterm>master</firstterm>) has a CD or DVD writer on it
          and writes the backup to disc.  The others
          (<firstterm>clients</firstterm>) collect data to be written to disc by
          the master.  Collectively, the master and client machines in a pool
@@ -211,7 +211,7 @@
             
          <para>
             As an example, I always back up every machine I own.  I typically
-            keep 7-10 days of staging directories around, but switch CD media
+            keep 7-10 days of staging directories around, but switch CD/DVD media
             mostly every week.  That way, I can periodically take a disc
             off-site in case the machine gets stolen or damaged.  
          </para>
@@ -580,10 +580,10 @@
       <title>Media and Device Types</title>
 
       <para>
-         Cedar Backup is focused around writing backups to CD-R or CD-RW media
-         using a standard SCSI or IDE CD writer.  In Cedar Backup terms, the
+         Cedar Backup is focused around writing backups to CD or DVD media
+         using a standard SCSI or IDE writer.  In Cedar Backup terms, the
          disc itself is referred to as the <firstterm>media</firstterm>, and
-         the CD-R or CD-RW drive is referred to as the <firstterm>device</firstterm> 
+         the CD/DVD drive is referred to as the <firstterm>device</firstterm> 
          or sometimes the <firstterm>backup device</firstterm>.
          <footnote><para>My original backup device was an old
          Sony CRX140E 4X CD-RW drive.  It has since died, and I currently
@@ -591,25 +591,27 @@
       </para>
 
       <para>
-         When using a new enough backup device, a new <quote>multisession</quote> 
-         ISO image <footnote><para>An <firstterm>ISO image</firstterm> is the
-         standard way of creating a filesystem to be copied to a CD.  It is
-         essentially a <quote>filesystem-within-a-file</quote> and many UNIX
-         operating systems can actually mount ISO image files just like hard drives,
-         floppy disks or actual CDs.  See Wikipedia for more information: <ulink
-         url="http://en.wikipedia.org/wiki/ISO_image"/>.</para></footnote> is
-         written to the media on the first day of the week, and then additional
-         multisession images are added to the media each day that Cedar Backup
-         runs.  This way, the media is complete and usable at the end of every
-         backup run, but a single disc can be used all week long.  If your
-         backup device does not support multisession images, then a new ISO
-         image will be written to the media each time Cedar Backup runs (and
-         you should probably confine yourself to the <quote>daily</quote>
-         backup mode to avoid losing data).
+         When using a new enough backup device, a new
+         <quote>multisession</quote> ISO image <footnote><para>An
+         <firstterm>ISO image</firstterm> is the standard way of creating a
+         filesystem to be copied to a CD or DVD.  It is essentially a
+         <quote>filesystem-within-a-file</quote> and many UNIX operating
+         systems can actually mount ISO image files just like hard drives,
+         floppy disks or actual CDs.  See Wikipedia for more information:
+         <ulink url="http://en.wikipedia.org/wiki/ISO_image"/>.</para></footnote> 
+         is written to the media on the first day of the week, and then
+         additional multisession images are added to the media each day that
+         Cedar Backup runs.  This way, the media is complete and usable at the
+         end of every backup run, but a single disc can be used all week long.
+         If your backup device does not support multisession images &mdash; which is
+         really unusual today &mdash; then a new ISO image will be written to the
+         media each time Cedar Backup runs (and you should probably confine
+         yourself to the <quote>daily</quote> backup mode to avoid losing
+         data).
       </para>
 
       <para>
-         Cedar Backup currently supports four different kinds of media:
+         Cedar Backup currently supports four different kinds of CD media:
       </para>
 
       <variablelist>
@@ -617,55 +619,71 @@
          <varlistentry>
             <term>cdr-74</term>
             <listitem>
-               <para>74-minute non-rewritable media</para>
+               <para>74-minute non-rewritable CD media</para>
             </listitem>
          </varlistentry>
 
          <varlistentry>
             <term>cdrw-74</term>
             <listitem>
-               <para>74-minute rewritable media</para>
+               <para>74-minute rewritable CD media</para>
             </listitem>
          </varlistentry>
 
          <varlistentry>
             <term>cdr-80</term>
             <listitem>
-               <para>80-minute non-rewritable media</para>
+               <para>80-minute non-rewritable CD media</para>
             </listitem>
          </varlistentry>
 
          <varlistentry>
             <term>cdrw-80</term>
             <listitem>
-               <para>80-minute rewritable media</para>
+               <para>80-minute rewritable CD media</para>
             </listitem>
          </varlistentry>
 
       </variablelist>
 
       <para>
-         I have chosen to support just these four types of media because they
-         seem to be the most <quote>standard</quote> of the various types
-         commonly sold in the U.S. today (early 2005).  If you regularly use an
-         unsupported media type and would like Cedar Backup to support it, send
-         me information about the capacity of the media in megabytes (MB) and
-         whether it is rewritable.  
+         I have chosen to support just these four types of CD media because
+         they seem to be the most <quote>standard</quote> of the various types
+         commonly sold in the U.S. as of this writing (early 2005).  If you
+         regularly use an unsupported media type and would like Cedar Backup to
+         support it, send me information about the capacity of the media in
+         megabytes (MB) and whether it is rewritable.  
       </para>
 
       <para>
-         Future versions of Cedar Backup may support writable DVDs.
-         <footnote><para>It would just require a new
-         <literal>DvdWriter</literal> class in <filename>writer.py</filename>
-         as well as some minor changes to configuration code.  All
-         writer-related access is through an abstract interface, so once the
-         new writer is implemented, the rest of the code will be able to use it
-         without any changes.</para></footnote> Now that I have my own
-         DVD&plusmn;RW hardware, this will happen when I get some time to work
-         on it and/or when someone else shows interest in it.  If you would
-         like to see support for DVDs in Cedar Backup and can offer some help,
-         please write the Cedar Backup Users mailing list.  
-         <footnote><para>See <ulink url="http://cedar-solutions.com/listarchives/"/>.</para></footnote>
+         Cedar Backup also supports two kinds of DVD media:
+      </para>
+
+      <variablelist>
+
+         <varlistentry>
+            <term>dvd+r</term>
+            <listitem>
+               <para>Single-layer non-rewritable DVD+R media</para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term>dvd+rw</term>
+            <listitem>
+               <para>Single-layer rewritable DVD+RW media</para>
+            </listitem>
+         </varlistentry>
+
+      </variablelist>
+
+      <para>
+         The underlying <command>growisofs</command> utility does support other
+         kinds of media (including DVD-R, DVD-RW and BlueRay) which work
+         somewhat differently than standard DVD+R and DVD+RW media.  I don't
+         support these other kinds of media because I haven't had any
+         opportunity to work with them.  The same goes for dual-layer media of
+         any type.
       </para>
 
    </sect1>

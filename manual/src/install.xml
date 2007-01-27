@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2006 Kenneth J. Pronovici.
+# Copyright (c) 2005-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -73,7 +73,7 @@
             To run a Cedar Backup client, you really just need a working Python
             installation.  To run a Cedar Backup master, you will also need a set
             of other executables, most of which are related to building and
-            writing CD images.  A full list of dependencies is provided further
+            writing CD/DVD images.  A full list of dependencies is provided further
             on in this chapter.
          </para>
 
@@ -216,19 +216,41 @@ $ apt-get install cedar-backup2 cedar-backup2-doc
 
          <para>
             Master machines also require several other system utilities, most
-            having to do with writing and validating CD media.  On master
+            having to do with writing and validating CD/DVD media.  On master
             machines, you must make sure that these utilities are available if
             you want to to run the store action:
          </para>
 
          <itemizedlist>
             <listitem><para><command>mkisofs</command></para></listitem>
-            <listitem><para><command>cdrecord</command></para></listitem>
             <listitem><para><command>eject</command></para></listitem>
             <listitem><para><command>mount</command></para></listitem>
             <listitem><para><command>unmount</command></para></listitem>
             <listitem><para><command>volname</command></para></listitem>
          </itemizedlist>
+          
+         <para>
+            Then, you need this utility if you are writing CD media:
+         </para>
+
+         <itemizedlist>
+            <listitem><para><command>cdrecord</command></para></listitem>
+         </itemizedlist>
+
+         <para>
+            <emphasis>or</emphasis> these utilities if you are writing DVD
+            media:
+         </para>
+
+         <itemizedlist>
+            <listitem><para><command>growisofs</command></para></listitem>
+            <listitem><para><command>dvd+rw-mediainfo</command></para></listitem>
+         </itemizedlist>
+
+         <para>
+            All of these utilities are common and are easy to find for almost
+            any UNIX-like operating system.
+         </para>
 
       </sect2>
 

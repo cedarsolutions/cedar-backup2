@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2006 Kenneth J. Pronovici.
+# Copyright (c) 2005-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -290,7 +290,7 @@
                      option is enabled, all output from system commands will be
                      logged.  This might be useful for debugging or just for
                      reference.  Cedar Backup uses system commands mostly for
-                     dealing with the CD recorder and its media.
+                     dealing with the CD/DVD recorder and its media.
                   </para>
                </listitem>
             </varlistentry>
@@ -628,14 +628,14 @@
                   <para>Working (temporary) directory to use for backups.</para>
                   <para>
                      This directory is used for writing temporary files, such
-                     as tar file or ISO CD images as they are being built.  It
+                     as tar file or ISO filesystem images as they are being built.  It
                      is also used to store day-to-day information about
                      incremental backups.
                   </para>
                   <para>
                      The working directory should contain enough free space to
                      hold temporary tar files (on a client) or to build an ISO
-                     CD image (on a master).
+                     filesystem image (on a master).
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be an absolute path
@@ -1854,6 +1854,27 @@
             </varlistentry>
 
             <varlistentry>
+               <term><literal>device_type</literal></term>
+               <listitem>
+                  <para>Type of the device used to write the media.</para>
+                  <para>
+                     This field controls which type of writer device will be
+                     used by Cedar Backup.  Currently, Cedar Backup supports CD
+                     writers (<literal>cdwriter</literal>) and DVD writers
+                     (<literal>dvdwriter</literal>).
+                  </para>
+                  <para>
+                     This field is optional.  If it doesn't exist, the
+                     <literal>cdwriter</literal> device type is assumed.  
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> If set, must be either <literal>cdwriter</literal>
+                     or <literal>dvdwriter</literal>.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
                <term><literal>media_type</literal></term>
                <listitem>
                   <para>Type of the media in the device.</para>
@@ -1862,36 +1883,18 @@
                      you are probably best off using rewritable media.
                   </para>
                   <para>
-                     If you have no idea what kind of media you have, choose
-                     <literal>cdr-74</literal>.   For more information on
+                     You must choose a media type that is appropriate for the
+                     device type you chose above.  For more information on
                      media types, see <xref linkend="cedar-basic-mediadevice"/>
                      (in <xref linkend="cedar-basic"/>).
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be one of
                      <literal>cdr-74</literal>, <literal>cdrw-74</literal>, 
-                     <literal>cdr-80</literal> or <literal>cdrw-80</literal>.
-                  </para>
-               </listitem>
-            </varlistentry>
-
-            <varlistentry>
-               <term><literal>device_type</literal></term>
-               <listitem>
-                  <para>Type of the device used to write the media.</para>
-                  <para>
-                     This field mostly exists for planned future enhancements,
-                     such as support for DVD writers.  It indicates what type
-                     of device should be used to write the media, in case that
-                     makes a difference to the underlying writer functionality.
-                     Currently, it can only be set to <literal>cdwriter</literal>.
-                  </para>
-                  <para>
-                     This field is optional.  If it doesn't exist, the
-                     <literal>cdwriter</literal> device type is assumed.  
-                  </para>
-                  <para>
-                     <emphasis>Restrictions:</emphasis> If set, must be <literal>cdwriter</literal>.
+                     <literal>cdr-80</literal> or <literal>cdrw-80</literal>
+                     if device type is <literal>cdwriter</literal>; or one
+                     of <literal>dvd+r</literal> or <literal>dvd+rw</literal>
+                     if device type is <literal>dvdwriter</literal>.
                   </para>
                </listitem>
             </varlistentry>
@@ -1901,13 +1904,25 @@
                <listitem>
                   <para>Filesystem device name for writer device.</para>
                   <para>
+                     This value is required for both CD writers and DVD
+                     writers.  
+                  </para>
+                  <para>
                      This is the UNIX device name for the writer drive, for
                      instance <filename>/dev/scd0</filename> or
-                     <filename>/dev/cdrw</filename>.   The device name is not
-                     needed in order to write to the media.  However, it is
-                     needed in order to do several pre-write checks (such as
-                     whether the device might already be mounted) as well as
-                     the post-write consistency check, if enabled.
+                     <filename>/dev/cdrw</filename>.   
+                  </para>
+                  <para>
+                     In some cases, this device name is used to directly write
+                     to media.  This is true all of the time for DVD writers,
+                     and is true for CD writers when a SCSI id (see below) has
+                     not been specified.  
+                  </para>
+                  <para>
+                     Besides this, the device name is also needed in order to
+                     do several pre-write checks (such as whether the device
+                     might already be mounted) as well as the post-write
+                     consistency check, if enabled.
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be an absolute path.
@@ -1920,11 +1935,15 @@
                <listitem>
                   <para>SCSI id for the writer device.</para>
                   <para>
-                     This value is optional.  If you have configured your CD
-                     writer hardware to work through the normal filesystem
-                     device path, then you can leave this parameter unset.
-                     Cedar Backup will just use the target device (above) when
-                     talking to <command>cdrecord</command>.
+                     This value is optional for CD writers and is ignored for
+                     DVD writers.
+                  </para>
+                  <para>
+                     If you have configured your CD writer hardware to work
+                     through the normal filesystem device path, then you can
+                     leave this parameter unset.  Cedar Backup will just use
+                     the target device (above) when talking to
+                     <command>cdrecord</command>.
                   </para>
                   <para>
                      Otherwise, if you have SCSI CD writer hardware or you have
@@ -1967,9 +1986,14 @@
                   <para>
                      This field is optional.  If it doesn't exist, the
                      underlying device-related functionality will use the
-                     default drive speed.  Since some media is speed-sensitive,
-                     it might be a good idea to set this to a sensible value
-                     for your writer.
+                     default drive speed.  
+                  </para>
+                  <para>
+                     For DVD writers, it is best to leave this value unset, so
+                     <command>growisofs</command> can pick an appropriate
+                     speed.  For CD writers, since media can be
+                     speed-sensitive, it is probably best to set a sensible
+                     value based on your specific writer and media.
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> If set, must be an integer >= 1.
@@ -2389,8 +2413,8 @@
          </para>
 
          <para>
-            Backing up large directories and creating ISO CD images can be
-            intensive operations, and could slow your computer down
+            Backing up large directories and creating ISO filesystem images can
+            be intensive operations, and could slow your computer down
             significantly. Choose a backup time that will not interfere with
             normal use of your computer.  Usually, you will want the backup to
             occur every day, but it is possible to configure cron to execute
@@ -2443,11 +2467,11 @@
 
       <sect2>
 
-         <title>Step 3: Configure your CD-R or CD-RW drive.</title>
+         <title>Step 3: Configure your writer device.</title>
 
          <para>
             Before using Cedar Backup, your writer device must be properly
-            configured.  If you have configured your CD writer hardware to work
+            configured.  If you have configured your CD/DVD writer hardware to work
             through the normal filesystem device path, then you just need to
             know the path to the device on disk (something like
             <filename>/dev/cdrw</filename>).  Cedar Backup will use the this
@@ -2471,8 +2495,8 @@
 
          <note>
             <para>
-               There is no need to set up your CD-R or CD-RW device if you
-               have decided not to execute the store action.
+               There is no need to set up your CD/DVD device if you have
+               decided not to execute the store action.
             </para>
          </note>
 
@@ -2514,7 +2538,7 @@
             Cedar Backup requires a backup directory tree on disk. This
             directory tree must be roughly three times as big as the amount of
             data that will be backed up on a nightly basis, to allow for the
-            data to be collected, staged, and then placed into an ISO CD
+            data to be collected, staged, and then placed into an ISO filesystem
             image on disk. (This is one disadvantage to using Cedar Backup in
             single-machine pools, but in this day of really large hard drives,
             it might not be an issue.) Note that if you elect not to purge the
@@ -2613,7 +2637,7 @@
             Use the command <command>cback validate</command> to validate your
             configuration file. This command checks that the configuration file
             can be found and parsed, and also checks for typical configuration
-            problems, such as invalid CD-R/CD-RW device entries.
+            problems, such as invalid CD/DVD device entries.
          </para>
 
          <para>
@@ -2630,7 +2654,7 @@
          <title>Step 8: Test your backup.</title>
 
          <para>
-            Place a valid CD-R or CD-RW disc in your drive, and then use the
+            Place a valid CD/DVD disc in your drive, and then use the
             command <command>cback --full all</command>.  You should execute
             this command as root.  If the command completes with no output,
             then the backup was run successfully.
@@ -2639,7 +2663,7 @@
          <para>
             Just to be sure that everything worked properly, check the logfile
             (<filename>/var/log/cback.log</filename>) for errors and also mount
-            the CD-R or CD-RW disc to be sure it can be read.
+            the CD/DVD disc to be sure it can be read.
          </para>
 
          <para>
@@ -2759,7 +2783,7 @@ cback all
          </para>
 
          <para>
-            Backing up large directories and creating ISO CD images can be
+            Backing up large directories and creating ISO filesystem images can be
             intensive operations, and could slow your computer down
             significantly. Choose a backup time that will not interfere with
             normal use of your computer.  Usually, you will want the backup to
@@ -3165,7 +3189,7 @@ The key fingerprint is:
          </para>
 
          <para>
-            Backing up large directories and creating ISO CD images can be
+            Backing up large directories and creating ISO filesystem images can be
             intensive operations, and could slow your computer down
             significantly. Choose a backup time that will not interfere with
             normal use of your computer.  Usually, you will want the backup to
@@ -3218,11 +3242,11 @@ The key fingerprint is:
 
       <sect2>
 
-         <title>Step 3: Configure your CD-R or CD-RW drive.</title>
+         <title>Step 3: Configure your writer device.</title>
 
          <para>
             Before using Cedar Backup, your writer device must be properly
-            configured.  If you have configured your CD writer hardware to work
+            configured.  If you have configured your CD/DVD writer hardware to work
             through the normal filesystem device path, then you just need to
             know the path to the device on disk (something like
             <filename>/dev/cdrw</filename>).  Cedar Backup will use the this
@@ -3246,8 +3270,8 @@ The key fingerprint is:
 
          <note>
             <para>
-               There is no need to set up your CD-R or CD-RW device if you
-               have decided not to execute the store action.
+               There is no need to set up your CD/DVD device if you have
+               decided not to execute the store action.
             </para>
          </note>
 
@@ -3443,7 +3467,7 @@ The key fingerprint is:
             Use the command <command>cback validate</command> to validate your
             configuration file. This command checks that the configuration file
             can be found and parsed, and also checks for typical configuration
-            problems, such as invalid CD-R/CD-RW device entries.  This command
+            problems, such as invalid CD/DVD device entries.  This command
             <emphasis>only</emphasis> validates configuration on the master,
             not any clients that the master might be configured to connect to.
          </para>
@@ -3500,17 +3524,17 @@ The key fingerprint is:
          </para>
 
          <para>
-            When all of the client backups have completed, place a valid CD-R
-            or CD-RW disc in your drive, and then use the command
-            <command>cback --full all</command>.  You should execute this
-            command as root.  If the command completes with no output, then the
-            backup was run successfully. 
+            When all of the client backups have completed, place a valid CD/DVD
+            disc in your drive, and then use the command <command>cback --full
+            all</command>.  You should execute this command as root.  If the
+            command completes with no output, then the backup was run
+            successfully. 
          </para>
 
          <para>
             Just to be sure that everything worked properly, check the logfile
             (<filename>/var/log/cback.log</filename>) on the master and each of
-            the clients, and also mount the CD-R or CD-RW disc on the master to
+            the clients, and also mount the CD/DVD disc on the master to
             be sure it can be read.
          </para>
 
@@ -3595,38 +3619,68 @@ The key fingerprint is:
 
       <sect2>
 
-         <title>SCSI Devices</title>
+         <title>Device Types</title>
 
          <para>
-            In order to execute the store action for a SCSI writer device, you
-            need to know the device's SCSI address and
-            <emphasis>also</emphasis> its filesystem device name.  The SCSI id
-            (&lt;target_scsi_id&gt;) will be used to write to media using
-            <command>cdrecord</command>; and the device name
-            (&lt;target_device&gt;) will be used for other filesystem
-            operations &mdash; for instance, when the media needs to be mounted
-            to run the consistency check.
-         </para>
-
-         <para>
-            A true SCSI device will always have an address
-            <literal>scsibus,target,lun</literal>, for instance
-            <literal>1,6,2</literal>.  This should hold true on most UNIX-like
-            systems including Linux and the various BSDs (although I do not have a
-            BSD system to test with currently).  The SCSI address represents the
-            location of your writer device on the one or more SCSI buses that you
-            have available on your system.  
+            In order to execute the store action, you need to know how to
+            identify your writer device.  Cedar Backup supports two kinds of
+            device types: CD writers and DVD writers.  DVD writers are always
+            referenced through a filesystem device name (i.e.
+            <filename>/dev/dvd</filename>).  CD writers can be referenced
+            either through a SCSI id, or through a filesystem device name.
+            Which you use depends on your operating system and hardware.
          </para>
 
       </sect2>
 
       <sect2>
 
-         <title>Non-SCSI Devices</title>
+         <title>Devices identified by by device name</title>
+
+         <para>
+            For all DVD writers, and for CD writers on certain platforms, you
+            will configure your writer device using only a device name.  If
+            your writer device works this way, you should just specify
+            &lt;target_device&gt; in configuration.  You can either leave
+            &lt;target_scsi_id&gt; blank or remove it completely.  The writer
+            device will be used both to write to the device and for filesystem
+            operations &mdash; for instance, when the media needs to be mounted
+            to run the consistency check.
+         </para>
+
+      </sect2>
+
+      <sect2>
+
+         <title>Devices identified by SCSI id</title>
+
+         <para>
+            Cedar Backup can use devices identified by SCSI id only when
+            configured to use the <literal>cdwriter</literal> device type.
+         </para>
+
+         <para>
+            In order to a SCSI device with Cedar Backup, you must know both the
+            SCSI id &lt;target_scsi_id&gt; and the device name
+            &lt;target_device&gt;.  The SCSI id will be used to write to media
+            using <command>cdrecord</command>; and the device name will be used
+            for other filesystem operations &mdash; for instance, when the
+            media needs to be mounted to run the consistency check.
+         </para>
+
+         <para>
+            A true SCSI device will always have an address
+            <literal>scsibus,target,lun</literal> (i.e.
+            <literal>1,6,2</literal>).  This should hold true on most UNIX-like
+            systems including Linux and the various BSDs (although I do not
+            have a BSD system to test with currently).  The SCSI address
+            represents the location of your writer device on the one or more
+            SCSI buses that you have available on your system.  
+         </para>
 
          <para>
             On some platforms, it is possible to reference non-SCSI writer
-            devices (like IDE CD writers) using an emulated SCSI id.  If you
+            devices (i.e. an IDE CD writer) using an emulated SCSI id.  If you
             have configured your non-SCSI writer device to have an emulated
             SCSI id, provide the filesystem device path in
             &lt;target_device&gt; and the SCSI id in &lt;target_scsi_id&gt;,
@@ -3634,18 +3688,10 @@ The key fingerprint is:
          </para>
 
          <para>
-            On other platforms, it is possible to reference non-SCSI writer
-            devices directly by filesystem device path rather than through SCSI
-            emulation.  On these platforms, you should configure Cedar Backup
-            with a &lt;target_device&gt; value but not a &lt;target_scsi_id&gt;
-            value.
-         </para>
-
-         <para>
             You should note that in some cases, an emulated SCSI id takes the
-            same form as a normal SCSI id (<quote>scsibus,target,lun</quote>),
-            while in other cases you might see a method name prepended to the
-            normal SCSI id.
+            same form as a normal SCSI id, while in other cases you might see a
+            method name prepended to the normal SCSI id (i.e.
+            <quote>ATA:1,1,1</quote>).
          </para>
 
       </sect2>
@@ -3655,7 +3701,7 @@ The key fingerprint is:
          <title>Linux Notes</title>
 
          <para>
-            On a Linux system, IDE writer devices often have a simulated SCSI
+            On a Linux system, IDE writer devices often have a emulated SCSI
             address, which allows SCSI-based software to access the device through
             an IDE-to-SCSI interface.  Under these circumstances, the first IDE
             writer device typically has an address <literal>0,0,0</literal>.  However,
@@ -3666,7 +3712,7 @@ The key fingerprint is:
          <para>
             Newer Linux kernels can address <firstterm>ATA</firstterm> or
             <firstterm>ATAPI</firstterm> drives without SCSI emulation by
-            prepending a <quote>method</quote> indicator to the simulated
+            prepending a <quote>method</quote> indicator to the emulated
             device address.  For instance, <literal>ATA:0,0,0</literal> or
             <literal>ATAPI:0,0,0</literal> are typical values.
          </para>
@@ -3674,13 +3720,18 @@ The key fingerprint is:
          <para>
             However, even this interface is deprecated as of late 2006, so with
             relatively new kernels you may be better off using the filesystem
-            device path directly rather than relying on any SCSI emulation, as
-            discussed above.
+            device path directly rather than relying on any SCSI emulation.
          </para>
+      </sect2>
+
+      <sect2>
+
+         <title>Finding your Linux CD Writer</title>
 
          <para>
-            Here are some hints about how to find your Linux hardware.  First, try to
-            reference your device using the filesystem device path:
+            Here are some hints about how to find your Linux CD writer
+            hardware.  First, try to reference your device using the filesystem
+            device path:
          </para>
 
          <screen>
