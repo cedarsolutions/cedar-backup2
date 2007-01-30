@@ -1155,6 +1155,149 @@ password = &lt;secret&gt;
 
       <title>Encrypt Extension</title>
 
+      <para>
+         The Encrypt Extension is a Cedar Backup extension used to encrypt
+         backups.  It does this by encrypting the contents of a master's
+         staging directory each day after the stage action is run.  This way,
+         backed-up data is encrypted both when sitting on the master and when
+         written to disc.  This extension must be run before the standard store
+         action, otherwise unencrypted data will be written to disc.
+      </para>
+
+      <para>
+         There are several differents ways encryption could have been built in
+         to or layered on to Cedar Backup.  I asked the mailing list for
+         opinions on the subject in January 2007 and did not get a lot of
+         feedback, so I chose the option that was simplest to understand and
+         simplest to implement.  If other encryption use cases make themselves
+         known in the future, this extension can be enhanced or replaced.
+      </para>
+
+      <para>
+         Currently, this extension supports only GPG.  However, it would be
+         straightforward to support other public-key encryption mechanisms,
+         such as OpenSSL.
+      </para>
+
+      <warning>
+         <para>
+            If you decide to encrypt your backups, be <emphasis>absolutely
+            sure</emphasis> that you have your GPG secret key saved off
+            someplace safe &mdash; someplace other than on your backup disc.
+            If you lose your secret key, your backup will be useless.
+         </para>
+
+         <para>
+            I suggest that before you rely on this extension, you should
+            execute a dry run and make sure you can successfully decrypt the
+            backup that is written to disc.
+         </para>
+      </warning>
+
+      <para>
+         Before configuring the Encrypt extension, you must configure GPG.
+         Either create a new keypair or use an existing one.  Determine which
+         user will execute your backup (typically root) and have that user
+         import the public half of the keypair.  Then, save off the secret half
+         of the keypair someplace safe, apart from your backup (i.e. on a
+         floppy disk or USB drive).  Make sure you know the recipient name
+         associated with the public key (i.e. what would be passed to
+         <command>gpg -r</command>), because you'll need it to configure Cedar
+         Backup.
+      </para>
+
+      <para>
+         An encrypted backup has the same file structure as a normal backup, so
+         all of the instructions in <xref linkend="cedar-recovering"/> apply.
+         The only difference is that encrypted files will have an additional
+         <filename>.gpg</filename> extension (so
+         for instance <filename>file.tar.gz</filename> becomes
+         <filename>file.tar.gz.gpg</filename>).  To recover decrypted data, simply
+         log on as a user which has access to the secret key and decrypt the
+         <filename>.gpg</filename> file that you are interested in.  Then, recover
+         the data as usual.
+      </para>
+
+      <para>
+         Note: I am being intentionally vague about how to configure and use GPG,
+         because I do not want to encourage neophytes to blindly use this
+         extension.  If you do not already understand GPG well enough to follow
+         the two paragraphs above, <emphasis>do not use this
+         extension</emphasis>.  Instead, before encrypting your backups, check
+         out the excellent GNU Privacy Handbook at 
+         <ulink url="http://www.gnupg.org/gph/en/manual.html"/> 
+         and gain an understanding of how encryption can help you or hurt you.
+      </para>
+
+      <para>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </para>
+      
+      <programlisting>
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;encrypt&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.encrypt&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;299&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </programlisting>
+      
+      <para>
+         This extension relies on the options and staging configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <literal>encrypt</literal> configuration
+         section.  This is an example Encrypt configuration section:
+      </para> 
+
+      <programlisting>
+&lt;encrypt&gt;
+   &lt;encrypt_mode&gt;gpg&lt;/encrypt_mode&gt;
+   &lt;encrypt_target&gt;Backup User&lt;/encrypt_target&gt;
+&lt;/encrypt&gt;
+      </programlisting>
+
+      <para>
+         The following elements are part of the Encrypt configuration section:
+      </para>
+
+      <variablelist>
+
+         <varlistentry>
+            <term><literal>encrypt_mode</literal></term>
+            <listitem>
+               <para>Encryption mode.</para>
+               <para>
+                  This value specifies which encryption mechanism will be used
+                  by the extension.
+               </para>
+               <para>
+                  Currently, only the GPG public-key encryption mechanism is
+                  supported.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be <literal>gpg</literal>.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>encrypt_target</literal></term>
+            <listitem>
+               <para>Encryption target.</para>
+               <para>
+                  The value in this field is dependent on the encryption mode.
+                  For the <literal>gpg</literal> mode, this is the name of the
+                  recipient whose public key will be used to encrypt the backup
+                  data, i.e. the value accepted by <command>gpg -r</command>.
+               </para>
+            </listitem>
+         </varlistentry>
+
+      </variablelist>
+
    </sect1>
 
 </chapter>
