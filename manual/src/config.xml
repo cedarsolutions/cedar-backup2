@@ -63,13 +63,13 @@
       <para>
          Once everything has been installed, you are ready to begin configuring
          Cedar Backup.  Look over <xref linkend="cedar-config-commandline"/>
-         (in <xref linkend="cedar-config"/>) to become familiar with the
-         command line interface.  Then, look over <xref
-         linkend="cedar-config-configfile"/> (below) and create a configuration
-         file for each peer in your backup pool.  To start with, create a very
-         simple configuration file, then expand it later.  Decide now whether
-         you will store the configuration file in the standard place
-         (<filename>/etc/cback.conf</filename>) or in some other location.
+         (below) to become familiar with the command line interface.  Then,
+         look over <xref linkend="cedar-config-configfile"/> (also below) and
+         create a configuration file for each peer in your backup pool.  To
+         start with, create a very simple configuration file, then expand it
+         later.  Decide now whether you will store the configuration file in
+         the standard place (<filename>/etc/cback.conf</filename>) or in some
+         other location.
       </para>
 
       <para>
@@ -2255,8 +2255,7 @@
             command-line action.  You have been told that this function is
             called <quote>foo.bar()</quote>.  You think of this backup as a
             <quote>collect</quote> kind of action, so you want it to be
-            performed after collect but before stage and purge if more than one
-            action is specified on the command line.  
+            performed immediately before the collect action.
          </para>
 
          <para>
@@ -2471,16 +2470,17 @@
 
          <para>
             Before using Cedar Backup, your writer device must be properly
-            configured.  If you have configured your CD/DVD writer hardware to work
-            through the normal filesystem device path, then you just need to
-            know the path to the device on disk (something like
+            configured.  If you have configured your CD/DVD writer hardware to
+            work through the normal filesystem device path, then you just need
+            to know the path to the device on disk (something like
             <filename>/dev/cdrw</filename>).  Cedar Backup will use the this
-            device path both when talking to <command>cdrecord</command> and
-            when doing filesystem operations like running media validation.
+            device path both when talking to a command like
+            <command>cdrecord</command> and when doing filesystem operations
+            like running media validation.
          </para>
 
          <para>
-            Your other option is to configure your writer hardware like a SCSI
+            Your other option is to configure your CD writer hardware like a SCSI
             device (either because it <emphasis>is</emphasis> a SCSI device or
             because you are using some sort of interface that makes it look
             like one).  In this case, Cedar Backup will use the SCSI id when
@@ -2497,6 +2497,12 @@
             <para>
                There is no need to set up your CD/DVD device if you have
                decided not to execute the store action.
+            </para>
+
+            <para>
+                Due to the underlying utilities that Cedar Backup uses, the
+                SCSI id may only be used for CD writers,
+                <emphasis>not</emphasis> DVD writers.
             </para>
          </note>
 
@@ -3246,16 +3252,17 @@ The key fingerprint is:
 
          <para>
             Before using Cedar Backup, your writer device must be properly
-            configured.  If you have configured your CD/DVD writer hardware to work
-            through the normal filesystem device path, then you just need to
-            know the path to the device on disk (something like
+            configured.  If you have configured your CD/DVD writer hardware to
+            work through the normal filesystem device path, then you just need
+            to know the path to the device on disk (something like
             <filename>/dev/cdrw</filename>).  Cedar Backup will use the this
-            device path both when talking to <command>cdrecord</command> and
-            when doing filesystem operations like running media validation.
+            device path both when talking to a command like
+            <command>cdrecord</command> and when doing filesystem operations
+            like running media validation.
          </para>
 
          <para>
-            Your other option is to configure your writer hardware like a SCSI
+            Your other option is to configure your CD writer hardware like a SCSI
             device (either because it <emphasis>is</emphasis> a SCSI device or
             because you are using some sort of interface that makes it look
             like one).  In this case, Cedar Backup will use the SCSI id when
@@ -3272,6 +3279,12 @@ The key fingerprint is:
             <para>
                There is no need to set up your CD/DVD device if you have
                decided not to execute the store action.
+            </para>
+
+            <para>
+                Due to the underlying utilities that Cedar Backup uses, the
+                SCSI id may only be used for CD writers,
+                <emphasis>not</emphasis> DVD writers.
             </para>
          </note>
 
@@ -3660,12 +3673,11 @@ The key fingerprint is:
          </para>
 
          <para>
-            In order to a SCSI device with Cedar Backup, you must know both the
+            In order to use a SCSI device with Cedar Backup, you must know both the
             SCSI id &lt;target_scsi_id&gt; and the device name
             &lt;target_device&gt;.  The SCSI id will be used to write to media
             using <command>cdrecord</command>; and the device name will be used
-            for other filesystem operations &mdash; for instance, when the
-            media needs to be mounted to run the consistency check.
+            for other filesystem operations.
          </para>
 
          <para>

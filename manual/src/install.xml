@@ -129,9 +129,9 @@ $ apt-get install cedar-backup2 cedar-backup2-doc
          installing Cedar Backup on a master machine, you must install some or
          all of the recommended dependencies, depending on which actions you
          intend to execute.  The stage action normally requires ssh, and the
-         store action requires cdrecord, mkisofs and eject.  Clients must
-         typically also install some sort of ssh server if a remote master will
-         collect backups from them.
+         store action requires eject and either cdrecord/mkisofs or
+         dvd+rw-tools.  Clients must also install some sort of ssh
+         server if a remote master will collect backups from them.
       </para>
 
       <para>
