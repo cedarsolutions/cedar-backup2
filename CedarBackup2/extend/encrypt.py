@@ -45,9 +45,10 @@ already been encrypted (as indicated by the C{cback.encrypt} file) will be
 ignored.
 
 This extension requires a new configuration section <encrypt> and is intended
-to be run immediately after the standard stage action.  Aside from its own
-configuration, it requires the options and staging configuration sections in
-the standard Cedar Backup configuration file.
+to be run immediately after the standard stage action or immediately before the
+standard store action.  Aside from its own configuration, it requires the
+options and staging configuration sections in the standard Cedar Backup
+configuration file.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
