@@ -331,7 +331,7 @@ class DvdWriter(object):
       will work properly.  It's not perfect, but it's much better than no
       testing at all.
 
-   @sort: __init__, isRewritable, openTray, closeTray, refreshMedia, 
+   @sort: __init__, isRewritable, retrieveCapacity, openTray, closeTray, refreshMedia, 
           initializeImage, addImageEntry, writeImage, 
           _writeImage, _getEstimatedImageSize, _searchForOverburn, _buildWriteArgs,
           device, scsiId, hardwareId, driveSpeed, media, deviceHasTray, deviceCanEject
