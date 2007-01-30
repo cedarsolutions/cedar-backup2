@@ -24,10 +24,9 @@
 Provides interface backwards compatibility.
 
 In Cedar Backup 2.10.0, a refactoring effort took place while adding code to
-support DVD hardware.  Most of the writer functionality was moved to the
-writers/ package, although a few utilities were placed into util.py instead.
-This mostly-empty file remains to preserve the Cedar Backup 2 library
-interface.
+support DVD hardware.  All of the writer functionality was moved to the
+writers/ package.  This mostly-empty file remains to preserve the Cedar Backup
+2 library interface.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -36,5 +35,5 @@ interface.
 # Imported modules
 ########################################################################
 
-from CedarBackup2.writers.image import IsoImage
+from CedarBackup2.writers.util import IsoImage
 

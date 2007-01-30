@@ -58,11 +58,11 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import BackupFileList
-from CedarBackup2.writers.image import IsoImage
+from CedarBackup2.writers.util import IsoImage
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, displayBytes, encodePath
 from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES, UNIT_GBYTES
-from CedarBackup2.util import validateDevice, validateDriveSpeed
+from CedarBackup2.writers.util import validateDevice, validateDriveSpeed
 
 
 ########################################################################

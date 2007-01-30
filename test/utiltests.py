@@ -83,7 +83,7 @@ from os.path import isdir
 from CedarBackup2.testutil import findResources, removedir, platformHasEcho
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, RestrictedContentList, RegexMatchList
 from CedarBackup2.util import DirectedGraph, PathResolverSingleton
-from CedarBackup2.util import sortDict, resolveCommand, executeCommand, getFunctionReference, encodePath, validateScsiId
+from CedarBackup2.util import sortDict, resolveCommand, executeCommand, getFunctionReference, encodePath
 
 
 #######################################################################
@@ -3185,118 +3185,6 @@ class TestFunctions(unittest.TestCase):
          else:
             self.failUnlessEqual("\xe2\x99\xaa\xe2\x99\xac", safePath)
 
-
-   ########################
-   # Test validateScsiId() 
-   ########################
-
-   def testValidateScsiId_001(self):
-      """
-      Test with simple scsibus,target,lun address.
-      """
-      scsiId = "0,0,0"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_002(self):
-      """
-      Test with simple scsibus,target,lun address containing spaces.
-      """
-      scsiId = " 0,   0, 0 "
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_003(self):
-      """
-      Test with simple ATA address.
-      """
-      scsiId = "ATA:3,2,1"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_004(self):
-      """
-      Test with simple ATA address containing spaces.
-      """
-      scsiId = "ATA: 3, 2,1  "
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_005(self):
-      """
-      Test with simple ATAPI address.
-      """
-      scsiId = "ATAPI:1,2,3"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_006(self):
-      """
-      Test with simple ATAPI address containing spaces.
-      """
-      scsiId = "  ATAPI:1,   2, 3"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_007(self):
-      """
-      Test with default-device Mac address.
-      """
-      scsiId = "IOCompactDiscServices"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_008(self):
-      """
-      Test with an alternate-device Mac address.
-      """
-      scsiId = "IOCompactDiscServices/2"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_009(self):
-      """
-      Test with an alternate-device Mac address.
-      """
-      scsiId = "IOCompactDiscServices/12"
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
-
-   def testValidateScsiId_010(self):
-      """
-      Test with an invalid address with a missing field.
-      """
-      scsiId = "1,2"
-      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
-
-   def testValidateScsiId_011(self):
-      """
-      Test with an invalid Mac-style address with a backslash.
-      """
-      scsiId = "IOCompactDiscServices\\3"
-      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
-
-   def testValidateScsiId_012(self):
-      """
-      Test with an invalid address with an invalid prefix separator.
-      """
-      scsiId = "ATAPI;1,2,3"
-      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
-
-   def testValidateScsiId_013(self):
-      """
-      Test with an invalid address with an invalid prefix separator.
-      """
-      scsiId = "ATA-1,2,3"
-      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
-
-   def testValidateScsiId_014(self):
-      """
-      Test with a None SCSI id.
-      """
-      scsiId = None
-      result = validateScsiId(scsiId)
-      self.failUnlessEqual(scsiId, result)
 
 
 #######################################################################

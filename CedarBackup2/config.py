@@ -237,7 +237,7 @@ import re
 import logging
 
 # Cedar Backup modules
-from CedarBackup2.util import validateScsiId, validateDriveSpeed
+from CedarBackup2.writers.util import validateScsiId, validateDriveSpeed
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, RegexMatchList, encodePath
 from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild
 from CedarBackup2.xmlutil import readStringList, readString, readInteger, readBoolean
@@ -2739,7 +2739,7 @@ class StoreConfig(object):
       - The media type must be one of the values in L{VALID_MEDIA_TYPES}.
       - The device type must be one of the values in L{VALID_DEVICE_TYPES}.
       - The device path must be an absolute path.
-      - The SCSI id, if provided, must be in the form specified by L{util.validateScsiId}.
+      - The SCSI id, if provided, must be in the form specified by L{validateScsiId}.
       - The drive speed must be an integer >= 1
 
    @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
@@ -2920,7 +2920,7 @@ class StoreConfig(object):
    def _setDeviceScsiId(self, value):
       """
       Property target used to set the SCSI id
-      The SCSI id must be valid per L{util.validateScsiId}.
+      The SCSI id must be valid per L{validateScsiId}.
       @raise ValueError: If the value is not valid.
       """
       if value is None:
@@ -2937,7 +2937,7 @@ class StoreConfig(object):
    def _setDriveSpeed(self, value):
       """
       Property target used to set the drive speed.
-      The drive speed must be valid per L{util.validateDriveSpeed}.
+      The drive speed must be valid per L{validateDriveSpeed}.
       @raise ValueError: If the value is not valid.
       """
       self._driveSpeed = validateDriveSpeed(value)

@@ -65,8 +65,8 @@ from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, displayBytes, encodePath
 from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES
-from CedarBackup2.util import validateDevice, validateScsiId, validateDriveSpeed
-from CedarBackup2.writers.image import IsoImage
+from CedarBackup2.writers.util import validateDevice, validateScsiId, validateDriveSpeed
+from CedarBackup2.writers.util import IsoImage
 
 
 ########################################################################

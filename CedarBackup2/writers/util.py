@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 # Language : Python (>= 2.3)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Provides ISO image-related objects.
+# Purpose  : Provides utilities related to image writers.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -37,7 +37,7 @@
 ########################################################################
 
 """
-Provides ISO image-related objects.
+Provides utilities related to image writers.
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -48,6 +48,7 @@ Provides ISO image-related objects.
 
 # System modules
 import os
+import re
 import logging
 
 # Cedar Backup modules
@@ -55,16 +56,93 @@ from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.knapsack import worstFit
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, encodePath
-from CedarBackup2.util import validateScsiId
 
 
 ########################################################################
 # Module-wide constants and variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.log.writers.image")
+logger = logging.getLogger("CedarBackup2.log.writers.util")
 
 MKISOFS_COMMAND      = [ "mkisofs", ]
+
+
+########################################################################
+# Functions used to portably validate certain kinds of values
+########################################################################
+
+############################
+# validateDevice() function
+############################
+
+def validateDevice(device, unittest=False):
+   """
+   Validates a configured device.
+   The device must be an absolute path, must exist, and must be writable.
+   The unittest flag turns off validation of the device on disk.
+   @param device: Filesystem device path.
+   @param unittest: Indicates whether we're unit testing.
+   @return: Device as a string, for instance C{"/dev/cdrw"}
+   @raise ValueError: If the device value is invalid.
+   @raise ValueError: If some path cannot be encoded properly.
+   """
+   if device is None:
+      raise ValueError("Device must be filled in.")
+   device = encodePath(device)
+   if not os.path.isabs(device):
+      raise ValueError("Backup device must be an absolute path.")
+   if not unittest and not os.path.exists(device):
+      raise ValueError("Backup device must exist on disk.")
+   if not unittest and not os.access(device, os.W_OK):
+      raise ValueError("Backup device is not writable by the current user.")
+   return device
+
+
+############################
+# validateScsiId() function
+############################
+
+def validateScsiId(scsiId):
+   """
+   Validates a SCSI id string.
+   SCSI id must be a string in the form C{[<method>:]scsibus,target,lun}.
+   For Mac OS X (Darwin), we also accept the form C{IO.*Services[/N]}.
+   @note: For consistency, if C{None} is passed in, C{None} will be returned.
+   @param scsiId: SCSI id for the device.
+   @return: SCSI id as a string, for instance C{"ATA:1,0,0"}
+   @raise ValueError: If the SCSI id string is invalid.
+   """
+   if scsiId is not None:
+      pattern = re.compile(r"^\s*(.*:)?\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*,\s*[0-9][0-9]*\s*$")
+      if not pattern.search(scsiId):
+         pattern = re.compile(r"^\s*IO.*Services(\/[0-9][0-9]*)?\s*$")
+         if not pattern.search(scsiId):
+            raise ValueError("SCSI id is not in a valid form.")
+   return scsiId
+
+
+################################
+# validateDriveSpeed() function
+################################
+
+def validateDriveSpeed(driveSpeed):
+   """
+   Validates a drive speed value.
+   Drive speed must be an integer which is >= 1.
+   @note: For consistency, if C{None} is passed in, C{None} will be returned.
+   @param driveSpeed: Speed at which the drive writes.
+   @return: Drive speed as an integer
+   @raise ValueError: If the drive speed value is invalid.
+   """
+   if driveSpeed is None:
+      return None
+   try:
+      intSpeed = int(driveSpeed)
+   except TypeError:
+      raise ValueError("Drive speed must be an integer >= 1.")
+   if intSpeed < 1:
+      raise ValueError("Drive speed must an integer >= 1.")
+   return intSpeed
 
 
 ########################################################################
