@@ -28,10 +28,11 @@ Version 2.10.0	unreleased
 	  - Change various files to import from the new module locations
 	* Refactor CD writer functionality and clean up code.
 	  - Create new writers package to hold all image writers
-	  - Move image.py into writers/ package
+	  - Move image.py into writers/util.py package
 	  - Move most of writer.py into writers/cdwriter.py
-	  - Move validate functions from writer.py to util.py
+	  - Move writer.py validate functions into writers/util.py
 	  - Move writertests.py into cdwritertests.py
+	  - Move imagetests.py into writersutiltests.py
 	  - Preserve public interface via imports in otherwise empty files
 	  - Change various files to import from the new module locations
 	* Revise and simplify the implied "image writer" interface in CdWriter.

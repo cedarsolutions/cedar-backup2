@@ -24,7 +24,7 @@
 Cedar Backup writers.
 
 This package consolidates all of the modules that implenent "image writer"
-functionality.
+functionality, including utilities and specific writer implementations.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -37,5 +37,5 @@ functionality.
 # Using 'from CedarBackup2.writers import *' will just import the modules listed
 # in the __all__ variable.
 
-__all__ = [ 'cdwriter', 'dvdwriter', ]
+__all__ = [ 'util', 'cdwriter', 'dvdwriter', ]
 

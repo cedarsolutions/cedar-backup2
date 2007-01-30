@@ -85,15 +85,24 @@ usertest:
 # Python.  A few warnings are expected.  The main check rule only checks the
 # implementation in CedarBackup2/.  The other rule checks all of the python
 # code in the system.
+#
+# Normally, I would run just one command-line here, but it turns out that
+# having util.py and writers/util.py (i.e. duplicated names) confuses
+# pychecker.
 
 check: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/actions/*.py \
-	                                  CedarBackup2/extend/*.py CedarBackup2/writers/*.py
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/actions/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/extend/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/writers/*.py 2>/dev/null
 
 allcheck: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py CedarBackup2/actions/*.py \
-	                                  CedarBackup2/extend/*.py CedarBackup2/writers/*.py \
-	                                  test/*.py util/*.py
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/actions/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/extend/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/writers/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc test/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc util/*.py 2>/dev/null
 
 
 ################

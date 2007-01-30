@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@
 # Language : Python (>= 2.3)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Tests ISO image functionality.
+# Purpose  : Tests writer utility functionality.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -38,14 +38,13 @@
 ########################################################################
 
 """
-Unit tests for CedarBackup2/image.py.
+Unit tests for CedarBackup2/writers/util.py.
 
 Code Coverage
 =============
 
    This module contains individual tests for the public functions and classes
-   implemented in image.py.  There are also tests for several of the private
-   methods.
+   implemented in writers/util.py. 
 
    I usually prefer to test only the public interface to a class, because that
    way the regression tests don't depend on the internal implementation.  In
@@ -53,7 +52,7 @@ Code Coverage
    "privateness" is more a matter of presenting a clean external interface than
    anything else (most of the private methods are static).  Being able to test
    these methods also makes it easier to gain some reasonable confidence in the
-   code even if some tests are not run because IMAGETESTS_FULL is not set to
+   code even if some tests are not run because WRITERSUTILTESTS_FULL is not set to
    "Y" in the environment (see below).
 
 Naming Conventions
@@ -76,7 +75,7 @@ Full vs. Reduced Tests
    on every build system out there (for instance, on a Debian autobuilder).
    Because of this, the default behavior is to run a "reduced feature set" test
    suite that has no surprising system, kernel or network requirements.  If you
-   want to run all of the tests, set IMAGETESTS_FULL to "Y" in the environment.
+   want to run all of the tests, set WRITERSUTILTESTS_FULL to "Y" in the environment.
 
    In this module, there are three dependencies: the system must have
    C{mkisofs} installed, the kernel must allow ISO images to be mounted
@@ -101,7 +100,7 @@ import tarfile
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.testutil import platformMacOsX, platformSupportsLinks
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.writers.image import IsoImage
+from CedarBackup2.writers.util import validateScsiId, IsoImage
 from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYTES
 
 
@@ -124,8 +123,8 @@ INVALID_FILE = "bogus"         # This file name should never exist
 
 def runAllTests():
    """Returns true/false depending on whether the full test suite should be run."""
-   if "IMAGETESTS_FULL" in os.environ:
-      return os.environ["IMAGETESTS_FULL"] == "Y"
+   if "WRITERSUTILTESTS_FULL" in os.environ:
+      return os.environ["WRITERSUTILTESTS_FULL"] == "Y"
    else:
       return False
 
@@ -133,6 +132,138 @@ def runAllTests():
 #######################################################################
 # Test Case Classes
 #######################################################################
+
+######################
+# TestFunctions class
+######################
+
+class TestFunctions(unittest.TestCase):
+
+   """Tests for the various public functions."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   ########################
+   # Test validateScsiId() 
+   ########################
+
+   def testValidateScsiId_001(self):
+      """
+      Test with simple scsibus,target,lun address.
+      """
+      scsiId = "0,0,0"
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
+   def testValidateScsiId_002(self):
+      """
+      Test with simple scsibus,target,lun address containing spaces.
+      """
+      scsiId = " 0,   0, 0 "
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
+   def testValidateScsiId_003(self):
+      """
+      Test with simple ATA address.
+      """
+      scsiId = "ATA:3,2,1"
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
+   def testValidateScsiId_004(self):
+      """
+      Test with simple ATA address containing spaces.
+      """
+      scsiId = "ATA: 3, 2,1  "
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
+   def testValidateScsiId_005(self):
+      """
+      Test with simple ATAPI address.
+      """
+      scsiId = "ATAPI:1,2,3"
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
+   def testValidateScsiId_006(self):
+      """
+      Test with simple ATAPI address containing spaces.
+      """
+      scsiId = "  ATAPI:1,   2, 3"
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
+   def testValidateScsiId_007(self):
+      """
+      Test with default-device Mac address.
+      """
+      scsiId = "IOCompactDiscServices"
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
+   def testValidateScsiId_008(self):
+      """
+      Test with an alternate-device Mac address.
+      """
+      scsiId = "IOCompactDiscServices/2"
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
+   def testValidateScsiId_009(self):
+      """
+      Test with an alternate-device Mac address.
+      """
+      scsiId = "IOCompactDiscServices/12"
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
+   def testValidateScsiId_010(self):
+      """
+      Test with an invalid address with a missing field.
+      """
+      scsiId = "1,2"
+      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
+
+   def testValidateScsiId_011(self):
+      """
+      Test with an invalid Mac-style address with a backslash.
+      """
+      scsiId = "IOCompactDiscServices\\3"
+      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
+
+   def testValidateScsiId_012(self):
+      """
+      Test with an invalid address with an invalid prefix separator.
+      """
+      scsiId = "ATAPI;1,2,3"
+      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
+
+   def testValidateScsiId_013(self):
+      """
+      Test with an invalid address with an invalid prefix separator.
+      """
+      scsiId = "ATA-1,2,3"
+      self.failUnlessRaises(ValueError, validateScsiId, scsiId)
+
+   def testValidateScsiId_014(self):
+      """
+      Test with a None SCSI id.
+      """
+      scsiId = None
+      result = validateScsiId(scsiId)
+      self.failUnlessEqual(scsiId, result)
+
 
 #####################
 # TestIsoImage class
@@ -1430,10 +1561,12 @@ def suite():
    """Returns a suite containing all the test cases in this module."""
    if runAllTests():
       return unittest.TestSuite((
+                                 unittest.makeSuite(TestFunctions, 'test'),
                                  unittest.makeSuite(TestIsoImage, 'test'),
                                ))
    else:
       return unittest.TestSuite((
+                                 unittest.makeSuite(TestFunctions, 'test'),
                                  unittest.makeSuite(TestIsoImage, 'testConstructor'),
                                  unittest.makeSuite(TestIsoImage, 'testUtilityMethods'),
                                  unittest.makeSuite(TestIsoImage, 'testAddEntry'),
