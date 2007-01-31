@@ -404,6 +404,10 @@ def executeAction(configPath, options, config):
    if config.options is None or config.stage is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
+   if local.encrypt.encryptMode not in ["gpg", ]:
+      raise ValueError("Unknown encrypt mode [%s]" % encryptMode);
+   if local.encrypt.encryptMode == "gpg":
+      _confirmGpgRecipient(local.encrypt.encryptTarget)
    dailyDirs = _findDailyDirs(stagingDir=config.stage.targetDir)
    for dailyDir in dailyDirs:
       _encryptDailyDir(dailyDir, local.encrypt.encryptMode, local.encrypt.encryptTarget, 
@@ -541,7 +545,7 @@ def _encryptFile(sourcePath, encryptMode, encryptTarget, backupUser, backupGroup
    if encryptMode == 'gpg':
       encryptedPath = _encryptFileWithGpg(sourcePath, recipient=encryptTarget)
    else:
-      raise ValueError("Unknown encrypt mode [%s]" % encryptMode);
+      raise ValueError("Unknown encrypt mode [%s]" % encryptMode); 
    changeOwnership(encryptedPath, backupUser, backupGroup)
    if removeSource:
       if os.path.exists(sourcePath):
@@ -574,12 +578,30 @@ def _encryptFileWithGpg(sourcePath, recipient):
    """
    encryptedPath = "%s.gpg" % sourcePath
    command = resolveCommand(GPG_COMMAND)
-   args = [ "-e", "-r", recipient, "-o", encryptedPath, sourcePath, ]
+   args = [ "--batch", "--yes", "-e", "-r", recipient, "-o", encryptedPath, sourcePath, ]
    result = executeCommand(command, args)[0]
    if result != 0:
-      raise IOError("Error [%d] calling [%s] to encrypt [%s]." % (result, command, sourcePath))
+      raise IOError("Error [%d] calling gpg to encrypt [%s]." % (result, sourcePath))
    if not os.path.exists(encryptedPath):
       raise IOError("After call to [%s], encrypted file [%s] does not exist." % (command, encryptedPath))
    logger.debug("Completed encrypting file [%s] to [%s]." % (sourcePath, encryptedPath))
    return encryptedPath
    
+
+#################################
+# _confirmGpgRecpient() function
+#################################
+
+def _confirmGpgRecipient(recipient):
+   """
+   Confirms that a recipient's public key is known to GPG.
+   Throws an exception if there is a problem, or returns normally otherwise.
+   @param recipient: Recipient name
+   @raise IOError: If the recipient's public key is not known to GPG.
+   """
+   command = resolveCommand(GPG_COMMAND)
+   args = [ "--batch", "-k", recipient, ]  # should use --with-colons if the output will be parsed
+   result = executeCommand(command, args)[0]
+   if result != 0:
+      raise IOError("GPG unable to find public key for [%s]." % recipient)
+
