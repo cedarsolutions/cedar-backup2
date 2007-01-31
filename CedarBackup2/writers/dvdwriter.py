@@ -686,7 +686,7 @@ class DvdWriter(object):
       This is implemented in terms of the C{IsoImage} class.  The returned
       value is calculated by adding a "fudge factor" to the value from
       C{IsoImage}.  This fudge factor was determined by experimentation and is
-      conservative -- the actual image could be as much as 400 blocks smaller
+      conservative -- the actual image could be as much as 450 blocks smaller
       under some circumstances.
 
       @param entries: Dictionary mapping path to graft point.
@@ -697,13 +697,13 @@ class DvdWriter(object):
       @raise ValueError: If any path in the dictionary does not exist
       @raise IOError: If there is a problem calling C{mkisofs}.
       """
-      FUDGE_FACTOR = 2450.0  # determined through experimentation
+      fudgeFactor = convertSize(2500.0, UNIT_SECTORS, UNIT_BYTES)  # determined through experimentation
       if len(entries.keys()) == 0:
          raise ValueError("Must add at least one entry with addImageEntry().")
       image = IsoImage()
       for path in entries.keys():
          image.addEntry(path, entries[path], override=False, contentsOnly=True)
-      estimatedSize = image.getEstimatedSize() + FUDGE_FACTOR
+      estimatedSize = image.getEstimatedSize() + fudgeFactor
       return estimatedSize
    _getEstimatedImageSize = staticmethod(_getEstimatedImageSize)
 
