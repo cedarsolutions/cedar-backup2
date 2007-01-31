@@ -1198,12 +1198,14 @@ password = &lt;secret&gt;
          Before configuring the Encrypt extension, you must configure GPG.
          Either create a new keypair or use an existing one.  Determine which
          user will execute your backup (typically root) and have that user
-         import the public half of the keypair.  Then, save off the secret half
-         of the keypair someplace safe, apart from your backup (i.e. on a
-         floppy disk or USB drive).  Make sure you know the recipient name
-         associated with the public key (i.e. what would be passed to
-         <command>gpg -r</command>), because you'll need it to configure Cedar
-         Backup.
+         import <emphasis>and lsign</emphasis> the public half of the keypair.
+         Then, save off the secret half of the keypair someplace safe, apart
+         from your backup (i.e. on a floppy disk or USB drive).  Make sure you
+         know the recipient name associated with the public key because you'll
+         need it to configure Cedar Backup.  (If you can run 
+         <command>gpg -e -r "Backup User" overburn.txt</command> 
+         and it executes cleanly with no user interaction required, you should
+         be OK.)
       </para>
 
       <para>
