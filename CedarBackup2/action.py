@@ -26,7 +26,7 @@ Provides interface backwards compatibility.
 In Cedar Backup 2.10.0, a refactoring effort took place to reorganize the code
 for the standard actions.  The code formerly in action.py was split into
 various other files in the CedarBackup2.actions package.  This mostly-empty
-file remains to preserve the Cedar Backup 2 library interface.
+file remains to preserve the Cedar Backup library interface.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
