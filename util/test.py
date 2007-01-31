@@ -180,10 +180,12 @@ def main():
    if "full" in args:
       os.environ["PEERTESTS_FULL"] = "Y"
       os.environ["WRITERSUTILTESTS_FULL"] = "Y"
-      args.remove("full") # remainder of list will be specific tests to run
+      os.environ["ENCRYPTTESTS_FULL"] = "Y"
+      args.remove("full") # remainder of list will be specific tests to run, if any
    else:
       os.environ["PEERTESTS_FULL"] = "N"
       os.environ["WRITERSUTILTESTS_FULL"] = "N"
+      os.environ["ENCRYPTTESTS_FULL"] = "N"
 
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."
