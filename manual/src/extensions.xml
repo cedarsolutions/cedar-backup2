@@ -1203,7 +1203,7 @@ password = &lt;secret&gt;
          from your backup (i.e. on a floppy disk or USB drive).  Make sure you
          know the recipient name associated with the public key because you'll
          need it to configure Cedar Backup.  (If you can run 
-         <command>gpg -e -r "Backup User" overburn.txt</command> 
+         <command>gpg -e -r "Backup User" file.txt</command> 
          and it executes cleanly with no user interaction required, you should
          be OK.)
       </para>
