@@ -31,10 +31,10 @@ Provides location to maintain version information.
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
-AUTHOR      = "Kenneth J. Pronovici, et. al"
+AUTHOR      = "Kenneth J. Pronovici"
 EMAIL       = "pronovic@ieee.org"
 COPYRIGHT   = "2004-2007"
-VERSION     = "2.10.0"
+VERSION     = "2.10.1"
 DATE        = "30 Jan 2007"
 URL         = "http://cedar-solutions.com/software/cedar-backup"
 
