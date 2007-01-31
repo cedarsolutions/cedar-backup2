@@ -1,6 +1,7 @@
-Version 2.10.1		unreleased
+Version 2.10.1		30 Jan 2007
 
-	* Minor tweaks to documentation.
+	* Fix a few places that still referred only to CD/CD-RW.
+	* Fix typo in definition of actions.constants.DIGEST_EXTENSION.
 
 Version 2.10.0		30 Jan 2007
 
