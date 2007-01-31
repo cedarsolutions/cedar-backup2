@@ -21,7 +21,7 @@
 ########################################################################
 
 """
-Implements local and remote backups to CD-R/CD-RW media.
+Implements local and remote backups to CD or DVD media.
 
 Cedar Backup is a software package designed to manage system backups for a pool
 of local and remote machines.  Cedar Backup understands how to back up
@@ -29,11 +29,11 @@ filesystem data as well as MySQL and PostgreSQL databases and Subversion
 repositories.  It can also be easily extended to support other kinds of data
 sources.
 
-Cedar Backup is focused around weekly backups to a single CD-R or CD-RW
-disc, with the expectation that the disc will be changed or overwritten at
-the beginning of each week.  If your hardware is new enough, Cedar Backup
-can write multisession discs, allowing you to add incremental data to a
-disc on a daily basis.
+Cedar Backup is focused around weekly backups to a single CD or DVD disc, with
+the expectation that the disc will be changed or overwritten at the beginning
+of each week.  If your hardware is new enough, Cedar Backup can write
+multisession discs, allowing you to add incremental data to a disc on a daily
+basis.
 
 Besides offering command-line utilities to manage the backup process, Cedar
 Backup provides a well-organized library of backup-related functionality,
