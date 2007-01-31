@@ -1,4 +1,4 @@
-Version 2.10.0	unreleased
+Version 2.10.0		30 Jan 2007
 
 	* Add support for DVD writers and DVD+R/DVD+RW media.
 	  - Create new writers.dvdwriter module and DvdWriter class
