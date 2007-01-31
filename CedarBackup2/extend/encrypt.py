@@ -405,7 +405,7 @@ def executeAction(configPath, options, config):
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
    if local.encrypt.encryptMode not in ["gpg", ]:
-      raise ValueError("Unknown encrypt mode [%s]" % encryptMode);
+      raise ValueError("Unknown encrypt mode [%s]" % local.encrypt.encryptMode);
    if local.encrypt.encryptMode == "gpg":
       _confirmGpgRecipient(local.encrypt.encryptTarget)
    dailyDirs = _findDailyDirs(stagingDir=config.stage.targetDir)
