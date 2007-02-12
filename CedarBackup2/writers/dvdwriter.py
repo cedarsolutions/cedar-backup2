@@ -373,7 +373,7 @@ class DvdWriter(object):
       @raise ValueError: If the drive speed is not an integer >= 1.
       """
       if scsiId is not None:
-         logger.warn("SCSI id [%s] will be ignored by DvdWriter.")
+         logger.warn("SCSI id [%s] will be ignored by DvdWriter." % scsiId)
       self._image = None  # optionally filled in by initializeImage()
       self._device = validateDevice(device, unittest)
       self._scsiId = scsiId  # not validated, because it's just for reference
