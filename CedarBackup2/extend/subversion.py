@@ -130,9 +130,9 @@ class RepositoryDir(object):
    def __init__(self, repositoryType=None, directoryPath=None, collectMode=None, compressMode=None,
                 relativeExcludePaths=None, excludePatterns=None):
       """
-      Constructor for the C{Repository} class.
+      Constructor for the C{RepositoryDir} class.
 
-      @param repositoryPath: Type of repository, for reference
+      @param repositoryType: Type of repository, for reference
       @param directoryPath: Absolute path of the Subversion parent directory
       @param collectMode: Overridden collect mode for this directory.
       @param compressMode: Overridden compression mode for this directory.
@@ -347,7 +347,7 @@ class Repository(object):
       """
       Constructor for the C{Repository} class.
 
-      @param repositoryPath: Type of repository, for reference
+      @param repositoryType: Type of repository, for reference
       @param repositoryPath: Absolute path to a Subversion repository on disk.
       @param collectMode: Overridden collect mode for this directory.
       @param compressMode: Overridden compression mode for this directory.
@@ -1039,7 +1039,7 @@ class LocalConfig(object):
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
-      @param repository: Repository to be added to the document.
+      @param repositoryDir: Repository dir to be added to the document.
       """
       if repositoryDir is not None:
          sectionNode = addContainerNode(xmlDom, parentNode, "repository_dir")
@@ -1419,7 +1419,7 @@ class BDBRepository(Repository):
 
    """
    Class representing Subversion BDB (Berkeley Database) repository configuration.
-   @deprecated: This object is deprecated.  Use a simple L{Repository} instead.
+   This object is deprecated.  Use a simple L{Repository} instead.
    """
 
    def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
@@ -1439,7 +1439,7 @@ class FSFSRepository(Repository):
 
    """
    Class representing Subversion FSFS repository configuration.
-   @deprecated: This object is deprecated.  Use a simple L{Repository} instead.
+   This object is deprecated.  Use a simple L{Repository} instead.
    """
 
    def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
@@ -1458,7 +1458,7 @@ class FSFSRepository(Repository):
 def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
    """
    Backs up an individual Subversion BDB repository.
-   @deprecated: Use L{backupRepository} instead.
+   This function is deprecated.  Use L{backupRepository} instead.
    """
    return backupRepository(repositoryPath, backupFile, startRevision, endRevision);
 
@@ -1466,7 +1466,7 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
 def backupFSFSRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
    """
    Backs up an individual Subversion FSFS repository.
-   @deprecated: Use L{backupRepository} instead.
+   This function is deprecated.  Use L{backupRepository} instead.
    """
    return backupRepository(repositoryPath, backupFile, startRevision, endRevision);
 
