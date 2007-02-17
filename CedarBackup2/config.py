@@ -4708,9 +4708,11 @@ class Config(object):
       """
       if self.extensions is not None:
          if self.extensions.actions is not None:
+            names = []
             for action in self.extensions.actions:
                if action.name is None:
                   raise ValueError("Each extended action must set a name.")
+               names.append(action.name)
                if action.module is None:
                   raise ValueError("Each extended action must set a module.")
                if action.function is None:
@@ -4721,6 +4723,7 @@ class Config(object):
                elif self.extensions.orderMode == "dependency":
                   if action.dependencies is None:
                      raise ValueError("Each extended action must set dependency information, based on order mode.")
+            Config._checkUnique("Duplicate extension names exist:", names)
 
    def _validateOptions(self):
       """
@@ -4821,22 +4824,26 @@ class Config(object):
          elif self.stage.localPeers is not None and self.stage.remotePeers is not None:
             if len(self.stage.localPeers) + len(self.stage.remotePeers) < 1:
                raise ValueError("Stage section must contain at least one backup peer.")
+         names = []
          if self.stage.localPeers is not None:
             for localPeer in self.stage.localPeers:
                if localPeer.name is None:
                   raise ValueError("Local peers must set a name.")
+               names.append(localPeer.name)
                if localPeer.collectDir is None:
                   raise ValueError("Local peers must set a collect directory.")
          if self.stage.remotePeers is not None:
             for remotePeer in self.stage.remotePeers:
                if remotePeer.name is None:
                   raise ValueError("Remote peers must set a name.")
+               names.append(remotePeer.name)
                if remotePeer.collectDir is None:
                   raise ValueError("Remote peers must set a collect directory.")
                if (self.options is None or self.options.backupUser is None) and remotePeer.remoteUser is None: # redundant
                   raise ValueError("Remote user must either be set in options section or individual remote peer.")
                if (self.options is None or self.options.rcpCommand is None) and remotePeer.rcpCommand is None: # redundant
                   raise ValueError("Remote copy command must either be set in options section or individual remote peer.")
+         Config._checkUnique("Duplicate peer names exist:", names)
 
    def _validateStore(self):
       """
@@ -4887,4 +4894,31 @@ class Config(object):
                   raise ValueError("Each purge directory must set an absolute path.")
                if purgeDir.retainDays is None:
                   raise ValueError("Each purge directory must set a retain days value.")
+
+
+   ##############################################
+   # Utility methods used for validating content
+   ##############################################
+
+   def _checkUnique(prefix, values):
+      """
+      Checks that all values are unique.
+
+      The values list is checked for duplicate values.  If there are
+      duplicates, an exception is thrown.  All duplicate values are listed in
+      the exception.
+
+      @param prefix: Prefix to use in the thrown exception
+      @param values: List of values to check
+
+      @raise ValueError: If there are duplicates in the list
+      """
+      values.sort()
+      duplicates = []
+      for i in range(1, len(values)):
+         if values[i-1] == values[i]:
+            duplicates.append(values[i])
+      if duplicates:
+         raise ValueError("%s %s" % (prefix, duplicates))
+   _checkUnique = staticmethod(_checkUnique)
 

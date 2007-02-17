@@ -8035,7 +8035,7 @@ class TestConfig(unittest.TestCase):
       config.stage = StageConfig()
       config.stage.targetDir = "/whatever"
       config.stage.localPeers = [LocalPeer(name="metoo", collectDir="/nowhere"), LocalPeer("one", "/two"), LocalPeer("a", "/b"), ]
-      config.stage.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), RemotePeer("a", "/b"), ]
+      config.stage.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), RemotePeer("c", "/d"), ]
       self.failUnlessRaises(ValueError, config._validateStage)
       config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
       config._validateStage()
@@ -8377,6 +8377,73 @@ class TestConfig(unittest.TestCase):
       config.purge = PurgeConfig()
       config.purge.purgeDirs = [ PurgeDir("/whatever", 4), PurgeDir("/etc/different", 12), ]
       config._validatePurge()
+
+   def testValidate_047(self):
+      """
+      Test that we catch a duplicate extended action name.
+      """
+      config = Config()
+      config.extensions = ExtensionsConfig()
+      config.extensions.orderMode = "dependency"
+
+      config.extensions.actions = [ ExtendedAction("unique1", "b", "c", dependencies=ActionDependencies()), 
+                                    ExtendedAction("unique2", "f", "g", dependencies=ActionDependencies()), ]
+      config._validateExtensions()
+
+      config.extensions.actions = [ ExtendedAction("duplicate", "b", "c", dependencies=ActionDependencies()), 
+                                    ExtendedAction("duplicate", "f", "g", dependencies=ActionDependencies()), ]
+      self.failUnlessRaises(ValueError, config._validateExtensions)
+
+   def testValidate_048(self):
+      """
+      Test that we catch a duplicate local peer name.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+
+      config.stage.localPeers = [ LocalPeer(name="unique1", collectDir="/nowhere"), 
+                                  LocalPeer(name="unique2", collectDir="/nowhere"), ]
+      config._validateStage()
+
+      config.stage.localPeers = [ LocalPeer(name="duplicate", collectDir="/nowhere"), 
+                                  LocalPeer(name="duplicate", collectDir="/nowhere"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_049(self):
+      """
+      Test that we catch a duplicate remote peer name.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+
+      config.stage.remotePeers = [ RemotePeer(name="unique1", collectDir="/some/path/to/data"), 
+                                   RemotePeer(name="unique2", collectDir="/some/path/to/data"), ]
+      config._validateStage()
+
+      config.stage.remotePeers = [ RemotePeer(name="duplicate", collectDir="/some/path/to/data"), 
+                                   RemotePeer(name="duplicate", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_050(self):
+      """
+      Test that we catch a duplicate peer name duplicated between remote and local.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.stage = StageConfig()
+      config.stage.targetDir = "/whatever"
+
+      config.stage.localPeers = [ LocalPeer(name="unique1", collectDir="/nowhere"),  ]
+      config.stage.remotePeers = [ RemotePeer(name="unique2", collectDir="/some/path/to/data"), ]
+      config._validateStage()
+
+      config.stage.localPeers = [ LocalPeer(name="duplicate", collectDir="/nowhere"),  ]
+      config.stage.remotePeers = [ RemotePeer(name="duplicate", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
 
 
    ############################
