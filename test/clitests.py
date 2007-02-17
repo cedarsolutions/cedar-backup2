@@ -79,9 +79,8 @@ Full vs. Reduced Tests
 
 import unittest
 from os.path import isdir, isfile, islink, isabs, exists
-from StringIO import StringIO
 from getopt import GetoptError
-from CedarBackup2.testutil import failUnlessAssignRaises
+from CedarBackup2.testutil import failUnlessAssignRaises, captureOutput
 from CedarBackup2.config import ExtensionsConfig, ExtendedAction, ActionDependencies, PreActionHook, PostActionHook
 from CedarBackup2.cli import _usage, _version
 from CedarBackup2.cli import Options
@@ -112,35 +111,6 @@ class TestFunctions(unittest.TestCase):
       pass
 
 
-   ##################
-   # Utility methods
-   ##################
-
-   def captureOutput(self, callable):
-      """
-      Captures the output (stdout, stderr) of a function or a method.
-
-      Some of our functions don't do anything other than just print output.  We
-      need a way to test these functions (at least nominally) but we don't want
-      any of the output spoiling the test suite output.
-
-      This function just creates a dummy file descriptor that can be used as a
-      target by the callable function, rather than C{stdout} or C{stderr}.
-
-      @note: This method assumes that C{callable} doesn't take any arguments
-      besides keyword argument C{fd} to specify the file descriptor.
-
-      @param callable: Callable function or method.
-
-      @return: Output of function, as one big string.
-      """
-      fd = StringIO()
-      callable(fd=fd)
-      result = fd.getvalue()
-      fd.close()
-      return result
-
-
    ########################
    # Test simple functions
    ########################
@@ -150,14 +120,14 @@ class TestFunctions(unittest.TestCase):
       Test that the _usage() function runs without errors.
       We don't care what the output is, and we don't check.
       """
-      self.captureOutput(_usage)
+      captureOutput(_usage)
 
    def testSimpleFuncs_002(self):
       """
       Test that the _version() function runs without errors.
       We don't care what the output is, and we don't check.
       """
-      self.captureOutput(_version)
+      captureOutput(_version)
 
 
 ####################
