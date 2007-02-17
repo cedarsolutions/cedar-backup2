@@ -167,7 +167,6 @@ Validation
    The target directory must be filled in.  The collect mode, archive mode and
    ignore file are all optional.  The list of absolute paths to exclude and
    patterns to exclude may be either C{None} or an empty list C{[]} if desired.
-   The collect directory list must contain at least one entry.  
 
    Each collect directory entry must contain an absolute path to collect, and
    then must either be able to take collect mode, archive mode and ignore file
@@ -4783,8 +4782,7 @@ class Config(object):
       The target directory must be filled in.  The collect mode, archive mode
       and ignore file are all optional.  The list of absolute paths to exclude
       and patterns to exclude may be either C{None} or an empty list C{[]} if
-      desired.  Either the collect file list or the collect directory list must
-      contain at least one entry (there must be at least one thing to back up).
+      desired.  
 
       Each collect directory entry must contain an absolute path to collect,
       and then must either be able to take collect mode, archive mode and
@@ -4800,9 +4798,6 @@ class Config(object):
       if self.collect is not None:
          if self.collect.targetDir is None:
             raise ValueError("Collect section target directory must be filled in.")
-         if ((self.collect.collectFiles is None or len(self.collect.collectFiles) < 1) and
-             (self.collect.collectDirs is None or len(self.collect.collectDirs) < 1)):
-            raise ValueError("Collect section must contain at least one collect file or collect directory.")
          if self.collect.collectFiles is not None:
             for collectFile in self.collect.collectFiles:
                if collectFile.absolutePath is None:

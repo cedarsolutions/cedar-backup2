@@ -931,6 +931,15 @@
          </para>
 
          <para>
+            In order to actually execute the collect action, you must have
+            configured at least one collect directory or one collect file.
+            However, if you are only including collect configuration for use by
+            an extension, then it's OK to leave out these sections.  The
+            validation will take place only when the collect action is
+            executed.
+         </para>
+
+         <para>
             This is an example collect configuration section:
          </para>
 
@@ -1190,7 +1199,7 @@
                   <para>
                      This section can be repeated as many times as is
                      necessary.  At least one collect directory or collect file
-                     must be configured.
+                     must be configured when the collect action is executed.
                   </para>
                   <para>
                      The collect file subsection contains the following
@@ -1279,7 +1288,7 @@
                   <para>
                      This section can be repeated as many times as is
                      necessary.  At least one collect directory must be
-                     configured.
+                     configured when the collect action is executed.
                   </para>
                   <para>
                      The collect directory subsection contains the following
