@@ -94,12 +94,14 @@ check:
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py 2>/dev/null
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/actions/*.py 2>/dev/null
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/extend/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/tools/*.py 2>/dev/null
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/writers/*.py 2>/dev/null
 
 allcheck: 
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py 2>/dev/null
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/actions/*.py 2>/dev/null
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/extend/*.py 2>/dev/null
+	-@$(PYCHECKER) --config pycheckrc CedarBackup2/tools/*.py 2>/dev/null
 	-@$(PYCHECKER) --config pycheckrc CedarBackup2/writers/*.py 2>/dev/null
 	-@$(PYCHECKER) --config pycheckrc test/*.py 2>/dev/null
 	-@$(PYCHECKER) --config pycheckrc util/*.py 2>/dev/null
