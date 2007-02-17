@@ -7793,7 +7793,7 @@ class TestConfig(unittest.TestCase):
       config = Config()
       config.collect = CollectConfig()
       config.collect.targetDir = "/whatever"
-      self.failUnlessRaises(ValueError, config._validateCollect)
+      config._validateCollect()  # we no longer validate that at least one file or dir is required here
 
    def testValidate_018(self):
       """
