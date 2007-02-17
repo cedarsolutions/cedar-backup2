@@ -155,135 +155,135 @@ class TestMboxFile(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.absolutePath)
-      self.failUnlessEqual(None, repository.collectMode)
-      self.failUnlessEqual(None, repository.compressMode)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.absolutePath)
+      self.failUnlessEqual(None, mboxFile.collectMode)
+      self.failUnlessEqual(None, mboxFile.compressMode)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in.
       """
-      repository = MboxFile("/path/to/it", "daily", "gzip")
-      self.failUnlessEqual("/path/to/it", repository.absolutePath)
-      self.failUnlessEqual("daily", repository.collectMode)
-      self.failUnlessEqual("gzip", repository.compressMode)
+      mboxFile = MboxFile("/path/to/it", "daily", "gzip")
+      self.failUnlessEqual("/path/to/it", mboxFile.absolutePath)
+      self.failUnlessEqual("daily", mboxFile.collectMode)
+      self.failUnlessEqual("gzip", mboxFile.compressMode)
 
    def testConstructor_003(self):
       """
       Test assignment of absolutePath attribute, None value.
       """
-      repository = MboxFile(absolutePath="/path/to/something")
-      self.failUnlessEqual("/path/to/something", repository.absolutePath)
-      repository.absolutePath = None
-      self.failUnlessEqual(None, repository.absolutePath)
+      mboxFile = MboxFile(absolutePath="/path/to/something")
+      self.failUnlessEqual("/path/to/something", mboxFile.absolutePath)
+      mboxFile.absolutePath = None
+      self.failUnlessEqual(None, mboxFile.absolutePath)
 
    def testConstructor_004(self):
       """
       Test assignment of absolutePath attribute, valid value.
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.absolutePath)
-      repository.absolutePath = "/path/to/whatever"
-      self.failUnlessEqual("/path/to/whatever", repository.absolutePath)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.absolutePath)
+      mboxFile.absolutePath = "/path/to/whatever"
+      self.failUnlessEqual("/path/to/whatever", mboxFile.absolutePath)
 
    def testConstructor_005(self):
       """
       Test assignment of absolutePath attribute, invalid value (empty).
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.absolutePath)
-      self.failUnlessAssignRaises(ValueError, repository, "absolutePath", "")
-      self.failUnlessEqual(None, repository.absolutePath)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.absolutePath)
+      self.failUnlessAssignRaises(ValueError, mboxFile, "absolutePath", "")
+      self.failUnlessEqual(None, mboxFile.absolutePath)
 
    def testConstructor_006(self):
       """
       Test assignment of absolutePath attribute, invalid value (not absolute).
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.absolutePath)
-      self.failUnlessAssignRaises(ValueError, repository, "absolutePath", "relative/path")
-      self.failUnlessEqual(None, repository.absolutePath)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.absolutePath)
+      self.failUnlessAssignRaises(ValueError, mboxFile, "absolutePath", "relative/path")
+      self.failUnlessEqual(None, mboxFile.absolutePath)
 
    def testConstructor_007(self):
       """
       Test assignment of collectMode attribute, None value.
       """
-      repository = MboxFile(collectMode="daily")
-      self.failUnlessEqual("daily", repository.collectMode)
-      repository.collectMode = None
-      self.failUnlessEqual(None, repository.collectMode)
+      mboxFile = MboxFile(collectMode="daily")
+      self.failUnlessEqual("daily", mboxFile.collectMode)
+      mboxFile.collectMode = None
+      self.failUnlessEqual(None, mboxFile.collectMode)
 
    def testConstructor_008(self):
       """
       Test assignment of collectMode attribute, valid value.
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.collectMode)
-      repository.collectMode = "daily"
-      self.failUnlessEqual("daily", repository.collectMode)
-      repository.collectMode = "weekly"
-      self.failUnlessEqual("weekly", repository.collectMode)
-      repository.collectMode = "incr"
-      self.failUnlessEqual("incr", repository.collectMode)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.collectMode)
+      mboxFile.collectMode = "daily"
+      self.failUnlessEqual("daily", mboxFile.collectMode)
+      mboxFile.collectMode = "weekly"
+      self.failUnlessEqual("weekly", mboxFile.collectMode)
+      mboxFile.collectMode = "incr"
+      self.failUnlessEqual("incr", mboxFile.collectMode)
 
    def testConstructor_009(self):
       """
       Test assignment of collectMode attribute, invalid value (empty).
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.collectMode)
-      self.failUnlessAssignRaises(ValueError, repository, "collectMode", "")
-      self.failUnlessEqual(None, repository.collectMode)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.collectMode)
+      self.failUnlessAssignRaises(ValueError, mboxFile, "collectMode", "")
+      self.failUnlessEqual(None, mboxFile.collectMode)
 
    def testConstructor_010(self):
       """
       Test assignment of collectMode attribute, invalid value (not in list).
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.collectMode)
-      self.failUnlessAssignRaises(ValueError, repository, "collectMode", "monthly")
-      self.failUnlessEqual(None, repository.collectMode)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.collectMode)
+      self.failUnlessAssignRaises(ValueError, mboxFile, "collectMode", "monthly")
+      self.failUnlessEqual(None, mboxFile.collectMode)
 
    def testConstructor_011(self):
       """
       Test assignment of compressMode attribute, None value.
       """
-      repository = MboxFile(compressMode="gzip")
-      self.failUnlessEqual("gzip", repository.compressMode)
-      repository.compressMode = None
-      self.failUnlessEqual(None, repository.compressMode)
+      mboxFile = MboxFile(compressMode="gzip")
+      self.failUnlessEqual("gzip", mboxFile.compressMode)
+      mboxFile.compressMode = None
+      self.failUnlessEqual(None, mboxFile.compressMode)
 
    def testConstructor_012(self):
       """
       Test assignment of compressMode attribute, valid value.
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.compressMode)
-      repository.compressMode = "none"
-      self.failUnlessEqual("none", repository.compressMode)
-      repository.compressMode = "bzip2"
-      self.failUnlessEqual("bzip2", repository.compressMode)
-      repository.compressMode = "gzip"
-      self.failUnlessEqual("gzip", repository.compressMode)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.compressMode)
+      mboxFile.compressMode = "none"
+      self.failUnlessEqual("none", mboxFile.compressMode)
+      mboxFile.compressMode = "bzip2"
+      self.failUnlessEqual("bzip2", mboxFile.compressMode)
+      mboxFile.compressMode = "gzip"
+      self.failUnlessEqual("gzip", mboxFile.compressMode)
 
    def testConstructor_013(self):
       """
       Test assignment of compressMode attribute, invalid value (empty).
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.compressMode)
-      self.failUnlessAssignRaises(ValueError, repository, "compressMode", "")
-      self.failUnlessEqual(None, repository.compressMode)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.compressMode)
+      self.failUnlessAssignRaises(ValueError, mboxFile, "compressMode", "")
+      self.failUnlessEqual(None, mboxFile.compressMode)
 
    def testConstructor_014(self):
       """
       Test assignment of compressMode attribute, invalid value (not in list).
       """
-      repository = MboxFile()
-      self.failUnlessEqual(None, repository.compressMode)
-      self.failUnlessAssignRaises(ValueError, repository, "compressMode", "compress")
-      self.failUnlessEqual(None, repository.compressMode)
+      mboxFile = MboxFile()
+      self.failUnlessEqual(None, mboxFile.compressMode)
+      self.failUnlessAssignRaises(ValueError, mboxFile, "compressMode", "compress")
+      self.failUnlessEqual(None, mboxFile.compressMode)
 
 
    ############################
@@ -441,139 +441,139 @@ class TestMboxDir(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.absolutePath)
-      self.failUnlessEqual(None, repository.collectMode)
-      self.failUnlessEqual(None, repository.compressMode)
-      self.failUnlessEqual(None, repository.relativeExcludePaths)
-      self.failUnlessEqual(None, repository.excludePatterns)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.absolutePath)
+      self.failUnlessEqual(None, mboxDir.collectMode)
+      self.failUnlessEqual(None, mboxDir.compressMode)
+      self.failUnlessEqual(None, mboxDir.relativeExcludePaths)
+      self.failUnlessEqual(None, mboxDir.excludePatterns)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in.
       """
-      repository = MboxDir("/path/to/it", "daily", "gzip", [ "whatever", ], [ ".*SPAM.*", ] )
-      self.failUnlessEqual("/path/to/it", repository.absolutePath)
-      self.failUnlessEqual("daily", repository.collectMode)
-      self.failUnlessEqual("gzip", repository.compressMode)
-      self.failUnlessEqual([ "whatever", ], repository.relativeExcludePaths)
-      self.failUnlessEqual([ ".*SPAM.*", ], repository.excludePatterns)
+      mboxDir = MboxDir("/path/to/it", "daily", "gzip", [ "whatever", ], [ ".*SPAM.*", ] )
+      self.failUnlessEqual("/path/to/it", mboxDir.absolutePath)
+      self.failUnlessEqual("daily", mboxDir.collectMode)
+      self.failUnlessEqual("gzip", mboxDir.compressMode)
+      self.failUnlessEqual([ "whatever", ], mboxDir.relativeExcludePaths)
+      self.failUnlessEqual([ ".*SPAM.*", ], mboxDir.excludePatterns)
 
    def testConstructor_003(self):
       """
       Test assignment of absolutePath attribute, None value.
       """
-      repository = MboxDir(absolutePath="/path/to/something")
-      self.failUnlessEqual("/path/to/something", repository.absolutePath)
-      repository.absolutePath = None
-      self.failUnlessEqual(None, repository.absolutePath)
+      mboxDir = MboxDir(absolutePath="/path/to/something")
+      self.failUnlessEqual("/path/to/something", mboxDir.absolutePath)
+      mboxDir.absolutePath = None
+      self.failUnlessEqual(None, mboxDir.absolutePath)
 
    def testConstructor_004(self):
       """
       Test assignment of absolutePath attribute, valid value.
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.absolutePath)
-      repository.absolutePath = "/path/to/whatever"
-      self.failUnlessEqual("/path/to/whatever", repository.absolutePath)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.absolutePath)
+      mboxDir.absolutePath = "/path/to/whatever"
+      self.failUnlessEqual("/path/to/whatever", mboxDir.absolutePath)
 
    def testConstructor_005(self):
       """
       Test assignment of absolutePath attribute, invalid value (empty).
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.absolutePath)
-      self.failUnlessAssignRaises(ValueError, repository, "absolutePath", "")
-      self.failUnlessEqual(None, repository.absolutePath)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.absolutePath)
+      self.failUnlessAssignRaises(ValueError, mboxDir, "absolutePath", "")
+      self.failUnlessEqual(None, mboxDir.absolutePath)
 
    def testConstructor_006(self):
       """
       Test assignment of absolutePath attribute, invalid value (not absolute).
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.absolutePath)
-      self.failUnlessAssignRaises(ValueError, repository, "absolutePath", "relative/path")
-      self.failUnlessEqual(None, repository.absolutePath)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.absolutePath)
+      self.failUnlessAssignRaises(ValueError, mboxDir, "absolutePath", "relative/path")
+      self.failUnlessEqual(None, mboxDir.absolutePath)
 
    def testConstructor_007(self):
       """
       Test assignment of collectMode attribute, None value.
       """
-      repository = MboxDir(collectMode="daily")
-      self.failUnlessEqual("daily", repository.collectMode)
-      repository.collectMode = None
-      self.failUnlessEqual(None, repository.collectMode)
+      mboxDir = MboxDir(collectMode="daily")
+      self.failUnlessEqual("daily", mboxDir.collectMode)
+      mboxDir.collectMode = None
+      self.failUnlessEqual(None, mboxDir.collectMode)
 
    def testConstructor_008(self):
       """
       Test assignment of collectMode attribute, valid value.
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.collectMode)
-      repository.collectMode = "daily"
-      self.failUnlessEqual("daily", repository.collectMode)
-      repository.collectMode = "weekly"
-      self.failUnlessEqual("weekly", repository.collectMode)
-      repository.collectMode = "incr"
-      self.failUnlessEqual("incr", repository.collectMode)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.collectMode)
+      mboxDir.collectMode = "daily"
+      self.failUnlessEqual("daily", mboxDir.collectMode)
+      mboxDir.collectMode = "weekly"
+      self.failUnlessEqual("weekly", mboxDir.collectMode)
+      mboxDir.collectMode = "incr"
+      self.failUnlessEqual("incr", mboxDir.collectMode)
 
    def testConstructor_009(self):
       """
       Test assignment of collectMode attribute, invalid value (empty).
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.collectMode)
-      self.failUnlessAssignRaises(ValueError, repository, "collectMode", "")
-      self.failUnlessEqual(None, repository.collectMode)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.collectMode)
+      self.failUnlessAssignRaises(ValueError, mboxDir, "collectMode", "")
+      self.failUnlessEqual(None, mboxDir.collectMode)
 
    def testConstructor_010(self):
       """
       Test assignment of collectMode attribute, invalid value (not in list).
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.collectMode)
-      self.failUnlessAssignRaises(ValueError, repository, "collectMode", "monthly")
-      self.failUnlessEqual(None, repository.collectMode)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.collectMode)
+      self.failUnlessAssignRaises(ValueError, mboxDir, "collectMode", "monthly")
+      self.failUnlessEqual(None, mboxDir.collectMode)
 
    def testConstructor_011(self):
       """
       Test assignment of compressMode attribute, None value.
       """
-      repository = MboxDir(compressMode="gzip")
-      self.failUnlessEqual("gzip", repository.compressMode)
-      repository.compressMode = None
-      self.failUnlessEqual(None, repository.compressMode)
+      mboxDir = MboxDir(compressMode="gzip")
+      self.failUnlessEqual("gzip", mboxDir.compressMode)
+      mboxDir.compressMode = None
+      self.failUnlessEqual(None, mboxDir.compressMode)
 
    def testConstructor_012(self):
       """
       Test assignment of compressMode attribute, valid value.
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.compressMode)
-      repository.compressMode = "none"
-      self.failUnlessEqual("none", repository.compressMode)
-      repository.compressMode = "bzip2"
-      self.failUnlessEqual("bzip2", repository.compressMode)
-      repository.compressMode = "gzip"
-      self.failUnlessEqual("gzip", repository.compressMode)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.compressMode)
+      mboxDir.compressMode = "none"
+      self.failUnlessEqual("none", mboxDir.compressMode)
+      mboxDir.compressMode = "bzip2"
+      self.failUnlessEqual("bzip2", mboxDir.compressMode)
+      mboxDir.compressMode = "gzip"
+      self.failUnlessEqual("gzip", mboxDir.compressMode)
 
    def testConstructor_013(self):
       """
       Test assignment of compressMode attribute, invalid value (empty).
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.compressMode)
-      self.failUnlessAssignRaises(ValueError, repository, "compressMode", "")
-      self.failUnlessEqual(None, repository.compressMode)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.compressMode)
+      self.failUnlessAssignRaises(ValueError, mboxDir, "compressMode", "")
+      self.failUnlessEqual(None, mboxDir.compressMode)
 
    def testConstructor_014(self):
       """
       Test assignment of compressMode attribute, invalid value (not in list).
       """
-      repository = MboxDir()
-      self.failUnlessEqual(None, repository.compressMode)
-      self.failUnlessAssignRaises(ValueError, repository, "compressMode", "compress")
-      self.failUnlessEqual(None, repository.compressMode)
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.compressMode)
+      self.failUnlessAssignRaises(ValueError, mboxDir, "compressMode", "compress")
+      self.failUnlessEqual(None, mboxDir.compressMode)
 
    def testConstructor_015(self):
       """
@@ -1904,7 +1904,7 @@ class TestLocalConfig(unittest.TestCase):
 
    def testParse_004(self):
       """
-      Parse config document with default modes, several repositories with
+      Parse config document with default modes, several files with
       various overrides and exclusions.
       """
       mboxFiles = []
