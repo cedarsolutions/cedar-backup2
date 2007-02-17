@@ -72,6 +72,7 @@ import getpass
 import random
 import string
 import platform
+from StringIO import StringIO
 
 from CedarBackup2.util import encodePath
 
@@ -306,6 +307,35 @@ def failUnlessAssignRaises(testCase, exception, object, property, value):
       testCase.fail("Expected assignment to raise %s, but got no exception." % (exception.__name__))
    if instead is not None:
       testCase.fail("Expected assignment to raise %s, but got %s instead." % (ValueError, instead.__class__.__name__))
+
+
+###########################
+# captureOutput() function
+###########################
+
+def captureOutput(callable):
+   """
+   Captures the output (stdout, stderr) of a function or a method.
+
+   Some of our functions don't do anything other than just print output.  We
+   need a way to test these functions (at least nominally) but we don't want
+   any of the output spoiling the test suite output.
+
+   This function just creates a dummy file descriptor that can be used as a
+   target by the callable function, rather than C{stdout} or C{stderr}.
+
+   @note: This method assumes that C{callable} doesn't take any arguments
+   besides keyword argument C{fd} to specify the file descriptor.
+
+   @param callable: Callable function or method.
+
+   @return: Output of function, as one big string.
+   """
+   fd = StringIO()
+   callable(fd=fd)
+   result = fd.getvalue()
+   fd.close()
+   return result
 
 
 #########################
