@@ -1078,7 +1078,7 @@ def executeAction(configPath, options, config):
          collectMode = _getCollectMode(local, mboxDir)
          compressMode = _getCompressMode(local, mboxDir)
          lastRevision = _loadLastRevision(config, mboxDir, fullBackup, collectMode)
-         (excludePaths, excludePatterns) = _getExclusions(config, mboxDir)
+         (excludePaths, excludePatterns) = _getExclusions(mboxDir)
          if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
             logger.debug("Mbox directory meets criteria to be backed up today.")
             _backupMboxDir(config, mboxDir.absolutePath, 
@@ -1197,7 +1197,7 @@ def _writeNewRevision(config, item, newRevision):
    except:
       logger.error("Failed to write revision file [%s] to disk." % revisionPath)
 
-def _getExclusions(config, mboxDir):
+def _getExclusions(mboxDir):
    """
    Gets exclusions (file and patterns) associated with an mbox directory.
 
@@ -1209,7 +1209,6 @@ def _getExclusions(config, mboxDir):
    backup for a given directory.  It is derived from the mbox directory's list
    of patterns.
 
-   @param config: Cedar Backup configuration.
    @param mboxDir: Mbox directory object.
 
    @return: Tuple (files, patterns) indicating what to exclude.

@@ -2,6 +2,7 @@ Version 2.10.2		unreleased
 
 	* Fix log message about SCSI id in writers/dvdwriter.py.
 	* Remove TODO from public distribution (use Bugzilla instead)
+	* Minor changes to mbox functionality (refactoring, test cleanup)
 
 Version 2.10.1		30 Jan 2007
 
