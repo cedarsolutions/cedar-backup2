@@ -1640,7 +1640,8 @@
                               remote peers.
                            </para>
                            <para>
-                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                              <emphasis>Restrictions:</emphasis> Must be non-empty,
+                              and unique among all peers.
                            </para>
                         </listitem>
                      </varlistentry>
@@ -1712,7 +1713,8 @@
                               during an rsh-based network call.
                            </para>
                            <para>
-                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                              <emphasis>Restrictions:</emphasis> Must be non-empty,
+                              and unique among all peers.
                            </para>
                         </listitem>
                      </varlistentry>
