@@ -971,7 +971,7 @@ class TestRepository(unittest.TestCase):
       self.failUnless(not repository1 >= repository2)
       self.failUnless(repository1 != repository2)
 
-   def testComparison_004(self):
+   def testComparison_004a(self):
       """
       Test comparison of two differing objects, repositoryPath differs (one None).
       """
@@ -1392,7 +1392,7 @@ class TestRepositoryDir(unittest.TestCase):
       self.failUnless(not repositoryDir1 >= repositoryDir2)
       self.failUnless(repositoryDir1 != repositoryDir2)
 
-   def testComparison_004(self):
+   def testComparison_004a(self):
       """
       Test comparison of two differing objects, directoryPath differs (one None).
       """
