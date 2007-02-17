@@ -50,9 +50,11 @@ collect action.  Aside from its own configuration, it requires the options and
 collect configuration sections in the standard Cedar Backup configuration file.
 
 There are two different kinds of Subversion repositories at this writing: BDB
-(Berkeley Database) and FSFS (a "filesystem within a filesystem").  This
-extension backs up both kinds of repositories in the same way, using C{svnadmin
-dump} in an incremental mode.
+(Berkeley Database) and FSFS (a "filesystem within a filesystem").  Although
+the repository type can be specified in configuration, that information is just
+kept around for reference.  It doesn't affect the backup.  Both kinds of
+repositories are backed up in the same way, using C{svnadmin dump} in an
+incremental mode.
 
 It turns out that FSFS repositories can also be backed up just like any
 other filesystem directory.  If you would rather do that, then use the normal
@@ -77,8 +79,10 @@ from gzip import GzipFile
 
 # Cedar Backup modules
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
-from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild, readString
+from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild, readString, readStringList
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
+from CedarBackup2.filesystem import FilesystemList
+from CedarBackup2.util import UnorderedList
 from CedarBackup2.util import isStartOfWeek, buildNormalizedPath
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import ObjectTypeList, encodePath, changeOwnership
@@ -97,6 +101,228 @@ REVISION_PATH_EXTENSION = "svnlast"
 
 
 ########################################################################
+# RepositoryDir class definition
+########################################################################
+
+class RepositoryDir(object):
+
+   """
+   Class representing Subversion repository directory.
+
+   A repository directory is a directory that contains one or more Subversion
+   repositories.
+
+   The following restrictions exist on data in this class:
+
+      - The directory path must be absolute.
+      - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
+      - The compress mode must be one of the values in L{VALID_COMPRESS_MODES}.
+
+   The repository type value is kept around just for reference.  It doesn't
+   affect the behavior of the backup.
+
+   Relative exclusions are allowed here.  However, there is no configured
+   ignore file, because repository dir backups are not recursive.
+
+   @sort: __init__, __repr__, __str__, __cmp__, directoryPat, collectMode, compressMode
+   """
+
+   def __init__(self, repositoryType=None, directoryPath=None, collectMode=None, compressMode=None,
+                relativeExcludePaths=None, excludePatterns=None):
+      """
+      Constructor for the C{Repository} class.
+
+      @param repositoryPath: Type of repository, for reference
+      @param directoryPath: Absolute path of the Subversion parent directory
+      @param collectMode: Overridden collect mode for this directory.
+      @param compressMode: Overridden compression mode for this directory.
+      @param relativeExcludePaths: List of relative paths to exclude.
+      @param excludePatterns: List of regular expression patterns to exclude
+      """
+      self._repositoryType = None
+      self._directoryPath = None
+      self._collectMode = None
+      self._compressMode = None
+      self._relativeExcludePaths = None
+      self._excludePatterns = None
+      self.repositoryType = repositoryType
+      self.directoryPath = directoryPath
+      self.collectMode = collectMode
+      self.compressMode = compressMode
+      self.relativeExcludePaths = relativeExcludePaths
+      self.excludePatterns = excludePatterns
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "RepositoryDir(%s, %s, %s, %s, %s, %s)" % (self.repositoryType, self.directoryPath, self.collectMode, 
+                                                        self.compressMode, self.relativeExcludePaths, self.excludePatterns)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._repositoryType != other._repositoryType:
+         if self._repositoryType < other._repositoryType:
+            return -1
+         else:
+            return 1
+      if self._directoryPath != other._directoryPath:
+         if self._directoryPath < other._directoryPath:
+            return -1
+         else:
+            return 1
+      if self._collectMode != other._collectMode:
+         if self._collectMode < other._collectMode:
+            return -1
+         else:
+            return 1
+      if self._compressMode != other._compressMode:
+         if self._compressMode < other._compressMode:
+            return -1
+         else:
+            return 1
+      if self._relativeExcludePaths != other._relativeExcludePaths:
+         if self._relativeExcludePaths < other._relativeExcludePaths:
+            return -1
+         else:
+            return 1
+      if self._excludePatterns != other._excludePatterns:
+         if self._excludePatterns < other._excludePatterns:
+            return -1
+         else:
+            return 1
+      return 0
+
+   def _setRepositoryType(self, value):
+      """
+      Property target used to set the repository type.
+      There is no validation; this value is kept around just for reference.
+      """
+      self._repositoryType = value
+
+   def _getRepositoryType(self):
+      """
+      Property target used to get the repository type.
+      """
+      return self._repositoryType
+
+   def _setDirectoryPath(self, value):
+      """
+      Property target used to set the directory path.
+      The value must be an absolute path if it is not C{None}.
+      It does not have to exist on disk at the time of assignment.
+      @raise ValueError: If the value is not an absolute path.
+      @raise ValueError: If the value cannot be encoded properly.
+      """
+      if value is not None:
+         if not os.path.isabs(value):
+            raise ValueError("Repository path must be an absolute path.")
+      self._directoryPath = encodePath(value)
+
+   def _getDirectoryPath(self):
+      """
+      Property target used to get the repository path.
+      """
+      return self._directoryPath
+
+   def _setCollectMode(self, value):
+      """
+      Property target used to set the collect mode.
+      If not C{None}, the mode must be one of the values in L{VALID_COLLECT_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_COLLECT_MODES:
+            raise ValueError("Collect mode must be one of %s." % VALID_COLLECT_MODES)
+      self._collectMode = value
+
+   def _getCollectMode(self):
+      """
+      Property target used to get the collect mode.
+      """
+      return self._collectMode
+
+   def _setCompressMode(self, value):
+      """
+      Property target used to set the compress mode.
+      If not C{None}, the mode must be one of the values in L{VALID_COMPRESS_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_COMPRESS_MODES:
+            raise ValueError("Compress mode must be one of %s." % VALID_COMPRESS_MODES)
+      self._compressMode = value
+
+   def _getCompressMode(self):
+      """
+      Property target used to get the compress mode.
+      """
+      return self._compressMode
+
+   def _setRelativeExcludePaths(self, value):
+      """
+      Property target used to set the relative exclude paths list.
+      Elements do not have to exist on disk at the time of assignment.
+      """
+      if value is None:
+         self._relativeExcludePaths = None
+      else:
+         try:
+            saved = self._relativeExcludePaths
+            self._relativeExcludePaths = UnorderedList()
+            self._relativeExcludePaths.extend(value)
+         except Exception, e:
+            self._relativeExcludePaths = saved
+            raise e
+
+   def _getRelativeExcludePaths(self):
+      """
+      Property target used to get the relative exclude paths list.
+      """
+      return self._relativeExcludePaths
+
+   def _setExcludePatterns(self, value):
+      """
+      Property target used to set the exclude patterns list.
+      """
+      if value is None:
+         self._excludePatterns = None
+      else:
+         try:
+            saved = self._excludePatterns
+            self._excludePatterns = UnorderedList()
+            self._excludePatterns.extend(value)
+         except Exception, e:
+            self._excludePatterns = saved
+            raise e
+
+   def _getExcludePatterns(self):
+      """
+      Property target used to get the exclude patterns list.
+      """
+      return self._excludePatterns
+
+   repositoryType = property(_getRepositoryType, _setRepositoryType, None, doc="Type of this repository, for reference.")
+   directoryPath = property(_getDirectoryPath, _setDirectoryPath, None, doc="Absolute path of the Subversion parent directory.")
+   collectMode = property(_getCollectMode, _setCollectMode, None, doc="Overridden collect mode for this repository.")
+   compressMode = property(_getCompressMode, _setCompressMode, None, doc="Overridden compress mode for this repository.")
+   relativeExcludePaths = property(_getRelativeExcludePaths, _setRelativeExcludePaths, None, "List of relative paths to exclude.")
+   excludePatterns = property(_getExcludePatterns, _setExcludePatterns, None, "List of regular expression patterns to exclude.")
+
+
+########################################################################
 # Repository class definition
 ########################################################################
 
@@ -105,25 +331,23 @@ class Repository(object):
    """
    Class representing generic Subversion repository configuration..
 
-   This is a base class used for validation later.  All subversion repository
-   configuration (no matter how many types there are) must inherit from this
-   class.
-
    The following restrictions exist on data in this class:
 
       - The respository path must be absolute.
       - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
       - The compress mode must be one of the values in L{VALID_COMPRESS_MODES}.
 
+   The repository type value is kept around just for reference.  It doesn't
+   affect the behavior of the backup.
+
    @sort: __init__, __repr__, __str__, __cmp__, repositoryPath, collectMode, compressMode
    """
 
-   def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
+   def __init__(self, repositoryType=None, repositoryPath=None, collectMode=None, compressMode=None):
       """
       Constructor for the C{Repository} class.
 
-      You should never directly instantiate this class.
-      
+      @param repositoryPath: Type of repository, for reference
       @param repositoryPath: Absolute path to a Subversion repository on disk.
       @param collectMode: Overridden collect mode for this directory.
       @param compressMode: Overridden compression mode for this directory.
@@ -132,6 +356,7 @@ class Repository(object):
       self._repositoryPath = None
       self._collectMode = None
       self._compressMode = None
+      self.repositoryType = repositoryType
       self.repositoryPath = repositoryPath
       self.collectMode = collectMode
       self.compressMode = compressMode
@@ -140,7 +365,7 @@ class Repository(object):
       """
       Official string representation for class instance.
       """
-      return "Repository(%s, %s, %s)" % (self.repositoryPath, self.collectMode, self.compressMode)
+      return "Repository(%s, %s, %s, %s)" % (self.repositoryType, self.repositoryPath, self.collectMode, self.compressMode)
 
    def __str__(self):
       """
@@ -177,6 +402,13 @@ class Repository(object):
          else:
             return 1
       return 0
+
+   def _setRepositoryType(self, value):
+      """
+      Property target used to set the repository type.
+      There is no validation; this value is kept around just for reference.
+      """
+      self._repositoryType = value
 
    def _getRepositoryType(self):
       """
@@ -237,88 +469,10 @@ class Repository(object):
       """
       return self._compressMode
 
-   repositoryType = property(_getRepositoryType, None, None, doc="Type of this repository.")
+   repositoryType = property(_getRepositoryType, _setRepositoryType, None, doc="Type of this repository, for reference.")
    repositoryPath = property(_getRepositoryPath, _setRepositoryPath, None, doc="Path to the repository to collect.")
    collectMode = property(_getCollectMode, _setCollectMode, None, doc="Overridden collect mode for this repository.")
    compressMode = property(_getCompressMode, _setCompressMode, None, doc="Overridden compress mode for this repository.")
-
-
-########################################################################
-# BDBRepository class definition
-########################################################################
-
-class BDBRepository(Repository):
-
-   """
-   Class representing Subversion BDB (Berkeley Database) repository configuration.
-
-   The Subversion configuration information is used for backing up single
-   Subversion repository in BDB form.
-
-   The following restrictions exist on data in this class:
-
-      - The respository path must be absolute.
-      - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
-      - The compress mode must be one of the values in L{VALID_COMPRESS_MODES}.
-
-   @sort: __init__, __repr__, __str__, __cmp__, repositoryPath, collectMode, compressMode
-   """
-
-   def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
-      """
-      Constructor for the C{BDBRepository} class.
-      
-      @param repositoryPath: Absolute path to a Subversion repository on disk.
-      @param collectMode: Overridden collect mode for this directory.
-      @param compressMode: Overridden compression mode for this directory.
-      """
-      super(BDBRepository, self).__init__(repositoryPath, collectMode, compressMode)
-      self._repositoryType = "BDB"
-
-   def __repr__(self):
-      """
-      Official string representation for class instance.
-      """
-      return "BDBRepository(%s, %s, %s)" % (self.repositoryPath, self.collectMode, self.compressMode)
-
-
-########################################################################
-# FSFSRepository class definition
-########################################################################
-
-class FSFSRepository(Repository):
-
-   """
-   Class representing Subversion FSFS repository configuration.
-
-   The Subversion configuration information is used for backing up single
-   Subversion repository in FSFS form.
-
-   The following restrictions exist on data in this class:
-
-      - The respository path must be absolute.
-      - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
-      - The compress mode must be one of the values in L{VALID_COMPRESS_MODES}.
-
-   @sort: __init__, __repr__, __str__, __cmp__, repositoryPath, collectMode, compressMode
-   """
-
-   def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
-      """
-      Constructor for the C{FSFSRepository} class.
-      
-      @param repositoryPath: Absolute path to a Subversion repository on disk.
-      @param collectMode: Overridden collect mode for this directory.
-      @param compressMode: Overridden compression mode for this directory.
-      """
-      super(FSFSRepository, self).__init__(repositoryPath, collectMode, compressMode)
-      self._repositoryType = "FSFS"
-
-   def __repr__(self):
-      """
-      Official string representation for class instance.
-      """
-      return "FSFSRepository(%s, %s, %s)" % (self.repositoryPath, self.collectMode, self.compressMode)
 
 
 ########################################################################
@@ -337,38 +491,42 @@ class SubversionConfig(object):
       - The collect mode must be one of the values in L{VALID_COLLECT_MODES}.
       - The compress mode must be one of the values in L{VALID_COMPRESS_MODES}.
       - The repositories list must be a list of C{Repository} objects.
+      - The repositoryDirs list must be a list of C{RepositoryDir} objects.
 
-   For the C{repositories} list, validation is accomplished through the
+   For the two lists, validation is accomplished through the
    L{util.ObjectTypeList} list implementation that overrides common list
-   methods and transparently ensures that each element is a C{Repository}.
+   methods and transparently ensures that each element has the correct type.
 
    @note: Lists within this class are "unordered" for equality comparisons.
 
    @sort: __init__, __repr__, __str__, __cmp__, collectMode, compressMode, repositories
    """
 
-   def __init__(self, collectMode=None, compressMode=None, repositories=None):
+   def __init__(self, collectMode=None, compressMode=None, repositories=None, repositoryDirs=None):
       """
       Constructor for the C{SubversionConfig} class.
 
       @param collectMode: Default collect mode.
       @param compressMode: Default compress mode.
       @param repositories: List of Subversion repositories to back up.
+      @param repositoryDirs: List of Subversion parent directories to back up.
 
       @raise ValueError: If one of the values is invalid.
       """
       self._collectMode = None
       self._compressMode = None
       self._repositories = None
+      self._repositoryDirs = None
       self.collectMode = collectMode
       self.compressMode = compressMode
       self.repositories = repositories
+      self.repositoryDirs = repositoryDirs
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "SubversionConfig(%s, %s, %s)" % (self.collectMode, self.compressMode, self.repositories)
+      return "SubversionConfig(%s, %s, %s, %s)" % (self.collectMode, self.compressMode, self.repositories, self.repositoryDirs)
 
    def __str__(self):
       """
@@ -397,6 +555,11 @@ class SubversionConfig(object):
             return 1
       if self._repositories != other._repositories:
          if self._repositories < other._repositories:
+            return -1
+         else:
+            return 1
+      if self._repositoryDirs != other._repositoryDirs:
+         if self._repositoryDirs < other._repositoryDirs:
             return -1
          else:
             return 1
@@ -438,7 +601,7 @@ class SubversionConfig(object):
 
    def _setRepositories(self, value):
       """
-      Property target used to set the repositorieslist.
+      Property target used to set the repositories list.
       Either the value must be C{None} or each element must be a C{Repository}.
       @raise ValueError: If the value is not a C{Repository}
       """
@@ -459,9 +622,33 @@ class SubversionConfig(object):
       """
       return self._repositories
 
+   def _setRepositoryDirs(self, value):
+      """
+      Property target used to set the repositoryDirs list.
+      Either the value must be C{None} or each element must be a C{Repository}.
+      @raise ValueError: If the value is not a C{Repository}
+      """
+      if value is None:
+         self._repositoryDirs = None
+      else:
+         try:
+            saved = self._repositoryDirs
+            self._repositoryDirs = ObjectTypeList(RepositoryDir, "RepositoryDir")
+            self._repositoryDirs.extend(value)
+         except Exception, e:
+            self._repositoryDirs = saved
+            raise e
+
+   def _getRepositoryDirs(self):
+      """
+      Property target used to get the repositoryDirs list.
+      """
+      return self._repositoryDirs
+
    collectMode = property(_getCollectMode, _setCollectMode, None, doc="Default collect mode.")
    compressMode = property(_getCompressMode, _setCompressMode, None, doc="Default compress mode.")
    repositories = property(_getRepositories, _setRepositories, None, doc="List of Subversion repositories to back up.")
+   repositoryDirs = property(_getRepositoryDirs, _setRepositoryDirs, None, doc="List of Subversion parent directories to back up.")
 
 
 ########################################################################
@@ -590,26 +777,33 @@ class LocalConfig(object):
       mode and compress mode are both optional, but the list of repositories
       must contain at least one entry.
 
-      Each BDB or FSFS repository must contain a repository path, and then must
-      be either able to take collect mode and compress mode configuration from
-      the parent C{SubversionConfig} object, or must set each value on its own.
-      We don't look at any other kinds of repositories that might be in the
-      list.
+      Each repository must contain a repository path, and then must be either
+      able to take collect mode and compress mode configuration from the parent
+      C{SubversionConfig} object, or must set each value on its own.
 
       @raise ValueError: If one of the validations fails.
       """
       if self.subversion is None:
          raise ValueError("Subversion section is required.")
-      if self.subversion.repositories is None or len(self.subversion.repositories) < 1:
+      if ((self.subversion.repositories is None or len(self.subversion.repositories) < 1) and
+          (self.subversion.repositoryDirs is None or len(self.subversion.repositoryDirs) <1)):
          raise ValueError("At least one Subversion repository must be configured.")
-      for repository in self.subversion.repositories:
-         if repository.repositoryType in [ "BDB", "FSFS", ]:
+      if self.subversion.repositories is not None:
+         for repository in self.subversion.repositories:
             if repository.repositoryPath is None:
-               raise ValueError("Each repository directory must set a repository path.")
+               raise ValueError("Each repository must set a repository path.")
             if self.subversion.collectMode is None and repository.collectMode is None:
                raise ValueError("Collect mode must either be set in parent section or individual repository.")
             if self.subversion.compressMode is None and repository.compressMode is None:
                raise ValueError("Compress mode must either be set in parent section or individual repository.")
+      if self.subversion.repositoryDirs is not None:
+         for repositoryDir in self.subversion.repositoryDirs:
+            if repositoryDir.directoryPath is None:
+               raise ValueError("Each repository directory must set a directory path.")
+            if self.subversion.collectMode is None and repositoryDir.collectMode is None:
+               raise ValueError("Collect mode must either be set in parent section or repository directory.")
+            if self.subversion.compressMode is None and repositoryDir.compressMode is None:
+               raise ValueError("Compress mode must either be set in parent section or repository directory.")
 
    def addConfig(self, xmlDom, parentNode):
       """
@@ -627,6 +821,7 @@ class LocalConfig(object):
       item::
 
          repository     //cb_config/subversion/repository
+         repository_dir //cb_config/subversion/repository_dir
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
@@ -638,6 +833,9 @@ class LocalConfig(object):
          if self.subversion.repositories is not None:
             for repository in self.subversion.repositories:
                LocalConfig._addRepository(xmlDom, sectionNode, repository)
+         if self.subversion.repositoryDirs is not None:
+            for repositoryDir in self.subversion.repositoryDirs:
+               LocalConfig._addRepositoryDir(xmlDom, sectionNode, repositoryDir)
 
    def _parseXmlData(self, xmlData):
       """
@@ -666,9 +864,11 @@ class LocalConfig(object):
       We also read groups of the following item, one list element per
       item::
 
-         repositories   //cb_config/subversion/repository
+         repositories    //cb_config/subversion/repository
+         repository_dirs //cb_config/subversion/repository_dir
 
-      The repositories are parsed by L{_parseRepositories}.
+      The repositories are parsed by L{_parseRepositories}, and the repository
+      dirs are parsed by L{_parseRepositoryDirs}.
 
       @param parent: Parent node to search beneath.
 
@@ -682,6 +882,7 @@ class LocalConfig(object):
          subversion.collectMode = readString(section, "collect_mode")
          subversion.compressMode = readString(section, "compress_mode")
          subversion.repositories = LocalConfig._parseRepositories(section)
+         subversion.repositoryDirs = LocalConfig._parseRepositoryDirs(section)
       return subversion
    _parseSubversion = staticmethod(_parseSubversion)
 
@@ -696,10 +897,8 @@ class LocalConfig(object):
          collectMode             collect_mode
          compressMode            compess_mode 
 
-      The type field is optional, and if it isn't there we assume a BDB
-      repositories.  Note that we will currently ignore any repository listing
-      which has a set type other than C{["BDB", "FSFS", ]}.  However, we will
-      log a warning if we do this.
+      The type field is optional, and its value is kept around only for
+      reference.
 
       @param parent: Parent node to search beneath.
 
@@ -709,21 +908,12 @@ class LocalConfig(object):
       lst = []
       for entry in readChildren(parent, "repository"):
          if isElement(entry):
-            repositoryType = readString(entry, "type")
-            if repositoryType in [ None, "BDB", ]:    # BDB is the default type 
-               repository = BDBRepository()
-               repository.repositoryPath = readString(entry, "abs_path")
-               repository.collectMode = readString(entry, "collect_mode")
-               repository.compressMode = readString(entry, "compress_mode")
-               lst.append(repository)
-            elif repositoryType == "FSFS":
-               repository = FSFSRepository()
-               repository.repositoryPath = readString(entry, "abs_path")
-               repository.collectMode = readString(entry, "collect_mode")
-               repository.compressMode = readString(entry, "compress_mode")
-               lst.append(repository)
-            else:
-               logger.warn("Warning: Ignoring Subversion repository with unknown type [%s]." % repositoryType)
+            repository = Repository()
+            repository.repositoryType = readString(entry, "type")
+            repository.repositoryPath = readString(entry, "abs_path")
+            repository.collectMode = readString(entry, "collect_mode")
+            repository.compressMode = readString(entry, "compress_mode")
+            lst.append(repository)
       if lst == []:
          lst = None
       return lst
@@ -757,6 +947,116 @@ class LocalConfig(object):
          addStringNode(xmlDom, sectionNode, "collect_mode", repository.collectMode)
          addStringNode(xmlDom, sectionNode, "compress_mode", repository.compressMode)
    _addRepository = staticmethod(_addRepository)
+
+   def _parseRepositoryDirs(parent):
+      """
+      Reads a list of C{RepositoryDir} objects from immediately beneath the parent.
+
+      We read the following individual fields::
+
+         repositoryType          type
+         directoryPath           abs_path
+         collectMode             collect_mode
+         compressMode            compess_mode 
+
+      We also read groups of the following items, one list element per
+      item::
+
+         relativeExcludePaths    exclude/rel_path
+         excludePatterns         exclude/pattern
+
+      The exclusions are parsed by L{_parseExclusions}. 
+
+      The type field is optional, and its value is kept around only for
+      reference.
+
+      @param parent: Parent node to search beneath.
+
+      @return: List of C{RepositoryDir} objects or C{None} if none are found.
+      @raise ValueError: If some filled-in value is invalid.
+      """
+      lst = []
+      for entry in readChildren(parent, "repository_dir"):
+         if isElement(entry):
+            repositoryDir = RepositoryDir()
+            repositoryDir.repositoryType = readString(entry, "type")
+            repositoryDir.directoryPath = readString(entry, "abs_path")
+            repositoryDir.collectMode = readString(entry, "collect_mode")
+            repositoryDir.compressMode = readString(entry, "compress_mode")
+            (repositoryDir.relativeExcludePaths, repositoryDir.excludePatterns) = LocalConfig._parseExclusions(entry)
+            lst.append(repositoryDir)
+      if lst == []:
+         lst = None
+      return lst
+   _parseRepositoryDirs = staticmethod(_parseRepositoryDirs)
+
+   def _parseExclusions(parentNode):
+      """
+      Reads exclusions data from immediately beneath the parent.
+
+      We read groups of the following items, one list element per item::
+
+         relative    exclude/rel_path
+         patterns    exclude/pattern
+
+      If there are none of some pattern (i.e. no relative path items) then
+      C{None} will be returned for that item in the tuple.
+
+      @param parentNode: Parent node to search beneath.
+
+      @return: Tuple of (relative, patterns) exclusions.
+      """
+      section = readFirstChild(parentNode, "exclude")
+      if section is None:
+         return (None, None)
+      else:
+         relative = readStringList(section, "rel_path")
+         patterns = readStringList(section, "pattern")
+         return (relative, patterns)
+   _parseExclusions = staticmethod(_parseExclusions) 
+
+   def _addRepositoryDir(xmlDom, parentNode, repositoryDir):
+      """
+      Adds a repository dir container as the next child of a parent.
+
+      We add the following fields to the document::
+
+         repositoryType          repository_dir/type
+         directoryPath           repository_dir/abs_path
+         collectMode             repository_dir/collect_mode
+         compressMode            repository_dir/compress_mode
+
+      We also add groups of the following items, one list element per item::
+
+         relativeExcludePaths    dir/exclude/rel_path
+         excludePatterns         dir/exclude/pattern
+
+      The <repository_dir> node itself is created as the next child of the
+      parent node.  This method only adds one repository node.  The parent must
+      loop for each repository dir in the C{SubversionConfig} object.
+
+      If C{repositoryDir} is C{None}, this method call will be a no-op.
+
+      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param parentNode: Parent that the section should be appended to.
+      @param repository: Repository to be added to the document.
+      """
+      if repositoryDir is not None:
+         sectionNode = addContainerNode(xmlDom, parentNode, "repository_dir")
+         addStringNode(xmlDom, sectionNode, "type", repositoryDir.repositoryType)
+         addStringNode(xmlDom, sectionNode, "abs_path", repositoryDir.directoryPath)
+         addStringNode(xmlDom, sectionNode, "collect_mode", repositoryDir.collectMode)
+         addStringNode(xmlDom, sectionNode, "compress_mode", repositoryDir.compressMode)
+         if ((repositoryDir.relativeExcludePaths is not None and repositoryDir.relativeExcludePaths != []) or
+             (repositoryDir.excludePatterns is not None and repositoryDir.excludePatterns != [])):
+            excludeNode = addContainerNode(xmlDom, sectionNode, "exclude")
+            if repositoryDir.relativeExcludePaths is not None:
+               for relativePath in repositoryDir.relativeExcludePaths:
+                  addStringNode(xmlDom, excludeNode, "rel_path", relativePath)
+            if repositoryDir.excludePatterns is not None:
+               for pattern in repositoryDir.excludePatterns:
+                  addStringNode(xmlDom, excludeNode, "pattern", pattern)
+   _addRepositoryDir = staticmethod(_addRepositoryDir)
 
 
 ########################################################################
@@ -792,29 +1092,22 @@ def executeAction(configPath, options, config):
    logger.debug("Full backup flag is [%s]" % fullBackup)
    if local.subversion.repositories is not None:
       for repository in local.subversion.repositories:
-         logger.debug("Working with repository [%s]" % repository.repositoryPath)
-         logger.debug("Repository type is [%s]" % repository.repositoryType)
-         if repository.repositoryType in ["BDB", "FSFS", ]:
-            collectMode = _getCollectMode(local, repository)
-            compressMode = _getCompressMode(local, repository)
-            revisionPath = _getRevisionPath(config, repository)
-            if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
-               logger.debug("Repository meets criteria to be backed up today.")
-               _backupRepository(config, repository.repositoryType,
-                                 repository.repositoryPath, revisionPath, 
-                                 fullBackup, collectMode, compressMode)
-            else:
-               logger.debug("Repository will not be backed up, per collect mode.")
-         else:
-            logger.debug("Repository will not be backed up, since it is not type BDB or FSFS.")
-         logger.info("Completed backing up Subversion repository [%s]." % repository.repositoryPath)
+         _backupRepository(config, local, todayIsStart, fullBackup, repository)
+   if local.subversion.repositoryDirs is not None:
+      for repositoryDir in local.subversion.repositoryDirs:
+         logger.debug("Working with repository directory [%s]." % repositoryDir.directoryPath)
+         for repositoryPath in _getRepositoryPaths(repositoryDir):
+            repository = Repository(repositoryDir.repositoryType, repositoryPath, 
+                                    repositoryDir.collectMode, repositoryDir.compressMode)
+            _backupRepository(config, local, todayIsStart, fullBackup, repository)
+         logger.info("Completed backing up Subversion repository directory [%s]." % repositoryDir.directoryPath)
    logger.info("Executed the Subversion extended action successfully.")
 
 def _getCollectMode(local, repository):
    """
    Gets the collect mode that should be used for a repository.
    Use repository's if possible, otherwise take from subversion section.
-   @param repository: BDBRepository object.
+   @param repository: Repository object.
    @return: Collect mode to use.
    """
    if repository.collectMode is None:
@@ -829,7 +1122,7 @@ def _getCompressMode(local, repository):
    Gets the compress mode that should be used for a repository.
    Use repository's if possible, otherwise take from subversion section.
    @param local: LocalConfig object.
-   @param repository: BDBRepository object.
+   @param repository: Repository object.
    @return: Compress mode to use.
    """
    if repository.compressMode is None:
@@ -843,7 +1136,7 @@ def _getRevisionPath(config, repository):
    """
    Gets the path to the revision file associated with a repository.
    @param config: Config object.
-   @param repository: BDBRepository object.
+   @param repository: Repository object.
    @return: Absolute path to the revision file associated with the repository.
    """
    normalized = buildNormalizedPath(repository.repositoryPath)
@@ -872,46 +1165,91 @@ def _getBackupPath(config, repositoryPath, compressMode, startRevision, endRevis
    logger.debug("Backup file path is [%s]" % backupPath)
    return backupPath
 
-def _backupRepository(config, repositoryType, repositoryPath, revisionPath, fullBackup, collectMode, compressMode):
+def _getRepositoryPaths(repositoryDir):
    """
-   Backs up an individual Subversion repository (either BDB or FSFS).
+   Gets a list of child repository paths within a repository directory.
+   @param repositoryDir: RepositoryDirectory
+   """
+   (excludePaths, excludePatterns) = _getExclusions(repositoryDir)
+   fsList = FilesystemList()
+   fsList.excludeFiles = True
+   fsList.excludeLinks = True
+   fsList.excludePaths = excludePaths
+   fsList.excludePatterns = excludePatterns
+   fsList.addDirContents(path=repositoryDir.directoryPath, recursive=False, addSelf=False)
+   return fsList
+
+def _getExclusions(repositoryDir):
+   """
+   Gets exclusions (file and patterns) associated with an repository directory.
+
+   The returned files value is a list of absolute paths to be excluded from the
+   backup for a given directory.  It is derived from the repository directory's
+   relative exclude paths.
+   
+   The returned patterns value is a list of patterns to be excluded from the
+   backup for a given directory.  It is derived from the repository directory's
+   list of patterns.
+
+   @param repositoryDir: Repository directory object.
+
+   @return: Tuple (files, patterns) indicating what to exclude.
+   """
+   paths = []
+   if repositoryDir.relativeExcludePaths is not None:
+      for relativePath in repositoryDir.relativeExcludePaths:
+         paths.append(os.path.join(repositoryDir.directoryPath, relativePath))
+   patterns = []
+   if repositoryDir.excludePatterns is not None:
+      patterns.extend(repositoryDir.excludePatterns)
+   logger.debug("Exclude paths: %s" % paths)
+   logger.debug("Exclude patterns: %s" % patterns)
+   return(paths, patterns)
+
+def _backupRepository(config, local, todayIsStart, fullBackup, repository):
+   """
+   Backs up an individual Subversion repository.
 
    This internal method wraps the public methods and adds some functionality
    to work better with the extended action itself.
 
    @param config: Cedar Backup configuration.
-   @param repositoryType: Type of the repository (assumed to be BDB or FSFS).
-   @param repositoryPath: Path to Subversion repository to back up.
-   @param revisionPath: Path used to store incremental revision information.
-   @param fullBackup: Indicates whether this should be a full backup.
-   @param collectMode: Collect mode to use.
-   @param compressMode: Compress mode to use.
+   @param local: Local configuration
+   @param todayIsStart: Indicates whether today is start of week
+   @param fullBackup: Full backup flag
+   @param repository: Repository to operate on 
     
    @raise ValueError: If some value is missing or invalid.
    @raise IOError: If there is a problem executing the Subversion dump.
    """
+   logger.debug("Working with repository [%s]" % repository.repositoryPath)
+   logger.debug("Repository type is [%s]" % repository.repositoryType)
+   collectMode = _getCollectMode(local, repository)
+   compressMode = _getCompressMode(local, repository)
+   revisionPath = _getRevisionPath(config, repository)
+   if not (fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart)):
+      logger.debug("Repository will not be backed up, per collect mode.")
+      return
+   logger.debug("Repository meets criteria to be backed up today.")
    if collectMode != "incr" or fullBackup:
       startRevision = 0
-      endRevision = getYoungestRevision(repositoryPath)
+      endRevision = getYoungestRevision(repository.repositoryPath)
       logger.debug("Using full backup, revision: (%d, %d)." % (startRevision, endRevision))
    else:
       if fullBackup:
          startRevision = 0
-         endRevision = getYoungestRevision(repositoryPath)
+         endRevision = getYoungestRevision(repository.repositoryPath)
       else:
          startRevision = _loadLastRevision(revisionPath) + 1
-         endRevision = getYoungestRevision(repositoryPath)
+         endRevision = getYoungestRevision(repository.repositoryPath)
          if startRevision > endRevision:
-            logger.info("No need to back up repository [%s]; no new revisions." % repositoryPath)
+            logger.info("No need to back up repository [%s]; no new revisions." % repository.repositoryPath)
             return
       logger.debug("Using incremental backup, revision: (%d, %d)." % (startRevision, endRevision))
-   backupPath = _getBackupPath(config, repositoryPath, compressMode, startRevision, endRevision)
+   backupPath = _getBackupPath(config, repository.repositoryPath, compressMode, startRevision, endRevision)
    outputFile = _getOutputFile(backupPath, compressMode)
    try:
-      if repositoryType == "BDB":
-         backupBDBRepository(repositoryPath, outputFile, startRevision, endRevision)
-      else:
-         backupFSFSRepository(repositoryPath, outputFile, startRevision, endRevision)
+      backupRepository(repository.repositoryPath, outputFile, startRevision, endRevision)
    finally:
       outputFile.close()
    if not os.path.exists(backupPath):
@@ -919,6 +1257,7 @@ def _backupRepository(config, repositoryType, repositoryPath, revisionPath, full
    changeOwnership(backupPath, config.options.backupUser, config.options.backupGroup)
    if collectMode == "incr":
       _writeLastRevision(config, revisionPath, endRevision)
+   logger.info("Completed backing up Subversion repository [%s]." % repository.repositoryPath)
 
 def _getOutputFile(backupPath, compressMode):
    """
@@ -985,13 +1324,13 @@ def _writeLastRevision(config, revisionPath, endRevision):
       logger.error("Failed to write revision file [%s] to disk." % revisionPath)
 
 
-#################################
-# backupBDBRepository() function
-#################################
+##############################
+# backupRepository() function
+##############################
 
-def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
+def backupRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
    """
-   Backs up an individual Subversion BDB repository.
+   Backs up an individual Subversion repository.
 
    The starting and ending revision values control an incremental backup.  If
    the starting revision is not passed in, then revision zero (the start of the
@@ -1011,7 +1350,7 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
    recovery using C{svnadmin recover}.
 
    @param repositoryPath: Path to Subversion repository to back up
-   @type repositoryPath: String path representing Subversion BDB repository on disk.
+   @type repositoryPath: String path representing Subversion repository on disk.
 
    @param backupFile: Python file object to use for writing backup.
    @type backupFile: Python file object as from C{open()} or C{file()}.
@@ -1039,66 +1378,7 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
    command = resolveCommand(SVNADMIN_COMMAND)
    result = executeCommand(command, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
    if result != 0:
-      raise IOError("Error [%d] executing Subversion dump for BDB repository [%s]." % (result, repositoryPath))
-   logger.debug("Completed dumping subversion repository [%s]." % repositoryPath)
-
-
-##################################
-# backupFSFSRepository() function
-##################################
-
-def backupFSFSRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
-   """
-   Backs up an individual Subversion FSFS repository.
-
-   The starting and ending revision values control an incremental backup.  If
-   the starting revision is not passed in, then revision zero (the start of the
-   repository) is assumed.  If the ending revision is not passed in, then the
-   youngest revision in the database will be used as the endpoint.
-
-   The backup data will be written into the passed-in back file.  Normally,
-   this would be an object as returned from C{open}, but it is possible to use
-   something like a C{GzipFile} to write compressed output.  The caller is
-   responsible for closing the passed-in backup file.
-
-   You should only use this function to back up an FSFS repository if you want
-   to use C{svnadmin dump} for your backup.  Use a normal filesystem copy
-   otherwise.  That will be simpler, and possibly less prone to problems like
-   updates to the repository in the middle of a backup.
-
-   @note: This function should either be run as root or as the owner of the
-   Subversion repository.
-
-   @param repositoryPath: Path to Subversion repository to back up
-   @type repositoryPath: String path representing Subversion FSFS repository on disk.
-
-   @param backupFile: Python file object to use for writing backup.
-   @type backupFile: Python file object as from C{open()} or C{file()}.
-   
-   @param startRevision: Starting repository revision to back up (for incremental backups)
-   @type startRevision: Integer value >= 0.
-
-   @param endRevision: Ending repository revision to back up (for incremental backups)
-   @type endRevision: Integer value >= 0.
-
-   @raise ValueError: If some value is missing or invalid.
-   @raise IOError: If there is a problem executing the Subversion dump.
-   """
-   if startRevision is None:
-      startRevision = 0
-   if endRevision is None:
-      endRevision = getYoungestRevision(repositoryPath)
-   if int(startRevision) < 0:
-      raise ValueError("Start revision must be >= 0.")
-   if int(endRevision) < 0:
-      raise ValueError("End revision must be >= 0.")
-   if startRevision > endRevision:
-      raise ValueError("Start revision must be <= end revision.")
-   args = [ "dump", "--quiet", "-r%s:%s" % (startRevision, endRevision), "--incremental", repositoryPath, ]
-   command = resolveCommand(SVNADMIN_COMMAND)
-   result = executeCommand(command, args, returnOutput=False, ignoreStderr=True, doNotLog=True, outputFile=backupFile)[0]
-   if result != 0:
-      raise IOError("Error [%d] executing Subversion dump for FSFS repository [%s]." % (result, repositoryPath))
+      raise IOError("Error [%d] executing Subversion dump for repository [%s]." % (result, repositoryPath))
    logger.debug("Completed dumping subversion repository [%s]." % repositoryPath)
 
 
@@ -1114,7 +1394,7 @@ def getYoungestRevision(repositoryPath):
    Subversion repository.
 
    @param repositoryPath: Path to Subversion repository to look in.
-   @type repositoryPath: String path representing Subversion BDB repository on disk.
+   @type repositoryPath: String path representing Subversion repository on disk.
 
    @return: Youngest revision as an integer.
    
@@ -1129,4 +1409,64 @@ def getYoungestRevision(repositoryPath):
    if len(output) != 1:
       raise ValueError("Unable to parse 'svnlook youngest' output.")
    return int(output[0])
+
+
+########################################################################
+# Deprecated functionality
+########################################################################
+
+class BDBRepository(Repository):
+
+   """
+   Class representing Subversion BDB (Berkeley Database) repository configuration.
+   @deprecated: This object is deprecated.  Use a simple L{Repository} instead.
+   """
+
+   def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
+      """
+      Constructor for the C{BDBRepository} class.
+      """
+      super(BDBRepository, self).__init__("BDB", repositoryPath, collectMode, compressMode)
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "BDBRepository(%s, %s, %s)" % (self.repositoryPath, self.collectMode, self.compressMode)
+
+
+class FSFSRepository(Repository):
+
+   """
+   Class representing Subversion FSFS repository configuration.
+   @deprecated: This object is deprecated.  Use a simple L{Repository} instead.
+   """
+
+   def __init__(self, repositoryPath=None, collectMode=None, compressMode=None):
+      """
+      Constructor for the C{FSFSRepository} class.
+      """
+      super(FSFSRepository, self).__init__("FSFS", repositoryPath, collectMode, compressMode)
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "FSFSRepository(%s, %s, %s)" % (self.repositoryPath, self.collectMode, self.compressMode)
+
+
+def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
+   """
+   Backs up an individual Subversion BDB repository.
+   @deprecated: Use L{backupRepository} instead.
+   """
+   return backupRepository(repositoryPath, backupFile, startRevision, endRevision);
+
+
+def backupFSFSRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
+   """
+   Backs up an individual Subversion FSFS repository.
+   @deprecated: Use L{backupRepository} instead.
+   """
+   return backupRepository(repositoryPath, backupFile, startRevision, endRevision);
 

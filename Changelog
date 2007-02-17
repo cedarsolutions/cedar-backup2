@@ -3,6 +3,11 @@ Version 2.10.2		unreleased
 	* Fix log message about SCSI id in writers/dvdwriter.py.
 	* Remove TODO from public distribution (use Bugzilla instead)
 	* Minor changes to mbox functionality (refactoring, test cleanup)
+	* Support repository directories in Subversion extension (closes: #46)
+	  - Add <repository_dir> configuration modeled after <mbox_dir>
+	  - Make <type> configuration value optional and for reference only
+	  - Refactor code and deprecate BDBRepository and FSFSRepository
+	  - Update user manual to reflect new functionality
 
 Version 2.10.1		30 Jan 2007
 

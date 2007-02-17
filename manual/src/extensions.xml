@@ -85,7 +85,7 @@
 
       <para>
          This extension relies on the options and collect configuration
-         sectionns in the standard Cedar Backup configuration file, but
+         sections in the standard Cedar Backup configuration file, but
          requires no new configuration of its own.  
       </para>
 
@@ -119,10 +119,14 @@
          writing: BDB (Berkeley Database) and FSFS (a "filesystem within a
          filesystem").  This extension backs up both kinds of repositories in
          the same way, using <command>svnadmin dump</command> in an incremental
-         mode.  It turns out that FSFS repositories can also be backed up just
-         like any other filesystem directory.  If you would rather do the
-         backup that way, then use the normal collect action rather than this
-         extension.  If you decide to do that, be sure to consult the 
+         mode.  
+      </para>
+         
+      <para>
+         It turns out that FSFS repositories can also be backed up just like
+         any other filesystem directory.  If you would rather do the backup
+         that way, then use the normal collect action rather than this
+         extension.  If you decide to do that, be sure to consult the
          Subversion documentation and make sure you understand the limitations
          of this kind of backup. <footnote><para>For instance, see the
          <quote>Backups</quote> section on this page: 
@@ -158,19 +162,16 @@
    &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
    &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
    &lt;repository&gt;
-      &lt;type&gt;FSFS&lt;/type&gt;
-      &lt;abs_path&gt;/opt/public/svn/software&lt;/abs_path&gt;
-      &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
-   &lt;/repository&gt;
-   &lt;repository&gt;
-      &lt;type&gt;FSFS&lt;/type&gt;
       &lt;abs_path&gt;/opt/public/svn/docs&lt;/abs_path&gt;
    &lt;/repository&gt;
    &lt;repository&gt;
-      &lt;type&gt;BDB&lt;/type&gt;
       &lt;abs_path&gt;/opt/public/svn/web&lt;/abs_path&gt;
       &lt;compress_mode&gt;gzip&lt;/compress_mode&gt;
    &lt;/repository&gt;
+   &lt;repository_dir&gt;
+      &lt;abs_path&gt;/opt/private/svn&lt;/abs_path&gt;
+      &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
+   &lt;/repository_dir&gt;
 &lt;/subversion&gt;
       </programlisting>
 
@@ -248,36 +249,16 @@
                   a specific Subversion repository to be backed up.
                </para>
                <para>
-                  This section can be repeated as many times as is
-                  necessary.  At least one repository directory must be
+                  This section can be repeated as many times as is necessary.
+                  At least one repository or repository directory must be
                   configured.
                </para>
                <para>
-                  The repository subsection contains the following fields:
+                  The <literal>repository</literal> subsection contains the
+                  following fields:
                </para>
 
                <variablelist>
-
-                  <varlistentry>
-                     <term><literal>type</literal></term>
-                     <listitem>
-                        <para>Repository type for this repository.</para>
-                        <para>
-                           The repository type indicates what kind of
-                           Subversion repository backend is in use.  The
-                           Subversion extension recognizes two kinds of
-                           backends: BDB and FSFS, as described above.
-                        </para>
-                        <para>
-                           This field is optional.  If it doesn't exist, the
-                           backup will assume the BDB type.
-                        </para>
-                        <para>
-                           <emphasis>Restrictions:</emphasis> Must be one of
-                           <literal>BDB</literal> or <literal>FSFS</literal>.
-                        </para>
-                     </listitem>
-                  </varlistentry>
 
                   <varlistentry>
                      <term><literal>collect_mode</literal></term>
@@ -321,6 +302,154 @@
                         <para>
                            <emphasis>Restrictions:</emphasis> Must be an absolute path.
                         </para>
+                     </listitem>
+                  </varlistentry>
+               </variablelist>
+
+            </listitem>
+
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>repository_dir</literal></term>
+            <listitem>
+               <para>A Subversion parent repository directory be collected.</para>
+               <para>
+                  This is a subsection which contains information about a
+                  Subversion parent repository directory to be backed up.  Any
+                  subdirectory immediately within this directory is assumed to
+                  be a Subversion repository, and will be backed up.
+               </para>
+               <para>
+                  This section can be repeated as many times as is necessary.
+                  At least one repository or repository directory must be
+                  configured.
+               </para>
+               <para>
+                  The <literal>repository_dir</literal> subsection contains the
+                  following fields:
+               </para>
+
+               <variablelist>
+
+                  <varlistentry>
+                     <term><literal>collect_mode</literal></term>
+                     <listitem>
+                        <para>Collect mode for this repository.</para>
+                        <para>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default collect mode.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>daily</literal>, <literal>weekly</literal> or
+                           <literal>incr</literal>.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>compress_mode</literal></term>
+                     <listitem>
+                        <para>Compress mode for this repository.</para>
+                        <para>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default compress mode.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be one of
+                           <literal>none</literal>, <literal>gzip</literal> or
+                           <literal>bzip2</literal>.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>abs_path</literal></term>
+                     <listitem>
+                        <para>
+                           Absolute path of the Subversion repository to
+                           back up.
+                        </para>
+                        <para>
+                           <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                        </para>
+                     </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                     <term><literal>exclude</literal></term>
+                     <listitem>
+                        <para>List of paths or patterns to exclude from the backup.</para>
+                        <para>
+                           This is a subsection which contains a set of paths
+                           and patterns to be excluded within this subversion
+                           parent directory.
+                        </para>
+                        <para>
+                           This section is entirely optional, and if it exists
+                           can also be empty.  
+                        </para>
+                        <para>
+                           The exclude subsection can contain one or more of each of
+                           the following fields:
+                        </para>
+
+                        <variablelist>
+
+                           <varlistentry>
+                              <term><literal>rel_path</literal></term>
+                              <listitem>
+                                 <para>
+                                    A relative path to be excluded from the
+                                    backup.
+                                 </para>
+                                 <para>
+                                    The path is assumed to be relative to the
+                                    subversion parent directory itself.  For instance, if
+                                    the configured subversion parent directory is
+                                    <filename>/opt/svn</filename> a
+                                    configured relative path of
+                                    <filename>software</filename> would exclude the
+                                    path <filename>/opt/svn/software</filename>.
+                                 </para>
+                                 <para>
+                                    This field can be repeated as many times as
+                                    is necessary.
+                                 </para>
+                                 <para>
+                                    <emphasis>Restrictions:</emphasis> Must be non-empty.
+                                 </para>
+                              </listitem>
+                           </varlistentry>
+
+                           <varlistentry>
+                              <term><literal>pattern</literal></term>
+                              <listitem>
+                                 <para>
+                                    A pattern to be excluded from the backup.
+                                 </para>
+                                 <para>
+                                    The pattern must be a Python regular
+                                    expression.  <footnoteref linkend="cedar-config-foot-regex"/> 
+                                    It is assumed to be bounded at front and
+                                    back by the beginning and end of the
+                                    string (i.e. it is treated as if it
+                                    begins with <literal>^</literal> and
+                                    ends with <literal>$</literal>).
+                                 </para>
+                                 <para>
+                                    This field can be repeated as many times as
+                                    is necessary.
+                                 </para>
+                                 <para>
+                                    <emphasis>Restrictions:</emphasis> Must be non-empty
+                                 </para>
+                              </listitem>
+                           </varlistentry>
+                          
+                        </variablelist>
+
                      </listitem>
                   </varlistentry>
                </variablelist>
