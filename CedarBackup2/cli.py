@@ -205,7 +205,7 @@ def cli():
       return 0
 
    try:
-      logfile = _setupLogging(options)
+      logfile = setupLogging(options)
    except Exception, e:
       sys.stderr.write("Error setting up logging: %s\n" % e)
       return 3
@@ -224,7 +224,7 @@ def cli():
    try:
       logger.info("Configuration path is [%s]" % configPath)
       config = Config(xmlPath=configPath)
-      _setupPathResolver(config)
+      setupPathResolver(config)
       actionSet = _ActionSet(options.actions, config.extensions, config.options.hooks)
    except Exception, e:
       logger.error("Error reading or handling configuration: %s" % e)
@@ -731,6 +731,7 @@ def _version(fd=sys.stdout):
    fd.write(" Cedar Backup version %s, released %s.\n" % (VERSION, DATE))
    fd.write("\n")
    fd.write(" Copyright (c) %s %s <%s>.\n" % (COPYRIGHT, AUTHOR, EMAIL))
+   fd.write(" See CREDITS for a list of included code and other contributors.\n")
    fd.write(" This is free software; there is NO warranty.  See the\n")
    fd.write(" GNU General Public License version 2 for copying conditions.\n")
    fd.write("\n")
@@ -738,11 +739,11 @@ def _version(fd=sys.stdout):
    fd.write("\n")
 
 
-###########################
-# _setupLogging() function
-###########################
+##########################
+# setupLogging() function
+##########################
 
-def _setupLogging(options):
+def setupLogging(options):
    """
    Set up logging based on command-line options.
 
@@ -893,11 +894,11 @@ def _setupDiskOutputLogging(outputLogger, logfile, options):
    outputLogger.addHandler(handler)
 
 
-################################
-# _setupPathResolver() function
-################################
+###############################
+# setupPathResolver() function
+###############################
 
-def _setupPathResolver(config):
+def setupPathResolver(config):
    """
    Set up the path resolver singleton based on configuration.
 

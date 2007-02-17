@@ -159,6 +159,7 @@ def main():
       import test.subversiontests as subversiontests
       import test.mboxtests as mboxtests
       import test.encrypttests as encrypttests
+      import test.spantests as spantests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -206,6 +207,7 @@ def main():
    if args == [] or "subversion" in args: unittests["subversion"] = subversiontests.suite()
    if args == [] or "mbox" in args: unittests["mbox"] = mboxtests.suite()
    if args == [] or "encrypt" in args: unittests["encrypt"] = encrypttests.suite()
+   if args == [] or "span" in args: unittests["span"] = spantests.suite()
    if args != []: print "*** Executing specific tests: %s" % unittests.keys()
 
    # Create and run the test suite

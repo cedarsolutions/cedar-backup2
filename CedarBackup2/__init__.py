@@ -50,7 +50,5 @@ written in the Python programming language.
 # Using 'from CedarBackup2 import *' will just import the modules listed
 # in the __all__ variable.
 
-__all__ = [ 'release', 'cli', 'actions', 'util', 'knapsack', 
-            'filesystem', 'peer', 'config', 
-            'actions', 'extend', 'writers', ] 
-
+__all__ = [ 'actions', 'cli', 'config', 'extend', 'filesystem', 'knapsack', 
+            'peer', 'release', 'tools', 'util', 'writers', ]
