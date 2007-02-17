@@ -341,13 +341,20 @@ class DvdWriter(object):
    # Constructor
    ##############
 
-   def __init__(self, device, scsiId=None, driveSpeed=None, mediaType=MEDIA_DVDPLUSRW, unittest=False):
+   def __init__(self, device, scsiId=None, driveSpeed=None, 
+                mediaType=MEDIA_DVDPLUSRW, noEject=False, unittest=False):
       """
       Initializes a DVD writer object.
 
       Since C{growisofs} can only address devices using the device path (i.e.
       C{/dev/dvd}), the hardware id will always be set based on the device.  If
       passed in, it will be saved for reference purposes only.
+
+      We have no way to query the device to ask whether it has a tray or can be
+      safely opened and closed.  So, the C{noEject} flag is used to set these
+      values.  If C{noEject=False}, then we assume a tray exists and open/close
+      is safe.  If C{noEject=True}, then we assume that there is no tray and
+      open/close is not safe.
 
       @note: The C{unittest} parameter should never be set to C{True}
       outside of Cedar Backup code.  It is intended for use in unit testing
@@ -365,6 +372,9 @@ class DvdWriter(object):
       @param mediaType: Type of the media that is assumed to be in the drive.
       @type mediaType: One of the valid media type as discussed above.
 
+      @param noEject: Tells Cedar Backup that the device cannot safely be ejected
+      @type noEject: Boolean true/false
+
       @param unittest: Turns off certain validations, for use in unit testing.
       @type unittest: Boolean true/false 
 
@@ -379,8 +389,12 @@ class DvdWriter(object):
       self._scsiId = scsiId  # not validated, because it's just for reference
       self._driveSpeed = validateDriveSpeed(driveSpeed)
       self._media = MediaDefinition(mediaType)
-      self._deviceHasTray = True   # just default it
-      self._deviceCanEject = True  # just default it
+      if noEject:
+         self._deviceHasTray = False
+         self._deviceCanEject = False
+      else:
+         self._deviceHasTray = True   # just assume 
+         self._deviceCanEject = True  # just assume 
 
 
    #############

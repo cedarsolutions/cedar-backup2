@@ -383,7 +383,8 @@ class CdWriter(object):
    # Constructor
    ##############
 
-   def __init__(self, device, scsiId=None, driveSpeed=None, mediaType=MEDIA_CDRW_74, unittest=False):
+   def __init__(self, device, scsiId=None, driveSpeed=None, 
+                mediaType=MEDIA_CDRW_74, noEject=False, unittest=False):
       """
       Initializes a CD writer object.
 
@@ -401,6 +402,10 @@ class CdWriter(object):
       is passed in, then the hardware id attribute will be taken from the SCSI
       id.  Otherwise, the hardware id will be taken from the device.
 
+      If cdrecord improperly detects whether your writer device has a tray and
+      can be safely opened and closed, then pass in C{noEject=False}.  This
+      will override the properties and the device will never be ejected.
+
       @note: The C{unittest} parameter should never be set to C{True}
       outside of Cedar Backup code.  It is intended for use in unit testing
       Cedar Backup internals and has no other sensible purpose.
@@ -417,6 +422,9 @@ class CdWriter(object):
       @param mediaType: Type of the media that is assumed to be in the drive.
       @type mediaType: One of the valid media type as discussed above.
 
+      @param noEject: Overrides properties to indicate that the device does not support eject.
+      @type noEject: Boolean true/false
+
       @param unittest: Turns off certain validations, for use in unit testing.
       @type unittest: Boolean true/false
 
@@ -430,6 +438,7 @@ class CdWriter(object):
       self._scsiId = validateScsiId(scsiId)
       self._driveSpeed = validateDriveSpeed(driveSpeed)
       self._media = MediaDefinition(mediaType)
+      self._noEject = noEject
       if not unittest:
          (self._deviceType,
           self._deviceVendor,
@@ -730,14 +739,17 @@ class CdWriter(object):
       does not have a tray or does not support ejecting its media, then we do
       nothing.
 
+      If the writer was constructed with C{noEject=True}, then this is a no-op.
+
       @raise IOError: If there is an error talking to the device.
       """
-      if self._deviceHasTray and self._deviceCanEject:
-         args = CdWriter._buildOpenTrayArgs(self._device)
-         command = resolveCommand(EJECT_COMMAND)
-         result = executeCommand(command, args)[0]
-         if result != 0:
-            raise IOError("Error (%d) executing eject command to open tray." % result)
+      if not self._noEject:
+         if self._deviceHasTray and self._deviceCanEject:
+            args = CdWriter._buildOpenTrayArgs(self._device)
+            command = resolveCommand(EJECT_COMMAND)
+            result = executeCommand(command, args)[0]
+            if result != 0:
+               raise IOError("Error (%d) executing eject command to open tray." % result)
 
    def closeTray(self):
       """
@@ -749,14 +761,17 @@ class CdWriter(object):
       does not have a tray or does not support ejecting its media, then we do
       nothing.
 
+      If the writer was constructed with C{noEject=True}, then this is a no-op.
+
       @raise IOError: If there is an error talking to the device.
       """
-      if self._deviceHasTray and self._deviceCanEject:
-         args = CdWriter._buildCloseTrayArgs(self._device)
-         command = resolveCommand(EJECT_COMMAND)
-         result = executeCommand(command, args)[0]
-         if result != 0:
-            raise IOError("Error (%d) executing eject command to close tray." % result)
+      if not self._noEject:
+         if self._deviceHasTray and self._deviceCanEject:
+            args = CdWriter._buildCloseTrayArgs(self._device)
+            command = resolveCommand(EJECT_COMMAND)
+            result = executeCommand(command, args)[0]
+            if result != 0:
+               raise IOError("Error (%d) executing eject command to close tray." % result)
 
    def refreshMedia(self):
       """

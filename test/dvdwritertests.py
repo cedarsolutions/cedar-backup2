@@ -362,7 +362,7 @@ class TestDvdWriter(unittest.TestCase):
       """
       Test with all valid parameters.
       """
-      dvdwriter = DvdWriter("/dev/dvd", "ATA:1,0,0", 1, MEDIA_DVDPLUSR, unittest=True)
+      dvdwriter = DvdWriter("/dev/dvd", "ATA:1,0,0", 1, MEDIA_DVDPLUSR, noEject=False, unittest=True)
       self.failUnlessEqual("/dev/dvd", dvdwriter.device)
       self.failUnlessEqual("ATA:1,0,0", dvdwriter.scsiId)
       self.failUnlessEqual("/dev/dvd", dvdwriter.hardwareId)
@@ -370,6 +370,19 @@ class TestDvdWriter(unittest.TestCase):
       self.failUnlessEqual(MEDIA_DVDPLUSR, dvdwriter.media.mediaType)
       self.failUnlessEqual(True, dvdwriter.deviceHasTray)
       self.failUnlessEqual(True, dvdwriter.deviceCanEject)
+
+   def testConstructor_016(self):
+      """
+      Test with all valid parameters.
+      """
+      dvdwriter = DvdWriter("/dev/dvd", "ATA:1,0,0", 1, MEDIA_DVDPLUSR, noEject=True, unittest=True)
+      self.failUnlessEqual("/dev/dvd", dvdwriter.device)
+      self.failUnlessEqual("ATA:1,0,0", dvdwriter.scsiId)
+      self.failUnlessEqual("/dev/dvd", dvdwriter.hardwareId)
+      self.failUnlessEqual(1, dvdwriter.driveSpeed)
+      self.failUnlessEqual(MEDIA_DVDPLUSR, dvdwriter.media.mediaType)
+      self.failUnlessEqual(False, dvdwriter.deviceHasTray)
+      self.failUnlessEqual(False, dvdwriter.deviceCanEject)
 
 
    ######################

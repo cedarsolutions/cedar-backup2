@@ -157,16 +157,20 @@ def createWriter(config):
    @raise ValueError: If there is a problem getting the writer.
    @raise IOError: If there is a problem creating the writer object.
    """
+   devicePath = config.store.devicePath
+   deviceScsiId = config.store.deviceScsiId
+   driveSpeed = config.store.driveSpeed
+   noEject = config.store.noEject
    deviceType = _getDeviceType(config)
    mediaType = _getMediaType(config)
-   if deviceMounted(config.store.devicePath):
-      raise IOError("Device [%s] is currently mounted." % (config.store.devicePath))
+   if deviceMounted(devicePath):
+      raise IOError("Device [%s] is currently mounted." % (devicePath))
    if deviceType == "cdwriter":
-      return CdWriter(config.store.devicePath, config.store.deviceScsiId, config.store.driveSpeed, mediaType)
+      return CdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject)
    elif deviceType == "dvdwriter":
-      return DvdWriter(config.store.devicePath, config.store.deviceScsiId, config.store.driveSpeed, mediaType)
+      return DvdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject)
    else:
-      raise ValueError("Device type [%s] is invalid." % config.store.deviceType)
+      raise ValueError("Device type [%s] is invalid." % deviceType)
 
 
 ########################

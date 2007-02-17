@@ -251,6 +251,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_002(self):
       """
@@ -265,6 +266,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_003(self):
       """
@@ -279,6 +281,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_004(self):
       """
@@ -331,6 +334,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_010(self):
       """
@@ -361,6 +365,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(1, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_013(self):
       """
@@ -375,6 +380,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(5, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_014(self):
       """
@@ -405,6 +411,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDR_74, writer.media.mediaType)
       self.failUnlessEqual(False, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_017(self):
       """
@@ -419,6 +426,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_74, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_018(self):
       """
@@ -433,6 +441,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDR_80, writer.media.mediaType)
       self.failUnlessEqual(False, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_019(self):
       """
@@ -447,6 +456,7 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_80, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
 
    def testConstructor_020(self):
       """
@@ -461,6 +471,22 @@ class TestCdWriter(unittest.TestCase):
       self.failUnlessEqual(None, writer.driveSpeed)
       self.failUnlessEqual(MEDIA_CDRW_80, writer.media.mediaType)
       self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(False, writer._noEject)
+
+   def testConstructor_021(self):
+      """
+      Test the constructor with device C{/dev/null}, which is writable and
+      exists.  Use None for SCSI id and a media type of MEDIA_CDRW_80.  Make
+      sure that C{unittest=True}.  Use C{noEject=True}.
+      """
+      writer = CdWriter(device="/dev/null", scsiId=None, mediaType=MEDIA_CDRW_80, noEject=True, unittest=True)
+      self.failUnlessEqual("/dev/null", writer.device)
+      self.failUnlessEqual(None, writer.scsiId)
+      self.failUnlessEqual("/dev/null", writer.hardwareId)
+      self.failUnlessEqual(None, writer.driveSpeed)
+      self.failUnlessEqual(MEDIA_CDRW_80, writer.media.mediaType)
+      self.failUnlessEqual(True, writer.isRewritable())
+      self.failUnlessEqual(True, writer._noEject)
 
 
    ####################################
