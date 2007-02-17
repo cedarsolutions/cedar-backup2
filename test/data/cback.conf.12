@@ -10,5 +10,6 @@
       <drive_speed>4</drive_speed>
       <check_data>Y</check_data>
       <warn_midnite>Y</warn_midnite>
+      <no_eject>Y</no_eject>
    </store>
 </cb_config>

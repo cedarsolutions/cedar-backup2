@@ -465,6 +465,7 @@
       &lt;drive_speed&gt;4&lt;/drive_speed&gt;
       &lt;check_data&gt;Y&lt;/check_data&gt;
       &lt;warn_midnite&gt;Y&lt;/warn_midnite&gt;
+      &lt;no_eject&gt;N&lt;/no_eject&gt;
    &lt;/store&gt;
    &lt;purge&gt;
       &lt;dir&gt;
@@ -1830,6 +1831,7 @@
    &lt;drive_speed&gt;4&lt;/drive_speed&gt;
    &lt;check_data&gt;Y&lt;/check_data&gt;
    &lt;warn_midnite&gt;Y&lt;/warn_midnite&gt;
+   &lt;no_eject&gt;N&lt;/no_eject&gt;
 &lt;/store&gt;
          </programlisting>
 
@@ -2050,6 +2052,40 @@
                      will not care about this warning.  Other users will expect
                      to never cross a boundary, and want to be notified that
                      something <quote>strange</quote> might have happened.
+                  </para>
+                  <para>
+                     This field is optional.  If it doesn't exist, then
+                     <literal>N</literal> will be assumed.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>no_eject</literal></term>
+               <listitem>
+                  <para>Indicates that the writer device should not be ejected.</para>
+                  <para>
+                     Under some circumstances, Cedar Backup ejects (opens and
+                     closes) the writer device.  This is done because some
+                     writer devices need to re-load the media before noticing a
+                     media state change (like a new session).
+                  </para>
+                  <para>
+                     For most writer devices this is safe, because they have a
+                     tray that can be opened and closed.  If your writer device
+                     does not have a tray <emphasis>and</emphasis> Cedar Backup
+                     does not properly detect this, then set this flag.  Cedar
+                     Backup will not ever issue an eject command to your
+                     writer.
+                  </para>
+                  <para>
+                     Note: this could cause problems with your backup.  For
+                     instance, with many writers, the check data step may fail
+                     if the media is not reloaded first.  If this happens to
+                     you, you may need to get a different writer device.
                   </para>
                   <para>
                      This field is optional.  If it doesn't exist, then

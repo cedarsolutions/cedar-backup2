@@ -1,10 +1,13 @@
 Version 2.10.2		unreleased
 
 	* Fix log message about SCSI id in writers/dvdwriter.py.
-	* Remove TODO from public distribution (use Bugzilla instead)
-	* Minor changes to mbox functionality (refactoring, test cleanup)
-	* Add validation for duplicate peer and extension names (closes: #37, #38)
-	* Support repository directories in Subversion extension (closes: #46)
+	* Remove TODO from public distribution (use Bugzilla instead).
+	* Minor changes to mbox functionality (refactoring, test cleanup).
+	* Add validation for duplicate peer and extension names (closes: #37, #38).
+	* Support a <no_eject> flag in store configuration (closes: #39).
+	  - Change StoreConfig, CdWriter and DvdWriter to accept new flag
+	  - Update user manual to document new flag, along with warnings about it
+	* Support repository directories in Subversion extension (closes: #46).
 	  - Add <repository_dir> configuration modeled after <mbox_dir>
 	  - Make <type> configuration value optional and for reference only
 	  - Refactor code and deprecate BDBRepository and FSFSRepository

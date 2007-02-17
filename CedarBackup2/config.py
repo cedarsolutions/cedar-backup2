@@ -2744,12 +2744,12 @@ class StoreConfig(object):
 
    @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
           mediaType, deviceType, devicePath, deviceScsiId, 
-          driveSpeed, checkData, warnMidnite
+          driveSpeed, checkData, warnMidnite, noEject
    """
 
    def __init__(self, sourceDir=None, mediaType=None, deviceType=None, 
                 devicePath=None, deviceScsiId=None, driveSpeed=None,
-                checkData=False, warnMidnite=False):
+                checkData=False, warnMidnite=False, noEject=False):
       """
       Constructor for the C{StoreConfig} class.
 
@@ -2761,6 +2761,7 @@ class StoreConfig(object):
       @param driveSpeed: Speed of the drive, i.e. C{2} for 2x drive, etc.
       @param checkData: Whether resulting image should be validated.
       @param warnMidnite: Whether to generate warnings for crossing midnite.
+      @param noEject: Indicates that the writer device should not be ejected.
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -2772,6 +2773,7 @@ class StoreConfig(object):
       self._driveSpeed = None
       self._checkData = None
       self._warnMidnite = None
+      self._noEject = None
       self.sourceDir = sourceDir
       self.mediaType = mediaType
       self.deviceType = deviceType
@@ -2780,14 +2782,15 @@ class StoreConfig(object):
       self.driveSpeed = driveSpeed
       self.checkData = checkData
       self.warnMidnite = warnMidnite
+      self.noEject = noEject
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
-                                                              self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                              self.checkData, self.warnMidnite)
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
+                                                                  self.devicePath, self.deviceScsiId, self.driveSpeed,
+                                                                  self.checkData, self.warnMidnite, self.noEject)
 
    def __str__(self):
       """
@@ -2840,6 +2843,11 @@ class StoreConfig(object):
             return 1
       if self._warnMidnite != other._warnMidnite:
          if self._warnMidnite < other._warnMidnite:
+            return -1
+         else:
+            return 1
+      if self._noEject != other._noEject:
+         if self._noEject < other._noEject:
             return -1
          else:
             return 1
@@ -2980,6 +2988,22 @@ class StoreConfig(object):
       """
       return self._warnMidnite
 
+   def _setNoEject(self, value):
+      """
+      Property target used to set the no-eject flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._noEject = True
+      else:
+         self._noEject = False
+
+   def _getNoEject(self):
+      """
+      Property target used to get the no-eject flag.
+      """
+      return self._noEject
+
    sourceDir = property(_getSourceDir, _setSourceDir, None, "Directory whose contents should be written to media.")
    mediaType = property(_getMediaType, _setMediaType, None, "Type of the media (see notes above).")
    deviceType = property(_getDeviceType, _setDeviceType, None, "Type of the device (optional, see notes above).")
@@ -2988,6 +3012,7 @@ class StoreConfig(object):
    driveSpeed = property(_getDriveSpeed, _setDriveSpeed, None, "Speed of the drive.")
    checkData = property(_getCheckData, _setCheckData, None, "Whether resulting image should be validated.")
    warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
+   noEject = property(_getNoEject, _setNoEject, None, "Indicates that the writer device should not be ejected.")
 
 
 ########################################################################
@@ -3707,6 +3732,7 @@ class Config(object):
          driveSpeed        //cb_config/store/drive_speed
          checkData         //cb_config/store/check_data
          warnMidnite       //cb_config/store/warn_midnite
+         noEject           //cb_config/store/no_eject
 
       @param parentNode: Parent node to search beneath.
 
@@ -3725,6 +3751,7 @@ class Config(object):
          store.driveSpeed = readInteger(sectionNode, "drive_speed")
          store.checkData = readBoolean(sectionNode, "check_data")
          store.warnMidnite = readBoolean(sectionNode, "warn_midnite")
+         store.noEject = readBoolean(sectionNode, "no_eject")
       return store
    _parseStore = staticmethod(_parseStore)
 
@@ -4316,6 +4343,7 @@ class Config(object):
          driveSpeed        //cb_config/store/drive_speed
          checkData         //cb_config/store/check_data
          warnMidnite       //cb_config/store/warn_midnite
+         noEject           //cb_config/store/no_eject
 
       If C{storeConfig} is C{None}, then no container will be added.
 
@@ -4333,6 +4361,7 @@ class Config(object):
          addIntegerNode(xmlDom, sectionNode, "drive_speed", storeConfig.driveSpeed)
          addBooleanNode(xmlDom, sectionNode, "check_data", storeConfig.checkData)
          addBooleanNode(xmlDom, sectionNode, "warn_midnite", storeConfig.warnMidnite)
+         addBooleanNode(xmlDom, sectionNode, "no_eject", storeConfig.noEject)
    _addStore = staticmethod(_addStore)
 
    def _addPurge(xmlDom, parentNode, purgeConfig):
