@@ -1360,7 +1360,7 @@ def compareContents(path1, path2, verbose=False):
    @type path1: String representing a path on disk
 
    @param path2: First path to compare.
-   @type path12 String representing a path on disk
+   @type path2: String representing a path on disk
 
    @param verbose: Indicates whether a verbose response should be given.
    @type verbose: Boolean
@@ -1376,18 +1376,35 @@ def compareContents(path1, path2, verbose=False):
       path2List = BackupFileList()
       path2List.addDirContents(path2)
       path2Digest = path2List.generateDigestMap(stripPrefix=normalizeDir(path2))
-      if not verbose:
-         if path1Digest != path2Digest:
-            raise ValueError("Consistency check failed.")
-      else:
-         list1 = UnorderedList(path1Digest.keys())
-         list2 = UnorderedList(path2Digest.keys())
-         if list1 != list2:
-            raise ValueError("Directories contain a different set of files.")
-         for key in list1:
-            if path1Digest[key] != path2Digest[key]:
-               raise ValueError("File contents for [%s] vary between directories." % key)
+      compareDigestMaps(path1Digest, path2Digest, verbose)
    except IOError, e:
       logger.error("I/O error encountered during consistency check.")
       raise e
+
+def compareDigestMaps(digest1, digest2, verbose=False):
+   """
+   Compares two digest maps and throws an exception if they differ.
+
+   @param digest1: First digest to compare.
+   @type digest1: Digest as returned from BackupFileList.generateDigestMap()
+
+   @param digest2: Second digest to compare.
+   @type digest2: Digest as returned from BackupFileList.generateDigestMap()
+
+   @param verbose: Indicates whether a verbose response should be given.
+   @type verbose: Boolean
+
+   @raise ValueError: If the two directories are not equivalent.
+   """
+   if not verbose:
+      if digest1 != digest2:
+         raise ValueError("Consistency check failed.")
+   else:
+      list1 = UnorderedList(digest1.keys())
+      list2 = UnorderedList(digest2.keys())
+      if list1 != list2:
+         raise ValueError("Directories contain a different set of files.")
+      for key in list1:
+         if digest1[key] != digest2[key]:
+            raise ValueError("File contents for [%s] vary between directories." % key)
 
