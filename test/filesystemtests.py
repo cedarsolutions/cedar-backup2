@@ -15643,6 +15643,122 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in fittedList)
 
 
+   ######################
+   # Test generateSpan()
+   ######################
+         
+   def testGenerateSpan_001(self):
+      """
+      Test on an empty list.
+      """
+      backupList = BackupFileList()
+      spanSet = backupList.generateSpan(2000)
+      self.failUnlessEqual(0, len(spanSet))
+
+   def testGenerateSpan_002(self):
+      """
+      Test a set of files that all fit in one span item.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      if platformSupportsLinks():
+         self.failUnlessEqual(15, count)
+         self.failUnlessEqual(15, len(backupList))
+         self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+         spanSet = backupList.generateSpan(2000)
+         self.failUnlessEqual(1, len(spanSet))
+         spanItem = spanSet[0]
+         self.failUnlessEqual(15, len(spanItem.fileList))
+         self.failUnlessEqual(1116, spanItem.size)
+         self.failUnlessEqual(2000, spanItem.capacity)
+         self.failUnlessEqual((1116.0/2000.0)*100.0, spanItem.utilization)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "file001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "file002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "link001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "link002", ]) in spanItem.fileList)
+
+   def testGenerateSpan_002(self):
+      """
+      Test a set of files that all fit in two span items.
+      """
+      self.extractTar("tree9")
+      path = self.buildPath(["tree9"])
+      backupList = BackupFileList()
+      count = backupList.addDirContents(path)
+      if platformSupportsLinks():
+         self.failUnlessEqual(15, count)
+         self.failUnlessEqual(15, len(backupList))
+         self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
+         self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
+         spanSet = backupList.generateSpan(760)
+         self.failUnlessEqual(2, len(spanSet))
+         spanItem = spanSet[0]
+         self.failUnlessEqual(3, len(spanItem.fileList))
+         self.failUnlessEqual(753, spanItem.size)
+         self.failUnlessEqual(760, spanItem.capacity)
+         self.failUnlessEqual((753.0/760.0)*100.0, spanItem.utilization)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "file001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "file001", ]) in spanItem.fileList)
+         spanItem = spanSet[1]
+         self.failUnlessEqual(3, len(spanItem.fileList))
+         self.failUnlessEqual(363, spanItem.size)
+         self.failUnlessEqual(760, spanItem.capacity)
+         self.failUnlessEqual((363.0/760.0)*100.0, spanItem.utilization)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir001", "link003", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link003", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "file002", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "link001", ]) in spanItem.fileList)
+         self.failUnless(self.buildPath([ "tree9", "link002", ]) in spanItem.fileList)
+
+
    #########################
    # Test generateTarfile()
    #########################
@@ -22077,11 +22193,14 @@ class TestFunctions(unittest.TestCase):
 
 def suite():
    """Returns a suite containing all the test cases in this module."""
+#   return unittest.TestSuite((
+#                              unittest.makeSuite(TestFilesystemList, 'test'),
+#                              unittest.makeSuite(TestBackupFileList, 'test'),
+#                              unittest.makeSuite(TestPurgeItemList, 'test'), 
+#                              unittest.makeSuite(TestFunctions, 'test'),
+#                            ))
    return unittest.TestSuite((
-                              unittest.makeSuite(TestFilesystemList, 'test'),
-                              unittest.makeSuite(TestBackupFileList, 'test'),
-                              unittest.makeSuite(TestPurgeItemList, 'test'), 
-                              unittest.makeSuite(TestFunctions, 'test'),
+                              unittest.makeSuite(TestBackupFileList, 'testGenerate'),
                             ))
 
 
