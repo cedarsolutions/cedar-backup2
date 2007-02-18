@@ -243,6 +243,8 @@ class DvdWriter(object):
 
       Only these methods will be used by other Cedar Backup functionality
       that expects a compatible image writer.
+   
+      The media attribute is also assumed to be available.
 
       Unlike the C{CdWriter}, the C{DvdWriter} can only operate in terms of
       filesystem devices, not SCSI devices.  So, although the constructor
