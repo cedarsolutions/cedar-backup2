@@ -60,16 +60,18 @@ directly from the user.
 import sys
 import os
 import logging
+import tempfile
 
 # Cedar Backup modules 
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
-from CedarBackup2.util import displayBytes, convertSize, UNIT_SECTORS, UNIT_BYTES
+from CedarBackup2.util import displayBytes, convertSize, mount, unmount
+from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES
 from CedarBackup2.config import Config
-from CedarBackup2.filesystem import FilesystemList, BackupFileList
+from CedarBackup2.filesystem import FilesystemList, BackupFileList, compareDigestMaps, normalizeDir
 from CedarBackup2.cli import Options, setupLogging, setupPathResolver
 from CedarBackup2.cli import DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, DEFAULT_MODE
 from CedarBackup2.actions.constants import STORE_INDICATOR
-from CedarBackup2.actions.store import createWriter
+from CedarBackup2.actions.store import createWriter, consistencyCheck, writeStoreIndicator
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 
 
@@ -91,7 +93,10 @@ class SpanOptions(Options):
 
    Most of the cback command-line options are exactly what we need here --
    logfile path, permissions, verbosity, etc.  However, we need to make a few
-   tweaks since we don't accept any actions.
+   tweaks since we don't accept any actions.  
+
+   Also, a few extra command line options that we accept are really ignored
+   underneath.  I just don't care about that for a tool like this.
    """
 
    def validate(self):
@@ -133,8 +138,8 @@ def cli():
       - C{6}: Error executing other parts of the script
 
    @note: This script uses print rather than logging to the INFO level, because
-   it is interactive.  Underlying functionality uses the logging mechanism
-   exclusively.
+   it is interactive.  Underlying Cedar Backup functionality uses the logging
+   mechanism exclusively.
 
    @return: Error code as described above.
    """
@@ -232,8 +237,8 @@ def _usage(fd=sys.stderr):
    fd.write("\n")
    fd.write("   -h, --help     Display this usage/help listing\n")
    fd.write("   -V, --version  Display version information\n")
-   fd.write("   -c, --config   Path to config file (default: %s)\n" % DEFAULT_CONFIG)
    fd.write("   -b, --verbose  Print verbose output as well as logging to disk\n")
+   fd.write("   -c, --config   Path to config file (default: %s)\n" % DEFAULT_CONFIG)
    fd.write("   -l, --logfile  Path to logfile (default: %s)\n" % DEFAULT_LOGFILE)
    fd.write("   -o, --owner    Logfile ownership, user:group (default: %s:%s)\n" % (DEFAULT_OWNERSHIP[0], DEFAULT_OWNERSHIP[1]))
    fd.write("   -m, --mode     Octal logfile permissions mode (default: %o)\n" % DEFAULT_MODE)
@@ -344,7 +349,7 @@ def _executeAction(options, config):
    print "a percentage of capacity to set aside.  The cushion reduces the"
    print "capacity of your media, so a 1.5% cushion leaves 98.5% remaining."
    print ""
-   cushion = _getFloat("What cushion percentage?", default=1.5)
+   cushion = _getFloat("What cushion percentage?", default=3.5)
    print "==="
 
    realCapacity = ((100.0 - cushion)/100.0) * mediaCapacity
@@ -378,7 +383,7 @@ def _executeAction(options, config):
 
       print ""
       print "Please wait, generating file lists (this may take a while)..."
-      spanSet = fileList.generateSpan(capacity=mediaCapacity, algorithm="%s_fit" % algorithm)
+      spanSet = fileList.generateSpan(capacity=realCapacity, algorithm="%s_fit" % algorithm)
       print "==="
 
       print ""
@@ -388,8 +393,8 @@ def _executeAction(options, config):
       counter = 0
       for item in spanSet:
          counter += 1
-         print "Disc %d: %d files, %s, %d%% utilization" % (counter, len(item.fileList), 
-                                                            displayBytes(item.size), item.utilization)
+         print "Disc %d: %d files, %s, %.2f%% utilization" % (counter, len(item.fileList), 
+                                                              displayBytes(item.size), item.utilization)
       print ""
       if _getYesNoAnswer("Accept this solution?", default="Y"):
          happy = True
@@ -400,14 +405,14 @@ def _executeAction(options, config):
    print "==="
 
    counter = 0
-   for item in spanSet:
+   for spanItem in spanSet:
       counter += 1
-      print ""
-      print "Writing disc %d..." % counter
-      print "Done writing disc %d." % counter
+      _writeDisc(config, writer, spanItem)
       print ""
       _getReturn("Please replace the disc in your backup device.\nPress return when ready.")
       print "==="
+
+   writeStoreIndicator(config, dailyDirs)
 
    print ""
    print "Completed writing all discs."
@@ -420,15 +425,16 @@ def _executeAction(options, config):
 def _findDailyDirs(stagingDir):
    """
    Returns a list of all daily staging directories that have not yet been
-   encrypted.
+   stored.
 
    The store indicator file C{cback.store} will be written to a daily staging
    directory once that directory is written to disc.  So, this function looks
    at each daily staging directory within the configured staging directory, and
    returns a list of those which do not contain the indicator file.
 
-   Returned is a tuple containing two items: a list of staging directories, and
-   a BackupFileList containing all files among those staging directories.
+   Returned is a tuple containing two items: a list of daily staging
+   directories, and a BackupFileList containing all files among those staging
+   directories.
 
    @param stagingDir: Configured staging directory 
 
@@ -475,6 +481,70 @@ def _getWriter(config):
    writer = createWriter(config)
    mediaCapacity = convertSize(writer.media.capacity, UNIT_SECTORS, UNIT_BYTES)
    return (writer, mediaCapacity)
+
+
+########################
+# _writeDisc() function
+########################
+
+def _writeDisc(config, writer, spanItem):
+   """
+   Writes a span item to disc.
+   @param config: Cedar Backup configuration
+   @param writer: Writer to use
+   @param spanItem: Span item to write
+   """
+   print ""
+   print "Initializing image..."
+   writer.initializeImage(newDisc=True, tmpdir=config.options.workingDir)
+   for path in spanItem.fileList:
+      graftPoint = os.path.dirname(path.replace(config.store.sourceDir, "", 1))
+      writer.addImageEntry(path, graftPoint)
+   print "Writing image to disc..."
+   writer.writeImage()
+   if config.store.checkData:
+      print "Running consistency check..."
+      _consistencyCheck(config, spanItem.fileList)
+   print "Write process is complete."
+
+
+###############################
+# _consistencyCheck() function
+###############################
+
+def _consistencyCheck(config, fileList):
+   """
+   Runs a consistency check against media in the backup device.
+
+   The function mounts the device at a temporary mount point in the working
+   directory, and then compares the passed-in file list's digest map with the
+   one generated from the disc.  The two lists should be identical.
+
+   If no exceptions are thrown, there were no problems with the consistency
+   check.
+
+   @warning: The implementation of this function is very UNIX-specific.
+
+   @param config: Config object.
+   @param fileList: BackupFileList whose contents to check against
+
+   @raise ValueError: If the check fails
+   @raise IOError: If there is a problem working with the media.
+   """
+   logger.debug("Running consistency check.")
+   mountPoint = tempfile.mkdtemp(dir=config.options.workingDir)
+   try:
+      mount(config.store.devicePath, mountPoint, "iso9660")
+      discList = BackupFileList()
+      discList.addDirContents(mountPoint)
+      sourceList = BackupFileList()
+      sourceList.extend(fileList)
+      discListDigest = discList.generateDigestMap(stripPrefix=normalizeDir(mountPoint))
+      sourceListDigest = sourceList.generateDigestMap(stripPrefix=normalizeDir(config.store.sourceDir))
+      compareDigestMaps(sourceListDigest, discListDigest, verbose=True)
+      logger.info("Consistency check completed.  No problems found.")
+   finally:
+      unmount(mountPoint, True, 5, 1)  # try 5 times, and remove mount point when done 
 
 
 #########################################################################
