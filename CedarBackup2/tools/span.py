@@ -58,13 +58,18 @@ directly from the user.
 
 # System modules
 import sys
+import os
 import logging
 
 # Cedar Backup modules 
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
+from CedarBackup2.util import displayBytes, convertSize, UNIT_SECTORS, UNIT_BYTES
 from CedarBackup2.config import Config
+from CedarBackup2.filesystem import FilesystemList, BackupFileList
 from CedarBackup2.cli import Options, setupLogging, setupPathResolver
 from CedarBackup2.cli import DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, DEFAULT_MODE
+from CedarBackup2.actions.constants import STORE_INDICATOR
+from CedarBackup2.actions.store import createWriter
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 
 
@@ -217,6 +222,8 @@ def _usage(fd=sys.stderr):
    fd.write("\n")
    fd.write(" Usage: cback-span [switches]\n")
    fd.write("\n")
+   fd.write(" Cedar Backup 'span' tool.\n")
+   fd.write("\n")
    fd.write(" This Cedar Backup utility spans staged data between multiple discs.\n")
    fd.write(" It is a utility, not an extension, and requires user interaction.\n")
    fd.write("\n")
@@ -275,7 +282,274 @@ def _executeAction(options, config):
 
    @raise Exception: Under many generic error conditions
    """
-   pass
+   print ""
+   print "================================================";
+   print "           Cedar Backup 'span' tool"
+   print "================================================";
+   print ""
+   print "This the Cedar Backup span tool.  It is used to split up staging"
+   print "data when that staging data does not fit onto a single disc."
+   print ""
+   print "This utility operates using Cedar Backup configuration.  Configuration"
+   print "specifies which staging directory to look at and which writer device"
+   print "and media type to use."
+   print ""
+   if not _getYesNoAnswer("Continue?", default="Y"):
+      return
+   print "==="
+
+   print ""
+   print "Cedar Backup store configuration looks like this:"
+   print ""
+   print "   Source Directory...: %s" % config.store.sourceDir
+   print "   Media Type.........: %s" % config.store.mediaType
+   print "   Device Type........: %s" % config.store.deviceType
+   print "   Device Path........: %s" % config.store.devicePath
+   print "   Device SCSI ID.....: %s" % config.store.deviceScsiId
+   print "   Drive Speed........: %s" % config.store.driveSpeed
+   print "   Check Data Flag....: %s" % config.store.checkData
+   print "   No Eject Flag......: %s" % config.store.noEject
+   print ""
+   if not _getYesNoAnswer("Is this OK?", default="Y"):
+      return
+   print "==="
+
+   (writer, mediaCapacity) = _getWriter(config)
+
+   print ""
+   print "Please wait, indexing the source directory (this may take a while)..."
+   (dailyDirs, fileList) = _findDailyDirs(config.store.sourceDir)
+   print "==="
+
+   print ""
+   print "The following daily staging directories have not yet been written to disc:"
+   print ""
+   for dailyDir in dailyDirs:
+      print "   %s" % dailyDir
+
+   totalSize = fileList.totalSize()
+   print ""
+   print "The total size of the data in these directories is %s." % displayBytes(totalSize)
+   print ""
+   if not _getYesNoAnswer("Continue?", default="Y"):
+      return
+   print "==="
+
+   print ""
+   print "Based on configuration, the capacity of your media is %s." % displayBytes(mediaCapacity)
+
+   print ""
+   print "Since estimates are not perfect and there is some uncertainly in"
+   print "media capacity calculations, it is good to have a \"cushion\","
+   print "a percentage of capacity to set aside.  The cushion reduces the"
+   print "capacity of your media, so a 1.5% cushion leaves 98.5% remaining."
+   print ""
+   cushion = _getFloat("What cushion percentage?", default=1.5)
+   print "==="
+
+   realCapacity = ((100.0 - cushion)/100.0) * mediaCapacity
+   minimumDiscs = (totalSize/realCapacity) + 1;
+   print ""
+   print "The real capacity, taking into account the %.2f%% cushion, is %s." % (cushion, displayBytes(realCapacity))
+   print "It will take at least %d disc(s) to store your %s of data." % (minimumDiscs, displayBytes(totalSize))
+   print ""
+   if not _getYesNoAnswer("Continue?", default="Y"):
+      return
+   print "==="
+   
+   happy = False
+   while not happy:
+      print ""
+      print "Which algorithm do you want to use to span your data across"
+      print "multiple discs?"
+      print ""
+      print "The following algorithms are available:"
+      print ""
+      print "   first....: The \"first-fit\" algorithm"
+      print "   best.....: The \"best-fit\" algorithm"
+      print "   worst....: The \"worst-fit\" algorithm"
+      print "   alternate: The \"alternate-fit\" algorithm"
+      print ""
+      print "If you don't like the results you will have a chance to try a"
+      print "different one later."
+      print ""
+      algorithm = _getChoiceAnswer("Which algorithm?", "worst", [ "first", "best", "worst", "alternate",])
+      print "==="
+
+      print ""
+      print "Please wait, generating file lists (this may take a while)..."
+      spanSet = fileList.generateSpan(capacity=mediaCapacity, algorithm="%s_fit" % algorithm)
+      print "==="
+
+      print ""
+      print "Using the \"%s-fit\" algorithm, Cedar Backup can split your data" % algorithm
+      print "into %d discs." % len(spanSet)
+      print ""
+      counter = 0
+      for item in spanSet:
+         counter += 1
+         print "Disc %d: %d files, %s, %d%% utilization" % (counter, len(item.fileList), 
+                                                            displayBytes(item.size), item.utilization)
+      print ""
+      if _getYesNoAnswer("Accept this solution?", default="Y"):
+         happy = True
+      print "==="
+
+   print ""
+   _getReturn("Please place the first disc in your backup device.\nPress return when ready.")
+   print "==="
+
+   counter = 0
+   for item in spanSet:
+      counter += 1
+      print ""
+      print "Writing disc %d..." % counter
+      print "Done writing disc %d." % counter
+      print ""
+      _getReturn("Please replace the disc in your backup device.\nPress return when ready.")
+      print "==="
+
+   print ""
+   print "Completed writing all discs."
+
+
+############################
+# _findDailyDirs() function
+############################
+
+def _findDailyDirs(stagingDir):
+   """
+   Returns a list of all daily staging directories that have not yet been
+   encrypted.
+
+   The store indicator file C{cback.store} will be written to a daily staging
+   directory once that directory is written to disc.  So, this function looks
+   at each daily staging directory within the configured staging directory, and
+   returns a list of those which do not contain the indicator file.
+
+   Returned is a tuple containing two items: a list of staging directories, and
+   a BackupFileList containing all files among those staging directories.
+
+   @param stagingDir: Configured staging directory 
+
+   @return: Tuple (staging dirs, backup file list)
+   """
+   results = FilesystemList()
+   yearDirs = FilesystemList()
+   yearDirs.excludeFiles = True
+   yearDirs.excludeLinks = True
+   yearDirs.addDirContents(path=stagingDir, recursive=False, addSelf=False)
+   for yearDir in yearDirs:
+      monthDirs = FilesystemList()
+      monthDirs.excludeFiles = True
+      monthDirs.excludeLinks = True
+      monthDirs.addDirContents(path=yearDir, recursive=False, addSelf=False)
+      for monthDir in monthDirs:
+         dailyDirs = FilesystemList()
+         dailyDirs.excludeFiles = True
+         dailyDirs.excludeLinks = True
+         dailyDirs.addDirContents(path=monthDir, recursive=False, addSelf=False)
+         for dailyDir in dailyDirs:
+            if os.path.exists(os.path.join(dailyDir, STORE_INDICATOR)):
+               logger.debug("Skipping directory [%s]; already stored." % dailyDir)
+            else:
+               logger.debug("Adding [%s] to list of directories to store." % dailyDir)
+               results.append(dailyDir) # just put it in the list, no fancy operations
+   fileList = BackupFileList()
+   for item in results:
+      fileList.addDirContents(item)
+   return (results, fileList)
+
+
+########################
+# _getWriter() function
+########################
+
+def _getWriter(config):
+   """
+   Gets a writer and media capacity from store configuration.
+   Returned is a writer and a media capacity in bytes.
+   @param config: Cedar Backup configuration
+   @return: Tuple of (writer, mediaCapacity) 
+   """
+   writer = createWriter(config)
+   mediaCapacity = convertSize(writer.media.capacity, UNIT_SECTORS, UNIT_BYTES)
+   return (writer, mediaCapacity)
+
+
+#########################################################################
+# User interface utilities
+########################################################################
+
+def _getYesNoAnswer(prompt, default):
+   """
+   Get a yes/no answer from the user.
+   The default will be placed at the end of the prompt.
+   A "Y" or "y" is considered yes, anything else no.
+   A blank (empty) response results in the default.
+   @param prompt: Prompt to show.
+   @param default: Default to set if the result is blank
+   @return: Boolean true/false corresponding to Y/N
+   """
+   if default == "Y":
+      prompt = "%s [Y/n]: " % prompt
+   else:
+      prompt = "%s [y/N]: " % prompt
+   answer = raw_input(prompt)
+   if answer in [ None, "", ]:
+      answer = default
+   if answer[0] in [ "Y", "y", ]:
+      return True
+   else:
+      return False
+
+def _getChoiceAnswer(prompt, default, validChoices):
+   """
+   Get a particular choice from the user.
+   The default will be placed at the end of the prompt.
+   The function loops until getting a valid choice.
+   A blank (empty) response results in the default.
+   @param prompt: Prompt to show.
+   @param default: Default to set if the result is None or blank.
+   @param validChoices: List of valid choices (strings)
+   @return: Valid choice from user.
+   """
+   prompt = "%s [%s]: " % (prompt, default)
+   answer = raw_input(prompt)
+   if answer in [ None, "", ]:
+      answer = default
+   while answer not in validChoices:
+      print "Choice must be one of %s" % validChoices
+      answer = raw_input(prompt)
+   return answer
+
+def _getFloat(prompt, default):
+   """
+   Get a floating point number from the user.
+   The default will be placed at the end of the prompt.
+   The function loops until getting a valid floating point number.
+   A blank (empty) response results in the default.
+   @param prompt: Prompt to show.
+   @param default: Default to set if the result is None or blank.
+   @return: Floating point number from user
+   """
+   prompt = "%s [%.2f]: " % (prompt, default)
+   while True:
+      answer = raw_input(prompt)
+      if answer in [ None, "" ]:
+         return default
+      else:
+         try:
+            return float(answer)
+         except ValueError:
+            print "Enter a floating point number."
+
+def _getReturn(prompt):
+   """
+   Get a return key from the user.
+   @param prompt: Prompt to show.
+   """
+   raw_input(prompt)
 
 
 #########################################################################
