@@ -57,7 +57,8 @@ import tarfile
 
 # Cedar Backup modules
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
-from CedarBackup2.util import AbsolutePathList, ObjectTypeList, UnorderedList, calculateFileAge, encodePath
+from CedarBackup2.util import AbsolutePathList, ObjectTypeList, UnorderedList
+from CedarBackup2.util import displayBytes, calculateFileAge, encodePath
 
 
 ########################################################################
@@ -849,17 +850,46 @@ class BackupFileList(FilesystemList):
       @return: Copy of list with total size no larger than indicated capacity
       @raise ValueError: If the algorithm is invalid.
       """
+      table = self._getKnapsackTable()
+      function = BackupFileList._getKnapsackFunction(algorithm)
+      return function(table, capacity)[0]
+
+   def _getKnapsackTable(self, capacity=None):
+      """
+      Converts the list into the form needed by the knapsack algorithms.
+      @return: Dictionary mapping file name to tuple of (file path, file size).
+      """
       table = { }
       for entry in self:
          if os.path.islink(entry):
             table[entry] = (entry, 0.0)
          elif os.path.isfile(entry):
-            table[entry] = (entry, float(os.stat(entry).st_size))
-      if algorithm == "first_fit": return firstFit(table, capacity)[0]
-      elif algorithm == "best_fit": return bestFit(table, capacity)[0]
-      elif algorithm == "worst_fit": return worstFit(table, capacity)[0]
-      elif algorithm == "alternate_fit": return alternateFit(table, capacity)[0]
-      else: raise ValueError("Algorithm [%s] is invalid." % algorithm);
+            size = float(os.stat(entry).st_size)
+            if capacity is not None:
+               if size > capacity:
+                  raise ValueError("File [%s] cannot fit in capacity %s." % (entry, displayBytes(capacity)))
+            table[entry] = (entry, size)
+      return table
+
+   def _getKnapsackFunction(algorithm):
+      """
+      Returns a reference to the function associated with an algorithm name.
+      Algorithm name must be one of "first_fit", "best_fit", "worst_fit", "alternate_fit"
+      @param algorithm: Name of the algorithm
+      @return: Reference to knapsack function
+      @raise ValueError: If the algorithm name is unknown.
+      """
+      if algorithm == "first_fit":
+         return firstFit
+      elif algorithm == "best_fit":
+         return bestFit
+      elif algorithm == "worst_fit":
+         return worstFit
+      elif algorithm == "alternate_fit":
+         return alternateFit
+      else:
+         raise ValueError("Algorithm [%s] is invalid." % algorithm);
+   _getKnapsackFunction = staticmethod(_getKnapsackFunction)
 
    def generateTarfile(self, path, mode='tar', ignore=False, flat=False):
       """
