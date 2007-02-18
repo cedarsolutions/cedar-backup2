@@ -10,6 +10,7 @@ include CedarBackup2/actions/*.py
 include CedarBackup2/extend/*.py
 include CedarBackup2/tools/*.py
 include CedarBackup2/writers/*.py
+include util/cback-span
 include util/test.py
 include util/knapsackdemo.py
 include util/docbook/*
@@ -20,6 +21,7 @@ include manual/src/*.xml
 include manual/src/images/html/*.png
 include manual/src/images/pdf/*.png
 include doc/cback.1
+include doc/cback-span.1
 include doc/cback.conf.sample
 include doc/docbook.txt
 include doc/release.txt
