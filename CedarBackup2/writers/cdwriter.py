@@ -292,6 +292,9 @@ class CdWriter(object):
       Only these methods will be used by other Cedar Backup functionality
       that expects a compatible image writer.
 
+      The media attribute is also assumed to be available.
+
+
    Media Types
    ===========
 
