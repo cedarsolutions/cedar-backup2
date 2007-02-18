@@ -4,6 +4,7 @@ Version 2.10.2		unreleased
 	* Remove TODO from public distribution (use Bugzilla instead).
 	* Minor changes to mbox functionality (refactoring, test cleanup).
 	* Add validation for duplicate peer and extension names (closes: #37, #38).
+	* Fix bug in knapsack implementation, masked by poor test data.
 	* Move validation that requires at least one thing to collect (closes: #34).
 	  - This is no longer a validation error at the configuration level
 	  - Instead, the collect action itself will enforce the rule when it is run

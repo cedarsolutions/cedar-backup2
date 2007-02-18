@@ -91,24 +91,37 @@ from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 # Module-wide configuration and constants
 #######################################################################
 
+# These all have random letters for keys because the original data had a,b,c,d,
+# etc. in ascending order, which actually masked a sorting bug in the implementation.
+
 ITEMS_01  = {  }
-ITEMS_02  = { "a" : 0,       "b" : 0,      "c" : 0,      "d" : 0,      "e" : 0,      "f" : 0,      "g" : 0,      "h" : 0,       }
-ITEMS_03  = { "a" : 0,       "b" : 1,      "c" : 10,     "d" : 100,    "e" : 1000,   "f" : 10000,  "g" : 100000, "h" : 1000000, }
-ITEMS_04  = { "a" : 1000000, "b" : 100000, "c" : 10000,  "d" : 1000,   "e" : 100,    "f" : 10,     "g" : 1,      "h" : 0,       }
-ITEMS_05  = { "a" : 1,       "b" : 1,      "c" : 1,      "d" : 1,      "e" : 1,      "f" : 1,      "g" : 1,      "h" : 1,       }
-ITEMS_06  = { "a" : 10,      "b" : 10,     "c" : 10,     "d" : 10,     "e" : 10,     "f" : 10,     "g" : 10,     "h" : 10,      }
-ITEMS_07  = { "a" : 100,     "b" : 100,    "c" : 100,    "d" : 100,    "e" : 100,    "f" : 100,    "g" : 100,    "h" : 100,     }
-ITEMS_08  = { "a" : 1000,    "b" : 1000,   "c" : 1000,   "d" : 1000,   "e" : 1000,   "f" : 1000,   "g" : 1000,   "h" : 1000,    }
-ITEMS_09  = { "a" : 10000,   "b" : 10000,  "c" : 10000,  "d" : 10000,  "e" : 10000,  "f" : 10000,  "g" : 10000,  "h" : 10000,   }
-ITEMS_10  = { "a" : 100000,  "b" : 100000, "c" : 100000, "d" : 100000, "e" : 100000, "f" : 100000, "g" : 100000, "h" : 100000,  }
-ITEMS_11  = { "a" : 1,       "b" : 1,      "c" : 100000, "d" : 100000, "e" : 100000, "f" : 100000, "g" : 1,      "h" : 1,       }
-ITEMS_12  = { "a" : 10,      "b" : 10,     "c" : 100000, "d" : 100000, "e" : 100000, "f" : 100000, "g" : 10,     "h" : 10,      }
-ITEMS_13  = { "a" : 100,     "b" : 100,    "c" : 100000, "d" : 100000, "e" : 100000, "f" : 100000, "g" : 100,    "h" : 100,     }
-ITEMS_14  = { "a" : 1000,    "b" : 1000,   "c" : 100000, "d" : 100000, "e" : 100000, "f" : 100000, "g" : 1000,   "h" : 1000,    }
-ITEMS_15  = { "a" : 1,       "b" : 1,      "c" : 1,      "d" : 100000, "e" : 100000, "f" : 1,      "g" : 1,      "h" : 1,       }
-ITEMS_16  = { "a" : 10,      "b" : 10,     "c" : 10,     "d" : 100000, "e" : 100000, "f" : 10,     "g" : 10,     "h" : 10,      }
-ITEMS_17  = { "a" : 100,     "b" : 100,    "c" : 100,    "d" : 100000, "e" : 100000, "f" : 100,    "g" : 100,    "h" : 100,     }
-ITEMS_18  = { "a" : 1000,    "b" : 1000,   "c" : 1000,   "d" : 100000, "e" : 100000, "f" : 1000,   "g" : 1000,   "h" : 1000,    }
+ITEMS_02  = { "z" : 0,       "^" : 0,      "3" : 0,      "(" : 0,      "[" : 0,      "/" : 0,      "a" : 0,      "r" : 0,       }
+ITEMS_03  = { "k" : 0,       "*" : 1,      "u" : 10,     "$" : 100,    "h" : 1000,   "?" : 10000,  "b" : 100000, "s" : 1000000, }
+ITEMS_04  = { "l" : 1000000, "G" : 100000, "h" : 10000,  "#" : 1000,   "a" : 100,    "'" : 10,     "c" : 1,      "t" : 0,       }
+ITEMS_05  = { "n" : 1,       "N" : 1,      "z" : 1,      "@" : 1,      "c" : 1,      "h" : 1,      "d" : 1,      "u" : 1,       }
+ITEMS_06  = { "o" : 10,      "b" : 10,     "G" : 10,     "+" : 10,     "B" : 10,     "O" : 10,     "e" : 10,     "v" : 10,      }
+ITEMS_07  = { "$" : 100,     "K" : 100,    "f" : 100,    "=" : 100,    "n" : 100,    "I" : 100,    "F" : 100,    "w" : 100,     }
+ITEMS_08  = { "y" : 1000,    "C" : 1000,   "s" : 1000,   "f" : 1000,   "a" : 1000,   "U" : 1000,   "g" : 1000,   "x" : 1000,    }
+ITEMS_09  = { "7" : 10000,   "d" : 10000,  "f" : 10000,  "g" : 10000,  "t" : 10000,  "l" : 10000,  "h" : 10000,  "y" : 10000,   }
+ITEMS_10  = { "5" : 100000,  "#" : 100000, "l" : 100000, "t" : 100000, "6" : 100000, "T" : 100000, "i" : 100000, "z" : 100000,  }
+ITEMS_11  = { "t" : 1,       "d" : 1,      "k" : 100000, "l" : 100000, "7" : 100000, "G" : 100000, "j" : 1,      "1" : 1,       }
+ITEMS_12  = { "a" : 10,      "e" : 10,     "M" : 100000, "u" : 100000, "y" : 100000, "f" : 100000, "k" : 10,     "2" : 10,      }
+ITEMS_13  = { "n" : 100,     "p" : 100,    "b" : 100000, "i" : 100000, "$" : 100000, "/" : 100000, "l" : 100,    "3" : 100,     }
+ITEMS_14  = { "b" : 1000,    ":" : 1000,   "e" : 100000, "O" : 100000, "o" : 100000, "#" : 100000, "m" : 1000,   "4" : 1000,    }
+ITEMS_15  = { "c" : 1,       "j" : 1,      "e" : 1,      "H" : 100000, "n" : 100000, "h" : 1,      "N" : 1,      "5" : 1,       }
+ITEMS_16  = { "a" : 10,      "M" : 10,     "%" : 10,     "'" : 100000, "l" : 100000, "?" : 10,     "o" : 10,     "6" : 10,      }
+ITEMS_17  = { "h" : 100,     "z" : 100,    "(" : 100,    "?" : 100000, "k" : 100000, "|" : 100,    "p" : 100,    "7" : 100,     }
+ITEMS_18  = { "[" : 1000,    "l" : 1000,   "*" : 1000,   "/" : 100000, "z" : 100000, "|" : 1000,   "q" : 1000,   "h" : 1000,    }
+
+# This is a more realistic example, taken from tree9.tar.gz
+ITEMS_19  = { 'dir001/file001': 243,
+              'dir001/file002': 268,
+              'dir002/file001': 134,
+              'dir002/file002': 74,
+              'file001'       : 155,
+              'file002'       : 242,
+              'link001'       : 0,
+              'link002'       : 0, }
 
 
 #######################################################################
@@ -736,6 +749,16 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(8, len(result[0]))
       self.failUnlessEqual(206000, result[1])
 
+   def testFirstFit_017(self):
+      """
+      Test firstFit() behavior for a more realistic set of items
+      """
+      items = buildItemDict(ITEMS_19)
+      capacity = 760
+      result = firstFit(items, capacity)
+      self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
+      # Unfortunately, can't test any more than this, since dict keys come out in random order
+
 
    ###############################
    # Tests for bestFit() function
@@ -1315,6 +1338,22 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnlessEqual(8, len(result[0]))
       self.failUnlessEqual(206000, result[1])
+
+   def testBestFit_017(self):
+      """
+      Test bestFit() behavior for a more realistic set of items
+      """
+      items = buildItemDict(ITEMS_19)
+      capacity = 760
+      result = bestFit(items, capacity)
+      self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
+      self.failUnlessEqual(5, len(result[0]))
+      self.failUnlessEqual(753, result[1])
+      self.failUnless('dir001/file001' in result[0])
+      self.failUnless('dir001/file002' in result[0])
+      self.failUnless('file002' in result[0])
+      self.failUnless('link001' in result[0])
+      self.failUnless('link002' in result[0])
 
 
    ################################
@@ -1896,6 +1935,23 @@ class TestKnapsack(unittest.TestCase):
       self.failUnlessEqual(8, len(result[0]))
       self.failUnlessEqual(206000, result[1])
 
+   def testWorstFit_017(self):
+      """
+      Test worstFit() behavior for a more realistic set of items
+      """
+      items = buildItemDict(ITEMS_19)
+      capacity = 760
+      result = worstFit(items, capacity)
+      self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
+      self.failUnlessEqual(6, len(result[0]))
+      self.failUnlessEqual(605, result[1])
+      self.failUnless('dir002/file001' in result[0])
+      self.failUnless('dir002/file002' in result[0])
+      self.failUnless('file001' in result[0])
+      self.failUnless('file002' in result[0])
+      self.failUnless('link001' in result[0])
+      self.failUnless('link002' in result[0])
+
 
    ####################################
    # Tests for alternateFit() function
@@ -2475,6 +2531,23 @@ class TestKnapsack(unittest.TestCase):
       self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
       self.failUnlessEqual(8, len(result[0]))
       self.failUnlessEqual(206000, result[1])
+
+   def testAlternateFit_017(self):
+      """
+      Test alternateFit() behavior for a more realistic set of items
+      """
+      items = buildItemDict(ITEMS_19)
+      capacity = 760
+      result = alternateFit(items, capacity)
+      self.failUnless(result[1] <= capacity, "%s <= %s" % (result[1], capacity))
+      self.failUnlessEqual(6, len(result[0]))
+      self.failUnlessEqual(719, result[1])
+      self.failUnless('link001' in result[0])
+      self.failUnless('dir001/file002' in result[0])
+      self.failUnless('link002' in result[0])
+      self.failUnless('dir001/file001' in result[0])
+      self.failUnless('dir002/file002' in result[0])
+      self.failUnless('dir002/file001' in result[0])
 
 
 #######################################################################

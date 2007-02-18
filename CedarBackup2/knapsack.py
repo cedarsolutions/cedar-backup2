@@ -180,7 +180,7 @@ def bestFit(items, capacity):
 
    # Sort the list from largest to smallest
    itemlist = items.items()
-   itemlist.sort(lambda x,y: cmp(y[1], x[1]))  # sort descending
+   itemlist.sort(lambda x,y: cmp(y[1][1], x[1][1]))  # sort descending
    keys = []
    for item in itemlist:
       keys.append(item[0])
@@ -249,7 +249,7 @@ def worstFit(items, capacity):
 
    # Sort the list from smallest to largest
    itemlist = items.items()
-   itemlist.sort(lambda x,y: cmp(x[1], y[1]))    # sort ascending
+   itemlist.sort(lambda x,y: cmp(x[1][1], y[1][1]))    # sort ascending
    keys = []
    for item in itemlist:
       keys.append(item[0])
@@ -320,7 +320,7 @@ def alternateFit(items, capacity):
 
    # Sort the list from smallest to largest
    itemlist = items.items()
-   itemlist.sort(lambda x,y: cmp(x[1], y[1]))    # sort ascending
+   itemlist.sort(lambda x,y: cmp(x[1][1], y[1][1]))    # sort ascending
    keys = []
    for item in itemlist:
       keys.append(item[0])
@@ -331,6 +331,7 @@ def alternateFit(items, capacity):
 
    front = keys[0:len(keys)/2]
    back = keys[len(keys)/2:len(keys)]
+   back.reverse()
    
    i = 0
    j = 0
