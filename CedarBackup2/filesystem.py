@@ -656,9 +656,9 @@ class SpanItem(object):
    def __init__(self, fileList, size, capacity, utilization):
       """
       Create object.
-      @ivar fileList: List of files
-      @ivar size: Size (in bytes) of files
-      @ivar utilization: Utilization, as a percentage (0-100)
+      @param fileList: List of files
+      @param size: Size (in bytes) of files
+      @param utilization: Utilization, as a percentage (0-100)
       """
       self.fileList = fileList
       self.size = size
