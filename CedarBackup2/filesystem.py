@@ -58,7 +58,7 @@ import tarfile
 # Cedar Backup modules
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 from CedarBackup2.util import AbsolutePathList, ObjectTypeList, UnorderedList
-from CedarBackup2.util import displayBytes, calculateFileAge, encodePath
+from CedarBackup2.util import removeKeys, displayBytes, calculateFileAge, encodePath
 
 
 ########################################################################
@@ -646,6 +646,27 @@ class FilesystemList(list):
 
 
 ########################################################################
+# SpanItem class definition
+########################################################################
+
+class SpanItem(object):
+   """
+   Item returned by L{BackupFileList.generateSpan}.
+   """
+   def __init__(self, fileList, size, capacity, utilization):
+      """
+      Create object.
+      @ivar fileList: List of files
+      @ivar size: Size (in bytes) of files
+      @ivar utilization: Utilization, as a percentage (0-100)
+      """
+      self.fileList = fileList
+      self.size = size
+      self.capacity = capacity
+      self.utilization = utilization
+
+
+########################################################################
 # BackupFileList class definition
 ########################################################################
 
@@ -853,6 +874,49 @@ class BackupFileList(FilesystemList):
       table = self._getKnapsackTable()
       function = BackupFileList._getKnapsackFunction(algorithm)
       return function(table, capacity)[0]
+
+   def generateSpan(self, capacity, algorithm="worst_fit"):
+      """
+      Splits the list of items into sub-lists that fit in a given capacity.
+
+      Sometimes, callers need split to a backup file list into a set of smaller
+      lists.  For instance, you could use this to "span" the files across a set
+      of discs.
+
+      The fitting is done using the functions in the knapsack module.  By
+      default, the first fit algorithm is used, but you can also choose
+      from best fit, worst fit and alternate fit.
+
+      @note: If any of your items are larger than the capacity, then it won't
+      be possible to find a solution.  In this case, a value error will be
+      raised.
+
+      @param capacity: Maximum capacity among the files in the new list
+      @type capacity: Integer, in bytes
+
+      @param algorithm: Knapsack (fit) algorithm to use
+      @type algorithm: One of "first_fit", "best_fit", "worst_fit", "alternate_fit"
+
+      @return: List of L{SpanItem} objects.
+
+      @raise ValueError: If the algorithm is invalid.
+      @raise ValueError: If it's not possible to fit some items
+      """
+      spanItems = []
+      function = BackupFileList._getKnapsackFunction(algorithm)
+      table = self._getKnapsackTable(capacity)
+      iteration = 0
+      while len(table) > 0:
+         iteration += 1
+         fit = function(table, capacity)
+         if len(fit[0]) == 0:
+            # Should never happen due to validations in _convertToKnapsackForm(), but let's be safe
+            raise ValueError("After iteration %d, unable to add any new items." % iteration)
+         removeKeys(table, fit[0])
+         utilization = (float(fit[1])/float(capacity))*100.0
+         item = SpanItem(fit[0], fit[1], capacity, utilization)
+         spanItems.append(item)
+      return spanItems
 
    def _getKnapsackTable(self, capacity=None):
       """
