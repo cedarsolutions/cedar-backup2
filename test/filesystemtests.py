@@ -15704,7 +15704,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in spanItem.fileList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in spanItem.fileList)
 
-   def testGenerateSpan_002(self):
+   def testGenerateSpan_003(self):
       """
       Test a set of files that all fit in two span items.
       """
@@ -15758,7 +15758,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "dir002", "file002", ]) in spanItem.fileList)
          self.failUnless(self.buildPath([ "tree9", "file001", ]) in spanItem.fileList)
 
-   def testGenerateSpan_003(self):
+   def testGenerateSpan_004(self):
       """
       Test a set of files that all fit in three span items.
       """
@@ -15817,7 +15817,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnlessEqual((134.0/515.0)*100.0, spanItem.utilization)
          self.failUnless(self.buildPath([ "tree9", "dir002", "file001", ]) in spanItem.fileList)
 
-   def testGenerateSpan_004(self):
+   def testGenerateSpan_005(self):
       """
       Test a set of files where one of the files does not fit in the capacity.
       """
