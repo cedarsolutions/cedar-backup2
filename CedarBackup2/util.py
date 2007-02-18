@@ -896,6 +896,23 @@ def sortDict(d):
    return [key for key, value in items]
 
 
+########################
+# removeKeys() function
+########################
+
+def removeKeys(d, keys):
+   """
+   Removes all of the keys from the dictionary.
+   The dictionary is altered in-place. 
+   Each key must exist in the dictionary.
+   @param d: Dictionary to operate on
+   @param keys: List of keys to remove
+   @raise KeyError: If one of the keys does not exist
+   """
+   for key in keys:
+      del d[key]
+
+
 #########################
 # convertSize() function
 #########################
