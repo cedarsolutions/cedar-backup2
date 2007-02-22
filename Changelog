@@ -4,9 +4,13 @@ Version 2.11.0		unreleased
 	* Remove TODO from public distribution (use Bugzilla instead).
 	* Minor changes to mbox functionality (refactoring, test cleanup).
 	* Fix bug in knapsack implementation, masked by poor test suite.
-	* Implement new cback-span tool and tools/span.py module (closes: #51).
+	* Reorg user manual to move command-line tools to own chapter (closes: #33)
 	* Add validation for duplicate peer and extension names (closes: #37, #38).
-	* Move validation that requires at least one thing to collect (closes: #34).
+	* Implement new cback-span command-line tool (closes: #51).
+	  - Create new util/cback-span script and CedarBackup2.tools package
+	  - Implement guts of script in CedarBackup2/tools/span.py
+	  - Add new section in user manual to discuss new command
+	* Rework validation requiring least one item to collect (closes: #34).
 	  - This is no longer a validation error at the configuration level
 	  - Instead, the collect action itself will enforce the rule when it is run
 	* Support a <no_eject> flag in store configuration (closes: #39).
