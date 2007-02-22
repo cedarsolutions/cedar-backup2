@@ -349,7 +349,7 @@ def _executeAction(options, config):
    print "a percentage of capacity to set aside.  The cushion reduces the"
    print "capacity of your media, so a 1.5% cushion leaves 98.5% remaining."
    print ""
-   cushion = _getFloat("What cushion percentage?", default=3.5)
+   cushion = _getFloat("What cushion percentage?", default=4.5)
    print "==="
 
    realCapacity = ((100.0 - cushion)/100.0) * mediaCapacity
