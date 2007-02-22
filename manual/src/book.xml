@@ -39,6 +39,7 @@
 <!ENTITY intro       SYSTEM "intro.xml">
 <!ENTITY basic       SYSTEM "basic.xml">
 <!ENTITY install     SYSTEM "install.xml">
+<!ENTITY commandline SYSTEM "commandline.xml">
 <!ENTITY config      SYSTEM "config.xml">
 <!ENTITY extensions  SYSTEM "extensions.xml">
 <!ENTITY extenspec   SYSTEM "extenspec.xml">
@@ -67,7 +68,7 @@
       </editor>
 
       <copyright>
-         <year>2005-2006</year>
+         <year>2005-2007</year>
          <holder>Kenneth J. Pronovici</holder>
       </copyright>
 
@@ -111,6 +112,7 @@
    &intro;
    &basic;
    &install;
+   &commandline;
    &config;
    &extensions;
    &extenspec;
