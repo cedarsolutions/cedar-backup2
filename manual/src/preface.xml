@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2006 Kenneth J. Pronovici.
+# Copyright (c) 2005-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -177,6 +177,16 @@
                <para>
                   Explains how to install the Cedar Backup package either from
                   the Python source distribution or from the Debian package.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><xref linkend="cedar-commandline"/></term>
+            <listitem>
+               <para>
+                  Discusses the various Cedar Backup command-line tools,
+                  including the primary <command>cback</command> command.
                </para>
             </listitem>
          </varlistentry>
