@@ -1,14 +1,17 @@
-Version 2.11.0		unreleased
+Version 2.11.0		21 Feb 2007
 
 	* Fix log message about SCSI id in writers/dvdwriter.py.
 	* Remove TODO from public distribution (use Bugzilla instead).
 	* Minor changes to mbox functionality (refactoring, test cleanup).
 	* Fix bug in knapsack implementation, masked by poor test suite.
+	* Fix filesystem unit tests that had typos in them and wouldn't work
 	* Reorg user manual to move command-line tools to own chapter (closes: #33)
 	* Add validation for duplicate peer and extension names (closes: #37, #38).
 	* Implement new cback-span command-line tool (closes: #51).
 	  - Create new util/cback-span script and CedarBackup2.tools package
 	  - Implement guts of script in CedarBackup2/tools/span.py
+	  - Add new BackupFileList.generateSpan() method and tests
+	  - Refactor other util and filesystem code to make things work
 	  - Add new section in user manual to discuss new command
 	* Rework validation requiring least one item to collect (closes: #34).
 	  - This is no longer a validation error at the configuration level
