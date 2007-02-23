@@ -64,6 +64,7 @@ from CedarBackup2.writers.dvdwriter import DvdWriter
 from CedarBackup2.writers.dvdwriter import MEDIA_DVDPLUSR, MEDIA_DVDPLUSRW
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR, STORE_INDICATOR
 from CedarBackup2.config import DEFAULT_MEDIA_TYPE, DEFAULT_DEVICE_TYPE
+from CedarBackup2.actions.util import writeIndicatorFile
 
 
 ########################################################################
@@ -217,13 +218,9 @@ def writeStoreIndicator(config, stagingDirs):
    @param stagingDirs: Dictionary mapping directory path to date suffix.
    """
    for stagingDir in stagingDirs.keys():
-      filename = os.path.join(stagingDir, STORE_INDICATOR)
-      logger.debug("Writing store indicator [%s]." % filename)
-      try:
-         open(filename, "w").write("")
-         changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
-      except Exception, e:
-         logger.error("Error writing store indicator: %s" % e)
+      writeIndicatorFile(stagingDir, STORE_INDICATOR, 
+                         config.options.backupUser, 
+                         config.options.backupGroup)
 
 
 ##############################

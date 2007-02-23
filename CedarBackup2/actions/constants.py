@@ -22,7 +22,8 @@
 
 """
 Provides common constants used by standard actions.
-@sort: DIR_TIME_FORMAT, DIGEST_EXTENSION, COLLECT_INDICATOR, STAGE_INDICATOR, STORE_INDICATOR
+@sort: DIR_TIME_FORMAT, DIGEST_EXTENSION, INDICATOR_PATTERN,
+       COLLECT_INDICATOR, STAGE_INDICATOR, STORE_INDICATOR
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -32,8 +33,9 @@ Provides common constants used by standard actions.
 
 DIR_TIME_FORMAT      = "%Y/%m/%d"
 DIGEST_EXTENSION     = "sha"
+
+INDICATOR_PATTERN    = [ "cback\..*", ]
 COLLECT_INDICATOR    = "cback.collect"
 STAGE_INDICATOR      = "cback.stage"
 STORE_INDICATOR      = "cback.store"
-
 

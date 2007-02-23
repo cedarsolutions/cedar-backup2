@@ -56,6 +56,7 @@ import logging
 from CedarBackup2.peer import RemotePeer, LocalPeer
 from CedarBackup2.util import getUidGid, changeOwnership
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR
+from CedarBackup2.actions.util import writeIndicatorFile
 
 
 ########################################################################
@@ -123,7 +124,7 @@ def executeStage(configPath, options, config):
          peer.writeStageIndicator()
       except (ValueError, IOError, OSError), e:
          logger.error("Error staging [%s]: %s" % (peer.name, e))
-   _writeStageIndicator(config, dailyDir)
+   writeIndicatorFile(config, dailyDir, config.options.backupUser, config.options.backupGroup)
    logger.info("Executed the 'stage' action successfully.")
 
 
@@ -174,31 +175,6 @@ def _createStagingDirs(config, dailyDir, peers):
             raise Exception("Unable to create staging directory: %s" % e)
    return mapping
       
-
-##################################
-# _writeStageIndicator() function
-##################################
-
-def _writeStageIndicator(config, dailyDir):
-   """
-   Writes a stage indicator file into the daily staging directory.
-
-   Note that there is a stage indicator on each peer (to indicate that a
-   collect directory has been staged) and in the daily staging directory itself
-   (to indicate that the staging directory has been utilized).  This just deals
-   with the daily staging directory.
-
-   @param config: Config object.
-   @param dailyDir: Daily staging directory.
-   """
-   filename = os.path.join(dailyDir, STAGE_INDICATOR)
-   logger.debug("Writing stage indicator [%s]." % filename)
-   try:
-      open(filename, "w").write("")
-      changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
-   except Exception, e:
-      logger.error("Error writing stage indicator: %s" % e)
-
 
 ########################################################################
 # Private attribute "getter" functions

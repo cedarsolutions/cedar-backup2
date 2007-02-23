@@ -56,6 +56,7 @@ import pickle
 from CedarBackup2.filesystem import BackupFileList
 from CedarBackup2.util import isStartOfWeek, changeOwnership, displayBytes, buildNormalizedPath
 from CedarBackup2.actions.constants import DIGEST_EXTENSION, COLLECT_INDICATOR
+from CedarBackup2.actions.util import writeIndicatorFile
 
 
 ########################################################################
@@ -136,7 +137,8 @@ def executeCollect(configPath, options, config):
          else:
             logger.debug("Directory will not be backed up, per collect mode.")
          logger.info("Completed collecting directory [%s]" % collectDir.absolutePath)
-   _writeCollectIndicator(config)
+   writeIndicatorFile(config.collect.targetDir, COLLECT_INDICATOR, 
+                      config.options.backupUser, config.options.backupGroup)
    logger.info("Executed the 'collect' action successfully.")
 
 
@@ -316,24 +318,6 @@ def _writeDigest(config, digest, digestPath):
       logger.debug("Wrote new digest [%s] to disk: %d entries." % (digestPath, len(digest)))
    except: 
       logger.error("Failed to write digest [%s] to disk." % digestPath)
-
-
-####################################
-# _writeCollectIndicator() function
-####################################
-
-def _writeCollectIndicator(config):
-   """
-   Writes a collect indicator file into a target collect directory.
-   @param config: Config object.
-   """
-   filename = os.path.join(config.collect.targetDir, COLLECT_INDICATOR)
-   logger.debug("Writing collect indicator [%s]." % filename)
-   try:
-      open(filename, "w").write("")
-      changeOwnership(filename, config.options.backupUser, config.options.backupGroup)
-   except Exception, e:
-      logger.error("Error writing collect indicator: %s" % e)
 
 
 ########################################################################

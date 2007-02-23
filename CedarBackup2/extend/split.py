@@ -28,7 +28,7 @@
 # Language : Python (>= 2.3)
 # Project  : Official Cedar Backup Extensions
 # Revision : $Id$
-# Purpose  : Provides an extension to encrypt staging directories.
+# Purpose  : Provides an extension to split up large files in staging directories.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -37,14 +37,15 @@
 ########################################################################
 
 """
-Provides an extension to encrypt staging directories.
+Provides an extension to split up large files in staging directories.
 
-When this extension is executed, all backed-up files in the configured Cedar
-Backup staging directory will be encrypted using gpg.  Any directory which has
-already been encrypted (as indicated by the C{cback.encrypt} file) will be
+When this extension is executed, it will look through the configured Cedar
+Backup staging directory for files exceeding a specified size limit, and split
+them down into smaller files using the 'split' utility.  Any directory which
+has already been split (as indicated by the C{cback.split} file) will be
 ignored.
 
-This extension requires a new configuration section <encrypt> and is intended
+This extension requires a new configuration section <split> and is intended
 to be run immediately after the standard stage action or immediately before the
 standard store action.  Aside from its own configuration, it requires the
 options and staging configuration sections in the standard Cedar Backup
@@ -59,13 +60,15 @@ configuration file.
 
 # System modules
 import os
+import re
 import logging
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import resolveCommand, executeCommand, changeOwnership
-from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
-from CedarBackup2.xmlutil import readFirstChild, readString
+from CedarBackup2.util import resolveCommand, executeCommand
+from CedarBackup2.util import changeOwnership, buildNormalizedPath
+from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode, addByteSizeNode
+from CedarBackup2.xmlutil import readFirstChild, readString, readByteSize
 from CedarBackup2.actions.util import findDailyDirs, writeIndicatorFile, getBackupFiles
 
 
@@ -73,51 +76,50 @@ from CedarBackup2.actions.util import findDailyDirs, writeIndicatorFile, getBack
 # Module-wide constants and variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.log.extend.encrypt")
+logger = logging.getLogger("CedarBackup2.log.extend.split")
 
-GPG_COMMAND = [ "gpg", ]
-VALID_ENCRYPT_MODES = [ "gpg", ]
-ENCRYPT_INDICATOR = "cback.encrypt"
+SPLIT_COMMAND = [ "split", ]
+SPLIT_INDICATOR = "cback.split"
 
 
 ########################################################################
-# EncryptConfig class definition
+# SplitConfig class definition
 ########################################################################
 
-class EncryptConfig(object):
+class SplitConfig(object):
 
    """
-   Class representing encrypt configuration.
+   Class representing split configuration.
 
-   Encrypt configuration is used for encrypting staging directories.
+   Split configuration is used for splitting staging directories.
 
    The following restrictions exist on data in this class:
 
-      - The encrypt mode must be one of the values in L{VALID_ENCRYPT_MODES}
-      - The encrypt target value must be a non-empty string
+      - The size limit must be an integer
+      - The split size must be an integer
 
-   @sort: __init__, __repr__, __str__, __cmp__, encryptMode, encryptTarget
+   @sort: __init__, __repr__, __str__, __cmp__, sizeLimit, splitSize
    """
 
-   def __init__(self, encryptMode=None, encryptTarget=None):
+   def __init__(self, sizeLimit=None, splitSize=None):
       """
-      Constructor for the C{EncryptConfig} class.
+      Constructor for the C{SplitCOnfig} class.
 
-      @param encryptMode: Encryption mode
-      @param encryptTarget: Encryption target (for instance, GPG recipient)
+      @param sizeLimit: Size limit of the files, in bytes
+      @param splitSize: Size that files exceeding the limit will be split into, in bytes
 
       @raise ValueError: If one of the values is invalid.
       """
-      self._encryptMode = None
-      self._encryptTarget = None
-      self.encryptMode = encryptMode
-      self.encryptTarget = encryptTarget
+      self._sizeLimit = None
+      self._splitSize = None
+      self.sizeLimit = sizeLimit
+      self.splitSize = splitSize
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "EncryptConfig(%s, %s)" % (self.encryptMode, self.encryptTarget)
+      return "SplitConfig(%s, %s)" % (self.sizeLimit, self.splitSize)
 
    def __str__(self):
       """
@@ -134,52 +136,54 @@ class EncryptConfig(object):
       """
       if other is None:
          return 1
-      if self._encryptMode != other._encryptMode:
-         if self._encryptMode < other._encryptMode:
+      if self._sizeLimit != other._sizeLimit:
+         if self._sizeLimit < other._sizeLimit:
             return -1
          else:
             return 1
-      if self._encryptTarget != other._encryptTarget:
-         if self._encryptTarget < other._encryptTarget:
+      if self._splitSize != other._splitSize:
+         if self._splitSize < other._splitSize:
             return -1
          else:
             return 1
       return 0
 
-   def _setEncryptMode(self, value):
+   def _setSizeLimit(self, value):
       """
-      Property target used to set the encrypt mode.
-      If not C{None}, the mode must be one of the values in L{VALID_ENCRYPT_MODES}.
+      Property target used to set the size limit.
+      If not C{None}, the mode must be a valid integer.
       @raise ValueError: If the value is not valid.
       """
-      if value is not None:
-         if value not in VALID_ENCRYPT_MODES:
-            raise ValueError("Encrypt mode must be one of %s." % VALID_ENCRYPT_MODES)
-      self._encryptMode = value
+      if value is None:
+         self._sizeLimit = None
+      else:
+         self._sizeLimit = int(value)
 
-   def _getEncryptMode(self):
+   def _getSizeLimit(self):
       """
       Property target used to get the encrypt mode.
       """
-      return self._encryptMode
+      return self._sizeLimit
 
-   def _setEncryptTarget(self, value):
+   def _setSplitSize(self, value):
       """
-      Property target used to set the encrypt target.
+      Property target used to set the size limit.
+      If not C{None}, the mode must be a valid integer.
+      @raise ValueError: If the value is not valid.
       """
-      if value is not None:
-         if len(value) < 1:
-            raise ValueError("Encrypt target must be non-empty string.")
-      self._encryptTarget = value
+      if value is None:
+         self._splitSize = None
+      else:
+         self._splitSize = int(value)
 
-   def _getEncryptTarget(self):
+   def _getSplitSize(self):
       """
-      Property target used to get the encrypt target.
+      Property target used to get the encrypt mode.
       """
-      return self._encryptTarget
+      return self._splitSize
 
-   encryptMode = property(_getEncryptMode, _setEncryptMode, None, doc="Encrypt mode.")
-   encryptTarget = property(_getEncryptTarget, _setEncryptTarget, None, doc="Encrypt target (i.e. GPG recipient).")
+   sizeLimit = property(_getSizeLimit, _setSizeLimit, None, doc="Size limit, in bytes.")
+   splitSize = property(_getSplitSize, _setSplitSize, None, doc="Split size, in bytes.")
 
 
 ########################################################################
@@ -237,8 +241,8 @@ class LocalConfig(object):
       @raise ValueError: If the XML data in C{xmlData} or C{xmlPath} cannot be parsed.
       @raise ValueError: If the parsed configuration document is not valid.
       """
-      self._encrypt = None
-      self.encrypt = None
+      self._split = None
+      self.split = None
       if xmlData is not None and xmlPath is not None:
          raise ValueError("Use either xmlData or xmlPath, but not both.")
       if xmlData is not None:
@@ -255,7 +259,7 @@ class LocalConfig(object):
       """
       Official string representation for class instance.
       """
-      return "LocalConfig(%s)" % (self.encrypt)
+      return "LocalConfig(%s)" % (self.split)
 
    def __str__(self):
       """
@@ -272,69 +276,69 @@ class LocalConfig(object):
       """
       if other is None:
          return 1
-      if self._encrypt != other._encrypt:
-         if self._encrypt < other._encrypt:
+      if self._split != other._split:
+         if self._split < other._split:
             return -1
          else:
             return 1
       return 0
 
-   def _setEncrypt(self, value):
+   def _setSplit(self, value):
       """
-      Property target used to set the encrypt configuration value.
-      If not C{None}, the value must be a C{EncryptConfig} object.
-      @raise ValueError: If the value is not a C{EncryptConfig}
+      Property target used to set the split configuration value.
+      If not C{None}, the value must be a C{SplitConfig} object.
+      @raise ValueError: If the value is not a C{SplitConfig}
       """
       if value is None:
-         self._encrypt = None
+         self._split = None
       else:
-         if not isinstance(value, EncryptConfig):
-            raise ValueError("Value must be a C{EncryptConfig} object.")
-         self._encrypt = value
+         if not isinstance(value, SplitConfig):
+            raise ValueError("Value must be a C{SplitConfig} object.")
+         self._split = value
 
-   def _getEncrypt(self):
+   def _getSplit(self):
       """
-      Property target used to get the encrypt configuration value.
+      Property target used to get the split configuration value.
       """
-      return self._encrypt
+      return self._split
 
-   encrypt = property(_getEncrypt, _setEncrypt, None, "Encrypt configuration in terms of a C{EncryptConfig} object.")
+   split = property(_getSplit, _setSplit, None, "Split configuration in terms of a C{SplitConfig} object.")
 
    def validate(self):
       """
       Validates configuration represented by the object.
 
-      Encrypt configuration must be filled in.  Within that, both the encrypt
-      mode and encrypt target must be filled in.
+      Split configuration must be filled in.  Within that, both the size limit
+      and split size must be filled in.
 
       @raise ValueError: If one of the validations fails.
       """
-      if self.encrypt is None:
-         raise ValueError("Encrypt section is required.")
-      if self.encrypt.encryptMode is None:
-         raise ValueError("Encrypt mode must be set.")
-      if self.encrypt.encryptTarget is None:
-         raise ValueError("Encrypt target must be set.")
+      if self.split is None:
+         raise ValueError("Split section is required.")
+      if self.split.sizeLimit is None:
+         raise ValueError("Size limit must be set.")
+      if self.split.splitSiez is None:
+         raise ValueError("Split size must be set.")
 
    def addConfig(self, xmlDom, parentNode):
       """
-      Adds an <encrypt> configuration section as the next child of a parent.
+      Adds a <split> configuration section as the next child of a parent.
 
       Third parties should use this function to write configuration related to
       this extension.
 
       We add the following fields to the document::
 
-         encryptMode    //cb_config/encrypt/encrypt_mode
-         encryptTarget  //cb_config/encrypt/encrypt_target
+         sizeLimit      //cb_config/split/size_limit
+         splitSize      //cb_config/split/split_size
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
       """
-      if self.encrypt is not None:
-         sectionNode = addContainerNode(xmlDom, parentNode, "encrypt")
-         addStringNode(xmlDom, sectionNode, "encrypt_mode", self.encrypt.encryptMode)
-         addStringNode(xmlDom, sectionNode, "encrypt_target", self.encrypt.encryptTarget)
+      if self.split is not None:
+         sectionNode = addContainerNode(xmlDom, parentNode, "split")
+         addByteSizeNode(xmlDom, sectionNode, "size_limit", self.split.sizeLimit)
+         addByteSizeNode(xmlDom, sectionNode, "split_size", self.split.splitSize)
 
    def _parseXmlData(self, xmlData):
       """
@@ -349,30 +353,30 @@ class LocalConfig(object):
       @raise ValueError: If the XML cannot be successfully parsed.
       """
       (xmlDom, parentNode) = createInputDom(xmlData)
-      self._encrypt = LocalConfig._parseEncrypt(parentNode)
+      self._split = LocalConfig._parseSplit(parentNode)
 
-   def _parseEncrypt(parent):
+   def _parseSplit(parent):
       """
-      Parses an encrypt configuration section.
+      Parses an split configuration section.
       
       We read the following individual fields::
 
-         encryptMode    //cb_config/encrypt/encrypt_mode
-         encryptTarget  //cb_config/encrypt/encrypt_target
+         sizeLimit      //cb_config/encrypt/size_limit
+         splitSize      //cb_config/encrypt/split_size
 
       @param parent: Parent node to search beneath.
 
       @return: C{EncryptConfig} object or C{None} if the section does not exist.
       @raise ValueError: If some filled-in value is invalid.
       """
-      encrypt = None
-      section = readFirstChild(parent, "encrypt")
+      split = None
+      section = readFirstChild(parent, "split")
       if section is not None:
-         encrypt = EncryptConfig()
-         encrypt.encryptMode = readString(section, "encrypt_mode")
-         encrypt.encryptTarget = readString(section, "encrypt_target")
-      return encrypt
-   _parseEncrypt = staticmethod(_parseEncrypt)
+         split = SplitConfig()
+         split.sizeLimit = readByteSize(section, "size_limit")
+         split.splitSize = readByteSize(section, "split_size")
+      return split
+   _parseSplit = staticmethod(_parseSplit)
 
 
 ########################################################################
@@ -385,7 +389,7 @@ class LocalConfig(object):
 
 def executeAction(configPath, options, config):
    """
-   Executes the encrypt backup action.
+   Executes the split backup action.
 
    @param configPath: Path to configuration file on disk.
    @type configPath: String representing a path on disk.
@@ -399,137 +403,92 @@ def executeAction(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there are I/O problems reading or writing files
    """
-   logger.debug("Executing encrypt extended action.")
+   logger.debug("Executing split extended action.")
    if config.options is None or config.stage is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
-   if local.encrypt.encryptMode not in ["gpg", ]:
-      raise ValueError("Unknown encrypt mode [%s]" % local.encrypt.encryptMode);
-   if local.encrypt.encryptMode == "gpg":
-      _confirmGpgRecipient(local.encrypt.encryptTarget)
-   dailyDirs = findDailyDirs(config.stage.targetDir, ENCRYPT_INDICATOR)
+   dailyDirs = findDailyDirs(config.stage.targetDir, SPLIT_INDICATOR)
    for dailyDir in dailyDirs:
-      _encryptDailyDir(dailyDir, local.encrypt.encryptMode, local.encrypt.encryptTarget, 
-                       config.options.backupUser, config.options.backupGroup)
-      writeIndicatorFile(dailyDir, ENCRYPT_INDICATOR, config.options.backupUser, config.options.backupGroup)
-   logger.info("Executed the encrypt extended action successfully.")
+      _splitDailyDir(dailyDir, local.split.sizeLimit, local.split.splitSize, 
+                     config.options.backupUser, config.options.backupGroup)
+      writeIndicatorFile(dailyDir, SPLIT_INDICATOR, config.options.backupUser, config.options.backupGroup)
+   logger.info("Executed the split extended action successfully.")
 
 
 ##############################
-# _encryptDailyDir() function
+# _splitDailyDir() function
 ##############################
 
-def _encryptDailyDir(dailyDir, encryptMode, encryptTarget, backupUser, backupGroup):
+def _splitDailyDir(dailyDir, sizeLimit, splitSize, backupUser, backupGroup):
    """
-   Encrypts the contents of a daily staging directory.
+   Splits large files in a daily staging directory.
 
-   Indicator files are ignored.  All other files are encrypted.  The only valid
-   encrypt mode is C{"gpg"}.
+   Files that match INDICATOR_PATTERNS (i.e. C{"cback.store"},
+   C{"cback.stage"}, etc.) are assumed to be indicator files and are ignored.
+   All other files are encrypted.
+
+   The only valid encrypt mode is C{"gpg"}.
 
    @param dailyDir: Daily directory to encrypt
-   @param encryptMode: Encryption mode (only "gpg" is allowed)
-   @param encryptTarget: Encryption target (GPG recipient for "gpg" mode)
+   @param sizeLimit: Size limit, in bytes
+   @param splitSize: Split size, in bytes
    @param backupUser: User that target files should be owned by
    @param backupGroup: Group that target files should be owned by
 
    @raise ValueError: If the encrypt mode is not supported.
    @raise ValueError: If the daily staging directory does not exist.
    """
-   logger.debug("Begin encrypting contents of [%s]." % dailyDir)
-   fileList = getBackupFiles(dailyDir) # ignores indicator files
+   logger.debug("Begin splitting contents of [%s]." % dailyDir)
+   fileList = getBackupFiles(dailyDir)  # ignores indicator files
    for path in fileList:
-      _encryptFile(path, encryptMode, encryptTarget, backupUser, backupGroup, removeSource=True)
-   logger.debug("Completed encrypting contents of [%s]." % dailyDir)
+      size = float(os.stat(path).st_size)
+      if size > sizeLimit:
+         _splitFile(path, splitSize, backupUser, backupGroup, removeSource=True)
+   logger.debug("Completed splitting contents of [%s]." % dailyDir)
 
 
-##########################
-# _encryptFile() function
-##########################
+########################
+# _splitFile() function
+########################
 
-def _encryptFile(sourcePath, encryptMode, encryptTarget, backupUser, backupGroup, removeSource=False):
+def _splitFile(sourcePath, splitSize, backupUser, backupGroup, removeSource=False):
    """
-   Encrypts the source file using the indicated mode.
+   Splits the source file into chunks of the indicated size.
 
-   The encrypted file will be owned by the indicated backup user and group.  If
+   The split files will be owned by the indicated backup user and group.  If
    C{removeSource} is C{True}, then the source file will be removed after it is
-   successfully encrypted.
-
-   Currently, only the C{"gpg"} encrypt mode is supported.
+   successfully split.
 
    @param sourcePath: Absolute path of the source file to encrypt
-   @param encryptMode: Encryption mode (only "gpg" is allowed)
-   @param encryptTarget: Encryption target (GPG recipient)
+   @param splitSize: Encryption mode (only "gpg" is allowed)
    @param backupUser: User that target files should be owned by
    @param backupGroup: Group that target files should be owned by
    @param removeSource: Indicates whether to remove the source file
-
-   @return: Path to the newly-created encrypted file.
 
    @raise ValueError: If an invalid encrypt mode is passed in.
    @raise IOError: If there is a problem accessing, encrypting or removing the source file.
    """
    if not os.path.exists(sourcePath):
       raise ValueError("Source path [%s] does not exist." % sourcePath);
-   if encryptMode == 'gpg':
-      encryptedPath = _encryptFileWithGpg(sourcePath, recipient=encryptTarget)
-   else:
-      raise ValueError("Unknown encrypt mode [%s]" % encryptMode); 
-   changeOwnership(encryptedPath, backupUser, backupGroup)
+   prefix = "%s_" % buildNormalizedPath(sourcePath)
+   command = resolveCommand(SPLIT_COMMAND)
+   args = [ "--verbose", "--numeric-suffixes", "--suffix-length=5", "--bytes=%d" % splitSize, sourcePath, prefix, ]
+   (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+   if result != 0:
+      raise IOError("Error [%d] calling split for [%s]." % (result, sourcePath))
+   pattern = re.compile(r"(creating file `)(%s)(.*)(')" % prefix)
+   match = pattern.search(output[-1:])
+   value = int(match.group(3).strip())
+   for index in range(0, value):
+      path = os.path.join(prefix, index)
+      if not os.path.exists(path):
+         raise IOError("After call to split, expected file [%s] does not exist." % path)
+      changeOwnership(path, backupUser, backupGroup)
    if removeSource:
       if os.path.exists(sourcePath):
          try: 
             os.remove(sourcePath)
             logger.debug("Completed removing old file [%s]." % sourcePath)
          except: 
-            raise IOError("Failed to remove file [%s] after encrypting it." % (sourcePath))
-   return encryptedPath
-
-
-#################################
-# _encryptFileWithGpg() function
-#################################
-
-def _encryptFileWithGpg(sourcePath, recipient):
-   """
-   Encrypts the indicated source file using GPG.
-
-   The encrypted file will be in GPG's binary output format and will have the
-   same name as the source file plus a C{".gpg"} extension.  The source file
-   will not be modified or removed by this function call.
-
-   @param sourcePath: Absolute path of file to be encrypted.
-   @param recipient: Recipient name to be passed to GPG's C{"-r"} option
-   
-   @return: Path to the newly-created encrypted file.
-
-   @raise IOError: If there is a problem encrypting the file.
-   """
-   encryptedPath = "%s.gpg" % sourcePath
-   command = resolveCommand(GPG_COMMAND)
-   args = [ "--batch", "--yes", "-e", "-r", recipient, "-o", encryptedPath, sourcePath, ]
-   result = executeCommand(command, args)[0]
-   if result != 0:
-      raise IOError("Error [%d] calling gpg to encrypt [%s]." % (result, sourcePath))
-   if not os.path.exists(encryptedPath):
-      raise IOError("After call to [%s], encrypted file [%s] does not exist." % (command, encryptedPath))
-   logger.debug("Completed encrypting file [%s] to [%s]." % (sourcePath, encryptedPath))
-   return encryptedPath
-   
-
-#################################
-# _confirmGpgRecpient() function
-#################################
-
-def _confirmGpgRecipient(recipient):
-   """
-   Confirms that a recipient's public key is known to GPG.
-   Throws an exception if there is a problem, or returns normally otherwise.
-   @param recipient: Recipient name
-   @raise IOError: If the recipient's public key is not known to GPG.
-   """
-   command = resolveCommand(GPG_COMMAND)
-   args = [ "--batch", "-k", recipient, ]  # should use --with-colons if the output will be parsed
-   result = executeCommand(command, args)[0]
-   if result != 0:
-      raise IOError("GPG unable to find public key for [%s]." % recipient)
+            raise IOError("Failed to remove file [%s] after splitting it." % (sourcePath))
 
