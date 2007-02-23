@@ -71,6 +71,7 @@ from CedarBackup2.cli import Options, setupLogging, setupPathResolver
 from CedarBackup2.cli import DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, DEFAULT_MODE
 from CedarBackup2.actions.constants import STORE_INDICATOR
 from CedarBackup2.actions.store import createWriter, consistencyCheck, writeStoreIndicator
+from CedarBackup2.actions.util import findDailyDirs
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 
 
@@ -439,27 +440,7 @@ def _findDailyDirs(stagingDir):
 
    @return: Tuple (staging dirs, backup file list)
    """
-   results = FilesystemList()
-   yearDirs = FilesystemList()
-   yearDirs.excludeFiles = True
-   yearDirs.excludeLinks = True
-   yearDirs.addDirContents(path=stagingDir, recursive=False, addSelf=False)
-   for yearDir in yearDirs:
-      monthDirs = FilesystemList()
-      monthDirs.excludeFiles = True
-      monthDirs.excludeLinks = True
-      monthDirs.addDirContents(path=yearDir, recursive=False, addSelf=False)
-      for monthDir in monthDirs:
-         dailyDirs = FilesystemList()
-         dailyDirs.excludeFiles = True
-         dailyDirs.excludeLinks = True
-         dailyDirs.addDirContents(path=monthDir, recursive=False, addSelf=False)
-         for dailyDir in dailyDirs:
-            if os.path.exists(os.path.join(dailyDir, STORE_INDICATOR)):
-               logger.debug("Skipping directory [%s]; already stored." % dailyDir)
-            else:
-               logger.debug("Adding [%s] to list of directories to store." % dailyDir)
-               results.append(dailyDir) # just put it in the list, no fancy operations
+   results = findDailyDirs(stagingDir, STORE_INDICATOR)
    fileList = BackupFileList()
    for item in results:
       fileList.addDirContents(item)

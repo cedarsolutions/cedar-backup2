@@ -44,5 +44,5 @@ Architecture Interface, i.e. the same interface that extensions implement.
 # Using 'from CedarBackup2.actions import *' will just import the modules listed
 # in the __all__ variable.
 
-__all__ = [ 'constants', 'collect', 'stage', 'store', 'purge', 'rebuild', 'validate', ]
+__all__ = [ 'constants', 'collect', 'stage', 'store', 'purge', 'util', 'rebuild', 'validate', ]
 

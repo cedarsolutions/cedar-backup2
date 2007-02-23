@@ -1660,23 +1660,23 @@ def isStartOfWeek(startingDay):
 # buildNormalizedPath() function
 #################################
 
-def buildNormalizedPath(absPath):
+def buildNormalizedPath(path):
    """
-   Returns a "normalized" path based on an absolute path.
+   Returns a "normalized" path based on a path name.
 
    A "normalized" path has its leading C{'/'} or C{'.'} characters removed, and
    then converts all remaining whitespace and C{'/'} characters to the C{'_'}
    character.   As a special case, the absolute path C{/} will be normalized to
    just C{'-'}.
 
-   @param absPath: Absolute path
+   @param path: Path to normalize
 
    @return: Normalized path.
    """
-   if absPath == os.sep:
+   if path == os.sep:
       return "-"
    else:
-      normalized = absPath
+      normalized = path
       normalized = re.sub("^\.", "", normalized)
       normalized = re.sub("^\/", "", normalized)
       normalized = re.sub("\/", "-", normalized)

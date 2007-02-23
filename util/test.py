@@ -149,6 +149,7 @@ def main():
       import test.knapsacktests as knapsacktests
       import test.filesystemtests as filesystemtests
       import test.peertests as peertests
+      import test.actionsutiltests as actionsutiltests
       import test.writersutiltests as writersutiltests
       import test.cdwritertests as cdwritertests
       import test.dvdwritertests as dvdwritertests
@@ -197,6 +198,7 @@ def main():
    if args == [] or "knapsack" in args: unittests["knapsack"] = knapsacktests.suite()
    if args == [] or "filesystem" in args: unittests["filesystem"] = filesystemtests.suite()
    if args == [] or "peer" in args: unittests["peer"] = peertests.suite()
+   if args == [] or "actionsutil" in args: unittests["actionsutil"] = actionsutiltests.suite()
    if args == [] or "writersutil" in args: unittests["writersutil"] = writersutiltests.suite()
    if args == [] or "cdwriter" in args: unittests["cdwriter"] = cdwritertests.suite()
    if args == [] or "dvdwriter" in args: unittests["dvdwriter"] = dvdwritertests.suite()

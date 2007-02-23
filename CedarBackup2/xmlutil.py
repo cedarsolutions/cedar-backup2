@@ -71,6 +71,10 @@ import codecs
 from types import UnicodeType
 from StringIO import StringIO
 
+# Cedar Backup modules
+from CedarBackup2.util import convertSize
+from CedarBackup2.util import UNIT_BYTES, UNIT_MBYTES, UNIT_GBYTES, BYTES_PER_MBYTE, BYTES_PER_GBYTE
+
 # XML-related modules
 from xml.parsers.expat import ExpatError
 from xml.dom.minidom import Node
@@ -272,6 +276,35 @@ def readBoolean(parent, name):
       else:
          raise ValueError("Boolean values must be one of %s." % VALID_BOOLEAN_VALUES)
 
+def readByteSize(parent, name):
+   """
+   Read a byte size value from an XML document.
+
+   A byte size value is an interpreted string value.  If the string value
+   ends with "MB" or "GB", then the string before that is interpreted as
+   floating point megabytes or gigabytes.  Otherwise, it is intepreted as
+   integer bytes.  In either case, integer bytes are returned.
+
+   @param parent: Parent node to search beneath.
+   @param name: Name of node to search for.
+
+   @return: Integer number of bytes, or C{None} if no matching nodes are found.
+   """
+   data = readString(parent, name)
+   if data is None:
+      return None
+   data = data.strip()
+   if data.endswith("MB"):
+      data = data[0:data.rfind("MB")].strip()
+      number = float(data)
+      return convertSize(number, UNIT_MBYTES, UNIT_BYTES)
+   elif data.endswith("GB"):
+      data = data[0:data.rfind("GB")].strip()
+      number = float(data)
+      return convertSize(number, UNIT_GBYTES, UNIT_BYTES)
+   else:
+      return int(data)
+
 
 ########################################################################
 # Functions for writing values into XML documents
@@ -358,6 +391,32 @@ def addBooleanNode(xmlDom, parentNode, nodeName, nodeValue):
          return addStringNode(xmlDom, parentNode, nodeName, "Y")
       else:
          return addStringNode(xmlDom, parentNode, nodeName, "N")
+
+def addByteSizeNode(xmlDom, parentNode, nodeName, nodeValue):
+   """
+   Adds a text node as the next child of a parent, to contain a byte size.
+
+   If the C{nodeValue} is None, then the node will be created, but will be
+   empty (i.e. will contain no text node child).
+
+   The size in bytes will be normalized.  If it is larger than 1.0 GB, it will
+   be shown in GB ("1.0 GB").  If it is larger than 1.0 MB ("1.0 MB"), it will
+   be shown in MB.  Otherwise, it will be shown in bytes ("423413").
+
+   @param xmlDom: DOM tree as from C{impl.createDocument()}.
+   @param parentNode: Parent node to create child for.
+   @param nodeName: Name of the new container node.
+   @param nodeValue: The byte value to put into the node, as an integer
+
+   @return: Reference to the newly-created node.
+   """
+   if nodeValue > BYTES_PER_GBYTE:
+      byteString = "%s GB" % convertSize(nodeValue, UNIT_BYTES, UNIT_GBYTES)
+   elif nodeValue > BYTES_PER_MBYTE:
+      byteString = "%s MB" % convertSize(nodeValue, UNIT_BYTES, UNIT_MBYTES)
+   else:
+      byteString = nodeValue
+   return addStringNode(xmlDom, parentNode, nodeName, byteString)
 
 
 ########################################################################
