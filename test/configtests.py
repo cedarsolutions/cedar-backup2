@@ -6022,12 +6022,13 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual(False, store.checkData)
       self.failUnlessEqual(False, store.warnMidnite)
       self.failUnlessEqual(False, store.noEject)
+      self.failUnlessEqual(None, store.blankFactor)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      store = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
+      store = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
       self.failUnlessEqual("/source", store.sourceDir)
       self.failUnlessEqual("cdr-74", store.mediaType)
       self.failUnlessEqual("cdwriter", store.deviceType)
@@ -6037,6 +6038,7 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual(True, store.checkData)
       self.failUnlessEqual(True, store.warnMidnite)
       self.failUnlessEqual(True, store.noEject)
+      self.failUnlessEqual("1.3", store.blankFactor)
 
    def testConstructor_003(self):
       """
@@ -6378,6 +6380,71 @@ class TestStoreConfig(unittest.TestCase):
       store.noEject = 3
       self.failUnlessEqual(True, store.noEject)
 
+   def testConstructor_035(self):
+      """
+      Test assignment of blankFactor attribute, None value.
+      """
+      store = StoreConfig(blankFactor="1.3")
+      self.failUnlessEqual("1.3", store.blankFactor)
+      store.blankFactor = None
+      self.failUnlessEqual(None, store.blankFactor)
+
+   def testConstructor_036(self):
+      """
+      Test assignment of store attribute, valid values.
+      """
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.blankFactor)
+      store.blankFactor = "1.0"
+      self.failUnlessEqual("1.0", store.blankFactor)
+      store.blankFactor = ".1"
+      self.failUnlessEqual(".1", store.blankFactor)
+      store.blankFactor = "12"
+      self.failUnlessEqual("12", store.blankFactor)
+      store.blankFactor = "0.5"
+      self.failUnlessEqual("0.5", store.blankFactor)
+      store.blankFactor = "181281"
+      self.failUnlessEqual("181281", store.blankFactor)
+      store.blankFactor = "1E6"
+      self.failUnlessEqual("1E6", store.blankFactor)
+      store.blankFactor = "0.25E2"
+      self.failUnlessEqual("0.25E2", store.blankFactor)
+      store.blankFactor = "0xAC"
+      self.failUnlessEqual("0xAC", store.blankFactor)
+
+   def testConstructor_037(self):
+      """
+      Test assignment of store attribute, invalid value (empty).
+      """
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.blankFactor)
+      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "")
+      self.failUnlessEqual(None, store.blankFactor)
+
+   def testConstructor_038(self):
+      """
+      Test assignment of store attribute, invalid value (not a floating point number).
+      """
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.blankFactor)
+      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "blech")
+      self.failUnlessEqual(None, store.blankFactor)
+
+   def testConstructor_039(self):
+      """
+      Test assignment of store attribute, invalid value (negative number).
+      """
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.blankFactor)
+      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "-3")
+      self.failUnlessEqual(None, store.blankFactor)
+      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "-6.8")
+      self.failUnlessEqual(None, store.blankFactor)
+      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "-0.2")
+      self.failUnlessEqual(None, store.blankFactor)
+      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "-.1")
+      self.failUnlessEqual(None, store.blankFactor)
+
 
    ############################
    # Test comparison operators
@@ -6401,8 +6468,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
       self.failUnlessEqual(store1, store2)
       self.failUnless(store1 == store2)
       self.failUnless(not store1 < store2)
@@ -6429,8 +6496,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, sourceDir differs.
       """
-      store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
-      store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
+      store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6457,8 +6524,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, mediaType differs.
       """
-      store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
+      store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(not store1 < store2)
@@ -6499,8 +6566,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, devicePath differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True, True, True)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True, True, True, "1.3")
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6527,8 +6594,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, deviceScsiId differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True, True, True)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True, True, True, "1.3")
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6555,8 +6622,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, driveSpeed differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, "1.3")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6569,8 +6636,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, checkData differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False, True, True)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False, True, True, "1.3")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6583,8 +6650,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, warnMidnite differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, False, True)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, False, True, "1.3")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6597,8 +6664,36 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, noEject differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, False)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, False, "1.3")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
+
+   def testComparison_017(self):
+      """
+      Test comparison of two differing objects, blankFactor differs (one None).
+      """
+      store1 = StoreConfig()
+      store2 = StoreConfig(blankFactor="1.3")
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
+
+   def testComparison_018(self):
+      """
+      Test comparison of two differing objects, blankFactor differs.
+      """
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, "1.2")
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8862,6 +8957,7 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
+      expected.store.blankFactor = "1.3"
       self.failUnlessEqual(expected, config)
 
    def testParse_026(self):
@@ -8966,6 +9062,7 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
+      expected.store.blankFactor = "1.3"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
@@ -9027,6 +9124,7 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
+      expected.store.blankFactor = "1.3"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
@@ -9085,6 +9183,7 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
+      expected.store.blankFactor = "1.3"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
@@ -9146,6 +9245,7 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
+      expected.store.blankFactor = "1.3"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
