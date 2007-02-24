@@ -1,6 +1,7 @@
 Version 2.12.1		unreleased
 	
 	* Fix typo in new split section in the user manual.
+	* Fix incorrect call to new writeIndicatorFile() function in stage action.
 	* Add notes in manual on how to find gpg and split commands.
 
 Version 2.12.0		23 Feb 2007
