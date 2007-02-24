@@ -540,10 +540,21 @@ class TestLocalConfig(unittest.TestCase):
 
    def testValidate_004(self):
       """
+      Test validate on a non-empty encrypt section with only one value filled in.
+      """
+      config = LocalConfig()
+      config.encrypt = EncryptConfig("gpg", None)
+      self.failUnlessRaises(ValueError, config.validate)
+      config.encrypt = EncryptConfig(None, "Backup User")
+      self.failUnlessRaises(ValueError, config.validate)
+
+   def testValidate_005(self):
+      """
       Test validate on a non-empty encrypt section with valid values filled in.
       """
       config = LocalConfig()
       config.encrypt = EncryptConfig("gpg", "Backup User")
+      config.validate()
 
 
    ############################

@@ -160,6 +160,7 @@ def main():
       import test.subversiontests as subversiontests
       import test.mboxtests as mboxtests
       import test.encrypttests as encrypttests
+      import test.splittests as splittests
       import test.spantests as spantests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
@@ -180,17 +181,23 @@ def main():
 
    # Set flags in the environment to control tests
    if "full" in args:
+      full = True
       os.environ["PEERTESTS_FULL"] = "Y"
       os.environ["WRITERSUTILTESTS_FULL"] = "Y"
       os.environ["ENCRYPTTESTS_FULL"] = "Y"
+      os.environ["SPLITTESTS_FULL"] = "Y"
       args.remove("full") # remainder of list will be specific tests to run, if any
    else:
+      full = False
       os.environ["PEERTESTS_FULL"] = "N"
       os.environ["WRITERSUTILTESTS_FULL"] = "N"
       os.environ["ENCRYPTTESTS_FULL"] = "N"
+      os.environ["SPLITTESTS_FULL"] = "N"
 
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."
+   if not full:
+      print "*** Using reduced feature set with minimum system requirements."
 
    # Make a list of tests to run
    unittests = { }
@@ -208,6 +215,7 @@ def main():
    if args == [] or "postgresql" in args: unittests["postgresql"] = postgresqltests.suite()
    if args == [] or "subversion" in args: unittests["subversion"] = subversiontests.suite()
    if args == [] or "mbox" in args: unittests["mbox"] = mboxtests.suite()
+   if args == [] or "split" in args: unittests["split"] = splittests.suite()
    if args == [] or "encrypt" in args: unittests["encrypt"] = encrypttests.suite()
    if args == [] or "span" in args: unittests["span"] = spantests.suite()
    if args != []: print "*** Executing specific tests: %s" % unittests.keys()

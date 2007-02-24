@@ -685,7 +685,7 @@ class DirectedGraph(object):
 # PathResolverSingleton class defkinition
 ########################################################################
 
-class PathResolverSingleton:
+class PathResolverSingleton(object):
 
    """
    Singleton used for resolving executable paths.
