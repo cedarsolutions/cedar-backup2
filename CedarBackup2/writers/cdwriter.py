@@ -249,8 +249,7 @@ class _ImageProperties(object):
    def __init__(self):
       self.newDisc = False
       self.tmpdir = None
-      self.capacity = None
-      self.image = None
+      self.entries = None     # dict mapping path to graft point
 
 
 ########################################################################
@@ -699,21 +698,15 @@ class CdWriter(object):
       self._image = _ImageProperties()
       self._image.newDisc = newDisc
       self._image.tmpdir = encodePath(tmpdir)
-      self._image.capacity = self.retrieveCapacity(entireDisc=newDisc)
-      logger.debug("Media capacity: %s" % displayBytes(self._image.capacity.bytesAvailable))
-      self._image.image = IsoImage(self.device, self._image.capacity.boundaries)  
+      self._image.entries = {} # mapping from path to graft point (if any)
 
    def addImageEntry(self, path, graftPoint):
       """
       Adds a filepath entry to the writer's associated ISO image.
 
-      Underneath, this calls L{IsoImage.addEntry} with the C{override=False}
-      and C{contentsOnly=True} arguments.  Using these arguments, the contents
-      of the passed-in path -- but not the path itself -- will be added to the
-      ISO image.
-
-      See the documentation by L{IsoImage.addEntry} for more information on how
-      a graft point path is defined.
+      The contents of the filepath -- but not the path itself -- will be added
+      to the image at the indicated graft point.  If you don't want to use a
+      graft point, just pass C{None}.
 
       @note: Before calling this method, you must call L{initializeImage}.
 
@@ -727,7 +720,9 @@ class CdWriter(object):
       """
       if self._image is None:
          raise ValueError("Must call initializeImage() before using this method.")
-      self._image.image.addEntry(path, graftPoint, override=False, contentsOnly=True)
+      if not os.path.exists(path):
+         raise ValueError("Path [%s] does not exist." % path)
+      self._image.entries[path] = graftPoint
 
    def setImageNewDisc(self, newDisc):
       """
@@ -738,7 +733,6 @@ class CdWriter(object):
       if self._image is None:
          raise ValueError("Must call initializeImage() before using this method.")
       self._image.newDisc = newDisc
-      self._image.capacity = self.retrieveCapacity(entireDisc=newDisc)
 
    def getEstimatedImageSize(self):
       """
@@ -749,7 +743,10 @@ class CdWriter(object):
       """
       if self._image is None:
          raise ValueError("Must call initializeImage() before using this method.")
-      return self._image.getEstimatedSize()
+      image = IsoImage()
+      for path in self._image.entries.keys():
+         image.addEntry(path, self._image.entries[path], override=False, contentsOnly=True)
+      return image.getEstimatedSize()
 
 
    ######################################
@@ -880,9 +877,13 @@ class CdWriter(object):
       @raise ValueError: If a path cannot be encoded properly.
       """
       path = None
-      size = self._image.image.getEstimatedSize()
+      image = IsoImage()
+      for path in self._image.entries.keys():
+         image.addEntry(path, self._image.entries[path], override=False, contentsOnly=True)
+      size = image.getEstimatedSize()
       logger.info("Image size will be %s." % displayBytes(size))
-      available = self._image.capacity.bytesAvailable
+      available = self.retrieveCapacity(entireDisc=self._image.newDisc)
+      logger.debug("Media capacity: %s" % displayBytes(available))
       if size > available:
          logger.error("Image [%s] does not fit in available capacity [%s]." % (displayBytes(size), displayBytes(available)))
          raise IOError("Media does not contain enough capacity to store image.")
@@ -890,7 +891,7 @@ class CdWriter(object):
          (handle, path) = tempfile.mkstemp(dir=self._image.tmpdir)
          try: os.close(handle)
          except: pass
-         self._image.image.writeImage(path)
+         image.writeImage(path)
          logger.debug("Completed creating image [%s]." % path)
          return path
       except Exception, e:
