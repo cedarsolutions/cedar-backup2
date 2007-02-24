@@ -1431,5 +1431,131 @@ password = &lt;secret&gt;
 
    </sect1>
 
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-extensions-split">
+
+      <title>Split Extension</title>
+
+      <para>
+         The Split Extension is a Cedar Backup extension used to split up
+         large files within staging directories.  It is probably only useful
+         in combination with the <command>cback-span</command> command, which
+         requires individual files within staging directories to each be
+         smaller than a single disc.
+      </para>
+
+      <para>
+         You would normally run this action immediately after the standard
+         stage action, but you could also choose to run it by hand immediately
+         before running <command>cback-stage</command>.
+      </para>
+
+      <para>
+         The split extension uses the standard UNIX <command>split</command>
+         tool to split the large files up.  This tool simply splits the files
+         on bite-size boundaries.  It has no knowledge of file formats.  
+      </para>
+         
+      <para>
+         <emphasis>Note: this means that in order to recover the data in your
+         original large file, you must have every file that the original file
+         was split into.</emphasis>  Think carefully about whether this is what
+         you want.  It doesn't sound like a huge limitation.  However,
+         <command>cback-span</command> might put an indivdual file on
+         <emphasis>any</emphasis> disc in a set &mdash; the files split from
+         one larger file will not necessarily be together.  That means you will
+         probably need every disc in your backup set in order to recover any
+         data from the backup set.
+      </para>
+
+      <para>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </para>
+      
+      <programlisting>
+&lt;extensions&gt; &lt;action&gt;
+      &lt;name&gt;split&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.split&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;299&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </programlisting>
+      
+      <para>
+         This extension relies on the options and staging configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <literal>split</literal> configuration
+         section.  This is an example Split configuration section:
+      </para> 
+
+      <programlisting>
+&lt;split&gt;
+   &lt;size_limit&gt;250 MB&lt;/size_limit&gt;
+   &lt;split_size&gt;100 MB&lt;/split_size&gt;
+&lt;/split&gt;
+      </programlisting>
+
+      <para>
+         The following elements are part of the Split configuration section:
+      </para>
+
+      <variablelist>
+
+         <varlistentry>
+            <term><literal>size_limit</literal></term>
+            <listitem>
+               <para>Size limit.</para>
+               <para>
+                  Files with a size strictly larger than this limit will
+                  be split by the extension.
+               </para>
+               <para>
+                  You can enter this value in two different forms.  It can
+                  either be a simple number, in which case the value is assumed
+                  to be in bytes; or it can be a number followed by a unit
+                  (KB, MB, GB).  
+               </para>
+               <para>
+                  Valid examples are <quote>10240</quote>, <quote>250
+                  MB</quote> or <quote>1.1 GB</quote>.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be a size as described above.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>split_size</literal></term>
+            <listitem>
+               <para>Split size.</para>
+               <para>
+                  This is the size of the chunks that a large file will be split into.
+                  The final chunk may be smaller if the split size doesn't divide
+                  evenly into the file size.
+               </para>
+               <para>
+                  You can enter this value in two different forms.  It can
+                  either be a simple number, in which case the value is assumed
+                  to be in bytes; or it can be a number followed by a unit
+                  (KB, MB, GB).  
+               </para>
+               <para>
+                  Valid examples are <quote>10240</quote>, <quote>250
+                  MB</quote> or <quote>1.1 GB</quote>.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be a size as described above.
+               </para>
+            </listitem>
+         </varlistentry>
+
+      </variablelist>
+
+   </sect1>
+
 </chapter>
 

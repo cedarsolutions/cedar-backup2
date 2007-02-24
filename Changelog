@@ -1,7 +1,8 @@
 Version 2.12.0		unreleased
 
 	* Created new split extension to split large staged files.
-	* Refactored common action utility code into actions/util.py.
+	  - Refactored common action utility code into actions/util.py.
+	  - Updated user manual to document the new extension and restore process.
 
 Version 2.11.0		21 Feb 2007
 
