@@ -218,7 +218,6 @@
       &lt;drive_speed&gt;4&lt;/drive_speed&gt;
       &lt;check_data&gt;Y&lt;/check_data&gt;
       &lt;warn_midnite&gt;Y&lt;/warn_midnite&gt;
-      &lt;no_eject&gt;N&lt;/no_eject&gt;
    &lt;/store&gt;
    &lt;purge&gt;
       &lt;dir&gt;
@@ -1594,6 +1593,7 @@
    &lt;check_data&gt;Y&lt;/check_data&gt;
    &lt;warn_midnite&gt;Y&lt;/warn_midnite&gt;
    &lt;no_eject&gt;N&lt;/no_eject&gt;
+   &lt;blank_factor&gt;N&lt;/blank_factor&gt;
 &lt;/store&gt;
          </programlisting>
 
@@ -1762,7 +1762,7 @@
                      value based on your specific writer and media.
                   </para>
                   <para>
-                     <emphasis>Restrictions:</emphasis> If set, must be an integer >= 1.
+                     <emphasis>Restrictions:</emphasis> If set, must be an integer &ge; 1.
                   </para>
                </listitem>
             </varlistentry>
@@ -1855,6 +1855,39 @@
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>blank_factor</literal></term>
+               <listitem>
+                  <para>Blanking factor used for smarter media blanking strategy.</para>
+                  <para>
+                     This field is optional.  If it doesn't exist, the default
+                     blanking strategy (blank the disc at start of every week) will
+                     be used.
+                  </para>
+                  <para>
+                     If this value is set, then it will be used to modify the default
+                     blanking strategy.  The disc will only be blanked on the first 
+                     day of the week if it looks like the week's backup will not fit
+                     in the remaining capacity.  
+                  </para>
+                  <para>
+                     The blanking factor is used by Cedar Backup to make a guess about
+                     whether the the week's backup will fit on the disc.  The disc
+                     will not be blanked unless the following relationship is true:
+                  </para>
+                  <screen>
+(bytes available / (1 + bytes required) &le; blanking factor
+                  </screen>
+                  <para>
+                     This option exists because rewritable CD and DVD media can
+                     only be blanked so many times before it is worn out.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> If set, must be a floating point number &ge; 0.
                   </para>
                </listitem>
             </varlistentry>
@@ -1978,7 +2011,7 @@
                               was last modified, it is a candidate for removal.
                            </para>
                            <para>
-                              <emphasis>Restrictions:</emphasis> Must be an integer >= 0.
+                              <emphasis>Restrictions:</emphasis> Must be an integer &ge; 0.
                            </para>
                         </listitem>
                      </varlistentry>
@@ -2142,7 +2175,7 @@
                         <listitem>
                            <para>Index of action, for execution ordering.</para>
                            <para>
-                              <emphasis>Restrictions:</emphasis> Must be an integer >= 0.
+                              <emphasis>Restrictions:</emphasis> Must be an integer &ge; 0.
                            </para>
                         </listitem>
                      </varlistentry>
