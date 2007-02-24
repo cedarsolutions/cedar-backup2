@@ -720,5 +720,44 @@ root:/tmp# grepmail -a -u restore.mbox > nodups.mbox
 
    </sect1>
 
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-recovering-split">
+
+      <title>Recovering Data split by the Split Extension</title>
+
+      <para>
+         The Split extension takes large files and splits them up into smaller
+         files. Typically, it would be used in conjunction with the
+         <command>cback-span</command> command.
+      </para>
+
+      <para>
+         The split up files are not difficult to work with.  Simply find
+         all of the files &mdash; which could be split between multiple
+         discs &mdash; and concatenate them together.  
+      </para>
+
+      <screen>
+root:/tmp# rm usr-src-software.tar.gz  # make sure it's not there
+root:/tmp# cat usr-src-software.tar.gz_00001 >> usr-src-software.tar.gz
+root:/tmp# cat usr-src-software.tar.gz_00002 >> usr-src-software.tar.gz
+root:/tmp# cat usr-src-software.tar.gz_00003 >> usr-src-software.tar.gz
+      </screen>
+
+      <para>
+         Then, use the resulting file like usual.
+      </para>
+
+      <para>
+         Remember, you need to have <emphasis>all</emphasis> of the files that
+         the original large file was split into before this will work.  If you
+         are missing a file, the result of the concatenation step will be
+         either a corrupt file or a truncated file (depending on which chunks
+         you did not include).
+      </para>
+
+   </sect1>
+
 </appendix>
 
