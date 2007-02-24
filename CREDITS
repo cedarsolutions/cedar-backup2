@@ -27,11 +27,14 @@ Unless otherwise indicated, all Cedar Backup source code is copyright
 Public License.  The contents of the GNU General Public License can be
 found in the LICENSE file, or can be downloaded from http://www.gnu.org/.
 
-Minor code snippets derived from newsgroup and mailing list postings are
-not generally attributed unless I used someone else's source code verbatim.
+Various patches and improvements have been contributed to the Cedar Backup
+codebase by Dmitry Rutsky.
 
 The PostgreSQL extension was contributed by Antoine Beaupre, based on
 the existing MySQL extension.
+
+Minor code snippets derived from newsgroup and mailing list postings are
+not generally attributed unless I used someone else's source code verbatim.
 
 Source code annotated as "(c) 2001, 2002 Python Software Foundation" was
 originally taken from or derived from code within the Python 2.3 codebase.
