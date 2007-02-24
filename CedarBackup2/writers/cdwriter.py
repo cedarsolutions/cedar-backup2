@@ -288,12 +288,14 @@ class CdWriter(object):
          initializeImage()
          addImageEntry()
          writeImage()
+         setImageNewDisc()
+         retrieveCapacity()
+         getEstimatedImageSize()
 
       Only these methods will be used by other Cedar Backup functionality
       that expects a compatible image writer.
 
       The media attribute is also assumed to be available.
-
 
    Media Types
    ===========
@@ -379,7 +381,7 @@ class CdWriter(object):
           _buildBoundariesArgs, _buildBlankArgs, _buildWriteArgs,
           device, scsiId, hardwareId, driveSpeed, media, deviceType, deviceVendor, 
           deviceId, deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject,
-          initializeImage, addImageEntry, writeImage
+          initializeImage, addImageEntry, writeImage, setImageNewDisc, getEstimatedImageSize
    """
 
    ##############
@@ -726,6 +728,28 @@ class CdWriter(object):
       if self._image is None:
          raise ValueError("Must call initializeImage() before using this method.")
       self._image.image.addEntry(path, graftPoint, override=False, contentsOnly=True)
+
+   def setImageNewDisc(self, newDisc):
+      """
+      Resets (overrides) the newDisc flag on the internal image.
+      @param newDisc: New disc flag to set
+      @raise ValueError: If initializeImage() was not previously called
+      """
+      if self._image is None:
+         raise ValueError("Must call initializeImage() before using this method.")
+      self._image.newDisc = newDisc
+      self._image.capacity = self.retrieveCapacity(entireDisc=newDisc)
+
+   def getEstimatedImageSize(self):
+      """
+      Gets the estimated size of the image associated with the writer.
+      @return: Estimated size of the image, in bytes.
+      @raise IOError: If there is a problem calling C{mkisofs}.
+      @raise ValueError: If initializeImage() was not previously called
+      """
+      if self._image is None:
+         raise ValueError("Must call initializeImage() before using this method.")
+      return self._image.getEstimatedSize()
 
 
    ######################################
