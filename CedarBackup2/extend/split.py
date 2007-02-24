@@ -625,9 +625,10 @@ def _splitDailyDir(dailyDir, sizeLimit, splitSize, backupUser, backupGroup):
    """
    logger.debug("Begin splitting contents of [%s]." % dailyDir)
    fileList = getBackupFiles(dailyDir)  # ignores indicator files
+   limitBytes = float(convertSize(sizeLimit.quantity, sizeLimit.units, UNIT_BYTES))
    for path in fileList:
       size = float(os.stat(path).st_size)
-      if size > sizeLimit:
+      if size > limitBytes:
          _splitFile(path, splitSize, backupUser, backupGroup, removeSource=True)
    logger.debug("Completed splitting contents of [%s]." % dailyDir)
 
@@ -652,28 +653,35 @@ def _splitFile(sourcePath, splitSize, backupUser, backupGroup, removeSource=Fals
 
    @raise IOError: If there is a problem accessing, splitting or removing the source file.
    """
-   if not os.path.exists(sourcePath):
-      raise ValueError("Source path [%s] does not exist." % sourcePath);
-   prefix = "%s_" % buildNormalizedPath(sourcePath)
-   bytes = int(convertSize(splitSize.quantity, splitSize.units, UNIT_BYTES))
-   command = resolveCommand(SPLIT_COMMAND)
-   args = [ "--verbose", "--numeric-suffixes", "--suffix-length=5", "--bytes=%d" % bytes, sourcePath, prefix, ]
-   (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
-   if result != 0:
-      raise IOError("Error [%d] calling split for [%s]." % (result, sourcePath))
-   pattern = re.compile(r"(creating file `)(%s)(.*)(')" % prefix)
-   match = pattern.search(output[-1:])
-   value = int(match.group(3).strip())
-   for index in range(0, value):
-      path = os.path.join(prefix, index)
-      if not os.path.exists(path):
-         raise IOError("After call to split, expected file [%s] does not exist." % path)
-      changeOwnership(path, backupUser, backupGroup)
-   if removeSource:
-      if os.path.exists(sourcePath):
-         try: 
-            os.remove(sourcePath)
-            logger.debug("Completed removing old file [%s]." % sourcePath)
-         except: 
-            raise IOError("Failed to remove file [%s] after splitting it." % (sourcePath))
+   cwd = os.getcwd()
+   try:
+      if not os.path.exists(sourcePath):
+         raise ValueError("Source path [%s] does not exist." % sourcePath);
+      dirname = os.path.dirname(sourcePath)
+      filename = os.path.basename(sourcePath)
+      prefix = "%s_" % filename
+      bytes = int(convertSize(splitSize.quantity, splitSize.units, UNIT_BYTES))
+      os.chdir(dirname) # need to operate from directory that we want files written to
+      command = resolveCommand(SPLIT_COMMAND)
+      args = [ "--verbose", "--numeric-suffixes", "--suffix-length=5", "--bytes=%d" % bytes, filename, prefix, ]
+      (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=False)
+      if result != 0:
+         raise IOError("Error [%d] calling split for [%s]." % (result, sourcePath))
+      pattern = re.compile(r"(creating file `)(%s)(.*)(')" % prefix)
+      match = pattern.search(output[-1:][0])
+      value = int(match.group(3).strip())
+      for index in range(0, value):
+         path = "%s%05d" % (prefix, index)
+         if not os.path.exists(path):
+            raise IOError("After call to split, expected file [%s] does not exist." % path)
+         changeOwnership(path, backupUser, backupGroup)
+      if removeSource:
+         if os.path.exists(sourcePath):
+            try: 
+               os.remove(sourcePath)
+               logger.debug("Completed removing old file [%s]." % sourcePath)
+            except: 
+               raise IOError("Failed to remove file [%s] after splitting it." % (sourcePath))
+   finally:
+      os.chdir(cwd)
 
