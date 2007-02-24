@@ -115,10 +115,8 @@ def executeStore(configPath, options, config):
    rebuildMedia = options.full
    logger.debug("Rebuild media flag [%s]" % rebuildMedia)
    todayIsStart = isStartOfWeek(config.options.startingDay)
-   newDisc = rebuildMedia or todayIsStart
-   logger.debug("New disc flag [%s]" % newDisc)
    stagingDirs = _findCorrectDailyDir(options, config)
-   writeImage(config, newDisc, stagingDirs)
+   writeImageBlankSafe(config, rebuildMedia, todayIsStart, config.store.blankFactor, stagingDirs)
    if config.store.checkData:
       if sys.platform == "darwin":
          logger.warn("Warning: consistency check cannot be run successfully on Mac OS X.")
@@ -187,6 +185,9 @@ def writeImage(config, newDisc, stagingDirs):
    date, so staging directory C{/opt/stage/2005/02/10} will be placed into the
    disc at C{/2005/02/10}.
 
+   @note: This function is implemented in terms of L{writeImageBlankSafe}.  The
+   C{newDisc} flag is passed in for both C{rebuildMedia} and C{todayIsStart}.
+
    @param config: Config object.
    @param newDisc: Indicates whether the disc should be re-initialized
    @param stagingDirs: Dictionary mapping directory path to date suffix.
@@ -194,13 +195,104 @@ def writeImage(config, newDisc, stagingDirs):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there is a problem writing the image to disc.
    """
+   writeImageBlankSafe(config, newDisc, newDisc, None, stagingDirs)
+
+
+#################################
+# writeImageBlankSafe() function
+#################################
+
+def writeImageBlankSafe(config, rebuildMedia, todayIsStart, blankFactor, stagingDirs):
+   """
+   Builds and writes an ISO image containing the indicated stage directories.
+
+   The generated image will contain each of the staging directories listed in
+   C{stagingDirs}.  The directories will be placed into the image at the root by
+   date, so staging directory C{/opt/stage/2005/02/10} will be placed into the
+   disc at C{/2005/02/10}.
+
+   This function is similar to L{writeImage}, but tries to implement a smarter
+   blanking strategy.  
+
+   First, the media is always blanked if the C{rebuildMedia} flag is true.  Then,
+   if C{rebuildMedia} is false, C{todayIsStart} comes into effect::
+
+      If today is not the start of the week, the disc will not be blanked
+
+      If today is the start of the week and the blanking factor is None,
+      then the disc will be blanked.  
+
+      If today is the start of the week, I{and} the blanking factor is set,
+      then the disc will be blanked only if it looks like the weekly backup
+      will not fit onto the media.
+
+   How do we decide whether the weekly backup will fit onto the media?  That is
+   what the blanking factor is used for.  The following formula is used::
+
+      will backup fit? = (bytes available / (1 + bytes required) <= blankFactor
+
+   The blanking factor will vary from setup to setup, and will probably
+   require some experimentation to get it right.
+
+   @note: It's safe to pass in C{blankFactor} as either a floating point number
+   or as a string representing a floating point number.
+
+   @param config: Config object.
+   @param rebuildMedia: Indicates whether media should be rebuilt
+   @param todayIsStart: Indicates whether today is the starting day of the week
+   @param blankFactor: Blanking factor as positive floating point number, or C{None}
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+
+   @raise ValueError: Under many generic error conditions
+   @raise IOError: If there is a problem writing the image to disc.
+   """
    writer = createWriter(config)
-   writer.initializeImage(newDisc, config.options.workingDir)
+   writer.initializeImage(True, config.options.workingDir)  # default value for newDisc
    for stageDir in stagingDirs.keys():
       logger.debug("Adding stage directory [%s]." % stageDir)
       dateSuffix = stagingDirs[stageDir]
       writer.addImageEntry(stageDir, dateSuffix)
+   newDisc = _getNewDisc(writer, rebuildMedia, todayIsStart, blankFactor)
+   writer.setImageNewDisc(newDisc)
    writer.writeImage()
+
+def _getNewDisc(writer, rebuildMedia, todayIsStart, blankFactor):
+   """
+   Gets a value for the newDisc flag based on blanking factor rules.
+
+   The blanking factor rules are described above by L{writeImageBlankSafe}.
+
+   @note: It's safe to pass in C{blankFactor} as either a floating point number
+   or as a string representing a floating point number.
+
+   @param writer: Previously configured image writer containing image entries
+   @param rebuildMedia: Indicates whether media should be rebuilt
+   @param todayIsStart: Indicates whether today is the starting day of the week
+   @param blankFactor: Blanking factor as positive floating point number, or C{None}
+
+   @return: newDisc flag to be set on writer.
+   """
+   newDisc = False
+   if rebuildMedia:
+      newDisc = True
+      logger.debug("Setting new disc flag based on rebuildMedia flag.")
+   elif todayIsStart:
+      if blankFactor is None:
+         newDisc = True
+         logger.debug("Setting new disc flag based on todayIsStart and no blanking factor.")
+      else:
+         logger.debug("Setting new disc flag based on todayIsStart and blanking factor calculation.")
+         blankFactor = float(blankFactor)
+         logger.debug("Blanking factor: %.2f" % blankFactor)
+         available = writer.retrieveCapacity()
+         logger.debug("Bytes available: %.2f" % available)
+         required = writer.getEstimatedImageSize()
+         logger.debug("Bytes required: %.2f" % required)
+         ratio = available / (1.0+required)
+         logger.debug("Ratio of available/(1+required): %.2f" % ratio)
+         newDisc = (ratio <= blankFactor)
+   logger.debug("New disc flag [%s]." % newDisc)
+   return newDisc
 
 
 #################################

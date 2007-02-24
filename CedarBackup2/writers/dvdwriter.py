@@ -76,7 +76,6 @@ MEDIA_DVDPLUSRW = 2
 
 GROWISOFS_COMMAND = [ "growisofs", ]
 EJECT_COMMAND     = [ "eject", ]
-MEDIAINFO_COMMAND = [ "dvd+rw-mediainfo", ]
 
 
 ########################################################################
@@ -240,6 +239,9 @@ class DvdWriter(object):
          initializeImage()
          addImageEntry()
          writeImage()
+         setImageNewDisc()
+         retrieveCapacity()
+         getEstimatedImageSize()
 
       Only these methods will be used by other Cedar Backup functionality
       that expects a compatible image writer.
@@ -298,22 +300,11 @@ class DvdWriter(object):
       process of estimating remaining capacity and image size is more
       straightforward with C{cdrecord}/C{mkisofs} than with C{growisofs}.
 
-      In this class, remaining capacity is calculated by asking
-      C{dvd+rw-mediainfo} for the "READ CAPACITY" of the disc (which seems to
-      be more-or-less the size of the data written previously to the disc), and
-      subtracting that from the capacity on the C{MediaDefinition}.  Image size
-      is estimated by asking the C{IsoImage} class for an estimate and then
-      adding on a "fudge factor" determined through experimentation.
-
-   Device Tray
-   ===========
-
-      It does not seem to be possible to get C{growisofs} to indicate whether a
-      given writer device has a tray.  I am not quite sure what to do about
-      this.  I haven't actually seen a DVD writer without a tray, so for the
-      time being I am going to assume a tray open/close operation is generally
-      safe; the C{deviceHasTray} and C{deviceCanEject} attributes are always
-      defaulted to C{True}. 
+      In this class, remaining capacity is calculated by asking doing a dry run
+      of C{growisofs} and grabbing some information from the output of that
+      command.  Image size is estimated by asking the C{IsoImage} class for an
+      estimate and then adding on a "fudge factor" determined through
+      experimentation.
 
    Testing
    =======
@@ -334,7 +325,7 @@ class DvdWriter(object):
       testing at all.
 
    @sort: __init__, isRewritable, retrieveCapacity, openTray, closeTray, refreshMedia, 
-          initializeImage, addImageEntry, writeImage, 
+          initializeImage, addImageEntry, writeImage, setImageNewDisc, getEstimatedImageSize,
           _writeImage, _getEstimatedImageSize, _searchForOverburn, _buildWriteArgs,
           device, scsiId, hardwareId, driveSpeed, media, deviceHasTray, deviceCanEject
    """
@@ -469,28 +460,25 @@ class DvdWriter(object):
 
       If C{entireDisc} is passed in as C{True}, the capacity will be for the
       entire disc, as if it were to be rewritten from scratch.  Otherwise, the
-      capacity will be calculated by subtracting the "READ CAPACITY" (reported
-      by C{dvd+rw-mediainfo}) from the total capacity of the disc.
-
-      @note: This is only an estimate, because C{growisofs} does not provide a
-      good way to calculate the capacity precisely.  In practice, you might
-      expect slightly less data to fit on the media than indicated by this
-      method.
+      capacity will be calculated by subtracting the sectors currently used on
+      the disc, as reported by C{growisofs} itself.
 
       @param entireDisc: Indicates whether to return capacity for entire disc.
       @type entireDisc: Boolean true/false
 
       @return: C{MediaCapacity} object describing the capacity of the media.
+
+      @raise ValueError: If there is a problem parsing the C{growisofs} output
       @raise IOError: If the media could not be read for some reason.
       """
       sectorsUsed = 0
       if not entireDisc:
-         command = resolveCommand(MEDIAINFO_COMMAND)
-         args = [ self.hardwareId, ]
+         command = resolveCommand(GROWISOFS_COMMAND)
+         args = DvdWriter._buildWriteArgs(False, self.hardwareId, self.driveSpeed, None, self._image.entries, dryRun=True)
          (result, output) = executeCommand(command, args, returnOutput=True)
          if result != 0:
-            raise IOError("Error (%d) reading media capacity." % result)
-         sectorsUsed = DvdWriter._getReadCapacity(output)
+            raise IOError("Error (%d) calling growisofs to read capacity." % result)
+         sectorsUsed = DvdWriter._getSectorsUsed(output)
       sectorsAvailable = self._media.capacity - sectorsUsed  # both are in sectors
       bytesUsed = convertSize(sectorsUsed, UNIT_SECTORS, UNIT_BYTES)
       bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
@@ -544,6 +532,32 @@ class DvdWriter(object):
       if not os.path.exists(path):
          raise ValueError("Path [%s] does not exist." % path)
       self._image.entries[path] = graftPoint
+
+   def setImageNewDisc(self, newDisc):
+      """
+      Resets (overrides) the newDisc flag on the internal image.
+      @param newDisc: New disc flag to set
+      @raise ValueError: If initializeImage() was not previously called
+      """
+      if self._image is None:
+         raise ValueError("Must call initializeImage() before using this method.")
+      self._image.newDisc = newDisc
+
+   def getEstimatedImageSize(self):
+      """
+      Gets the estimated size of the image associated with the writer.
+
+      This is an estimate and is conservative.  The actual image could be as
+      much as 450 blocks (sectors) smaller under some circmstances.
+
+      @return: Estimated size of the image, in bytes.
+
+      @raise IOError: If there is a problem calling C{mkisofs}.
+      @raise ValueError: If initializeImage() was not previously called
+      """
+      if self._image is None:
+         raise ValueError("Must call initializeImage() before using this method.")
+      return DvdWriter._getEstimatedImageSize(self._image.entries)
 
 
    ######################################
@@ -650,7 +664,7 @@ class DvdWriter(object):
       if imagePath is None:
          if self._image is None:
             raise ValueError("Must call initializeImage() before using this method with no image path.")
-         size = DvdWriter._getEstimatedImageSize(self._image.entries)
+         size = self.getEstimatedImageSize()
          logger.info("Image size will be %s (estimated)." % displayBytes(size))
          self._writeImage(self._image.newDisc, None, self._image.entries)
       else:
@@ -723,31 +737,36 @@ class DvdWriter(object):
       return estimatedSize
    _getEstimatedImageSize = staticmethod(_getEstimatedImageSize)
 
-   def _getReadCapacity(output):
+   def _getSectorsUsed(output):
       """
-      Parse "READ CAPACITY" in sectors out of C{dvd+rw-mediainfo} output.
+      Parse sectors used information out of C{growisofs} output.
 
-      The "READ CAPACITY" line looks like this::
+      The first line of a growisofs run looks something like this::
 
-         READ CAPACITY:          30592*2048=62652416
+         Executing 'mkisofs -C 973744,1401056 -M /dev/fd/3 -r -graft-points music4/=music | builtin_dd of=/dev/cdrom obs=32k seek=87566'
 
-      The first value is the number of sectors used, the second value is the
-      sector size (which should be standard at 2048 bytes) and the third value
-      is the number of bytes.  This method returns the number of sectors.
+      Dmitry has determined that the seek value in this line gives us
+      information about how much data has previously been written to the media.
+      That value multiplied by 16 yields the number of sectors used.
 
-      If the "READ CAPACITY" line is not found or does not make sense, then
-      zero will be returned.
+      If the seek line cannot be found in the output, then sectors used of zero
+      is assumed.
 
-      @return: Read capacity of media in sectors, as a float.
+      @return: Sectors used on the media, as a floating point number.
+
+      @raise ValueError: If the output cannot be parsed properly.
       """
       if output is not None:
-         pattern = re.compile(r"(^)(READ CAPACITY:\s*)([0-9]*)([*])([0-9]*)(=)([0-9]*)")
+         pattern = re.compile(r"(^)(.*)(seek=)(.*)('$)")
          for line in output:
             match = pattern.search(line)
             if match is not None:
-               return float(match.group(3).strip())
+               try:
+                  return float(match.group(4).strip()) * 16.0
+               except ValueError:
+                  raise ValueError("Unable to parse sectors used out of growisofs output.")
       return 0.0
-   _getReadCapacity = staticmethod(_getReadCapacity)
+   _getSectorsUsed = staticmethod(_getSectorsUsed)
 
    def _searchForOverburn(output):
       """
