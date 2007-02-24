@@ -1117,13 +1117,18 @@ def getUidGid(user, group):
 def changeOwnership(path, user, group):
    """
    Changes ownership of path to match the user and group.
-   This is a no-op if user/group functionality is not available on the platform.
+
+   This is a no-op if user/group functionality is not available on the
+   platform, or if the either passed-in user or group is C{None}.
+
    @param path: Path whose ownership to change.
    @param user: User which owns file.
    @param group: Group which owns file.
    """
    if _UID_GID_AVAILABLE:
-      if os.getuid() != 0:
+      if user is None or group is None:
+         logger.debug("User or group is None, so not attempting to change owner on [%s]." % path)
+      elif os.getuid() != 0:
          logger.debug("Not root, so not attempting to change owner on [%s]." % path)
       else:
          try:
