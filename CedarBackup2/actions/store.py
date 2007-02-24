@@ -284,11 +284,11 @@ def _getNewDisc(writer, rebuildMedia, todayIsStart, blankFactor):
          logger.debug("Setting new disc flag based on todayIsStart and blanking factor calculation.")
          blankFactor = float(blankFactor)
          logger.debug("Blanking factor: %.2f" % blankFactor)
-         available = writer.retrieveCapacity()
+         available = writer.retrieveCapacity().bytesAvailable
          logger.debug("Bytes available: %.2f" % available)
          required = writer.getEstimatedImageSize()
          logger.debug("Bytes required: %.2f" % required)
-         ratio = available / (1.0+required)
+         ratio = available / (1.0 + required)
          logger.debug("Ratio of available/(1+required): %.2f" % ratio)
          newDisc = (ratio <= blankFactor)
    logger.debug("New disc flag [%s]." % newDisc)

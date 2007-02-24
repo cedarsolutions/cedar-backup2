@@ -877,12 +877,13 @@ class CdWriter(object):
       @raise ValueError: If a path cannot be encoded properly.
       """
       path = None
-      image = IsoImage()
+      capacity = self.retrieveCapacity(entireDisc=self._image.newDisc)
+      image = IsoImage(self.device, capacity.boundaries)
       for path in self._image.entries.keys():
          image.addEntry(path, self._image.entries[path], override=False, contentsOnly=True)
       size = image.getEstimatedSize()
       logger.info("Image size will be %s." % displayBytes(size))
-      available = self.retrieveCapacity(entireDisc=self._image.newDisc)
+      available = capacity.bytesAvailable
       logger.debug("Media capacity: %s" % displayBytes(available))
       if size > available:
          logger.error("Image [%s] does not fit in available capacity [%s]." % (displayBytes(size), displayBytes(available)))
