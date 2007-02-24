@@ -1448,7 +1448,7 @@ password = &lt;secret&gt;
       <para>
          You would normally run this action immediately after the standard
          stage action, but you could also choose to run it by hand immediately
-         before running <command>cback-stage</command>.
+         before running <command>cback-span</command>.
       </para>
 
       <para>
