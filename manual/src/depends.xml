@@ -508,6 +508,75 @@
             </listitem>
          </varlistentry>
 
+         <varlistentry>
+            <term><command>gpg</command></term>
+            <listitem>
+
+               <para>
+                  The <command>gpg</command> command is used by the encrypt
+                  extension to encrypt files.
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://freshmeat.net/projects/gnupg/"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="http://packages.debian.org/stable/utils/gnupg"/></entry>
+                        </row>
+                        <row>
+                           <entry>Gentoo</entry>
+                           <entry><ulink url="http://packages.gentoo.org/packages/?category=app-crypt;name=gnupg"/></entry>
+                        </row>
+                        <row>
+                           <entry>RPM</entry>
+                           <entry><ulink url="http://rpmfind.net/linux/rpm2html/search.php?query=gnupg"/></entry>
+                        </row>
+                        <row>
+                           <entry>Mac OS X</entry>
+                           <entry><ulink url="http://pdb.finkproject.org/pdb/package.php/gnupg"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><command>split</command></term>
+            <listitem>
+
+               <para>
+                  The <command>split</command> command is used by the split
+                  extension to split up large files.
+               </para>
+
+               <para>
+                  This command is typically part of the core operating system
+                  install and is not distributed in a separate package.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
       </variablelist>
 
    </simplesect>
