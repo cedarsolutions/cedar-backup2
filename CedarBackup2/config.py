@@ -2740,15 +2740,21 @@ class StoreConfig(object):
       - The device path must be an absolute path.
       - The SCSI id, if provided, must be in the form specified by L{validateScsiId}.
       - The drive speed must be an integer >= 1
+      - The blanking factor must be a positive floating point number
+
+   Note that although the blanking factor must be a positive floating point
+   number, it is stored as a string. This is done so that we can losslessly go
+   back and forth between XML and object representations of configuration.
 
    @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
           mediaType, deviceType, devicePath, deviceScsiId, 
-          driveSpeed, checkData, warnMidnite, noEject
+          driveSpeed, checkData, warnMidnite, noEject, blankFactor
    """
 
    def __init__(self, sourceDir=None, mediaType=None, deviceType=None, 
                 devicePath=None, deviceScsiId=None, driveSpeed=None,
-                checkData=False, warnMidnite=False, noEject=False):
+                checkData=False, warnMidnite=False, noEject=False,
+                blankFactor=None):
       """
       Constructor for the C{StoreConfig} class.
 
@@ -2761,6 +2767,7 @@ class StoreConfig(object):
       @param checkData: Whether resulting image should be validated.
       @param warnMidnite: Whether to generate warnings for crossing midnite.
       @param noEject: Indicates that the writer device should not be ejected.
+      @param blankFactor: Factor used for improved media blanking strategy
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -2773,6 +2780,7 @@ class StoreConfig(object):
       self._checkData = None
       self._warnMidnite = None
       self._noEject = None
+      self._blankFactor = None
       self.sourceDir = sourceDir
       self.mediaType = mediaType
       self.deviceType = deviceType
@@ -2782,14 +2790,16 @@ class StoreConfig(object):
       self.checkData = checkData
       self.warnMidnite = warnMidnite
       self.noEject = noEject
+      self.blankFactor = blankFactor
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
-                                                                  self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                                  self.checkData, self.warnMidnite, self.noEject)
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
+                                                                      self.devicePath, self.deviceScsiId, self.driveSpeed,
+                                                                      self.checkData, self.warnMidnite, self.noEject,
+                                                                      self.blankFactor)
 
    def __str__(self):
       """
@@ -2847,6 +2857,11 @@ class StoreConfig(object):
             return 1
       if self._noEject != other._noEject:
          if self._noEject < other._noEject:
+            return -1
+         else:
+            return 1
+      if self._blankFactor != other._blankFactor:
+         if self._blankFactor < other._blankFactor:
             return -1
          else:
             return 1
@@ -3003,6 +3018,28 @@ class StoreConfig(object):
       """
       return self._noEject
 
+   def _setBlankFactor(self, value):
+      """
+      Property target used to set the blanking factor.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      @raise ValueError: If the value is not a valid floating point number
+      @raise ValueError: If the value is less than zero
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("Blanking factor must be a non-empty string.")
+         floatValue = float(value)
+         if floatValue < 0.0:
+            raise ValueError("Blanking factor cannot be negative.")
+      self._blankFactor = value # keep around string
+
+   def _getBlankFactor(self):
+      """
+      Property target used to get the blanking factor.
+      """
+      return self._blankFactor
+
    sourceDir = property(_getSourceDir, _setSourceDir, None, "Directory whose contents should be written to media.")
    mediaType = property(_getMediaType, _setMediaType, None, "Type of the media (see notes above).")
    deviceType = property(_getDeviceType, _setDeviceType, None, "Type of the device (optional, see notes above).")
@@ -3012,6 +3049,7 @@ class StoreConfig(object):
    checkData = property(_getCheckData, _setCheckData, None, "Whether resulting image should be validated.")
    warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
    noEject = property(_getNoEject, _setNoEject, None, "Indicates that the writer device should not be ejected.")
+   blankFactor = property(_getBlankFactor, _setBlankFactor, None, "Factor used for improved media blanking strategy.")
 
 
 ########################################################################
@@ -3732,6 +3770,7 @@ class Config(object):
          checkData         //cb_config/store/check_data
          warnMidnite       //cb_config/store/warn_midnite
          noEject           //cb_config/store/no_eject
+         blankFactor       //cb_config/store/blank_factor
 
       @param parentNode: Parent node to search beneath.
 
@@ -3751,6 +3790,7 @@ class Config(object):
          store.checkData = readBoolean(sectionNode, "check_data")
          store.warnMidnite = readBoolean(sectionNode, "warn_midnite")
          store.noEject = readBoolean(sectionNode, "no_eject")
+         store.blankFactor = readString(sectionNode, "blank_factor")
       return store
    _parseStore = staticmethod(_parseStore)
 
@@ -4343,6 +4383,7 @@ class Config(object):
          checkData         //cb_config/store/check_data
          warnMidnite       //cb_config/store/warn_midnite
          noEject           //cb_config/store/no_eject
+         blankFactor       //cb_config/store/blank_factor
 
       If C{storeConfig} is C{None}, then no container will be added.
 
@@ -4361,6 +4402,7 @@ class Config(object):
          addBooleanNode(xmlDom, sectionNode, "check_data", storeConfig.checkData)
          addBooleanNode(xmlDom, sectionNode, "warn_midnite", storeConfig.warnMidnite)
          addBooleanNode(xmlDom, sectionNode, "no_eject", storeConfig.noEject)
+         addStringNode(xmlDom, sectionNode, "blank_factor", storeConfig.blankFactor)
    _addStore = staticmethod(_addStore)
 
    def _addPurge(xmlDom, parentNode, purgeConfig):
@@ -4873,8 +4915,8 @@ class Config(object):
       """
       Validates store configuration.
 
-      The device type, drive speed are optional, and all other values are
-      required (missing booleans will be set to defaults, which is OK).
+      The device type, drive speed, and blanking factor are optional.  All
+      other values are required. Missing booleans will be set to defaults.
 
       The image writer functionality in the C{writer} module is supposed to be
       able to handle a device speed of C{None}.  
