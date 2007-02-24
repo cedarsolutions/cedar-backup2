@@ -222,7 +222,7 @@ def writeImageBlankSafe(config, rebuildMedia, todayIsStart, blankFactor, staging
       If today is the start of the week and the blanking factor is None,
       then the disc will be blanked.  
 
-      If today is the start of the week, I{and} the blanking factor is set,
+      If today is the start of the week, and the blanking factor is set,
       then the disc will be blanked only if it looks like the weekly backup
       will not fit onto the media.
 
