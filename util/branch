@@ -1,7 +1,7 @@
 #!/bin/ksh
 # Sensibly creates a branch off a named release in Subversion.
 
-if [[ $# != 1 || ${1} == "--help" ]]
+if [[ $# != 2 || ${1} == "--help" ]]
 then
    print "Usage: branch <version> <branchname>"
    exit 1
