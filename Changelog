@@ -1,4 +1,4 @@
-Version 2.12.1		unreleased
+Version 2.12.1		26 Feb 2007
 	
 	* Fix typo in new split section in the user manual.
 	* Fix incorrect call to new writeIndicatorFile() function in stage action.
