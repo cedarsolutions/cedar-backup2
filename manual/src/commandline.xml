@@ -104,7 +104,7 @@
    -l, --logfile  Path to logfile (default: /var/log/cback.log)
    -o, --owner    Logfile ownership, user:group (default: root:adm)
    -m, --mode     Octal logfile permissions mode (default: 640)
-   -O, --output   Record some sub-command (i.e. tar) output to the log
+   -O, --output   Record some sub-command (i.e. cdrecord) output to the log
    -d, --debug    Write debugging information to the log (implies --output)
    -s, --stack    Dump a Python stack trace instead of swallowing exceptions
 
@@ -406,7 +406,7 @@
    -l, --logfile  Path to logfile (default: /var/log/cback.log)
    -o, --owner    Logfile ownership, user:group (default: root:adm)
    -m, --mode     Octal logfile permissions mode (default: 640)
-   -O, --output   Record some sub-command (i.e. tar) output to the log
+   -O, --output   Record some sub-command (i.e. cdrecord) output to the log
    -d, --debug    Write debugging information to the log (implies --output)
    -s, --stack    Dump a Python stack trace instead of swallowing exceptions
          </screen>

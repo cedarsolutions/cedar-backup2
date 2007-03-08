@@ -692,7 +692,7 @@ def _usage(fd=sys.stderr):
    fd.write("   -l, --logfile  Path to logfile (default: %s)\n" % DEFAULT_LOGFILE)
    fd.write("   -o, --owner    Logfile ownership, user:group (default: %s:%s)\n" % (DEFAULT_OWNERSHIP[0], DEFAULT_OWNERSHIP[1]))
    fd.write("   -m, --mode     Octal logfile permissions mode (default: %o)\n" % DEFAULT_MODE)
-   fd.write("   -O, --output   Record some sub-command (i.e. tar) output to the log\n")
+   fd.write("   -O, --output   Record some sub-command (i.e. cdrecord) output to the log\n")
    fd.write("   -d, --debug    Write debugging information to the log (implies --output)\n")
    fd.write("   -s, --stack    Dump a Python stack trace instead of swallowing exceptions\n")
    fd.write("\n")
