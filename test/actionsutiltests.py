@@ -241,7 +241,7 @@ class TestFunctions(unittest.TestCase):
       Test with a nonexistent staging directory.
       """
       stagingDir = self.buildPath([INVALID_PATH])
-      writeIndicatorFile(stagingDir, ENCRYPT_INDICATOR, None, None)   # should just log an error and go on
+      self.failUnlessRaises(IOError, writeIndicatorFile, stagingDir, ENCRYPT_INDICATOR, None, None)
 
    def testWriteIndicatorFile_002(self):
       """

@@ -945,6 +945,8 @@ def convertSize(size, fromUnit, toUnit):
    @return: Number converted to new unit, as a float.
    @raise ValueError: If one of the units is invalid.
    """
+   if size is None:
+      raise ValueError("Cannot convert size of None.")
    if fromUnit == UNIT_BYTES:
       byteSize = float(size)
    elif fromUnit == UNIT_KBYTES:
@@ -956,7 +958,7 @@ def convertSize(size, fromUnit, toUnit):
    elif fromUnit == UNIT_SECTORS:
       byteSize = float(size) * BYTES_PER_SECTOR
    else:
-      raise ValueError("Unknown 'from' unit %d." % fromUnit)
+      raise ValueError("Unknown 'from' unit %s." % fromUnit)
    if toUnit == UNIT_BYTES:
       return byteSize
    elif toUnit == UNIT_KBYTES:
@@ -968,7 +970,7 @@ def convertSize(size, fromUnit, toUnit):
    elif toUnit == UNIT_SECTORS:
       return byteSize / BYTES_PER_SECTOR
    else:
-      raise ValueError("Unknown 'to' unit %d." % toUnit)
+      raise ValueError("Unknown 'to' unit %s." % toUnit)
 
 
 ##########################
@@ -981,7 +983,7 @@ def displayBytes(bytes, digits=2):
 
    It's rather difficult to look at a number like "72372224 bytes" and get any
    meaningful information out of it.  It would be more useful to see something
-   like "72.37 MB".  That's what this function does.  Any time you want to display
+   like "69.02 MB".  That's what this function does.  Any time you want to display
    a byte value, i.e.::
 
       print "Size: %s bytes" % bytes
@@ -992,7 +994,9 @@ def displayBytes(bytes, digits=2):
 
    What comes out will be sensibly formatted.  The indicated number of digits
    will be listed after the decimal point, rounded based on whatever rules are
-   used by Python's standard C{%f} string format specifier.
+   used by Python's standard C{%f} string format specifier. (Values less than 1
+   kB will be listed in bytes and will not have a decimal point, since the
+   concept of a fractional byte is nonsensical.)
 
    @param bytes: Byte quantity.
    @type bytes: Integer number of bytes.
@@ -1002,6 +1006,8 @@ def displayBytes(bytes, digits=2):
 
    @return: String, formatted for sensible display.
    """
+   if(bytes is None):
+      raise ValueError("Cannot display byte value of None.")
    bytes = float(bytes)
    if math.fabs(bytes) < BYTES_PER_KBYTE:
       format = "%.0f bytes"
@@ -1160,7 +1166,11 @@ def splitCommandLine(commandLine):
    @type commandLine: String, i.e. "cback --verbose stage store"
 
    @return: List of arguments, suitable for passing to L{popen2}.
+
+   @raise ValueError: If the command line is None.
    """
+   if commandLine is None:
+      raise ValueError("Cannot split command line of None.")
    fields = re.findall('[^ "]+|"[^"]+"', commandLine)
    fields = map(lambda field: field.replace('"', ''), fields)
    return fields
@@ -1669,21 +1679,43 @@ def buildNormalizedPath(path):
    """
    Returns a "normalized" path based on a path name.
 
-   A "normalized" path has its leading C{'/'} or C{'.'} characters removed, and
-   then converts all remaining whitespace and C{'/'} characters to the C{'_'}
-   character.   As a special case, the absolute path C{/} will be normalized to
-   just C{'-'}.
+   A normalized path is a representation of a path that is also a valid file
+   name.  To make a valid file name out of a complete path, we have to convert
+   or remove some characters that are significant to the filesystem -- in
+   particular, the path separator and any leading C{'.'} character (which would
+   cause the file to be hidden in a file listing).  
+
+   Note that this is a one-way transformation -- you can't safely derive the
+   original path from the normalized path.
+
+   To normalize a path, we begin by looking at the first character.  If the
+   first character is C{'/'} or C{'\\'}, it gets removed.  If the first
+   character is C{'.'}, it gets converted to C{'_'}.  Then, we look through the
+   rest of the path and convert all remaining C{'/'} or C{'\\'} characters
+   C{'-'}, and all remaining whitespace characters to C{'_'}.
+
+   As a special case, a path consisting only of a single C{'/'} or C{'\\'}
+   character will be converted to C{'-'}.
 
    @param path: Path to normalize
 
-   @return: Normalized path.
+   @return: Normalized path as described above.
+
+   @raise ValueError: If the path is None
    """
-   if path == os.sep:
+   if path is None:
+      raise ValueError("Cannot normalize path None.")
+   elif len(path) == 0:
+      return path
+   elif path == "/" or path == "\\":
       return "-"
    else:
       normalized = path
-      normalized = re.sub("^\.", "", normalized)
-      normalized = re.sub("^\/", "", normalized)
-      normalized = re.sub("\/", "-", normalized)
-      normalized = re.sub("\s", "_", normalized)
+      normalized = re.sub(r"^\/", "", normalized)  # remove leading '/'
+      normalized = re.sub(r"^\\", "", normalized)  # remove leading '\'
+      normalized = re.sub(r"^\.", "_", normalized) # convert leading '.' to '_' so file won't be hidden
+      normalized = re.sub(r"\/", "-", normalized)  # convert all '/' characters to '-'
+      normalized = re.sub(r"\\", "-", normalized)  # convert all '\' characters to '-'
+      normalized = re.sub(r"\s", "_", normalized)  # convert all whitespace to '_'
       return normalized
+

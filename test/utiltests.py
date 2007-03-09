@@ -78,12 +78,16 @@ import sys
 import os
 import unittest
 import tempfile
+import time
 from os.path import isdir
 
-from CedarBackup2.testutil import findResources, removedir, platformHasEcho
+from CedarBackup2.testutil import findResources, removedir, platformHasEcho, platformWindows
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, RestrictedContentList, RegexMatchList
 from CedarBackup2.util import DirectedGraph, PathResolverSingleton
 from CedarBackup2.util import sortDict, resolveCommand, executeCommand, getFunctionReference, encodePath
+from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
+from CedarBackup2.util import displayBytes, deriveDayOfWeek, isStartOfWeek
+from CedarBackup2.util import buildNormalizedPath, splitCommandLine, nullDevice
 
 
 #######################################################################
@@ -3185,6 +3189,547 @@ class TestFunctions(unittest.TestCase):
          else:
             self.failUnlessEqual("\xe2\x99\xaa\xe2\x99\xac", safePath)
 
+
+   #####################
+   # Test convertSize() 
+   ######################
+         
+   def testConvertSize_001(self):
+      """
+      Test valid conversion from bytes to bytes.
+      """
+      fromUnit = UNIT_BYTES
+      toUnit = UNIT_BYTES
+      size = 10.0
+      result = convertSize(size, fromUnit, toUnit)
+      self.failUnlessEqual(result, size)
+
+   def testConvertSize_002(self):
+      """
+      Test valid conversion from sectors to bytes and back.
+      """
+      fromUnit = UNIT_SECTORS
+      toUnit = UNIT_BYTES
+      size = 10
+      result1 = convertSize(size, fromUnit, toUnit)
+      self.failUnlessEqual(10*2048, result1)
+      result2 = convertSize(result1, toUnit, fromUnit)
+      self.failUnlessEqual(result2, size)
+
+   def testConvertSize_003(self):
+      """
+      Test valid conversion from kbytes to bytes and back.
+      """
+      fromUnit = UNIT_KBYTES
+      toUnit = UNIT_BYTES
+      size = 10
+      result1 = convertSize(size, fromUnit, toUnit)
+      self.failUnlessEqual(10*1024, result1)
+      result2 = convertSize(result1, toUnit, fromUnit)
+      self.failUnlessEqual(result2, size)
+
+   def testConvertSize_004(self):
+      """
+      Test valid conversion from mbytes to bytes and back.
+      """
+      fromUnit = UNIT_MBYTES
+      toUnit = UNIT_BYTES
+      size = 10
+      result1 = convertSize(size, fromUnit, toUnit)
+      self.failUnlessEqual(10*1024*1024, result1)
+      result2 = convertSize(result1, toUnit, fromUnit)
+      self.failUnlessEqual(result2, size)
+
+   def testConvertSize_005(self):
+      """
+      Test valid conversion from gbytes to bytes and back.
+      """
+      fromUnit = UNIT_GBYTES
+      toUnit = UNIT_BYTES
+      size = 10
+      result1 = convertSize(size, fromUnit, toUnit)
+      self.failUnlessEqual(10*1024*1024*1024, result1)
+      result2 = convertSize(result1, toUnit, fromUnit)
+      self.failUnlessEqual(result2, size)
+
+   def testConvertSize_006(self):
+      """
+      Test valid conversion from mbytes to kbytes and back.
+      """
+      fromUnit = UNIT_MBYTES
+      toUnit = UNIT_KBYTES
+      size = 10
+      result1 = convertSize(size, fromUnit, toUnit)
+      self.failUnlessEqual(size*1024, result1)
+      result2 = convertSize(result1, toUnit, fromUnit)
+      self.failUnlessEqual(result2, size)
+
+   def testConvertSize_007(self):
+      """
+      Test with an invalid from unit (None).
+      """
+      fromUnit = None
+      toUnit = UNIT_BYTES
+      size = 10
+      self.failUnlessRaises(ValueError, convertSize, size, fromUnit, toUnit)
+
+   def testConvertSize_008(self):
+      """
+      Test with an invalid from unit.
+      """
+      fromUnit = 333
+      toUnit = UNIT_BYTES
+      size = 10
+      self.failUnlessRaises(ValueError, convertSize, size, fromUnit, toUnit)
+
+   def testConvertSize_009(self):
+      """
+      Test with an invalid to unit (None)
+      """
+      fromUnit = UNIT_BYTES
+      toUnit = None
+      size = 10
+      self.failUnlessRaises(ValueError, convertSize, size, fromUnit, toUnit)
+
+   def testConvertSize_010(self):
+      """
+      Test with an invalid to unit.
+      """
+      fromUnit = UNIT_BYTES
+      toUnit = "ken"
+      size = 10
+      self.failUnlessRaises(ValueError, convertSize, size, fromUnit, toUnit)
+
+   def testConvertSize_011(self):
+      """
+      Test with an invalid quantity (None)
+      """
+      fromUnit = UNIT_BYTES
+      toUnit = UNIT_BYTES
+      size = None
+      self.failUnlessRaises(ValueError, convertSize, size, fromUnit, toUnit)
+
+   def testConvertSize_012(self):
+      """
+      Test with an invalid quantity (not a floating point).
+      """
+      fromUnit = UNIT_BYTES
+      toUnit = UNIT_BYTES
+      size = "blech"
+      self.failUnlessRaises(ValueError, convertSize, size, fromUnit, toUnit)
+
+
+   ####################
+   # Test nullDevice() 
+   #####################
+         
+   def testNullDevice_001(self):
+      """
+      Test that the function behaves sensibly on Windows and non-Windows platforms.
+      """
+      device = nullDevice()
+      if platformWindows():
+         self.failUnlessEqual("NUL", device)
+      else:
+         self.failUnlessEqual("/dev/null", device)
+
+
+   ######################
+   # Test displayBytes() 
+   ######################
+         
+   def testDisplayBytes_001(self):
+      """
+      Test display for a positive value < 1 KB
+      """
+      bytes = 12
+      result = displayBytes(bytes)
+      self.failUnlessEqual("12 bytes", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("12 bytes", result)
+
+   def testDisplayBytes_002(self):
+      """
+      Test display for a negative value < 1 KB
+      """
+      bytes = -12
+      result = displayBytes(bytes)
+      self.failUnlessEqual("-12 bytes", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("-12 bytes", result)
+
+   def testDisplayBytes_003(self):
+      """
+      Test display for a positive value = 1kB
+      """
+      bytes = 1024
+      result = displayBytes(bytes)
+      self.failUnlessEqual("1.00 kB", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("1.000 kB", result)
+
+   def testDisplayBytes_004(self):
+      """
+      Test display for a positive value >= 1kB
+      """
+      bytes = 5678
+      result = displayBytes(bytes)
+      self.failUnlessEqual("5.54 kB", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("5.545 kB", result)
+
+   def testDisplayBytes_005(self):
+      """
+      Test display for a negative value >= 1kB
+      """
+      bytes = -5678
+      result = displayBytes(bytes)
+      self.failUnlessEqual("-5.54 kB", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("-5.545 kB", result)
+
+   def testDisplayBytes_006(self):
+      """
+      Test display for a positive value = 1MB
+      """
+      bytes = 1024.0 * 1024.0
+      result = displayBytes(bytes)
+      self.failUnlessEqual("1.00 MB", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("1.000 MB", result)
+
+   def testDisplayBytes_007(self):
+      """
+      Test display for a positive value >= 1MB
+      """
+      bytes = 72372224
+      result = displayBytes(bytes)
+      self.failUnlessEqual("69.02 MB", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("69.020 MB", result)
+
+   def testDisplayBytes_008(self):
+      """
+      Test display for a negative value >= 1MB
+      """
+      bytes = -72372224.0
+      result = displayBytes(bytes)
+      self.failUnlessEqual("-69.02 MB", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("-69.020 MB", result)
+
+   def testDisplayBytes_009(self):
+      """
+      Test display for a positive value = 1GB
+      """
+      bytes = 1024.0 * 1024.0 * 1024.0
+      result = displayBytes(bytes)
+      self.failUnlessEqual("1.00 GB", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("1.000 GB", result)
+
+   def testDisplayBytes_010(self):
+      """
+      Test display for a positive value >= 1GB
+      """
+      bytes = 4.4 * 1024.0 * 1024.0 * 1024.0
+      result = displayBytes(bytes)
+      self.failUnlessEqual("4.40 GB", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("4.400 GB", result)
+
+   def testDisplayBytes_011(self):
+      """
+      Test display for a negative value >= 1GB
+      """
+      bytes = -1234567891011
+      result = displayBytes(bytes)
+      self.failUnlessEqual("-1149.78 GB", result)
+      result = displayBytes(bytes, 3)
+      self.failUnlessEqual("-1149.781 GB", result)
+
+   def testDisplayBytes_012(self):
+      """
+      Test display with an invalid quantity (None).
+      """
+      bytes = None
+      self.failUnlessRaises(ValueError, displayBytes, bytes)
+
+   def testDisplayBytes_013(self):
+      """
+      Test display with an invalid quantity (not a floating point).
+      """
+      bytes = "ken"
+      self.failUnlessRaises(ValueError, displayBytes, bytes)
+
+
+   #########################
+   # Test deriveDayOfWeek() 
+   #########################
+         
+   def testDeriveDayOfWeek_001(self):
+      """
+      Test for valid day names.
+      """
+      self.failUnlessEqual(0, deriveDayOfWeek("monday"))
+      self.failUnlessEqual(1, deriveDayOfWeek("tuesday"))
+      self.failUnlessEqual(2, deriveDayOfWeek("wednesday"))
+      self.failUnlessEqual(3, deriveDayOfWeek("thursday"))
+      self.failUnlessEqual(4, deriveDayOfWeek("friday"))
+      self.failUnlessEqual(5, deriveDayOfWeek("saturday"))
+      self.failUnlessEqual(6, deriveDayOfWeek("sunday"))
+
+   def testDeriveDayOfWeek_002(self):
+      """
+      Test for invalid day names.
+      """
+      self.failUnlessEqual(-1, deriveDayOfWeek("bogus"))
+
+
+   #######################
+   # Test isStartOfWeek() 
+   #######################
+         
+   def testIsStartOfWeek001(self):
+      """
+      Test positive case.
+      """
+      day = time.localtime().tm_wday
+      if day == 0:
+         result = isStartOfWeek("monday")
+      elif day == 1:
+         result = isStartOfWeek("tuesday")
+      elif day == 2:
+         result = isStartOfWeek("wednesday")
+      elif day == 3:
+         result = isStartOfWeek("thursday")
+      elif day == 4:
+         result = isStartOfWeek("friday")
+      elif day == 5:
+         result = isStartOfWeek("saturday")
+      elif day == 6:
+         result = isStartOfWeek("sunday")
+      self.failUnlessEqual(True, result)
+
+   def testIsStartOfWeek002(self):
+      """
+      Test negative case.
+      """
+      day = time.localtime().tm_wday
+      if day == 0:
+         result = isStartOfWeek("friday")
+      elif day == 1:
+         result = isStartOfWeek("saturday")
+      elif day == 2:
+         result = isStartOfWeek("sunday")
+      elif day == 3:
+         result = isStartOfWeek("monday")
+      elif day == 4:
+         result = isStartOfWeek("tuesday")
+      elif day == 5:
+         result = isStartOfWeek("wednesday")
+      elif day == 6:
+         result = isStartOfWeek("thursday")
+      self.failUnlessEqual(False, result)
+
+
+   #############################
+   # Test buildNormalizedPath() 
+   #############################
+
+   def testBuildNormalizedPath001(self):
+      """
+      Test for a None path.
+      """
+      self.failUnlessRaises(ValueError, buildNormalizedPath, None)
+         
+   def testBuildNormalizedPath002(self):
+      """
+      Test for an empty path.
+      """
+      path = ""
+      expected = ""
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath003(self):
+      """
+      Test for "."
+      """
+      path = "."
+      expected = "_"
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath004(self):
+      """
+      Test for ".."
+      """
+      path = ".."
+      expected = "_."
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath005(self):
+      """
+      Test for "..........."
+      """
+      path = ".........."
+      expected = "_........."
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath006(self):
+      """
+      Test for "/"
+      """
+      path = "/"
+      expected = "-"
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath007(self):
+      """
+      Test for "\\"
+      """
+      path = "\\"
+      expected = "-"
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath008(self):
+      """
+      Test for "/."
+      """
+      path = "/."
+      expected = "_"
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath009(self):
+      """
+      Test for "/.."
+      """
+      path = "/.."
+      expected = "_."
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath010(self):
+      """
+      Test for "/..."
+      """
+      path = "/..."
+      expected = "_.."
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath011(self):
+      """
+      Test for "\."
+      """
+      path = r"\."
+      expected = "_"
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath012(self):
+      """
+      Test for "\.."
+      """
+      path = r"\.."
+      expected = "_."
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath013(self):
+      """
+      Test for "\..."
+      """
+      path = r"\..."
+      expected = "_.."
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath014(self):
+      """
+      Test for "/var/log/apache/httpd.log.1"
+      """
+      path = "/var/log/apache/httpd.log.1"
+      expected = "var-log-apache-httpd.log.1"
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath015(self):
+      """
+      Test for "var/log/apache/httpd.log.1"
+      """
+      path = "var/log/apache/httpd.log.1"
+      expected = "var-log-apache-httpd.log.1"
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath016(self):
+      """
+      Test for "\\var/log/apache\\httpd.log.1"
+      """
+      path = "\\var/log/apache\\httpd.log.1"
+      expected = "var-log-apache-httpd.log.1"
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+   def testBuildNormalizedPath017(self):
+      """
+      Test for "/Big Nasty Base Path With Spaces/something/else/space s/file.  log   .2 ."
+      """
+      path = "/Big Nasty Base Path With Spaces/something/else/space s/file.  log   .2 ."
+      expected = "Big_Nasty_Base_Path_With_Spaces-something-else-space_s-file.__log___.2_."
+      actual = buildNormalizedPath(path)
+      self.failUnlessEqual(expected, actual)
+
+
+   ##########################
+   # Test splitCommandLine() 
+   ##########################
+
+   def testSplitCommandLine_001(self):
+      """
+      Test for a None command line.
+      """
+      commandLine = None
+      self.failUnlessRaises(ValueError, splitCommandLine, commandLine)
+
+   def testSplitCommandLine_002(self):
+      """
+      Test for an empty command line.
+      """
+      commandLine = ""
+      result = splitCommandLine(commandLine)
+      self.failUnlessEqual([], result)
+
+   def testSplitCommandLine_003(self):
+      """
+      Test for a command line with no quoted arguments.
+      """
+      commandLine = "cback --verbose stage store purge"
+      result = splitCommandLine(commandLine)
+      self.failUnlessEqual(["cback", "--verbose", "stage", "store", "purge", ], result)
+
+   def testSplitCommandLine_004(self):
+      """
+      Test for a command line with double-quoted arguments.
+      """
+      commandLine = 'cback "this is a really long double-quoted argument"'
+      result = splitCommandLine(commandLine)
+      self.failUnlessEqual(["cback", "this is a really long double-quoted argument", ], result)
+
+   def testSplitCommandLine_005(self):
+      """
+      Test for a command line with single-quoted arguments.
+      """
+      commandLine = "cback 'this is a really long single-quoted argument'"
+      result = splitCommandLine(commandLine)
+      self.failUnlessEqual(["cback", "'this", "is", "a", "really", "long", "single-quoted", "argument'", ], result)
 
 
 #######################################################################
