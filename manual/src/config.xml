@@ -1593,7 +1593,10 @@
    &lt;check_data&gt;Y&lt;/check_data&gt;
    &lt;warn_midnite&gt;Y&lt;/warn_midnite&gt;
    &lt;no_eject&gt;N&lt;/no_eject&gt;
-   &lt;blank_factor&gt;N&lt;/blank_factor&gt;
+   &lt;blank_behavior&gt;
+      &lt;mode&gt;weekly&lt;/mode&gt;
+      &lt;factor&gt;1.3&lt;/factor&gt;
+   &lt;/blank_behavior&gt;
 &lt;/store&gt;
          </programlisting>
 
@@ -1860,35 +1863,89 @@
             </varlistentry>
 
             <varlistentry>
-               <term><literal>blank_factor</literal></term>
+               <term><literal>blank_behavior</literal></term>
                <listitem>
-                  <para>Blanking factor used for smarter media blanking strategy.</para>
+                  <para>Optimized blanking behavior.</para>
                   <para>
-                     This field is optional.  If it doesn't exist, the default
-                     blanking strategy (blank the disc at start of every week) will
-                     be used.
+                     When optimized blanking behavior has not been configured,
+                     Cedar Backup uses a simplistic approach: rewritable media is blanked
+                     at the beginning of every week, period.  
                   </para>
                   <para>
-                     If this value is set, then it will be used to modify the default
-                     blanking strategy.  The disc will only be blanked on the first 
-                     day of the week if it looks like the week's backup will not fit
-                     in the remaining capacity.  
+                     Since rewritable media can be blanked only a finite number
+                     of times before becoming unusable, some users &mdash;
+                     especially users of rewritable DVD media with its large
+                     capacity &mdash; may prefer to blank the media less often.
                   </para>
                   <para>
-                     The blanking factor is used by Cedar Backup to make a guess about
-                     whether the the week's backup will fit on the disc.  The disc
-                     will not be blanked unless the following relationship is true:
+                     If optimized blanking behavior is configured, Cedar Backup
+                     will use a blanking factor and attempt to determine
+                     whether future backups will fit on the current media.  If
+                     it looks like backups will fit, then the media will not be
+                     blanked.
+                  </para>
+                  <para>
+                     There are two blanking modes: daily and weekly.  If the
+                     weekly blanking mode is set, Cedar Backup will only
+                     estimate future capacity (and potentially blank the disc)
+                     once per week, on the starting day of the week.  If the
+                     daily blanking mode is set, Cedar Backup will estimate
+                     future capacity (and potentially blank the disc) every
+                     time it is run.  <emphasis>You should only use the daily
+                     blanking mode in conjunction with daily collect
+                     configuration, otherwise you will risk losing
+                     data.</emphasis>
+                  </para>
+                  <para>
+                     Cedar Backup estimates future capacity based on the
+                     configured blanking factor.  The disc will be blanked if
+                     the following relationship is true:
                   </para>
                   <screen>
 (bytes available / (1 + bytes required) &le; blanking factor
                   </screen>
                   <para>
-                     This option exists because rewritable CD and DVD media can
-                     only be blanked so many times before it is worn out.
+                     This entire configuration section is optional.  However,
+                     if you choose to provide it, you must configure both a
+                     blanking mode and a blanking factor.
                   </para>
-                  <para>
-                     <emphasis>Restrictions:</emphasis> If set, must be a floating point number &ge; 0.
-                  </para>
+
+                  <variablelist>
+                     <varlistentry>
+                        <term><literal>blank_mode</literal></term>
+                        <listitem>
+                           <para>Blanking mode.</para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis>Must be one of "daily" or "weekly".
+                           </para>
+                        </listitem>
+                     </varlistentry>
+                  </variablelist>
+
+                  <variablelist>
+                     <varlistentry>
+                        <term><literal>blank_factor</literal></term>
+                        <listitem>
+                           <para>Blanking factor.</para>
+                           <para>
+                              If you are using the daily blanking mode, you can
+                              typically set this value to 1.0.  This will cause
+                              Cedar Backup to blank the media whenever there is
+                              not enough space to store the current day's
+                              backup.
+                           </para>
+                           <para>
+                              If you are using the weekly blanking mode, then
+                              finding the correct blanking factor will require
+                              some experimentation.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis>Must be a floating point number &ge; 0.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+                  </variablelist>
+
                </listitem>
             </varlistentry>
 
