@@ -2861,13 +2861,13 @@ class StoreConfig(object):
 
    @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
           mediaType, deviceType, devicePath, deviceScsiId, 
-          driveSpeed, checkData, warnMidnite, noEject, blankBehavior
+          driveSpeed, checkData, checkMedia, warnMidnite, noEject, blankBehavior
    """
 
    def __init__(self, sourceDir=None, mediaType=None, deviceType=None, 
                 devicePath=None, deviceScsiId=None, driveSpeed=None,
                 checkData=False, warnMidnite=False, noEject=False,
-                blankBehavior=None):
+                checkMedia=False, blankBehavior=None):
       """
       Constructor for the C{StoreConfig} class.
 
@@ -2878,6 +2878,7 @@ class StoreConfig(object):
       @param deviceScsiId: SCSI id for writer device, i.e. C{[<method>:]scsibus,target,lun}.
       @param driveSpeed: Speed of the drive, i.e. C{2} for 2x drive, etc.
       @param checkData: Whether resulting image should be validated.
+      @param checkMedia: Whether media should be checked before being written to.
       @param warnMidnite: Whether to generate warnings for crossing midnite.
       @param noEject: Indicates that the writer device should not be ejected.
       @param blankBehavior: Controls optimized blanking behavior.
@@ -2891,6 +2892,7 @@ class StoreConfig(object):
       self._deviceScsiId = None
       self._driveSpeed = None
       self._checkData = None
+      self._checkMedia = None
       self._warnMidnite = None
       self._noEject = None
       self._blankBehavior = None
@@ -2901,6 +2903,7 @@ class StoreConfig(object):
       self.deviceScsiId = deviceScsiId
       self.driveSpeed = driveSpeed
       self.checkData = checkData
+      self.checkMedia = checkMedia
       self.warnMidnite = warnMidnite
       self.noEject = noEject
       self.blankBehavior = blankBehavior
@@ -2909,10 +2912,10 @@ class StoreConfig(object):
       """
       Official string representation for class instance.
       """
-      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType, 
-                                                                      self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                                      self.checkData, self.warnMidnite, self.noEject,
-                                                                      self.blankBehavior)
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType, 
+                                                                          self.devicePath, self.deviceScsiId, self.driveSpeed,
+                                                                          self.checkData, self.warnMidnite, self.noEject,
+                                                                          self.checkMedia, self.blankBehavior)
 
    def __str__(self):
       """
@@ -2960,6 +2963,11 @@ class StoreConfig(object):
             return 1
       if self._checkData != other._checkData:
          if self._checkData < other._checkData:
+            return -1
+         else:
+            return 1
+      if self._checkMedia != other._checkMedia:
+         if self._checkMedia < other._checkMedia:
             return -1
          else:
             return 1
@@ -3099,6 +3107,22 @@ class StoreConfig(object):
       """
       return self._checkData
 
+   def _setCheckMedia(self, value):
+      """
+      Property target used to set the check media flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._checkMedia = True
+      else:
+         self._checkMedia = False
+
+   def _getCheckMedia(self):
+      """
+      Property target used to get the check media flag.
+      """
+      return self._checkMedia
+
    def _setWarnMidnite(self, value):
       """
       Property target used to set the midnite warning flag.
@@ -3157,6 +3181,7 @@ class StoreConfig(object):
    deviceScsiId = property(_getDeviceScsiId, _setDeviceScsiId, None, "SCSI id for writer device (optional, see notes above).")
    driveSpeed = property(_getDriveSpeed, _setDriveSpeed, None, "Speed of the drive.")
    checkData = property(_getCheckData, _setCheckData, None, "Whether resulting image should be validated.")
+   checkMedia = property(_getCheckMedia, _setCheckMedia, None, "Whether media should be checked before being written to.")
    warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
    noEject = property(_getNoEject, _setNoEject, None, "Indicates that the writer device should not be ejected.")
    blankBehavior = property(_getBlankBehavior, _setBlankBehavior, None, "Controls optimized blanking behavior.")
@@ -3878,6 +3903,7 @@ class Config(object):
          deviceScsiId      //cb_config/store/target_scsi_id
          driveSpeed        //cb_config/store/drive_speed
          checkData         //cb_config/store/check_data
+         checkMedia        //cb_config/store/check_media
          warnMidnite       //cb_config/store/warn_midnite
          noEject           //cb_config/store/no_eject
 
@@ -3900,6 +3926,7 @@ class Config(object):
          store.deviceScsiId = readString(sectionNode,  "target_scsi_id")
          store.driveSpeed = readInteger(sectionNode, "drive_speed")
          store.checkData = readBoolean(sectionNode, "check_data")
+         store.checkMedia = readBoolean(sectionNode, "check_media")
          store.warnMidnite = readBoolean(sectionNode, "warn_midnite")
          store.noEject = readBoolean(sectionNode, "no_eject")
          store.blankBehavior = Config._parseBlankBehavior(sectionNode)
@@ -4516,6 +4543,7 @@ class Config(object):
          deviceScsiId      //cb_config/store/target_scsi_id
          driveSpeed        //cb_config/store/drive_speed
          checkData         //cb_config/store/check_data
+         checkMedia        //cb_config/store/check_media
          warnMidnite       //cb_config/store/warn_midnite
          noEject           //cb_config/store/no_eject
 
@@ -4537,6 +4565,7 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "target_scsi_id", storeConfig.deviceScsiId)
          addIntegerNode(xmlDom, sectionNode, "drive_speed", storeConfig.driveSpeed)
          addBooleanNode(xmlDom, sectionNode, "check_data", storeConfig.checkData)
+         addBooleanNode(xmlDom, sectionNode, "check_media", storeConfig.checkMedia)
          addBooleanNode(xmlDom, sectionNode, "warn_midnite", storeConfig.warnMidnite)
          addBooleanNode(xmlDom, sectionNode, "no_eject", storeConfig.noEject)
          Config._addBlankBehavior(xmlDom, sectionNode, storeConfig.blankBehavior)

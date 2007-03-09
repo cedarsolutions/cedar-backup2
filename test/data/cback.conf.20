@@ -132,6 +132,7 @@
       <target_device>/dev/cdrw</target_device>
       <drive_speed>1</drive_speed>
       <check_data>Y</check_data>
+      <check_media>Y</check_media>
       <warn_midnite>Y</warn_midnite>
       <no_eject>Y</no_eject>
       <blank_behavior>
