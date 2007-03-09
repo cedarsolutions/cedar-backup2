@@ -116,7 +116,7 @@ def executeStore(configPath, options, config):
    logger.debug("Rebuild media flag [%s]" % rebuildMedia)
    todayIsStart = isStartOfWeek(config.options.startingDay)
    stagingDirs = _findCorrectDailyDir(options, config)
-   writeImageBlankSafe(config, rebuildMedia, todayIsStart, config.store.blankFactor, stagingDirs)
+   writeImageBlankSafe(config, rebuildMedia, todayIsStart, config.store.blankBehavior, stagingDirs)
    if config.store.checkData:
       if sys.platform == "darwin":
          logger.warn("Warning: consistency check cannot be run successfully on Mac OS X.")
@@ -202,7 +202,7 @@ def writeImage(config, newDisc, stagingDirs):
 # writeImageBlankSafe() function
 #################################
 
-def writeImageBlankSafe(config, rebuildMedia, todayIsStart, blankFactor, stagingDirs):
+def writeImageBlankSafe(config, rebuildMedia, todayIsStart, blankBehavior, stagingDirs):
    """
    Builds and writes an ISO image containing the indicated stage directories.
 
@@ -214,17 +214,19 @@ def writeImageBlankSafe(config, rebuildMedia, todayIsStart, blankFactor, staging
    This function is similar to L{writeImage}, but tries to implement a smarter
    blanking strategy.  
 
-   First, the media is always blanked if the C{rebuildMedia} flag is true.  Then,
-   if C{rebuildMedia} is false, C{todayIsStart} comes into effect::
+   First, the media is always blanked if the C{rebuildMedia} flag is true.
+   Then, if C{rebuildMedia} is false, blanking behavior and C{todayIsStart}
+   come into effect::
 
-      If today is not the start of the week, the disc will not be blanked
+      If no blanking behavior is specified, and it is the start of the week,
+      the disc will be blanked
 
-      If today is the start of the week and the blanking factor is None,
-      then the disc will be blanked.  
+      If blanking behavior is specified, and either the blank mode is "daily"
+      or the blank mode is "weekly" and it is the start of the week, then 
+      the disc will be blanked if it looks like the weekly backup will not
+      fit onto the media.
 
-      If today is the start of the week, and the blanking factor is set,
-      then the disc will be blanked only if it looks like the weekly backup
-      will not fit onto the media.
+      Otherwise, the disc will not be blanked
 
    How do we decide whether the weekly backup will fit onto the media?  That is
    what the blanking factor is used for.  The following formula is used::
@@ -234,13 +236,10 @@ def writeImageBlankSafe(config, rebuildMedia, todayIsStart, blankFactor, staging
    The blanking factor will vary from setup to setup, and will probably
    require some experimentation to get it right.
 
-   @note: It's safe to pass in C{blankFactor} as either a floating point number
-   or as a string representing a floating point number.
-
    @param config: Config object.
    @param rebuildMedia: Indicates whether media should be rebuilt
    @param todayIsStart: Indicates whether today is the starting day of the week
-   @param blankFactor: Blanking factor as positive floating point number, or C{None}
+   @param blankBehavior: Blank behavior from configuration, or C{None} to use default behavior
    @param stagingDirs: Dictionary mapping directory path to date suffix.
 
    @raise ValueError: Under many generic error conditions
@@ -252,23 +251,20 @@ def writeImageBlankSafe(config, rebuildMedia, todayIsStart, blankFactor, staging
       logger.debug("Adding stage directory [%s]." % stageDir)
       dateSuffix = stagingDirs[stageDir]
       writer.addImageEntry(stageDir, dateSuffix)
-   newDisc = _getNewDisc(writer, rebuildMedia, todayIsStart, blankFactor)
+   newDisc = _getNewDisc(writer, rebuildMedia, todayIsStart, blankBehavior)
    writer.setImageNewDisc(newDisc)
    writer.writeImage()
 
-def _getNewDisc(writer, rebuildMedia, todayIsStart, blankFactor):
+def _getNewDisc(writer, rebuildMedia, todayIsStart, blankBehavior):
    """
    Gets a value for the newDisc flag based on blanking factor rules.
 
    The blanking factor rules are described above by L{writeImageBlankSafe}.
 
-   @note: It's safe to pass in C{blankFactor} as either a floating point number
-   or as a string representing a floating point number.
-
    @param writer: Previously configured image writer containing image entries
    @param rebuildMedia: Indicates whether media should be rebuilt
    @param todayIsStart: Indicates whether today is the starting day of the week
-   @param blankFactor: Blanking factor as positive floating point number, or C{None}
+   @param blankBehavior: Blank behavior from configuration, or C{None} to use default behavior
 
    @return: newDisc flag to be set on writer.
    """
@@ -276,21 +272,28 @@ def _getNewDisc(writer, rebuildMedia, todayIsStart, blankFactor):
    if rebuildMedia:
       newDisc = True
       logger.debug("Setting new disc flag based on rebuildMedia flag.")
-   elif todayIsStart:
-      if blankFactor is None:
-         newDisc = True
-         logger.debug("Setting new disc flag based on todayIsStart and no blanking factor.")
+   else:
+      if blankBehavior is None:
+         logger.debug("Default media blanking behavior is in effect.")
+         if todayIsStart:
+            newDisc = True
+            logger.debug("Setting new disc flag based on todayIsStart.")
       else:
-         logger.debug("Setting new disc flag based on todayIsStart and blanking factor calculation.")
-         blankFactor = float(blankFactor)
-         logger.debug("Blanking factor: %.2f" % blankFactor)
-         available = writer.retrieveCapacity().bytesAvailable
-         logger.debug("Bytes available: %.2f" % available)
-         required = writer.getEstimatedImageSize()
-         logger.debug("Bytes required: %.2f" % required)
-         ratio = available / (1.0 + required)
-         logger.debug("Ratio of available/(1+required): %.2f" % ratio)
-         newDisc = (ratio <= blankFactor)
+         # note: validation says we can assume that behavior is fully filled in if it exists at all
+         logger.debug("Optimized media blanking behavior is in effect based on configuration.")
+         if blankBehavior.blankMode == "daily" or (blankBehavior.blankMode == "weekly" and todayIsStart):
+            logger.debug("New disc flag will be set based on blank factor calculation.")
+            blankFactor = float(blankBehavior.blankFactor)
+            logger.debug("Blanking factor: %.2f" % blankFactor)
+            available = writer.retrieveCapacity().bytesAvailable
+            logger.debug("Bytes available: %.2f" % available)
+            required = writer.getEstimatedImageSize()
+            logger.debug("Bytes required: %.2f" % required)
+            ratio = available / (1.0 + required)
+            logger.debug("Ratio of available/(1+required): %.2f" % ratio)
+            newDisc = (ratio <= blankFactor)
+         else:
+            logger.debug("No blank factor calculation is required based on configuration.")
    logger.debug("New disc flag [%s]." % newDisc)
    return newDisc
 

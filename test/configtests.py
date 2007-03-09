@@ -103,7 +103,7 @@ import os
 import unittest
 from CedarBackup2.testutil import findResources, removedir, failUnlessAssignRaises
 from CedarBackup2.config import ActionHook, PreActionHook, PostActionHook, CommandOverride
-from CedarBackup2.config import ExtendedAction, ActionDependencies
+from CedarBackup2.config import ExtendedAction, ActionDependencies, BlankBehavior
 from CedarBackup2.config import CollectFile, CollectDir, PurgeDir, LocalPeer, RemotePeer
 from CedarBackup2.config import ReferenceConfig, ExtensionsConfig, OptionsConfig
 from CedarBackup2.config import CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config
@@ -982,6 +982,227 @@ class TestPostActionHook(unittest.TestCase):
       self.failUnless(not hook1 > hook2)
       self.failUnless(not hook1 >= hook2)
       self.failUnless(hook1 != hook2)
+
+
+##########################
+# TestBlankBehavior class
+##########################
+
+class TestBlankBehavior(unittest.TestCase):
+
+   """Tests for the BlankBehavior class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = BlankBehavior()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      behavior = BlankBehavior()
+      self.failUnlessEqual(None, behavior.blankMode)
+      self.failUnlessEqual(None, behavior.blankFactor)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values.
+      """
+      behavior = BlankBehavior(blankMode="daily", blankFactor="1.0")
+      self.failUnlessEqual("daily", behavior.blankMode)
+      self.failUnlessEqual("1.0", behavior.blankFactor)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of blankMode, None value.
+      """
+      behavior = BlankBehavior(blankMode="daily")
+      self.failUnlessEqual("daily", behavior.blankMode)
+      behavior.blankMode = None
+      self.failUnlessEqual(None, behavior.blankMode)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of blankMode attribute, valid value.
+      """
+      behavior = BlankBehavior()
+      self.failUnlessEqual(None, behavior.blankMode)
+      behavior.blankMode = "daily"
+      self.failUnlessEqual("daily", behavior.blankMode)
+      behavior.blankMode = "weekly"
+      self.failUnlessEqual("weekly", behavior.blankMode)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of blankFactor attribute, None value.
+      """
+      behavior = BlankBehavior(blankFactor="1.3")
+      self.failUnlessEqual("1.3", behavior.blankFactor)
+      behavior.blankFactor = None
+      self.failUnlessEqual(None, behavior.blankFactor)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of blankFactor attribute, valid values.
+      """
+      behavior = BlankBehavior()
+      self.failUnlessEqual(None, behavior.blankFactor)
+      behavior.blankFactor = "1.0"
+      self.failUnlessEqual("1.0", behavior.blankFactor)
+      behavior.blankFactor = ".1"
+      self.failUnlessEqual(".1", behavior.blankFactor)
+      behavior.blankFactor = "12"
+      self.failUnlessEqual("12", behavior.blankFactor)
+      behavior.blankFactor = "0.5"
+      self.failUnlessEqual("0.5", behavior.blankFactor)
+      behavior.blankFactor = "181281"
+      self.failUnlessEqual("181281", behavior.blankFactor)
+      behavior.blankFactor = "1E6"
+      self.failUnlessEqual("1E6", behavior.blankFactor)
+      behavior.blankFactor = "0.25E2"
+      self.failUnlessEqual("0.25E2", behavior.blankFactor)
+      behavior.blankFactor = "0xAC"
+      self.failUnlessEqual("0xAC", behavior.blankFactor)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of blankFactor attribute, invalid value (empty).
+      """
+      behavior = BlankBehavior()
+      self.failUnlessEqual(None, behavior.blankFactor)
+      self.failUnlessAssignRaises(ValueError, behavior, "blankFactor", "")
+      self.failUnlessEqual(None, behavior.blankFactor)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of blankFactor attribute, invalid value (not a floating point number).
+      """
+      behavior = BlankBehavior()
+      self.failUnlessEqual(None, behavior.blankFactor)
+      self.failUnlessAssignRaises(ValueError, behavior, "blankFactor", "blech")
+      self.failUnlessEqual(None, behavior.blankFactor)
+
+   def testConstructor_009(self):
+      """
+      Test assignment of blankFactor store attribute, invalid value (negative number).
+      """
+      behavior = BlankBehavior()
+      self.failUnlessEqual(None, behavior.blankFactor)
+      self.failUnlessAssignRaises(ValueError, behavior, "blankFactor", "-3")
+      self.failUnlessEqual(None, behavior.blankFactor)
+      self.failUnlessAssignRaises(ValueError, behavior, "blankFactor", "-6.8")
+      self.failUnlessEqual(None, behavior.blankFactor)
+      self.failUnlessAssignRaises(ValueError, behavior, "blankFactor", "-0.2")
+      self.failUnlessEqual(None, behavior.blankFactor)
+      self.failUnlessAssignRaises(ValueError, behavior, "blankFactor", "-.1")
+      self.failUnlessEqual(None, behavior.blankFactor)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      behavior1 = BlankBehavior()
+      behavior2 = BlankBehavior()
+      self.failUnlessEqual(behavior1, behavior2)
+      self.failUnless(behavior1 == behavior2)
+      self.failUnless(not behavior1 < behavior2)
+      self.failUnless(behavior1 <= behavior2)
+      self.failUnless(not behavior1 > behavior2)
+      self.failUnless(behavior1 >= behavior2)
+      self.failUnless(not behavior1 != behavior2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      behavior1 = BlankBehavior(blankMode="weekly", blankFactor="1.0")
+      behavior2 = BlankBehavior(blankMode="weekly", blankFactor="1.0")
+      self.failUnlessEqual(behavior1, behavior2)
+      self.failUnless(behavior1 == behavior2)
+      self.failUnless(not behavior1 < behavior2)
+      self.failUnless(behavior1 <= behavior2)
+      self.failUnless(not behavior1 > behavior2)
+      self.failUnless(behavior1 >= behavior2)
+      self.failUnless(not behavior1 != behavior2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two different objects, blankMode differs (one None).
+      """
+      behavior1 = BlankBehavior(None, blankFactor="1.0")
+      behavior2 = BlankBehavior(blankMode="weekly", blankFactor="1.0")
+      self.failUnless(not behavior1 == behavior2)
+      self.failUnless(behavior1 < behavior2)
+      self.failUnless(behavior1 <= behavior2)
+      self.failUnless(not behavior1 > behavior2)
+      self.failUnless(not behavior1 >= behavior2)
+      self.failUnless(behavior1 != behavior2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two different objects, blankMode differs.
+      """
+      behavior1 = BlankBehavior(blankMode="daily", blankFactor="1.0")
+      behavior2 = BlankBehavior(blankMode="weekly", blankFactor="1.0")
+      self.failUnless(not behavior1 == behavior2)
+      self.failUnless(behavior1 < behavior2)
+      self.failUnless(behavior1 <= behavior2)
+      self.failUnless(not behavior1 > behavior2)
+      self.failUnless(not behavior1 >= behavior2)
+      self.failUnless(behavior1 != behavior2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two different objects, blankFactor differs (one None).
+      """
+      behavior1 = BlankBehavior(blankMode="weekly", blankFactor=None)
+      behavior2 = BlankBehavior(blankMode="weekly", blankFactor="1.0")
+      self.failUnless(not behavior1 == behavior2)
+      self.failUnless(behavior1 < behavior2)
+      self.failUnless(behavior1 <= behavior2)
+      self.failUnless(not behavior1 > behavior2)
+      self.failUnless(not behavior1 >= behavior2)
+      self.failUnless(behavior1 != behavior2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two different objects, blankFactor differs.
+      """
+      behavior1 = BlankBehavior(blankMode="weekly", blankFactor="0.0")
+      behavior2 = BlankBehavior(blankMode="weekly", blankFactor="1.0")
+      self.failUnless(not behavior1 == behavior2)
+      self.failUnless(behavior1 < behavior2)
+      self.failUnless(behavior1 <= behavior2)
+      self.failUnless(not behavior1 > behavior2)
+      self.failUnless(not behavior1 >= behavior2)
+      self.failUnless(behavior1 != behavior2)
 
 
 ###########################
@@ -6022,13 +6243,14 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual(False, store.checkData)
       self.failUnlessEqual(False, store.warnMidnite)
       self.failUnlessEqual(False, store.noEject)
-      self.failUnlessEqual(None, store.blankFactor)
+      self.failUnlessEqual(None, store.blankBehavior)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      store = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      behavior = BlankBehavior("weekly", "1.3")
+      store = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior)
       self.failUnlessEqual("/source", store.sourceDir)
       self.failUnlessEqual("cdr-74", store.mediaType)
       self.failUnlessEqual("cdwriter", store.deviceType)
@@ -6038,7 +6260,7 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual(True, store.checkData)
       self.failUnlessEqual(True, store.warnMidnite)
       self.failUnlessEqual(True, store.noEject)
-      self.failUnlessEqual("1.3", store.blankFactor)
+      self.failUnlessEqual(behavior, store.blankBehavior)
 
    def testConstructor_003(self):
       """
@@ -6382,68 +6604,26 @@ class TestStoreConfig(unittest.TestCase):
 
    def testConstructor_035(self):
       """
-      Test assignment of blankFactor attribute, None value.
+      Test assignment of blankBehavior attribute, None value.
       """
-      store = StoreConfig(blankFactor="1.3")
-      self.failUnlessEqual("1.3", store.blankFactor)
-      store.blankFactor = None
-      self.failUnlessEqual(None, store.blankFactor)
+      store = StoreConfig()
+      store.blankBehavior = None
+      self.failUnlessEqual(None, store.blankBehavior)
 
    def testConstructor_036(self):
       """
-      Test assignment of store attribute, valid values.
+      Test assignment of blankBehavior store attribute, valid value.
       """
       store = StoreConfig()
-      self.failUnlessEqual(None, store.blankFactor)
-      store.blankFactor = "1.0"
-      self.failUnlessEqual("1.0", store.blankFactor)
-      store.blankFactor = ".1"
-      self.failUnlessEqual(".1", store.blankFactor)
-      store.blankFactor = "12"
-      self.failUnlessEqual("12", store.blankFactor)
-      store.blankFactor = "0.5"
-      self.failUnlessEqual("0.5", store.blankFactor)
-      store.blankFactor = "181281"
-      self.failUnlessEqual("181281", store.blankFactor)
-      store.blankFactor = "1E6"
-      self.failUnlessEqual("1E6", store.blankFactor)
-      store.blankFactor = "0.25E2"
-      self.failUnlessEqual("0.25E2", store.blankFactor)
-      store.blankFactor = "0xAC"
-      self.failUnlessEqual("0xAC", store.blankFactor)
+      store.blankBehavior = BlankBehavior()
+      self.failUnlessEqual(BlankBehavior(), store.blankBehavior)
 
    def testConstructor_037(self):
       """
-      Test assignment of store attribute, invalid value (empty).
+      Test assignment of blankBehavior store attribute, invalid value (not BlankBehavior).
       """
       store = StoreConfig()
-      self.failUnlessEqual(None, store.blankFactor)
-      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "")
-      self.failUnlessEqual(None, store.blankFactor)
-
-   def testConstructor_038(self):
-      """
-      Test assignment of store attribute, invalid value (not a floating point number).
-      """
-      store = StoreConfig()
-      self.failUnlessEqual(None, store.blankFactor)
-      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "blech")
-      self.failUnlessEqual(None, store.blankFactor)
-
-   def testConstructor_039(self):
-      """
-      Test assignment of store attribute, invalid value (negative number).
-      """
-      store = StoreConfig()
-      self.failUnlessEqual(None, store.blankFactor)
-      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "-3")
-      self.failUnlessEqual(None, store.blankFactor)
-      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "-6.8")
-      self.failUnlessEqual(None, store.blankFactor)
-      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "-0.2")
-      self.failUnlessEqual(None, store.blankFactor)
-      self.failUnlessAssignRaises(ValueError, store, "blankFactor", "-.1")
-      self.failUnlessEqual(None, store.blankFactor)
+      self.failUnlessAssignRaises(ValueError, store, "blankBehavior", CollectDir())
 
 
    ############################
@@ -6468,8 +6648,10 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior2)
       self.failUnlessEqual(store1, store2)
       self.failUnless(store1 == store2)
       self.failUnless(not store1 < store2)
@@ -6496,8 +6678,10 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, sourceDir differs.
       """
-      store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
-      store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior1)
+      store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior2)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6524,8 +6708,10 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, mediaType differs.
       """
-      store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior2)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(not store1 < store2)
@@ -6566,8 +6752,10 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, devicePath differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True, True, True, behavior2)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6594,8 +6782,10 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, deviceScsiId differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True, True, True, behavior2)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6622,8 +6812,10 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, driveSpeed differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, "1.3")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, behavior1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior2)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6636,8 +6828,10 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, checkData differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False, True, True, "1.3")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False, True, True, behavior1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior2)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6650,8 +6844,10 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, warnMidnite differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, False, True, "1.3")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, False, True, behavior1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior2)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6664,8 +6860,10 @@ class TestStoreConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, noEject differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, False, "1.3")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, False, behavior1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior2)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6676,10 +6874,11 @@ class TestStoreConfig(unittest.TestCase):
 
    def testComparison_017(self):
       """
-      Test comparison of two differing objects, blankFactor differs (one None).
+      Test comparison of two differing objects, blankBehavior differs (one None).
       """
+      behavior = BlankBehavior()
       store1 = StoreConfig()
-      store2 = StoreConfig(blankFactor="1.3")
+      store2 = StoreConfig(blankBehavior=behavior)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -6690,10 +6889,12 @@ class TestStoreConfig(unittest.TestCase):
 
    def testComparison_018(self):
       """
-      Test comparison of two differing objects, blankFactor differs.
+      Test comparison of two differing objects, blankBehavior differs.
       """
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, "1.2")
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, "1.3")
+      behavior1 = BlankBehavior("daily", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, behavior2)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8957,7 +9158,9 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
-      expected.store.blankFactor = "1.3"
+      expected.store.blankBehavior = BlankBehavior()
+      expected.store.blankBehavior.blankMode = "weekly"
+      expected.store.blankBehavior.blankFactor = "1.3"
       self.failUnlessEqual(expected, config)
 
    def testParse_026(self):
@@ -9062,7 +9265,9 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
-      expected.store.blankFactor = "1.3"
+      expected.store.blankBehavior = BlankBehavior()
+      expected.store.blankBehavior.blankMode = "weekly"
+      expected.store.blankBehavior.blankFactor = "1.3"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
@@ -9124,7 +9329,9 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
-      expected.store.blankFactor = "1.3"
+      expected.store.blankBehavior = BlankBehavior()
+      expected.store.blankBehavior.blankMode = "weekly"
+      expected.store.blankBehavior.blankFactor = "1.3"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
@@ -9183,7 +9390,9 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
-      expected.store.blankFactor = "1.3"
+      expected.store.blankBehavior = BlankBehavior()
+      expected.store.blankBehavior.blankMode = "weekly"
+      expected.store.blankBehavior.blankFactor = "1.3"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
@@ -9245,7 +9454,9 @@ class TestConfig(unittest.TestCase):
       expected.store.checkData = True
       expected.store.warnMidnite = True
       expected.store.noEject = True
-      expected.store.blankFactor = "1.3"
+      expected.store.blankBehavior = BlankBehavior()
+      expected.store.blankBehavior.blankMode = "weekly"
+      expected.store.blankBehavior.blankFactor = "1.3"
       expected.purge = PurgeConfig()
       expected.purge.purgeDirs = []
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
@@ -9906,6 +10117,7 @@ def suite():
                               unittest.makeSuite(TestActionHook, 'test'), 
                               unittest.makeSuite(TestPreActionHook, 'test'), 
                               unittest.makeSuite(TestPostActionHook, 'test'), 
+                              unittest.makeSuite(TestBlankBehavior, 'test'), 
                               unittest.makeSuite(TestExtendedAction, 'test'), 
                               unittest.makeSuite(TestCommandOverride, 'test'), 
                               unittest.makeSuite(TestCollectFile, 'test'), 
