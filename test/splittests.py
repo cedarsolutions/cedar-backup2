@@ -1039,7 +1039,6 @@ class TestFunctions(unittest.TestCase):
       Test with integer split size, removeSource=False.
       """
       self.extractTar("tree21")
-      dailyDir = self.buildPath(["tree21", "2007", "01", "01", "system1", "file001.a.b", ])
       sourcePath = self.buildPath(["tree21", "2007", "01", "01", "system1", "file001.a.b", ])
       self.failUnless(os.path.exists(sourcePath))
       splitSize = ByteQuantity("320", UNIT_BYTES)
