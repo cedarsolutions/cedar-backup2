@@ -11,6 +11,9 @@
       <check_data>Y</check_data>
       <warn_midnite>Y</warn_midnite>
       <no_eject>Y</no_eject>
-      <blank_factor>1.3</blank_factor>
+      <blank_behavior>
+         <mode>weekly</mode>
+         <factor>1.3</factor>
+      </blank_behavior>
    </store>
 </cb_config>
