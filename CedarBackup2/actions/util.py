@@ -116,6 +116,7 @@ def writeIndicatorFile(targetDir, indicatorFile, backupUser, backupGroup):
    @param indicatorFile: Name of the indicator file
    @param backupUser: User that indicator file should be owned by
    @param backupGroup: Group that indicator file should be owned by
+   @raise IOException: If there is a problem writing the indicator file
    """
    filename = os.path.join(targetDir, indicatorFile)
    logger.debug("Writing indicator file [%s]." % filename)
@@ -123,7 +124,8 @@ def writeIndicatorFile(targetDir, indicatorFile, backupUser, backupGroup):
       open(filename, "w").write("")
       changeOwnership(filename, backupUser, backupGroup)
    except Exception, e:
-      logger.error("Error writing indicator file: %s" % e)
+      logger.error("Error writing [%s]: %s" % (filename, e))
+      raise e
 
 
 ############################
