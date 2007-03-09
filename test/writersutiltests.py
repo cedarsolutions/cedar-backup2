@@ -100,7 +100,7 @@ import tarfile
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.testutil import platformMacOsX, platformSupportsLinks
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.writers.util import validateScsiId, IsoImage
+from CedarBackup2.writers.util import validateScsiId, validateDriveSpeed, IsoImage
 from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYTES
 
 
@@ -263,6 +263,60 @@ class TestFunctions(unittest.TestCase):
       scsiId = None
       result = validateScsiId(scsiId)
       self.failUnlessEqual(scsiId, result)
+
+
+   ############################
+   # Test validateDriveSpeed() 
+   ############################
+
+   def testValidateDriveSpeed_001(self):
+      """
+      Test for a valid drive speed.
+      """
+      speed = 1
+      result = validateDriveSpeed(speed)
+      self.failUnlessEqual(result, speed)
+      speed = 2
+      result = validateDriveSpeed(speed)
+      self.failUnlessEqual(result, speed)
+      speed = 30
+      result = validateDriveSpeed(speed)
+      self.failUnlessEqual(result, speed)
+      speed = 2.0
+      result = validateDriveSpeed(speed)
+      self.failUnlessEqual(result, speed)
+      speed = 1.3
+      result = validateDriveSpeed(speed)
+      self.failUnlessEqual(result, 1)  # truncated
+
+   def testValidateDriveSpeed_002(self):
+      """
+      Test for a None drive speed (special case).
+      """
+      speed = None
+      result = validateDriveSpeed(speed)
+      self.failUnlessEqual(result, speed)
+
+   def testValidateDriveSpeed_003(self):
+      """
+      Test for an invalid drive speed (zero)
+      """
+      speed = 0
+      self.failUnlessRaises(ValueError, validateDriveSpeed, speed)
+
+   def testValidateDriveSpeed_004(self):
+      """
+      Test for an invalid drive speed (negative)
+      """
+      speed = -1
+      self.failUnlessRaises(ValueError, validateDriveSpeed, speed)
+
+   def testValidateDriveSpeed_005(self):
+      """
+      Test for an invalid drive speed (not integer)
+      """
+      speed = "ken"
+      self.failUnlessRaises(ValueError, validateDriveSpeed, speed)
 
 
 #####################

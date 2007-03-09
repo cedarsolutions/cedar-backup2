@@ -1,6 +1,8 @@
 Version 2.12.2		unreleased
 
+	* Add unit tests for a variety of basic utility functions
 	* Change writeIndicator() to raise exception on failure (closes #53).
+	* Change buildNormalizedPath() for leading "." so files won't be hidden
 
 Version 2.12.1		26 Feb 2007
 	
