@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 # Language : Python (>= 2.3)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
-# Purpose  : Implements the standard 'purge' action.
+# Purpose  : Implements the standard 'initialize' action.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -37,8 +37,8 @@
 ########################################################################
 
 """
-Implements the standard 'purge' action.
-@sort: executePurge
+Implements the standard 'initialize' action.
+@sort: executeInitialize
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -51,31 +51,31 @@ Implements the standard 'purge' action.
 import logging
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import PurgeItemList
+from CedarBackup2.actions.util import initializeMediaState
 
 
 ########################################################################
 # Module-wide constants and variables
 ########################################################################
 
-logger = logging.getLogger("CedarBackup2.log.actions.purge")
+logger = logging.getLogger("CedarBackup2.log.actions.initialize")
 
 
 ########################################################################
 # Public functions
 ########################################################################
 
-##########################
-# executePurge() function
-##########################
+###############################
+# executeInitialize() function
+###############################
 
-def executePurge(configPath, options, config):
+def executeInitialize(configPath, options, config):
    """
-   Executes the purge backup action.
+   Executes the initialize action.
 
-   For each configured directory, we create a purge item list, remove from the
-   list anything that's younger than the configured retain days value, and then
-   purge from the filesystem what's left.
+   The initialize action initializes the media currently in the writer
+   device so that Cedar Backup can recognize it later.  This is an optional
+   step; it's only required if checkMedia is set on the store configuration.
 
    @param configPath: Path to configuration file on disk.
    @type configPath: String representing a path on disk.
@@ -85,17 +85,8 @@ def executePurge(configPath, options, config):
 
    @param config: Program configuration.
    @type config: Config object.
-
-   @raise ValueError: Under many generic error conditions
    """
-   logger.debug("Executing the 'purge' action.")
-   if config.options is None or config.purge is None:
-      raise ValueError("Purge configuration is not properly filled in.")
-   if config.purge.purgeDirs is not None:
-      for purgeDir in config.purge.purgeDirs:
-         purgeList = PurgeItemList()
-         purgeList.addDirContents(purgeDir.absolutePath)  # add everything within directory
-         purgeList.removeYoungFiles(purgeDir.retainDays)  # remove young files *from the list* so they won't be purged
-         purgeList.purgeItems()                           # remove remaining items from the filesystem
-   logger.info("Executed the 'purge' action successfully.")
+   logger.debug("Executing the 'initialize' action.")
+   initializeMediaState(config)
+   logger.info("Executed the 'initialize' action successfully.")
 

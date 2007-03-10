@@ -95,7 +95,7 @@ def executeCollect(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise TarError: If there is a problem creating a tar file
    """
-   logger.debug("Executing collect action.")
+   logger.debug("Executing the 'collect' action.")
    if config.options is None or config.collect is None:
       raise ValueError("Collect configuration is not properly filled in.")
    if ((config.collect.collectFiles is None or len(config.collect.collectFiles) < 1) and

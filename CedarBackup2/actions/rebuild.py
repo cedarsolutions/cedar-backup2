@@ -55,6 +55,7 @@ import datetime
 
 # Cedar Backup modules
 from CedarBackup2.util import deriveDayOfWeek
+from CedarBackup2.actions.util import checkMediaState
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR
 from CedarBackup2.actions.store import writeImage, writeStoreIndicator, consistencyCheck
 
@@ -98,12 +99,14 @@ def executeRebuild(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there are problems reading or writing files.
    """
-   logger.debug("Executing rebuild action.")
+   logger.debug("Executing the 'rebuild' action.")
    if sys.platform == "darwin":
       logger.warn("Warning: the rebuild action is not fully supported on Mac OS X.")
       logger.warn("See the Cedar Backup software manual for further information.")
    if config.options is None or config.store is None:
       raise ValueError("Rebuild configuration is not properly filled in.")
+   if config.store.checkMedia:
+      checkMediaState(config.store.devicePath)
    stagingDirs = _findRebuildDirs(config)
    writeImage(config, True, stagingDirs)
    if config.store.checkData:

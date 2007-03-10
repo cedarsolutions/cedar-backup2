@@ -202,6 +202,7 @@ class _ImageProperties(object):
    def __init__(self):
       self.newDisc = False
       self.tmpdir = None
+      self.mediaLabel = None
       self.entries = None     # dict mapping path to graft point
 
 
@@ -489,7 +490,7 @@ class DvdWriter(object):
    # Methods used for working with the internal ISO image
    #######################################################
 
-   def initializeImage(self, newDisc, tmpdir):
+   def initializeImage(self, newDisc, tmpdir, mediaLabel=None):
       """
       Initializes the writer's associated ISO image.
 
@@ -502,10 +503,14 @@ class DvdWriter(object):
 
       @param tmpdir: Temporary directory to use if needed
       @type tmpdir: String representing a directory path on disk
+
+      @param mediaLabel: Media label to be applied to the image, if any
+      @type mediaLabel: String, no more than 25 characters long
       """
       self._image = _ImageProperties()
       self._image.newDisc = newDisc
       self._image.tmpdir = encodePath(tmpdir)
+      self._image.mediaLabel = mediaLabel
       self._image.entries = {} # mapping from path to graft point (if any)
 
    def addImageEntry(self, path, graftPoint):
@@ -666,7 +671,7 @@ class DvdWriter(object):
             raise ValueError("Must call initializeImage() before using this method with no image path.")
          size = self.getEstimatedImageSize()
          logger.info("Image size will be %s (estimated)." % displayBytes(size))
-         self._writeImage(self._image.newDisc, None, self._image.entries)
+         self._writeImage(self._image.newDisc, None, self._image.entries, self._image.mediaLabel)
       else:
          if not os.path.isabs(imagePath):
             raise ValueError("Image path must be absolute.")
@@ -678,7 +683,7 @@ class DvdWriter(object):
    # Utility methods for dealing with growisofs and dvd+rw-mediainfo
    ##################################################################
 
-   def _writeImage(self, newDisc, imagePath, entries):
+   def _writeImage(self, newDisc, imagePath, entries, mediaLabel=None):
       """
       Writes an image to disc using either an entries list or an ISO image on
       disk.
@@ -697,13 +702,13 @@ class DvdWriter(object):
       @raise IOError: If the media could not be written to for some reason.
       """
       command = resolveCommand(GROWISOFS_COMMAND)
-      args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, dryRun=True)
+      args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, mediaLabel, dryRun=True)
       (result, output) = executeCommand(command, args, returnOutput=True)
       if result != 0:
          DvdWriter._searchForOverburn(output) # throws own exception if overburn condition is found
          raise IOError("Error (%d) executing dry run to check media capacity." % result)
       logger.debug("Dry run succeeded, so image size should be OK.")
-      args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, dryRun=False)
+      args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, mediaLabel, dryRun=False)
       result = executeCommand(command, args)[0]
       if result != 0:
          raise IOError("Error (%d) executing command to write disc." % result)
@@ -804,7 +809,7 @@ class DvdWriter(object):
             raise IOError("Media does not contain enough capacity to store image.")
    _searchForOverburn = staticmethod(_searchForOverburn)
          
-   def _buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun=False):
+   def _buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel=None, dryRun=False):
       """
       Builds a list of arguments to be passed to a C{growisofs} command.
 
@@ -812,13 +817,16 @@ class DvdWriter(object):
       file to disc, or will pass C{growisofs} a list of directories or files
       that should be written to disc.  
 
-      The disc will always be written with Rock Ridge extensions (-r).
+      If a new image is created, it will always be created with Rock Ridge
+      extensions (-r).  A volume name will be applied (-V) if C{mediaLabel} is
+      not C{None} and C{newDisc} is true.
 
       @param newDisc: Indicates whether the disc should be re-initialized
       @param hardwareId: Hardware id for the device 
       @param driveSpeed: Speed at which the drive writes.
       @param imagePath: Path to an ISO image on disk, or c{None} to use C{entries}
       @param entries: Mapping from path to graft point, or C{None} to use C{imagePath}
+      @param mediaLabel: Media label to set on the image, if any
       @param dryRun: Says whether to make this a dry run (for checking capacity)
 
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
@@ -840,6 +848,9 @@ class DvdWriter(object):
          args.append("%s=%s" % (hardwareId, imagePath))
       else:
          args.append(hardwareId)
+         if newDisc and mediaLabel is not None:
+            args.append("-V")
+            args.append(mediaLabel)
          args.append("-r")    # Rock Ridge extensions with sane ownership and permissions
          args.append("-graft-points")
          keys = entries.keys()
