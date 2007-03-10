@@ -70,7 +70,8 @@ from CedarBackup2.filesystem import FilesystemList, BackupFileList, compareDiges
 from CedarBackup2.cli import Options, setupLogging, setupPathResolver
 from CedarBackup2.cli import DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, DEFAULT_MODE
 from CedarBackup2.actions.constants import STORE_INDICATOR
-from CedarBackup2.actions.store import createWriter, consistencyCheck, writeStoreIndicator
+from CedarBackup2.actions.util import createWriter
+from CedarBackup2.actions.store import consistencyCheck, writeStoreIndicator
 from CedarBackup2.actions.util import findDailyDirs
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 

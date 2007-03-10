@@ -249,6 +249,7 @@ class _ImageProperties(object):
    def __init__(self):
       self.newDisc = False
       self.tmpdir = None
+      self.mediaLabel = None
       self.entries = None     # dict mapping path to graft point
 
 
@@ -681,7 +682,7 @@ class CdWriter(object):
    # Methods used for working with the internal ISO image
    #######################################################
 
-   def initializeImage(self, newDisc, tmpdir):
+   def initializeImage(self, newDisc, tmpdir, mediaLabel=None):
       """
       Initializes the writer's associated ISO image.
 
@@ -689,15 +690,21 @@ class CdWriter(object):
       can use the C{addImageEntry} method.  Once entries have been added, the
       C{writeImage} method can be called with no arguments.
 
+      The media label will only be used when creating a new disc from scratch.
+
       @param newDisc: Indicates whether the disc should be re-initialized
       @type newDisc: Boolean true/false.
 
       @param tmpdir: Temporary directory to use if needed
       @type tmpdir: String representing a directory path on disk
+
+      @param mediaLabel: Media label to be applied to the image, if any
+      @type mediaLabel: String, no more than 25 characters long
       """
       self._image = _ImageProperties()
       self._image.newDisc = newDisc
       self._image.tmpdir = encodePath(tmpdir)
+      self._image.mediaLabel = mediaLabel
       self._image.entries = {} # mapping from path to graft point (if any)
 
    def addImageEntry(self, path, graftPoint):
@@ -879,6 +886,8 @@ class CdWriter(object):
       path = None
       capacity = self.retrieveCapacity(entireDisc=self._image.newDisc)
       image = IsoImage(self.device, capacity.boundaries)
+      if self._image.newDisc:
+         image.volumeId = self._image.mediaLabel
       for path in self._image.entries.keys():
          image.addEntry(path, self._image.entries[path], override=False, contentsOnly=True)
       size = image.getEstimatedSize()

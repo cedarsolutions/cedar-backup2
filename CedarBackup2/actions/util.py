@@ -49,11 +49,20 @@ Implements action-related utilities
 
 # System modules
 import os
+import time
+import tempfile
 import logging
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import changeOwnership
+from CedarBackup2.util import deviceMounted
+from CedarBackup2.writers.util import readMediaLabel
+from CedarBackup2.writers.cdwriter import CdWriter
+from CedarBackup2.writers.dvdwriter import DvdWriter
+from CedarBackup2.writers.cdwriter import MEDIA_CDR_74, MEDIA_CDR_80, MEDIA_CDRW_74, MEDIA_CDRW_80
+from CedarBackup2.writers.dvdwriter import MEDIA_DVDPLUSR, MEDIA_DVDPLUSRW
+from CedarBackup2.config import DEFAULT_MEDIA_TYPE, DEFAULT_DEVICE_TYPE
 from CedarBackup2.actions.constants import INDICATOR_PATTERN
 
 
@@ -62,10 +71,11 @@ from CedarBackup2.actions.constants import INDICATOR_PATTERN
 ########################################################################
 
 logger = logging.getLogger("CedarBackup2.log.actions.util")
+MEDIA_LABEL_PREFIX   = "CEDAR BACKUP"
 
 
 ########################################################################
-# Public functions
+# Public utility functions
 ########################################################################
 
 ###########################
@@ -103,6 +113,50 @@ def findDailyDirs(stagingDir, indicatorFile):
                logger.debug("Adding [%s] to list of daily directories." % dailyDir)
                results.append(dailyDir) # just put it in the list, no fancy operations
    return results
+
+
+###########################
+# createWriter() function
+###########################
+
+def createWriter(config):
+   """
+   Creates a writer object based on current configuration.
+
+   This function creates and returns a writer based on configuration.  This is
+   done to abstract action functionality from knowing what kind of writer is in
+   use.  Since all writers implement the same interface, there's no need for
+   actions to care which one they're working with.
+
+   Currently, the C{cdwriter} and C{dvdwriter} device types are allowed.  An
+   exception will be raised if any other device type is used.
+
+   This function also checks to make sure that the device isn't mounted before
+   creating a writer object for it.  Experience shows that sometimes if the
+   device is mounted, we have problems with the backup.  We may as well do the
+   check here first, before instantiating the writer.
+
+   @param config: Config object.
+
+   @return: Writer that can be used to write a directory to some media.
+
+   @raise ValueError: If there is a problem getting the writer.
+   @raise IOError: If there is a problem creating the writer object.
+   """
+   devicePath = config.store.devicePath
+   deviceScsiId = config.store.deviceScsiId
+   driveSpeed = config.store.driveSpeed
+   noEject = config.store.noEject
+   deviceType = _getDeviceType(config)
+   mediaType = _getMediaType(config)
+   if deviceMounted(devicePath):
+      raise IOError("Device [%s] is currently mounted." % (devicePath))
+   if deviceType == "cdwriter":
+      return CdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject)
+   elif deviceType == "dvdwriter":
+      return DvdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject)
+   else:
+      raise ValueError("Device type [%s] is invalid." % deviceType)
 
 
 ################################
@@ -151,4 +205,149 @@ def getBackupFiles(targetDir):
    fileList.excludeBasenamePatterns = INDICATOR_PATTERN
    fileList.addDirContents(targetDir)
    return fileList
+
+
+####################
+# checkMediaState()
+####################
+
+def checkMediaState(devicePath):
+   """
+   Checks state of the media in the backup device to confirm whether it has
+   been initialized for use with Cedar Backup.
+
+   We can tell whether the media has been initialized by looking at its media
+   label.  If the media label starts with MEDIA_LABEL_PREFIX, then it has been
+   initialized.
+
+   @param devicePath: Path to the backup device.
+
+   @raise ValueError: If media is not initialized.
+   """
+   mediaLabel = readMediaLabel(devicePath)
+   if mediaLabel is None:
+      raise ValueError("Media has not been initialized: no media label available")
+   if not mediaLabel.startswith(MEDIA_LABEL_PREFIX):
+      raise ValueError("Media has not been initialized: unrecognized media label [%s]" % mediaLabel)
+
+
+#########################
+# initializeMediaState()
+#########################
+
+def initializeMediaState(config):
+   """
+   Initializes state of the media in the backup device so Cedar Backup can
+   recognize it.
+
+   This is done by writing an mostly-empty image (it contains a "Cedar Backup"
+   directory) to the media with a known media label.
+
+   @param devicePath: Path to the backup device.
+
+   @raise ValueError: If media could not be initialized.
+   """ 
+   mediaLabel = buildMediaLabel()
+   writer = createWriter(config)
+   writer.initializeImage(True, config.options.workingDir, mediaLabel) # always create a new disc
+   tempdir = tempfile.mkdtemp(dir=config.options.workingDir)
+   try:
+      writer.addImageEntry(tempdir, "CedarBackup")
+      writer.writeImage()
+   finally:
+      if os.path.exists(tempdir):
+         try:
+            os.rmdir(tempdir)
+         except: pass
+
+
+####################
+# buildMediaLabel()
+####################
+
+def buildMediaLabel():
+   """
+   Builds a media label to be used on Cedar Backup media.
+   @return: Media label as a string.
+   """
+   currentDate = time.strftime("%d-%b-%Y").upper()
+   return "%s %s" % (MEDIA_LABEL_PREFIX, currentDate)
+
+
+########################################################################
+# Private attribute "getter" functions
+########################################################################
+
+############################
+# _getDeviceType() function
+############################
+
+def _getDeviceType(config):
+   """
+   Gets the device type that should be used for storing.
+
+   Use the configured device type if not C{None}, otherwise use
+   L{config.DEFAULT_DEVICE_TYPE}.
+
+   @param config: Config object.
+   @return: Device type to be used.
+   """
+   if config.store.deviceType is None:
+      deviceType = DEFAULT_DEVICE_TYPE
+   else:
+      deviceType = config.store.deviceType
+   logger.debug("Device type is [%s]" % deviceType)
+   return deviceType
+
+
+###########################
+# _getMediaType() function
+###########################
+
+def _getMediaType(config):
+   """
+   Gets the media type that should be used for storing.
+
+   Use the configured media type if not C{None}, otherwise use
+   C{DEFAULT_MEDIA_TYPE}.
+
+   Once we figure out what configuration value to use, we return a media type
+   value that is valid in one of the supported writers::
+
+      MEDIA_CDR_74
+      MEDIA_CDRW_74
+      MEDIA_CDR_80
+      MEDIA_CDRW_80
+      MEDIA_DVDPLUSR
+      MEDIA_DVDPLUSRW
+
+   @param config: Config object.
+
+   @return: Media type to be used as a writer media type value.
+   @raise ValueError: If the media type is not valid.
+   """
+   if config.store.mediaType is None:
+      mediaType = DEFAULT_MEDIA_TYPE
+   else:
+      mediaType = config.store.mediaType
+   if mediaType == "cdr-74":
+      logger.debug("Media type is MEDIA_CDR_74.")
+      return MEDIA_CDR_74
+   elif mediaType == "cdrw-74":
+      logger.debug("Media type is MEDIA_CDRW_74.")
+      return MEDIA_CDRW_74
+   elif mediaType == "cdr-80":
+      logger.debug("Media type is MEDIA_CDR_80.")
+      return MEDIA_CDR_80
+   elif mediaType == "cdrw-80":
+      logger.debug("Media type is MEDIA_CDRW_80.")
+      return MEDIA_CDRW_80
+   elif mediaType == "dvd+r":
+      logger.debug("Media type is MEDIA_DVDPLUSR.")
+      return MEDIA_DVDPLUSR
+   elif mediaType == "dvd+rw":
+      logger.debug("Media type is MEDIA_DVDPLUSRW.")
+      return MEDIA_DVDPLUSR
+   else:
+      raise ValueError("Media type [%s] is not valid." % mediaType)
 

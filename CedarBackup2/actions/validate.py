@@ -53,7 +53,7 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.util import getUidGid, getFunctionReference
-from CedarBackup2.actions.store import createWriter
+from CedarBackup2.actions.util import createWriter
 
 
 ########################################################################
@@ -100,7 +100,7 @@ def executeValidate(configPath, options, config):
 
    @raise ValueError: If some configuration value is invalid.
    """
-   logger.debug("Executing validate action.")
+   logger.debug("Executing the 'validate' action.")
    if options.quiet:
       logfunc = logger.info   # info so it goes to the log
    else:

@@ -117,6 +117,7 @@
    purge          Take the purge action
    rebuild        Rebuild "this week's" disc if possible
    validate       Validate configuration only
+   initialize     Initialize media for use with Cedar Backup
 
  You may also specify extended actions that have been defined in
  configuration.
@@ -124,8 +125,9 @@
  You must specify at least one action to take.  More than one of
  the "collect", "stage", "store" or "purge" actions and/or
  extended actions may be specified in any arbitrary order; they
- will be executed in a sensible order.  The "all", "rebuild"
- or "validate" actions may not be combined with other actions.
+ will be executed in a sensible order.  The "all", "rebuild",
+ "validate", and "initialize" actions may not be combined with
+ other actions.
          </screen>
 
          <para>
@@ -303,8 +305,9 @@
             <literal>store</literal> or <literal>purge</literal> actions, and
             the specified actions will be executed in a sensible order.  Or,
             you can specify one of the <literal>all</literal>,
-            <literal>rebuild</literal> or <literal>validate</literal> actions
-            (but these actions may not be combined with other actions).
+            <literal>rebuild</literal>, <literal>validate</literal>, or
+            <literal>initialize</literal> actions (but these actions may not be
+            combined with other actions).
          </para>
          
          <para>
