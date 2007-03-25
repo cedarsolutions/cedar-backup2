@@ -1896,45 +1896,14 @@
             <varlistentry>
                <term><literal>blank_behavior</literal></term>
                <listitem>
-                  <para>Optimized blanking behavior.</para>
+                  <para>Optimized blanking strategy.</para>
+
                   <para>
-                     When optimized blanking behavior has not been configured,
-                     Cedar Backup uses a simplistic approach: rewritable media is blanked
-                     at the beginning of every week, period.  
+                     For more information about Cedar Backup's optimized
+                     blanking strategy, see <xref
+                     linkend="cedar-config-blanking"/>.
                   </para>
-                  <para>
-                     Since rewritable media can be blanked only a finite number
-                     of times before becoming unusable, some users &mdash;
-                     especially users of rewritable DVD media with its large
-                     capacity &mdash; may prefer to blank the media less often.
-                  </para>
-                  <para>
-                     If optimized blanking behavior is configured, Cedar Backup
-                     will use a blanking factor and attempt to determine
-                     whether future backups will fit on the current media.  If
-                     it looks like backups will fit, then the media will not be
-                     blanked.
-                  </para>
-                  <para>
-                     There are two blanking modes: daily and weekly.  If the
-                     weekly blanking mode is set, Cedar Backup will only
-                     estimate future capacity (and potentially blank the disc)
-                     once per week, on the starting day of the week.  If the
-                     daily blanking mode is set, Cedar Backup will estimate
-                     future capacity (and potentially blank the disc) every
-                     time it is run.  <emphasis>You should only use the daily
-                     blanking mode in conjunction with daily collect
-                     configuration, otherwise you will risk losing
-                     data.</emphasis>
-                  </para>
-                  <para>
-                     Cedar Backup estimates future capacity based on the
-                     configured blanking factor.  The disc will be blanked if
-                     the following relationship is true:
-                  </para>
-                  <screen>
-(bytes available / (1 + bytes required) &le; blanking factor
-                  </screen>
+
                   <para>
                      This entire configuration section is optional.  However,
                      if you choose to provide it, you must configure both a
@@ -1958,18 +1927,6 @@
                         <term><literal>blank_factor</literal></term>
                         <listitem>
                            <para>Blanking factor.</para>
-                           <para>
-                              If you are using the daily blanking mode, you can
-                              typically set this value to 1.0.  This will cause
-                              Cedar Backup to blank the media whenever there is
-                              not enough space to store the current day's
-                              backup.
-                           </para>
-                           <para>
-                              If you are using the weekly blanking mode, then
-                              finding the correct blanking factor will require
-                              some experimentation.
-                           </para>
                            <para>
                               <emphasis>Restrictions:</emphasis>Must be a floating point number &ge; 0.
                            </para>
@@ -3782,6 +3739,126 @@ scsibus1:
          </para>
 
       </sect2>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-config-blanking">
+         
+      <title>Optimized Blanking Stategy</title>
+
+      <para>
+         When the optimized blanking strategy has not been configured, Cedar
+         Backup uses a simplistic approach: rewritable media is blanked at the
+         beginning of every week, period.  
+      </para>
+
+      <para>
+         Since rewritable media can be blanked only a finite number of times
+         before becoming unusable, some users &mdash; especially users of
+         rewritable DVD media with its large capacity &mdash; may prefer to
+         blank the media less often.
+      </para>
+
+      <para>
+         If the optimized blanking strategy is configured, Cedar Backup will
+         use a blanking factor and attempt to determine whether future backups
+         will fit on the current media.  If it looks like backups will fit,
+         then the media will not be blanked.
+      </para>
+
+      <para>
+         This feature will only be useful (assuming single disc is used for the
+         whole week's backups) if the estimated total size of the weekly backup
+         is considerably smaller than the capacity of the media (no more than
+         50% of the total media capacity), and only if the size of the backup
+         can be expected to remain fairly constant over time (no frequent rapid
+         growth expected).
+      </para>
+
+      <para>
+         There are two blanking modes: daily and weekly.  If the weekly
+         blanking mode is set, Cedar Backup will only estimate future capacity
+         (and potentially blank the disc) once per week, on the starting day of
+         the week.  If the daily blanking mode is set, Cedar Backup will
+         estimate future capacity (and potentially blank the disc) every time
+         it is run.  <emphasis>You should only use the daily blanking mode in
+         conjunction with daily collect configuration, otherwise you will risk
+         losing data.</emphasis>
+      </para>
+
+      <para>
+         If you are using the daily blanking mode, you can typically set the
+         blanking value to 1.0.  This will cause Cedar Backup to blank the
+         media whenever there is not enough space to store the current day's
+         backup.
+      </para>
+
+      <para>
+         If you are using the weekly blanking mode, then finding the correct
+         blanking factor will require some experimentation.  Cedar Backup
+         estimates future capacity based on the configured blanking factor.
+         The disc will be blanked if the following relationship is true:
+      </para>
+
+      <screen>
+bytes available / (1 + bytes required) &le; blanking factor
+      </screen>
+
+      <para>
+         Another way to look at this is to consider the blanking factor as a
+         sort of (upper) backup growth estimate:
+      </para>
+
+      <screen>
+Total size of weekly backup / Full backup size at the start of the week
+      </screen>
+
+      <para>
+         This ratio can be estimated using a week or two of previous backups.
+         For instance, take this example, where March 10 is the start of the
+         week and March 4 through March 9 represent the incremental backups
+         from the previous week:
+      </para>
+
+      <screen>
+/opt/backup/staging# du -s 2007/03/*
+3040    2007/03/01
+3044    2007/03/02
+6812    2007/03/03
+3044    2007/03/04
+3152    2007/03/05
+3056    2007/03/06
+3060    2007/03/07
+3056    2007/03/08
+4776    2007/03/09
+6812    2007/03/10
+11824   2007/03/11
+      </screen>
+
+      <para>
+         In this case, the ratio is approximately 4:
+      </para>
+
+      <screen>
+6812 + (3044 + 3152 + 3056 + 3060 + 3056 + 4776) / 6812 = 3.9571
+      </screen>
+
+      <para>
+         To be safe, you might choose to configure a factor of 5.0.  
+      </para>
+
+      <para>
+         Setting a higher value reduces the risk of exceeding media capacity
+         mid-week but might result in blanking the media more often than is necessary.  
+      </para>
+         
+      <para>
+         If you run out of space mid-week, then the solution is to run the
+         rebuild action.  If this happens frequently, a higher blanking factor
+         value should be used.
+      </para>
 
    </sect1>
 
