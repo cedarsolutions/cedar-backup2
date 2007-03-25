@@ -72,6 +72,7 @@ import getpass
 import random
 import string
 import platform
+import logging
 from StringIO import StringIO
 
 from CedarBackup2.util import encodePath
@@ -80,6 +81,29 @@ from CedarBackup2.util import encodePath
 ########################################################################
 # Public functions
 ########################################################################
+
+##############################
+# setupDebugLogger() function
+##############################
+
+def setupDebugLogger():
+   """
+   Sets up a screen logger for debugging purposes.
+
+   Normally, the CLI functionality configures the logger so that
+   things get written to the right place.  However, for debugging
+   it's sometimes nice to just get everything -- debug information
+   and output -- dumped to the screen.  This function takes care
+   of that.
+   """
+   logger = logging.getLogger("CedarBackup2")
+   logger.setLevel(logging.DEBUG)    # let the logger see all messages
+   formatter = logging.Formatter(fmt="%(message)s")
+   handler = logging.StreamHandler(strm=sys.stdout)
+   handler.setFormatter(formatter)
+   handler.setLevel(logging.DEBUG)
+   logger.addHandler(handler)
+
 
 ###########################
 # findResources() function
