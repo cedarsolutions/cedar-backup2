@@ -62,7 +62,7 @@ from CedarBackup2.writers.cdwriter import CdWriter
 from CedarBackup2.writers.dvdwriter import DvdWriter
 from CedarBackup2.writers.cdwriter import MEDIA_CDR_74, MEDIA_CDR_80, MEDIA_CDRW_74, MEDIA_CDRW_80
 from CedarBackup2.writers.dvdwriter import MEDIA_DVDPLUSR, MEDIA_DVDPLUSRW
-from CedarBackup2.config import DEFAULT_MEDIA_TYPE, DEFAULT_DEVICE_TYPE
+from CedarBackup2.config import DEFAULT_MEDIA_TYPE, DEFAULT_DEVICE_TYPE, REWRITABLE_MEDIA_TYPES
 from CedarBackup2.actions.constants import INDICATOR_PATTERN
 
 
@@ -213,7 +213,7 @@ def getBackupFiles(targetDir):
 # checkMediaState()
 ####################
 
-def checkMediaState(devicePath):
+def checkMediaState(storeConfig):
    """
    Checks state of the media in the backup device to confirm whether it has
    been initialized for use with Cedar Backup.
@@ -222,15 +222,25 @@ def checkMediaState(devicePath):
    label.  If the media label starts with MEDIA_LABEL_PREFIX, then it has been
    initialized.
 
-   @param devicePath: Path to the backup device.
+   The check varies depending on whether the media is rewritable or not.  For
+   non-rewritable media, we also accept a C{None} media label, since this kind
+   of media cannot safely be initialized.
+
+   @param storeConfig: Store configuration
 
    @raise ValueError: If media is not initialized.
    """
    mediaLabel = readMediaLabel(devicePath)
-   if mediaLabel is None:
-      raise ValueError("Media has not been initialized: no media label available")
-   if not mediaLabel.startswith(MEDIA_LABEL_PREFIX):
-      raise ValueError("Media has not been initialized: unrecognized media label [%s]" % mediaLabel)
+   if storeConfig.mediaType in REWRITABLE_MEDIA_TYPES:
+      if mediaLabel is None:
+         raise ValueError("Media has not been initialized: no media label available")
+      elif not mediaLabel.startswith(MEDIA_LABEL_PREFIX):
+         raise ValueError("Media has not been initialized: unrecognized media label [%s]" % mediaLabel)
+   else:
+      if mediaLabel is None:
+         logger.info("Media has no media label; assuming OK since media is not rewritable.")
+      elif not mediaLabel.startswith(MEDIA_LABEL_PREFIX):
+         raise ValueError("Media has not been initialized: unrecognized media label [%s]" % mediaLabel)
 
 
 #########################
@@ -245,10 +255,18 @@ def initializeMediaState(config):
    This is done by writing an mostly-empty image (it contains a "Cedar Backup"
    directory) to the media with a known media label.
 
+   @note: Only rewritable media (CD-RW, DVD+RW) can be initialized.  It
+   doesn't make any sense to initialize media that cannot be rewritten (CD-R,
+   DVD+R), since Cedar Backup would then not be able to use that media for a
+   backup.
+
    @param config: Cedar Backup configuration
 
    @raise ValueError: If media could not be initialized.
+   @raise ValueError: If the configured media type is not rewritable
    """ 
+   if not config.store.mediaType in REWRITABLE_MEDIA_TYPES:
+      raise ValueError("Only rewritable media types can be initialized.")
    mediaLabel = buildMediaLabel()
    writer = createWriter(config)
    writer.initializeImage(True, config.options.workingDir, mediaLabel) # always create a new disc

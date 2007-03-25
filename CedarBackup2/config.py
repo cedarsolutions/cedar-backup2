@@ -263,6 +263,8 @@ VALID_COMPRESS_MODES  = [ "none", "gzip", "bzip2", ]
 VALID_ORDER_MODES     = [ "index", "dependency", ]
 VALID_BLANK_MODES     = [ "daily", "weekly", ]
 
+REWRITABLE_MEDIA_TYPES = [ "cdrw-74", "cdrw-80", "dvd+rw", ]
+
 ACTION_NAME_REGEX     = r"^[a-z0-9]*$"
 
 

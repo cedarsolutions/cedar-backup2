@@ -519,6 +519,16 @@
             <quote>CEDAR BACKUP</quote>).
          </para>
 
+         <para>
+            Note that only rewritable media (CD-RW, DVD+RW) can be initialized.
+            It doesn't make any sense to initialize media that cannot be
+            rewritten (CD-R, DVD+R), since Cedar Backup would then not be able
+            to use that media for a backup.  You can still configure Cedar
+            Backup to check non-rewritable media; in this case, the check will
+            also pass if the media is apparently unused (i.e. has no media
+            label).
+         </para>
+
       </sect2>
 
       <!-- ################################################################# -->
