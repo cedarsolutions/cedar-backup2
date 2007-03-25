@@ -245,6 +245,27 @@ def readInteger(parent, name):
    else:
       return int(result)
 
+def readFloat(parent, name):
+   """
+   Returns float contents of the first child with a given name immediately
+   beneath the parent.
+
+   By "immediately beneath" the parent, we mean from among nodes that are
+   direct children of the passed-in parent node.  
+
+   @param parent: Parent node to search beneath.
+   @param name: Name of node to search for.
+
+   @return: Float contents of node or C{None} if no matching nodes are found.
+   @raise ValueError: If the string at the location can't be converted to a
+   float value.
+   """
+   result = readString(parent, name)
+   if result is None:
+      return None
+   else:
+      return float(result)
+
 def readBoolean(parent, name):
    """
    Returns boolean contents of the first child with a given name immediately

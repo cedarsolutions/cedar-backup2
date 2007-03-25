@@ -76,7 +76,6 @@ MEDIA_DVDPLUSRW = 2
 
 GROWISOFS_COMMAND = [ "growisofs", ]
 EJECT_COMMAND     = [ "eject", ]
-MEDIAINFO_COMMAND = [ "dvd+rw-mediainfo", ]
 
 
 ########################################################################
@@ -203,6 +202,7 @@ class _ImageProperties(object):
    def __init__(self):
       self.newDisc = False
       self.tmpdir = None
+      self.mediaLabel = None
       self.entries = None     # dict mapping path to graft point
 
 
@@ -240,6 +240,9 @@ class DvdWriter(object):
          initializeImage()
          addImageEntry()
          writeImage()
+         setImageNewDisc()
+         retrieveCapacity()
+         getEstimatedImageSize()
 
       Only these methods will be used by other Cedar Backup functionality
       that expects a compatible image writer.
@@ -298,22 +301,11 @@ class DvdWriter(object):
       process of estimating remaining capacity and image size is more
       straightforward with C{cdrecord}/C{mkisofs} than with C{growisofs}.
 
-      In this class, remaining capacity is calculated by asking
-      C{dvd+rw-mediainfo} for the "READ CAPACITY" of the disc (which seems to
-      be more-or-less the size of the data written previously to the disc), and
-      subtracting that from the capacity on the C{MediaDefinition}.  Image size
-      is estimated by asking the C{IsoImage} class for an estimate and then
-      adding on a "fudge factor" determined through experimentation.
-
-   Device Tray
-   ===========
-
-      It does not seem to be possible to get C{growisofs} to indicate whether a
-      given writer device has a tray.  I am not quite sure what to do about
-      this.  I haven't actually seen a DVD writer without a tray, so for the
-      time being I am going to assume a tray open/close operation is generally
-      safe; the C{deviceHasTray} and C{deviceCanEject} attributes are always
-      defaulted to C{True}. 
+      In this class, remaining capacity is calculated by asking doing a dry run
+      of C{growisofs} and grabbing some information from the output of that
+      command.  Image size is estimated by asking the C{IsoImage} class for an
+      estimate and then adding on a "fudge factor" determined through
+      experimentation.
 
    Testing
    =======
@@ -334,7 +326,7 @@ class DvdWriter(object):
       testing at all.
 
    @sort: __init__, isRewritable, retrieveCapacity, openTray, closeTray, refreshMedia, 
-          initializeImage, addImageEntry, writeImage, 
+          initializeImage, addImageEntry, writeImage, setImageNewDisc, getEstimatedImageSize,
           _writeImage, _getEstimatedImageSize, _searchForOverburn, _buildWriteArgs,
           device, scsiId, hardwareId, driveSpeed, media, deviceHasTray, deviceCanEject
    """
@@ -469,28 +461,25 @@ class DvdWriter(object):
 
       If C{entireDisc} is passed in as C{True}, the capacity will be for the
       entire disc, as if it were to be rewritten from scratch.  Otherwise, the
-      capacity will be calculated by subtracting the "READ CAPACITY" (reported
-      by C{dvd+rw-mediainfo}) from the total capacity of the disc.
-
-      @note: This is only an estimate, because C{growisofs} does not provide a
-      good way to calculate the capacity precisely.  In practice, you might
-      expect slightly less data to fit on the media than indicated by this
-      method.
+      capacity will be calculated by subtracting the sectors currently used on
+      the disc, as reported by C{growisofs} itself.
 
       @param entireDisc: Indicates whether to return capacity for entire disc.
       @type entireDisc: Boolean true/false
 
       @return: C{MediaCapacity} object describing the capacity of the media.
+
+      @raise ValueError: If there is a problem parsing the C{growisofs} output
       @raise IOError: If the media could not be read for some reason.
       """
       sectorsUsed = 0
       if not entireDisc:
-         command = resolveCommand(MEDIAINFO_COMMAND)
-         args = [ self.hardwareId, ]
+         command = resolveCommand(GROWISOFS_COMMAND)
+         args = DvdWriter._buildWriteArgs(False, self.hardwareId, self.driveSpeed, None, self._image.entries, None, dryRun=True)
          (result, output) = executeCommand(command, args, returnOutput=True)
          if result != 0:
-            raise IOError("Error (%d) reading media capacity." % result)
-         sectorsUsed = DvdWriter._getReadCapacity(output)
+            raise IOError("Error (%d) calling growisofs to read capacity." % result)
+         sectorsUsed = DvdWriter._getSectorsUsed(output)
       sectorsAvailable = self._media.capacity - sectorsUsed  # both are in sectors
       bytesUsed = convertSize(sectorsUsed, UNIT_SECTORS, UNIT_BYTES)
       bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
@@ -501,7 +490,7 @@ class DvdWriter(object):
    # Methods used for working with the internal ISO image
    #######################################################
 
-   def initializeImage(self, newDisc, tmpdir):
+   def initializeImage(self, newDisc, tmpdir, mediaLabel=None):
       """
       Initializes the writer's associated ISO image.
 
@@ -514,10 +503,14 @@ class DvdWriter(object):
 
       @param tmpdir: Temporary directory to use if needed
       @type tmpdir: String representing a directory path on disk
+
+      @param mediaLabel: Media label to be applied to the image, if any
+      @type mediaLabel: String, no more than 25 characters long
       """
       self._image = _ImageProperties()
       self._image.newDisc = newDisc
       self._image.tmpdir = encodePath(tmpdir)
+      self._image.mediaLabel = mediaLabel
       self._image.entries = {} # mapping from path to graft point (if any)
 
    def addImageEntry(self, path, graftPoint):
@@ -544,6 +537,32 @@ class DvdWriter(object):
       if not os.path.exists(path):
          raise ValueError("Path [%s] does not exist." % path)
       self._image.entries[path] = graftPoint
+
+   def setImageNewDisc(self, newDisc):
+      """
+      Resets (overrides) the newDisc flag on the internal image.
+      @param newDisc: New disc flag to set
+      @raise ValueError: If initializeImage() was not previously called
+      """
+      if self._image is None:
+         raise ValueError("Must call initializeImage() before using this method.")
+      self._image.newDisc = newDisc
+
+   def getEstimatedImageSize(self):
+      """
+      Gets the estimated size of the image associated with the writer.
+
+      This is an estimate and is conservative.  The actual image could be as
+      much as 450 blocks (sectors) smaller under some circmstances.
+
+      @return: Estimated size of the image, in bytes.
+
+      @raise IOError: If there is a problem calling C{mkisofs}.
+      @raise ValueError: If initializeImage() was not previously called
+      """
+      if self._image is None:
+         raise ValueError("Must call initializeImage() before using this method.")
+      return DvdWriter._getEstimatedImageSize(self._image.entries)
 
 
    ######################################
@@ -627,9 +646,8 @@ class DvdWriter(object):
       the Cedar Backup image writer interface.
 
       @note: The image size indicated in the log ("Image size will be...") is
-      only an estimate.  If C{growisofs} fails with a a capacity problem, the
-      image size indicated in that error message might differ from the image
-      size that was initially logged.
+      an estimate.  The estimate is conservative and is probably larger than
+      the actual space that C{dvdwriter} will use.
 
       @param imagePath: Path to an ISO image on disk, or C{None} to use writer's image
       @type imagePath: String representing a path on disk
@@ -650,9 +668,13 @@ class DvdWriter(object):
       if imagePath is None:
          if self._image is None:
             raise ValueError("Must call initializeImage() before using this method with no image path.")
-         size = DvdWriter._getEstimatedImageSize(self._image.entries)
+         size = self.getEstimatedImageSize()
          logger.info("Image size will be %s (estimated)." % displayBytes(size))
-         self._writeImage(self._image.newDisc, None, self._image.entries)
+         available = self.retrieveCapacity(entireDisc=self._image.newDisc).bytesAvailable
+         if size > available:
+            logger.error("Image [%s] does not fit in available capacity [%s]." % (displayBytes(size), displayBytes(available)))
+            raise IOError("Media does not contain enough capacity to store image.")
+         self._writeImage(self._image.newDisc, None, self._image.entries, self._image.mediaLabel)
       else:
          if not os.path.isabs(imagePath):
             raise ValueError("Image path must be absolute.")
@@ -664,17 +686,13 @@ class DvdWriter(object):
    # Utility methods for dealing with growisofs and dvd+rw-mediainfo
    ##################################################################
 
-   def _writeImage(self, newDisc, imagePath, entries):
+   def _writeImage(self, newDisc, imagePath, entries, mediaLabel=None):
       """
       Writes an image to disc using either an entries list or an ISO image on
       disk.
 
       Callers are assumed to have done validation on paths, etc. before calling
       this method.
-
-      A dry run is done before actually writing the image, to be sure it fits
-      on the media.  If the dry run yields an error, we try to parse out the
-      error message.
 
       @param newDisc: Indicates whether the disc should be re-initialized
       @param imagePath: Path to an ISO image on disk, or c{None} to use C{entries}
@@ -683,15 +701,10 @@ class DvdWriter(object):
       @raise IOError: If the media could not be written to for some reason.
       """
       command = resolveCommand(GROWISOFS_COMMAND)
-      args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, dryRun=True)
+      args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, mediaLabel, dryRun=False)
       (result, output) = executeCommand(command, args, returnOutput=True)
       if result != 0:
          DvdWriter._searchForOverburn(output) # throws own exception if overburn condition is found
-         raise IOError("Error (%d) executing dry run to check media capacity." % result)
-      logger.debug("Dry run succeeded, so image size should be OK.")
-      args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, dryRun=False)
-      result = executeCommand(command, args)[0]
-      if result != 0:
          raise IOError("Error (%d) executing command to write disc." % result)
       self.refreshMedia()
 
@@ -723,31 +736,36 @@ class DvdWriter(object):
       return estimatedSize
    _getEstimatedImageSize = staticmethod(_getEstimatedImageSize)
 
-   def _getReadCapacity(output):
+   def _getSectorsUsed(output):
       """
-      Parse "READ CAPACITY" in sectors out of C{dvd+rw-mediainfo} output.
+      Parse sectors used information out of C{growisofs} output.
 
-      The "READ CAPACITY" line looks like this::
+      The first line of a growisofs run looks something like this::
 
-         READ CAPACITY:          30592*2048=62652416
+         Executing 'mkisofs -C 973744,1401056 -M /dev/fd/3 -r -graft-points music4/=music | builtin_dd of=/dev/cdrom obs=32k seek=87566'
 
-      The first value is the number of sectors used, the second value is the
-      sector size (which should be standard at 2048 bytes) and the third value
-      is the number of bytes.  This method returns the number of sectors.
+      Dmitry has determined that the seek value in this line gives us
+      information about how much data has previously been written to the media.
+      That value multiplied by 16 yields the number of sectors used.
 
-      If the "READ CAPACITY" line is not found or does not make sense, then
-      zero will be returned.
+      If the seek line cannot be found in the output, then sectors used of zero
+      is assumed.
 
-      @return: Read capacity of media in sectors, as a float.
+      @return: Sectors used on the media, as a floating point number.
+
+      @raise ValueError: If the output cannot be parsed properly.
       """
       if output is not None:
-         pattern = re.compile(r"(^)(READ CAPACITY:\s*)([0-9]*)([*])([0-9]*)(=)([0-9]*)")
+         pattern = re.compile(r"(^)(.*)(seek=)(.*)('$)")
          for line in output:
             match = pattern.search(line)
             if match is not None:
-               return float(match.group(3).strip())
+               try:
+                  return float(match.group(4).strip()) * 16.0
+               except ValueError:
+                  raise ValueError("Unable to parse sectors used out of growisofs output.")
       return 0.0
-   _getReadCapacity = staticmethod(_getReadCapacity)
+   _getSectorsUsed = staticmethod(_getSectorsUsed)
 
    def _searchForOverburn(output):
       """
@@ -785,7 +803,7 @@ class DvdWriter(object):
             raise IOError("Media does not contain enough capacity to store image.")
    _searchForOverburn = staticmethod(_searchForOverburn)
          
-   def _buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun=False):
+   def _buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel=None, dryRun=False):
       """
       Builds a list of arguments to be passed to a C{growisofs} command.
 
@@ -793,20 +811,34 @@ class DvdWriter(object):
       file to disc, or will pass C{growisofs} a list of directories or files
       that should be written to disc.  
 
-      The disc will always be written with Rock Ridge extensions (-r).
+      If a new image is created, it will always be created with Rock Ridge
+      extensions (-r).  A volume name will be applied (-V) if C{mediaLabel} is
+      not C{None}.
+
+      @note: Dry run does I{not} always seem to work with C{newDisc=True}.  For
+      some reason, C{dvdwriter} barfs if passed -Z when there is already data
+      on a disc.  A warning is issued if these arguments are passed in
+      together.
 
       @param newDisc: Indicates whether the disc should be re-initialized
       @param hardwareId: Hardware id for the device 
       @param driveSpeed: Speed at which the drive writes.
       @param imagePath: Path to an ISO image on disk, or c{None} to use C{entries}
       @param entries: Mapping from path to graft point, or C{None} to use C{imagePath}
+      @param mediaLabel: Media label to set on the image, if any
       @param dryRun: Says whether to make this a dry run (for checking capacity)
+
+      @note: If we write an existing image to disc, then the mediaLabel is
+      ignored.  The media label is an attribute of the image, and should be set
+      on the image when it is created.
 
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
 
       @raise ValueError: If caller does not pass one or the other of imagePath or entries.
       """
       args = []
+      if newDisc and dryRun:
+         logger.warn("Dry run of dvdwriter may not work properly with -Z option!")
       if (imagePath is None and entries is None) or (imagePath is not None and entries is not None):
          raise ValueError("Must use either imagePath or entries.")
       if dryRun:
@@ -821,6 +853,9 @@ class DvdWriter(object):
          args.append("%s=%s" % (hardwareId, imagePath))
       else:
          args.append(hardwareId)
+         if mediaLabel is not None:
+            args.append("-V")
+            args.append(mediaLabel)
          args.append("-r")    # Rock Ridge extensions with sane ownership and permissions
          args.append("-graft-points")
          keys = entries.keys()
