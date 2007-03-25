@@ -124,7 +124,7 @@ def executeStage(configPath, options, config):
          peer.writeStageIndicator()
       except (ValueError, IOError, OSError), e:
          logger.error("Error staging [%s]: %s" % (peer.name, e))
-   writeIndicatorFile(config, dailyDir, config.options.backupUser, config.options.backupGroup)
+   writeIndicatorFile(dailyDir, STAGE_INDICATOR, config.options.backupUser, config.options.backupGroup)
    logger.info("Executed the 'stage' action successfully.")
 
 
