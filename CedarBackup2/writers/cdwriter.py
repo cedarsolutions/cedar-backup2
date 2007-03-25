@@ -639,7 +639,9 @@ class CdWriter(object):
          command = resolveCommand(CDRECORD_COMMAND)
          (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
          if result != 0:
-            raise IOError("Error (%d) executing cdrecord command to get capacity." % result)
+            logger.debug("Error (%d) executing cdrecord command to get capacity." % result)
+            logger.warn("Unable to read disc (might not be initialized); returning boundaries of None.")
+            return None
          boundaries = CdWriter._parseBoundariesOutput(output)
          if boundaries is None:
             logger.debug("Returning disc boundaries: None")
