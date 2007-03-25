@@ -56,7 +56,6 @@ Provides backup peer-related objects and utility functions.
 import os
 import logging
 import shutil
-import tempfile
 import sets
 import re
 
@@ -735,10 +734,6 @@ class RemotePeer(object):
       @note: If you have user/group as strings, call the L{util.getUidGid} function
       to get the associated uid/gid as an ownership tuple.
 
-      @note: This method's behavior is UNIX-specific.  It depends on the
-      ability of L{tempfile.NamedTemporaryFile} to create files that can be
-      opened more than once.
-
       @param stageIndicator: Name of the indicator file to write
       @type stageIndicator: String representing name of a file in the collect directory
 
@@ -747,7 +742,6 @@ class RemotePeer(object):
       @raise OSError: If there is an OS error creating or changing permissions on the file
       """
       stageIndicator = encodePath(stageIndicator)
-      sourceFile = tempfile.NamedTemporaryFile(dir=self.workingDir)
       if stageIndicator is None:
          sourceFile = os.path.join(self.workingDir, DEF_STAGE_INDICATOR)
          targetFile = os.path.join(self.collectDir, DEF_STAGE_INDICATOR)
