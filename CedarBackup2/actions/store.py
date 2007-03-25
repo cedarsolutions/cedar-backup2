@@ -108,7 +108,7 @@ def executeStore(configPath, options, config):
    if config.options is None or config.store is None:
       raise ValueError("Store configuration is not properly filled in.")
    if config.store.checkMedia:
-      checkMediaState(config.store.devicePath)  # raises exception if media is not initialized
+      checkMediaState(config.store)  # raises exception if media is not initialized
    rebuildMedia = options.full
    logger.debug("Rebuild media flag [%s]" % rebuildMedia)
    todayIsStart = isStartOfWeek(config.options.startingDay)

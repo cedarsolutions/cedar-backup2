@@ -106,7 +106,7 @@ def executeRebuild(configPath, options, config):
    if config.options is None or config.store is None:
       raise ValueError("Rebuild configuration is not properly filled in.")
    if config.store.checkMedia:
-      checkMediaState(config.store.devicePath)
+      checkMediaState(config.store)  # raises exception if media is not initialized
    stagingDirs = _findRebuildDirs(config)
    writeImage(config, True, stagingDirs)
    if config.store.checkData:

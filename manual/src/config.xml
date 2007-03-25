@@ -1811,15 +1811,15 @@
                      writing to it.  It will write to any media in the backup
                      device.  If you set this flag to Y, Cedar Backup will make
                      sure that the media has been initialized before writing to
-                     it.
+                     it.  (Rewritable media is initialized using the initialize
+                     action.)
                   </para>
                   <para>
-                     Although this option is allowed for all types of media, it
-                     probably only makes sense to use it for rewritable media.
-                     Initializing the media consists of writing an initial
-                     session to the media, and once you've done this Cedar
-                     Backup will probably have issues using your new disc on
-                     the first day of the backup week.
+                     If the configured media is not rewritable (like CD-R),
+                     then this behavior is modified slightly.  For this kind of
+                     media, the check passes either if the media has been
+                     initialized <emphasis>or</emphasis> if the media appears
+                     unused.
                   </para>
                   <para>
                      This field is optional.  If it doesn't exist, then

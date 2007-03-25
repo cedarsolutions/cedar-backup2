@@ -87,6 +87,8 @@ def executeInitialize(configPath, options, config):
    @type config: Config object.
    """
    logger.debug("Executing the 'initialize' action.")
+   if config.options is None or config.store is None:
+      raise ValueError("Store configuration is not properly filled in.")
    initializeMediaState(config)
    logger.info("Executed the 'initialize' action successfully.")
 
