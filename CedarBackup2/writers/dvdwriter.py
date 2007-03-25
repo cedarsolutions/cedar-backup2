@@ -754,7 +754,9 @@ class DvdWriter(object):
          command = resolveCommand(GROWISOFS_COMMAND)
          (result, output) = executeCommand(command, args, returnOutput=True)
          if result != 0:
-            raise IOError("Error (%d) calling growisofs to read sectors used." % result)
+            logger.debug("Error (%d) calling growisofs to read sectors used." % result)
+            logger.warn("Unable to read disc (might not be initialized); returning zero sectors used.")
+            return 0.0
          sectorsUsed = DvdWriter._parseSectorsUsed(output)
          logger.debug("Determined sectors used as %s" % sectorsUsed)
          return sectorsUsed
@@ -792,6 +794,7 @@ class DvdWriter(object):
                   return float(match.group(4).strip()) * 16.0
                except ValueError:
                   raise ValueError("Unable to parse sectors used out of growisofs output.")
+      logger.warn("Unable to read disc (might not be initialized); returning zero sectors used.")
       return 0.0
    _parseSectorsUsed = staticmethod(_parseSectorsUsed)
 

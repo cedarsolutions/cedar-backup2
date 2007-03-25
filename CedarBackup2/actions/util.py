@@ -230,7 +230,7 @@ def checkMediaState(storeConfig):
 
    @raise ValueError: If media is not initialized.
    """
-   mediaLabel = readMediaLabel(devicePath)
+   mediaLabel = readMediaLabel(storeConfig.devicePath)
    if storeConfig.mediaType in REWRITABLE_MEDIA_TYPES:
       if mediaLabel is None:
          raise ValueError("Media has not been initialized: no media label available")

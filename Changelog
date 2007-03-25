@@ -10,6 +10,7 @@ Version 2.13.0		unreleased
 	* Reimplement DVD capacity calculation (initial code from Dmitry Rutsky).
 	  - This is now done using a growisofs dry run, without -Z
 	  - The old dvd+rw-mediainfo method was unreliable on some systems
+	  - Error-handling behavior on CdWriter was also tweaked for consistency
 	* Add code to check media before writing to it (closes: #5).
 	  - Create new check_media store configuration option
 	  - Implement new initialize action to initialize rewritable media
