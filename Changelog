@@ -7,7 +7,7 @@ Version 2.13.0		unreleased
 	* Add unit tests for a variety of basic utility functions (closes: #45).
 	  - Error-handling was improved in some utility methods
 	  - Fundamentally, behavior should be unchanged
-	* Reimplement DVD capacity calculation (contributed by Dmitry Rutsky).
+	* Reimplement DVD capacity calculation (initial code from Dmitry Rutsky).
 	  - This is now done using a growisofs dry run, without -Z
 	  - The old dvd+rw-mediainfo method was unreliable on some systems
 	* Add code to check media before writing to it (closes: #5).

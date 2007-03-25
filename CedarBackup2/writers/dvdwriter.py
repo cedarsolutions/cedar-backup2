@@ -56,6 +56,7 @@ Provides functionality related to DVD writer devices.
 import os
 import re
 import logging
+import tempfile
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import BackupFileList
@@ -475,12 +476,7 @@ class DvdWriter(object):
       """
       sectorsUsed = 0
       if not entireDisc:
-         command = resolveCommand(GROWISOFS_COMMAND)
-         args = DvdWriter._buildWriteArgs(False, self.hardwareId, self.driveSpeed, None, self._image.entries, None, dryRun=True)
-         (result, output) = executeCommand(command, args, returnOutput=True)
-         if result != 0:
-            raise IOError("Error (%d) calling growisofs to read capacity." % result)
-         sectorsUsed = DvdWriter._getSectorsUsed(output)
+         sectorsUsed = self._retrieveSectorsUsed()
       sectorsAvailable = self._media.capacity - sectorsUsed  # both are in sectors
       bytesUsed = convertSize(sectorsUsed, UNIT_SECTORS, UNIT_BYTES)
       bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
@@ -737,7 +733,38 @@ class DvdWriter(object):
       return estimatedSize
    _getEstimatedImageSize = staticmethod(_getEstimatedImageSize)
 
-   def _getSectorsUsed(output):
+   def _retrieveSectorsUsed(self):
+      """
+      Retrieves the number of sectors used on the current media.
+
+      This is a little ugly.  We need to call growisofs in "dry-run" mode and
+      parse some information from its output.  However, to do that, we need to
+      create a dummy file that we can pass to the command -- and we have to
+      make sure to remove it later.
+   
+      Once growisofs has been run, then we call C{_parseSectorsUsed} to parse
+      the output and calculate the number of sectors used on the media.
+
+      @return: Number of sectors used on the media
+      """
+      tempdir = tempfile.mkdtemp()
+      try:
+         entries = { tempdir: None }
+         args = DvdWriter._buildWriteArgs(False, self.hardwareId, self.driveSpeed, None, entries, None, dryRun=True)
+         command = resolveCommand(GROWISOFS_COMMAND)
+         (result, output) = executeCommand(command, args, returnOutput=True)
+         if result != 0:
+            raise IOError("Error (%d) calling growisofs to read sectors used." % result)
+         sectorsUsed = DvdWriter._parseSectorsUsed(output)
+         logger.debug("Determined sectors used as %s" % sectorsUsed)
+         return sectorsUsed
+      finally:
+         if os.path.exists(tempdir):
+            try:
+               os.rmdir(tempdir)
+            except: pass
+
+   def _parseSectorsUsed(output):
       """
       Parse sectors used information out of C{growisofs} output.
 
@@ -766,7 +793,7 @@ class DvdWriter(object):
                except ValueError:
                   raise ValueError("Unable to parse sectors used out of growisofs output.")
       return 0.0
-   _getSectorsUsed = staticmethod(_getSectorsUsed)
+   _parseSectorsUsed = staticmethod(_parseSectorsUsed)
 
    def _searchForOverburn(output):
       """
