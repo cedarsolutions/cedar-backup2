@@ -65,6 +65,7 @@ from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, encodePath
 logger = logging.getLogger("CedarBackup2.log.writers.util")
 
 MKISOFS_COMMAND      = [ "mkisofs", ]
+VOLNAME_COMMAND      = [ "volname", ]
 
 
 ########################################################################
@@ -143,6 +144,31 @@ def validateDriveSpeed(driveSpeed):
    if intSpeed < 1:
       raise ValueError("Drive speed must an integer >= 1.")
    return intSpeed
+
+
+########################################################################
+# General writer-related utility functions
+########################################################################
+
+############################
+# readMediaLabel() function
+############################
+
+def readMediaLabel(devicePath):
+   """
+   Reads the media label (volume name) from the indicated device.
+   The volume name is read using the C{volname} command.
+   @param devicePath: Device path to read from
+   @return: Media label as a string, or None if there is no name or it could not be read.
+   """
+   args = [ devicePath, ]
+   command = resolveCommand(VOLNAME_COMMAND)
+   (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=True)
+   if result != 0:
+      return None
+   if output is None or len(output) < 1:
+      return None
+   return output[0].rstrip()
 
 
 ########################################################################

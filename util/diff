@@ -1,16 +1,23 @@
 #!/bin/ksh
 # Does a diff between current trunk and a released version.
 
-if [[ $# != 1 || ${1} == "--help" ]]
+if [[ ${1} == "--help" ]]
 then
-   print "Usage: diff <version>"
-   print "Diffs working copy against a named revision."
+   print "Usage: diff <version> <branch>"
+   print "Diffs working copy (or optionally a branch) against a named revision."
    print "For example, 'diff 2.8.2' to diff against CEDAR_BACKUP_V2.8.2."
+   print "For example, 'diff 2.8.2 capacity' to diff capacity branch against CEDAR_BACKUP_V2.8.2."
    exit 1
 fi
 
 VERSION=${1}
+BRANCH=${2}
 
-svn diff svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP2_V${VERSION} \
-         svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/trunk | gvim -
-
+if [[ "${2}"F = "F" ]]
+then
+   svn diff svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP2_V${VERSION} \
+            svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/trunk | gvim -
+else
+   svn diff svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP2_V${VERSION} \
+            svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/branches/${BRANCH} | gvim -
+fi

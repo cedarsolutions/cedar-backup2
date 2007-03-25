@@ -101,7 +101,7 @@ def executeStage(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there are problems reading or writing files.
    """
-   logger.debug("Executing stage action.")
+   logger.debug("Executing the 'stage' action.")
    if config.options is None or config.stage is None:
       raise ValueError("Stage configuration is not properly filled in.")
    dailyDir = _getDailyDir(config)

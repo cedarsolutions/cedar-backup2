@@ -108,8 +108,7 @@ GB44        = (4.4*1024.0*1024.0*1024.0)  # 4.4 GB
 GB44SECTORS = GB44/2048.0                 # 4.4 GB in 2048-byte sectors
 
 DATA_DIRS = [ "./data", "./test/data", ]
-RESOURCES = [ "tree9.tar.gz", "mediainfo1.txt", "mediainfo2.txt", "mediainfo3.txt",
-              "mediainfo4.txt", "mediainfo5.txt", "mediainfo6.txt", "mediainfo7.txt", ]
+RESOURCES = [ "tree9.tar.gz", ]
 
 
 #######################################################################
@@ -697,113 +696,65 @@ class TestDvdWriter(unittest.TestCase):
       self.failUnlessRaises(IOError, DvdWriter._searchForOverburn, output)
 
 
-   ##########################
-   # Test _getReadCapacity()
-   ##########################
+   #########################
+   # Test _getSectorsUsed()
+   #########################
 
-   def testGetReadCapacity_001(self):
+   def testGetSectorsUsed_001(self):
       """
       Test with output=None.
       """
       output = None
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(0.0, readCapacity)
+      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      self.failUnlessEqual(0.0, sectorsUsed)
 
-   def testGetReadCapacity_002(self):
+   def testGetSectorsUsed_002(self):
       """
       Test with output=[].
       """
       output = []
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(0.0, readCapacity)
+      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      self.failUnlessEqual(0.0, sectorsUsed)
 
-   def testGetReadCapacity_003(self):
+   def testGetSectorsUsed_003(self):
       """
       Test with one-line output, not containing the pattern.
       """
       output = [ "This line does not contain the pattern", ]
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(0.0, readCapacity)
+      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      self.failUnlessEqual(0.0, sectorsUsed)
 
-      output = [ "READ CAPACITY:          30592*2048*62652416", ] # star instead of equals
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(0.0, readCapacity)
-
-      output = [ "    READ CAPACITY:          30592*2048*62652416", ] # not in front of line
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(0.0, readCapacity)
-
-   def testGetReadCapacity_004(self):
+   def testGetSectorsUsed_004(self):
       """
       Test with one-line output(s), containing the pattern.
       """
-      output = [ "READ CAPACITY:          30592*2048=62652416", ]
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(30592.0, readCapacity)
+      output = [ "'seek=10'", ]
+      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      self.failUnlessEqual(10.0*16.0, sectorsUsed)
 
-      output = [ "READ CAPACITY:30592*2048=62652416", ]
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(30592.0, readCapacity)
+      output = [ "'    seek=    10     '", ]
+      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      self.failUnlessEqual(10.0*16.0, sectorsUsed)
 
-      output = [ "READ CAPACITY:30592*2048=62652416                 ", ]
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(30592.0, readCapacity)
+      output = [ "Executing 'mkisofs -C 973744,1401056 -M /dev/fd/3 -r -graft-points music4/=music | builtin_dd of=/dev/cdrom obs=32k seek=87566'", ]
+      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      self.failUnlessEqual(87566*16.0, sectorsUsed)
 
-   def testGetReadCapacity_005(self):
+   def testGetSectorsUsed_005(self):
       """
-      Test with output from an empty disc.
+      Test with real growisofs output.
       """
-      output = self.getFileContents("mediainfo1.txt")
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(0.0, readCapacity)
-
-   def testGetReadCapacity_006(self):
-      """
-      Test with output from a disc with 1 session.
-      """
-      output = self.getFileContents("mediainfo2.txt")
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(30592.0, readCapacity)
-
-   def testGetReadCapacity_007(self):
-      """
-      Test with output from a disc with 2 sessions.
-      """
-      output = self.getFileContents("mediainfo3.txt")
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(116880.0, readCapacity)
-
-   def testGetReadCapacity_008(self):
-      """
-      Test with output from a disc with 3 sessions.
-      """
-      output = self.getFileContents("mediainfo4.txt")
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(143424.0, readCapacity)
-
-   def testGetReadCapacity_009(self):
-      """
-      Test with output from a disc with 4 sessions.
-      """
-      output = self.getFileContents("mediainfo5.txt")
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(202000.0, readCapacity)
-
-   def testGetReadCapacity_010(self):
-      """
-      Test with output from a disc with 5 sessions.
-      """
-      output = self.getFileContents("mediainfo6.txt")
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(660816.0, readCapacity)
-
-   def testGetReadCapacity_011(self):
-      """
-      Test with output from a disc with 6 sessions.
-      """
-      output = self.getFileContents("mediainfo7.txt")
-      readCapacity = DvdWriter._getReadCapacity(output)
-      self.failUnlessEqual(1673920.0, readCapacity)
+      output = []
+      output.append("Executing 'mkisofs -C 973744,1401056 -M /dev/fd/3 -r -graft-points music4/=music | builtin_dd of=/dev/cdrom obs=32k seek=87566'")
+      output.append("Rock Ridge signatures found")
+      output.append("Using THE_K000 for  music4/The_Kings_Singers (The_Kingston_Trio)")
+      output.append("Using COCKT000 for music/Various_Artists/Cocktail_Classics_-_Beethovens_Fifth_and_Others (Cocktail_Classics_-_Pachelbels_Canon_and_Others)")
+      output.append("Using THE_V000 for  music/Brahms/The_Violin_Sonatas (The_Viola_Sonatas) Using COMPL000 for  music/Gershwin/Complete_Gershwin_2 (Complete_Gershwin_1)")
+      output.append("Using SELEC000.MP3;1 for music/Marquette_Chorus/Selected_Christmas_Carols_For_Double_Choir.mp3 (Selected_Choruses_from_The_Lark.mp3)")
+      output.append("Using SELEC001.MP3;1 for music/Marquette_Chorus/Selected_Choruses_from_The_Lark.mp3 (Selected_Choruses_from_Messiah.mp3)")
+      output.append("Using IN_TH000.MP3;1 for  music/Marquette_Chorus/In_the_Bleak_Midwinter.mp3 (In_the_Beginning.mp3) Using AFRIC000.MP3;1 for  music/Marquette_Chorus/African_Noel-tb.mp3 (African_Noel-satb.mp3)")
+      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      self.failUnlessEqual(87566*16.0, sectorsUsed)
 
 
    #########################
@@ -812,252 +763,323 @@ class TestDvdWriter(unittest.TestCase):
 
    def testBuildWriteArgs_001(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None, imagePath=None, entries=None, dryRun=False.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath=None, entries=None, mediaLabel=None,dryRun=False.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = None
       entries = None
+      mediaLabel = None
       dryRun = False
-      self.failUnlessRaises(ValueError, DvdWriter._buildWriteArgs, newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      self.failUnlessRaises(ValueError, DvdWriter._buildWriteArgs, newDisc, hardwareId, 
+                            driveSpeed, imagePath, entries, mediaLabel, dryRun)
 
    def testBuildWriteArgs_002(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None, imagePath=None, entries=None, dryRun=True.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath=None, entries=None, mediaLabel=None, dryRun=True.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = None
       entries = None
+      mediaLabel = None
       dryRun = True
-      self.failUnlessRaises(ValueError, DvdWriter._buildWriteArgs, newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      self.failUnlessRaises(ValueError, DvdWriter._buildWriteArgs, newDisc, hardwareId, 
+                            driveSpeed, imagePath, entries, mediaLabel, dryRun)
 
    def testBuildWriteArgs_003(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None, imagePath="/path/to/image", entries=None, dryRun=False.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath="/path/to/image", entries=None, mediaLabel=None, dryRun=False.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = "/path/to/image"
       entries = None
+      mediaLabel = None
       dryRun = False
       expected = [ "-M", "/dev/dvd=/path/to/image", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_004(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None, imagePath="/path/to/image", entries=None, dryRun=True.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath="/path/to/image", entries=None, mediaLabel=None, dryRun=True.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = "/path/to/image"
       entries = None
+      mediaLabel = None
       dryRun = True
       expected = [ "--dry-run", "-M", "/dev/dvd=/path/to/image", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_005(self):
       """
-      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=None, imagePath="/path/to/image", entries=None, dryRun=False.
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath="/path/to/image", entries=None, mediaLabel=None, dryRun=False.
       """
       newDisc = True
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = "/path/to/image"
       entries = None
+      mediaLabel = None
       dryRun = False
       expected = [ "-Z", "/dev/dvd=/path/to/image", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_006(self):
       """
-      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=None, imagePath="/path/to/image", entries=None, dryRun=True.
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath="/path/to/image", entries=None, mediaLabel=None, dryRun=True.
       """
       newDisc = True
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = "/path/to/image"
       entries = None
+      mediaLabel = None
       dryRun = True
       expected = [ "--dry-run", "-Z", "/dev/dvd=/path/to/image", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_007(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=1, imagePath="/path/to/image", entries=None, dryRun=False.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=1,
+      imagePath="/path/to/image", entries=None, mediaLabel=None, dryRun=False.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = 1
       imagePath = "/path/to/image"
       entries = None
+      mediaLabel = None
       dryRun = False
       expected = [ "-speed=1", "-M", "/dev/dvd=/path/to/image", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_008(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=2, imagePath="/path/to/image", entries=None, dryRun=True.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=2,
+      imagePath="/path/to/image", entries=None, mediaLabel=None, dryRun=True.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = 2
       imagePath = "/path/to/image"
       entries = None
+      mediaLabel = None
       dryRun = True
       expected = [ "--dry-run", "-speed=2", "-M", "/dev/dvd=/path/to/image", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_009(self):
       """
-      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=3, imagePath="/path/to/image", entries=None, dryRun=False.
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=3,
+      imagePath="/path/to/image", entries=None, mediaLabel=None, dryRun=False.
       """
       newDisc = True
       hardwareId = "/dev/dvd"
       driveSpeed = 3
       imagePath = "/path/to/image"
       entries = None
+      mediaLabel = None
       dryRun = False
       expected = [ "-speed=3", "-Z", "/dev/dvd=/path/to/image", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_010(self):
       """
-      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=4, imagePath="/path/to/image", entries=None, dryRun=True.
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=4,
+      imagePath="/path/to/image", entries=None, mediaLabel=None, dryRun=True.
       """
       newDisc = True
       hardwareId = "/dev/dvd"
       driveSpeed = 4
       imagePath = "/path/to/image"
       entries = None
+      mediaLabel = None
       dryRun = True
       expected = [ "--dry-run", "-speed=4", "-Z", "/dev/dvd=/path/to/image", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_011(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None, imagePath=None, entries=<one>, dryRun=False.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath=None, entries=<one>, mediaLabel=None, dryRun=False.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = None
       entries = { "path1":None, }
+      mediaLabel = None
       dryRun = False
       expected = [ "-M", "/dev/dvd", "-r", "-graft-points", "path1", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_012(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None, imagePath=None, entries=<one>, dryRun=True.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath=None, entries=<one>, mediaLabel=None, dryRun=True.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = None
       entries = { "path1":None, }
+      mediaLabel = None
       dryRun = True
       expected = [ "--dry-run", "-M", "/dev/dvd", "-r", "-graft-points", "path1", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_013(self):
       """
-      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=None, imagePath=None, entries=<several>, dryRun=False.
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath=None, entries=<several>, mediaLabel=None, dryRun=False.
       """
       newDisc = True
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = None
       entries = { "path1":None, "path2":"graft2", "path3":"/path/to/graft3", }
+      mediaLabel = None
       dryRun = False
       expected = [ "-Z", "/dev/dvd", "-r", "-graft-points", "path1", "graft2/=path2", "path/to/graft3/=path3", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_014(self):
       """
-      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=None, imagePath=None, entries=<several>, dryRun=True.
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=None,
+      imagePath=None, entries=<several>, mediaLabel=None, dryRun=True.
       """
       newDisc = True
       hardwareId = "/dev/dvd"
       driveSpeed = None
       imagePath = None
       entries = { "path1":None, "path2":"graft2", "path3":"/path/to/graft3", }
+      mediaLabel = None
       dryRun = True
       expected = [ "--dry-run", "-Z", "/dev/dvd", "-r", "-graft-points", "path1", "graft2/=path2", "path/to/graft3/=path3", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_015(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=1, imagePath=None, entries=<several>, dryRun=False.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=1,
+      imagePath=None, entries=<several>, mediaLabel=None, dryRun=False.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = 1
       imagePath = None
       entries = { "path1":None, "path2":"graft2", }
+      mediaLabel = None
       dryRun = False
       expected = [ "-speed=1", "-M", "/dev/dvd", "-r", "-graft-points", "path1", "graft2/=path2", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_016(self):
       """
-      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=2, imagePath=None, entries=<several>, dryRun=True.
+      Test with newDisc=False, hardwareId="/dev/dvd", driveSpeed=2,
+      imagePath=None, entries=<several>, mediaLabel=None, dryRun=True.
       """
       newDisc = False
       hardwareId = "/dev/dvd"
       driveSpeed = 2
       imagePath = None
       entries = { "path1":None, "path2":"graft2", }
+      mediaLabel = None
       dryRun = True
       expected = [ "--dry-run", "-speed=2", "-M", "/dev/dvd", "-r", "-graft-points", "path1", "graft2/=path2", ]
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_017(self):
       """
-      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=3, imagePath=None, entries=<several>, dryRun=False.
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=3,
+      imagePath=None, entries=<several>, mediaLabel=None, dryRun=False.
       """
       newDisc = True
       hardwareId = "/dev/dvd"
       driveSpeed = 3
       imagePath = None
       entries = { "path1":None, "/path/to/path2":None, "/path/to/path3/":"/path/to/graft3/", }
+      mediaLabel = None
       dryRun = False
       expected = [ "-speed=3", "-Z", "/dev/dvd", "-r", "-graft-points", 
                    "/path/to/path2", "path/to/graft3/=/path/to/path3/", "path1", ]  # sorted order
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
    def testBuildWriteArgs_018(self):
       """
-      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=4, imagePath=None, entries=<several>, dryRun=True.
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=4,
+      imagePath=None, entries=<several>, mediaLabel=None, dryRun=True.
       """
       newDisc = True
       hardwareId = "/dev/dvd"
       driveSpeed = 4
       imagePath = None
       entries = { "path1":None, "/path/to/path2":None, "/path/to/path3/":"/path/to/graft3/", }
+      mediaLabel = None
       dryRun = True
       expected = [ "--dry-run", "-speed=4", "-Z", "/dev/dvd", "-r", "-graft-points", 
                    "/path/to/path2", "path/to/graft3/=/path/to/path3/", "path1", ]  # sorted order
-      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, dryRun)
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
+      self.failUnlessEqual(actual, expected)
+
+   def testBuildWriteArgs_019(self):
+      """
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=3,
+      imagePath="/path/to/image", entries=None, mediaLabel="BACKUP", dryRun=False.
+      """
+      newDisc = True
+      hardwareId = "/dev/dvd"
+      driveSpeed = 3
+      imagePath = "/path/to/image"
+      entries = None
+      mediaLabel = "BACKUP"
+      dryRun = False
+      expected = [ "-speed=3", "-Z", "/dev/dvd=/path/to/image", ]
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
+      self.failUnlessEqual(actual, expected)
+
+   def testBuildWriteArgs_020(self):
+      """
+      Test with newDisc=True, hardwareId="/dev/dvd", driveSpeed=4,
+      imagePath=None, entries=<several>, mediaLabel="BACKUP", dryRun=True.
+      """
+      newDisc = True
+      hardwareId = "/dev/dvd"
+      driveSpeed = 4
+      imagePath = None
+      entries = { "path1":None, "/path/to/path2":None, "/path/to/path3/":"/path/to/graft3/", }
+      mediaLabel = "BACKUP"
+      dryRun = True
+      expected = [ "--dry-run", "-speed=4", "-Z", "/dev/dvd", "-V", "BACKUP", "-r", "-graft-points", 
+                   "/path/to/path2", "path/to/graft3/=/path/to/path3/", "path1", ]  # sorted order
+      actual = DvdWriter._buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel, dryRun)
       self.failUnlessEqual(actual, expected)
 
 

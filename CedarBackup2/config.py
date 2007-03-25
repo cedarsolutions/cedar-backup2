@@ -261,6 +261,7 @@ VALID_COLLECT_MODES   = [ "daily", "weekly", "incr", ]
 VALID_ARCHIVE_MODES   = [ "tar", "targz", "tarbz2", ]
 VALID_COMPRESS_MODES  = [ "none", "gzip", "bzip2", ]
 VALID_ORDER_MODES     = [ "index", "dependency", ]
+VALID_BLANK_MODES     = [ "daily", "weekly", ]
 
 ACTION_NAME_REGEX     = r"^[a-z0-9]*$"
 
@@ -294,7 +295,7 @@ class ActionDependencies(object):
 
    def __init__(self, beforeList=None, afterList=None):
       """
-      Constructor for the C{ActionHook} class.
+      Constructor for the C{ActionDependencies} class.
 
       @param beforeList: List of named actions that this action must be run before
       @param afterList: List of named actions that this action must be run after
@@ -617,6 +618,118 @@ class PostActionHook(ActionHook):
       Official string representation for class instance.
       """
       return "PostActionHook(%s, %s, %s, %s)" % (self.action, self.command, self.before, self.after)
+
+
+########################################################################
+# BlankBehavior class definition
+########################################################################
+
+class BlankBehavior(object):
+
+   """
+   Class representing optimized store-action media blanking behavior.
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.   Some validation is done
+   on non-C{None} assignments through the use of the Python C{property()}
+   construct.
+
+   The following restrictions exist on data in this class:
+
+      - The blanking mode must be a one of the values in L{VALID_BLANK_MODES}
+      - The blanking factor must be a positive floating point number
+
+   @sort: __init__, __repr__, __str__, __cmp__, blankMode, blankFactor
+   """
+
+   def __init__(self, blankMode=None, blankFactor=None):
+      """
+      Constructor for the C{BlankBehavior} class.
+
+      @param blankMode: Blanking mode
+      @param blankFactor: Blanking factor
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      self._blankMode = None
+      self._blankFactor = None
+      self.blankMode = blankMode
+      self.blankFactor = blankFactor
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "BlankBehavior(%s, %s)" % (self.blankMode, self.blankFactor)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._blankMode != other._blankMode:
+         if self._blankMode < other._blankMode:
+            return -1
+         else:
+            return 1
+      if self._blankFactor != other._blankFactor:
+         if self._blankFactor < other._blankFactor:
+            return -1
+         else:
+            return 1
+      return 0
+
+   def _setBlankMode(self, value):
+      """
+      Property target used to set the blanking mode.
+      The value must be one of L{VALID_BLANK_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_BLANK_MODES:
+            raise ValueError("Blanking mode must be one of %s." % VALID_BLANK_MODES)
+      self._blankMode = value
+
+   def _getBlankMode(self):
+      """
+      Property target used to get the blanking mode.
+      """
+      return self._blankMode
+
+   def _setBlankFactor(self, value):
+      """
+      Property target used to set the blanking factor.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      @raise ValueError: If the value is not a valid floating point number
+      @raise ValueError: If the value is less than zero
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("Blanking factor must be a non-empty string.")
+         floatValue = float(value)
+         if floatValue < 0.0:
+            raise ValueError("Blanking factor cannot be negative.")
+      self._blankFactor = value # keep around string
+
+   def _getBlankFactor(self):
+      """
+      Property target used to get the blanking factor.
+      """
+      return self._blankFactor
+
+   blankMode = property(_getBlankMode, _setBlankMode, None, "Blanking mode")
+   blankFactor = property(_getBlankFactor, _setBlankFactor, None, "Blanking factor")
 
 
 ########################################################################
@@ -2740,16 +2853,21 @@ class StoreConfig(object):
       - The device path must be an absolute path.
       - The SCSI id, if provided, must be in the form specified by L{validateScsiId}.
       - The drive speed must be an integer >= 1
+      - The blanking behavior must be a C{BlankBehavior} object
+
+   Note that although the blanking factor must be a positive floating point
+   number, it is stored as a string. This is done so that we can losslessly go
+   back and forth between XML and object representations of configuration.
 
    @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
           mediaType, deviceType, devicePath, deviceScsiId, 
-          driveSpeed, checkData, checkMedia, warnMidnite, noEject
+          driveSpeed, checkData, checkMedia, warnMidnite, noEject, blankBehavior
    """
 
    def __init__(self, sourceDir=None, mediaType=None, deviceType=None, 
                 devicePath=None, deviceScsiId=None, driveSpeed=None,
                 checkData=False, warnMidnite=False, noEject=False,
-                checkMedia=False):
+                checkMedia=False, blankBehavior=None):
       """
       Constructor for the C{StoreConfig} class.
 
@@ -2763,6 +2881,7 @@ class StoreConfig(object):
       @param checkMedia: Whether media should be checked before being written to.
       @param warnMidnite: Whether to generate warnings for crossing midnite.
       @param noEject: Indicates that the writer device should not be ejected.
+      @param blankBehavior: Controls optimized blanking behavior.
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -2776,6 +2895,7 @@ class StoreConfig(object):
       self._checkMedia = None
       self._warnMidnite = None
       self._noEject = None
+      self._blankBehavior = None
       self.sourceDir = sourceDir
       self.mediaType = mediaType
       self.deviceType = deviceType
@@ -2786,15 +2906,16 @@ class StoreConfig(object):
       self.checkMedia = checkMedia
       self.warnMidnite = warnMidnite
       self.noEject = noEject
+      self.blankBehavior = blankBehavior
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType,
-                                                                      self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                                      self.checkData, self.warnMidnite, self.noEject,
-                                                                      self.checkMedia)
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType, 
+                                                                          self.devicePath, self.deviceScsiId, self.driveSpeed,
+                                                                          self.checkData, self.warnMidnite, self.noEject,
+                                                                          self.checkMedia, self.blankBehavior)
 
    def __str__(self):
       """
@@ -2857,6 +2978,11 @@ class StoreConfig(object):
             return 1
       if self._noEject != other._noEject:
          if self._noEject < other._noEject:
+            return -1
+         else:
+            return 1
+      if self._blankBehavior != other._blankBehavior:
+         if self._blankBehavior < other._blankBehavior:
             return -1
          else:
             return 1
@@ -3029,6 +3155,25 @@ class StoreConfig(object):
       """
       return self._noEject
 
+   def _setBlankBehavior(self, value):
+      """
+      Property target used to set blanking behavior configuration.
+      If not C{None}, the value must be a C{BlankBehavior} object.
+      @raise ValueError: If the value is not a C{BlankBehavior}
+      """
+      if value is None:
+         self._blankBehavior = None
+      else:
+         if not isinstance(value, BlankBehavior):
+            raise ValueError("Value must be a C{BlankBehavior} object.")
+         self._blankBehavior = value
+
+   def _getBlankBehavior(self):
+      """
+      Property target used to get the blanking behavior configuration.
+      """
+      return self._blankBehavior
+
    sourceDir = property(_getSourceDir, _setSourceDir, None, "Directory whose contents should be written to media.")
    mediaType = property(_getMediaType, _setMediaType, None, "Type of the media (see notes above).")
    deviceType = property(_getDeviceType, _setDeviceType, None, "Type of the device (optional, see notes above).")
@@ -3039,6 +3184,7 @@ class StoreConfig(object):
    checkMedia = property(_getCheckMedia, _setCheckMedia, None, "Whether media should be checked before being written to.")
    warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
    noEject = property(_getNoEject, _setNoEject, None, "Indicates that the writer device should not be ejected.")
+   blankBehavior = property(_getBlankBehavior, _setBlankBehavior, None, "Controls optimized blanking behavior.")
 
 
 ########################################################################
@@ -3761,6 +3907,9 @@ class Config(object):
          warnMidnite       //cb_config/store/warn_midnite
          noEject           //cb_config/store/no_eject
 
+      Blanking behavior configuration is parsed by the C{_parseBlankBehavior}
+      method.
+
       @param parentNode: Parent node to search beneath.
 
       @return: C{StoreConfig} object or C{None} if the section does not exist.
@@ -3780,6 +3929,7 @@ class Config(object):
          store.checkMedia = readBoolean(sectionNode, "check_media")
          store.warnMidnite = readBoolean(sectionNode, "warn_midnite")
          store.noEject = readBoolean(sectionNode, "no_eject")
+         store.blankBehavior = Config._parseBlankBehavior(sectionNode)
       return store
    _parseStore = staticmethod(_parseStore)
 
@@ -4146,6 +4296,29 @@ class Config(object):
          return pass2
    _parseCommaSeparatedString = staticmethod(_parseCommaSeparatedString)
 
+   def _parseBlankBehavior(parentNode):
+      """
+      Reads a single C{BlankBehavior} object from immediately beneath the parent.
+
+      We read the following individual fields::
+
+         blankMode     blank_behavior/mode
+         blankFactor   blank_behavior/factor
+
+      @param parentNode: Parent node to search beneath.
+
+      @return: C{BlankBehavior} object or C{None} if none if the section is not found
+      @raise ValueError: If some filled-in value is invalid.
+      """
+      blankBehavior = None
+      sectionNode = readFirstChild(parentNode, "blank_behavior")
+      if sectionNode is not None:
+         blankBehavior = BlankBehavior()
+         blankBehavior.blankMode = readString(sectionNode, "mode")
+         blankBehavior.blankFactor = readString(sectionNode, "factor")
+      return blankBehavior
+   _parseBlankBehavior = staticmethod(_parseBlankBehavior)
+
 
    ########################################
    # High-level methods for generating XML
@@ -4374,6 +4547,9 @@ class Config(object):
          warnMidnite       //cb_config/store/warn_midnite
          noEject           //cb_config/store/no_eject
 
+      Blanking behavior configuration is added by the L{_addBlankBehavior}
+      method.
+
       If C{storeConfig} is C{None}, then no container will be added.
 
       @param xmlDom: DOM tree as from L{createOutputDom}.
@@ -4392,6 +4568,7 @@ class Config(object):
          addBooleanNode(xmlDom, sectionNode, "check_media", storeConfig.checkMedia)
          addBooleanNode(xmlDom, sectionNode, "warn_midnite", storeConfig.warnMidnite)
          addBooleanNode(xmlDom, sectionNode, "no_eject", storeConfig.noEject)
+         Config._addBlankBehavior(xmlDom, sectionNode, storeConfig.blankBehavior)
    _addStore = staticmethod(_addStore)
 
    def _addPurge(xmlDom, parentNode, purgeConfig):
@@ -4719,6 +4896,30 @@ class Config(object):
       return ",".join(valueList)
    _buildCommaSeparatedString = staticmethod(_buildCommaSeparatedString)
 
+   def _addBlankBehavior(xmlDom, parentNode, blankBehavior):
+      """
+      Adds a blanking behavior container as the next child of a parent.
+
+      We add the following fields to the document::
+
+         blankMode    blank_behavior/mode
+         blankFactor  blank_behavior/factor
+   
+      The <blank_behavior> node itself is created as the next child of the
+      parent node.
+
+      If C{blankBehavior} is C{None}, this method call will be a no-op.
+
+      @param xmlDom: DOM tree as from L{createOutputDom}.
+      @param parentNode: Parent that the section should be appended to.
+      @param blankBehavior: Blanking behavior to be added to the document.
+      """
+      if blankBehavior is not None:
+         sectionNode = addContainerNode(xmlDom, parentNode, "blank_behavior")
+         addStringNode(xmlDom, sectionNode, "mode", blankBehavior.blankMode)
+         addStringNode(xmlDom, sectionNode, "factor", blankBehavior.blankFactor)
+   _addBlankBehavior = staticmethod(_addBlankBehavior)
+
 
    #################################################
    # High-level methods used for validating content
@@ -4904,8 +5105,11 @@ class Config(object):
       """
       Validates store configuration.
 
-      The device type, drive speed are optional, and all other values are
-      required (missing booleans will be set to defaults, which is OK).
+      The device type, drive speed, and blanking behavior are optional.  All
+      other values are required. Missing booleans will be set to defaults.
+
+      If blanking behavior is provided, then both a blanking mode and a
+      blanking factor are required.
 
       The image writer functionality in the C{writer} module is supposed to be
       able to handle a device speed of C{None}.  
@@ -4931,6 +5135,9 @@ class Config(object):
          elif self.store.deviceType == "dvdwriter":
             if self.store.mediaType not in VALID_DVD_MEDIA_TYPES:
                raise ValueError("Media type must match device type.")
+         if self.store.blankBehavior is not None:
+            if self.store.blankBehavior.blankMode is None and self.store.blankBehavior.blankFactor is None:
+               raise ValueError("If blanking behavior is provided, all values must be filled in.")
 
    def _validatePurge(self):
       """

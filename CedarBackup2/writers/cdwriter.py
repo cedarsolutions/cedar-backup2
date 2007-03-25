@@ -249,8 +249,8 @@ class _ImageProperties(object):
    def __init__(self):
       self.newDisc = False
       self.tmpdir = None
-      self.capacity = None
-      self.image = None
+      self.mediaLabel = None
+      self.entries = None     # dict mapping path to graft point
 
 
 ########################################################################
@@ -288,12 +288,14 @@ class CdWriter(object):
          initializeImage()
          addImageEntry()
          writeImage()
+         setImageNewDisc()
+         retrieveCapacity()
+         getEstimatedImageSize()
 
       Only these methods will be used by other Cedar Backup functionality
       that expects a compatible image writer.
 
       The media attribute is also assumed to be available.
-
 
    Media Types
    ===========
@@ -379,7 +381,7 @@ class CdWriter(object):
           _buildBoundariesArgs, _buildBlankArgs, _buildWriteArgs,
           device, scsiId, hardwareId, driveSpeed, media, deviceType, deviceVendor, 
           deviceId, deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject,
-          initializeImage, addImageEntry, writeImage
+          initializeImage, addImageEntry, writeImage, setImageNewDisc, getEstimatedImageSize
    """
 
    ##############
@@ -680,7 +682,7 @@ class CdWriter(object):
    # Methods used for working with the internal ISO image
    #######################################################
 
-   def initializeImage(self, newDisc, tmpdir):
+   def initializeImage(self, newDisc, tmpdir, mediaLabel=None):
       """
       Initializes the writer's associated ISO image.
 
@@ -693,25 +695,23 @@ class CdWriter(object):
 
       @param tmpdir: Temporary directory to use if needed
       @type tmpdir: String representing a directory path on disk
+
+      @param mediaLabel: Media label to be applied to the image, if any
+      @type mediaLabel: String, no more than 25 characters long
       """
       self._image = _ImageProperties()
       self._image.newDisc = newDisc
       self._image.tmpdir = encodePath(tmpdir)
-      self._image.capacity = self.retrieveCapacity(entireDisc=newDisc)
-      logger.debug("Media capacity: %s" % displayBytes(self._image.capacity.bytesAvailable))
-      self._image.image = IsoImage(self.device, self._image.capacity.boundaries)  
+      self._image.mediaLabel = mediaLabel
+      self._image.entries = {} # mapping from path to graft point (if any)
 
    def addImageEntry(self, path, graftPoint):
       """
       Adds a filepath entry to the writer's associated ISO image.
 
-      Underneath, this calls L{IsoImage.addEntry} with the C{override=False}
-      and C{contentsOnly=True} arguments.  Using these arguments, the contents
-      of the passed-in path -- but not the path itself -- will be added to the
-      ISO image.
-
-      See the documentation by L{IsoImage.addEntry} for more information on how
-      a graft point path is defined.
+      The contents of the filepath -- but not the path itself -- will be added
+      to the image at the indicated graft point.  If you don't want to use a
+      graft point, just pass C{None}.
 
       @note: Before calling this method, you must call L{initializeImage}.
 
@@ -725,7 +725,33 @@ class CdWriter(object):
       """
       if self._image is None:
          raise ValueError("Must call initializeImage() before using this method.")
-      self._image.image.addEntry(path, graftPoint, override=False, contentsOnly=True)
+      if not os.path.exists(path):
+         raise ValueError("Path [%s] does not exist." % path)
+      self._image.entries[path] = graftPoint
+
+   def setImageNewDisc(self, newDisc):
+      """
+      Resets (overrides) the newDisc flag on the internal image.
+      @param newDisc: New disc flag to set
+      @raise ValueError: If initializeImage() was not previously called
+      """
+      if self._image is None:
+         raise ValueError("Must call initializeImage() before using this method.")
+      self._image.newDisc = newDisc
+
+   def getEstimatedImageSize(self):
+      """
+      Gets the estimated size of the image associated with the writer.
+      @return: Estimated size of the image, in bytes.
+      @raise IOError: If there is a problem calling C{mkisofs}.
+      @raise ValueError: If initializeImage() was not previously called
+      """
+      if self._image is None:
+         raise ValueError("Must call initializeImage() before using this method.")
+      image = IsoImage()
+      for path in self._image.entries.keys():
+         image.addEntry(path, self._image.entries[path], override=False, contentsOnly=True)
+      return image.getEstimatedSize()
 
 
    ######################################
@@ -856,9 +882,15 @@ class CdWriter(object):
       @raise ValueError: If a path cannot be encoded properly.
       """
       path = None
-      size = self._image.image.getEstimatedSize()
+      capacity = self.retrieveCapacity(entireDisc=self._image.newDisc)
+      image = IsoImage(self.device, capacity.boundaries)
+      image.volumeId = self._image.mediaLabel  # may be None, which is also valid
+      for path in self._image.entries.keys():
+         image.addEntry(path, self._image.entries[path], override=False, contentsOnly=True)
+      size = image.getEstimatedSize()
       logger.info("Image size will be %s." % displayBytes(size))
-      available = self._image.capacity.bytesAvailable
+      available = capacity.bytesAvailable
+      logger.debug("Media capacity: %s" % displayBytes(available))
       if size > available:
          logger.error("Image [%s] does not fit in available capacity [%s]." % (displayBytes(size), displayBytes(available)))
          raise IOError("Media does not contain enough capacity to store image.")
@@ -866,7 +898,7 @@ class CdWriter(object):
          (handle, path) = tempfile.mkstemp(dir=self._image.tmpdir)
          try: os.close(handle)
          except: pass
-         self._image.image.writeImage(path)
+         image.writeImage(path)
          logger.debug("Completed creating image [%s]." % path)
          return path
       except Exception, e:

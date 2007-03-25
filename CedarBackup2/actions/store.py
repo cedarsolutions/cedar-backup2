@@ -38,7 +38,7 @@
 
 """
 Implements the standard 'store' action.
-@sort: executeStore, createWriter, writeImage, writeStoreIndicator, consistencyCheck
+@sort: executeStore, writeImage, writeStoreIndicator, consistencyCheck
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
 
@@ -57,14 +57,9 @@ import tempfile
 # Cedar Backup modules
 from CedarBackup2.filesystem import compareContents
 from CedarBackup2.util import isStartOfWeek, getUidGid, changeOwnership
-from CedarBackup2.util import deviceMounted, mount, unmount
-from CedarBackup2.writers.cdwriter import CdWriter
-from CedarBackup2.writers.cdwriter import MEDIA_CDR_74, MEDIA_CDR_80, MEDIA_CDRW_74, MEDIA_CDRW_80
-from CedarBackup2.writers.dvdwriter import DvdWriter
-from CedarBackup2.writers.dvdwriter import MEDIA_DVDPLUSR, MEDIA_DVDPLUSRW
+from CedarBackup2.util import mount, unmount
+from CedarBackup2.actions.util import createWriter, checkMediaState, buildMediaLabel, writeIndicatorFile
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR, STORE_INDICATOR
-from CedarBackup2.config import DEFAULT_MEDIA_TYPE, DEFAULT_DEVICE_TYPE
-from CedarBackup2.actions.util import writeIndicatorFile
 
 
 ########################################################################
@@ -106,19 +101,19 @@ def executeStore(configPath, options, config):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there are problems reading or writing files.
    """
-   logger.debug("Executing store action.")
+   logger.debug("Executing the 'store' action.")
    if sys.platform == "darwin":
       logger.warn("Warning: the store action is not fully supported on Mac OS X.")
       logger.warn("See the Cedar Backup software manual for further information.")
    if config.options is None or config.store is None:
       raise ValueError("Store configuration is not properly filled in.")
+   if config.store.checkMedia:
+      checkMediaState(config.store.devicePath)  # raises exception if media is not initialized
    rebuildMedia = options.full
    logger.debug("Rebuild media flag [%s]" % rebuildMedia)
    todayIsStart = isStartOfWeek(config.options.startingDay)
-   newDisc = rebuildMedia or todayIsStart
-   logger.debug("New disc flag [%s]" % newDisc)
    stagingDirs = _findCorrectDailyDir(options, config)
-   writeImage(config, newDisc, stagingDirs)
+   writeImageBlankSafe(config, rebuildMedia, todayIsStart, config.store.blankBehavior, stagingDirs)
    if config.store.checkData:
       if sys.platform == "darwin":
          logger.warn("Warning: consistency check cannot be run successfully on Mac OS X.")
@@ -128,50 +123,6 @@ def executeStore(configPath, options, config):
          consistencyCheck(config, stagingDirs)
    writeStoreIndicator(config, stagingDirs)
    logger.info("Executed the 'store' action successfully.")
-
-
-###########################
-# createWriter() function
-###########################
-
-def createWriter(config):
-   """
-   Creates a writer object based on current configuration.
-
-   This function creates and returns a writer based on configuration.  This is
-   done to abstract action functionality from knowing what kind of writer is in
-   use.  Since all writers implement the same interface, there's no need for
-   actions to care which one they're working with.
-
-   Currently, the C{cdwriter} and C{dvdwriter} device types are allowed.  An
-   exception will be raised if any other device type is used.
-
-   This function also checks to make sure that the device isn't mounted before
-   creating a writer object for it.  Experience shows that sometimes if the
-   device is mounted, we have problems with the backup.  We may as well do the
-   check here first, before instantiating the writer.
-
-   @param config: Config object.
-
-   @return: Writer that can be used to write a directory to some media.
-
-   @raise ValueError: If there is a problem getting the writer.
-   @raise IOError: If there is a problem creating the writer object.
-   """
-   devicePath = config.store.devicePath
-   deviceScsiId = config.store.deviceScsiId
-   driveSpeed = config.store.driveSpeed
-   noEject = config.store.noEject
-   deviceType = _getDeviceType(config)
-   mediaType = _getMediaType(config)
-   if deviceMounted(devicePath):
-      raise IOError("Device [%s] is currently mounted." % (devicePath))
-   if deviceType == "cdwriter":
-      return CdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject)
-   elif deviceType == "dvdwriter":
-      return DvdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject)
-   else:
-      raise ValueError("Device type [%s] is invalid." % deviceType)
 
 
 ########################
@@ -187,6 +138,9 @@ def writeImage(config, newDisc, stagingDirs):
    date, so staging directory C{/opt/stage/2005/02/10} will be placed into the
    disc at C{/2005/02/10}.
 
+   @note: This function is implemented in terms of L{writeImageBlankSafe}.  The
+   C{newDisc} flag is passed in for both C{rebuildMedia} and C{todayIsStart}.
+
    @param config: Config object.
    @param newDisc: Indicates whether the disc should be re-initialized
    @param stagingDirs: Dictionary mapping directory path to date suffix.
@@ -194,13 +148,109 @@ def writeImage(config, newDisc, stagingDirs):
    @raise ValueError: Under many generic error conditions
    @raise IOError: If there is a problem writing the image to disc.
    """
+   writeImageBlankSafe(config, newDisc, newDisc, None, stagingDirs)
+
+
+#################################
+# writeImageBlankSafe() function
+#################################
+
+def writeImageBlankSafe(config, rebuildMedia, todayIsStart, blankBehavior, stagingDirs):
+   """
+   Builds and writes an ISO image containing the indicated stage directories.
+
+   The generated image will contain each of the staging directories listed in
+   C{stagingDirs}.  The directories will be placed into the image at the root by
+   date, so staging directory C{/opt/stage/2005/02/10} will be placed into the
+   disc at C{/2005/02/10}.  The media will always be written with a media 
+   label specific to Cedar Backup.
+
+   This function is similar to L{writeImage}, but tries to implement a smarter
+   blanking strategy.  
+
+   First, the media is always blanked if the C{rebuildMedia} flag is true.
+   Then, if C{rebuildMedia} is false, blanking behavior and C{todayIsStart}
+   come into effect::
+
+      If no blanking behavior is specified, and it is the start of the week,
+      the disc will be blanked
+
+      If blanking behavior is specified, and either the blank mode is "daily"
+      or the blank mode is "weekly" and it is the start of the week, then 
+      the disc will be blanked if it looks like the weekly backup will not
+      fit onto the media.
+
+      Otherwise, the disc will not be blanked
+
+   How do we decide whether the weekly backup will fit onto the media?  That is
+   what the blanking factor is used for.  The following formula is used::
+
+      will backup fit? = (bytes available / (1 + bytes required) <= blankFactor
+
+   The blanking factor will vary from setup to setup, and will probably
+   require some experimentation to get it right.
+
+   @param config: Config object.
+   @param rebuildMedia: Indicates whether media should be rebuilt
+   @param todayIsStart: Indicates whether today is the starting day of the week
+   @param blankBehavior: Blank behavior from configuration, or C{None} to use default behavior
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+
+   @raise ValueError: Under many generic error conditions
+   @raise IOError: If there is a problem writing the image to disc.
+   """
+   mediaLabel = buildMediaLabel()
    writer = createWriter(config)
-   writer.initializeImage(newDisc, config.options.workingDir)
+   writer.initializeImage(True, config.options.workingDir, mediaLabel)  # default value for newDisc
    for stageDir in stagingDirs.keys():
       logger.debug("Adding stage directory [%s]." % stageDir)
       dateSuffix = stagingDirs[stageDir]
       writer.addImageEntry(stageDir, dateSuffix)
+   newDisc = _getNewDisc(writer, rebuildMedia, todayIsStart, blankBehavior)
+   writer.setImageNewDisc(newDisc)
    writer.writeImage()
+
+def _getNewDisc(writer, rebuildMedia, todayIsStart, blankBehavior):
+   """
+   Gets a value for the newDisc flag based on blanking factor rules.
+
+   The blanking factor rules are described above by L{writeImageBlankSafe}.
+
+   @param writer: Previously configured image writer containing image entries
+   @param rebuildMedia: Indicates whether media should be rebuilt
+   @param todayIsStart: Indicates whether today is the starting day of the week
+   @param blankBehavior: Blank behavior from configuration, or C{None} to use default behavior
+
+   @return: newDisc flag to be set on writer.
+   """
+   newDisc = False
+   if rebuildMedia:
+      newDisc = True
+      logger.debug("Setting new disc flag based on rebuildMedia flag.")
+   else:
+      if blankBehavior is None:
+         logger.debug("Default media blanking behavior is in effect.")
+         if todayIsStart:
+            newDisc = True
+            logger.debug("Setting new disc flag based on todayIsStart.")
+      else:
+         # note: validation says we can assume that behavior is fully filled in if it exists at all
+         logger.debug("Optimized media blanking behavior is in effect based on configuration.")
+         if blankBehavior.blankMode == "daily" or (blankBehavior.blankMode == "weekly" and todayIsStart):
+            logger.debug("New disc flag will be set based on blank factor calculation.")
+            blankFactor = float(blankBehavior.blankFactor)
+            logger.debug("Blanking factor: %.2f" % blankFactor)
+            available = writer.retrieveCapacity().bytesAvailable
+            logger.debug("Bytes available: %.2f" % available)
+            required = writer.getEstimatedImageSize()
+            logger.debug("Bytes required: %.2f" % required)
+            ratio = available / (1.0 + required)
+            logger.debug("Ratio of available/(1+required): %.2f" % ratio)
+            newDisc = (ratio <= blankFactor)
+         else:
+            logger.debug("No blank factor calculation is required based on configuration.")
+   logger.debug("New disc flag [%s]." % newDisc)
+   return newDisc
 
 
 #################################
@@ -344,82 +394,4 @@ def _findCorrectDailyDir(options, config):
             logger.warn("Warning: store process crossed midnite boundary to find data.")
          return { tomorrowPath:tomorrowDate }
       raise IOError("Unable to find unused staging directory to store (tried today, yesterday, tomorrow).")
-
-
-########################################################################
-# Private attribute "getter" functions
-########################################################################
-
-############################
-# _getDeviceType() function
-############################
-
-def _getDeviceType(config):
-   """
-   Gets the device type that should be used for storing.
-
-   Use the configured device type if not C{None}, otherwise use
-   L{config.DEFAULT_DEVICE_TYPE}.
-
-   @param config: Config object.
-   @return: Device type to be used.
-   """
-   if config.store.deviceType is None:
-      deviceType = DEFAULT_DEVICE_TYPE
-   else:
-      deviceType = config.store.deviceType
-   logger.debug("Device type is [%s]" % deviceType)
-   return deviceType
-
-
-###########################
-# _getMediaType() function
-###########################
-
-def _getMediaType(config):
-   """
-   Gets the media type that should be used for storing.
-
-   Use the configured media type if not C{None}, otherwise use
-   C{DEFAULT_MEDIA_TYPE}.
-
-   Once we figure out what configuration value to use, we return a media type
-   value that is valid in one of the supported writers::
-
-      MEDIA_CDR_74
-      MEDIA_CDRW_74
-      MEDIA_CDR_80
-      MEDIA_CDRW_80
-      MEDIA_DVDPLUSR
-      MEDIA_DVDPLUSRW
-
-   @param config: Config object.
-
-   @return: Media type to be used as a writer media type value.
-   @raise ValueError: If the media type is not valid.
-   """
-   if config.store.mediaType is None:
-      mediaType = DEFAULT_MEDIA_TYPE
-   else:
-      mediaType = config.store.mediaType
-   if mediaType == "cdr-74":
-      logger.debug("Media type is MEDIA_CDR_74.")
-      return MEDIA_CDR_74
-   elif mediaType == "cdrw-74":
-      logger.debug("Media type is MEDIA_CDRW_74.")
-      return MEDIA_CDRW_74
-   elif mediaType == "cdr-80":
-      logger.debug("Media type is MEDIA_CDR_80.")
-      return MEDIA_CDR_80
-   elif mediaType == "cdrw-80":
-      logger.debug("Media type is MEDIA_CDRW_80.")
-      return MEDIA_CDRW_80
-   elif mediaType == "dvd+r":
-      logger.debug("Media type is MEDIA_DVDPLUSR.")
-      return MEDIA_DVDPLUSR
-   elif mediaType == "dvd+rw":
-      logger.debug("Media type is MEDIA_DVDPLUSRW.")
-      return MEDIA_DVDPLUSR
-   else:
-      raise ValueError("Media type [%s] is not valid." % mediaType)
 

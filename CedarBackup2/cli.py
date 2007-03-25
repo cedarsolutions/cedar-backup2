@@ -96,6 +96,7 @@ from CedarBackup2.actions.store import executeStore
 from CedarBackup2.actions.purge import executePurge
 from CedarBackup2.actions.rebuild import executeRebuild
 from CedarBackup2.actions.validate import executeValidate
+from CedarBackup2.actions.initialize import executeInitialize
 
 
 ########################################################################
@@ -117,14 +118,15 @@ DEFAULT_MODE       = 0640
 
 REBUILD_INDEX      = 0        # can't run with anything else, anyway
 VALIDATE_INDEX     = 0        # can't run with anything else, anyway
+INITIALIZE_INDEX   = 0        # can't run with anything else, anyway
 COLLECT_INDEX      = 100
 STAGE_INDEX        = 200
 STORE_INDEX        = 300
 PURGE_INDEX        = 400
 
-VALID_ACTIONS      = [ "collect", "stage", "store", "purge", "rebuild", "validate", "all", ]
+VALID_ACTIONS      = [ "collect", "stage", "store", "purge", "rebuild", "validate", "initialize", "all", ]
 COMBINE_ACTIONS    = [ "collect", "stage", "store", "purge", ]
-NONCOMBINE_ACTIONS = [ "rebuild", "validate", "all", ]
+NONCOMBINE_ACTIONS = [ "rebuild", "validate", "initialize", "all", ]
 
 SHORT_SWITCHES     = "hVbqc:fl:o:m:Ods"
 LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet', 
@@ -459,6 +461,7 @@ class _ActionSet(object):
       functionMap = {}
       functionMap['rebuild'] = executeRebuild
       functionMap['validate'] = executeValidate
+      functionMap['initialize'] = executeInitialize
       functionMap['collect'] = executeCollect
       functionMap['stage'] = executeStage
       functionMap['store'] = executeStore
@@ -490,6 +493,7 @@ class _ActionSet(object):
          logger.info("Action ordering will use 'index' order mode.")
          indexMap['rebuild'] = REBUILD_INDEX;
          indexMap['validate'] = VALIDATE_INDEX;
+         indexMap['initialize'] = INITIALIZE_INDEX;
          indexMap['collect'] = COLLECT_INDEX;
          indexMap['stage'] = STAGE_INDEX;
          indexMap['store'] = STORE_INDEX;
@@ -501,6 +505,7 @@ class _ActionSet(object):
             logger.info("Action ordering will use 'index' order mode.")
             indexMap['rebuild'] = REBUILD_INDEX;
             indexMap['validate'] = VALIDATE_INDEX;
+            indexMap['initialize'] = INITIALIZE_INDEX;
             indexMap['collect'] = COLLECT_INDEX;
             indexMap['stage'] = STAGE_INDEX;
             indexMap['store'] = STORE_INDEX;
@@ -515,6 +520,7 @@ class _ActionSet(object):
             graph = DirectedGraph("dependencies")
             graph.createVertex("rebuild")
             graph.createVertex("validate")
+            graph.createVertex("initialize")
             graph.createVertex("collect")
             graph.createVertex("stage")
             graph.createVertex("store")
@@ -705,6 +711,7 @@ def _usage(fd=sys.stderr):
    fd.write("   purge          Take the purge action\n")
    fd.write("   rebuild        Rebuild \"this week's\" disc if possible\n")
    fd.write("   validate       Validate configuration only\n")
+   fd.write("   initialize     Initialize media for use with Cedar Backup\n")
    fd.write("\n")
    fd.write(" You may also specify extended actions that have been defined in\n")
    fd.write(" configuration.\n")
@@ -712,8 +719,9 @@ def _usage(fd=sys.stderr):
    fd.write(" You must specify at least one action to take.  More than one of\n")
    fd.write(" the \"collect\", \"stage\", \"store\" or \"purge\" actions and/or\n")
    fd.write(" extended actions may be specified in any arbitrary order; they\n")
-   fd.write(" will be executed in a sensible order.  The \"all\", \"rebuild\"\n")
-   fd.write(" or \"validate\" actions may not be combined with other actions.\n")
+   fd.write(" will be executed in a sensible order.  The \"all\", \"rebuild\",\n")
+   fd.write(" \"validate\", and \"initialize\" actions may not be combined with\n")
+   fd.write(" other actions.\n")
    fd.write("\n")
 
 

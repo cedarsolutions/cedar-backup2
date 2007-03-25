@@ -189,8 +189,9 @@
          The <command>cback</command> command also supports several actions
          that are not part of the standard backup run and cannot be executed
          along with any other actions.  These actions are
-         <firstterm>validate</firstterm> and <firstterm>rebuild</firstterm>.
-         All of the various actions are discussed further below.
+         <firstterm>validate</firstterm>, <firstterm>initialize</firstterm> and
+         <firstterm>rebuild</firstterm>.  All of the various actions are
+         discussed further below.
       </para>
 
       <para>
@@ -488,6 +489,34 @@
             portions of the configuration file make sense (for instance, making
             sure that specified users exist, directories are readable and
             writable as necessary, etc.).
+         </para>
+
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-basic-process-initialize">
+         
+         <title>The Initialize Action</title>
+
+         <para>
+            The initialize action is used to initialize media for use with
+            Cedar Backup.  This is an optional step.  By default, Cedar Backup
+            does not need to use initialized media and will write to whatever
+            media exists in the writer device.  
+         </para>
+            
+         <para>
+            However, if the <quote>check media</quote> store configuration
+            option is set to true, Cedar Backup will check the media before
+            writing to it and will error out if the media has not been
+            initialized. 
+         </para>
+
+         <para>
+            Initializing the media consists of writing a mostly-empty image
+            using a known media label (the media label will begin with
+            <quote>CEDAR BACKUP</quote>).
          </para>
 
       </sect2>
