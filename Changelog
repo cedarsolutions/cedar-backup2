@@ -1,9 +1,28 @@
-Version 2.12.2		unreleased
+Version 2.13.0		unreleased
 
-	* Add unit tests for a variety of basic utility functions
 	* Change writeIndicator() to raise exception on failure (closes #53).
 	* Change buildNormalizedPath() for leading "." so files won't be hidden
 	* Remove bogus usage of tempfile.NamedTemporaryFile in remote peer.
+	* Refactored some common action code into CedarBackup2.actions.util.
+	* Add unit tests for a variety of basic utility functions (closes: #45).
+	  - Error-handling was improved in some utility methods
+	  - Fundamentally, behavior should be unchanged
+	* Reimplement DVD capacity calculation (contributed by Dmitry Rutsky).
+	  - This is now done using a growisofs dry run, without -Z
+	  - The old dvd+rw-mediainfo method was unreliable on some systems
+	* Add code to check media before writing to it (closes: #5).
+	  - Create new check_media store configuration option
+	  - Implement new initialize action to initialize rewritable media
+	  - Media is initialized by writing an initial session with media label
+	  - The store action now always writes a media label as well
+	  - Update user manual to discuss the new behavior
+	  - Add unit tests for new configuration
+	* Implement an optimized media blanking strategy (closes: #48).
+	  - When used, Cedar Backup will only blank media when it runs out of space
+	  - Initial implementation and manual text provided by Dmitry Rutsky
+	  - Add new blanking_behavior store configuration options
+	  - Update user manual to document options and discuss usage
+	  - Add unit tests for new configuration
 
 Version 2.12.1		26 Feb 2007
 	

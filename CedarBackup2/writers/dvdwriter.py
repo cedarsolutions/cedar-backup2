@@ -45,6 +45,7 @@ Provides functionality related to DVD writer devices.
 @var MEDIA_DVDPLUSRW: Constant representing DVD+RW media.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
+@author: Dmitry Rutsky <rutsky@inbox.ru>
 """
 
 ########################################################################
