@@ -462,9 +462,10 @@ class DvdWriter(object):
       object.
 
       If C{entireDisc} is passed in as C{True}, the capacity will be for the
-      entire disc, as if it were to be rewritten from scratch.  Otherwise, the
-      capacity will be calculated by subtracting the sectors currently used on
-      the disc, as reported by C{growisofs} itself.
+      entire disc, as if it were to be rewritten from scratch.  The same will
+      happen if the disc can't be read for some reason. Otherwise, the capacity
+      will be calculated by subtracting the sectors currently used on the disc,
+      as reported by C{growisofs} itself.
 
       @param entireDisc: Indicates whether to return capacity for entire disc.
       @type entireDisc: Boolean true/false
