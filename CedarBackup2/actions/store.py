@@ -40,6 +40,7 @@
 Implements the standard 'store' action.
 @sort: executeStore, writeImage, writeStoreIndicator, consistencyCheck
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
+@author: Dmitry Rutsky <rutsky@inbox.ru>
 """
 
 
