@@ -646,9 +646,8 @@ class DvdWriter(object):
       the Cedar Backup image writer interface.
 
       @note: The image size indicated in the log ("Image size will be...") is
-      only an estimate.  If C{growisofs} fails with a a capacity problem, the
-      image size indicated in that error message might differ from the image
-      size that was initially logged.
+      an estimate.  The estimate is conservative and is probably larger than
+      the actual space that C{dvdwriter} will use.
 
       @param imagePath: Path to an ISO image on disk, or C{None} to use writer's image
       @type imagePath: String representing a path on disk
@@ -671,6 +670,10 @@ class DvdWriter(object):
             raise ValueError("Must call initializeImage() before using this method with no image path.")
          size = self.getEstimatedImageSize()
          logger.info("Image size will be %s (estimated)." % displayBytes(size))
+         available = retrieveCapacity(self, entireDisc=self._image.newDisc).bytesAvailable
+         if size > available:
+            logger.error("Image [%s] does not fit in available capacity [%s]." % (displayBytes(size), displayBytes(available)))
+            raise IOError("Media does not contain enough capacity to store image.")
          self._writeImage(self._image.newDisc, None, self._image.entries, self._image.mediaLabel)
       else:
          if not os.path.isabs(imagePath):
@@ -691,10 +694,6 @@ class DvdWriter(object):
       Callers are assumed to have done validation on paths, etc. before calling
       this method.
 
-      A dry run is done before actually writing the image, to be sure it fits
-      on the media.  If the dry run yields an error, we try to parse out the
-      error message.
-
       @param newDisc: Indicates whether the disc should be re-initialized
       @param imagePath: Path to an ISO image on disk, or c{None} to use C{entries}
       @param entries: Mapping from path to graft point, or C{None} to use C{imagePath}
@@ -702,15 +701,10 @@ class DvdWriter(object):
       @raise IOError: If the media could not be written to for some reason.
       """
       command = resolveCommand(GROWISOFS_COMMAND)
-      args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, mediaLabel, dryRun=True)
-      (result, output) = executeCommand(command, args, returnOutput=True)
-      if result != 0:
-         DvdWriter._searchForOverburn(output) # throws own exception if overburn condition is found
-         raise IOError("Error (%d) executing dry run to check media capacity." % result)
-      logger.debug("Dry run succeeded, so image size should be OK.")
       args = DvdWriter._buildWriteArgs(newDisc, self.hardwareId, self._driveSpeed, imagePath, entries, mediaLabel, dryRun=False)
       result = executeCommand(command, args)[0]
       if result != 0:
+         DvdWriter._searchForOverburn(output) # throws own exception if overburn condition is found
          raise IOError("Error (%d) executing command to write disc." % result)
       self.refreshMedia()
 
@@ -819,7 +813,12 @@ class DvdWriter(object):
 
       If a new image is created, it will always be created with Rock Ridge
       extensions (-r).  A volume name will be applied (-V) if C{mediaLabel} is
-      not C{None} and C{newDisc} is true.
+      not C{None}.
+
+      @note: Dry run does I{not} always seem to work with C{newDisc=True}.  For
+      some reason, C{dvdwriter} barfs if passed -Z when there is already data
+      on a disc.  A warning is issued if these arguments are passed in
+      together.
 
       @param newDisc: Indicates whether the disc should be re-initialized
       @param hardwareId: Hardware id for the device 
@@ -834,12 +833,17 @@ class DvdWriter(object):
       @raise ValueError: If caller does not pass one or the other of imagePath or entries.
       """
       args = []
+      if newDisc and dryRun:
+         logger.warn("Dry run of dvdwriter may not work properly with -Z option!")
       if (imagePath is None and entries is None) or (imagePath is not None and entries is not None):
          raise ValueError("Must use either imagePath or entries.")
       if dryRun:
          args.append("--dry-run")
       if driveSpeed is not None:
          args.append("-speed=%d" % driveSpeed)
+      if mediaLabel is not None:
+         args.append("-V")
+         args.append(mediaLabel)
       if newDisc:
          args.append("-Z")
       else:
@@ -848,9 +852,6 @@ class DvdWriter(object):
          args.append("%s=%s" % (hardwareId, imagePath))
       else:
          args.append(hardwareId)
-         if newDisc and mediaLabel is not None:
-            args.append("-V")
-            args.append(mediaLabel)
          args.append("-r")    # Rock Ridge extensions with sane ownership and permissions
          args.append("-graft-points")
          keys = entries.keys()
