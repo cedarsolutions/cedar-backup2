@@ -600,7 +600,7 @@ class DvdWriter(object):
       """
       if self._deviceHasTray and self._deviceCanEject:
          command = resolveCommand(EJECT_COMMAND)
-         args = [ self.device, ]
+         args = [ "-t", self.device, ]
          result = executeCommand(command, args)[0]
          if result != 0:
             raise IOError("Error (%d) executing eject command to close tray." % result)
