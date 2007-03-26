@@ -1,4 +1,4 @@
-Version 2.13.0		unreleased
+Version 2.13.0		25 Mar 2007
 
 	* Change writeIndicator() to raise exception on failure (closes #53).
 	* Change buildNormalizedPath() for leading "." so files won't be hidden
