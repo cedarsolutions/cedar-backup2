@@ -58,7 +58,7 @@ import tempfile
 # Cedar Backup modules
 from CedarBackup2.filesystem import compareContents
 from CedarBackup2.util import isStartOfWeek, getUidGid, changeOwnership
-from CedarBackup2.util import mount, unmount
+from CedarBackup2.util import mount, unmount, displayBytes
 from CedarBackup2.actions.util import createWriter, checkMediaState, buildMediaLabel, writeIndicatorFile
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR, STORE_INDICATOR
 
@@ -240,14 +240,15 @@ def _getNewDisc(writer, rebuildMedia, todayIsStart, blankBehavior):
          if blankBehavior.blankMode == "daily" or (blankBehavior.blankMode == "weekly" and todayIsStart):
             logger.debug("New disc flag will be set based on blank factor calculation.")
             blankFactor = float(blankBehavior.blankFactor)
-            logger.debug("Blanking factor: %.2f" % blankFactor)
+            logger.debug("Configured blanking factor: %.2f" % blankFactor)
             available = writer.retrieveCapacity().bytesAvailable
-            logger.debug("Bytes available: %.2f" % available)
+            logger.debug("Bytes available: %s" % displayBytes(available))
             required = writer.getEstimatedImageSize()
-            logger.debug("Bytes required: %.2f" % required)
+            logger.debug("Bytes required: %s" % displayBytes(required))
             ratio = available / (1.0 + required)
-            logger.debug("Ratio of available/(1+required): %.2f" % ratio)
+            logger.debug("Calculated ratio: %.2f" % ratio)
             newDisc = (ratio <= blankFactor)
+            logger.debug("%.2f <= %.2f ? %s" % (ratio, blankFactor, newDisc))
          else:
             logger.debug("No blank factor calculation is required based on configuration.")
    logger.debug("New disc flag [%s]." % newDisc)
