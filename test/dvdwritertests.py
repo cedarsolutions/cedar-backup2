@@ -696,51 +696,51 @@ class TestDvdWriter(unittest.TestCase):
       self.failUnlessRaises(IOError, DvdWriter._searchForOverburn, output)
 
 
-   #########################
-   # Test _getSectorsUsed()
-   #########################
+   ###########################
+   # Test _parseSectorsUsed()
+   ###########################
 
-   def testGetSectorsUsed_001(self):
+   def testParseSectorsUsed_001(self):
       """
       Test with output=None.
       """
       output = None
-      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      sectorsUsed = DvdWriter._parseSectorsUsed(output)
       self.failUnlessEqual(0.0, sectorsUsed)
 
-   def testGetSectorsUsed_002(self):
+   def testParseSectorsUsed_002(self):
       """
       Test with output=[].
       """
       output = []
-      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      sectorsUsed = DvdWriter._parseSectorsUsed(output)
       self.failUnlessEqual(0.0, sectorsUsed)
 
-   def testGetSectorsUsed_003(self):
+   def testParseSectorsUsed_003(self):
       """
       Test with one-line output, not containing the pattern.
       """
       output = [ "This line does not contain the pattern", ]
-      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      sectorsUsed = DvdWriter._parseSectorsUsed(output)
       self.failUnlessEqual(0.0, sectorsUsed)
 
-   def testGetSectorsUsed_004(self):
+   def testParseSectorsUsed_004(self):
       """
       Test with one-line output(s), containing the pattern.
       """
       output = [ "'seek=10'", ]
-      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      sectorsUsed = DvdWriter._parseSectorsUsed(output)
       self.failUnlessEqual(10.0*16.0, sectorsUsed)
 
       output = [ "'    seek=    10     '", ]
-      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      sectorsUsed = DvdWriter._parseSectorsUsed(output)
       self.failUnlessEqual(10.0*16.0, sectorsUsed)
 
       output = [ "Executing 'mkisofs -C 973744,1401056 -M /dev/fd/3 -r -graft-points music4/=music | builtin_dd of=/dev/cdrom obs=32k seek=87566'", ]
-      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      sectorsUsed = DvdWriter._parseSectorsUsed(output)
       self.failUnlessEqual(87566*16.0, sectorsUsed)
 
-   def testGetSectorsUsed_005(self):
+   def testParseSectorsUsed_005(self):
       """
       Test with real growisofs output.
       """
@@ -753,7 +753,7 @@ class TestDvdWriter(unittest.TestCase):
       output.append("Using SELEC000.MP3;1 for music/Marquette_Chorus/Selected_Christmas_Carols_For_Double_Choir.mp3 (Selected_Choruses_from_The_Lark.mp3)")
       output.append("Using SELEC001.MP3;1 for music/Marquette_Chorus/Selected_Choruses_from_The_Lark.mp3 (Selected_Choruses_from_Messiah.mp3)")
       output.append("Using IN_TH000.MP3;1 for  music/Marquette_Chorus/In_the_Bleak_Midwinter.mp3 (In_the_Beginning.mp3) Using AFRIC000.MP3;1 for  music/Marquette_Chorus/African_Noel-tb.mp3 (African_Noel-satb.mp3)")
-      sectorsUsed = DvdWriter._getSectorsUsed(output)
+      sectorsUsed = DvdWriter._parseSectorsUsed(output)
       self.failUnlessEqual(87566*16.0, sectorsUsed)
 
 
