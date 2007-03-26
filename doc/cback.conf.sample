@@ -96,6 +96,11 @@
       <target_scsi_id>0,0,0</target_scsi_id>
       <drive_speed>4</drive_speed>
       <check_data>Y</check_data>
+      <check_media>N</check_media>
+      <blank_behavior>
+         <mode>weekly</mode>
+         <factor>5.1</factor>
+      </blank_behavior>
    </store>
    <purge>
       <dir>
