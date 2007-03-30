@@ -847,11 +847,6 @@ class DvdWriter(object):
       extensions (-r).  A volume name will be applied (-V) if C{mediaLabel} is
       not C{None}.
 
-      @note: Dry run does I{not} always seem to work with C{newDisc=True}.  For
-      some reason, C{dvdwriter} barfs if passed -Z when there is already data
-      on a disc.  A warning is issued if these arguments are passed in
-      together.
-
       @param newDisc: Indicates whether the disc should be re-initialized
       @param hardwareId: Hardware id for the device 
       @param driveSpeed: Speed at which the drive writes.
@@ -864,17 +859,23 @@ class DvdWriter(object):
       ignored.  The media label is an attribute of the image, and should be set
       on the image when it is created.
 
+      @note: We always pass the undocumented option C{-use-the-force-like=tty}
+      to growisofs.  Without this option, growisofs will refuse to execute
+      certain actions when running from cron.  A good example is -Z, which
+      happily overwrites an existing DVD from the command-line, but fails when
+      run from cron.  It took a while to figure that out, since it worked every
+      time I tested it by hand. :(
+
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
 
       @raise ValueError: If caller does not pass one or the other of imagePath or entries.
       """
       args = []
-      if newDisc and dryRun:
-         logger.warn("Dry run of dvdwriter may not work properly with -Z option!")
       if (imagePath is None and entries is None) or (imagePath is not None and entries is not None):
          raise ValueError("Must use either imagePath or entries.")
+      args.append("-use-the-force-luke=tty") # tell growisofs to let us run from cron
       if dryRun:
-         args.append("--dry-run")
+         args.append("-dry-run")
       if driveSpeed is not None:
          args.append("-speed=%d" % driveSpeed)
       if newDisc:
