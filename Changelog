@@ -1,3 +1,11 @@
+Version 2.13.1		29 Mar 2007
+
+	* Fix ongoing problems re-initializing previously-written DVDs 
+	  - Even with -Z, growisofs sometimes wouldn't overwrite DVDs
+	  - It turns out that this ONLY happens from cron, not from a terminal
+	  - The solution is to use the undocumented option -use-the-force-luke=tty
+	  - Also corrected dvdwriter to use option "-dry-run" not "--dry-run"
+
 Version 2.13.0		25 Mar 2007
 
 	* Change writeIndicator() to raise exception on failure (closes #53).
