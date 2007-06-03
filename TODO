@@ -14,3 +14,11 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+Would be nice if substitute/replace worked in configuration
+files (i.e. set up a $VARIABLE and substitute elsewhere).
+
+Do I want to confine myself to just backwards compatible
+changes?
+
+Can configuration be generalized, or is code the right
+way to do it?
