@@ -1,3 +1,9 @@
+Version 2.13.2		unreleased
+
+	* Apply documentation patch from Lukasz K. Nowak.
+	  - Document that mysql extension can back up remote databases
+	  - Fix typos in extend/sysinfo.py
+
 Version 2.13.1		29 Mar 2007
 
 	* Fix ongoing problems re-initializing previously-written DVDs 

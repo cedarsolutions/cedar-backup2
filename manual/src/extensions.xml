@@ -530,6 +530,22 @@ password = &lt;secret&gt;
          </para>
 
          <para>
+            As a side note, it is also possible to configure <filename>.my.cnf</filename>
+            such that Cedar Backup can back up a remote database server:
+         </para>
+
+         <programlisting>
+[mysqldump]
+host = remote.host
+         </programlisting>
+
+         <para>
+            For this to work, you will also need to grant privileges properly
+            for the user which is executing the backup.  See your MySQL documentation 
+            for more information about how this can be done.
+         </para>
+
+         <para>
             Regardless of whether you are using <filename>~/.my.cnf</filename> or
             <filename>/etc/cback.conf</filename> to store database login and
             password information, you should be careful about who is allowed to
@@ -537,6 +553,7 @@ password = &lt;secret&gt;
             so that only the file owner can read the file contents (i.e. use mode
             <literal>0600</literal>).
          </para>
+
       </warning>
 
       <para>

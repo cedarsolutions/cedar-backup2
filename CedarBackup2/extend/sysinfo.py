@@ -124,8 +124,8 @@ def _dumpDebianPackages(targetDir, backupUser, backupGroup, compress=True):
    """
    Dumps a list of currently installed Debian packages via C{dpkg}.
    @param targetDir: Directory to write output file into.
-   @param backupUser: User which should own the resulting fule.
-   @param backupGroup: Group which should own the resulting fule.
+   @param backupUser: User which should own the resulting file.
+   @param backupGroup: Group which should own the resulting file.
    @param compress: Indicates whether to compress the output file.
    @raise IOError: If the dump fails for some reason.
    """
@@ -150,8 +150,8 @@ def _dumpPartitionTable(targetDir, backupUser, backupGroup, compress=True):
    """
    Dumps information about the partition table via C{fdisk}.
    @param targetDir: Directory to write output file into.
-   @param backupUser: User which should own the resulting fule.
-   @param backupGroup: Group which should own the resulting fule.
+   @param backupUser: User which should own the resulting file.
+   @param backupGroup: Group which should own the resulting file.
    @param compress: Indicates whether to compress the output file.
    @raise IOError: If the dump fails for some reason.
    """
@@ -176,8 +176,8 @@ def _dumpFilesystemContents(targetDir, backupUser, backupGroup, compress=True):
    """
    Dumps complete listing of filesystem contents via C{ls -laR}.
    @param targetDir: Directory to write output file into.
-   @param backupUser: User which should own the resulting fule.
-   @param backupGroup: Group which should own the resulting fule.
+   @param backupUser: User which should own the resulting file.
+   @param backupGroup: Group which should own the resulting file.
    @param compress: Indicates whether to compress the output file.
    @raise IOError: If the dump fails for some reason.
    """
