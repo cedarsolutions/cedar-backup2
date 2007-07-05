@@ -2470,6 +2470,34 @@ class TestCollectDir(unittest.TestCase):
       collectDir.excludePatterns.insert(1, "bogus")
       self.failUnlessEqual(["valid", "bogus", "more", ], collectDir.excludePatterns)
 
+   def testConstructor_033(self):
+      """
+      Test assignment of excludePatterns attribute, single invalid entry.
+      """
+      collectDir = CollectDir()
+      self.failUnlessEqual(None, collectDir.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, collectDir, "excludePatterns", ["*.jpg", ])
+      self.failUnlessEqual(None, collectDir.excludePatterns)
+
+   def testConstructor_034(self):
+      """
+      Test assignment of excludePatterns attribute, multiple invalid entries.
+      """
+      collectDir = CollectDir()
+      self.failUnlessEqual(None, collectDir.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, collectDir, "excludePatterns", ["*.jpg", "*", ])
+      self.failUnlessEqual(None, collectDir.excludePatterns)
+
+   def testConstructor_035(self):
+      """
+      Test assignment of excludePatterns attribute, mixed valid and invalid
+      entries.
+      """
+      collectDir = CollectDir()
+      self.failUnlessEqual(None, collectDir.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, collectDir, "excludePatterns", ["*.jpg", "valid", ])
+      self.failUnlessEqual(None, collectDir.excludePatterns)
+
 
    ############################
    # Test comparison operators
@@ -5247,6 +5275,34 @@ class TestCollectConfig(unittest.TestCase):
       self.failUnlessEqual(None, collect.excludePatterns)
       collect.excludePatterns = ["pattern1", "pattern2", ]
       self.failUnlessEqual(["pattern1", "pattern2", ], collect.excludePatterns)
+
+   def testConstructor_029a(self):
+      """
+      Test assignment of excludePatterns attribute, single invalid entry.
+      """
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, collect, "excludePatterns", ["*.jpg", ])
+      self.failUnlessEqual(None, collect.excludePatterns)
+
+   def testConstructor_029b(self):
+      """
+      Test assignment of excludePatterns attribute, multiple invalid entries.
+      """
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, collect, "excludePatterns", ["*.jpg", "*", ])
+      self.failUnlessEqual(None, collect.excludePatterns)
+
+   def testConstructor_029c(self):
+      """
+      Test assignment of excludePatterns attribute, mixed valid and invalid
+      entries.
+      """
+      collect = CollectConfig()
+      self.failUnlessEqual(None, collect.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, collect, "excludePatterns", ["*.jpg", "valid", ])
+      self.failUnlessEqual(None, collect.excludePatterns)
 
    def testConstructor_030(self):
       """

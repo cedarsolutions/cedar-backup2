@@ -656,6 +656,34 @@ class TestMboxDir(unittest.TestCase):
       mboxDir.excludePatterns.insert(1, "bogus")
       self.failUnlessEqual(["valid", "bogus", "more", ], mboxDir.excludePatterns)
 
+   def testConstructor_023(self):
+      """
+      Test assignment of excludePatterns attribute, single invalid entry.
+      """
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, mboxDir, "excludePatterns", ["*.jpg", ])
+      self.failUnlessEqual(None, mboxDir.excludePatterns)
+
+   def testConstructor_024(self):
+      """
+      Test assignment of excludePatterns attribute, multiple invalid entries.
+      """
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, mboxDir, "excludePatterns", ["*.jpg", "*" ])
+      self.failUnlessEqual(None, mboxDir.excludePatterns)
+
+   def testConstructor_025(self):
+      """
+      Test assignment of excludePatterns attribute, mixed valid and invalid
+      entries.
+      """
+      mboxDir = MboxDir()
+      self.failUnlessEqual(None, mboxDir.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, mboxDir, "excludePatterns", ["*.jpg", "valid" ])
+      self.failUnlessEqual(None, mboxDir.excludePatterns)
+
 
    ############################
    # Test comparison operators

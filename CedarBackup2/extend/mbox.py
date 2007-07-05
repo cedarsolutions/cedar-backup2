@@ -105,7 +105,7 @@ from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild, readSt
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
 from CedarBackup2.util import isStartOfWeek, buildNormalizedPath
 from CedarBackup2.util import resolveCommand, executeCommand
-from CedarBackup2.util import ObjectTypeList, UnorderedList, encodePath, changeOwnership
+from CedarBackup2.util import ObjectTypeList, UnorderedList, RegexList, encodePath, changeOwnership
 
 
 ########################################################################
@@ -428,7 +428,7 @@ class MboxDir(object):
       else:
          try:
             saved = self._excludePatterns
-            self._excludePatterns = UnorderedList()
+            self._excludePatterns = RegexList()
             self._excludePatterns.extend(value)
          except Exception, e:
             self._excludePatterns = saved
