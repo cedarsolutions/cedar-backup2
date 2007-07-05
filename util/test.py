@@ -197,7 +197,7 @@ def main():
    # Print a starting banner
    print "\n*** Running CedarBackup2 unit tests."
    if not full:
-      print "*** Using reduced feature set with minimum system requirements."
+      print "*** Using reduced feature set suite with minimum system requirements."
 
    # Make a list of tests to run
    unittests = { }
