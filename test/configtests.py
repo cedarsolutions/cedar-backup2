@@ -1855,7 +1855,7 @@ class TestCollectFile(unittest.TestCase):
       """
       Just make sure that the string functions don't have errors (i.e. bad variable names).
       """
-      obj = CollectDir()
+      obj = CollectFile()
       obj.__repr__()
       obj.__str__()
 
@@ -1868,135 +1868,135 @@ class TestCollectFile(unittest.TestCase):
       """
       Test constructor with no values filled in.
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.absolutePath)
-      self.failUnlessEqual(None, collectDir.collectMode)
-      self.failUnlessEqual(None, collectDir.archiveMode)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.absolutePath)
+      self.failUnlessEqual(None, collectFile.collectMode)
+      self.failUnlessEqual(None, collectFile.archiveMode)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      collectDir = CollectDir("/etc/whatever", "incr", "tar")
-      self.failUnlessEqual("/etc/whatever", collectDir.absolutePath)
-      self.failUnlessEqual("incr", collectDir.collectMode)
-      self.failUnlessEqual("tar", collectDir.archiveMode)
+      collectFile = CollectFile("/etc/whatever", "incr", "tar")
+      self.failUnlessEqual("/etc/whatever", collectFile.absolutePath)
+      self.failUnlessEqual("incr", collectFile.collectMode)
+      self.failUnlessEqual("tar", collectFile.archiveMode)
 
    def testConstructor_003(self):
       """
       Test assignment of absolutePath attribute, None value.
       """
-      collectDir = CollectDir(absolutePath="/whatever")
-      self.failUnlessEqual("/whatever", collectDir.absolutePath)
-      collectDir.absolutePath = None
-      self.failUnlessEqual(None, collectDir.absolutePath)
+      collectFile = CollectFile(absolutePath="/whatever")
+      self.failUnlessEqual("/whatever", collectFile.absolutePath)
+      collectFile.absolutePath = None
+      self.failUnlessEqual(None, collectFile.absolutePath)
 
    def testConstructor_004(self):
       """
       Test assignment of absolutePath attribute, valid value.
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.absolutePath)
-      collectDir.absolutePath = "/etc/whatever"
-      self.failUnlessEqual("/etc/whatever", collectDir.absolutePath)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.absolutePath)
+      collectFile.absolutePath = "/etc/whatever"
+      self.failUnlessEqual("/etc/whatever", collectFile.absolutePath)
 
    def testConstructor_005(self):
       """
       Test assignment of absolutePath attribute, invalid value (empty).
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.absolutePath)
-      self.failUnlessAssignRaises(ValueError, collectDir, "absolutePath", "")
-      self.failUnlessEqual(None, collectDir.absolutePath)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.absolutePath)
+      self.failUnlessAssignRaises(ValueError, collectFile, "absolutePath", "")
+      self.failUnlessEqual(None, collectFile.absolutePath)
 
    def testConstructor_006(self):
       """
       Test assignment of absolutePath attribute, invalid value (non-absolute).
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.absolutePath)
-      self.failUnlessAssignRaises(ValueError, collectDir, "absolutePath", "whatever")
-      self.failUnlessEqual(None, collectDir.absolutePath)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.absolutePath)
+      self.failUnlessAssignRaises(ValueError, collectFile, "absolutePath", "whatever")
+      self.failUnlessEqual(None, collectFile.absolutePath)
 
    def testConstructor_007(self):
       """
       Test assignment of collectMode attribute, None value.
       """
-      collectDir = CollectDir(collectMode="incr")
-      self.failUnlessEqual("incr", collectDir.collectMode)
-      collectDir.collectMode = None
-      self.failUnlessEqual(None, collectDir.collectMode)
+      collectFile = CollectFile(collectMode="incr")
+      self.failUnlessEqual("incr", collectFile.collectMode)
+      collectFile.collectMode = None
+      self.failUnlessEqual(None, collectFile.collectMode)
 
    def testConstructor_008(self):
       """
       Test assignment of collectMode attribute, valid value.
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.collectMode)
-      collectDir.collectMode = "daily"
-      self.failUnlessEqual("daily", collectDir.collectMode)
-      collectDir.collectMode = "weekly"
-      self.failUnlessEqual("weekly", collectDir.collectMode)
-      collectDir.collectMode = "incr"
-      self.failUnlessEqual("incr", collectDir.collectMode)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.collectMode)
+      collectFile.collectMode = "daily"
+      self.failUnlessEqual("daily", collectFile.collectMode)
+      collectFile.collectMode = "weekly"
+      self.failUnlessEqual("weekly", collectFile.collectMode)
+      collectFile.collectMode = "incr"
+      self.failUnlessEqual("incr", collectFile.collectMode)
 
    def testConstructor_009(self):
       """
       Test assignment of collectMode attribute, invalid value (empty).
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.collectMode)
-      self.failUnlessAssignRaises(ValueError, collectDir, "collectMode", "")
-      self.failUnlessEqual(None, collectDir.collectMode)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.collectMode)
+      self.failUnlessAssignRaises(ValueError, collectFile, "collectMode", "")
+      self.failUnlessEqual(None, collectFile.collectMode)
 
    def testConstructor_010(self):
       """
       Test assignment of collectMode attribute, invalid value (not in list).
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.collectMode)
-      self.failUnlessAssignRaises(ValueError, collectDir, "collectMode", "bogus")
-      self.failUnlessEqual(None, collectDir.collectMode)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.collectMode)
+      self.failUnlessAssignRaises(ValueError, collectFile, "collectMode", "bogus")
+      self.failUnlessEqual(None, collectFile.collectMode)
 
    def testConstructor_011(self):
       """
       Test assignment of archiveMode attribute, None value.
       """
-      collectDir = CollectDir(archiveMode="tar")
-      self.failUnlessEqual("tar", collectDir.archiveMode)
-      collectDir.archiveMode = None
-      self.failUnlessEqual(None, collectDir.archiveMode)
+      collectFile = CollectFile(archiveMode="tar")
+      self.failUnlessEqual("tar", collectFile.archiveMode)
+      collectFile.archiveMode = None
+      self.failUnlessEqual(None, collectFile.archiveMode)
 
    def testConstructor_012(self):
       """
       Test assignment of archiveMode attribute, valid value.
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.archiveMode)
-      collectDir.archiveMode = "tar"
-      self.failUnlessEqual("tar", collectDir.archiveMode)
-      collectDir.archiveMode = "targz"
-      self.failUnlessEqual("targz", collectDir.archiveMode)
-      collectDir.archiveMode = "tarbz2"
-      self.failUnlessEqual("tarbz2", collectDir.archiveMode)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.archiveMode)
+      collectFile.archiveMode = "tar"
+      self.failUnlessEqual("tar", collectFile.archiveMode)
+      collectFile.archiveMode = "targz"
+      self.failUnlessEqual("targz", collectFile.archiveMode)
+      collectFile.archiveMode = "tarbz2"
+      self.failUnlessEqual("tarbz2", collectFile.archiveMode)
 
    def testConstructor_013(self):
       """
       Test assignment of archiveMode attribute, invalid value (empty).
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.archiveMode)
-      self.failUnlessAssignRaises(ValueError, collectDir, "archiveMode", "")
-      self.failUnlessEqual(None, collectDir.archiveMode)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.archiveMode)
+      self.failUnlessAssignRaises(ValueError, collectFile, "archiveMode", "")
+      self.failUnlessEqual(None, collectFile.archiveMode)
 
    def testConstructor_014(self):
       """
       Test assignment of archiveMode attribute, invalid value (not in list).
       """
-      collectDir = CollectDir()
-      self.failUnlessEqual(None, collectDir.archiveMode)
-      self.failUnlessAssignRaises(ValueError, collectDir, "archiveMode", "bogus")
-      self.failUnlessEqual(None, collectDir.archiveMode)
+      collectFile = CollectFile()
+      self.failUnlessEqual(None, collectFile.archiveMode)
+      self.failUnlessAssignRaises(ValueError, collectFile, "archiveMode", "bogus")
+      self.failUnlessEqual(None, collectFile.archiveMode)
 
 
    ############################
@@ -2007,112 +2007,112 @@ class TestCollectFile(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes None.
       """
-      collectDir1 = CollectDir()
-      collectDir2 = CollectDir()
-      self.failUnlessEqual(collectDir1, collectDir2)
-      self.failUnless(collectDir1 == collectDir2)
-      self.failUnless(not collectDir1 < collectDir2)
-      self.failUnless(collectDir1 <= collectDir2)
-      self.failUnless(not collectDir1 > collectDir2)
-      self.failUnless(collectDir1 >= collectDir2)
-      self.failUnless(not collectDir1 != collectDir2)
+      collectFile1 = CollectFile()
+      collectFile2 = CollectFile()
+      self.failUnlessEqual(collectFile1, collectFile2)
+      self.failUnless(collectFile1 == collectFile2)
+      self.failUnless(not collectFile1 < collectFile2)
+      self.failUnless(collectFile1 <= collectFile2)
+      self.failUnless(not collectFile1 > collectFile2)
+      self.failUnless(collectFile1 >= collectFile2)
+      self.failUnless(not collectFile1 != collectFile2)
 
    def testComparison_002(self):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar")
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar")
-      self.failUnless(collectDir1 == collectDir2)
-      self.failUnless(not collectDir1 < collectDir2)
-      self.failUnless(collectDir1 <= collectDir2)
-      self.failUnless(not collectDir1 > collectDir2)
-      self.failUnless(collectDir1 >= collectDir2)
-      self.failUnless(not collectDir1 != collectDir2)
+      collectFile1 = CollectFile("/etc/whatever", "incr", "tar")
+      collectFile2 = CollectFile("/etc/whatever", "incr", "tar")
+      self.failUnless(collectFile1 == collectFile2)
+      self.failUnless(not collectFile1 < collectFile2)
+      self.failUnless(collectFile1 <= collectFile2)
+      self.failUnless(not collectFile1 > collectFile2)
+      self.failUnless(collectFile1 >= collectFile2)
+      self.failUnless(not collectFile1 != collectFile2)
 
    def testComparison_003(self):
       """
       Test comparison of two differing objects, absolutePath differs (one None).
       """
-      collectDir1 = CollectDir()
-      collectDir2 = CollectDir(absolutePath="/whatever")
-      self.failIfEqual(collectDir1, collectDir2)
-      self.failUnless(not collectDir1 == collectDir2)
-      self.failUnless(collectDir1 < collectDir2)
-      self.failUnless(collectDir1 <= collectDir2)
-      self.failUnless(not collectDir1 > collectDir2)
-      self.failUnless(not collectDir1 >= collectDir2)
-      self.failUnless(collectDir1 != collectDir2)
+      collectFile1 = CollectFile()
+      collectFile2 = CollectFile(absolutePath="/whatever")
+      self.failIfEqual(collectFile1, collectFile2)
+      self.failUnless(not collectFile1 == collectFile2)
+      self.failUnless(collectFile1 < collectFile2)
+      self.failUnless(collectFile1 <= collectFile2)
+      self.failUnless(not collectFile1 > collectFile2)
+      self.failUnless(not collectFile1 >= collectFile2)
+      self.failUnless(collectFile1 != collectFile2)
 
    def testComparison_004(self):
       """
       Test comparison of two differing objects, absolutePath differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar")
-      collectDir2 = CollectDir("/stuff", "incr", "tar")
-      self.failIfEqual(collectDir1, collectDir2)
-      self.failUnless(not collectDir1 == collectDir2)
-      self.failUnless(collectDir1 < collectDir2)
-      self.failUnless(collectDir1 <= collectDir2)
-      self.failUnless(not collectDir1 > collectDir2)
-      self.failUnless(not collectDir1 >= collectDir2)
-      self.failUnless(collectDir1 != collectDir2)
+      collectFile1 = CollectFile("/etc/whatever", "incr", "tar")
+      collectFile2 = CollectFile("/stuff", "incr", "tar")
+      self.failIfEqual(collectFile1, collectFile2)
+      self.failUnless(not collectFile1 == collectFile2)
+      self.failUnless(collectFile1 < collectFile2)
+      self.failUnless(collectFile1 <= collectFile2)
+      self.failUnless(not collectFile1 > collectFile2)
+      self.failUnless(not collectFile1 >= collectFile2)
+      self.failUnless(collectFile1 != collectFile2)
 
    def testComparison_005(self):
       """
       Test comparison of two differing objects, collectMode differs (one None).
       """
-      collectDir1 = CollectDir()
-      collectDir2 = CollectDir(collectMode="incr")
-      self.failIfEqual(collectDir1, collectDir2)
-      self.failUnless(not collectDir1 == collectDir2)
-      self.failUnless(collectDir1 < collectDir2)
-      self.failUnless(collectDir1 <= collectDir2)
-      self.failUnless(not collectDir1 > collectDir2)
-      self.failUnless(not collectDir1 >= collectDir2)
-      self.failUnless(collectDir1 != collectDir2)
+      collectFile1 = CollectFile()
+      collectFile2 = CollectFile(collectMode="incr")
+      self.failIfEqual(collectFile1, collectFile2)
+      self.failUnless(not collectFile1 == collectFile2)
+      self.failUnless(collectFile1 < collectFile2)
+      self.failUnless(collectFile1 <= collectFile2)
+      self.failUnless(not collectFile1 > collectFile2)
+      self.failUnless(not collectFile1 >= collectFile2)
+      self.failUnless(collectFile1 != collectFile2)
 
    def testComparison_006(self):
       """
       Test comparison of two differing objects, collectMode differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar")
-      collectDir2 = CollectDir("/etc/whatever", "daily", "tar")
-      self.failIfEqual(collectDir1, collectDir2)
-      self.failUnless(not collectDir1 == collectDir2)
-      self.failUnless(not collectDir1 < collectDir2)
-      self.failUnless(not collectDir1 <= collectDir2)
-      self.failUnless(collectDir1 > collectDir2)
-      self.failUnless(collectDir1 >= collectDir2)
-      self.failUnless(collectDir1 != collectDir2)
+      collectFile1 = CollectFile("/etc/whatever", "incr", "tar")
+      collectFile2 = CollectFile("/etc/whatever", "daily", "tar")
+      self.failIfEqual(collectFile1, collectFile2)
+      self.failUnless(not collectFile1 == collectFile2)
+      self.failUnless(not collectFile1 < collectFile2)
+      self.failUnless(not collectFile1 <= collectFile2)
+      self.failUnless(collectFile1 > collectFile2)
+      self.failUnless(collectFile1 >= collectFile2)
+      self.failUnless(collectFile1 != collectFile2)
 
    def testComparison_007(self):
       """
       Test comparison of two differing objects, archiveMode differs (one None).
       """
-      collectDir1 = CollectDir()
-      collectDir2 = CollectDir(archiveMode="tar")
-      self.failIfEqual(collectDir1, collectDir2)
-      self.failUnless(not collectDir1 == collectDir2)
-      self.failUnless(collectDir1 < collectDir2)
-      self.failUnless(collectDir1 <= collectDir2)
-      self.failUnless(not collectDir1 > collectDir2)
-      self.failUnless(not collectDir1 >= collectDir2)
-      self.failUnless(collectDir1 != collectDir2)
+      collectFile1 = CollectFile()
+      collectFile2 = CollectFile(archiveMode="tar")
+      self.failIfEqual(collectFile1, collectFile2)
+      self.failUnless(not collectFile1 == collectFile2)
+      self.failUnless(collectFile1 < collectFile2)
+      self.failUnless(collectFile1 <= collectFile2)
+      self.failUnless(not collectFile1 > collectFile2)
+      self.failUnless(not collectFile1 >= collectFile2)
+      self.failUnless(collectFile1 != collectFile2)
 
    def testComparison_008(self):
       """
       Test comparison of two differing objects, archiveMode differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "targz")
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar")
-      self.failIfEqual(collectDir1, collectDir2)
-      self.failUnless(not collectDir1 == collectDir2)
-      self.failUnless(not collectDir1 < collectDir2)
-      self.failUnless(not collectDir1 <= collectDir2)
-      self.failUnless(collectDir1 > collectDir2)
-      self.failUnless(collectDir1 >= collectDir2)
-      self.failUnless(collectDir1 != collectDir2)
+      collectFile1 = CollectFile("/etc/whatever", "incr", "targz")
+      collectFile2 = CollectFile("/etc/whatever", "incr", "tar")
+      self.failIfEqual(collectFile1, collectFile2)
+      self.failUnless(not collectFile1 == collectFile2)
+      self.failUnless(not collectFile1 < collectFile2)
+      self.failUnless(not collectFile1 <= collectFile2)
+      self.failUnless(collectFile1 > collectFile2)
+      self.failUnless(collectFile1 >= collectFile2)
+      self.failUnless(collectFile1 != collectFile2)
 
 
 #######################
