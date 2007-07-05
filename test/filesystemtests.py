@@ -120,6 +120,7 @@ import tarfile
 
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, changeFileAge, randomFilename
 from CedarBackup2.testutil import platformMacOsX, platformWindows, platformSupportsLinks, platformRequiresBinaryRead
+from CedarBackup2.testutil import failUnlessAssignRaises
 from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemList, normalizeDir, compareContents
 
 
@@ -193,6 +194,179 @@ class TestFilesystemList(unittest.TestCase):
    def pathPattern(self, path):
       """Returns properly-escaped regular expression pattern matching the indicated path."""
       return ".*%s.*" % path.replace("\\", "\\\\")
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test attribute assignment
+   ############################
+
+   def testAssignment_001(self):
+      """
+      Test assignment of excludeFiles attribute, true values.
+      """
+      fsList = FilesystemList()
+      self.failUnlessEqual(False, fsList.excludeFiles)
+      fsList.excludeFiles = True
+      self.failUnlessEqual(True, fsList.excludeFiles)
+      fsList.excludeFiles = [ 1, ]
+      self.failUnlessEqual(True, fsList.excludeFiles)
+
+   def testAssignment_002(self):
+      """
+      Test assignment of excludeFiles attribute, false values.
+      """
+      fsList = FilesystemList()
+      self.failUnlessEqual(False, fsList.excludeFiles)
+      fsList.excludeFiles = False
+      self.failUnlessEqual(False, fsList.excludeFiles)
+      fsList.excludeFiles = [ ]
+      self.failUnlessEqual(False, fsList.excludeFiles)
+
+   def testAssignment_003(self):
+      """
+      Test assignment of excludeLinks attribute, true values.
+      """
+      fsList = FilesystemList()
+      self.failUnlessEqual(False, fsList.excludeLinks)
+      fsList.excludeLinks = True
+      self.failUnlessEqual(True, fsList.excludeLinks)
+      fsList.excludeLinks = [ 1, ]
+      self.failUnlessEqual(True, fsList.excludeLinks)
+
+   def testAssignment_004(self):
+      """
+      Test assignment of excludeLinks attribute, false values.
+      """
+      fsList = FilesystemList()
+      self.failUnlessEqual(False, fsList.excludeLinks)
+      fsList.excludeLinks = False
+      self.failUnlessEqual(False, fsList.excludeLinks)
+      fsList.excludeLinks = [ ]
+      self.failUnlessEqual(False, fsList.excludeLinks)
+
+   def testAssignment_005(self):
+      """
+      Test assignment of excludeDirs attribute, true values.
+      """
+      fsList = FilesystemList()
+      self.failUnlessEqual(False, fsList.excludeDirs)
+      fsList.excludeDirs = True
+      self.failUnlessEqual(True, fsList.excludeDirs)
+      fsList.excludeDirs = [ 1, ]
+      self.failUnlessEqual(True, fsList.excludeDirs)
+
+   def testAssignment_006(self):
+      """
+      Test assignment of excludeDirs attribute, false values.
+      """
+      fsList = FilesystemList()
+      self.failUnlessEqual(False, fsList.excludeDirs)
+      fsList.excludeDirs = False
+      self.failUnlessEqual(False, fsList.excludeDirs)
+      fsList.excludeDirs = [ ]
+      self.failUnlessEqual(False, fsList.excludeDirs)
+
+   def testAssignment_007(self):
+      """
+      Test assignment of ignoreFile attribute.
+      """
+      fsList = FilesystemList()
+      self.failUnlessEqual(None, fsList.ignoreFile)
+      fsList.ignoreFile = "ken"
+      self.failUnlessEqual("ken", fsList.ignoreFile)
+      fsList.ignoreFile = None
+      self.failUnlessEqual(None, fsList.ignoreFile)
+
+   def testAssignment_008(self):
+      """
+      Test assignment of excludePaths attribute.
+      """
+      fsList = FilesystemList();
+      self.failUnlessEqual([], fsList.excludePaths)
+      fsList.excludePaths = None
+      self.failUnlessEqual([], fsList.excludePaths)
+      fsList.excludePaths = [ "/path/to/something/absolute", ]
+      self.failUnlessEqual([ "/path/to/something/absolute", ], fsList.excludePaths)
+      fsList.excludePaths = [ "/path/to/something/absolute", "/path/to/something/else",]
+      self.failUnlessEqual([ "/path/to/something/absolute", "/path/to/something/else", ], fsList.excludePaths)
+      self.failUnlessAssignRaises(ValueError, fsList, "excludePaths", ["path/to/something/relative", ])
+      self.failUnlessAssignRaises(ValueError, fsList, "excludePaths", [ "/path/to/something/absolute", "path/to/something/relative", ])
+      fsList.excludePaths = [ "/path/to/something/absolute", ]
+      self.failUnlessEqual([ "/path/to/something/absolute", ], fsList.excludePaths)
+      fsList.excludePaths.insert(0, "/ken")
+      self.failUnlessEqual([ "/ken", "/path/to/something/absolute", ], fsList.excludePaths)
+      fsList.excludePaths.append("/file")
+      self.failUnlessEqual([ "/ken", "/path/to/something/absolute", "/file", ], fsList.excludePaths)
+      fsList.excludePaths.extend(["/one", "/two", ])
+      self.failUnlessEqual([ "/ken", "/path/to/something/absolute", "/file", "/one", "/two", ], fsList.excludePaths)
+      fsList.excludePaths = [ "/path/to/something/absolute", ]
+      self.failUnlessRaises(ValueError, fsList.excludePaths.insert, 0, "path/to/something/relative")
+      self.failUnlessRaises(ValueError, fsList.excludePaths.append, "path/to/something/relative")
+      self.failUnlessRaises(ValueError, fsList.excludePaths.extend, ["path/to/something/relative",])
+
+   def testAssignment_009(self):
+      """
+      Test assignment of excludePatterns attribute.
+      """
+      fsList = FilesystemList();
+      self.failUnlessEqual([], fsList.excludePatterns)
+      fsList.excludePatterns = None
+      self.failUnlessEqual([], fsList.excludePatterns)
+      fsList.excludePatterns = [ ".*\.jpg", ]
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
+      fsList.excludePatterns = [ ".*\.jpg", "[a-zA-Z0-9]*",]
+      self.failUnlessEqual([ ".*\.jpg", "[a-zA-Z0-9]*", ], fsList.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, fsList, "excludePatterns", [ "*.jpg", ])
+      self.failUnlessAssignRaises(ValueError, fsList, "excludePatterns", [ "*.jpg", "[a-zA-Z0-9]*", ])
+      fsList.excludePatterns = [ ".*\.jpg", ]
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
+      fsList.excludePatterns.insert(0, "ken")
+      self.failUnlessEqual([ "ken", ".*\.jpg", ], fsList.excludePatterns)
+      fsList.excludePatterns.append("pattern")
+      self.failUnlessEqual([ "ken", ".*\.jpg", "pattern", ], fsList.excludePatterns)
+      fsList.excludePatterns.extend(["one", "two", ])
+      self.failUnlessEqual([ "ken", ".*\.jpg", "pattern", "one", "two", ], fsList.excludePatterns)
+      fsList.excludePatterns = [ ".*\.jpg", ]
+      self.failUnlessRaises(ValueError, fsList.excludePatterns.insert, 0, "*.jpg")
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
+      self.failUnlessRaises(ValueError, fsList.excludePatterns.append, "*.jpg")
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
+      self.failUnlessRaises(ValueError, fsList.excludePatterns.extend, ["*.jpg",])
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
+
+   def testAssignment_010(self):
+      """
+      Test assignment of excludeBasenamePatterns attribute.
+      """
+      fsList = FilesystemList();
+      self.failUnlessEqual([], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns = None
+      self.failUnlessEqual([], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns = [ ".*\.jpg", ]
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns = [ ".*\.jpg", "[a-zA-Z0-9]*",]
+      self.failUnlessEqual([ ".*\.jpg", "[a-zA-Z0-9]*", ], fsList.excludeBasenamePatterns)
+      self.failUnlessAssignRaises(ValueError, fsList, "excludeBasenamePatterns", [ "*.jpg", ])
+      self.failUnlessAssignRaises(ValueError, fsList, "excludeBasenamePatterns", [ "*.jpg", "[a-zA-Z0-9]*", ])
+      fsList.excludeBasenamePatterns = [ ".*\.jpg", ]
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns.insert(0, "ken")
+      self.failUnlessEqual([ "ken", ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns.append("pattern")
+      self.failUnlessEqual([ "ken", ".*\.jpg", "pattern", ], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns.extend(["one", "two", ])
+      self.failUnlessEqual([ "ken", ".*\.jpg", "pattern", "one", "two", ], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns = [ ".*\.jpg", ]
+      self.failUnlessRaises(ValueError, fsList.excludeBasenamePatterns.insert, 0, "*.jpg")
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      self.failUnlessRaises(ValueError, fsList.excludeBasenamePatterns.append, "*.jpg")
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      self.failUnlessRaises(ValueError, fsList.excludeBasenamePatterns.extend, ["*.jpg",])
+      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
 
 
    ################################
@@ -4597,6 +4771,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       count = fsList.removeFiles(pattern="pattern")
       self.failUnlessEqual(0, count)
+      self.failUnlessRaises(ValueError, fsList.removeFiles, pattern="*.jpg")
 
    def testRemoveFiles_003(self):
       """
@@ -6746,6 +6921,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       count = fsList.removeDirs(pattern="pattern")
       self.failUnlessEqual(0, count)
+      self.failUnlessRaises(ValueError, fsList.removeDirs, pattern="*.jpg")
 
    def testRemoveDirs_003(self):
       """
@@ -8934,6 +9110,7 @@ class TestFilesystemList(unittest.TestCase):
          fsList = FilesystemList()
          count = fsList.removeLinks(pattern="pattern")
          self.failUnlessEqual(0, count)
+      self.failUnlessRaises(ValueError, fsList.removeLinks, pattern="*.jpg")
 
    def testRemoveLinks_003(self):
       """
@@ -11060,6 +11237,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList = FilesystemList()
       count = fsList.removeMatch(pattern="pattern")
       self.failUnlessEqual(0, count)
+      self.failUnlessRaises(ValueError, fsList.removeMatch, pattern="*.jpg")
 
    def testRemoveMatch_003(self):
       """

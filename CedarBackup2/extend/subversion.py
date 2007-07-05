@@ -82,7 +82,7 @@ from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
 from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild, readString, readStringList
 from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import UnorderedList
+from CedarBackup2.util import UnorderedList, RegexList
 from CedarBackup2.util import isStartOfWeek, buildNormalizedPath
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import ObjectTypeList, encodePath, changeOwnership
@@ -302,7 +302,7 @@ class RepositoryDir(object):
       else:
          try:
             saved = self._excludePatterns
-            self._excludePatterns = UnorderedList()
+            self._excludePatterns = RegexList()
             self._excludePatterns.extend(value)
          except Exception, e:
             self._excludePatterns = saved

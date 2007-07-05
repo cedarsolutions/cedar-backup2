@@ -3,6 +3,15 @@ Version 2.13.2		unreleased
 	* Apply documentation patch from Lukasz K. Nowak.
 	  - Document that mysql extension can back up remote databases
 	  - Fix typos in extend/sysinfo.py
+	* Clean up some configuration error messages to be clearer.
+	  - Make sure that reported errors always include enough information
+	  - Add a prefix argument to some of the specialized lists in util.py
+	* Catch invalid regular expressions in config and filesystem code.
+	  - Add new util.RegexList list to contain only valid regexes
+	  - Use RegexList in config.ConfigDir and config.CollectConfig 
+	  - Use RegexList in subversion.RepositoryDir and mbox.MboxDir
+	  - Throw ValueError on bad regex in FilesystemList remove() methods
+	  - Use RegexList in FilesystemList for all lists of patterns
 
 Version 2.13.1		29 Mar 2007
 

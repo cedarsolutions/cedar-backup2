@@ -57,7 +57,7 @@ import tarfile
 
 # Cedar Backup modules
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
-from CedarBackup2.util import AbsolutePathList, ObjectTypeList, UnorderedList
+from CedarBackup2.util import AbsolutePathList, ObjectTypeList, UnorderedList, RegexList
 from CedarBackup2.util import removeKeys, displayBytes, calculateFileAge, encodePath
 
 
@@ -138,8 +138,8 @@ class FilesystemList(list):
       self.excludeLinks = False
       self.excludeDirs = False
       self.excludePaths = []
-      self.excludePatterns = []
-      self.excludeBasenamePatterns = []
+      self.excludePatterns = RegexList()
+      self.excludeBasenamePatterns = RegexList()
       self.ignoreFile = None
 
 
@@ -217,7 +217,7 @@ class FilesystemList(list):
       Property target used to set the exclude patterns list.
       A C{None} value is converted to an empty list.
       """
-      self._excludePatterns = []
+      self._excludePatterns = RegexList()
       if value is not None:
          self._excludePatterns.extend(value)
 
@@ -232,7 +232,7 @@ class FilesystemList(list):
       Property target used to set the exclude basename patterns list.
       A C{None} value is converted to an empty list.
       """
-      self._excludeBasenamePatterns = []
+      self._excludeBasenamePatterns = RegexList()
       if value is not None:
          self._excludeBasenamePatterns.extend(value)
 
@@ -303,10 +303,10 @@ class FilesystemList(list):
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return 0
       for pattern in self.excludePatterns:
-         if re.compile(r"^%s$" % pattern).match(path):
+         if re.compile(r"^%s$" % pattern).match(path): # safe to assume all are valid due to RegexList
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
-      for pattern in self.excludeBasenamePatterns:
+      for pattern in self.excludeBasenamePatterns: # safe to assume all are valid due to RegexList
          if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
             logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
             return 0
@@ -345,11 +345,11 @@ class FilesystemList(list):
       if path in self.excludePaths:
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return 0
-      for pattern in self.excludePatterns:
+      for pattern in self.excludePatterns: # safe to assume all are valid due to RegexList
          if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
-      for pattern in self.excludeBasenamePatterns:
+      for pattern in self.excludeBasenamePatterns: # safe to assume all are valid due to RegexList
          if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
             logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
             return 0
@@ -426,11 +426,11 @@ class FilesystemList(list):
       if path in self.excludePaths:
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return added
-      for pattern in self.excludePatterns:
+      for pattern in self.excludePatterns: # safe to assume all are valid due to RegexList
          if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return added
-      for pattern in self.excludeBasenamePatterns:
+      for pattern in self.excludeBasenamePatterns: # safe to assume all are valid due to RegexList
          if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
             logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
             return added
@@ -475,6 +475,7 @@ class FilesystemList(list):
       @param pattern: Regular expression pattern representing entries to remove
 
       @return: Number of entries removed
+      @raise ValueError: If the passed-in pattern is not a valid regular expression.
       """
       removed = 0
       if pattern is None:
@@ -484,7 +485,10 @@ class FilesystemList(list):
                logger.debug("Removed path [%s] from list." % entry)
                removed += 1
       else:
-         compiled = re.compile(pattern)
+         try:
+            compiled = re.compile(pattern)
+         except re.error:
+            raise ValueError("Pattern is not a valid regular expression.")
          for entry in self[:]:
             if os.path.exists(entry) and os.path.isfile(entry):
                if compiled.match(entry):
@@ -513,6 +517,7 @@ class FilesystemList(list):
       @param pattern: Regular expression pattern representing entries to remove
 
       @return: Number of entries removed
+      @raise ValueError: If the passed-in pattern is not a valid regular expression.
       """
       removed = 0
       if pattern is None:
@@ -522,7 +527,10 @@ class FilesystemList(list):
                logger.debug("Removed path [%s] from list." % entry)
                removed += 1
       else:
-         compiled = re.compile(pattern)
+         try:
+            compiled = re.compile(pattern)
+         except re.error:
+            raise ValueError("Pattern is not a valid regular expression.")
          for entry in self[:]:
             if os.path.exists(entry) and os.path.isdir(entry):
                if compiled.match(entry):
@@ -549,6 +557,7 @@ class FilesystemList(list):
       @param pattern: Regular expression pattern representing entries to remove
 
       @return: Number of entries removed
+      @raise ValueError: If the passed-in pattern is not a valid regular expression.
       """
       removed = 0
       if pattern is None:
@@ -558,7 +567,10 @@ class FilesystemList(list):
                logger.debug("Removed path [%s] from list." % entry)
                removed += 1
       else:
-         compiled = re.compile(pattern)
+         try:
+            compiled = re.compile(pattern)
+         except re.error:
+            raise ValueError("Pattern is not a valid regular expression.")
          for entry in self[:]:
             if os.path.exists(entry) and os.path.islink(entry):
                if compiled.match(entry):
@@ -587,9 +599,13 @@ class FilesystemList(list):
       @param pattern: Regular expression pattern representing entries to remove
 
       @return: Number of entries removed.
+      @raise ValueError: If the passed-in pattern is not a valid regular expression.
       """
+      try:
+         compiled = re.compile(pattern)
+      except re.error:
+         raise ValueError("Pattern is not a valid regular expression.")
       removed = 0
-      compiled = re.compile(pattern)
       for entry in self[:]:
          if compiled.match(entry):
             self.remove(entry)

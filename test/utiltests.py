@@ -82,7 +82,8 @@ import time
 from os.path import isdir
 
 from CedarBackup2.testutil import findResources, removedir, platformHasEcho, platformWindows
-from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, RestrictedContentList, RegexMatchList
+from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList 
+from CedarBackup2.util import RestrictedContentList, RegexMatchList, RegexList
 from CedarBackup2.util import DirectedGraph, PathResolverSingleton
 from CedarBackup2.util import sortDict, resolveCommand, executeCommand, getFunctionReference, encodePath
 from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
@@ -914,6 +915,94 @@ class TestRegexMatchList(unittest.TestCase):
       self.failUnlessRaises(ValueError, list1.extend, [ "", ])
       self.failUnlessEqual(list1, [])
       self.failUnlessRaises(ValueError, list1.extend, [ None, ])
+      self.failUnlessEqual(list1, [])
+
+
+######################
+# TestRegexList class
+######################
+
+class TestRegexList(unittest.TestCase):
+
+   """Tests for the RegexList class."""
+
+   ################
+   # Setup methods
+   ################
+
+   def setUp(self):
+      pass
+
+   def tearDown(self):
+      pass
+
+
+   #######################
+   # Test list operations
+   #######################
+
+   def testListOperations_001(self):
+      """
+      Test append() for a valid regular expresson.
+      """
+      list1 = RegexList()
+      list1.append(".*\.jpg")
+      self.failUnlessEqual(list1, [ ".*\.jpg", ])
+      self.failUnlessEqual(list1[0], ".*\.jpg")
+      list1.append("[a-zA-Z0-9]*")
+      self.failUnlessEqual(list1, [ ".*\.jpg", "[a-zA-Z0-9]*", ])
+      self.failUnlessEqual(list1[0], ".*\.jpg")
+      self.failUnlessEqual(list1[1], "[a-zA-Z0-9]*")
+
+   def testListOperations_002(self):
+      """
+      Test append() for an invalid regular expression.
+      """
+      list1 = RegexList()
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.append, "*.jpg")
+      self.failUnlessEqual(list1, [])
+
+   def testListOperations_003(self):
+      """
+      Test insert() for a valid regular expression.
+      """
+      list1 = RegexList()
+      list1.insert(0, ".*\.jpg")
+      self.failUnlessEqual(list1, [ ".*\.jpg", ])
+      self.failUnlessEqual(list1[0], ".*\.jpg")
+      list1.insert(0, "[a-zA-Z0-9]*")
+      self.failUnlessEqual(list1, [ "[a-zA-Z0-9]*", ".*\.jpg", ])
+      self.failUnlessEqual(list1[0], "[a-zA-Z0-9]*")
+      self.failUnlessEqual(list1[1], ".*\.jpg")
+
+   def testListOperations_004(self):
+      """
+      Test insert() for an invalid regular expression.
+      """
+      list1 = RegexList()
+      self.failUnlessRaises(ValueError, list1.insert, 0, "*.jpg")
+
+   def testListOperations_005(self):
+      """
+      Test extend() for a valid regular expression.
+      """
+      list1 = RegexList()
+      list1.extend([".*\.jpg", ])
+      self.failUnlessEqual(list1, [ ".*\.jpg", ])
+      self.failUnlessEqual(list1[0], ".*\.jpg")
+      list1.extend(["[a-zA-Z0-9]*", ])
+      self.failUnlessEqual(list1, [ ".*\.jpg", "[a-zA-Z0-9]*", ])
+      self.failUnlessEqual(list1[0], ".*\.jpg")
+      self.failUnlessEqual(list1[1], "[a-zA-Z0-9]*")
+
+   def testListOperations_006(self):
+      """
+      Test extend() for an invalid regular expression.
+      """
+      list1 = RegexList()
+      self.failUnlessEqual(list1, [])
+      self.failUnlessRaises(ValueError, list1.extend, [ "*.jpg", ])
       self.failUnlessEqual(list1, [])
 
 
@@ -3744,6 +3833,7 @@ def suite():
                               unittest.makeSuite(TestObjectTypeList, 'test'),
                               unittest.makeSuite(TestRestrictedContentList, 'test'),
                               unittest.makeSuite(TestRegexMatchList, 'test'),
+                              unittest.makeSuite(TestRegexList, 'test'),
                               unittest.makeSuite(TestDirectedGraph, 'test'),
                               unittest.makeSuite(TestPathResolverSingleton, 'test'),
                               unittest.makeSuite(TestFunctions, 'test'),

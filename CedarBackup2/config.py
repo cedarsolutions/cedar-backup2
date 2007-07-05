@@ -237,7 +237,8 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.writers.util import validateScsiId, validateDriveSpeed
-from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, RegexMatchList, encodePath
+from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList
+from CedarBackup2.util import RegexMatchList, RegexList, encodePath
 from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild
 from CedarBackup2.xmlutil import readStringList, readString, readInteger, readBoolean
 from CedarBackup2.xmlutil import addContainerNode, addStringNode, addIntegerNode, addBooleanNode
@@ -344,7 +345,7 @@ class ActionDependencies(object):
    def _setBeforeList(self, value):
       """
       Property target used to set the "run before" list.
-      Either the value must be C{None} or each element must be a string matching ACTION_REGEX.
+      Either the value must be C{None} or each element must be a string matching ACTION_NAME_REGEX.
       @raise ValueError: If the value does not match the regular expression.
       """
       if value is None:
@@ -352,7 +353,7 @@ class ActionDependencies(object):
       else:
          try:
             saved = self._beforeList
-            self._beforeList = RegexMatchList(ACTION_NAME_REGEX, emptyAllowed=False)
+            self._beforeList = RegexMatchList(ACTION_NAME_REGEX, emptyAllowed=False, prefix="Action name")
             self._beforeList.extend(value)
          except Exception, e:
             self._beforeList = saved
@@ -367,7 +368,7 @@ class ActionDependencies(object):
    def _setAfterList(self, value):
       """
       Property target used to set the "run after" list.
-      Either the value must be C{None} or each element must be a string matching ACTION_REGEX.
+      Either the value must be C{None} or each element must be a string matching ACTION_NAME_REGEX.
       @raise ValueError: If the value does not match the regular expression.
       """
       if value is None:
@@ -375,7 +376,7 @@ class ActionDependencies(object):
       else:
          try:
             saved = self._afterList
-            self._afterList = RegexMatchList(ACTION_NAME_REGEX, emptyAllowed=False)
+            self._afterList = RegexMatchList(ACTION_NAME_REGEX, emptyAllowed=False, prefix="Action name")
             self._afterList.extend(value)
          except Exception, e:
             self._afterList = saved
@@ -1044,7 +1045,7 @@ class CommandOverride(object):
       """
       if value is not None:
          if not os.path.isabs(value):
-            raise ValueError("Absolute path must be, er, an absolute path.")
+            raise ValueError("Not an absolute path: [%s]" % value)
       self._absolutePath = encodePath(value)
 
    def _getAbsolutePath(self):
@@ -1145,7 +1146,7 @@ class CollectFile(object):
       """
       if value is not None:
          if not os.path.isabs(value):
-            raise ValueError("Absolute path must be, er, an absolute path.")
+            raise ValueError("Not an absolute path: [%s]" % value)
       self._absolutePath = encodePath(value)
 
    def _getAbsolutePath(self):
@@ -1328,7 +1329,7 @@ class CollectDir(object):
       """
       if value is not None:
          if not os.path.isabs(value):
-            raise ValueError("Absolute path must be, er, an absolute path.")
+            raise ValueError("Not an absolute path: [%s]" % value)
       self._absolutePath = encodePath(value)
 
    def _getAbsolutePath(self):
@@ -1443,7 +1444,7 @@ class CollectDir(object):
       else:
          try:
             saved = self._excludePatterns
-            self._excludePatterns = UnorderedList()
+            self._excludePatterns = RegexList()
             self._excludePatterns.extend(value)
          except Exception, e:
             self._excludePatterns = saved
@@ -2613,7 +2614,7 @@ class CollectConfig(object):
       else:
          try:
             saved = self._excludePatterns
-            self._excludePatterns = UnorderedList()
+            self._excludePatterns = RegexList()
             self._excludePatterns.extend(value)
          except Exception, e:
             self._excludePatterns = saved

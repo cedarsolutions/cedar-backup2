@@ -43,7 +43,7 @@
 Provides general-purpose utilities. 
 
 @sort: AbsolutePathList, ObjectTypeList, RestrictedValueList, RegexMatchList,
-       _Vertex, DirectedGraph, PathResolverSingleton, 
+       RegexList, _Vertex, DirectedGraph, PathResolverSingleton, 
        sortDict, convertSize, getUidGid, changeOwnership, splitCommandLine,
        resolveCommand, executeCommand, calculateFileAge, encodePath, nullDevice,
        deriveDayOfWeek, isStartOfWeek, buildNormalizedPath, 
@@ -281,7 +281,7 @@ class AbsolutePathList(UnorderedList):
       @raise ValueError: If item is not an absolute path.
       """
       if not os.path.isabs(item):
-         raise ValueError("Item must be an absolute path.")
+         raise ValueError("Not an absolute path: [%s]" % item)
       list.append(self, encodePath(item))
 
    def insert(self, index, item):
@@ -290,7 +290,7 @@ class AbsolutePathList(UnorderedList):
       @raise ValueError: If item is not an absolute path.
       """
       if not os.path.isabs(item):
-         raise ValueError("Item must be an absolute path.")
+         raise ValueError("Not an absolute path: [%s]" % item)
       list.insert(self, index, encodePath(item))
 
    def extend(self, seq):
@@ -300,7 +300,7 @@ class AbsolutePathList(UnorderedList):
       """
       for item in seq:
          if not os.path.isabs(item):
-            raise ValueError("All items must be absolute paths.")
+            raise ValueError("Not an absolute path: [%s]" % item)
       for item in seq:
          list.append(self, encodePath(item))
 
@@ -389,12 +389,15 @@ class RestrictedContentList(UnorderedList):
    exceptions or other problems.
    """
    
-   def __init__(self, valuesList, valuesDescr):
+   def __init__(self, valuesList, valuesDescr, prefix=None):
       """
       Initializes a list restricted to containing certain values.
       @param valuesList: List of valid values.
       @param valuesDescr: Short string describing list of values.
+      @param prefix: Prefix to use in error messages (None results in prefix "Item")
       """
+      self.prefix = "Item"
+      if prefix is not None: self.prefix = prefix
       self.valuesList = valuesList
       self.valuesDescr = valuesDescr
 
@@ -404,7 +407,7 @@ class RestrictedContentList(UnorderedList):
       @raise ValueError: If item is not in the values list.
       """
       if item not in self.valuesList:
-         raise ValueError("Item must be one of values in %s." % self.valuesDescr)
+         raise ValueError("%s must be one of the values in %s." % (self.prefix, self.valuesDescr))
       list.append(self, item)
 
    def insert(self, index, item):
@@ -413,7 +416,7 @@ class RestrictedContentList(UnorderedList):
       @raise ValueError: If item is not in the values list.
       """
       if item not in self.valuesList:
-         raise ValueError("Item must be one of values in %s." % self.valuesDescr)
+         raise ValueError("%s must be one of the values in %s." % (self.prefix, self.valuesDescr))
       list.insert(self, index, item)
 
    def extend(self, seq):
@@ -423,7 +426,7 @@ class RestrictedContentList(UnorderedList):
       """
       for item in seq:
          if item not in self.valuesList:
-            raise ValueError("Item must be one of values in %s." % self.valuesDescr)
+            raise ValueError("%s must be one of the values in %s." % (self.prefix, self.valuesDescr))
       list.extend(self, seq)
 
 
@@ -450,12 +453,15 @@ class RegexMatchList(UnorderedList):
    likely get either TypeError or AttributeError exceptions as a result.
    """
    
-   def __init__(self, valuesRegex, emptyAllowed=True):
+   def __init__(self, valuesRegex, emptyAllowed=True, prefix=None):
       """
       Initializes a list restricted to containing certain values.
       @param valuesRegex: Regular expression that must be matched, as a string
       @param emptyAllowed: Indicates whether empty or None values are allowed.
+      @param prefix: Prefix to use in error messages (None results in prefix "Item")
       """
+      self.prefix = "Item"
+      if prefix is not None: self.prefix = prefix
       self.valuesRegex = valuesRegex
       self.emptyAllowed = emptyAllowed
       self.pattern = re.compile(self.valuesRegex)
@@ -468,9 +474,9 @@ class RegexMatchList(UnorderedList):
       @raise ValueError: If item does not match the configured regular expression
       """
       if item is None or (not self.emptyAllowed and item == ""):
-         raise ValueError("Item must be non-empty.")
+         raise ValueError("%s cannot be empty." % self.prefix)
       if not self.pattern.search(item):
-         raise ValueError("Item must match regular expression [%s]." % self.valuesRegex)
+         raise ValueError("%s is not valid: [%s]" % (self.prefix, item))
       list.append(self, item)
 
    def insert(self, index, item):
@@ -481,9 +487,9 @@ class RegexMatchList(UnorderedList):
       @raise ValueError: If item does not match the configured regular expression
       """
       if item is None or (not self.emptyAllowed and item == ""):
-         raise ValueError("Item must be non-empty.")
+         raise ValueError("%s cannot be empty." % self.prefix)
       if not self.pattern.search(item):
-         raise ValueError("Item must match regular expression [%s]." % self.valuesRegex)
+         raise ValueError("%s is not valid [%s]" % (self.prefix, item))
       list.insert(self, index, item)
 
    def extend(self, seq):
@@ -495,10 +501,61 @@ class RegexMatchList(UnorderedList):
       """
       for item in seq:
          if item is None or (not self.emptyAllowed and item == ""):
-            raise ValueError("Item must be non-empty.")
+            raise ValueError("%s cannot be empty.", self.prefix)
          if not self.pattern.search(item):
-            raise ValueError("Item must match regular expression [%s]." % self.valuesRegex)
+            raise ValueError("%s is not valid: [%s]" % (self.prefix, item))
       list.extend(self, seq)
+
+
+########################################################################
+# RegexList class definition
+########################################################################
+
+class RegexList(UnorderedList):
+
+   """
+   Class representing a list of valid regular expression strings.
+
+   This is an unordered list.
+
+   We override the C{append}, C{insert} and C{extend} methods to ensure that
+   any item added to the list is a valid regular expression.
+   """
+
+   def append(self, item):
+      """
+      Overrides the standard C{append} method.
+      @raise ValueError: If item is not an absolute path.
+      """
+      try:
+         re.compile(item)
+      except re.error:
+         raise ValueError("Not a valid regular expression: [%s]" % item)
+      list.append(self, item)
+
+   def insert(self, index, item):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If item is not an absolute path.
+      """
+      try:
+         re.compile(item)
+      except re.error:
+         raise ValueError("Not a valid regular expression: [%s]" % item)
+      list.insert(self, index, item)
+
+   def extend(self, seq):
+      """
+      Overrides the standard C{insert} method.
+      @raise ValueError: If any item is not an absolute path.
+      """
+      for item in seq:
+         try:
+            re.compile(item)
+         except re.error:
+            raise ValueError("Not a valid regular expression: [%s]" % item)
+      for item in seq:
+         list.append(self, item)
 
 
 ########################################################################

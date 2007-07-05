@@ -1331,6 +1331,34 @@ class TestRepositoryDir(unittest.TestCase):
       repositoryDir.excludePatterns.insert(1, "bogus")
       self.failUnlessEqual(["valid", "bogus", "more", ], repositoryDir.excludePatterns)
 
+   def testConstructor_025(self):
+      """
+      Test assignment of excludePatterns attribute, single invalid entry.
+      """
+      repositoryDir = RepositoryDir()
+      self.failUnlessEqual(None, repositoryDir.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, repositoryDir, "excludePatterns", ["*.jpg", ])
+      self.failUnlessEqual(None, repositoryDir.excludePatterns)
+
+   def testConstructor_026(self):
+      """
+      Test assignment of excludePatterns attribute, multiple invalid entries.
+      """
+      repositoryDir = RepositoryDir()
+      self.failUnlessEqual(None, repositoryDir.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, repositoryDir, "excludePatterns", ["*.jpg", "*" ])
+      self.failUnlessEqual(None, repositoryDir.excludePatterns)
+
+   def testConstructor_027(self):
+      """
+      Test assignment of excludePatterns attribute, mixed valid and invalid
+      entries.
+      """
+      repositoryDir = RepositoryDir()
+      self.failUnlessEqual(None, repositoryDir.excludePatterns)
+      self.failUnlessAssignRaises(ValueError, repositoryDir, "excludePatterns", ["*.jpg", "valid" ])
+      self.failUnlessEqual(None, repositoryDir.excludePatterns)
+
 
    ############################
    # Test comparison operators
