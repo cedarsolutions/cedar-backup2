@@ -123,7 +123,7 @@ doc: interface-doc manual-doc
 interface-doc: interface-html 
 
 interface-html: $(INTERFACE_DIR)
-	@$(EPYDOC) --name "CedarBackup2" --target $(INTERFACE_DIR) --url $(URL) CedarBackup2/
+	@$(EPYDOC) --html --name "CedarBackup2" --output $(INTERFACE_DIR) --url $(URL) CedarBackup2/
 
 manual-doc: $(MANUAL_DIR)
 	@$(CD) $(MANUAL_SRC) && $(MAKE) install
