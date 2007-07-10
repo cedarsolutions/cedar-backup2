@@ -1283,7 +1283,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    Executes a shell command, hopefully in a safe way.
 
    This function exists to replace direct calls to C{os.popen} in the Cedar
-   Backup code.  It's not safe to call a function such as L{os.popen()} with
+   Backup code.  It's not safe to call a function such as C{os.popen()} with
    untrusted arguments, since that can cause problems if the string contains
    non-safe variables or other constructs (imagine that the argument is
    C{$WHATEVER}, but C{$WHATEVER} contains something like C{"; rm -fR ~/;
