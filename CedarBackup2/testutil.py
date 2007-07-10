@@ -318,7 +318,7 @@ def failUnlessAssignRaises(testCase, exception, object, property, value):
    @param property: Name of the property, as a string.
    @param value: Value that is to be assigned to the property.
 
-   @see: L{unittest.TestCase.failUnlessRaises}
+   @see: C{unittest.TestCase.failUnlessRaises}
    """
    missed = False
    instead = None
