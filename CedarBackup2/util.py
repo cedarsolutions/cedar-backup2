@@ -854,7 +854,7 @@ if _PIPE_IMPLEMENTATION == "subprocess.Popen":
 
       All of this functionality is provided (in Python 2.4 or later) by the
       C{subprocess.Popen} class, so when that class is available, we'll use it.
-      Otherwise, there's another implementation based on L{popen2.Popen4},
+      Otherwise, there's another implementation based on C{popen2.Popen4},
       which unfortunately only works on UNIX platforms.
       """
       def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
@@ -1222,7 +1222,7 @@ def splitCommandLine(commandLine):
    @param commandLine: Command line string
    @type commandLine: String, i.e. "cback --verbose stage store"
 
-   @return: List of arguments, suitable for passing to L{popen2}.
+   @return: List of arguments, suitable for passing to C{popen2}.
 
    @raise ValueError: If the command line is None.
    """
@@ -1282,7 +1282,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    """
    Executes a shell command, hopefully in a safe way.
 
-   This function exists to replace direct calls to L{os.popen()} in the Cedar
+   This function exists to replace direct calls to C{os.popen} in the Cedar
    Backup code.  It's not safe to call a function such as L{os.popen()} with
    untrusted arguments, since that can cause problems if the string contains
    non-safe variables or other constructs (imagine that the argument is
@@ -1295,7 +1295,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
 
    Under the normal case, this function will return a tuple of C{(status,
    None)} where the status is the wait-encoded return status of the call per
-   the L{popen2.Popen4} documentation.  If C{returnOutput} is passed in as
+   the C{popen2.Popen4} documentation.  If C{returnOutput} is passed in as
    C{True}, the function will return a tuple of C{(status, output)} where
    C{output} is a list of strings, one entry per line in the output from the
    command.  Output is always logged to the C{outputLogger.info()} target,

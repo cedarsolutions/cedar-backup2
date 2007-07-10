@@ -437,7 +437,7 @@ class RemotePeer(object):
       Initializes a remote backup peer.
 
       @note: If provided, the rcp command will eventually be parsed into a list
-      of strings suitable for passing to L{popen2.Popen4} in order to avoid
+      of strings suitable for passing to C{popen2.Popen4} in order to avoid
       security holes related to shell interpolation.   This parsing will be
       done by the L{util.splitCommandLine} function.  See the documentation for
       that function for some important notes about its limitations.
@@ -770,7 +770,7 @@ class RemotePeer(object):
       Returns the contents of a directory in terms of a Set.
       
       The directory's contents are read as a L{FilesystemList} containing only
-      files, and then the list is converted into a L{sets.Set} object for later
+      files, and then the list is converted into a C{sets.Set} object for later
       use.
 
       @param path: Directory path to get contents for
