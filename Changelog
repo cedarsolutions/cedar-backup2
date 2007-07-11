@@ -1,5 +1,6 @@
 Version 2.13.2		unreleased
 
+	* Tweak some docstring markup to work with Epydoc beta 1.
 	* Apply documentation patch from Lukasz K. Nowak.
 	  - Document that mysql extension can back up remote databases
 	  - Fix typos in extend/sysinfo.py
