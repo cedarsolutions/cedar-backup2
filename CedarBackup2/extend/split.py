@@ -669,6 +669,8 @@ def _splitFile(sourcePath, splitSize, backupUser, backupGroup, removeSource=Fals
          raise IOError("Error [%d] calling split for [%s]." % (result, sourcePath))
       pattern = re.compile(r"(creating file `)(%s)(.*)(')" % prefix)
       match = pattern.search(output[-1:][0])
+      if match is None:
+         raise IOError("Unable to parse output from split command.")
       value = int(match.group(3).strip())
       for index in range(0, value):
          path = "%s%05d" % (prefix, index)

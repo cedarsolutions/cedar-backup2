@@ -1,3 +1,13 @@
+Version 2.14.0		unreleased
+
+	* Deal properly with programs that localize their output.
+		- Create new util.sanitizeEnvironment() function to set $LANG=C
+		- Call new sanitizeEnvironment() function inside util.executeCommand()
+		- Change extend/split._splitFile() to be more verbose about problems
+		- Update Extension Architecture Interface to mandate $LANG=C
+		- Add split unit tests to catch any locale-related regressions
+		- Thanks to Lukasz Nowak for initial debugging in split extension
+
 Version 2.13.2		10 Jul 2007
 
 	* Tweak some docstring markup to work with Epydoc beta 1.
