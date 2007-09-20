@@ -1,4 +1,4 @@
-Version 2.14.0		unreleased
+Version 2.14.0		19 Sep 2007
 
 	* Deal properly with programs that localize their output.
 		- Create new util.sanitizeEnvironment() function to set $LANG=C
