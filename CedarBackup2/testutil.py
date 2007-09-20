@@ -75,7 +75,7 @@ import platform
 import logging
 from StringIO import StringIO
 
-from CedarBackup2.util import encodePath
+from CedarBackup2.util import encodePath, executeCommand
 
 
 ########################################################################
@@ -466,4 +466,19 @@ def runningAsRoot():
    else:
       return os.geteuid() == 0
 
+
+##############################
+# availableLocales() function
+##############################
+
+def availableLocales():
+   """
+   Returns a list of available locales on the system
+   @return: List of string locale names
+   """
+   locales = []
+   output = executeCommand(["locale"], [ "-a", ], returnOutput=True, ignoreStderr=True)[1]
+   for line in output:
+      locales.append(line.rstrip())
+   return locales
 

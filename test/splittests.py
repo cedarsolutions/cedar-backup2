@@ -87,7 +87,10 @@ Full vs. Reduced Tests
    want to run all of the tests, set SPLITTESTS_FULL to "Y" in the environment.
 
    In this module, the primary dependency is that the split utility must be
-   available.
+   available.  There is also one test that wants at least one non-English
+   locale (fr_FR, ru_RU or pt_PT) available to check localization issues (but
+   that test will just automatically be skipped if such a locale is not
+   available).
 
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -106,7 +109,8 @@ import tarfile
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
-from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, failUnlessAssignRaises, platformSupportsLinks
+from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
+from CedarBackup2.testutil import failUnlessAssignRaises, platformSupportsLinks, availableLocales
 from CedarBackup2.xmlutil import createOutputDom, serializeDom
 from CedarBackup2.extend.split import LocalConfig, SplitConfig, ByteQuantity
 from CedarBackup2.extend.split import _splitFile, _splitDailyDir
@@ -974,7 +978,7 @@ class TestLocalConfig(unittest.TestCase):
 
 class TestFunctions(unittest.TestCase):
 
-   """Tests for the functions in spliy.py."""
+   """Tests for the functions in split.py."""
 
    ################
    # Setup methods
@@ -1018,6 +1022,22 @@ class TestFunctions(unittest.TestCase):
          splitPath = "%s_%05d" % (sourcePath, wholeFiles)
          self.failUnless(os.path.exists(splitPath))
          self.failUnlessEqual(leftoverBytes, os.stat(splitPath).st_size) 
+
+   def findBadLocale(self):
+      """
+      The split command localizes its output for certain locales.  This breaks
+      the parsing code in split.py.  This method returns a list of the locales
+      (if any) that are currently configured which could be expected to cause a
+      failure if the localization-fixing code doesn't work.
+      """
+      locales = availableLocales()
+      if 'fr_FR' in locales:
+         return 'fr_FR'
+      if 'pl_PL' in locales:
+         return 'pl_PL'
+      if 'ru_RU' in locales:
+         return 'ru_RU'
+      return None
 
 
    ####################
@@ -1069,6 +1089,34 @@ class TestFunctions(unittest.TestCase):
       _splitFile(sourcePath, splitSize, None, None, removeSource=True)
       self.failIf(os.path.exists(sourcePath))
       self.checkSplit(sourcePath, 3200, 320)
+
+   def testSplitFile_005(self):
+      """
+      Test with a local other than "C" or "en_US" set.
+      """
+      locale = self.findBadLocale()
+      if locale is not None:
+         os.environ["LANG"] = locale
+         os.environ["LC_ADDRESS"] = locale
+         os.environ["LC_ALL"] = locale
+         os.environ["LC_COLLATE"] = locale
+         os.environ["LC_CTYPE"] = locale
+         os.environ["LC_IDENTIFICATION"] = locale
+         os.environ["LC_MEASUREMENT"] = locale
+         os.environ["LC_MESSAGES"] = locale
+         os.environ["LC_MONETARY"] = locale
+         os.environ["LC_NAME"] = locale
+         os.environ["LC_NUMERIC"] = locale
+         os.environ["LC_PAPER"] = locale
+         os.environ["LC_TELEPHONE"] = locale
+         os.environ["LC_TIME"] = locale
+         self.extractTar("tree21")
+         sourcePath = self.buildPath(["tree21", "2007", "01", "01", "system1", "file001.a.b", ])
+         self.failUnless(os.path.exists(sourcePath))
+         splitSize = ByteQuantity("320", UNIT_BYTES)
+         _splitFile(sourcePath, splitSize, None, None, removeSource=True)
+         self.failIf(os.path.exists(sourcePath))
+         self.checkSplit(sourcePath, 3200, 320)
 
 
    ##########################

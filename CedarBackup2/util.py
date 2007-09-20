@@ -135,6 +135,14 @@ MTAB_FILE          = "/etc/mtab"
 MOUNT_COMMAND      = [ "mount", ]
 UMOUNT_COMMAND     = [ "umount", ]
 
+DEFAULT_LANGUAGE   = "C"
+LANG_VAR           = "LANG"
+LOCALE_VARS        = [ "LC_ADDRESS", "LC_ALL", "LC_COLLATE",
+                       "LC_CTYPE", "LC_IDENTIFICATION", 
+                       "LC_MEASUREMENT", "LC_MESSAGES", 
+                       "LC_MONETARY", "LC_NAME", "LC_NUMERIC",
+                       "LC_PAPER", "LC_TELEPHONE", "LC_TIME", ]
+
 
 ########################################################################
 # UnorderedList class definition
@@ -1330,6 +1338,9 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    implement the equivalent to redirection using C{ignoreStderr} and
    C{outputFile}, as discussed above.
 
+   @note: The operating system environment is partially sanitized before
+   the command is invoked.  See L{sanitizeEnvironment} for details.
+
    @param command: Shell command to execute
    @type command: List of individual arguments that make up the command
 
@@ -1356,6 +1367,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    fields = command[:]        # make sure to copy it so we don't destroy it
    fields.extend(args)
    try:
+      sanitizeEnvironment()   # make sure we have a consistent environment
       pipe = Pipe(fields, ignoreStderr=ignoreStderr)
       while True:
          line = pipe.fromchild.readline()
@@ -1776,3 +1788,34 @@ def buildNormalizedPath(path):
       normalized = re.sub(r"\s", "_", normalized)  # convert all whitespace to '_'
       return normalized
 
+
+#################################
+# sanitizeEnvironment() function
+#################################
+
+def sanitizeEnvironment():
+   """
+   Sanitizes the operating system environment.
+   
+   The operating system environment is contained in C{os.environ}.  This method
+   sanitizes the contents of that dictionary.  
+
+   Currently, all it does is reset the locale (removing C{$LC_*}) and set the
+   default language (C{$LANG}) to L{DEFAULT_LANGUAGE}.  This way, we can count
+   on consistent localization regardless of what the end-user has configured.
+   This is important for code that needs to parse program output.
+
+   The C{os.environ} dictionary is modifed in-place.  If C{$LANG} is already
+   set to the proper value, it is not re-set, so we can avoid the memory leaks
+   that are documented to occur on BSD-based systems.
+
+   @return: Copy of the sanitized environment.
+   """
+   for var in LOCALE_VARS:
+      if os.environ.has_key(var):
+         del os.environ[var]
+   if os.environ.has_key(LANG_VAR):
+      if os.environ[LANG_VAR] != DEFAULT_LANGUAGE: # no need to reset if it exists (avoid leaks on BSD systems)
+         os.environ[LANG_VAR] = DEFAULT_LANGUAGE
+   return os.environ.copy()
+   

@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2006 Kenneth J. Pronovici.
+# Copyright (c) 2005-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -150,6 +150,19 @@
                or new writer types.
             </para>
          </listitem>
+
+         <listitem>
+            <para>
+               Extensions must be written to assume an empty locale set (no
+               <literal>$LC_*</literal> settings) and
+               <literal>$LANG=C</literal>.  For the typical open-source
+               software project, this would imply writing output-parsing code
+               against the English localization (if any).  The
+               <literal>executeCommand</literal> function does sanitize the
+               environment to enforce this configuration.
+            </para>
+         </listitem>
+
 
       </orderedlist>
     
