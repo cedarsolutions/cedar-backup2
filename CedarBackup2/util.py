@@ -1556,7 +1556,7 @@ def deviceMounted(devicePath):
 
 def encodePath(path):
 
-   """
+   r"""
    Safely encodes a filesystem path.
 
    Many Python filesystem functions, such as C{os.listdir}, behave differently
