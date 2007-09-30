@@ -46,7 +46,7 @@ useful within the source tree.
 
 Many of these functions are in here because they are "good enough" for unit
 test work but are not robust enough to be real public functions.  Others (like
-L{removedir} do what they are supposed to, but I don't want responsibility for
+L{removedir}) do what they are supposed to, but I don't want responsibility for
 making them available to others.
 
 @sort: findResources, commandAvailable,
