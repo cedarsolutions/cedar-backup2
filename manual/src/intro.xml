@@ -286,7 +286,7 @@
          compact, better focused, and better documented than any release before
          it.  Utility code is less application-specific, and is now usable as a
          general-purpose library.  The 2.0 release also includes a complete
-         regression test suite of over 2800 tests, which will help to ensure
+         regression test suite of over 3000 tests, which will help to ensure
          that quality is maintained as development continues into the future.
          <footnote><para>Tests are implemented using Python's unit test
          framework.  See <ulink url="http://docs.python.org/lib/module-unittest.html"/>.</para></footnote> 

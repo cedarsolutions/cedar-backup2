@@ -228,9 +228,8 @@ class DvdWriter(object):
       of DVD media.  It provides common operations for the device, such as
       ejecting the media and writing data to the media.
 
-      This class is implemented in terms of the C{eject}, C{growisofs} and
-      C{dvd+rw-mediainfo} utilities, all of which should be available on most
-      UN*X platforms.
+      This class is implemented in terms of the C{eject} and C{growisofs}
+      utilities, all of which should be available on most UN*X platforms.
 
    Image Writer Interface
    ======================
