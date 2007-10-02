@@ -275,12 +275,8 @@
 
                <para>
                   The dvd+rw-tools package provides the
-                  <command>growisofs</command> and
-                  <command>dvd+rw-mediainfo</command> utilities.  The
-                  <command>growisofs</command> utility is used to write ISO
-                  images to DVD media in a backup device.  The
-                  <command>dvd+rw-mediainfo</command> utility is used to get
-                  information about DVD media sitting in a writer device.
+                  <command>growisofs</command> utility, which is used to write
+                  ISO images to DVD media in a backup device.
                </para>
 
                <informaltable>

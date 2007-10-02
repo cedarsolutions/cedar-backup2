@@ -1,3 +1,7 @@
+Version 2.14.1		unreleased
+
+	* Minor documentation tweaks discovered during 3.0 development.
+
 Version 2.14.0		19 Sep 2007
 
 	* Deal properly with programs that localize their output.

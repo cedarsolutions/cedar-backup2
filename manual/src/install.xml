@@ -244,7 +244,6 @@ $ apt-get install cedar-backup2 cedar-backup2-doc
 
          <itemizedlist>
             <listitem><para><command>growisofs</command></para></listitem>
-            <listitem><para><command>dvd+rw-mediainfo</command></para></listitem>
          </itemizedlist>
 
          <para>
