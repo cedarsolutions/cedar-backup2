@@ -31,6 +31,7 @@
 
 CD                = cd
 CP                = cp
+MV                = mv
 EPYDOC            = epydoc
 FIND              = find
 MKDIR             = mkdir
@@ -49,9 +50,9 @@ URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $
 # Locations
 ############
 
-DOC_DIR           = ./doc
-DIST_DIR          = ./build
-MANUAL_SRC        = ./manual
+DOC_DIR           = doc
+DIST_DIR          = build
+MANUAL_SRC        = manual
 SDIST_DIR         = $(DIST_DIR)/sdist
 INTERFACE_DIR     = $(DOC_DIR)/interface
 INTERFACE_TEMPDIR = $(DOC_DIR)/interface/tmp
@@ -159,7 +160,7 @@ $(INTERFACE_TEMPDIR):
 # Debian packages are maintained via cvs-buildpackage as usual).  This
 # keeps cedar-backup2 from being a Debian-native package.
 
-distrib: doc sdist debdist docdist
+distrib: debdist docdist
 
 distribclean: sdistclean debdistclean
 	-@$(RM) -f MANIFEST 
@@ -182,8 +183,15 @@ debdist: sdist
 debdistclean: 
 	@$(RM) -f $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz 
 
-docdist: 
-	@$(TAR) -zcvf ../htmldocs.tar.gz doc/manual doc/interface
+# This layout matches the htdocs/docs tree for the SF website
+docdist: doc
+	@$(MKDIR) -p $(DOC_DIR)/tmp/docs/cedar-backup2/
+	@$(MKDIR) -p $(DOC_DIR)/tmp/docs/cedar-backup2/
+	@$(CP) -r $(MANUAL_DIR) $(DOC_DIR)/tmp/docs/cedar-backup2/
+	@$(CP) -r $(INTERFACE_DIR) $(DOC_DIR)/tmp/docs/cedar-backup2/
+	@$(CD) $(DOC_DIR)/tmp && $(TAR) -zcvf ../htmldocs.tar.gz docs/
+	@$(MV) $(DOC_DIR)/htmldocs.tar.gz ../
+	@$(RM) -rf $(DOC_DIR)/tmp
 
 
 ##################################
