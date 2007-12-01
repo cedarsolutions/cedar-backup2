@@ -1,6 +1,8 @@
 #!/bin/ksh
 # Sensibly creates a release label in Subversion.
 
+REPO=https://cedar-backup.svn.sourceforge.net/svnroot/cedar-backup/cedar-backup2
+
 if [[ $# != 1 || ${1} == "--help" ]]
 then
    print "Usage: release <version>"
@@ -9,16 +11,16 @@ fi
 
 VERSION=${1}
 
-svn list svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP2_V${VERSION} >/dev/null 2>&1
+svn list ${REPO}/tags/CEDAR_BACKUP2_V${VERSION} >/dev/null 2>&1
 if [[ $? = 0 ]]
 then
    print "Removing existing release label for ${VERSION}."
-   svn del svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP2_V${VERSION} \
+   svn del ${REPO}/tags/CEDAR_BACKUP2_V${VERSION} \
             -m "Tagging new version of ${VERSION} release of Cedar Backup."
 fi
 
-svn copy svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/trunk \
-         svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP2_V${VERSION} \
+svn copy ${REPO}/trunk \
+         ${REPO}/tags/CEDAR_BACKUP2_V${VERSION} \
          -m "Tagging the ${VERSION} release of Cedar Backup."
 if [[ $? != 0 ]]
 then
@@ -29,7 +31,7 @@ fi
 print "Completed tagging release ${VERSION} of Cedar Backup:"
 print ""
 
-svn list --verbose svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags
+svn list --verbose ${REPO}/tags
 
 print ""
 print "Make sure to re-run this script if you forgot to update"

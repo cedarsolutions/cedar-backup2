@@ -1,6 +1,8 @@
 #!/bin/ksh
 # Does a diff between current trunk and a released version.
 
+REPO=https://cedar-backup.svn.sourceforge.net/svnroot/cedar-backup/cedar-backup2
+
 if [[ ${1} == "--help" ]]
 then
    print "Usage: diff <version> <branch>"
@@ -15,9 +17,9 @@ BRANCH=${2}
 
 if [[ "${2}"F = "F" ]]
 then
-   svn diff svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP2_V${VERSION} \
-            svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/trunk | gvim -
+   svn diff ${REPO}/tags/CEDAR_BACKUP2_V${VERSION} \
+            ${REPO}/trunk | gvim -
 else
-   svn diff svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/tags/CEDAR_BACKUP2_V${VERSION} \
-            svn+ssh://daystrom/opt/public/svn/software/cedar-backup2/branches/${BRANCH} | gvim -
+   svn diff ${REPO}/tags/CEDAR_BACKUP2_V${VERSION} \
+            ${REPO}/branches/${BRANCH} | gvim -
 fi
