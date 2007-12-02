@@ -184,9 +184,11 @@ debdistclean:
 	@$(RM) -f $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz 
 
 # This layout matches the htdocs/docs tree for the SF website
+htmldocs: docdist
 docdist: doc
 	@$(MKDIR) -p $(DOC_DIR)/tmp/docs/cedar-backup2/
 	@$(MKDIR) -p $(DOC_DIR)/tmp/docs/cedar-backup2/
+	@$(CP) Changelog $(DOC_DIR)/tmp/docs/cedar-backup2/
 	@$(CP) -r $(MANUAL_DIR) $(DOC_DIR)/tmp/docs/cedar-backup2/
 	@$(CP) -r $(INTERFACE_DIR) $(DOC_DIR)/tmp/docs/cedar-backup2/
 	@$(CD) $(DOC_DIR)/tmp && $(TAR) -zcvf ../htmldocs.tar.gz docs/
