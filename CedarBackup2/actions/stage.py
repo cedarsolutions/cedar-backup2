@@ -246,7 +246,7 @@ def _getRemotePeers(config):
       logger.debug("Using list of remote peers from peers configuration.")
       configPeers = config.peers.remotePeers
    if configPeers is not None:
-      for peer in config.peers.remotePeers:
+      for peer in configPeers:
          remoteUser = _getRemoteUser(config, peer)
          rcpCommand = _getRcpCommand(config, peer)
          remotePeer = RemotePeer(peer.name, peer.collectDir, config.options.workingDir,
