@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Complete document containing all required fields, order mode is "dependency". -->
+<!-- Complete document containing all required and optional fields, order mode is "dependency". -->
 <cb_config>
    <reference>
       <author>$Author: pronovic $</author>
@@ -32,6 +32,8 @@
       <backup_group>group</backup_group>
       <rcp_command>/usr/bin/scp -1 -B</rcp_command>
       <rsh_command>/usr/bin/ssh</rsh_command>
+      <cback_command>/usr/bin/cback</cback_command>
+      <managed_actions>collect, purge</managed_actions>
       <override>
          <command>mkisofs</command>
          <abs_path>/usr/bin/mkisofs</abs_path>

@@ -24,5 +24,22 @@
          <rcp_command>scp -B</rcp_command>
          <collect_dir>/home/whatever/tmp</collect_dir>
       </peer>
+      <peer>
+         <name>machine4</name>
+         <type>remote</type>
+         <backup_user>someone</backup_user>
+         <rcp_command>scp -B</rcp_command>
+         <rsh_command>ssh</rsh_command>
+         <cback_command>cback</cback_command>
+         <managed>Y</managed>
+         <collect_dir>/aa</collect_dir>
+      </peer>
+      <peer>
+         <name>machine5</name>
+         <type>remote</type>
+         <managed>N</managed>
+         <managed_actions>collect, purge</managed_actions>
+         <collect_dir>/bb</collect_dir>
+      </peer>
    </peers>
 </cb_config>
