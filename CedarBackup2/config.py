@@ -5060,49 +5060,14 @@ class Config(object):
       (remote or local) between the two lists of peers.  A list with no entries
       can be either C{None} or an empty list C{[]} if desired.
 
-      Local peers must be completely filled in, including both name and collect
-      directory.  Remote peers must also fill in the name and collect
-      directory, but can leave the remote user and rcp command unset.  In this
-      case, the remote user is assumed to match the backup user from the
-      options section and rcp command is taken directly from the options
-      section.
+      Then, peer list validation (see L{_validatePeerList}) applies as well.
 
       @raise ValueError: If stage configuration is invalid.
       """
       if self.stage is not None:
          if self.stage.targetDir is None:
             raise ValueError("Stage section target directory must be filled in.")
-         if self.stage.localPeers is None and self.stage.remotePeers is None:
-            raise ValueError("Stage section must contain at least one backup peer.")
-         if self.stage.localPeers is None and self.stage.remotePeers is not None:
-            if len(self.stage.remotePeers) < 1:
-               raise ValueError("Stage section must contain at least one backup peer.")
-         elif self.stage.localPeers is not None and self.stage.remotePeers is None:
-            if len(self.stage.localPeers) < 1:
-               raise ValueError("Stage section must contain at least one backup peer.")
-         elif self.stage.localPeers is not None and self.stage.remotePeers is not None:
-            if len(self.stage.localPeers) + len(self.stage.remotePeers) < 1:
-               raise ValueError("Stage section must contain at least one backup peer.")
-         names = []
-         if self.stage.localPeers is not None:
-            for localPeer in self.stage.localPeers:
-               if localPeer.name is None:
-                  raise ValueError("Local peers must set a name.")
-               names.append(localPeer.name)
-               if localPeer.collectDir is None:
-                  raise ValueError("Local peers must set a collect directory.")
-         if self.stage.remotePeers is not None:
-            for remotePeer in self.stage.remotePeers:
-               if remotePeer.name is None:
-                  raise ValueError("Remote peers must set a name.")
-               names.append(remotePeer.name)
-               if remotePeer.collectDir is None:
-                  raise ValueError("Remote peers must set a collect directory.")
-               if (self.options is None or self.options.backupUser is None) and remotePeer.remoteUser is None: # redundant
-                  raise ValueError("Remote user must either be set in options section or individual remote peer.")
-               if (self.options is None or self.options.rcpCommand is None) and remotePeer.rcpCommand is None: # redundant
-                  raise ValueError("Remote copy command must either be set in options section or individual remote peer.")
-         Config._checkUnique("Duplicate peer names exist:", names)
+         self._validatePeerList(self.stage.localPeers, self.stage.remotePeers)
 
    def _validateStore(self):
       """
@@ -5159,6 +5124,54 @@ class Config(object):
                   raise ValueError("Each purge directory must set an absolute path.")
                if purgeDir.retainDays is None:
                   raise ValueError("Each purge directory must set a retain days value.")
+
+   def _validatePeerList(self, localPeers, remotePeers):
+      """
+      Validates the set of local and remote peers.
+
+      Local peers must be completely filled in, including both name and collect
+      directory.  Remote peers must also fill in the name and collect
+      directory, but can leave the remote user and rcp command unset.  In this
+      case, the remote user is assumed to match the backup user from the
+      options section and rcp command is taken directly from the options
+      section.
+
+      @param localPeers: List of local peers
+      @param remotePeers: List of remote peers
+
+      @raise ValueError: If stage configuration is invalid.
+      """
+      if localPeers is None and remotePeers is None:
+         raise ValueError("Peer list must contain at least one backup peer.")
+      if localPeers is None and remotePeers is not None:
+         if len(remotePeers) < 1:
+            raise ValueError("Peer list must contain at least one backup peer.")
+      elif localPeers is not None and remotePeers is None:
+         if len(localPeers) < 1:
+            raise ValueError("Peerl list must contain at least one backup peer.")
+      elif localPeers is not None and remotePeers is not None:
+         if len(localPeers) + len(remotePeers) < 1:
+            raise ValueError("Peerl list must contain at least one backup peer.")
+      names = []
+      if localPeers is not None:
+         for localPeer in localPeers:
+            if localPeer.name is None:
+               raise ValueError("Local peers must set a name.")
+            names.append(localPeer.name)
+            if localPeer.collectDir is None:
+               raise ValueError("Local peers must set a collect directory.")
+      if remotePeers is not None:
+         for remotePeer in remotePeers:
+            if remotePeer.name is None:
+               raise ValueError("Remote peers must set a name.")
+            names.append(remotePeer.name)
+            if remotePeer.collectDir is None:
+               raise ValueError("Remote peers must set a collect directory.")
+            if (self.options is None or self.options.backupUser is None) and remotePeer.remoteUser is None: # redundant
+               raise ValueError("Remote user must either be set in options section or individual remote peer.")
+            if (self.options is None or self.options.rcpCommand is None) and remotePeer.rcpCommand is None: # redundant
+               raise ValueError("Remote copy command must either be set in options section or individual remote peer.")
+      Config._checkUnique("Duplicate peer names exist:", names)
 
 
    ##############################################
