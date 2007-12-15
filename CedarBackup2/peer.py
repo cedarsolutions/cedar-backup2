@@ -437,10 +437,10 @@ class RemotePeer(object):
       Initializes a remote backup peer.
 
       @note: If provided, the rcp command will eventually be parsed into a list
-      of strings suitable for passing to C{popen2.Popen4} in order to avoid
-      security holes related to shell interpolation.   This parsing will be
-      done by the L{util.splitCommandLine} function.  See the documentation for
-      that function for some important notes about its limitations.
+      of strings suitable for passing to C{util.executeCommand} in order to
+      avoid security holes related to shell interpolation.   This parsing will
+      be done by the L{util.splitCommandLine} function.  See the documentation
+      for that function for some important notes about its limitations.
 
       @param name: Name of the backup peer
       @type name: String, must be a valid DNS hostname

@@ -1837,7 +1837,7 @@ class RemotePeer(object):
       """
       if value is not None:
          if len(value) < 1:
-            raise ValueError("The remote user must be a non-empty string.")
+            raise ValueError("The rcp command must be a non-empty string.")
       self._rcpCommand = value
 
    def _getRcpCommand(self):
