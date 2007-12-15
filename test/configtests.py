@@ -4299,19 +4299,22 @@ class TestOptionsConfig(unittest.TestCase):
       self.failUnlessEqual(None, options.backupUser)
       self.failUnlessEqual(None, options.backupGroup)
       self.failUnlessEqual(None, options.rcpCommand)
+      self.failUnlessEqual(None, options.rshCommand)
       self.failUnlessEqual(None, options.overrides)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values (lists empty).
       """
-      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [])
+      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [], [], "ssh")
       self.failUnlessEqual("monday", options.startingDay)
       self.failUnlessEqual("/tmp", options.workingDir)
       self.failUnlessEqual("user", options.backupUser)
       self.failUnlessEqual("group", options.backupGroup)
       self.failUnlessEqual("scp -1 -B", options.rcpCommand)
+      self.failUnlessEqual("ssh", options.rshCommand)
       self.failUnlessEqual([], options.overrides)
+      self.failUnlessEqual([], options.hooks)
 
    def testConstructor_003(self):
       """
@@ -4483,13 +4486,14 @@ class TestOptionsConfig(unittest.TestCase):
       Test constructor with all values filled in, with valid values (lists not empty).
       """
       overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), ]
-      hooks = [ ActionHook("collect", "ls -l"), ]
-      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks)
+      hooks = [ PreActionHook("collect", "ls -l"), ]
+      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
       self.failUnlessEqual("monday", options.startingDay)
       self.failUnlessEqual("/tmp", options.workingDir)
       self.failUnlessEqual("user", options.backupUser)
       self.failUnlessEqual("group", options.backupGroup)
       self.failUnlessEqual("scp -1 -B", options.rcpCommand)
+      self.failUnlessEqual("ssh", options.rshCommand)
       self.failUnlessEqual(overrides, options.overrides)
       self.failUnlessEqual(hooks, options.hooks)
 
@@ -4584,8 +4588,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       collect = OptionsConfig()
       self.failUnlessEqual(None, collect.hooks)
-      collect.hooks = [ActionHook("stage", "df -k"), ]
-      self.failUnlessEqual([ActionHook("stage", "df -k"), ], collect.hooks)
+      collect.hooks = [PreActionHook("stage", "df -k"), ]
+      self.failUnlessEqual([PreActionHook("stage", "df -k"), ], collect.hooks)
 
    def testConstructor_031(self):
       """
@@ -4594,8 +4598,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       collect = OptionsConfig()
       self.failUnlessEqual(None, collect.hooks)
-      collect.hooks = [ ActionHook("stage", "df -k"), ActionHook("collect", "ls -l"), ]
-      self.failUnlessEqual([ActionHook("stage", "df -k"), ActionHook("collect", "ls -l"), ], collect.hooks)
+      collect.hooks = [ PreActionHook("stage", "df -k"), PostActionHook("collect", "ls -l"), ]
+      self.failUnlessEqual([PreActionHook("stage", "df -k"), PostActionHook("collect", "ls -l"), ], collect.hooks)
 
    def testConstructor_032(self):
       """
@@ -4624,8 +4628,35 @@ class TestOptionsConfig(unittest.TestCase):
       """
       collect = OptionsConfig()
       self.failUnlessEqual(None, collect.hooks)
-      self.failUnlessAssignRaises(ValueError, collect, "hooks", [ "hello", ActionHook("stage", "df -k"), ])
+      self.failUnlessAssignRaises(ValueError, collect, "hooks", [ "hello", PreActionHook("stage", "df -k"), ])
       self.failUnlessEqual(None, collect.hooks)
+
+   def testConstructor_035(self):
+      """
+      Test assignment of rshCommand attribute, None value.
+      """
+      options = OptionsConfig(rshCommand="command")
+      self.failUnlessEqual("command", options.rshCommand)
+      options.rshCommand = None
+      self.failUnlessEqual(None, options.rshCommand)
+
+   def testConstructor_036(self):
+      """
+      Test assignment of rshCommand attribute, valid value.
+      """
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.rshCommand)
+      options.rshCommand = "command"
+      self.failUnlessEqual("command", options.rshCommand)
+
+   def testConstructor_037(self):
+      """
+      Test assignment of rshCommand attribute, invalid value (empty).
+      """
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.rshCommand)
+      self.failUnlessAssignRaises(ValueError, options, "rshCommand", "")
+      self.failUnlessEqual(None, options.rshCommand)
 
 
    ############################
@@ -4652,8 +4683,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
       self.failUnlessEqual(options1, options2)
       self.failUnless(options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4682,8 +4713,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks)
-      options2 = OptionsConfig("tuesday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
+      options2 = OptionsConfig("tuesday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -4712,8 +4743,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp/whatever", "user", "group", "scp -1 -B", overrides, hooks)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks)
+      options1 = OptionsConfig("monday", "/tmp/whatever", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4742,8 +4773,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user2", "group", "scp -1 -B", overrides, hooks)
-      options2 = OptionsConfig("monday", "/tmp", "user1", "group", "scp -1 -B", overrides, hooks)
+      options1 = OptionsConfig("monday", "/tmp", "user2", "group", "scp -1 -B", overrides, hooks, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user1", "group", "scp -1 -B", overrides, hooks, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4772,8 +4803,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group1", "scp -1 -B", overrides, hooks)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group2", "scp -1 -B", overrides, hooks)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group1", "scp -1 -B", overrides, hooks, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group2", "scp -1 -B", overrides, hooks, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -4802,8 +4833,8 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -2 -B", overrides, hooks)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -2 -B", overrides, hooks, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4820,8 +4851,8 @@ class TestOptionsConfig(unittest.TestCase):
       overrides1 = None
       overrides2 = []
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -4838,10 +4869,10 @@ class TestOptionsConfig(unittest.TestCase):
       overrides1 = None
       overrides2 = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh")
       self.failIfEqual(options1, options2)
-      self.failUnless(not options1 == options2)
+      self.failUnless(not options1 == options2, "ssh")
       self.failUnless(options1 < options2)
       self.failUnless(options1 <= options2)
       self.failUnless(not options1 > options2)
@@ -4856,8 +4887,8 @@ class TestOptionsConfig(unittest.TestCase):
       overrides1 = [ CommandOverride("one", "/one"), ]
       overrides2 = []
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4874,8 +4905,8 @@ class TestOptionsConfig(unittest.TestCase):
       overrides1 = [ CommandOverride("one", "/one"), ]
       overrides2 = [ CommandOverride(), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4892,8 +4923,8 @@ class TestOptionsConfig(unittest.TestCase):
       overrides = [ CommandOverride("one", "/one"), ]
       hooks1 = None
       hooks2 = []
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -4910,8 +4941,8 @@ class TestOptionsConfig(unittest.TestCase):
       overrides = [ CommandOverride("one", "/one"), ]
       hooks1 = [ PreActionHook("collect", "ls -l ") ]
       hooks2 = [ PostActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 > options2)
@@ -4928,8 +4959,8 @@ class TestOptionsConfig(unittest.TestCase):
       overrides = [ CommandOverride("one", "/one"), ]
       hooks1 = [ PreActionHook("collect", "ls -l ") ]
       hooks2 = [ PreActionHook("stage", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2)
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 > options2)
@@ -4945,9 +4976,39 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks1 = [ PreActionHook("collect", "ls -l ") ]
-      hooks2 = [ ActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1)
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2)
+      hooks2 = [ PostActionHook("collect", "ls -l ") ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh")
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(not options1 < options2)
+      self.failUnless(not options1 <= options2)
+      self.failUnless(options1 > options2)
+      self.failUnless(options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_021(self):
+      """
+      Test comparison of two differing objects, rshCommand differs (one None).
+      """
+      options1 = OptionsConfig()
+      options2 = OptionsConfig(rshCommand="command")
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_022(self):
+      """
+      Test comparison of two differing objects, rshCommand differs.
+      """
+      overrides = [ CommandOverride("one", "/one"), ]
+      hooks = [ PreActionHook("collect", "ls -l ") ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh2")
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh1")
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -7653,6 +7714,7 @@ class TestConfig(unittest.TestCase):
       self.failUnlessEqual(None, config.reference)
       self.failUnlessEqual(None, config.extensions)
       self.failUnlessEqual(None, config.options)
+      self.failUnlessEqual(None, config.peers)
       self.failUnlessEqual(None, config.collect)
       self.failUnlessEqual(None, config.stage)
       self.failUnlessEqual(None, config.store)
@@ -7666,6 +7728,7 @@ class TestConfig(unittest.TestCase):
       self.failUnlessEqual(None, config.reference)
       self.failUnlessEqual(None, config.extensions)
       self.failUnlessEqual(None, config.options)
+      self.failUnlessEqual(None, config.peers)
       self.failUnlessEqual(None, config.collect)
       self.failUnlessEqual(None, config.stage)
       self.failUnlessEqual(None, config.store)
@@ -7689,6 +7752,7 @@ class TestConfig(unittest.TestCase):
       self.failUnlessEqual(None, config.reference)
       self.failUnlessEqual(None, config.extensions)
       self.failUnlessEqual(None, config.options)
+      self.failUnlessEqual(None, config.peers)
       self.failUnlessEqual(None, config.collect)
       self.failUnlessEqual(None, config.stage)
       self.failUnlessEqual(None, config.store)
@@ -7703,6 +7767,7 @@ class TestConfig(unittest.TestCase):
       self.failUnlessEqual(None, config.reference)
       self.failUnlessEqual(None, config.extensions)
       self.failUnlessEqual(None, config.options)
+      self.failUnlessEqual(None, config.peers)
       self.failUnlessEqual(None, config.collect)
       self.failUnlessEqual(None, config.stage)
       self.failUnlessEqual(None, config.store)
@@ -7868,6 +7933,29 @@ class TestConfig(unittest.TestCase):
       """
       config = Config()
       self.failUnlessAssignRaises(ValueError, config, "purge", CollectDir())
+
+   def testConstructor_027(self):
+      """
+      Test assignment of peers attribute, None value.
+      """
+      config = Config()
+      config.peers = None
+      self.failUnlessEqual(None, config.peers)
+
+   def testConstructor_028(self):
+      """
+      Test assignment of peers attribute, valid value.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      self.failUnlessEqual(PeersConfig(), config.peers)
+
+   def testConstructor_029(self):
+      """
+      Test assignment of peers attribute, invalid value (not PeersConfig).
+      """
+      config = Config()
+      self.failUnlessAssignRaises(ValueError, config, "peers", CollectDir())
 
 
    ############################
@@ -9860,7 +9948,7 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.6"]
       config = Config(xmlPath=path, validate=False)
       expected = Config()
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PostActionHook("stage", "df -k"), ]
       self.failUnlessEqual(expected, config)
@@ -10103,7 +10191,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions = []
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
@@ -10168,7 +10256,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
                                                         dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
                                                                                         afterList=["one",])))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
@@ -10230,7 +10318,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions = []
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
@@ -10295,7 +10383,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
                                                         dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
                                                                                         afterList=["one",])))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
@@ -10439,7 +10527,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
                                                         dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
                                                                                         afterList=["one",])))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
       expected.peers = PeersConfig()
@@ -10506,7 +10594,7 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
                                                         dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
                                                                                         afterList=["one",])))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
       expected.peers = PeersConfig()
@@ -10734,8 +10822,9 @@ class TestConfig(unittest.TestCase):
       Extract document containing only a valid options section, validate=True.
       """
       before = Config()
-      before.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B")
+      before.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
       before.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
+      before.options.hooks = [ PostActionHook("collect", "ls -l"), ]
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
    def testExtractXml_012(self):
@@ -10743,8 +10832,9 @@ class TestConfig(unittest.TestCase):
       Extract document containing only a valid options section, validate=False.
       """
       before = Config()
-      before.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B")
+      before.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "backup", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
       before.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
+      before.options.hooks = [ PostActionHook("collect", "ls -l"), ]
       beforeXml = before.extractXml(validate=False)
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)
@@ -11163,6 +11253,17 @@ class TestConfig(unittest.TestCase):
       validate=True.
       """
       path = self.resources["cback.conf.1"]
+      before = Config(xmlPath=path, validate=True)
+      beforeXml = before.extractXml(validate=True)
+      after = Config(xmlData=beforeXml, validate=True)
+      self.failUnlessEqual(before, after)
+
+   def testExtractXml_041(self):
+      """
+      Extract complete document containing all required and optional fields,
+      using a peers configuration section, validate=True.
+      """
+      path = self.resources["cback.conf.21"]
       before = Config(xmlPath=path, validate=True)
       beforeXml = before.extractXml(validate=True)
       after = Config(xmlData=beforeXml, validate=True)
