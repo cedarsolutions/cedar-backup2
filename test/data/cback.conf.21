@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Document containing all required fields, peers in peer configuration and not staging. -->
+<!-- Document containing all required and optional fields, peers in peer configuration and not staging. -->
 <cb_config>
    <reference>
       <author>$Author: pronovic $</author>
@@ -32,6 +32,8 @@
       <backup_group>group</backup_group>
       <rcp_command>/usr/bin/scp -1 -B</rcp_command>
       <rsh_command>/usr/bin/ssh</rsh_command>
+      <cback_command>/usr/bin/cback</cback_command>
+      <managed_actions>collect, purge</managed_actions>
       <override>
          <command>mkisofs</command>
          <abs_path>/usr/bin/mkisofs</abs_path>
@@ -75,6 +77,23 @@
          <backup_user>someone</backup_user>
          <rcp_command>scp -B</rcp_command>
          <collect_dir>/home/whatever/tmp</collect_dir>
+      </peer>
+      <peer>
+         <name>machine4</name>
+         <type>remote</type>
+         <backup_user>someone</backup_user>
+         <rcp_command>scp -B</rcp_command>
+         <rsh_command>ssh</rsh_command>
+         <cback_command>cback</cback_command>
+         <managed>Y</managed>
+         <collect_dir>/aa</collect_dir>
+      </peer>
+      <peer>
+         <name>machine5</name>
+         <type>remote</type>
+         <managed>N</managed>
+         <managed_actions>collect, purge</managed_actions>
+         <collect_dir>/bb</collect_dir>
       </peer>
    </peers>
    <collect>

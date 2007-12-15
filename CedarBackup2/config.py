@@ -1717,11 +1717,16 @@ class RemotePeer(object):
       - The collect directory must be an absolute path.
       - The remote user must be a non-empty string.
       - The rcp command must be a non-empty string.
+      - The rsh command must be a non-empty string.
+      - The cback command must be a non-empty string.
+      - Any managed action name must be a non-empty string matching C{ACTION_NAME_REGEX}
 
    @sort: __init__, __repr__, __str__, __cmp__, name, collectDir, remoteUser, rcpCommand
    """
 
-   def __init__(self, name=None, collectDir=None, remoteUser=None, rcpCommand=None):
+   def __init__(self, name=None, collectDir=None, remoteUser=None, 
+                rcpCommand=None, rshCommand=None, cbackCommand=None, 
+                managed=False, managedActions=None):
       """
       Constructor for the C{RemotePeer} class.
 
@@ -1729,6 +1734,10 @@ class RemotePeer(object):
       @param collectDir: Collect directory to stage files from on peer.
       @param remoteUser: Name of backup user on remote peer.
       @param rcpCommand: Overridden rcp-compatible copy command for peer.
+      @param rshCommand: Overridden rsh-compatible remote shell command for peer.
+      @param cbackCommand: Overridden cback-compatible command to use on remote peer.
+      @param managed: Indicates whether this is a managed peer.
+      @param managedActions: Overridden set of actions that are managed on the peer.
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -1736,16 +1745,26 @@ class RemotePeer(object):
       self._collectDir = None
       self._remoteUser = None
       self._rcpCommand = None
+      self._rshCommand = None
+      self._cbackCommand = None
+      self._managed = None
+      self._managedActions = None
       self.name = name
       self.collectDir = collectDir
       self.remoteUser = remoteUser
       self.rcpCommand = rcpCommand
+      self.rshCommand = rshCommand
+      self.cbackCommand = cbackCommand
+      self.managed = managed
+      self.managedActions = managedActions
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "RemotePeer(%s, %s, %s, %s)" % (self.name, self.collectDir, self.remoteUser, self.rcpCommand)
+      return "RemotePeer(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.name, self.collectDir, self.remoteUser, 
+                                                             self.rcpCommand, self.rshCommand, self.cbackCommand,
+                                                             self.managed, self.managedActions)
 
    def __str__(self):
       """
@@ -1778,6 +1797,26 @@ class RemotePeer(object):
             return 1
       if self._rcpCommand != other._rcpCommand:
          if self._rcpCommand < other._rcpCommand:
+            return -1
+         else:
+            return 1
+      if self._rshCommand != other._rshCommand:
+         if self._rshCommand < other._rshCommand:
+            return -1
+         else:
+            return 1
+      if self._cbackCommand != other._cbackCommand:
+         if self._cbackCommand < other._cbackCommand:
+            return -1
+         else:
+            return 1
+      if self._managed != other._managed:
+         if self._managed < other._managed:
+            return -1
+         else:
+            return 1
+      if self._managedActions != other._managedActions:
+         if self._managedActions < other._managedActions:
             return -1
          else:
             return 1
@@ -1853,10 +1892,86 @@ class RemotePeer(object):
       """
       return self._rcpCommand
 
+   def _setRshCommand(self, value):
+      """
+      Property target used to set the rsh command.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The rsh command must be a non-empty string.")
+      self._rshCommand = value
+
+   def _getRshCommand(self):
+      """
+      Property target used to get the rsh command.
+      """
+      return self._rshCommand
+
+   def _setCbackCommand(self, value):
+      """
+      Property target used to set the cback command.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The cback command must be a non-empty string.")
+      self._cbackCommand = value
+
+   def _getCbackCommand(self):
+      """
+      Property target used to get the cback command.
+      """
+      return self._cbackCommand
+
+   def _setManaged(self, value):
+      """
+      Property target used to set the managed flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._managed = True
+      else:
+         self._managed = False
+
+   def _getManaged(self):
+      """
+      Property target used to get the managed flag.
+      """
+      return self._managed
+
+   def _setManagedActions(self, value):
+      """
+      Property target used to set the managed actions list.
+      Elements do not have to exist on disk at the time of assignment.
+      """
+      if value is None:
+         self._managedActions = None
+      else:
+         try:
+            saved = self._managedActions
+            self._managedActions = RegexMatchList(ACTION_NAME_REGEX, emptyAllowed=False, prefix="Action name")
+            self._managedActions.extend(value)
+         except Exception, e:
+            self._managedActions = saved
+            raise e
+
+   def _getManagedActions(self):
+      """
+      Property target used to get the managed actions list.
+      """
+      return self._managedActions
+
    name = property(_getName, _setName, None, "Name of the peer, must be a valid hostname.")
    collectDir = property(_getCollectDir, _setCollectDir, None, "Collect directory to stage files from on peer.")
    remoteUser = property(_getRemoteUser, _setRemoteUser, None, "Name of backup user on remote peer.")
    rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "Overridden rcp-compatible copy command for peer.")
+   rshCommand = property(_getRshCommand, _setRshCommand, None, "Overridden rsh-compatible remote shell command for peer.")
+   cbackCommand = property(_getCbackCommand, _setCbackCommand, None, "Overridden cback-compatible command to use on remote peer.")
+   managed = property(_getManaged, _setManaged, None, "Indicates whether this is a managed peer.")
+   managedActions = property(_getManagedActions, _setManagedActions, None, "Overridden set of actions that are managed on the peer.")
 
 
 ########################################################################
@@ -2140,6 +2255,8 @@ class OptionsConfig(object):
       - All of the other values must be non-empty strings if they are set to something other than C{None}.
       - The overrides list must be a list of C{CommandOverride} objects.
       - The hooks list must be a list of C{ActionHook} objects.
+      - The cback command must be a non-empty string.
+      - Any managed action name must be a non-empty string matching C{ACTION_NAME_REGEX}
 
    @sort: __init__, __repr__, __str__, __cmp__, startingDay, workingDir, 
          backupUser, backupGroup, rcpCommand, rshCommand, overrides
@@ -2147,7 +2264,8 @@ class OptionsConfig(object):
 
    def __init__(self, startingDay=None, workingDir=None, backupUser=None, 
                 backupGroup=None, rcpCommand=None, overrides=None, 
-                hooks=None, rshCommand=None):
+                hooks=None, rshCommand=None, cbackCommand=None,
+                managedActions=None):
       """
       Constructor for the C{OptionsConfig} class.
 
@@ -2157,8 +2275,10 @@ class OptionsConfig(object):
       @param backupGroup: Effective group that backups should run as.
       @param rcpCommand: Default rcp-compatible copy command for staging.
       @param rshCommand: Default rsh-compatible command to use for remote shells.
+      @param cbackCommand: Default cback-compatible command to use on managed remote peers.
       @param overrides: List of configured command path overrides, if any.
       @param hooks: List of configured pre- and post-action hooks.
+      @parma managedActions: Default set of actions that are managed on remote peers.
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -2168,25 +2288,30 @@ class OptionsConfig(object):
       self._backupGroup = None
       self._rcpCommand = None
       self._rshCommand = None
+      self._cbackCommand = None
       self._overrides = None
       self._hooks = None
+      self._managedActions = None
       self.startingDay = startingDay
       self.workingDir = workingDir
       self.backupUser = backupUser
       self.backupGroup = backupGroup
       self.rcpCommand = rcpCommand
       self.rshCommand = rshCommand
+      self.cbackCommand = cbackCommand
       self.overrides = overrides
       self.hooks = hooks
+      self.managedActions = managedActions
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "OptionsConfig(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir,  
-                                                                self.backupUser, self.backupGroup, 
-                                                                self.rcpCommand, self.overrides,
-                                                                self.hooks, self.rshCommand)
+      return "OptionsConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir,  
+                                                                        self.backupUser, self.backupGroup, 
+                                                                        self.rcpCommand, self.overrides,
+                                                                        self.hooks, self.rshCommand,
+                                                                        self.cbackCommand, self.managedActions)
 
    def __str__(self):
       """
@@ -2232,6 +2357,11 @@ class OptionsConfig(object):
             return -1
          else:
             return 1
+      if self._cbackCommand != other._cbackCommand:
+         if self._cbackCommand < other._cbackCommand:
+            return -1
+         else:
+            return 1
       if self._overrides != other._overrides:
          if self._overrides < other._overrides:
             return -1
@@ -2239,6 +2369,11 @@ class OptionsConfig(object):
             return 1
       if self._hooks != other._hooks:
          if self._hooks < other._hooks:
+            return -1
+         else:
+            return 1
+      if self._managedActions != other._managedActions:
+         if self._managedActions < other._managedActions:
             return -1
          else:
             return 1
@@ -2349,6 +2484,23 @@ class OptionsConfig(object):
       """
       return self._rshCommand
 
+   def _setCbackCommand(self, value):
+      """
+      Property target used to set the cback command.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The cback command must be a non-empty string.")
+      self._cbackCommand = value
+
+   def _getCbackCommand(self):
+      """
+      Property target used to get the cback command.
+      """
+      return self._cbackCommand
+
    def _setOverrides(self, value):
       """
       Property target used to set the command path overrides list.
@@ -2395,14 +2547,38 @@ class OptionsConfig(object):
       """
       return self._hooks
 
+   def _setManagedActions(self, value):
+      """
+      Property target used to set the managed actions list.
+      Elements do not have to exist on disk at the time of assignment.
+      """
+      if value is None:
+         self._managedActions = None
+      else:
+         try:
+            saved = self._managedActions
+            self._managedActions = RegexMatchList(ACTION_NAME_REGEX, emptyAllowed=False, prefix="Action name")
+            self._managedActions.extend(value)
+         except Exception, e:
+            self._managedActions = saved
+            raise e
+
+   def _getManagedActions(self):
+      """
+      Property target used to get the managed actions list.
+      """
+      return self._managedActions
+
    startingDay = property(_getStartingDay, _setStartingDay, None, "Day that starts the week.")
    workingDir = property(_getWorkingDir, _setWorkingDir, None, "Working (temporary) directory to use for backups.")
    backupUser = property(_getBackupUser, _setBackupUser, None, "Effective user that backups should run as.")
    backupGroup = property(_getBackupGroup, _setBackupGroup, None, "Effective group that backups should run as.")
    rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "Default rcp-compatible copy command for staging.")
    rshCommand = property(_getRshCommand, _setRshCommand, None, "Default rsh-compatible command to use for remote shells.")
+   cbackCommand = property(_getCbackCommand, _setCbackCommand, None, "Default cback-compatible command to use on managed remote peers.")
    overrides = property(_getOverrides, _setOverrides, None, "List of configured command path overrides, if any.")
    hooks = property(_getHooks, _setHooks, None, "List of configured pre- and post-action hooks.")
+   managedActions = property(_getManagedActions, _setManagedActions, None, "Default set of actions that are managed on remote peers.")
 
 
 ########################################################################
@@ -4005,13 +4181,19 @@ class Config(object):
          backupGroup    //cb_config/options/backup_group
          rcpCommand     //cb_config/options/rcp_command
          rshCommand     //cb_config/options/rsh_command
+         cbackCommand   //cb_config/options/cback_command
+         managedActions //cb_config/options/managed_actions
+
+      The list of managed actions is a comma-separated list of action names.
 
       We also read groups of the following items, one list element per
       item::
 
          overrides      //cb_config/options/override
+         hooks          //cb_config/options/hook
 
-      The overrides are parsed by L{_parseOverrides}.
+      The overrides are parsed by L{_parseOverrides} and the hooks are parsed
+      by L{_parseHooks}.
 
       @param parentNode: Parent node to search beneath.
 
@@ -4028,8 +4210,11 @@ class Config(object):
          options.backupGroup = readString(sectionNode, "backup_group")
          options.rcpCommand = readString(sectionNode, "rcp_command")
          options.rshCommand = readString(sectionNode, "rsh_command")
+         options.cbackCommand = readString(sectionNode, "cback_command")
          options.overrides = Config._parseOverrides(sectionNode)
          options.hooks = Config._parseHooks(sectionNode)
+         managedActions = readString(sectionNode, "managed_actions")
+         options.managedActions = Config._parseCommaSeparatedString(managedActions)
       return options
    _parseOptions = staticmethod(_parseOptions)
 
@@ -4441,8 +4626,12 @@ class Config(object):
       We also read the following individual fields for remote peers
       only::
 
-         remoteUser  backup_user
-         rcpCommand  rcp_command
+         remoteUser     backup_user
+         rcpCommand     rcp_command
+         rshCommand     rsh_command
+         cbackCommand   cback_command
+         managed        managed
+         managedActions managed_actions
 
       Additionally, the value in the C{type} field is used to determine whether
       this entry is a remote peer.  If the type is C{"remote"}, it's a remote
@@ -4472,6 +4661,11 @@ class Config(object):
                remotePeer.collectDir = readString(entry, "collect_dir")
                remotePeer.remoteUser = readString(entry, "backup_user")
                remotePeer.rcpCommand = readString(entry, "rcp_command")
+               remotePeer.rshCommand = readString(entry, "rsh_command")
+               remotePeer.cbackCommand = readString(entry, "cback_command")
+               remotePeer.managed = readBoolean(entry, "managed")
+               managedActions = readString(entry, "managed_actions")
+               remotePeer.managedActions = Config._parseCommaSeparatedString(managedActions)
                remotePeers.append(remotePeer)
       if localPeers == []:
          localPeers = None
@@ -4655,6 +4849,8 @@ class Config(object):
          backupGroup    //cb_config/options/backup_group
          rcpCommand     //cb_config/options/rcp_command
          rshCommand     //cb_config/options/rsh_command
+         cbackCommand   //cb_config/options/cback_command
+         managedActions //cb_config/options/managed_actions
 
       We also add groups of the following items, one list element per
       item::
@@ -4680,6 +4876,9 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "backup_group", optionsConfig.backupGroup)
          addStringNode(xmlDom, sectionNode, "rcp_command", optionsConfig.rcpCommand)
          addStringNode(xmlDom, sectionNode, "rsh_command", optionsConfig.rshCommand)
+         addStringNode(xmlDom, sectionNode, "cback_command", optionsConfig.cbackCommand)
+         managedActions = Config._buildCommaSeparatedString(optionsConfig.managedActions)
+         addStringNode(xmlDom, sectionNode, "managed_actions", managedActions)
          if optionsConfig.overrides is not None:
             for override in optionsConfig.overrides:
                Config._addOverride(xmlDom, sectionNode, override)
@@ -5077,10 +5276,15 @@ class Config(object):
 
       We add the following fields to the document::
 
-         name        peer/name
-         collectDir  peer/collect_dir
-         remoteUser  peer/backup_user
-         rcpCommand  peer/rcp_command
+         name            peer/name
+         collectDir      peer/collect_dir
+         remoteUser      peer/backup_user
+         rcpCommand      peer/rcp_command
+         rcpCommand      peer/rcp_command
+         rshCommand      peer/rsh_command
+         cbackCommand    peer/cback_command
+         managed         peer/managed
+         managedActions  peer/managed_actions
 
       Additionally, C{peer/type} is filled in with C{"remote"}, since this is a
       remote peer.
@@ -5102,6 +5306,11 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "collect_dir", remotePeer.collectDir)
          addStringNode(xmlDom, sectionNode, "backup_user", remotePeer.remoteUser)
          addStringNode(xmlDom, sectionNode, "rcp_command", remotePeer.rcpCommand)
+         addStringNode(xmlDom, sectionNode, "rsh_command", remotePeer.rshCommand)
+         addStringNode(xmlDom, sectionNode, "cback_command", remotePeer.cbackCommand)
+         addBooleanNode(xmlDom, sectionNode, "managed", remotePeer.managed)
+         managedActions = Config._buildCommaSeparatedString(remotePeer.managedActions)
+         addStringNode(xmlDom, sectionNode, "managed_actions", managedActions)
    _addRemotePeer = staticmethod(_addRemotePeer)
 
    def _addPurgeDir(xmlDom, parentNode, purgeDir):
@@ -5459,6 +5668,9 @@ class Config(object):
                raise ValueError("Remote user must either be set in options section or individual remote peer.")
             if (self.options is None or self.options.rcpCommand is None) and remotePeer.rcpCommand is None: # redundant
                raise ValueError("Remote copy command must either be set in options section or individual remote peer.")
+            if remotePeer.managed:
+               if (self.options is None or self.options.rshCommand is None) and remotePeer.rshCommand is None: # redundant
+                  raise ValueError("Remote shell command must either be set in options section or individual remote peer.")
       Config._checkUnique("Duplicate peer names exist:", names)
 
 

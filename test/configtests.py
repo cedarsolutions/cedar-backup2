@@ -3313,16 +3313,24 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(None, remotePeer.collectDir)
       self.failUnlessEqual(None, remotePeer.remoteUser)
       self.failUnlessEqual(None, remotePeer.rcpCommand)
+      self.failUnlessEqual(None, remotePeer.rshCommand)
+      self.failUnlessEqual(None, remotePeer.cbackCommand)
+      self.failUnlessEqual(False, remotePeer.managed)
+      self.failUnlessEqual(None, remotePeer.managedActions)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      remotePeer = RemotePeer("myname", "/stuff", "backup", "scp -1 -B")
+      remotePeer = RemotePeer("myname", "/stuff", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
       self.failUnlessEqual("myname", remotePeer.name)
       self.failUnlessEqual("/stuff", remotePeer.collectDir)
       self.failUnlessEqual("backup", remotePeer.remoteUser)
       self.failUnlessEqual("scp -1 -B", remotePeer.rcpCommand)
+      self.failUnlessEqual("ssh", remotePeer.rshCommand)
+      self.failUnlessEqual("cback", remotePeer.cbackCommand)
+      self.failUnlessEqual(True, remotePeer.managed)
+      self.failUnlessEqual(["collect", ], remotePeer.managedActions)
 
    def testConstructor_003(self):
       """
@@ -3441,6 +3449,131 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessAssignRaises(ValueError, remotePeer, "rcpCommand", "")
       self.failUnlessEqual(None, remotePeer.rcpCommand)
 
+   def testConstructor_016(self):
+      """
+      Test assignment of rshCommand attribute, valid value.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.rshCommand)
+      remotePeer.rshCommand = "scp"
+      self.failUnlessEqual("scp", remotePeer.rshCommand)
+
+   def testConstructor_017(self):
+      """
+      Test assignment of rshCommand attribute, invalid value (empty).
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.rshCommand)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "rshCommand", "")
+      self.failUnlessEqual(None, remotePeer.rshCommand)
+
+   def testConstructor_018(self):
+      """
+      Test assignment of cbackCommand attribute, valid value.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.cbackCommand)
+      remotePeer.cbackCommand = "scp"
+      self.failUnlessEqual("scp", remotePeer.cbackCommand)
+
+   def testConstructor_019(self):
+      """
+      Test assignment of cbackCommand attribute, invalid value (empty).
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.cbackCommand)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "cbackCommand", "")
+      self.failUnlessEqual(None, remotePeer.cbackCommand)
+
+   def testConstructor_021(self):
+      """
+      Test assignment of managed attribute, None value.
+      """
+      remotePeer = RemotePeer(managed=True)
+      self.failUnlessEqual(True, remotePeer.managed)
+      remotePeer.managed = None
+      self.failUnlessEqual(False, remotePeer.managed)
+
+   def testConstructor_022(self):
+      """
+      Test assignment of managed attribute, valid value (real boolean).
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(False, remotePeer.managed)
+      remotePeer.managed = True
+      self.failUnlessEqual(True, remotePeer.managed)
+      remotePeer.managed = False
+      self.failUnlessEqual(False, remotePeer.managed)
+
+   def testConstructor_023(self):
+      """
+      Test assignment of managed attribute, valid value (expression).
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(False, remotePeer.managed)
+      remotePeer.managed = 0
+      self.failUnlessEqual(False, remotePeer.managed)
+      remotePeer.managed = []
+      self.failUnlessEqual(False, remotePeer.managed)
+      remotePeer.managed = None
+      self.failUnlessEqual(False, remotePeer.managed)
+      remotePeer.managed = ['a']
+      self.failUnlessEqual(True, remotePeer.managed)
+      remotePeer.managed = 3
+      self.failUnlessEqual(True, remotePeer.managed)
+
+   def testConstructor_024(self):
+      """
+      Test assignment of managedActions attribute, None value.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.managedActions)
+      remotePeer.managedActions = None
+      self.failUnlessEqual(None, remotePeer.managedActions)
+
+   def testConstructor_025(self):
+      """
+      Test assignment of managedActions attribute, empty list.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.managedActions)
+      remotePeer.managedActions = []
+      self.failUnlessEqual([], remotePeer.managedActions)
+
+   def testConstructor_026(self):
+      """
+      Test assignment of managedActions attribute, non-empty list, valid values.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.managedActions)
+      remotePeer.managedActions = ['a', 'b', ]
+      self.failUnlessEqual(['a', 'b'], remotePeer.managedActions)
+
+   def testConstructor_027(self):
+      """
+      Test assignment of managedActions attribute, non-empty list, invalid value.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.managedActions)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "managedActions", ["KEN", ])
+      self.failUnlessEqual(None, remotePeer.managedActions)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "managedActions", ["hello, world" ])
+      self.failUnlessEqual(None, remotePeer.managedActions)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "managedActions", ["dash-word", ])
+      self.failUnlessEqual(None, remotePeer.managedActions)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "managedActions", ["", ])
+      self.failUnlessEqual(None, remotePeer.managedActions)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "managedActions", [None, ])
+      self.failUnlessEqual(None, remotePeer.managedActions)
+
+   def testConstructor_028(self):
+      """
+      Test assignment of managedActions attribute, non-empty list, mixed values.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.managedActions)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "managedActions", ["ken", "dash-word", ])
+
 
    ############################
    # Test comparison operators
@@ -3464,8 +3597,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
       self.failUnless(remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
       self.failUnless(remotePeer1 <= remotePeer2)
@@ -3491,8 +3624,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, name differs.
       """
-      remotePeer1 = RemotePeer("name1", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
-      remotePeer2 = RemotePeer("name2", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      remotePeer1 = RemotePeer("name1", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer2 = RemotePeer("name2", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
@@ -3519,8 +3652,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, collectDir differs.
       """
-      remotePeer1 = RemotePeer("name", "/etc", "backup", "scp -1 -B")
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      remotePeer1 = RemotePeer("name", "/etc", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
@@ -3547,8 +3680,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, remoteUser differs.
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "spot", "scp -1 -B")
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "spot", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
@@ -3575,8 +3708,152 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, rcpCommand differs.
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -2 -B")
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B")
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -2 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(not remotePeer1 < remotePeer2)
+      self.failUnless(not remotePeer1 <= remotePeer2)
+      self.failUnless(remotePeer1 > remotePeer2)
+      self.failUnless(remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_011(self):
+      """
+      Test comparison of two differing objects, rshCommand differs (one None).
+      """
+      remotePeer1 = RemotePeer()
+      remotePeer2 = RemotePeer(rshCommand="ssh")
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_012(self):
+      """
+      Test comparison of two differing objects, rshCommand differs.
+      """
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh2", "cback", True, [ "collect", ])
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh1", "cback", True, [ "collect", ])
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(not remotePeer1 < remotePeer2)
+      self.failUnless(not remotePeer1 <= remotePeer2)
+      self.failUnless(remotePeer1 > remotePeer2)
+      self.failUnless(remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_013(self):
+      """
+      Test comparison of two differing objects, cbackCommand differs (one None).
+      """
+      remotePeer1 = RemotePeer()
+      remotePeer2 = RemotePeer(cbackCommand="cback")
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_014(self):
+      """
+      Test comparison of two differing objects, cbackCommand differs.
+      """
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback2", True, [ "collect", ])
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback1", True, [ "collect", ])
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(not remotePeer1 < remotePeer2)
+      self.failUnless(not remotePeer1 <= remotePeer2)
+      self.failUnless(remotePeer1 > remotePeer2)
+      self.failUnless(remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_015(self):
+      """
+      Test comparison of two differing objects, managed differs (one None).
+      """
+      remotePeer1 = RemotePeer()
+      remotePeer2 = RemotePeer(managed=True)
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_016(self):
+      """
+      Test comparison of two differing objects, managed differs.
+      """
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", False, [ "collect", ])
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_017(self):
+      """
+      Test comparison of two differing objects, managedActions differs (one
+      None, one empty).
+      """
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, None)
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [])
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_018(self):
+      """
+      Test comparison of two differing objects, managedActions differs (one
+      None, one not empty).
+      """
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, None)
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_019(self):
+      """
+      Test comparison of two differing objects, managedActions differs (one
+      empty, one not empty).
+      """
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [] )
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_020(self):
+      """
+      Test comparison of two differing objects, managedActions differs (both
+      not empty).
+      """
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "purge", ])
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
@@ -4300,21 +4577,26 @@ class TestOptionsConfig(unittest.TestCase):
       self.failUnlessEqual(None, options.backupGroup)
       self.failUnlessEqual(None, options.rcpCommand)
       self.failUnlessEqual(None, options.rshCommand)
+      self.failUnlessEqual(None, options.cbackCommand)
       self.failUnlessEqual(None, options.overrides)
+      self.failUnlessEqual(None, options.hooks)
+      self.failUnlessEqual(None, options.managedActions)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values (lists empty).
       """
-      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [], [], "ssh")
+      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", [], [], "ssh", "cback", [])
       self.failUnlessEqual("monday", options.startingDay)
       self.failUnlessEqual("/tmp", options.workingDir)
       self.failUnlessEqual("user", options.backupUser)
       self.failUnlessEqual("group", options.backupGroup)
       self.failUnlessEqual("scp -1 -B", options.rcpCommand)
       self.failUnlessEqual("ssh", options.rshCommand)
+      self.failUnlessEqual("cback", options.cbackCommand)
       self.failUnlessEqual([], options.overrides)
       self.failUnlessEqual([], options.hooks)
+      self.failUnlessEqual([], options.managedActions)
 
    def testConstructor_003(self):
       """
@@ -4487,15 +4769,18 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), ]
       hooks = [ PreActionHook("collect", "ls -l"), ]
-      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
       self.failUnlessEqual("monday", options.startingDay)
       self.failUnlessEqual("/tmp", options.workingDir)
       self.failUnlessEqual("user", options.backupUser)
       self.failUnlessEqual("group", options.backupGroup)
       self.failUnlessEqual("scp -1 -B", options.rcpCommand)
       self.failUnlessEqual("ssh", options.rshCommand)
+      self.failUnlessEqual("cback", options.cbackCommand)
       self.failUnlessEqual(overrides, options.overrides)
       self.failUnlessEqual(hooks, options.hooks)
+      self.failUnlessEqual(managedActions, options.managedActions)
 
    def testConstructor_021(self):
       """
@@ -4658,6 +4943,85 @@ class TestOptionsConfig(unittest.TestCase):
       self.failUnlessAssignRaises(ValueError, options, "rshCommand", "")
       self.failUnlessEqual(None, options.rshCommand)
 
+   def testConstructor_038(self):
+      """
+      Test assignment of cbackCommand attribute, None value.
+      """
+      options = OptionsConfig(cbackCommand="command")
+      self.failUnlessEqual("command", options.cbackCommand)
+      options.cbackCommand = None
+      self.failUnlessEqual(None, options.cbackCommand)
+
+   def testConstructor_039(self):
+      """
+      Test assignment of cbackCommand attribute, valid value.
+      """
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.cbackCommand)
+      options.cbackCommand = "command"
+      self.failUnlessEqual("command", options.cbackCommand)
+
+   def testConstructor_040(self):
+      """
+      Test assignment of cbackCommand attribute, invalid value (empty).
+      """
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.cbackCommand)
+      self.failUnlessAssignRaises(ValueError, options, "cbackCommand", "")
+      self.failUnlessEqual(None, options.cbackCommand)
+
+   def testConstructor_041(self):
+      """
+      Test assignment of managedActions attribute, None value.
+      """
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.managedActions)
+      options.managedActions = None
+      self.failUnlessEqual(None, options.managedActions)
+
+   def testConstructor_042(self):
+      """
+      Test assignment of managedActions attribute, empty list.
+      """
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.managedActions)
+      options.managedActions = []
+      self.failUnlessEqual([], options.managedActions)
+
+   def testConstructor_043(self):
+      """
+      Test assignment of managedActions attribute, non-empty list, valid values.
+      """
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.managedActions)
+      options.managedActions = ['a', 'b', ]
+      self.failUnlessEqual(['a', 'b'], options.managedActions)
+
+   def testConstructor_044(self):
+      """
+      Test assignment of managedActions attribute, non-empty list, invalid value.
+      """
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.managedActions)
+      self.failUnlessAssignRaises(ValueError, options, "managedActions", ["KEN", ])
+      self.failUnlessEqual(None, options.managedActions)
+      self.failUnlessAssignRaises(ValueError, options, "managedActions", ["hello, world" ])
+      self.failUnlessEqual(None, options.managedActions)
+      self.failUnlessAssignRaises(ValueError, options, "managedActions", ["dash-word", ])
+      self.failUnlessEqual(None, options.managedActions)
+      self.failUnlessAssignRaises(ValueError, options, "managedActions", ["", ])
+      self.failUnlessEqual(None, options.managedActions)
+      self.failUnlessAssignRaises(ValueError, options, "managedActions", [None, ])
+      self.failUnlessEqual(None, options.managedActions)
+
+   def testConstructor_045(self):
+      """
+      Test assignment of managedActions attribute, non-empty list, mixed values.
+      """
+      options = OptionsConfig()
+      self.failUnlessEqual(None, options.managedActions)
+      self.failUnlessAssignRaises(ValueError, options, "managedActions", ["ken", "dash-word", ])
+
 
    ############################
    # Test comparison operators
@@ -4683,8 +5047,9 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
       self.failUnlessEqual(options1, options2)
       self.failUnless(options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4713,8 +5078,9 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
-      options2 = OptionsConfig("tuesday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("tuesday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -4743,8 +5109,9 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp/whatever", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp/whatever", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4773,8 +5140,9 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user2", "group", "scp -1 -B", overrides, hooks, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user1", "group", "scp -1 -B", overrides, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user2", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user1", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4803,8 +5171,9 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group1", "scp -1 -B", overrides, hooks, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group2", "scp -1 -B", overrides, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group1", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group2", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -4833,8 +5202,9 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -2 -B", overrides, hooks, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -2 -B", overrides, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4851,8 +5221,9 @@ class TestOptionsConfig(unittest.TestCase):
       overrides1 = None
       overrides2 = []
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -4869,8 +5240,9 @@ class TestOptionsConfig(unittest.TestCase):
       overrides1 = None
       overrides2 = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2, "ssh")
       self.failUnless(options1 < options2)
@@ -4887,8 +5259,9 @@ class TestOptionsConfig(unittest.TestCase):
       overrides1 = [ CommandOverride("one", "/one"), ]
       overrides2 = []
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4905,8 +5278,9 @@ class TestOptionsConfig(unittest.TestCase):
       overrides1 = [ CommandOverride("one", "/one"), ]
       overrides2 = [ CommandOverride(), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides1, hooks, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides2, hooks, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -4923,8 +5297,9 @@ class TestOptionsConfig(unittest.TestCase):
       overrides = [ CommandOverride("one", "/one"), ]
       hooks1 = None
       hooks2 = []
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 < options2)
@@ -4941,8 +5316,9 @@ class TestOptionsConfig(unittest.TestCase):
       overrides = [ CommandOverride("one", "/one"), ]
       hooks1 = [ PreActionHook("collect", "ls -l ") ]
       hooks2 = [ PostActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(options1 > options2)
@@ -4959,8 +5335,9 @@ class TestOptionsConfig(unittest.TestCase):
       overrides = [ CommandOverride("one", "/one"), ]
       hooks1 = [ PreActionHook("collect", "ls -l ") ]
       hooks2 = [ PreActionHook("stage", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 > options2)
@@ -4977,8 +5354,9 @@ class TestOptionsConfig(unittest.TestCase):
       overrides = [ CommandOverride("one", "/one"), ]
       hooks1 = [ PreActionHook("collect", "ls -l ") ]
       hooks2 = [ PostActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks1, "ssh", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks2, "ssh", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
@@ -5007,14 +5385,122 @@ class TestOptionsConfig(unittest.TestCase):
       """
       overrides = [ CommandOverride("one", "/one"), ]
       hooks = [ PreActionHook("collect", "ls -l ") ]
-      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh2")
-      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh1")
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh2", "cback", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh1", "cback", managedActions)
       self.failIfEqual(options1, options2)
       self.failUnless(not options1 == options2)
       self.failUnless(not options1 < options2)
       self.failUnless(not options1 <= options2)
       self.failUnless(options1 > options2)
       self.failUnless(options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_023(self):
+      """
+      Test comparison of two differing objects, cbackCommand differs (one None).
+      """
+      options1 = OptionsConfig()
+      options2 = OptionsConfig(rshCommand="command")
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_024(self):
+      """
+      Test comparison of two differing objects, cbackCommand differs.
+      """
+      overrides = [ CommandOverride("one", "/one"), ]
+      hooks = [ PreActionHook("collect", "ls -l ") ]
+      managedActions = [ "collect", "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback1", managedActions)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback2", managedActions)
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_025(self):
+      """
+      Test comparison of two differing objects, managedActions differs (one
+      None, one empty).
+      """
+      overrides = [ CommandOverride("one", "/one"), ]
+      hooks = [ PreActionHook("collect", "ls -l ") ]
+      managedActions1 = None
+      managedActions2 = []
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions1)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions2)
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_026(self):
+      """
+      Test comparison of two differing objects, managedActions differs (one
+      None, one not empty).
+      """
+      overrides = [ CommandOverride("one", "/one"), ]
+      hooks = [ PreActionHook("collect", "ls -l ") ]
+      managedActions1 = None
+      managedActions2 = [ "collect", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions1)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions2)
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_027(self):
+      """
+      Test comparison of two differing objects, managedActions differs (one
+      empty, one not empty).
+      """
+      overrides = [ CommandOverride("one", "/one"), ]
+      hooks = [ PreActionHook("collect", "ls -l ") ]
+      managedActions1 = [] 
+      managedActions2 = [ "collect", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions1)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions2)
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_028(self):
+      """
+      Test comparison of two differing objects, managedActions differs (both
+      not empty).
+      """
+      overrides = [ CommandOverride("one", "/one"), ]
+      hooks = [ PreActionHook("collect", "ls -l ") ]
+      managedActions1 = [ "collect", ] 
+      managedActions2 = [ "purge", ]
+      options1 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions1)
+      options2 = OptionsConfig("monday", "/tmp", "user", "group", "scp -1 -B", overrides, hooks, "ssh", "cback", managedActions2)
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
       self.failUnless(options1 != options2)
 
 
@@ -9948,9 +10434,10 @@ class TestConfig(unittest.TestCase):
       path = self.resources["cback.conf.6"]
       config = Config(xmlPath=path, validate=False)
       expected = Config()
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PostActionHook("stage", "df -k"), ]
+      expected.options.managedActions = [ "collect", "purge", ]
       self.failUnlessEqual(expected, config)
 
    def testParse_014(self):
@@ -10191,9 +10678,10 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions = []
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.options.managedActions = [ "collect", "purge", ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
@@ -10256,9 +10744,10 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
                                                         dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
                                                                                         afterList=["one",])))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.options.managedActions = [ "collect", "purge", ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
@@ -10318,9 +10807,10 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions = []
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", 102))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", 350))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.options.managedActions = [ "collect", "purge", ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
@@ -10383,9 +10873,10 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
                                                         dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
                                                                                         afterList=["one",])))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.options.managedActions = [ "collect", "purge", ]
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
@@ -10527,9 +11018,10 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
                                                         dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
                                                                                         afterList=["one",])))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.options.managedActions = [ "collect", "purge", ]
       expected.peers = PeersConfig()
       expected.peers.localPeers = []
       expected.peers.remotePeers = []
@@ -10537,6 +11029,8 @@ class TestConfig(unittest.TestCase):
       expected.peers.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
       expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
       expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      expected.peers.remotePeers.append(RemotePeer("machine4", "/aa", remoteUser="someone", rcpCommand="scp -B", rshCommand="ssh", cbackCommand="cback", managed=True, managedActions=None))
+      expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge",]))
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
@@ -10594,9 +11088,10 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
                                                         dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
                                                                                         afterList=["one",])))
-      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh")
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.options.managedActions = [ "collect", "purge", ]
       expected.peers = PeersConfig()
       expected.peers.localPeers = []
       expected.peers.remotePeers = []
@@ -10604,6 +11099,8 @@ class TestConfig(unittest.TestCase):
       expected.peers.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
       expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
       expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      expected.peers.remotePeers.append(RemotePeer("machine4", "/aa", remoteUser="someone", rcpCommand="scp -B", rshCommand="ssh", cbackCommand="cback", managed=True, managedActions=None))
+      expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge",]))
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
@@ -10681,6 +11178,8 @@ class TestConfig(unittest.TestCase):
       expected.peers.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
       expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
       expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      expected.peers.remotePeers.append(RemotePeer("machine4", "/aa", remoteUser="someone", rcpCommand="scp -B", rshCommand="ssh", cbackCommand="cback", managed=True, managedActions=None))
+      expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge",]))
       self.failUnlessEqual(expected, config)
 
    def testParse_040(self):
