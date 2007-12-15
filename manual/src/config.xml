@@ -187,6 +187,13 @@
       &lt;backup_group&gt;group&lt;/backup_group&gt;
       &lt;rcp_command&gt;/usr/bin/scp -B&lt;/rcp_command&gt;
    &lt;/options&gt;
+   &lt;peers&gt;
+      &lt;peer&gt;
+         &lt;name&gt;debian&lt;/name&gt;
+         &lt;type&gt;local&lt;/type&gt;
+         &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+      &lt;/peer&gt;
+   &lt;/peers&gt;
    &lt;collect&gt;
       &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
       &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
@@ -203,11 +210,6 @@
    &lt;/collect&gt;
    &lt;stage&gt;
       &lt;staging_dir&gt;/opt/backup/staging&lt;/staging_dir&gt;
-      &lt;peer&gt;
-         &lt;name&gt;debian&lt;/name&gt;
-         &lt;type&gt;local&lt;/type&gt;
-         &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
-      &lt;/peer&gt;
    &lt;/stage&gt;
    &lt;store&gt;
       &lt;source_dir&gt;/opt/backup/staging&lt;/source_dir&gt;
@@ -408,7 +410,7 @@
                   </para>
                   <para>
                      This value is also used as the default remote backup user
-                     for remote peers in the staging section.
+                     for remote peers.
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be non-empty
@@ -447,9 +449,8 @@
                   </para>
                   <para>
                      This value is used as the default value for all remote
-                     peers in the staging section.  Technically, this value is
-                     not needed by clients, but we require it for all config
-                     files anyway.
+                     peers.  Technically, this value is not needed by clients,
+                     but we require it for all config files anyway.
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be non-empty
@@ -668,6 +669,236 @@
 
          </variablelist>
          
+      </sect2>
+
+      <!-- ################################################################# -->
+
+      <sect2 id="cedar-config-configfile-peers">
+
+         <title>Peers Configuration</title>
+
+         <para>
+            The peers configuration section contains a list of the peers
+            managed by a master.  This section is only required on a master.
+         </para>
+            
+         <para>
+            This is an example peers configuration section:
+         </para>
+
+         <programlisting>
+&lt;peers&gt;
+   &lt;peer&gt;
+      &lt;name&gt;machine1&lt;/name&gt;
+      &lt;type&gt;local&lt;/type&gt;
+      &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+   &lt;/peer&gt;
+   &lt;peer&gt;
+      &lt;name&gt;machine2&lt;/name&gt;
+      &lt;type&gt;remote&lt;/type&gt;
+      &lt;backup_user&gt;backup&lt;/backup_user&gt;
+      &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+   &lt;/peer&gt;
+&lt;/peers&gt;
+         </programlisting>
+
+         <para>
+            The following elements are part of the peers configuration section:
+         </para>
+
+         <variablelist>
+
+            <varlistentry>
+               <term><literal>peer</literal> (local version)</term>
+               <listitem>
+                  <para>Local client peer in a backup pool.</para>
+                  <para>
+                     This is a subsection which contains information about a
+                     specific local client peer managed by a master.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one remote or local peer must be
+                     configured.
+                  </para>
+                  <para>
+                     The local peer subsection must contain the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>name</literal></term>
+                        <listitem>
+                           <para>Name of the peer, typically a valid hostname.</para>
+                           <para>
+                              For local peers, this value is only used for
+                              reference.  However, it is good practice to list
+                              the peer's hostname here, for consistency with
+                              remote peers.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty,
+                              and unique among all peers.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>type</literal></term>
+                        <listitem>
+                           <para>Type of this peer.</para>
+                           <para>
+                              This value identifies the type of the peer.  For
+                              a local peer, it must always be <literal>local</literal>.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be <literal>local</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>collect_dir</literal></term>
+                        <listitem>
+                           <para>Collect directory to stage from for this peer.</para>
+                           <para>
+                              The master will copy all files in this directory
+                              into the appropriate staging directory.  Since
+                              this is a local peer, the directory is assumed to
+                              be reachable via normal filesystem operations
+                              (i.e. <command>cp</command>). 
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>peer</literal> (remote version)</term>
+               <listitem>
+                  <para>Remote client peer in a backup pool.</para>
+                  <para>
+                     This is a subsection which contains information about a
+                     specific remote client peer managed by a master.  A remote
+                     peer is one which can be reached via an rsh-based network
+                     call.
+                  </para>
+                  <para>
+                     This section can be repeated as many times as is
+                     necessary.  At least one remote or local peer must be
+                     configured.
+                  </para>
+                  <para>
+                     The remote peer subsection must contain the following fields:
+                  </para>
+
+                  <variablelist>
+
+                     <varlistentry>
+                        <term><literal>name</literal></term>
+                        <listitem>
+                           <para>Hostname of the peer.</para>
+                           <para>
+                              For remote peers, this must be a valid DNS
+                              hostname or IP address which can be resolved
+                              during an rsh-based network call.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty,
+                              and unique among all peers.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>type</literal></term>
+                        <listitem>
+                           <para>Type of this peer.</para>
+                           <para>
+                              This value identifies the type of the peer.  For
+                              a remote peer, it must always be <literal>remote</literal>.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be <literal>remote</literal>.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>collect_dir</literal></term>
+                        <listitem>
+                           <para>Collect directory to stage from for this peer.</para>
+                           <para>
+                              The master will copy all files in this directory
+                              into the appropriate staging directory.  Since
+                              this is a remote peer, the directory is assumed to
+                              be reachable via rsh-based network operations
+                              (i.e. <command>scp</command> or the configured
+                              rcp command). 
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>backup_user</literal></term>
+                        <listitem>
+                           <para>Name of backup user on the remote peer.</para>
+                           <para>
+                              This username will be used when copying files from
+                              the remote peer via an rsh-based network connection.
+                           </para>
+                           <para>
+                              This field is optional.  if it doesn't exist, the
+                              backup will use the default backup user from the 
+                              options section.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>rcp_command</literal></term>
+                        <listitem>
+                           <para>The rcp-compatible copy command for this peer.</para>
+                           <para>
+                              The rcp command should be the exact command used for
+                              remote copies, including any required options.  If you are
+                              using <command>scp</command>, you should pass it the
+                              <option>-B</option> option, so <command>scp</command> will
+                              not ask for any user input (which could hang the backup).
+                              A common example is something like <command>/usr/bin/scp
+                              -B</command>.
+                           </para>
+                           <para>
+                              This field is optional.  if it doesn't exist, the
+                              backup will use the default rcp command from the
+                              options section.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                  </variablelist>
+
+               </listitem>
+            </varlistentry>
+
+         </variablelist>
+
       </sect2>
 
       <!-- ################################################################# -->
@@ -1311,13 +1542,32 @@
 
          <para>
             The stage configuration section contains configuration options
-            related the the stage action.  The section defines the set of peers
-            in a backup pool, and then also indicates where data from those
-            peers should be staged to.
+            related the the stage action.  The section indicates where date
+            from peers can be staged to.  
+         </para>
+            
+         <para>
+            This section can also (optionally) override the list of peers so
+            that not all peers are staged.  If you provide
+            <emphasis>any</emphasis> peers in this section, then the list of
+            peers here completely replaces the list of peers in the peers
+            configuration section for the purposes of staging.
          </para>
 
          <para>
-            This is an example stage configuration section:
+            This is an example stage configuration section for the simple case
+            where the list of peers is taken from peers configuration:
+         </para>
+
+         <programlisting>
+&lt;stage&gt;
+   &lt;staging_dir&gt;/opt/backup/stage&lt;/staging_dir&gt;
+&lt;/stage&gt;
+         </programlisting>
+
+         <para>
+            This is an example stage configuration section that overrides the
+            default list of peers:
          </para>
 
          <programlisting>
@@ -1385,6 +1635,12 @@
                      This section can be repeated as many times as is
                      necessary.  At least one remote or local peer must be
                      configured.
+                  </para>
+                  <para>
+                     <emphasis>Remember</emphasis>, if you provide
+                     <emphasis>any</emphasis> local or remote peer in staging
+                     configuration, the global peer configuration is completely
+                     replaced by the staging peer configuration.
                   </para>
                   <para>
                      The local peer subsection must contain the following fields:
@@ -1459,6 +1715,12 @@
                      This section can be repeated as many times as is
                      necessary.  At least one remote or local peer must be
                      configured.
+                  </para>
+                  <para>
+                     <emphasis>Remember</emphasis>, if you provide
+                     <emphasis>any</emphasis> local or remote peer in staging
+                     configuration, the global peer configuration is completely
+                     replaced by the staging peer configuration.
                   </para>
                   <para>
                      The remote peer subsection must contain the following fields:
