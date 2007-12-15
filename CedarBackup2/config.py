@@ -159,9 +159,9 @@ Validation
 
    I{Options Validations}
 
-   All fields must be filled in.  The rcp command is used as a default value
-   for all remote peers in the staging section.  Remote peers can also rely on
-   the backup user as the default remote user name if they choose.
+   All fields must be filled in except the rsh command.  The rcp and rsh
+   commands are used as default values for all remote peers.  Remote peers can
+   also rely on the backup user as the default remote user name if they choose.
 
    I{Peers Validations}
 
@@ -2142,11 +2142,12 @@ class OptionsConfig(object):
       - The hooks list must be a list of C{ActionHook} objects.
 
    @sort: __init__, __repr__, __str__, __cmp__, startingDay, workingDir, 
-         backupUser, backupGroup, rcpCommand, overrides
+         backupUser, backupGroup, rcpCommand, rshCommand, overrides
    """
 
    def __init__(self, startingDay=None, workingDir=None, backupUser=None, 
-                backupGroup=None, rcpCommand=None, overrides=None, hooks=None):
+                backupGroup=None, rcpCommand=None, overrides=None, 
+                hooks=None, rshCommand=None):
       """
       Constructor for the C{OptionsConfig} class.
 
@@ -2155,6 +2156,7 @@ class OptionsConfig(object):
       @param backupUser: Effective user that backups should run as.
       @param backupGroup: Effective group that backups should run as.
       @param rcpCommand: Default rcp-compatible copy command for staging.
+      @param rshCommand: Default rsh-compatible command to use for remote shells.
       @param overrides: List of configured command path overrides, if any.
       @param hooks: List of configured pre- and post-action hooks.
 
@@ -2165,6 +2167,7 @@ class OptionsConfig(object):
       self._backupUser = None
       self._backupGroup = None
       self._rcpCommand = None
+      self._rshCommand = None
       self._overrides = None
       self._hooks = None
       self.startingDay = startingDay
@@ -2172,6 +2175,7 @@ class OptionsConfig(object):
       self.backupUser = backupUser
       self.backupGroup = backupGroup
       self.rcpCommand = rcpCommand
+      self.rshCommand = rshCommand
       self.overrides = overrides
       self.hooks = hooks
 
@@ -2179,10 +2183,10 @@ class OptionsConfig(object):
       """
       Official string representation for class instance.
       """
-      return "OptionsConfig(%s, %s, %s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir,  
-                                                            self.backupUser, self.backupGroup, 
-                                                            self.rcpCommand, self.overrides,
-                                                            self.hooks)
+      return "OptionsConfig(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.startingDay, self.workingDir,  
+                                                                self.backupUser, self.backupGroup, 
+                                                                self.rcpCommand, self.overrides,
+                                                                self.hooks, self.rshCommand)
 
    def __str__(self):
       """
@@ -2220,6 +2224,11 @@ class OptionsConfig(object):
             return 1
       if self._rcpCommand != other._rcpCommand:
          if self._rcpCommand < other._rcpCommand:
+            return -1
+         else:
+            return 1
+      if self._rshCommand != other._rshCommand:
+         if self._rshCommand < other._rshCommand:
             return -1
          else:
             return 1
@@ -2323,6 +2332,23 @@ class OptionsConfig(object):
       """
       return self._rcpCommand
 
+   def _setRshCommand(self, value):
+      """
+      Property target used to set the rsh command.
+      The value must be a non-empty string if it is not C{None}.
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("The rsh command must be a non-empty string.")
+      self._rshCommand = value
+
+   def _getRshCommand(self):
+      """
+      Property target used to get the rsh command.
+      """
+      return self._rshCommand
+
    def _setOverrides(self, value):
       """
       Property target used to set the command path overrides list.
@@ -2374,6 +2400,7 @@ class OptionsConfig(object):
    backupUser = property(_getBackupUser, _setBackupUser, None, "Effective user that backups should run as.")
    backupGroup = property(_getBackupGroup, _setBackupGroup, None, "Effective group that backups should run as.")
    rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "Default rcp-compatible copy command for staging.")
+   rshCommand = property(_getRshCommand, _setRshCommand, None, "Default rsh-compatible command to use for remote shells.")
    overrides = property(_getOverrides, _setOverrides, None, "List of configured command path overrides, if any.")
    hooks = property(_getHooks, _setHooks, None, "List of configured pre- and post-action hooks.")
 
@@ -3977,6 +4004,7 @@ class Config(object):
          backupUser     //cb_config/options/backup_user
          backupGroup    //cb_config/options/backup_group
          rcpCommand     //cb_config/options/rcp_command
+         rshCommand     //cb_config/options/rsh_command
 
       We also read groups of the following items, one list element per
       item::
@@ -3999,6 +4027,7 @@ class Config(object):
          options.backupUser = readString(sectionNode, "backup_user")
          options.backupGroup = readString(sectionNode, "backup_group")
          options.rcpCommand = readString(sectionNode, "rcp_command")
+         options.rshCommand = readString(sectionNode, "rsh_command")
          options.overrides = Config._parseOverrides(sectionNode)
          options.hooks = Config._parseHooks(sectionNode)
       return options
@@ -4625,6 +4654,7 @@ class Config(object):
          backupUser     //cb_config/options/backup_user
          backupGroup    //cb_config/options/backup_group
          rcpCommand     //cb_config/options/rcp_command
+         rshCommand     //cb_config/options/rsh_command
 
       We also add groups of the following items, one list element per
       item::
@@ -4649,6 +4679,7 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "backup_user", optionsConfig.backupUser)
          addStringNode(xmlDom, sectionNode, "backup_group", optionsConfig.backupGroup)
          addStringNode(xmlDom, sectionNode, "rcp_command", optionsConfig.rcpCommand)
+         addStringNode(xmlDom, sectionNode, "rsh_command", optionsConfig.rshCommand)
          if optionsConfig.overrides is not None:
             for override in optionsConfig.overrides:
                Config._addOverride(xmlDom, sectionNode, override)
@@ -5231,9 +5262,10 @@ class Config(object):
       """
       Validates options configuration.
 
-      All fields must be filled in.  The rcp command is used as a default value
-      for all remote peers in the staging section.  Remote peers can also rely
-      on the backup user as the default remote user name if they choose.
+      All fields must be filled in except the rsh command.  The rcp and rsh
+      commands are used as default values for all remote peers.  Remote peers
+      can also rely on the backup user as the default remote user name if they
+      choose.
 
       @raise ValueError: If reference configuration is invalid.
       """
