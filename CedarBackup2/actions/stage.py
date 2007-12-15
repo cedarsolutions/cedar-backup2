@@ -212,8 +212,15 @@ def _getLocalPeers(config):
    @return: List of L{LocalPeer} objects.
    """
    localPeers = []
-   if config.stage.localPeers is not None:
-      for peer in config.stage.localPeers:
+   configPeers = None
+   if config.stage.hasPeers():
+      logger.debug("Using list of local peers from stage configuration.")
+      configPeers = config.stage.localPeers
+   elif config.peers is not None and config.peers.hasPeers():
+      logger.debug("Using list of local peers from peers configuration.")
+      configPeers = config.peers.localPeers
+   if configPeers is not None:
+      for peer in configPeers:
          localPeer = LocalPeer(peer.name, peer.collectDir)
          localPeers.append(localPeer)
          logger.debug("Found local peer: [%s]" % localPeer.name)
@@ -231,8 +238,15 @@ def _getRemotePeers(config):
    @return: List of L{RemotePeer} objects.
    """
    remotePeers = []
-   if config.stage.remotePeers is not None:
-      for peer in config.stage.remotePeers:
+   configPeers = None
+   if config.stage.hasPeers():
+      logger.debug("Using list of remote peers from stage configuration.")
+      configPeers = config.stage.remotePeers
+   elif config.peers is not None and config.peers.hasPeers():
+      logger.debug("Using list of remote peers from peers configuration.")
+      configPeers = config.peers.remotePeers
+   if configPeers is not None:
+      for peer in config.peers.remotePeers:
          remoteUser = _getRemoteUser(config, peer)
          rcpCommand = _getRcpCommand(config, peer)
          remotePeer = RemotePeer(peer.name, peer.collectDir, config.options.workingDir,
