@@ -105,7 +105,7 @@ from CedarBackup2.testutil import findResources, removedir, failUnlessAssignRais
 from CedarBackup2.config import ActionHook, PreActionHook, PostActionHook, CommandOverride
 from CedarBackup2.config import ExtendedAction, ActionDependencies, BlankBehavior
 from CedarBackup2.config import CollectFile, CollectDir, PurgeDir, LocalPeer, RemotePeer
-from CedarBackup2.config import ReferenceConfig, ExtensionsConfig, OptionsConfig
+from CedarBackup2.config import ReferenceConfig, ExtensionsConfig, OptionsConfig, PeersConfig
 from CedarBackup2.config import CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config
 
 
@@ -118,7 +118,8 @@ RESOURCES = [ "cback.conf.1", "cback.conf.2", "cback.conf.3", "cback.conf.4",
               "cback.conf.5", "cback.conf.6", "cback.conf.7", "cback.conf.8", 
               "cback.conf.9", "cback.conf.10", "cback.conf.11", "cback.conf.12", 
               "cback.conf.13", "cback.conf.14", "cback.conf.15", "cback.conf.16", 
-              "cback.conf.17", "cback.conf.18", "cback.conf.19", "cback.conf.20", ]
+              "cback.conf.17", "cback.conf.18", "cback.conf.19", "cback.conf.20", 
+              "cback.conf.21", "cback.conf.22", "cback.conf.23", ]
 
 
 #######################################################################
@@ -4956,6 +4957,366 @@ class TestOptionsConfig(unittest.TestCase):
       self.failUnless(options1 != options2)
 
 
+########################
+# TestPeersConfig class
+########################
+
+class TestPeersConfig(unittest.TestCase):
+
+   """Tests for the PeersConfig class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = PeersConfig()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.localPeers)
+      self.failUnlessEqual(None, peers.remotePeers)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values (empty lists).
+      """
+      peers = PeersConfig([], [])
+      self.failUnlessEqual([], peers.localPeers)
+      self.failUnlessEqual([], peers.remotePeers)
+
+   def testConstructor_003(self):
+      """
+      Test constructor with all values filled in, with valid values (non-empty lists).
+      """
+      peers = PeersConfig([LocalPeer(), ], [RemotePeer(), ])
+      self.failUnlessEqual([LocalPeer(), ], peers.localPeers)
+      self.failUnlessEqual([RemotePeer(), ], peers.remotePeers)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of localPeers attribute, None value.
+      """
+      peers = PeersConfig(localPeers=[])
+      self.failUnlessEqual([], peers.localPeers)
+      peers.localPeers = None
+      self.failUnlessEqual(None, peers.localPeers)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of localPeers attribute, empty list.
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.localPeers)
+      peers.localPeers = []
+      self.failUnlessEqual([], peers.localPeers)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of localPeers attribute, single valid entry.
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.localPeers)
+      peers.localPeers = [LocalPeer(), ]
+      self.failUnlessEqual([LocalPeer(), ], peers.localPeers)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of localPeers attribute, multiple valid
+      entries.
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.localPeers)
+      peers.localPeers = [LocalPeer(name="one"), LocalPeer(name="two"), ]
+      self.failUnlessEqual([LocalPeer(name="one"), LocalPeer(name="two"), ], peers.localPeers)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of localPeers attribute, single invalid entry
+      (None).
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.localPeers)
+      self.failUnlessAssignRaises(ValueError, peers, "localPeers", [None, ])
+      self.failUnlessEqual(None, peers.localPeers)
+
+   def testConstructor_009(self):
+      """
+      Test assignment of localPeers attribute, single invalid entry
+      (not a LocalPeer).
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.localPeers)
+      self.failUnlessAssignRaises(ValueError, peers, "localPeers", [RemotePeer(), ])
+      self.failUnlessEqual(None, peers.localPeers)
+
+   def testConstructor_010(self):
+      """
+      Test assignment of localPeers attribute, mixed valid and
+      invalid entries.
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.localPeers)
+      self.failUnlessAssignRaises(ValueError, peers, "localPeers", [LocalPeer(), RemotePeer(), ])
+      self.failUnlessEqual(None, peers.localPeers)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of remotePeers attribute, None value.
+      """
+      peers = PeersConfig(remotePeers=[])
+      self.failUnlessEqual([], peers.remotePeers)
+      peers.remotePeers = None
+      self.failUnlessEqual(None, peers.remotePeers)
+
+   def testConstructor_012(self):
+      """
+      Test assignment of remotePeers attribute, empty list.
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.remotePeers)
+      peers.remotePeers = []
+      self.failUnlessEqual([], peers.remotePeers)
+
+   def testConstructor_013(self):
+      """
+      Test assignment of remotePeers attribute, single valid entry.
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.remotePeers)
+      peers.remotePeers = [RemotePeer(name="one"), ]
+      self.failUnlessEqual([RemotePeer(name="one"), ], peers.remotePeers)
+
+   def testConstructor_014(self):
+      """
+      Test assignment of remotePeers attribute, multiple valid
+      entries.
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.remotePeers)
+      peers.remotePeers = [RemotePeer(name="one"), RemotePeer(name="two"), ]
+      self.failUnlessEqual([RemotePeer(name="one"), RemotePeer(name="two"), ], peers.remotePeers)
+
+   def testConstructor_015(self):
+      """
+      Test assignment of remotePeers attribute, single invalid entry
+      (None).
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.remotePeers)
+      self.failUnlessAssignRaises(ValueError, peers, "remotePeers", [None, ])
+      self.failUnlessEqual(None, peers.remotePeers)
+
+   def testConstructor_016(self):
+      """
+      Test assignment of remotePeers attribute, single invalid entry
+      (not a RemotePeer).
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.remotePeers)
+      self.failUnlessAssignRaises(ValueError, peers, "remotePeers", [LocalPeer(), ])
+      self.failUnlessEqual(None, peers.remotePeers)
+
+   def testConstructor_017(self):
+      """
+      Test assignment of remotePeers attribute, mixed valid and
+      invalid entries.
+      """
+      peers = PeersConfig()
+      self.failUnlessEqual(None, peers.remotePeers)
+      self.failUnlessAssignRaises(ValueError, peers, "remotePeers", [LocalPeer(), RemotePeer(), ])
+      self.failUnlessEqual(None, peers.remotePeers)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      peers1 = PeersConfig()
+      peers2 = PeersConfig()
+      self.failUnlessEqual(peers1, peers2)
+      self.failUnless(peers1 == peers2)
+      self.failUnless(not peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(peers1 >= peers2)
+      self.failUnless(not peers1 != peers2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None (empty lists).
+      """
+      peers1 = PeersConfig([], [])
+      peers2 = PeersConfig([], [])
+      self.failUnlessEqual(peers1, peers2)
+      self.failUnless(peers1 == peers2)
+      self.failUnless(not peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(peers1 >= peers2)
+      self.failUnless(not peers1 != peers2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two identical objects, all attributes non-None (non-empty lists).
+      """
+      peers1 = PeersConfig([LocalPeer(), ], [RemotePeer(), ])
+      peers2 = PeersConfig([LocalPeer(), ], [RemotePeer(), ])
+      self.failUnlessEqual(peers1, peers2)
+      self.failUnless(peers1 == peers2)
+      self.failUnless(not peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(peers1 >= peers2)
+      self.failUnless(not peers1 != peers2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two differing objects, localPeers differs (one None,
+      one empty).
+      """
+      peers1 = PeersConfig(None, [RemotePeer(), ])
+      peers2 = PeersConfig([], [RemotePeer(), ])
+      self.failIfEqual(peers1, peers2)
+      self.failUnless(not peers1 == peers2)
+      self.failUnless(peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(not peers1 >= peers2)
+      self.failUnless(peers1 != peers2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two differing objects, localPeers differs (one None,
+      one not empty).
+      """
+      peers1 = PeersConfig(None, [RemotePeer(), ])
+      peers2 = PeersConfig([LocalPeer(), ], [RemotePeer(), ])
+      self.failIfEqual(peers1, peers2)
+      self.failUnless(not peers1 == peers2)
+      self.failUnless(peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(not peers1 >= peers2)
+      self.failUnless(peers1 != peers2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two differing objects, localPeers differs (one empty,
+      one not empty).
+      """
+      peers1 = PeersConfig([], [RemotePeer(), ])
+      peers2 = PeersConfig([LocalPeer(), ], [RemotePeer(), ])
+      self.failIfEqual(peers1, peers2)
+      self.failUnless(not peers1 == peers2)
+      self.failUnless(peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(not peers1 >= peers2)
+      self.failUnless(peers1 != peers2)
+
+   def testComparison_007(self):
+      """
+      Test comparison of two differing objects, localPeers differs (both not
+      empty).
+      """
+      peers1 = PeersConfig([LocalPeer(name="one"), ], [RemotePeer(), ])
+      peers2 = PeersConfig([LocalPeer(name="two"), ], [RemotePeer(), ])
+      self.failIfEqual(peers1, peers2)
+      self.failUnless(not peers1 == peers2)
+      self.failUnless(peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(not peers1 >= peers2)
+      self.failUnless(peers1 != peers2)
+
+   def testComparison_008(self):
+      """
+      Test comparison of two differing objects, remotePeers differs (one None,
+      one empty).
+      """
+      peers1 = PeersConfig([LocalPeer(), ], None)
+      peers2 = PeersConfig([LocalPeer(), ], [])
+      self.failIfEqual(peers1, peers2)
+      self.failUnless(not peers1 == peers2)
+      self.failUnless(peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(not peers1 >= peers2)
+      self.failUnless(peers1 != peers2)
+
+   def testComparison_009(self):
+      """
+      Test comparison of two differing objects, remotePeers differs (one None,
+      one not empty).
+      """
+      peers1 = PeersConfig([LocalPeer(), ], None)
+      peers2 = PeersConfig([LocalPeer(), ], [RemotePeer(), ])
+      self.failIfEqual(peers1, peers2)
+      self.failUnless(not peers1 == peers2)
+      self.failUnless(peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(not peers1 >= peers2)
+      self.failUnless(peers1 != peers2)
+
+   def testComparison_010(self):
+      """
+      Test comparison of two differing objects, remotePeers differs (one empty,
+      one not empty).
+      """
+      peers1 = PeersConfig([LocalPeer(), ], [])
+      peers2 = PeersConfig([LocalPeer(), ], [RemotePeer(), ])
+      self.failIfEqual(peers1, peers2)
+      self.failUnless(not peers1 == peers2)
+      self.failUnless(peers1 < peers2)
+      self.failUnless(peers1 <= peers2)
+      self.failUnless(not peers1 > peers2)
+      self.failUnless(not peers1 >= peers2)
+      self.failUnless(peers1 != peers2)
+
+   def testComparison_011(self):
+      """
+      Test comparison of two differing objects, remotePeers differs (both not
+      empty).
+      """
+      peers1 = PeersConfig([LocalPeer(), ], [RemotePeer(name="two"), ])
+      peers2 = PeersConfig([LocalPeer(), ], [RemotePeer(name="one"), ])
+      self.failIfEqual(peers1, peers2)
+      self.failUnless(not peers1 == peers2)
+      self.failUnless(not peers1 < peers2)
+      self.failUnless(not peers1 <= peers2)
+      self.failUnless(peers1 > peers2)
+      self.failUnless(peers1 >= peers2)
+      self.failUnless(peers1 != peers2)
+
+
 ##########################
 # TestCollectConfig class
 ##########################
@@ -7535,6 +7896,7 @@ class TestConfig(unittest.TestCase):
       config1.reference = ReferenceConfig()
       config1.extensions = ExtensionsConfig()
       config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig()
       config1.store = StoreConfig()
@@ -7544,6 +7906,7 @@ class TestConfig(unittest.TestCase):
       config2.reference = ReferenceConfig()
       config2.extensions = ExtensionsConfig()
       config2.options = OptionsConfig()
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
       config2.store = StoreConfig()
@@ -7579,6 +7942,7 @@ class TestConfig(unittest.TestCase):
       config1 = Config()
       config1.reference = ReferenceConfig(author="one")
       config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig()
       config1.store = StoreConfig()
@@ -7587,6 +7951,7 @@ class TestConfig(unittest.TestCase):
       config2 = Config()
       config2.reference = ReferenceConfig(author="two")
       config2.options = OptionsConfig()
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
       config2.store = StoreConfig()
@@ -7623,6 +7988,7 @@ class TestConfig(unittest.TestCase):
       config1.reference = ReferenceConfig()
       config1.extensions = ExtensionsConfig(None)
       config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig()
       config1.store = StoreConfig()
@@ -7632,6 +7998,7 @@ class TestConfig(unittest.TestCase):
       config2.reference = ReferenceConfig()
       config2.extensions = ExtensionsConfig([])
       config2.options = OptionsConfig()
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
       config2.store = StoreConfig()
@@ -7653,6 +8020,7 @@ class TestConfig(unittest.TestCase):
       config1.reference = ReferenceConfig()
       config1.extensions = ExtensionsConfig([])
       config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig()
       config1.store = StoreConfig()
@@ -7662,6 +8030,7 @@ class TestConfig(unittest.TestCase):
       config2.reference = ReferenceConfig()
       config2.extensions = ExtensionsConfig([ExtendedAction("one", "two", "three"), ])
       config2.options = OptionsConfig()
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
       config2.store = StoreConfig()
@@ -7683,15 +8052,17 @@ class TestConfig(unittest.TestCase):
       config1.reference = ReferenceConfig()
       config1.extensions = ExtensionsConfig([ExtendedAction("one", "two", "three"), ])
       config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig()
       config1.store = StoreConfig()
       config1.purge = PurgeConfig()
 
       config2 = Config()
-      config1.reference = ReferenceConfig()
-      config1.extensions = ExtensionsConfig([ExtendedAction("one", "two", "four"), ])
+      config2.reference = ReferenceConfig()
+      config2.extensions = ExtensionsConfig([ExtendedAction("one", "two", "four"), ])
       config2.options = OptionsConfig()
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
       config2.store = StoreConfig()
@@ -7727,6 +8098,7 @@ class TestConfig(unittest.TestCase):
       config1 = Config()
       config1.reference = ReferenceConfig()
       config1.options = OptionsConfig(startingDay="tuesday")
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig()
       config1.store = StoreConfig()
@@ -7735,6 +8107,7 @@ class TestConfig(unittest.TestCase):
       config2 = Config()
       config2.reference = ReferenceConfig()
       config2.options = OptionsConfig(startingDay="monday")
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
       config2.store = StoreConfig()
@@ -7770,6 +8143,7 @@ class TestConfig(unittest.TestCase):
       config1 = Config()
       config1.reference = ReferenceConfig()
       config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig(collectMode="daily")
       config1.stage = StageConfig()
       config1.store = StoreConfig()
@@ -7778,6 +8152,7 @@ class TestConfig(unittest.TestCase):
       config2 = Config()
       config2.reference = ReferenceConfig()
       config2.options = OptionsConfig()
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig(collectMode="incr")
       config2.stage = StageConfig()
       config2.store = StoreConfig()
@@ -7813,6 +8188,7 @@ class TestConfig(unittest.TestCase):
       config1 = Config()
       config1.reference = ReferenceConfig()
       config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig(targetDir="/something")
       config1.store = StoreConfig()
@@ -7821,6 +8197,7 @@ class TestConfig(unittest.TestCase):
       config2 = Config()
       config2.reference = ReferenceConfig()
       config2.options = OptionsConfig()
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig(targetDir="/whatever")
       config2.store = StoreConfig()
@@ -7856,6 +8233,7 @@ class TestConfig(unittest.TestCase):
       config1 = Config()
       config1.reference = ReferenceConfig()
       config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig()
       config1.store = StoreConfig(deviceScsiId="ATA:0,0,0")
@@ -7864,6 +8242,7 @@ class TestConfig(unittest.TestCase):
       config2 = Config()
       config2.reference = ReferenceConfig()
       config2.options = OptionsConfig()
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
       config2.store = StoreConfig(deviceScsiId="0,0,0")
@@ -7899,6 +8278,7 @@ class TestConfig(unittest.TestCase):
       config1 = Config()
       config1.reference = ReferenceConfig()
       config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
       config1.collect = CollectConfig()
       config1.stage = StageConfig()
       config1.store = StoreConfig()
@@ -7907,10 +8287,58 @@ class TestConfig(unittest.TestCase):
       config2 = Config()
       config2.reference = ReferenceConfig()
       config2.options = OptionsConfig()
+      config2.peers = PeersConfig()
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
       config2.store = StoreConfig()
       config2.purge = PurgeConfig(purgeDirs=[])
+
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_019(self):
+      """
+      Test comparison of two differing objects, peers differs (one None).
+      """
+      config1 = Config()
+      config2 = Config()
+      config2.peers = PeersConfig()
+      self.failIfEqual(config1, config2)
+      self.failUnless(not config1 == config2)
+      self.failUnless(config1 < config2)
+      self.failUnless(config1 <= config2)
+      self.failUnless(not config1 > config2)
+      self.failUnless(not config1 >= config2)
+      self.failUnless(config1 != config2)
+
+   def testComparison_020(self):
+      """
+      Test comparison of two identical objects, peers differs.
+      """
+      config1 = Config()
+      config1.reference = ReferenceConfig()
+      config1.extensions = ExtensionsConfig()
+      config1.options = OptionsConfig()
+      config1.peers = PeersConfig()
+      config1.collect = CollectConfig()
+      config1.stage = StageConfig()
+      config1.store = StoreConfig()
+      config1.purge = PurgeConfig()
+
+      config2 = Config()
+      config2.reference = ReferenceConfig()
+      config2.extensions = ExtensionsConfig()
+      config2.options = OptionsConfig()
+      config2.peers = PeersConfig(localPeers=[LocalPeer(),])
+      config2.collect = CollectConfig()
+      config2.stage = StageConfig()
+      config2.store = StoreConfig()
+      config2.purge = PurgeConfig()
 
       self.failIfEqual(config1, config2)
       self.failUnless(not config1 == config2)
@@ -8897,7 +9325,7 @@ class TestConfig(unittest.TestCase):
 
    def testValidate_048(self):
       """
-      Test that we catch a duplicate local peer name.
+      Test that we catch a duplicate local peer name in stage configuration.
       """
       config = Config()
       config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
@@ -8914,7 +9342,7 @@ class TestConfig(unittest.TestCase):
 
    def testValidate_049(self):
       """
-      Test that we catch a duplicate remote peer name.
+      Test that we catch a duplicate remote peer name in stage configuration.
       """
       config = Config()
       config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
@@ -8931,7 +9359,8 @@ class TestConfig(unittest.TestCase):
 
    def testValidate_050(self):
       """
-      Test that we catch a duplicate peer name duplicated between remote and local.
+      Test that we catch a duplicate peer name duplicated between remote and
+      local in stage configuration.
       """
       config = Config()
       config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
@@ -8944,6 +9373,320 @@ class TestConfig(unittest.TestCase):
 
       config.stage.localPeers = [ LocalPeer(name="duplicate", collectDir="/nowhere"),  ]
       config.stage.remotePeers = [ RemotePeer(name="duplicate", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_051(self):
+      """
+      Test validate on a None peers section.
+      """
+      config = Config()
+      config.peers = None
+      config._validatePeers()
+
+   def testValidate_052(self):
+      """
+      Test validate on an empty peers section.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_053(self):
+      """
+      Test validate on peers section containing None for the lists.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = None
+      config.peers.remotePeers = None
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_054(self):
+      """
+      Test validate on peers section containing [] for the lists.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = []
+      config.peers.remotePeers = []
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_055(self):
+      """
+      Test validate on peers section containing one local peer that is empty.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = [LocalPeer(), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_056(self):
+      """
+      Test validate on peers section containing local peer with only a name.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = [LocalPeer(name="name"), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_057(self):
+      """
+      Test validate on peers section containing one local peer with a name and
+      path, None for remote list.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = [LocalPeer(name="name", collectDir="/somewhere"), ]
+      config.peers.remotePeers = None
+      config._validatePeers()
+
+   def testValidate_058(self):
+      """
+      Test validate on peers section containing one local peer with a name and
+      path, [] for remote list.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = [LocalPeer(name="name", collectDir="/somewhere"), ]
+      config.peers.remotePeers = []
+      config._validatePeers()
+
+   def testValidate_059(self):
+      """
+      Test validate on peers section containing one remote peer that is empty.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.remotePeers = [RemotePeer(), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_060(self):
+      """
+      Test validate on peers section containing one remote peer with only a name.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.remotePeers = [RemotePeer(name="blech"), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_061(self):
+      """
+      Test validate on peers section containing one remote peer with a name and
+      path, None for local list.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = None
+      config.peers.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config._validatePeers()
+      config.options = None
+      self.failUnlessRaises(ValueError, config._validatePeers)
+      config.peers.remotePeers[-1].remoteUser = "remote"
+      config.peers.remotePeers[-1].rcpCommand = "command"
+      config._validatePeers()
+
+   def testValidate_062(self):
+      """
+      Test validate on peers section containing one remote peer with a name and
+      path, [] for local list.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = []
+      config.peers.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config._validatePeers()
+      config.options = None
+      self.failUnlessRaises(ValueError, config._validatePeers)
+      config.peers.remotePeers[-1].remoteUser = "remote"
+      config.peers.remotePeers[-1].rcpCommand = "command"
+      config._validatePeers()
+
+   def testValidate_063(self):
+      """
+      Test validate on peers section containing one remote and one local peer.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = [LocalPeer(name="metoo", collectDir="/nowhere"),  ]
+      config.peers.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config._validatePeers()
+      config.options = None
+      self.failUnlessRaises(ValueError, config._validatePeers)
+      config.peers.remotePeers[-1].remoteUser = "remote"
+      config.peers.remotePeers[-1].rcpCommand = "command"
+      config._validatePeers()
+
+   def testValidate_064(self):
+      """
+      Test validate on peers section containing multiple remote and local peers.
+      """
+      config = Config()
+      config.peers = PeersConfig()
+      config.peers.localPeers = [LocalPeer(name="metoo", collectDir="/nowhere"), LocalPeer("one", "/two"), LocalPeer("a", "/b"), ]
+      config.peers.remotePeers = [RemotePeer(name="blech", collectDir="/some/path/to/data"), RemotePeer("c", "/d"), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config._validatePeers()
+      config.options = None
+      self.failUnlessRaises(ValueError, config._validatePeers)
+      config.peers.remotePeers[-1].remoteUser = "remote"
+      config.peers.remotePeers[-1].rcpCommand = "command"
+      self.failUnlessRaises(ValueError, config._validatePeers)
+      config.peers.remotePeers[0].remoteUser = "remote"
+      config.peers.remotePeers[0].rcpCommand = "command"
+      config._validatePeers()
+
+   def testValidate_065(self):
+      """
+      Test that we catch a duplicate local peer name in peers configuration.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.peers = PeersConfig()
+
+      config.peers.localPeers = [ LocalPeer(name="unique1", collectDir="/nowhere"), 
+                                  LocalPeer(name="unique2", collectDir="/nowhere"), ]
+      config._validatePeers()
+
+      config.peers.localPeers = [ LocalPeer(name="duplicate", collectDir="/nowhere"), 
+                                  LocalPeer(name="duplicate", collectDir="/nowhere"), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_066(self):
+      """
+      Test that we catch a duplicate remote peer name in peers configuration.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.peers = PeersConfig()
+
+      config.peers.remotePeers = [ RemotePeer(name="unique1", collectDir="/some/path/to/data"), 
+                                   RemotePeer(name="unique2", collectDir="/some/path/to/data"), ]
+      config._validatePeers()
+
+      config.peers.remotePeers = [ RemotePeer(name="duplicate", collectDir="/some/path/to/data"), 
+                                   RemotePeer(name="duplicate", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_067(self):
+      """
+      Test that we catch a duplicate peer name duplicated between remote and
+      local in peers configuration.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.peers = PeersConfig()
+
+      config.peers.localPeers = [ LocalPeer(name="unique1", collectDir="/nowhere"),  ]
+      config.peers.remotePeers = [ RemotePeer(name="unique2", collectDir="/some/path/to/data"), ]
+      config._validatePeers()
+
+      config.peers.localPeers = [ LocalPeer(name="duplicate", collectDir="/nowhere"),  ]
+      config.peers.remotePeers = [ RemotePeer(name="duplicate", collectDir="/some/path/to/data"), ]
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+   def testValidate_068(self):
+      """
+      Test that stage peers can be None, if peers configuration is not None.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.peers = PeersConfig()
+      config.stage = StageConfig()
+
+      config.peers.localPeers = [ LocalPeer(name="unique1", collectDir="/nowhere"),  ]
+      config.peers.remotePeers = [ RemotePeer(name="unique2", collectDir="/some/path/to/data"), ]
+
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = None
+      config.stage.remotePeers = None
+
+      config._validatePeers()
+      config._validateStage()
+
+   def testValidate_069(self):
+      """
+      Test that stage peers can be empty lists, if peers configuration is not None.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.peers = PeersConfig()
+      config.stage = StageConfig()
+
+      config.peers.localPeers = [ LocalPeer(name="unique1", collectDir="/nowhere"),  ]
+      config.peers.remotePeers = [ RemotePeer(name="unique2", collectDir="/some/path/to/data"), ]
+
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = []
+      config.stage.remotePeers = []
+
+      config._validatePeers()
+      config._validateStage()
+
+   def testValidate_070(self):
+      """
+      Test that staging local peers must be valid if filled in, even if peers
+      configuration is not None.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.peers = PeersConfig()
+      config.stage = StageConfig()
+
+      config.peers.localPeers = [ LocalPeer(name="unique1", collectDir="/nowhere"),  ]
+      config.peers.remotePeers = [ RemotePeer(name="unique2", collectDir="/some/path/to/data"), ]
+
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = [LocalPeer(), ]  # empty local peer is invalid, so validation should catch it
+      config.stage.remotePeers = []
+
+      config._validatePeers()
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_071(self):
+      """
+      Test that staging remote peers must be valid if filled in, even if peers
+      configuration is not None.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.peers = PeersConfig()
+      config.stage = StageConfig()
+
+      config.peers.localPeers = [ LocalPeer(name="unique1", collectDir="/nowhere"),  ]
+      config.peers.remotePeers = [ RemotePeer(name="unique2", collectDir="/some/path/to/data"), ]
+
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = []
+      config.stage.remotePeers = [RemotePeer(), ]  # empty remote peer is invalid, so validation should catch it
+
+      config._validatePeers()
+      self.failUnlessRaises(ValueError, config._validateStage)
+
+   def testValidate_072(self):
+      """
+      Test that staging local and remote peers must be valid if filled in, even
+      if peers configuration is not None.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="command")
+      config.peers = PeersConfig()
+      config.stage = StageConfig()
+
+      config.peers.localPeers = [ LocalPeer(name="unique1", collectDir="/nowhere"),  ]
+      config.peers.remotePeers = [ RemotePeer(name="unique2", collectDir="/some/path/to/data"), ]
+
+      config.stage.targetDir = "/whatever"
+      config.stage.localPeers = [LocalPeer(), ]  # empty local peer is invalid, so validation should catch it
+      config.stage.remotePeers = [RemotePeer(), ]  # empty remote peer is invalid, so validation should catch it
+
+      config._validatePeers()
       self.failUnlessRaises(ValueError, config._validateStage)
 
 
@@ -9680,6 +10423,186 @@ class TestConfig(unittest.TestCase):
       expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
       self.failUnlessEqual(expected, config)
 
+   def testParse_035(self):
+      """
+      Document containing all required fields, peers in peer configuration and not staging, validate=False.
+      """
+      path = self.resources["cback.conf.21"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration", "Generated by hand.")
+      expected.extensions = ExtensionsConfig()
+      expected.extensions.orderMode = "dependency"
+      expected.extensions.actions = []
+      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", index=None,
+                                                        dependencies=ActionDependencies()))
+      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
+                                                                                        afterList=["one",])))
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
+      expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.peers = PeersConfig()
+      expected.peers.localPeers = []
+      expected.peers.remotePeers = []
+      expected.peers.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
+      expected.peers.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
+      expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
+      expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
+      expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
+      expected.collect.collectFiles = []
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectDirs = []
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      collectDir = CollectDir(absolutePath="/opt")
+      collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
+      collectDir.relativeExcludePaths = [ "large", "backup", ]
+      collectDir.excludePatterns = [ ".*\.doc\.*", ".*\.xls\.*", ]
+      expected.collect.collectDirs.append(collectDir)
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = None
+      expected.stage.remotePeers = None
+      expected.store = StoreConfig()
+      expected.store.sourceDir = "/opt/backup/staging"
+      expected.store.mediaType = "dvd+rw"
+      expected.store.deviceType = "dvdwriter"
+      expected.store.devicePath = "/dev/cdrw"
+      expected.store.deviceScsiId = None
+      expected.store.driveSpeed = 1
+      expected.store.checkData = True
+      expected.store.checkMedia = True
+      expected.store.warnMidnite = True
+      expected.store.noEject = True
+      expected.store.blankBehavior = BlankBehavior()
+      expected.store.blankBehavior.blankMode = "weekly"
+      expected.store.blankBehavior.blankFactor = "1.3"
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = []
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
+      expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_036(self):
+      """
+      Document containing all required fields, peers in peer configuration and not staging, validate=True.
+      """
+      path = self.resources["cback.conf.21"]
+      config = Config(xmlPath=path, validate=True)
+      expected = Config()
+      expected.reference = ReferenceConfig("$Author: pronovic $", "1.3", "Sample configuration", "Generated by hand.")
+      expected.extensions = ExtensionsConfig()
+      expected.extensions.orderMode = "dependency"
+      expected.extensions.actions = []
+      expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", index=None,
+                                                        dependencies=ActionDependencies()))
+      expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
+                                                                                        afterList=["one",])))
+      expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B")
+      expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
+      expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
+      expected.peers = PeersConfig()
+      expected.peers.localPeers = []
+      expected.peers.remotePeers = []
+      expected.peers.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
+      expected.peers.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
+      expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
+      expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
+      expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
+      expected.collect.collectFiles = []
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectDirs = []
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      collectDir = CollectDir(absolutePath="/opt")
+      collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
+      collectDir.relativeExcludePaths = [ "large", "backup", ]
+      collectDir.excludePatterns = [ ".*\.doc\.*", ".*\.xls\.*", ]
+      expected.collect.collectDirs.append(collectDir)
+      expected.stage = StageConfig()
+      expected.stage.targetDir = "/opt/backup/staging"
+      expected.stage.localPeers = None
+      expected.stage.remotePeers = None
+      expected.store = StoreConfig()
+      expected.store.sourceDir = "/opt/backup/staging"
+      expected.store.mediaType = "dvd+rw"
+      expected.store.deviceType = "dvdwriter"
+      expected.store.devicePath = "/dev/cdrw"
+      expected.store.deviceScsiId = None
+      expected.store.driveSpeed = 1
+      expected.store.checkData = True
+      expected.store.checkMedia = True
+      expected.store.warnMidnite = True
+      expected.store.noEject = True
+      expected.store.blankBehavior = BlankBehavior()
+      expected.store.blankBehavior.blankMode = "weekly"
+      expected.store.blankBehavior.blankFactor = "1.3"
+      expected.purge = PurgeConfig()
+      expected.purge.purgeDirs = []
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/stage", 5))
+      expected.purge.purgeDirs.append(PurgeDir("/opt/backup/collect", 0))
+      expected.purge.purgeDirs.append(PurgeDir("/home/backup/tmp", 12))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_037(self):
+      """
+      Parse config document containing only a peers section, containing only
+      required fields, validate=False.
+      """
+      path = self.resources["cback.conf.22"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.peers = PeersConfig()
+      expected.peers.localPeers = None
+      expected.peers.remotePeers = [ RemotePeer("machine2", "/opt/backup/collect"), ]
+      self.failUnlessEqual(expected, config)
+
+   def testParse_038(self):
+      """
+      Parse config document containing only a peers section, containing only
+      required fields, validate=True.
+      """
+      path = self.resources["cback.conf.9"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
+   def testParse_039(self):
+      """
+      Parse config document containing only a peers section, containing all
+      required and optional fields, validate=False.
+      """
+      path = self.resources["cback.conf.23"]
+      config = Config(xmlPath=path, validate=False)
+      expected = Config()
+      expected.peers = PeersConfig()
+      expected.peers.localPeers = []
+      expected.peers.remotePeers = []
+      expected.peers.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
+      expected.peers.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
+      expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
+      self.failUnlessEqual(expected, config)
+
+   def testParse_040(self):
+      """
+      Parse config document containing only a peers section, containing all
+      required and optional fields, validate=True.
+      """
+      path = self.resources["cback.conf.23"]
+      self.failUnlessRaises(ValueError, Config, xmlPath=path, validate=True)
+
 
    #########################
    # Test the extract logic
@@ -10268,6 +11191,7 @@ def suite():
                               unittest.makeSuite(TestReferenceConfig, 'test'), 
                               unittest.makeSuite(TestExtensionsConfig, 'test'), 
                               unittest.makeSuite(TestOptionsConfig, 'test'), 
+                              unittest.makeSuite(TestPeersConfig, 'test'), 
                               unittest.makeSuite(TestCollectConfig, 'test'), 
                               unittest.makeSuite(TestStageConfig, 'test'), 
                               unittest.makeSuite(TestStoreConfig, 'test'), 

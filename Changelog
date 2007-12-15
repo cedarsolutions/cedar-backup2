@@ -1,6 +1,10 @@
-Version 2.14.1		unreleased
+Version 2.15.0		unreleased
 
 	* Minor documentation tweaks discovered during 3.0 development.
+	* Add support for managed peers, where the mater kicks off remote actions.
+	  - Add a new <peers> configuration section (PeersConfig) 
+	  - Change peers configuration in <stage> to just override <peers>
+	  - Modify stage process to take peers list from peers section (if available)
 
 Version 2.14.0		19 Sep 2007
 

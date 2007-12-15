@@ -65,8 +65,8 @@ Backwards Compatibility
    The configuration file format has changed between Cedar Backup 1.x and Cedar
    Backup 2.x.  Any Cedar Backup 1.x configuration file is also a valid Cedar
    Backup 2.x configuration file.  However, it doesn't work to go the other
-   direction, as the 2.x configuration files may contain additional fields that
-   are not accepted by older versions of the software.  
+   direction, as the 2.x configuration files contains additional configuration 
+   is not accepted by older versions of the software.  
 
 XML Configuration Structure
 ===========================
@@ -81,6 +81,7 @@ XML Configuration Structure
       - I{reference}: specifies reference information about the file (author, revision, etc)
       - I{extensions}: specifies mappings to Cedar Backup extensions (external code)
       - I{options}: specifies global configuration options
+      - I{peers}: specifies the set of peers in a master's backup pool
       - I{collect}: specifies configuration related to the collect action
       - I{stage}: specifies configuration related to the stage action
       - I{store}: specifies configuration related to the store action
@@ -162,6 +163,14 @@ Validation
    for all remote peers in the staging section.  Remote peers can also rely on
    the backup user as the default remote user name if they choose.
 
+   I{Peers Validations}
+
+   Local peers must be completely filled in, including both name and collect
+   directory.  Remote peers must also fill in the name and collect directory,
+   but can leave the remote user and rcp command unset.  In this case, the
+   remote user is assumed to match the backup user from the options section and
+   rcp command is taken directly from the options section.
+
    I{Collect Validations}
 
    The target directory must be filled in.  The collect mode, archive mode and
@@ -183,11 +192,9 @@ Validation
    (remote or local) between the two lists of peers.  A list with no entries
    can be either C{None} or an empty list C{[]} if desired.
 
-   Local peers must be completely filled in, including both name and collect
-   directory.  Remote peers must also fill in the name and collect directory,
-   but can leave the remote user and rcp command unset.  In this case, the
-   remote user is assumed to match the backup user from the options section and
-   rcp command is taken directly from the options section.
+   If a set of peers is provided, this configuration completely overrides
+   configuration in the peers configuration section, and the same validations
+   apply.
 
    I{Store Validations}
 
@@ -207,7 +214,7 @@ Validation
 
 @sort: ActionDependencies, ActionHook, PreActionHook, PostActionHook,
        ExtendedAction, CommandOverride, CollectFile, CollectDir, PurgeDir, LocalPeer, 
-       RemotePeer, ReferenceConfig, ExtensionsConfig, OptionsConfig,
+       RemotePeer, ReferenceConfig, ExtensionsConfig, OptionsConfig, PeersConfig,
        CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config,
        DEFAULT_DEVICE_TYPE, DEFAULT_MEDIA_TYPE, 
        VALID_DEVICE_TYPES, VALID_MEDIA_TYPES, 
@@ -2372,6 +2379,141 @@ class OptionsConfig(object):
 
 
 ########################################################################
+# PeersConfig class definition
+########################################################################
+
+class PeersConfig(object):
+
+   """
+   Class representing Cedar Backup global peer configuration.
+
+   This section contains a list of local and remote peers in a master's backup
+   pool.  The section is optional.  If a master does not define this section,
+   then all peers are unmanaged, and the stage configuration section must
+   explicitly list any peer that is to be staged.  If this section is
+   configured, then peers may be managed or unmanaged, and the stage section
+   peer configuration (if any) completely overrides this configuration.
+
+   As with all of the other classes that represent configuration sections, all
+   of these values are optional.  It is up to some higher-level construct to
+   decide whether everything they need is filled in.
+
+   The following restrictions exist on data in this class:
+
+      - The list of local peers must contain only C{LocalPeer} objects
+      - The list of remote peers must contain only C{RemotePeer} objects
+
+   @note: Lists within this class are "unordered" for equality comparisons.
+
+   @sort: __init__, __repr__, __str__, __cmp__, localPeers, remotePeers
+   """
+
+   def __init__(self, localPeers=None, remotePeers=None):
+      """
+      Constructor for the C{PeersConfig} class.
+
+      @param localPeers: List of local peers.
+      @param remotePeers: List of remote peers.
+
+      @raise ValueError: If one of the values is invalid.
+      """
+      self._localPeers = None
+      self._remotePeers = None
+      self.localPeers = localPeers
+      self.remotePeers = remotePeers
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "PeersConfig(%s, %s)" % (self.localPeers, self.remotePeers)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      Lists within this class are "unordered" for equality comparisons.
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self._localPeers != other._localPeers:
+         if self._localPeers < other._localPeers:
+            return -1
+         else:
+            return 1
+      if self._remotePeers != other._remotePeers:
+         if self._remotePeers < other._remotePeers:
+            return -1
+         else:
+            return 1
+      return 0
+
+   def hasPeers(self):
+      """
+      Indicates whether any peers are filled into this object.
+      @return: Boolean true if any local or remote peers are filled in, false otherwise.
+      """
+      return ((self.localPeers is not None and len(self.localPeers) > 0) or
+              (self.remotePeers is not None and len(self.remotePeers) > 0))
+
+   def _setLocalPeers(self, value):
+      """
+      Property target used to set the local peers list.
+      Either the value must be C{None} or each element must be a C{LocalPeer}.
+      @raise ValueError: If the value is not an absolute path.
+      """
+      if value is None:
+         self._localPeers = None
+      else:
+         try:
+            saved = self._localPeers
+            self._localPeers = ObjectTypeList(LocalPeer, "LocalPeer")
+            self._localPeers.extend(value)
+         except Exception, e:
+            self._localPeers = saved
+            raise e
+
+   def _getLocalPeers(self):
+      """
+      Property target used to get the local peers list.
+      """
+      return self._localPeers
+
+   def _setRemotePeers(self, value):
+      """
+      Property target used to set the remote peers list.
+      Either the value must be C{None} or each element must be a C{RemotePeer}.
+      @raise ValueError: If the value is not a C{RemotePeer}
+      """
+      if value is None:
+         self._remotePeers = None
+      else:
+         try:
+            saved = self._remotePeers
+            self._remotePeers = ObjectTypeList(RemotePeer, "RemotePeer")
+            self._remotePeers.extend(value)
+         except Exception, e:
+            self._remotePeers = saved
+            raise e
+
+   def _getRemotePeers(self):
+      """
+      Property target used to get the remote peers list.
+      """
+      return self._remotePeers
+
+   localPeers = property(_getLocalPeers, _setLocalPeers, None, "List of local peers.")
+   remotePeers = property(_getRemotePeers, _setRemotePeers, None, "List of remote peers.")
+
+
+########################################################################
 # CollectConfig class definition
 ########################################################################
 
@@ -2762,6 +2904,14 @@ class StageConfig(object):
          else:
             return 1
       return 0
+
+   def hasPeers(self):
+      """
+      Indicates whether any peers are filled into this object.
+      @return: Boolean true if any local or remote peers are filled in, false otherwise.
+      """
+      return ((self.localPeers is not None and len(self.localPeers) > 0) or
+              (self.remotePeers is not None and len(self.remotePeers) > 0))
 
    def _setTargetDir(self, value):
       """
@@ -3324,8 +3474,9 @@ class Config(object):
    @sort: __init__, __repr__, __str__, __cmp__, extractXml, validate, 
           reference, extensions, options, collect, stage, store, purge,
           _getReference, _setReference, _getExtensions, _setExtensions, 
-          _getOptions, _setOptions, _getCollect, _setCollect, _getStage, 
-          _setStage, _getStore, _setStore, _getPurge, _setPurge
+          _getOptions, _setOptions, _getPeers, _setPeers, _getCollect, 
+          _setCollect, _getStage, _setStage, _getStore, _setStore, 
+          _getPurge, _setPurge
    """
 
    ##############
@@ -3370,6 +3521,7 @@ class Config(object):
       self._reference = None
       self._extensions = None
       self._options = None
+      self._peers = None
       self._collect = None
       self._stage = None
       self._store = None
@@ -3377,6 +3529,7 @@ class Config(object):
       self.reference = None
       self.extensions = None
       self.options = None
+      self.peers = None
       self.collect = None
       self.stage = None
       self.store = None
@@ -3402,8 +3555,9 @@ class Config(object):
       """
       Official string representation for class instance.
       """
-      return "Config(%s, %s, %s, %s, %s, %s, %s)" % (self.reference, self.extensions, self.options, 
-                                                     self.collect, self.stage, self.store, self.purge)
+      return "Config(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.reference, self.extensions, self.options, 
+                                                         self.peers, self.collect, self.stage, self.store, 
+                                                         self.purge)
 
    def __str__(self):
       """
@@ -3437,6 +3591,11 @@ class Config(object):
             return 1
       if self._options != other._options:
          if self._options < other._options:
+            return -1
+         else:
+            return 1
+      if self._peers != other._peers:
+         if self._peers < other._peers:
             return -1
          else:
             return 1
@@ -3524,6 +3683,25 @@ class Config(object):
       """
       return self._options
 
+   def _setPeers(self, value):
+      """
+      Property target used to set the peers configuration value.
+      If not C{None}, the value must be an C{PeersConfig} object.
+      @raise ValueError: If the value is not a C{PeersConfig}
+      """
+      if value is None:
+         self._peers = None
+      else:
+         if not isinstance(value, PeersConfig):
+            raise ValueError("Value must be a C{PeersConfig} object.")
+         self._peers = value
+
+   def _getPeers(self):
+      """
+      Property target used to get the peers configuration value.
+      """
+      return self._peers
+
    def _setCollect(self, value):
       """
       Property target used to set the collect configuration value.
@@ -3603,6 +3781,7 @@ class Config(object):
    reference = property(_getReference, _setReference, None, "Reference configuration in terms of a C{ReferenceConfig} object.")
    extensions = property(_getExtensions, _setExtensions, None, "Extensions configuration in terms of a C{ExtensionsConfig} object.")
    options = property(_getOptions, _setOptions, None, "Options configuration in terms of a C{OptionsConfig} object.")
+   peers = property(_getPeers, _setPeers, None, "Peers configuration in terms of a C{PeersConfig} object.")
    collect = property(_getCollect, _setCollect, None, "Collect configuration in terms of a C{CollectConfig} object.")
    stage = property(_getStage, _setStage, None, "Stage configuration in terms of a C{StageConfig} object.")
    store = property(_getStore, _setStore, None, "Store configuration in terms of a C{StoreConfig} object.")
@@ -3652,7 +3831,7 @@ class Config(object):
          return xmlData
 
    def validate(self, requireOneAction=True, requireReference=False, requireExtensions=False, requireOptions=True, 
-                requireCollect=False, requireStage=False, requireStore=False, requirePurge=False):
+                requireCollect=False, requireStage=False, requireStore=False, requirePurge=False, requirePeers=False):
       """
       Validates configuration represented by the object.
 
@@ -3666,6 +3845,7 @@ class Config(object):
       @param requireReference: Require the reference section.
       @param requireExtensions: Require the extensions section.
       @param requireOptions: Require the options section.
+      @param requirePeers: Require the peers section.
       @param requireCollect: Require the collect section.
       @param requireStage: Require the stage section.
       @param requireStore: Require the store section.
@@ -3681,6 +3861,8 @@ class Config(object):
          raise ValueError("The extensions is section is required.")
       if requireOptions and self.options is None:
          raise ValueError("The options is section is required.")
+      if requirePeers and self.peers is None:
+         raise ValueError("The peers is section is required.")
       if requireCollect and self.collect is None:
          raise ValueError("The collect is section is required.")
       if requireStage and self.stage is None:
@@ -3719,6 +3901,7 @@ class Config(object):
       self._reference = Config._parseReference(parentNode)
       self._extensions = Config._parseExtensions(parentNode)
       self._options = Config._parseOptions(parentNode)
+      self._peers = Config._parsePeers(parentNode)
       self._collect = Config._parseCollect(parentNode)
       self._stage = Config._parseStage(parentNode)
       self._store = Config._parseStore(parentNode)
@@ -3821,6 +4004,31 @@ class Config(object):
       return options
    _parseOptions = staticmethod(_parseOptions)
 
+   def _parsePeers(parentNode):
+      """
+      Parses a peers configuration section.
+
+      We read groups of the following items, one list element per
+      item::
+
+         localPeers     //cb_config/stage/peer
+         remotePeers    //cb_config/stage/peer
+
+      The individual peer entries are parsed by L{_parsePeerList}.
+
+      @param parentNode: Parent node to search beneath.
+
+      @return: C{StageConfig} object or C{None} if the section does not exist.
+      @raise ValueError: If some filled-in value is invalid.
+      """
+      peers = None
+      sectionNode = readFirstChild(parentNode, "peers")
+      if sectionNode is not None:
+         peers = PeersConfig()
+         (peers.localPeers, peers.remotePeers) = Config._parsePeerList(sectionNode)
+      return peers
+   _parsePeers = staticmethod(_parsePeers)
+
    def _parseCollect(parentNode):
       """
       Parses a collect configuration section.
@@ -3877,7 +4085,7 @@ class Config(object):
          localPeers     //cb_config/stage/peer
          remotePeers    //cb_config/stage/peer
 
-      The individual peer entries are parsed by L{_parsePeers}.
+      The individual peer entries are parsed by L{_parsePeerList}.
 
       @param parentNode: Parent node to search beneath.
 
@@ -3889,7 +4097,7 @@ class Config(object):
       if sectionNode is not None:
          stage = StageConfig()
          stage.targetDir = readString(sectionNode, "staging_dir")
-         (stage.localPeers, stage.remotePeers) = Config._parsePeers(sectionNode)
+         (stage.localPeers, stage.remotePeers) = Config._parsePeerList(sectionNode)
       return stage
    _parseStage = staticmethod(_parseStage)
 
@@ -4191,7 +4399,7 @@ class Config(object):
       return lst
    _parsePurgeDirs = staticmethod(_parsePurgeDirs)
 
-   def _parsePeers(parentNode):
+   def _parsePeerList(parentNode):
       """
       Reads remote and local peer data from immediately beneath the parent.
 
@@ -4241,7 +4449,7 @@ class Config(object):
       if remotePeers == []:
          remotePeers = None
       return (localPeers, remotePeers)
-   _parsePeers = staticmethod(_parsePeers)
+   _parsePeerList = staticmethod(_parsePeerList)
 
    def _parseDependencies(parentNode):
       """
@@ -4344,6 +4552,7 @@ class Config(object):
       Config._addReference(xmlDom, parentNode, self.reference)
       Config._addExtensions(xmlDom, parentNode, self.extensions)
       Config._addOptions(xmlDom, parentNode, self.options)
+      Config._addPeers(xmlDom, parentNode, self.peers)
       Config._addCollect(xmlDom, parentNode, self.collect)
       Config._addStage(xmlDom, parentNode, self.stage)
       Config._addStore(xmlDom, parentNode, self.store)
@@ -4447,6 +4656,35 @@ class Config(object):
             for hook in optionsConfig.hooks:
                Config._addHook(xmlDom, sectionNode, hook)
    _addOptions = staticmethod(_addOptions)
+
+   def _addPeers(xmlDom, parentNode, peersConfig):
+      """
+      Adds a <peers> configuration section as the next child of a parent.
+
+      We add groups of the following items, one list element per
+      item::
+
+         localPeers     //cb_config/peers/peer
+         remotePeers    //cb_config/peers/peer
+
+      The individual local and remote peer entries are added by
+      L{_addLocalPeer} and L{_addRemotePeer}, respectively.
+
+      If C{peersConfig} is C{None}, then no container will be added.
+
+      @param xmlDom: DOM tree as from L{createOutputDom}.
+      @param parentNode: Parent that the section should be appended to.
+      @param peersConfig: Peers configuration section to be added to the document.
+      """
+      if peersConfig is not None:
+         sectionNode = addContainerNode(xmlDom, parentNode, "peers")
+         if peersConfig.localPeers is not None:
+            for localPeer in peersConfig.localPeers:
+               Config._addLocalPeer(xmlDom, sectionNode, localPeer)
+         if peersConfig.remotePeers is not None:
+            for remotePeer in peersConfig.remotePeers:
+               Config._addRemotePeer(xmlDom, sectionNode, remotePeer)
+   _addPeers = staticmethod(_addPeers)
 
    def _addCollect(xmlDom, parentNode, collectConfig):
       """
@@ -4943,6 +5181,7 @@ class Config(object):
       self._validateReference()
       self._validateExtensions()
       self._validateOptions()
+      self._validatePeers()
       self._validateCollect()
       self._validateStage()
       self._validateStore()
@@ -5010,6 +5249,14 @@ class Config(object):
          if self.options.rcpCommand is None:
             raise ValueError("Options section remote copy command must be filled in.")
 
+   def _validatePeers(self):
+      """
+      Validates peers configuration per rules in L{_validatePeerList}.
+      @raise ValueError: If peers configuration is invalid.
+      """
+      if self.peers is not None:
+         self._validatePeerList(self.peers.localPeers, self.peers.remotePeers)
+
    def _validateCollect(self):
       """
       Validates collect configuration.
@@ -5056,18 +5303,27 @@ class Config(object):
       """
       Validates stage configuration.
 
-      The target directory must be filled in.  There must be at least one peer
-      (remote or local) between the two lists of peers.  A list with no entries
-      can be either C{None} or an empty list C{[]} if desired.
+      The target directory must be filled in, and the peers are
+      also validated.
 
-      Then, peer list validation (see L{_validatePeerList}) applies as well.
+      Peers are only required in this section if the peers configuration
+      section is not filled in.  However, if any peers are filled in 
+      here, they override the peers configuration and must meet the
+      validation criteria in L{_validatePeerList}.
 
       @raise ValueError: If stage configuration is invalid.
       """
       if self.stage is not None:
          if self.stage.targetDir is None:
             raise ValueError("Stage section target directory must be filled in.")
-         self._validatePeerList(self.stage.localPeers, self.stage.remotePeers)
+         if self.peers is None:
+            # In this case, stage configuration is our only configuration and must be valid.
+            self._validatePeerList(self.stage.localPeers, self.stage.remotePeers)
+         else:
+            # In this case, peers configuration is the default and stage configuration overrides.
+            # Validation is only needed if it's stage configuration is actually filled in.
+            if self.stage.hasPeers():
+               self._validatePeerList(self.stage.localPeers, self.stage.remotePeers)
 
    def _validateStore(self):
       """
@@ -5148,10 +5404,10 @@ class Config(object):
             raise ValueError("Peer list must contain at least one backup peer.")
       elif localPeers is not None and remotePeers is None:
          if len(localPeers) < 1:
-            raise ValueError("Peerl list must contain at least one backup peer.")
+            raise ValueError("Peer list must contain at least one backup peer.")
       elif localPeers is not None and remotePeers is not None:
          if len(localPeers) + len(remotePeers) < 1:
-            raise ValueError("Peerl list must contain at least one backup peer.")
+            raise ValueError("Peer list must contain at least one backup peer.")
       names = []
       if localPeers is not None:
          for localPeer in localPeers:
