@@ -334,6 +334,7 @@
    &lt;backup_user&gt;backup&lt;/backup_user&gt;
    &lt;backup_group&gt;backup&lt;/backup_group&gt;
    &lt;rcp_command&gt;/usr/bin/scp -B&lt;/rcp_command&gt;
+   &lt;rsh_command&gt;/usr/bin/ssh&lt;/rsh_command&gt;
    &lt;override&gt;
       &lt;command&gt;cdrecord&lt;/command&gt;
       &lt;abs_path&gt;/opt/local/bin/cdrecord&lt;/abs_path&gt;
@@ -454,6 +455,25 @@
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>rsh_command</literal></term>
+               <listitem>
+                  <para>Default rsh-compatible command to use for remote shells.</para>
+                  <para>
+                     The rsh command should be the exact command used for
+                     remote shells, including any required options.  
+                  </para>
+                  <para>
+                     This value is used as the default value for all remote
+                     peers.  It is optional, because it is only used for
+                     managed peers.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> If provided, must be non-empty
                   </para>
                </listitem>
             </varlistentry>
