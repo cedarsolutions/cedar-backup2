@@ -5664,13 +5664,18 @@ class Config(object):
             names.append(remotePeer.name)
             if remotePeer.collectDir is None:
                raise ValueError("Remote peers must set a collect directory.")
-            if (self.options is None or self.options.backupUser is None) and remotePeer.remoteUser is None: # redundant
+            if (self.options is None or self.options.backupUser is None) and remotePeer.remoteUser is None:
                raise ValueError("Remote user must either be set in options section or individual remote peer.")
-            if (self.options is None or self.options.rcpCommand is None) and remotePeer.rcpCommand is None: # redundant
+            if (self.options is None or self.options.rcpCommand is None) and remotePeer.rcpCommand is None:
                raise ValueError("Remote copy command must either be set in options section or individual remote peer.")
             if remotePeer.managed:
-               if (self.options is None or self.options.rshCommand is None) and remotePeer.rshCommand is None: # redundant
+               if (self.options is None or self.options.rshCommand is None) and remotePeer.rshCommand is None:
                   raise ValueError("Remote shell command must either be set in options section or individual remote peer.")
+               if (self.options is None or self.options.cbackCommand is None) and remotePeer.cbackCommand is None:
+                  raise ValueError("Remote cback command must either be set in options section or individual remote peer.")
+               if ((self.options is None or self.options.managedActions is None or len(self.options.managedActions) < 1) 
+                    and (remotePeer.managedActions is None or len(remotePeer.managedActions) < 1)):
+                  raise ValueError("Managed actions list must be set in options section or individual remote peer.")
       Config._checkUnique("Duplicate peer names exist:", names)
 
 
