@@ -335,6 +335,8 @@
    &lt;backup_group&gt;backup&lt;/backup_group&gt;
    &lt;rcp_command&gt;/usr/bin/scp -B&lt;/rcp_command&gt;
    &lt;rsh_command&gt;/usr/bin/ssh&lt;/rsh_command&gt;
+   &lt;cback_command&gt;/usr/bin/cback&lt;/cback_command&gt;
+   &lt;managed_actions&gt;collect, purge&lt;/managed_actions&gt;
    &lt;override&gt;
       &lt;command&gt;cdrecord&lt;/command&gt;
       &lt;abs_path&gt;/opt/local/bin/cdrecord&lt;/abs_path&gt;
@@ -468,12 +470,67 @@
                      remote shells, including any required options.  
                   </para>
                   <para>
-                     This value is used as the default value for all remote
-                     peers.  It is optional, because it is only used for
-                     managed peers.
+                     This value is used as the default value for all managed
+                     clients.  It is optional, because it is only used when
+                     executing actions on managed clients.  However, each
+                     managed client must either be able to read the value from
+                     options configuration or must set the value explicitly.
                   </para>
                   <para>
-                     <emphasis>Restrictions:</emphasis> If provided, must be non-empty
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>cback_command</literal></term>
+               <listitem>
+                  <para>Default cback-compatible command to use on managed remote clients.</para>
+                  <para>
+                     The cback command should be the exact command used for for
+                     executing <command>cback</command> on a remote managed
+                     client, including any required command-line options.  Do
+                     <emphasis>not</emphasis> list any actions in the command
+                     line, and do <emphasis>not</emphasis> include the
+                     <command>--full</command> command-line option.
+                  </para>
+                  <para>
+                     This value is used as the default value for all managed
+                     clients.  It is optional, because it is only used when
+                     executing actions on managed clients.  However, each
+                     managed client must either be able to read the value from
+                     options configuration or must set the value explicitly.
+                  </para>
+                  <para>
+                     Note: if this command-line is complicated, it is often
+                     better to create a simple shell script on the remote host
+                     to encapsulate all of the options.  Then, just reference
+                     the shell script in configuration.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>managed_actions</literal></term>
+               <listitem>
+                  <para>Default set of actions that are managed on remote clients.</para>
+                  <para>
+                     This is a comma-separated list of actions that the master
+                     will manage on behalf of remote clients.  Typically, it
+                     would include only collect-like actions and purge.  
+                  </para>
+                  <para>
+                     This value is used as the default value for all managed
+                     clients.  It is optional, because it is only used when
+                     executing actions on managed clients.  However, each
+                     managed client must either be able to read the value from
+                     options configuration or must set the value explicitly.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be non-empty.  
                   </para>
                </listitem>
             </varlistentry>
@@ -719,6 +776,17 @@
       &lt;backup_user&gt;backup&lt;/backup_user&gt;
       &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
    &lt;/peer&gt;
+   &lt;peer&gt;
+      &lt;name&gt;machine3&lt;/name&gt;
+      &lt;type&gt;remote&lt;/type&gt;
+      &lt;managed&gt;Y&lt;/managed&gt;
+      &lt;backup_user&gt;backup&lt;/backup_user&gt;
+      &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+      &lt;rcp_command&gt;/usr/bin/scp&lt;/rcp_command&gt;
+      &lt;rsh_command&gt;/usr/bin/ssh&lt;/rsh_command&gt;
+      &lt;cback_command&gt;/usr/bin/cback&lt;/cback_command&gt;
+      &lt;managed_actions&gt;collect, purge&lt;/managed_actions&gt;
+   &lt;/peer&gt;
 &lt;/peers&gt;
          </programlisting>
 
@@ -777,6 +845,7 @@
                            </para>
                         </listitem>
                      </varlistentry>
+
 
                      <varlistentry>
                         <term><literal>collect_dir</literal></term>
@@ -852,6 +921,25 @@
                      </varlistentry>
 
                      <varlistentry>
+                        <term><literal>managed</literal></term>
+                        <listitem>
+                           <para>Indicates whether this peer is managed.</para>
+                           <para>
+                              A managed peer (or managed client) is a peer for
+                              which the master manages all of the backup
+                              activites via a remote shell.
+                           </para>
+                           <para>
+                              This field is optional.  If it doesn't exist, then
+                              <literal>N</literal> will be assumed.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
                         <term><literal>collect_dir</literal></term>
                         <listitem>
                            <para>Collect directory to stage from for this peer.</para>
@@ -908,6 +996,86 @@
                            </para>
                            <para>
                               <emphasis>Restrictions:</emphasis> Must be non-empty.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>rsh_command</literal></term>
+                        <listitem>
+                           <para>The rsh-compatible command for this peer.</para>
+                           <para>
+                              The rsh command should be the exact command used for
+                              remote shells, including any required options.  
+                           </para>
+                           <para>
+                              This value only applies if the peer is managed.
+                           </para>
+                           <para>
+                              This field is optional.  if it doesn't exist, the
+                              backup will use the default rsh command from the
+                              options section.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>cback_command</literal></term>
+                        <listitem>
+                           <para>The cback-compatible command for this peer.</para>
+                           <para>
+                              The cback command should be the exact command
+                              used for for executing cback on the peer as part
+                              of a managed backup.  This value must include any
+                              required command-line options.  Do
+                              <emphasis>not</emphasis> list any actions in the
+                              command line, and do <emphasis>not</emphasis>
+                              include the <command>--full</command>
+                              command-line option.
+                           </para>
+                           <para>
+                              This value only applies if the peer is managed.
+                           </para>
+                           <para>
+                              This field is optional.  if it doesn't exist, the
+                              backup will use the default cback command from the
+                              options section.
+                           </para>
+                           <para>
+                              Note: if this command-line is complicated, it is often
+                              better to create a simple shell script on the remote host
+                              to encapsulate all of the options.  Then, just reference
+                              the shell script in configuration.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>managed_actions</literal></term>
+                        <listitem>
+                           <para>Set of actions that are managed for this peer.</para>
+                           <para>
+                              This is a comma-separated list of actions that
+                              the master will manage on behalf this peer.
+                              Typically, it would include only collect-like
+                              actions and purge.  
+                           </para>
+                           <para>
+                              This value only applies if the peer is managed.
+                           </para>
+                           <para>
+                              This field is optional.  if it doesn't exist, the
+                              backup will use the default list of managed
+                              actions from the options section.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be non-empty.  
                            </para>
                         </listitem>
                      </varlistentry>
