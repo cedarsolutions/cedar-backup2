@@ -186,6 +186,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -205,6 +207,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -224,6 +228,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -243,6 +249,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -262,6 +270,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -281,6 +291,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -300,6 +312,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -319,6 +333,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -338,6 +354,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -357,6 +375,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -376,6 +396,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -395,6 +417,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -414,6 +438,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -433,6 +459,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -452,6 +480,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -471,6 +501,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -490,6 +522,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -509,6 +543,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -528,6 +564,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -547,6 +585,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -590,6 +630,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual("something", options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -609,6 +651,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual("something", options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -628,6 +672,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual("something", options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -647,6 +693,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual("something", options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -666,6 +714,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(True, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -686,6 +736,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(True, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -705,6 +757,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(True, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -724,6 +778,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(True, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -767,6 +823,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual("something", options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -786,6 +844,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual("something", options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -805,6 +865,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual("something", options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -824,6 +886,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual("something", options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -891,6 +955,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(("a", "b"), options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -910,6 +976,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(("a", "b"), options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -929,6 +997,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(("a", "b"), options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -948,6 +1018,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(("a", "b"), options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1015,6 +1087,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(0631, options.mode)
@@ -1034,6 +1108,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(0631, options.mode)
@@ -1053,6 +1129,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(0631, options.mode)
@@ -1072,6 +1150,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(0631, options.mode)
@@ -1091,6 +1171,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1110,6 +1192,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1129,6 +1213,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1148,6 +1234,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1167,6 +1255,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1186,6 +1276,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1205,6 +1297,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1224,6 +1318,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1243,6 +1339,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1262,6 +1360,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1281,6 +1381,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1300,6 +1402,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1319,6 +1423,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1338,6 +1444,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1357,6 +1465,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1376,6 +1486,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1395,6 +1507,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1414,6 +1528,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1433,6 +1549,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1452,6 +1570,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1471,6 +1591,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1490,6 +1612,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1509,6 +1633,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1528,6 +1654,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1547,6 +1675,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1566,6 +1696,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1585,6 +1717,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1604,6 +1738,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1623,6 +1759,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1642,6 +1780,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1661,6 +1801,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1680,6 +1822,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1699,6 +1843,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(0600, options.mode)
@@ -1718,6 +1864,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(0600, options.mode)
@@ -1749,6 +1897,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1768,6 +1918,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1787,6 +1939,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1806,6 +1960,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1825,6 +1981,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1844,6 +2002,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1863,6 +2023,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -1882,6 +2044,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2285,6 +2449,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2304,6 +2470,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2323,6 +2491,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2342,6 +2512,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2361,6 +2533,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2380,6 +2554,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2399,6 +2575,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2418,6 +2596,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2437,6 +2617,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2475,6 +2657,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2494,6 +2678,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2513,6 +2699,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2532,6 +2720,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(None, options.mode)
@@ -2551,6 +2741,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(0600, options.mode)
@@ -2570,6 +2762,8 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.quiet)
       self.failUnlessEqual(None, options.config)
       self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
       self.failUnlessEqual(None, options.logfile)
       self.failUnlessEqual(None, options.owner)
       self.failUnlessEqual(0600, options.mode)
@@ -2577,6 +2771,224 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
+
+   def testConstructor_189(self):
+      """
+      Test constructor with argumentList=["--managed", ], validate=False.
+      """
+      options = Options(argumentList=["--managed", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(True, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_190(self):
+      """
+      Test constructor with argumentString="--managed", validate=False.
+      """
+      options = Options(argumentString="--managed", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(True, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_191(self):
+      """
+      Test constructor with argumentList=["-M", ], validate=False.
+      """
+      options = Options(argumentList=["-M", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(True, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_192(self):
+      """
+      Test constructor with argumentString="-M", validate=False.
+      """
+      options = Options(argumentString="-M", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(True, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_193(self):
+      """
+      Test constructor with argumentList=["--managed-only", ], validate=False.
+      """
+      options = Options(argumentList=["--managed-only", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(True, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_194(self):
+      """
+      Test constructor with argumentString="--managed-only", validate=False.
+      """
+      options = Options(argumentString="--managed-only", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(True, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_195(self):
+      """
+      Test constructor with argumentList=["-N", ], validate=False.
+      """
+      options = Options(argumentList=["-N", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(True, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_196(self):
+      """
+      Test constructor with argumentString="-N", validate=False.
+      """
+      options = Options(argumentString="-N", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(True, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_197(self):
+      """
+      Test constructor with argumentList=["--managed", ], validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentList=["--managed", ], validate=True)
+
+   def testConstructor_198(self):
+      """
+      Test constructor with argumentString="--managed", validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentString="--managed", validate=True)
+
+   def testConstructor_199(self):
+      """
+      Test constructor with argumentList=["-M", ], validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentList=["-M", ], validate=True)
+
+   def testConstructor_200(self):
+      """
+      Test constructor with argumentString="-M", validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentString="-M", validate=True)
+
+   def testConstructor_201(self):
+      """
+      Test constructor with argumentList=["--managed-only", ], validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentList=["--managed-only", ], validate=True)
+
+   def testConstructor_202(self):
+      """
+      Test constructor with argumentString="--managed-only", validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentString="--managed-only", validate=True)
+
+   def testConstructor_203(self):
+      """
+      Test constructor with argumentList=["-N", ], validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentList=["-N", ], validate=True)
+
+   def testConstructor_204(self):
+      """
+      Test constructor with argumentString="-N", validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentString="-N", validate=True)
 
 
    ############################
@@ -2610,6 +3022,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -2624,6 +3038,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -2653,6 +3069,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -2667,6 +3085,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -2696,6 +3116,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -2710,6 +3132,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -2739,6 +3163,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -2753,6 +3179,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -2782,6 +3210,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -2796,6 +3226,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = False
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -2825,6 +3257,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "whatever"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -2839,6 +3273,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -2868,6 +3304,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = False
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -2882,6 +3320,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -2911,6 +3351,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -2925,6 +3367,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "stuff"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -2954,6 +3398,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -2968,6 +3414,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("c", "d")
       options2.mode = 0631
@@ -2997,6 +3445,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = 0600
@@ -3011,6 +3461,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -3040,6 +3492,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -3054,6 +3508,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -3083,6 +3539,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -3097,6 +3555,8 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
@@ -3126,6 +3586,8 @@ class TestOptions(unittest.TestCase):
       options1.quiet = True
       options1.config = "config"
       options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
       options1.logfile = "logfile"
       options1.owner = ("a", "b")
       options1.mode = "631"
@@ -3140,12 +3602,108 @@ class TestOptions(unittest.TestCase):
       options2.quiet = True
       options2.config = "config"
       options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
       options2.logfile = "logfile"
       options2.owner = ("a", "b")
       options2.mode = 0631
       options2.output = True
       options2.debug = True
       options2.stacktrace = True
+      options2.actions = ["collect", ]
+
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_015(self):
+      """
+      Test comparison of two identical objects, all attributes filled in, managed different.
+      """
+      options1 = Options()
+      options2 = Options()
+
+      options1.help = True
+      options1.version = True
+      options1.verbose = True
+      options1.quiet = True
+      options1.config = "config"
+      options1.full = True
+      options1.managed = False
+      options1.managedOnly = True
+      options1.logfile = "logfile"
+      options1.owner = ("a", "b")
+      options1.mode = "631"
+      options1.output = True
+      options1.debug = True
+      options1.stacktrace = False
+      options1.actions = ["collect", ]
+
+      options2.help = True
+      options2.version = True
+      options2.verbose = True
+      options2.quiet = True
+      options2.config = "config"
+      options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
+      options2.logfile = "logfile"
+      options2.owner = ("a", "b")
+      options2.mode = 0631
+      options2.output = True
+      options2.debug = True
+      options2.stacktrace = False
+      options2.actions = ["collect", ]
+
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_016(self):
+      """
+      Test comparison of two identical objects, all attributes filled in, managedOnly different.
+      """
+      options1 = Options()
+      options2 = Options()
+
+      options1.help = True
+      options1.version = True
+      options1.verbose = True
+      options1.quiet = True
+      options1.config = "config"
+      options1.full = True
+      options1.managed = True
+      options1.managedOnly = False
+      options1.logfile = "logfile"
+      options1.owner = ("a", "b")
+      options1.mode = "631"
+      options1.output = True
+      options1.debug = True
+      options1.stacktrace = False
+      options1.actions = ["collect", ]
+
+      options2.help = True
+      options2.version = True
+      options2.verbose = True
+      options2.quiet = True
+      options2.config = "config"
+      options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
+      options2.logfile = "logfile"
+      options2.owner = ("a", "b")
+      options2.mode = 0631
+      options2.output = True
+      options2.debug = True
+      options2.stacktrace = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3274,6 +3832,8 @@ class TestOptions(unittest.TestCase):
       options.quiet = True
       options.config = "config"
       options.full = True
+      options.managed = True
+      options.managedOnly = True
       options.logfile = "logfile"
       options.owner = ("a", "b")
       options.mode = "631"
@@ -3283,7 +3843,8 @@ class TestOptions(unittest.TestCase):
       options.actions = ["collect", ]
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
-                             "--full", "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
+                             "--full", "--managed", "--managed-only", 
+                             "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
                              "--output", "--debug", "--stack", "collect", ], argumentList)
 
    def testBuildArgumentList_017(self):
@@ -3295,6 +3856,8 @@ class TestOptions(unittest.TestCase):
       options.quiet = True
       options.config = "config"
       options.full = True
+      options.managed = True
+      options.managedOnly = True
       options.logfile = "logfile"
       options.owner = ("a", "b")
       options.mode = "631"
@@ -3304,7 +3867,8 @@ class TestOptions(unittest.TestCase):
       options.actions = ["collect", "stage", ]
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
-                             "--full", "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
+                             "--full", "--managed", "--managed-only", 
+                             "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
                              "--output", "--debug", "--stack", "collect", "stage", ], argumentList)
 
    def testBuildArgumentList_018(self):
@@ -3401,7 +3965,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(["collect", "stage", "store", "purge", ], argumentList)
 
    def testBuildArgumentList_033(self):
-      """Test with all values set, actions containing one item, validate=True."""
+      """Test with all values set (except managed ones), actions containing one item, validate=True."""
       options = Options()
       options.help = True
       options.version = True
@@ -3422,7 +3986,7 @@ class TestOptions(unittest.TestCase):
                              "--output", "--debug", "--stack", "collect", ], argumentList)
 
    def testBuildArgumentList_034(self):
-      """Test with all values set, actions containing multiple items, validate=True."""
+      """Test with all values set (except managed ones), actions containing multiple items, validate=True."""
       options = Options()
       options.help = True
       options.version = True
@@ -3441,6 +4005,72 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
                              "--full", "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
                              "--output", "--debug", "--stack", "collect", "stage", ], argumentList)
+
+   def testBuildArgumentList_035(self):
+      """Test with managed set, validate=False."""
+      options = Options()
+      options.managed = True
+      argumentList = options.buildArgumentList(validate=False)
+      self.failUnlessEqual(["--managed", ], argumentList)
+
+   def testBuildArgumentList_036(self):
+      """Test with managed set, validate=True."""
+      options = Options()
+      options.managed = True
+      self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
+
+   def testBuildArgumentList_037(self):
+      """Test with managedOnly set, validate=False."""
+      options = Options()
+      options.managedOnly = True
+      argumentList = options.buildArgumentList(validate=False)
+      self.failUnlessEqual(["--managed-only", ], argumentList)
+
+   def testBuildArgumentList_038(self):
+      """Test with managedOnly set, validate=True."""
+      options = Options()
+      options.managedOnly = True
+      self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
+
+   def testBuildArgumentList_039(self):
+      """Test with all values set, actions containing one item, validate=True."""
+      options = Options()
+      options.help = True
+      options.version = True
+      options.verbose = True
+      options.quiet = True
+      options.config = "config"
+      options.full = True
+      options.managed = True
+      options.managedOnly = True
+      options.logfile = "logfile"
+      options.owner = ("a", "b")
+      options.mode = "631"
+      options.output = True
+      options.debug = True
+      options.stacktrace = True
+      options.actions = ["collect", ]
+      self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
+
+   def testBuildArgumentList_040(self):
+      """Test with all values set, actions containing multiple items, validate=True."""
+      options = Options()
+      options.help = True
+      options.version = True
+      options.verbose = True
+      options.quiet = True
+      options.config = "config"
+      options.full = True
+      options.managed = True
+      options.managedOnly = True
+      options.logfile = "logfile"
+      options.owner = ("a", "b")
+      options.mode = "631"
+      options.output = True
+      options.debug = True
+      options.stacktrace = True
+      options.actions = ["collect", "stage", ]
+      self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
 
    #############################
@@ -3560,6 +4190,8 @@ class TestOptions(unittest.TestCase):
       options.quiet = True
       options.config = "config"
       options.full = True
+      options.managed = True
+      options.managedOnly = True
       options.logfile = "logfile"
       options.owner = ("a", "b")
       options.mode = "631"
@@ -3568,7 +4200,7 @@ class TestOptions(unittest.TestCase):
       options.stacktrace = True
       options.actions = ["collect", ]
       argumentString = options.buildArgumentString(validate=False)
-      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --managed --managed-only --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" ', argumentString)
 
    def testBuildArgumentString_017(self):
       """Test with all values set, actions containing multiple items, validate=False."""
@@ -3683,7 +4315,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual('"collect" "stage" "store" "purge" ', argumentString)
 
    def testBuildArgumentString_033(self):
-      """Test with all values set, actions containing one item, validate=True."""
+      """Test with all values set (except managed ones), actions containing one item, validate=True."""
       options = Options()
       options.help = True
       options.version = True
@@ -3702,7 +4334,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" ', argumentString)
 
    def testBuildArgumentString_034(self):
-      """Test with all values set, actions containing multiple items, validate=True."""
+      """Test with all values set (except managed ones), actions containing multiple items, validate=True."""
       options = Options()
       options.help = True
       options.version = True
@@ -3719,6 +4351,72 @@ class TestOptions(unittest.TestCase):
       options.actions = ["collect", "stage", ]
       argumentString = options.buildArgumentString(validate=True)
       self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" "stage" ', argumentString)
+
+   def testBuildArgumentString_035(self):
+      """Test with managed set, validate=False."""
+      options = Options()
+      options.managed = True
+      argumentString = options.buildArgumentString(validate=False)
+      self.failUnlessEqual("--managed ", argumentString)
+
+   def testBuildArgumentString_036(self):
+      """Test with managed set, validate=True."""
+      options = Options()
+      options.managed = True
+      self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
+
+   def testBuildArgumentString_037(self):
+      """Test with full set, validate=False."""
+      options = Options()
+      options.managedOnly = True
+      argumentString = options.buildArgumentString(validate=False)
+      self.failUnlessEqual("--managed-only ", argumentString)
+
+   def testBuildArgumentString_038(self):
+      """Test with managedOnly set, validate=True."""
+      options = Options()
+      options.managedOnly = True
+      self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
+
+   def testBuildArgumentString_039(self):
+      """Test with all values set (except managed ones), actions containing one item, validate=True."""
+      options = Options()
+      options.help = True
+      options.version = True
+      options.verbose = True
+      options.quiet = True
+      options.config = "config"
+      options.full = True
+      options.managed = True
+      options.managedOnly = True
+      options.logfile = "logfile"
+      options.owner = ("a", "b")
+      options.mode = "631"
+      options.output = True
+      options.debug = True
+      options.stacktrace = True
+      options.actions = ["collect", ]
+      self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
+
+   def testBuildArgumentString_040(self):
+      """Test with all values set (except managed ones), actions containing multiple items, validate=True."""
+      options = Options()
+      options.help = True
+      options.version = True
+      options.verbose = True
+      options.quiet = True
+      options.config = "config"
+      options.full = True
+      options.managed = True
+      options.managedOnly = True
+      options.logfile = "logfile"
+      options.owner = ("a", "b")
+      options.mode = "631"
+      options.output = True
+      options.debug = True
+      options.stacktrace = True
+      options.actions = ["collect", "stage", ]
+      self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
 
 ######################

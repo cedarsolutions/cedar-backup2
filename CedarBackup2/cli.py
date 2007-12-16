@@ -128,10 +128,11 @@ VALID_ACTIONS      = [ "collect", "stage", "store", "purge", "rebuild", "validat
 COMBINE_ACTIONS    = [ "collect", "stage", "store", "purge", ]
 NONCOMBINE_ACTIONS = [ "rebuild", "validate", "initialize", "all", ]
 
-SHORT_SWITCHES     = "hVbqc:fl:o:m:Ods"
+SHORT_SWITCHES     = "hVbqc:fMNl:o:m:Ods"
 LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet', 
-                       'config=', 'full', 'logfile=', 'owner=', 
-                       'mode=', 'output', 'debug', 'stack', ]
+                       'config=', 'full', 'managed', 'managed-only',
+                       'logfile=', 'owner=', 'mode=', 
+                       'output', 'debug', 'stack', ]
 
 
 #######################################################################
@@ -689,29 +690,31 @@ def _usage(fd=sys.stderr):
    fd.write("\n")
    fd.write(" The following switches are accepted:\n")
    fd.write("\n")
-   fd.write("   -h, --help     Display this usage/help listing\n")
-   fd.write("   -V, --version  Display version information\n")
-   fd.write("   -b, --verbose  Print verbose output as well as logging to disk\n")
-   fd.write("   -q, --quiet    Run quietly (display no output to the screen)\n")
-   fd.write("   -c, --config   Path to config file (default: %s)\n" % DEFAULT_CONFIG)
-   fd.write("   -f, --full     Perform a full backup, regardless of configuration\n")
-   fd.write("   -l, --logfile  Path to logfile (default: %s)\n" % DEFAULT_LOGFILE)
-   fd.write("   -o, --owner    Logfile ownership, user:group (default: %s:%s)\n" % (DEFAULT_OWNERSHIP[0], DEFAULT_OWNERSHIP[1]))
-   fd.write("   -m, --mode     Octal logfile permissions mode (default: %o)\n" % DEFAULT_MODE)
-   fd.write("   -O, --output   Record some sub-command (i.e. cdrecord) output to the log\n")
-   fd.write("   -d, --debug    Write debugging information to the log (implies --output)\n")
-   fd.write("   -s, --stack    Dump a Python stack trace instead of swallowing exceptions\n")
+   fd.write("   -h, --help         Display this usage/help listing\n")
+   fd.write("   -V, --version      Display version information\n")
+   fd.write("   -b, --verbose      Print verbose output as well as logging to disk\n")
+   fd.write("   -q, --quiet        Run quietly (display no output to the screen)\n")
+   fd.write("   -c, --config       Path to config file (default: %s)\n" % DEFAULT_CONFIG)
+   fd.write("   -f, --full         Perform a full backup, regardless of configuration\n")
+   fd.write("   -M, --managed      Include managed peers when executing actions\n")
+   fd.write("   -N, --managed-only Include ONLY managed peers when executing actions\n")
+   fd.write("   -l, --logfile      Path to logfile (default: %s)\n" % DEFAULT_LOGFILE)
+   fd.write("   -o, --owner        Logfile ownership, user:group (default: %s:%s)\n" % (DEFAULT_OWNERSHIP[0], DEFAULT_OWNERSHIP[1]))
+   fd.write("   -m, --mode         Octal logfile permissions mode (default: %o)\n" % DEFAULT_MODE)
+   fd.write("   -O, --output       Record some sub-command (i.e. cdrecord) output to the log\n")
+   fd.write("   -d, --debug        Write debugging information to the log (implies --output)\n")
+   fd.write("   -s, --stack        Dump a Python stack trace instead of swallowing exceptions\n") # exactly 80 characters in width!
    fd.write("\n")
    fd.write(" The following actions may be specified:\n")
    fd.write("\n")
-   fd.write("   all            Take all normal actions (collect, stage, store, purge)\n")
-   fd.write("   collect        Take the collect action\n")
-   fd.write("   stage          Take the stage action\n")
-   fd.write("   store          Take the store action\n")
-   fd.write("   purge          Take the purge action\n")
-   fd.write("   rebuild        Rebuild \"this week's\" disc if possible\n")
-   fd.write("   validate       Validate configuration only\n")
-   fd.write("   initialize     Initialize media for use with Cedar Backup\n")
+   fd.write("   all                Take all normal actions (collect, stage, store, purge)\n")
+   fd.write("   collect            Take the collect action\n")
+   fd.write("   stage              Take the stage action\n")
+   fd.write("   store              Take the store action\n")
+   fd.write("   purge              Take the purge action\n")
+   fd.write("   rebuild            Rebuild \"this week's\" disc if possible\n")
+   fd.write("   validate           Validate configuration only\n")
+   fd.write("   initialize         Initialize media for use with Cedar Backup\n")
    fd.write("\n")
    fd.write(" You may also specify extended actions that have been defined in\n")
    fd.write(" configuration.\n")
@@ -1035,6 +1038,8 @@ class Options(object):
       self._quiet = False
       self._config = None
       self._full = False
+      self._managed = False
+      self._managedOnly = False
       self._logfile = None
       self._owner = None
       self._mode = None
@@ -1110,6 +1115,16 @@ class Options(object):
             return 1
       if self._full != other._full:
          if self._full < other._full:
+            return -1
+         else:
+            return 1
+      if self._managed != other._managed:
+         if self._managed < other._managed:
+            return -1
+         else:
+            return 1
+      if self._managedOnly != other._managedOnly:
+         if self._managedOnly < other._managedOnly:
             return -1
          else:
             return 1
@@ -1249,6 +1264,38 @@ class Options(object):
       Property target used to get the full flag.
       """
       return self._full
+
+   def _setManaged(self, value):
+      """
+      Property target used to set the managed flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._managed = True
+      else:
+         self._managed = False
+
+   def _getManaged(self):
+      """
+      Property target used to get the managed flag.
+      """
+      return self._managed
+
+   def _setManagedOnly(self, value):
+      """
+      Property target used to set the managedOnly flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._managedOnly = True
+      else:
+         self._managedOnly = False
+
+   def _getManagedOnly(self):
+      """
+      Property target used to get the managedOnly flag.
+      """
+      return self._managedOnly
 
    def _setLogfile(self, value):
       """
@@ -1393,6 +1440,8 @@ class Options(object):
    quiet = property(_getQuiet, _setQuiet, None, "Command-line quiet (C{-q,--quiet}) flag.")
    config = property(_getConfig, _setConfig, None, "Command-line configuration file (C{-c,--config}) parameter.")
    full = property(_getFull, _setFull, None, "Command-line full-backup (C{-f,--full}) flag.")
+   managed = property(_getManaged, _setManaged, None, "Command-line managed (C{-M,--managed}) flag.")
+   managedOnly = property(_getManagedOnly, _setManagedOnly, None, "Command-line managed-only (C{-N,--managed-only}) flag.")
    logfile = property(_getLogfile, _setLogfile, None, "Command-line logfile (C{-l,--logfile}) parameter.")
    owner = property(_getOwner, _setOwner, None, "Command-line owner (C{-o,--owner}) parameter, as tuple C{(user,group)}.")
    mode = property(_getMode, _setMode, None, "Command-line mode (C{-m,--mode}) parameter.")
@@ -1423,6 +1472,8 @@ class Options(object):
       if not self.help and not self.version:
          if self.actions is None or len(self.actions) == 0:
             raise ValueError("At least one action must be specified.")
+      if self.managed and self.managedOnly:
+         raise ValueError("The --managed and --managed-only options may not be combined.")
 
    def buildArgumentList(self, validate=True):
       """
@@ -1467,6 +1518,10 @@ class Options(object):
          argumentList.append(self.config)
       if self.full:
          argumentList.append("--full")
+      if self.managed:
+         argumentList.append("--managed")
+      if self.managedOnly:
+         argumentList.append("--managed-only")
       if self.logfile is not None:
          argumentList.append("--logfile")
          argumentList.append(self.logfile)
@@ -1529,6 +1584,10 @@ class Options(object):
          argumentString += "--config \"%s\" " % self.config
       if self.full:
          argumentString += "--full "
+      if self.managed:
+         argumentString += "--managed "
+      if self.managedOnly:
+         argumentString += "--managed-only "
       if self.logfile is not None:
          argumentString += "--logfile \"%s\" " % self.logfile
       if self.owner is not None:
@@ -1585,6 +1644,10 @@ class Options(object):
          self.config = switches["--config"]
       if switches.has_key("-f") or switches.has_key("--full"):
          self.full = True
+      if switches.has_key("-M") or switches.has_key("--managed"):
+         self.managed = True
+      if switches.has_key("-N") or switches.has_key("--managed-only"):
+         self.managedOnly = True
       if switches.has_key("-l"):
          self.logfile = switches["-l"]
       if switches.has_key("--logfile"):
