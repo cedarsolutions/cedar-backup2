@@ -95,29 +95,31 @@
 
  The following switches are accepted:
 
-   -h, --help     Display this usage/help listing
-   -V, --version  Display version information
-   -b, --verbose  Print verbose output as well as logging to disk
-   -q, --quiet    Run quietly (display no output to the screen)
-   -c, --config   Path to config file (default: /etc/cback.conf)
-   -f, --full     Perform a full backup, regardless of configuration
-   -l, --logfile  Path to logfile (default: /var/log/cback.log)
-   -o, --owner    Logfile ownership, user:group (default: root:adm)
-   -m, --mode     Octal logfile permissions mode (default: 640)
-   -O, --output   Record some sub-command (i.e. cdrecord) output to the log
-   -d, --debug    Write debugging information to the log (implies --output)
-   -s, --stack    Dump a Python stack trace instead of swallowing exceptions
+   -h, --help         Display this usage/help listing
+   -V, --version      Display version information
+   -b, --verbose      Print verbose output as well as logging to disk
+   -q, --quiet        Run quietly (display no output to the screen)
+   -c, --config       Path to config file (default: /etc/cback.conf)
+   -f, --full         Perform a full backup, regardless of configuration
+   -M, --managed      Include managed clients when executing actions
+   -N, --managed-only Include ONLY managed clients when executing actions
+   -l, --logfile      Path to logfile (default: /var/log/cback.log)
+   -o, --owner        Logfile ownership, user:group (default: root:adm)
+   -m, --mode         Octal logfile permissions mode (default: 640)
+   -O, --output       Record some sub-command (i.e. cdrecord) output to the log
+   -d, --debug        Write debugging information to the log (implies --output)
+   -s, --stack        Dump a Python stack trace instead of swallowing exceptions
 
  The following actions may be specified:
 
-   all            Take all normal actions (collect, stage, store, purge)
-   collect        Take the collect action
-   stage          Take the stage action
-   store          Take the store action
-   purge          Take the purge action
-   rebuild        Rebuild "this week's" disc if possible
-   validate       Validate configuration only
-   initialize     Initialize media for use with Cedar Backup
+   all                Take all normal actions (collect, stage, store, purge)
+   collect            Take the collect action
+   stage              Take the stage action
+   store              Take the store action
+   purge              Take the purge action
+   rebuild            Rebuild "this week's" disc if possible
+   validate           Validate configuration only
+   initialize         Initialize media for use with Cedar Backup
 
  You may also specify extended actions that have been defined in
  configuration.
@@ -203,6 +205,31 @@
                     information related to incremental backups will be ignored
                     and rewritten; for the store action, this means that a new
                     disc will be started.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-M</option>, <option>--managed</option></term>
+               <listitem>
+                  <para>
+                     Include managed clients when executing actions.  If the
+                     action being executed is listed as a managed action for a
+                     managed client, execute the action on that client after
+                     executing the action locally.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-N</option>, <option>--managed-only</option></term>
+               <listitem>
+                  <para>
+                     Include <emphasis>only</emphasis> managed clients when
+                     executing actions.  If the action being executed is listed
+                     as a managed action for a managed client, execute the action
+                     on that client &mdash; but <emphasis>do not</emphasis>
+                     execute the action locally.
                   </para>
                </listitem>
             </varlistentry>

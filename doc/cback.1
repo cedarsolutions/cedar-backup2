@@ -15,9 +15,9 @@
 .\" #
 .\" # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 .\"
-.TH cback "1" "July 2005" "Cedar Backup" "Kenneth J. Pronovici"
+.TH cback "1" "December 2007" "Cedar Backup" "Kenneth J. Pronovici"
 .SH NAME
-cback \- Local and remote backups to CD-R/CD-RW media under Linux
+cback \- Local and remote backups to CD-R/CD-RW media 
 .SH SYNOPSIS
 .B cback
 [\fIswitches\fR]
@@ -47,6 +47,12 @@ part of the backup process: \fIcollect\fR, \fIstage\fR, \fIstore\fR and
 actions, but only the master executes the stage and store actions.  The
 configuration file \fI/etc/cback.conf\fR controls the actions taken during
 collect, stage, store and purge actions.
+.PP
+Cedar Backup also supports the concept of \fImanaged clients\fR.  Managed
+clients have their entire backup process managed by the master via a remote
+shell.  The same actions are run as part of the backup process, but the master
+controls when the actions are executed on the clients rather than the clients
+controlling it for themselves.
 .SH SWITCHES
 .TP
 \fB\-h\fR, \fB\-\-help\fR
@@ -72,6 +78,16 @@ Perform a full backup, regardless of configuration.  For the collect action,
 this means that any existing information related to incremental backups will be
 ignored and rewritten; for the store action, this means that a new disc will be
 started.
+.TP
+\fB\-M\fR, \fB\-\-managed\fR
+Include managed clients when executing actions.  If the action being executed
+is listed as a managed action for a managed client, execute the action on that
+client after executing the action locally.  
+.TP
+\fB\-N\fR, \fB\-\-managed-only\fR
+Include only managed clients when executing actions.  If the action being
+executed is listed as a managed action for a managed client, execute the action
+on that client -- but do not execute the action locally.  
 .TP
 \fB\-l\fR, \fB\-\-logfile\fR
 Specify the path to an alternate logfile.  The default logfile file is
@@ -164,10 +180,9 @@ Backup was interrupted with a CTRL-C or similar.
 Error executing specified backup actions.
 .SH NOTES
 .PP
-The script is designed to run as root, since otherwise it's difficult to
-back up system directories or write the CD or DVD device.  However, pains
-are taken to use a backup user's effective user id (specified in
-configuration) when appropriate.
+The script is designed to run as root, since otherwise it's difficult to back
+up system directories or write the CD or DVD device.  However, pains are taken
+to switch to a backup user (specified in configuration) when appropriate.
 .PP
 To use the script, you must specify at least one action to take.  More than one
 of the "collect", "stage", "store" or "purge" actions may be specified, in any
@@ -184,12 +199,13 @@ actions, however.
 .PP
 Note that there is no facility for restoring backups.  It is assumed that the
 user can deal with copying tarfiles off disc and using them to restore missing
-files as needed.
+files as needed.  The user manual provides detailed intructions in Appendix C.
 .PP
 Finally, you should be aware that backups to CD or DVD can probably be read
 by any user which has permissions to mount the CD or DVD drive.  If you
 intend to leave the backup disc in the drive at all times, you may want to
-consider this when setting up device permissions on your machine.
+consider this when setting up device permissions on your machine.  You might
+also want to investigate the encrypt extension.
 .SH FILES
 .TP
 \fI/etc/cback.conf\fR - Default configuration file
