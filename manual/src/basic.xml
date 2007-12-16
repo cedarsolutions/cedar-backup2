@@ -593,20 +593,51 @@
          data before it is purged.
       </para>
 
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-basic-managedbackups">
+
+      <title>Managed Backups</title>
+
       <para>
-         I decided to do it this way because this coordination step usually
-         doesn't take a lot of effort, and is only imposed on the user at
-         configuration time.  If instead, I wanted to to accomplish the same
-         thing <emphasis>dynamically</emphasis> in code, this would add quite a
-         bit of complexity to Cedar Backup.  This code would be difficult to
-         test and would initially be somewhat error-prone, at least until I
-         worked out all of the kinks.  Given that the current architecture has
-         been proven to work well, I don't think that it is worth adding
-         complexity to the code just to simplify the initial set-up process.
-         <footnote><para>Feel free to write me or the user mailing list if you
-         disagree <emphasis>and</emphasis> can come up with a straightforward
-         implementation which can be easily verified and
-         maintained.</para></footnote>
+         Cedar Backup also supports an optional feature called the
+         <quote>managed backup</quote>.  This feature is intended for use with
+         remote clients where cron is not available (for instance, SourceForge
+         shell accounts).
+      </para>
+
+      <para>
+         When managed backups are enabled, managed clients must still be
+         configured as usual.  However, rather than using a cron job on the
+         client to execute the collect and purge actions, the master executes
+         these actions on the client via a remote shell.  
+      </para>
+
+      <para>
+         To make this happen, first set up one or more managed clients in Cedar
+         Backup configuration.  Then, invoke Cedar Backup with the
+         <command>--managed</command> command-line option.  Whenever Cedar
+         Backup invokes an action locally, it will invoke the same action on
+         each of the managed clients.
+      </para>
+
+      <para>
+         Technically, this feature works for any client, not just clients that
+         don't have cron available.  Used this way, it can simplify the setup
+         process, because cron only has to be configured on the master.  For
+         some users, that may be motivation enough to use this feature all of
+         the time.
+      </para>
+
+      <para>
+         However, please keep in mind that this feature depends on a stable
+         network.  If your network connection drops, your backup will be
+         interrupted and will not be complete.  It is even possible that some
+         of the Cedar Backup metadata (like incremental backup state) will be
+         corrupted.  The risk is not high, but it is something you need to be
+         aware of if you choose to use this optional feature.
       </para>
 
    </sect1>
