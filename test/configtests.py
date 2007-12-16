@@ -10263,6 +10263,103 @@ class TestConfig(unittest.TestCase):
       config._validatePeers()
       self.failUnlessRaises(ValueError, config._validateStage)
 
+   def testValidate_073(self):
+      """
+      Confirm that remote peer is required to have backup user if not set in options.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="rcp", rshCommand="rsh", cbackCommand="cback", managedActions=["collect"], )
+      config.peers = PeersConfig()
+      config.peers.localPeers = []
+      config.peers.remotePeers = [ RemotePeer(name="remote", collectDir="/path"), ]
+      config._validatePeers()
+
+      config.options.backupUser = None
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+      config.peers.remotePeers[0].remoteUser = "ken"
+      config._validatePeers()
+
+   def testValidate_074(self):
+      """
+      Confirm that remote peer is required to have rcp command if not set in options.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="rcp", rshCommand="rsh", cbackCommand="cback", managedActions=["collect"], )
+      config.peers = PeersConfig()
+      config.peers.localPeers = []
+      config.peers.remotePeers = [ RemotePeer(name="remote", collectDir="/path"), ]
+      config._validatePeers()
+
+      config.options.rcpCommand = None
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+      config.peers.remotePeers[0].rcpCommand = "rcp"
+      config._validatePeers()
+
+   def testValidate_075(self):
+      """
+      Confirm that remote managed peer is required to have rsh command if not set in options.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="rcp", rshCommand="rsh", cbackCommand="cback", managedActions=["collect"], )
+      config.peers = PeersConfig()
+      config.peers.localPeers = []
+      config.peers.remotePeers = [ RemotePeer(name="remote", collectDir="/path"), ]
+      config._validatePeers()
+
+      config.options.rshCommand = None
+      config._validatePeers()
+
+      config.peers.remotePeers[0].managed = True
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+      config.peers.remotePeers[0].rshCommand = "rsh"
+      config._validatePeers()
+
+   def testValidate_076(self):
+      """
+      Confirm that remote managed peer is required to have cback command if not set in options.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="rcp", rshCommand="rsh", cbackCommand="cback", managedActions=["collect"], )
+      config.peers = PeersConfig()
+      config.peers.localPeers = []
+      config.peers.remotePeers = [ RemotePeer(name="remote", collectDir="/path"), ]
+      config._validatePeers()
+
+      config.options.cbackCommand = None
+      config._validatePeers()
+
+      config.peers.remotePeers[0].managed = True
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+      config.peers.remotePeers[0].cbackCommand = "cback"
+      config._validatePeers()
+
+   def testValidate_077(self):
+      """
+      Confirm that remote managed peer is required to have managed actions list if not set in options.
+      """
+      config = Config()
+      config.options = OptionsConfig(backupUser="ken", rcpCommand="rcp", rshCommand="rsh", cbackCommand="cback", managedActions=["collect"], )
+      config.peers = PeersConfig()
+      config.peers.localPeers = []
+      config.peers.remotePeers = [ RemotePeer(name="remote", collectDir="/path"), ]
+      config._validatePeers()
+
+      config.options.managedActions = None
+      config._validatePeers()
+
+      config.peers.remotePeers[0].managed = True
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+      config.options.managedActions = []
+      self.failUnlessRaises(ValueError, config._validatePeers)
+
+      config.peers.remotePeers[0].managedActions = ["collect", ]
+      config._validatePeers()
+
 
    ############################
    # Test parsing of documents
