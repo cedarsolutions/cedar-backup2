@@ -81,7 +81,8 @@ import unittest
 from os.path import isdir, isfile, islink, isabs, exists
 from getopt import GetoptError
 from CedarBackup2.testutil import failUnlessAssignRaises, captureOutput
-from CedarBackup2.config import ExtensionsConfig, ExtendedAction, ActionDependencies, PreActionHook, PostActionHook
+from CedarBackup2.config import OptionsConfig, ExtensionsConfig
+from CedarBackup2.config import ExtendedAction, ActionDependencies, PreActionHook, PostActionHook
 from CedarBackup2.cli import _usage, _version
 from CedarBackup2.cli import Options
 from CedarBackup2.cli import _ActionSet
@@ -4448,7 +4449,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = None
       extensions = ExtensionsConfig(None, None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_002(self):
       """
@@ -4456,7 +4458,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = []
       extensions = ExtensionsConfig(None, None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_003(self):
       """
@@ -4464,7 +4467,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = []
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_004(self):
       """
@@ -4472,7 +4476,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4487,7 +4492,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -4502,7 +4508,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
@@ -4517,7 +4524,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(400, actionSet.actionSet[0].index)
@@ -4532,7 +4540,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 4)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -4562,7 +4571,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(0, actionSet.actionSet[0].index)
       self.failUnlessEqual("rebuild", actionSet.actionSet[0].name)
@@ -4576,7 +4586,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(0, actionSet.actionSet[0].index)
       self.failUnlessEqual("validate", actionSet.actionSet[0].name)
@@ -4590,7 +4601,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "collect", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -4609,7 +4621,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "stage", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -4628,7 +4641,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "store", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -4647,7 +4661,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "purge", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -4666,7 +4681,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "all", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_016(self):
       """
@@ -4674,7 +4690,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "rebuild", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_017(self):
       """
@@ -4682,7 +4699,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "validate", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_018(self):
       """
@@ -4690,7 +4708,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "collect", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -4709,7 +4728,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "stage", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -4728,7 +4748,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "store", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -4747,7 +4768,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "purge", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -4766,7 +4788,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "all", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_023(self):
       """
@@ -4774,7 +4797,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "rebuild", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_024(self):
       """
@@ -4782,7 +4806,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "validate", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_025(self):
       """
@@ -4790,7 +4815,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "collect", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -4809,7 +4835,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "stage", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -4828,7 +4855,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "store", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
       self.failUnlessEqual("store", actionSet.actionSet[0].name)
@@ -4847,7 +4875,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "purge", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
       self.failUnlessEqual("store", actionSet.actionSet[0].name)
@@ -4866,7 +4895,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "all", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_030(self):
       """
@@ -4874,7 +4904,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "rebuild", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_031(self):
       """
@@ -4882,7 +4913,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "validate", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_032(self):
       """
@@ -4890,7 +4922,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "collect", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -4909,7 +4942,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "stage", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -4928,7 +4962,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "store", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
       self.failUnlessEqual("store", actionSet.actionSet[0].name)
@@ -4947,7 +4982,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "purge", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(400, actionSet.actionSet[0].index)
       self.failUnlessEqual("purge", actionSet.actionSet[0].name)
@@ -4966,7 +5002,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "all", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_037(self):
       """
@@ -4974,7 +5011,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "rebuild", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_038(self):
       """
@@ -4982,7 +5020,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "validate", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_039(self):
       """
@@ -4990,7 +5029,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "collect", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_040(self):
       """
@@ -4998,7 +5038,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "stage", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_041(self):
       """
@@ -5006,7 +5047,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "store", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_042(self):
       """
@@ -5014,7 +5056,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "purge", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_043(self):
       """
@@ -5022,7 +5065,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "all", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_044(self):
       """
@@ -5030,7 +5074,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "rebuild", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_045(self):
       """
@@ -5038,7 +5083,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "validate", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_046(self):
       """
@@ -5046,7 +5092,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "collect", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_047(self):
       """
@@ -5054,7 +5101,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "stage", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_048(self):
       """
@@ -5062,7 +5110,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "store", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_049(self):
       """
@@ -5070,7 +5119,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "purge", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_050(self):
       """
@@ -5078,7 +5128,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "all", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_051(self):
       """
@@ -5086,7 +5137,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "rebuild", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_052(self):
       """
@@ -5094,7 +5146,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "validate", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_053(self):
       """
@@ -5102,7 +5155,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "collect", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_054(self):
       """
@@ -5110,7 +5164,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "stage", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_055(self):
       """
@@ -5118,7 +5173,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "store", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_056(self):
       """
@@ -5126,7 +5182,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "purge", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_057(self):
       """
@@ -5134,7 +5191,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "all", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_058(self):
       """
@@ -5142,7 +5200,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "rebuild", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_059(self):
       """
@@ -5150,7 +5209,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "validate", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_060(self):
       """
@@ -5158,7 +5218,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_061(self):
       """
@@ -5166,7 +5227,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "collect", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_062(self):
       """
@@ -5174,7 +5236,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "stage", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_063(self):
       """
@@ -5182,7 +5245,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "store", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_064(self):
       """
@@ -5190,7 +5254,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "purge", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_065(self):
       """
@@ -5198,7 +5263,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "all", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_066(self):
       """
@@ -5206,7 +5272,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "rebuild", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_067(self):
       """
@@ -5214,7 +5281,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "validate", ]
       extensions = ExtensionsConfig([], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_068(self):
       """
@@ -5222,7 +5290,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one",  ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5241,7 +5310,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
@@ -5260,7 +5330,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5279,7 +5350,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5298,7 +5370,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_073(self):
       """
@@ -5306,7 +5379,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_074(self):
       """
@@ -5314,7 +5388,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_075(self):
       """
@@ -5322,7 +5397,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -5341,7 +5417,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5360,7 +5437,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5379,7 +5457,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5398,7 +5477,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_080(self):
       """
@@ -5406,7 +5486,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_081(self):
       """
@@ -5414,7 +5495,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_082(self):
       """
@@ -5422,7 +5504,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -5441,7 +5524,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -5460,7 +5544,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(250, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5479,7 +5564,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(250, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5498,7 +5584,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_087(self):
       """
@@ -5506,7 +5593,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_088(self):
       """
@@ -5514,7 +5602,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 250), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_089(self):
       """
@@ -5522,7 +5611,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -5541,7 +5631,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -5560,7 +5651,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
       self.failUnlessEqual("store", actionSet.actionSet[0].name)
@@ -5579,7 +5671,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(350, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5598,7 +5691,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_094(self):
       """
@@ -5606,7 +5700,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_095(self):
       """
@@ -5614,7 +5709,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 350), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_096(self):
       """
@@ -5622,7 +5718,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -5641,7 +5738,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -5660,7 +5758,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
       self.failUnlessEqual("store", actionSet.actionSet[0].name)
@@ -5679,7 +5778,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(400, actionSet.actionSet[0].index)
       self.failUnlessEqual("purge", actionSet.actionSet[0].name)
@@ -5698,7 +5798,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_101(self):
       """
@@ -5706,7 +5807,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_102(self):
       """
@@ -5714,7 +5816,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testActionSet_103(self):
       """
@@ -5722,7 +5825,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "one", "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 450), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(450, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5741,7 +5845,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "stage", "store", "purge", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 4)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -5770,7 +5875,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "purge", "collect", "store", ]
       extensions = ExtensionsConfig([], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 4)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -5801,7 +5907,8 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
                      ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
                      ExtendedAction("five", "os.path", "exists", 450), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 9)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5857,7 +5964,8 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
                      ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
                      ExtendedAction("five", "os.path", "exists", 450), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 9)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5911,7 +6019,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -5925,8 +6034,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], None)
-      hooks = []
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = []
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -5941,8 +6051,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], None)
-      hooks = [ PreActionHook("stage", "something") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("stage", "something") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -5957,8 +6068,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], None)
-      hooks = [ PostActionHook("stage", "something") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("stage", "something") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -5973,8 +6085,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], None)
-      hooks = [ PreActionHook("collect", "something") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("collect", "something") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -5989,8 +6102,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], None)
-      hooks = [ PostActionHook("collect", "something") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("collect", "something") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -6005,8 +6119,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], None)
-      hooks = [ PreActionHook("collect", "something1"), PostActionHook("collect", "something2") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("collect", "something1"), PostActionHook("collect", "something2") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -6021,8 +6136,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = []
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = []
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6036,8 +6152,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PreActionHook("store", "whatever"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("store", "whatever"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6051,8 +6168,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PostActionHook("store", "whatever"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("store", "whatever"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6066,8 +6184,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PreActionHook("one", "extension"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6081,8 +6200,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PostActionHook("one", "extension"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6096,8 +6216,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "one", ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PostActionHook("one", "extension2"), PreActionHook("one", "extension1"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("one", "extension2"), PreActionHook("one", "extension1"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6111,8 +6232,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one",  ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = []
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = []
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6131,8 +6253,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one",  ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PreActionHook("purge", "rm -f"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("purge", "rm -f"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6151,8 +6274,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one",  ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PostActionHook("purge", "rm -f"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("purge", "rm -f"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6171,8 +6295,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one",  ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PreActionHook("collect", "something"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("collect", "something"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6191,8 +6316,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one",  ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PostActionHook("collect", "something"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("collect", "something"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6211,8 +6337,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one",  ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PreActionHook("one", "extension"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6231,8 +6358,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one",  ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PostActionHook("one", "extension"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6251,8 +6379,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "one",  ]
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
-      hooks = [ PostActionHook("one", "extension"), PreActionHook("collect", "something"), PostActionHook("stage", "whatever"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("one", "extension"), PreActionHook("collect", "something"), PostActionHook("stage", "whatever"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -6276,7 +6405,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = None
       extensions = ExtensionsConfig(None, "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_002(self):
       """
@@ -6284,7 +6414,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = []
       extensions = ExtensionsConfig(None, "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_003(self):
       """
@@ -6292,7 +6423,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = []
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_004(self):
       """
@@ -6300,7 +6432,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -6315,7 +6448,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -6330,7 +6464,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
@@ -6345,7 +6480,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(400, actionSet.actionSet[0].index)
@@ -6360,7 +6496,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 4)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -6390,7 +6527,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(0, actionSet.actionSet[0].index)
       self.failUnlessEqual("rebuild", actionSet.actionSet[0].name)
@@ -6404,7 +6542,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(0, actionSet.actionSet[0].index)
       self.failUnlessEqual("validate", actionSet.actionSet[0].name)
@@ -6418,7 +6557,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -6437,7 +6577,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "stage", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -6456,7 +6597,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -6475,7 +6617,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -6494,7 +6637,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "all", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_016(self):
       """
@@ -6502,7 +6646,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "rebuild", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_017(self):
       """
@@ -6510,7 +6655,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "validate", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_018(self):
       """
@@ -6518,7 +6664,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -6537,7 +6684,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "stage", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -6556,7 +6704,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -6575,7 +6724,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -6594,7 +6744,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "all", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_023(self):
       """
@@ -6602,7 +6753,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "rebuild", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_024(self):
       """
@@ -6610,7 +6762,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "validate", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_025(self):
       """
@@ -6618,7 +6771,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -6637,7 +6791,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "stage", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -6656,7 +6811,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
       self.failUnlessEqual("store", actionSet.actionSet[0].name)
@@ -6675,7 +6831,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
       self.failUnlessEqual("store", actionSet.actionSet[0].name)
@@ -6694,7 +6851,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "all", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_030(self):
       """
@@ -6702,7 +6860,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "rebuild", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_031(self):
       """
@@ -6710,7 +6869,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "store", "validate", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_032(self):
       """
@@ -6718,7 +6878,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -6737,7 +6898,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "stage", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
@@ -6756,7 +6918,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(300, actionSet.actionSet[0].index)
       self.failUnlessEqual("store", actionSet.actionSet[0].name)
@@ -6775,7 +6938,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(400, actionSet.actionSet[0].index)
       self.failUnlessEqual("purge", actionSet.actionSet[0].name)
@@ -6794,7 +6958,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "all", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_037(self):
       """
@@ -6802,7 +6967,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "rebuild", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_038(self):
       """
@@ -6810,7 +6976,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "purge", "validate", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_039(self):
       """
@@ -6818,7 +6985,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_040(self):
       """
@@ -6826,7 +6994,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "stage", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_041(self):
       """
@@ -6834,7 +7003,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_042(self):
       """
@@ -6842,7 +7012,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_043(self):
       """
@@ -6850,7 +7021,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "all", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_044(self):
       """
@@ -6858,7 +7030,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "rebuild", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_045(self):
       """
@@ -6866,7 +7039,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "all", "validate", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_046(self):
       """
@@ -6874,7 +7048,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_047(self):
       """
@@ -6882,7 +7057,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "stage", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_048(self):
       """
@@ -6890,7 +7066,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_049(self):
       """
@@ -6898,7 +7075,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_050(self):
       """
@@ -6906,7 +7084,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "all", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_051(self):
       """
@@ -6914,7 +7093,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "rebuild", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_052(self):
       """
@@ -6922,7 +7102,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "rebuild", "validate", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_053(self):
       """
@@ -6930,7 +7111,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_054(self):
       """
@@ -6938,7 +7120,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "stage", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_055(self):
       """
@@ -6946,7 +7129,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_056(self):
       """
@@ -6954,7 +7138,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_057(self):
       """
@@ -6962,7 +7147,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "all", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_058(self):
       """
@@ -6970,7 +7156,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "rebuild", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_059(self):
       """
@@ -6978,7 +7165,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "validate", "validate", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_060(self):
       """
@@ -6986,7 +7174,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_061(self):
       """
@@ -6994,7 +7183,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_062(self):
       """
@@ -7002,7 +7192,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "stage", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_063(self):
       """
@@ -7010,7 +7201,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_064(self):
       """
@@ -7018,7 +7210,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_065(self):
       """
@@ -7026,7 +7219,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "all", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_066(self):
       """
@@ -7034,7 +7228,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "rebuild", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_067(self):
       """
@@ -7042,7 +7237,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "bogus", "validate", ]
       extensions = ExtensionsConfig([], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_068(self):
       """
@@ -7051,7 +7247,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one",  ]
       dependencies = ActionDependencies(["collect",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7069,7 +7266,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "stage", "one", ]
       dependencies = ActionDependencies(["stage",], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
@@ -7087,7 +7285,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "store", "one", ]
       dependencies = ActionDependencies(["store",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7105,7 +7304,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "purge", "one", ]
       dependencies = ActionDependencies(["purge",], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7123,7 +7323,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "all", "one", ]
       dependencies = ActionDependencies(["collect",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_073(self):
       """
@@ -7132,7 +7333,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "rebuild", "one", ]
       dependencies = ActionDependencies(["collect",], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_074(self):
       """
@@ -7141,7 +7343,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "validate", "one", ]
       dependencies = ActionDependencies(["stage",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_075(self):
       """
@@ -7150,7 +7353,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one", ]
       dependencies = ActionDependencies([], ["collect", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7168,7 +7372,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "stage", "one", ]
       dependencies = ActionDependencies(None, ["collect", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7186,7 +7391,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "store", "one", ]
       dependencies = ActionDependencies([], ["collect", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7204,7 +7410,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "purge", "one", ]
       dependencies = ActionDependencies(None, ["collect", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7222,7 +7429,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "stage", "one", ]
       dependencies = ActionDependencies(["stage", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7240,7 +7448,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "store", "one", ]
       dependencies = ActionDependencies(["stage", ], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7258,7 +7467,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "purge", "one", ]
       dependencies = ActionDependencies(["stage", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7276,7 +7486,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "all", "one", ]
       dependencies = ActionDependencies(None, ["collect", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_083(self):
       """
@@ -7285,7 +7496,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "rebuild", "one", ]
       dependencies = ActionDependencies([], ["collect", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_084(self):
       """
@@ -7294,7 +7506,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "validate", "one", ]
       dependencies = ActionDependencies(None, ["collect", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_085(self):
       """
@@ -7303,7 +7516,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one", ]
       dependencies = ActionDependencies([], ["stage", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7321,7 +7535,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "stage", "one", ]
       dependencies = ActionDependencies([], ["stage", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("stage", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7339,7 +7554,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "store", "one", ]
       dependencies = ActionDependencies(None, ["stage", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7357,7 +7573,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "purge", "one", ]
       dependencies = ActionDependencies([], ["stage", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7375,7 +7592,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one", ]
       dependencies = ActionDependencies(["store",], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7393,7 +7611,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "stage", "one", ]
       dependencies = ActionDependencies(["store",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7411,7 +7630,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "store", "one", ]
       dependencies = ActionDependencies(["store",], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7429,7 +7649,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "purge", "one", ]
       dependencies = ActionDependencies(["store",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7447,7 +7668,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "all", "one", ]
       dependencies = ActionDependencies(None, ["stage", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_094(self):
       """
@@ -7456,7 +7678,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "rebuild", "one", ]
       dependencies = ActionDependencies([], ["stage", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_095(self):
       """
@@ -7465,7 +7688,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "validate", "one", ]
       dependencies = ActionDependencies(None, ["stage", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_096(self):
       """
@@ -7474,7 +7698,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one", ]
       dependencies = ActionDependencies(["store",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7492,7 +7717,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "stage", "one", ]
       dependencies = ActionDependencies(["store",], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7510,7 +7736,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "store", "one", ]
       dependencies = ActionDependencies(["store",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7528,7 +7755,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "purge", "one", ]
       dependencies = ActionDependencies(["store",], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7546,7 +7774,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one", ]
       dependencies = ActionDependencies([], ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
@@ -7564,7 +7793,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "stage", "one", ]
       dependencies = ActionDependencies(None, ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
@@ -7582,7 +7812,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "store", "one", ]
       dependencies = ActionDependencies([], ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
@@ -7600,7 +7831,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "purge", "one", ]
       dependencies = ActionDependencies(None, ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("purge", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7618,7 +7850,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "all", "one", ]
       dependencies = ActionDependencies(["store",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_105(self):
       """
@@ -7627,7 +7860,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "rebuild", "one", ]
       dependencies = ActionDependencies(["store",], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_106(self):
       """
@@ -7636,7 +7870,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "validate", "one", ]
       dependencies = ActionDependencies(["store",], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_107(self):
       """
@@ -7645,7 +7880,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one", ]
       dependencies = ActionDependencies(None, ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
@@ -7663,7 +7899,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "stage", "one", ]
       dependencies = ActionDependencies([], ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
@@ -7681,7 +7918,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "store", "one", ]
       dependencies = ActionDependencies(None, ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[1].name)
       self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
@@ -7699,7 +7937,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "purge", "one", ]
       dependencies = ActionDependencies([], ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("purge", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7717,7 +7956,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "all", "one", ]
       dependencies = ActionDependencies(None, ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_112(self):
       """
@@ -7726,7 +7966,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "rebuild", "one", ]
       dependencies = ActionDependencies([], ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_113(self):
       """
@@ -7735,7 +7976,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "validate", "one", ]
       dependencies = ActionDependencies(None, ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_114(self):
       """
@@ -7744,7 +7986,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "one", "one", ]
       dependencies = ActionDependencies([], ["purge", ])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7761,7 +8004,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", "stage", "store", "purge", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 4)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -7790,7 +8034,8 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "stage", "purge", "collect", "store", ]
       extensions = ExtensionsConfig([], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 4)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -7830,7 +8075,8 @@ class TestActionSet(unittest.TestCase):
       eaction4 = ExtendedAction("four", "os.path", "isabs", dependencies=dependencies4)
       eaction5 = ExtendedAction("five", "os.path", "exists", dependencies=dependencies5)
       extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 9)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7886,7 +8132,8 @@ class TestActionSet(unittest.TestCase):
       eaction4 = ExtendedAction("four", "os.path", "isabs", dependencies=dependencies4)
       eaction5 = ExtendedAction("five", "os.path", "exists", dependencies=dependencies5)
       extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 9)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7932,7 +8179,8 @@ class TestActionSet(unittest.TestCase):
       actions = [ "one", ]
       dependencies = ActionDependencies(["collect", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      actionSet = _ActionSet(actions, extensions, None)
+      options = OptionsConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -7945,8 +8193,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      hooks = []
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = []
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -7961,8 +8210,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      hooks = [ PreActionHook("stage", "something") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("stage", "something") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -7976,8 +8226,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      hooks = [ PostActionHook("stage", "something") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("stage", "something") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -7991,8 +8242,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      hooks = [ PreActionHook("collect", "something") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("collect", "something") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -8006,8 +8258,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      hooks = [ PostActionHook("collect", "something") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("collect", "something") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -8021,8 +8274,9 @@ class TestActionSet(unittest.TestCase):
       """
       actions = [ "collect", ]
       extensions = ExtensionsConfig([], "dependency")
-      hooks = [ PreActionHook("collect", "something1"), PostActionHook("collect", "something2") ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("collect", "something1"), PostActionHook("collect", "something2") ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("collect", actionSet.actionSet[0].name)
@@ -8037,8 +8291,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "one", ]
       dependencies = ActionDependencies(["collect", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = []
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = []
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8052,8 +8308,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "one", ]
       dependencies = ActionDependencies(["collect", ], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PreActionHook("store", "whatever"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("store", "whatever"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8067,8 +8325,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "one", ]
       dependencies = ActionDependencies(["collect", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PostActionHook("store", "whatever"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("store", "whatever"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8082,8 +8342,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "one", ]
       dependencies = ActionDependencies(["collect", ], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PreActionHook("one", "extension"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(PreActionHook("one", "extension"), actionSet.actionSet[0].preHook)
@@ -8097,8 +8359,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "one", ]
       dependencies = ActionDependencies(["collect", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PostActionHook("one", "extension"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8112,8 +8376,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "one", ]
       dependencies = ActionDependencies(["collect", ], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PostActionHook("one", "extension2"), PreActionHook("one", "extension1"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("one", "extension2"), PreActionHook("one", "extension1"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(PreActionHook("one", "extension1"), actionSet.actionSet[0].preHook)
@@ -8127,8 +8393,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one",  ]
       dependencies = ActionDependencies(["collect", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = []
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = []
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8146,8 +8414,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one",  ]
       dependencies = ActionDependencies(["collect", ], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PreActionHook("purge", "rm -f"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("purge", "rm -f"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8165,8 +8435,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one",  ]
       dependencies = ActionDependencies(["collect", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PostActionHook("purge", "rm -f"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("purge", "rm -f"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8184,8 +8456,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one",  ]
       dependencies = ActionDependencies(["collect", ], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PreActionHook("collect", "something"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("collect", "something"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8203,8 +8477,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one",  ]
       dependencies = ActionDependencies(["collect", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PostActionHook("collect", "something"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("collect", "something"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8222,8 +8498,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one",  ]
       dependencies = ActionDependencies(["collect", ], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PreActionHook("one", "extension"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PreActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(PreActionHook("one", "extension"), actionSet.actionSet[0].preHook)
@@ -8241,8 +8519,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one",  ]
       dependencies = ActionDependencies(["collect", ], [])
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PostActionHook("one", "extension"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("one", "extension"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8260,8 +8540,10 @@ class TestActionSet(unittest.TestCase):
       actions = [ "collect", "one",  ]
       dependencies = ActionDependencies(["collect", ], None)
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", dependencies=dependencies), ], "dependency")
-      hooks = [ PostActionHook("one", "extension"), PreActionHook("collect", "something"), PostActionHook("stage", "whatever"), ]
-      actionSet = _ActionSet(actions, extensions, hooks)
+      options = OptionsConfig()
+      options = OptionsConfig()
+      options.hooks = [ PostActionHook("one", "extension"), PreActionHook("collect", "something"), PostActionHook("stage", "whatever"), ]
+      actionSet = _ActionSet(actions, extensions, options, None, False, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual("one", actionSet.actionSet[0].name)
       self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
@@ -8289,7 +8571,8 @@ class TestActionSet(unittest.TestCase):
       eaction4 = ExtendedAction("four", "os.path", "isabs", dependencies=dependencies4)
       eaction5 = ExtendedAction("five", "os.path", "exists", dependencies=dependencies5)
       extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
    def testDependencyMode_141(self):
       """
@@ -8308,7 +8591,8 @@ class TestActionSet(unittest.TestCase):
       eaction4 = ExtendedAction("four", "os.path", "isabs", dependencies=dependencies4)
       eaction5 = ExtendedAction("five", "os.path", "exists", dependencies=dependencies5)
       extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
-      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, None)
+      options = OptionsConfig()
+      self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
 
 
 #######################################################################
