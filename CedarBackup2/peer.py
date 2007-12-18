@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -72,6 +72,9 @@ from CedarBackup2.util import splitCommandLine, encodePath
 logger                  = logging.getLogger("CedarBackup2.log.peer")
 
 DEF_RCP_COMMAND         = [ "/usr/bin/scp", "-B", "-q", "-C" ]
+DEF_RSH_COMMAND         = [ "/usr/bin/ssh", ]
+DEF_CBACK_COMMAND       = "/usr/bin/cback"
+
 DEF_COLLECT_INDICATOR   = "cback.collect"
 DEF_STAGE_INDICATOR     = "cback.stage"
 
@@ -424,23 +427,25 @@ class RemotePeer(object):
    interface shared with the C{LocalPeer} class.
 
    @sort: __init__, stagePeer, checkCollectIndicator, writeStageIndicator, 
-          _getDirContents, _copyRemoteDir, _copyRemoteFile, _pushLocalFile, 
-          name, collectDir, remoteUser, rcpCommand
+          executeRemoteCommand, executeManagedAction, _getDirContents, 
+          _copyRemoteDir, _copyRemoteFile, _pushLocalFile, name, collectDir, 
+          remoteUser, rcpCommand, rshCommand, cbackCommand
    """
 
    ##############
    # Constructor
    ##############
 
-   def __init__(self, name, collectDir, workingDir, remoteUser, rcpCommand=None, localUser=None):
+   def __init__(self, name, collectDir=None, workingDir=None, remoteUser=None, 
+                rcpCommand=None, localUser=None, rshCommand=None, cbackCommand=None):
       """
       Initializes a remote backup peer.
 
-      @note: If provided, the rcp command will eventually be parsed into a list
-      of strings suitable for passing to C{util.executeCommand} in order to
-      avoid security holes related to shell interpolation.   This parsing will
-      be done by the L{util.splitCommandLine} function.  See the documentation
-      for that function for some important notes about its limitations.
+      @note: If provided, each command will eventually be parsed into a list of
+      strings suitable for passing to C{util.executeCommand} in order to avoid
+      security holes related to shell interpolation.   This parsing will be
+      done by the L{util.splitCommandLine} function.  See the documentation for
+      that function for some important notes about its limitations.
 
       @param name: Name of the backup peer
       @type name: String, must be a valid DNS hostname
@@ -452,13 +457,19 @@ class RemotePeer(object):
       @type workingDir: String representing an absolute path on the current host.
       
       @param remoteUser: Name of the Cedar Backup user on the remote peer
-      @type remoteUser: String representing a username, valid via the copy command
+      @type remoteUser: String representing a username, valid via remote shell to the peer
+
+      @param localUser: Name of the Cedar Backup user on the current host
+      @type localUser: String representing a username, valid on the current host
 
       @param rcpCommand: An rcp-compatible copy command to use for copying files from the peer
       @type rcpCommand: String representing a system command including required arguments
 
-      @param localUser: Name of the Cedar Backup user on the current host
-      @type localUser: String representing a username, valid on the current host
+      @param rshCommand: An rsh-compatible copy command to use for remote shells to the peer
+      @type rshCommand: String representing a system command including required arguments
+
+      @param cbackCommand: A chack-compatible command to use for executing managed actions
+      @type cbackCommand: String representing a system command including required arguments
 
       @raise ValueError: If collect directory is not an absolute path
       """
@@ -469,12 +480,17 @@ class RemotePeer(object):
       self._localUser = None
       self._rcpCommand = None
       self._rcpCommandList = None
+      self._rshCommand = None
+      self._rshCommandList = None
+      self._cbackCommand = None
       self.name = name
       self.collectDir = collectDir
       self.workingDir = workingDir
       self.remoteUser = remoteUser
       self.localUser = localUser
       self.rcpCommand = rcpCommand
+      self.rshCommand = rshCommand
+      self.cbackCommand = cbackCommand
 
 
    #############
@@ -505,8 +521,9 @@ class RemotePeer(object):
       @raise ValueError: If the value is C{None} or is not an absolute path.
       @raise ValueError: If the value cannot be encoded properly.
       """
-      if value is None or not os.path.isabs(value):
-         raise ValueError("Collect directory must be an absolute path.")
+      if value is not None:
+         if not os.path.isabs(value):
+            raise ValueError("Collect directory must be an absolute path.")
       self._collectDir = encodePath(value)
 
    def _getCollectDir(self):
@@ -522,8 +539,9 @@ class RemotePeer(object):
       @raise ValueError: If the value is C{None} or is not an absolute path.
       @raise ValueError: If the value cannot be encoded properly.
       """
-      if value is None or not os.path.isabs(value):
-         raise ValueError("Working directory must be an absolute path.")
+      if value is not None:
+         if not os.path.isabs(value):
+            raise ValueError("Working directory must be an absolute path.")
       self._workingDir = encodePath(value)
 
    def _getWorkingDir(self):
@@ -597,12 +615,70 @@ class RemotePeer(object):
       """
       return self._rcpCommand
 
+   def _setRshCommand(self, value):
+      """
+      Property target to set the rsh command.
+
+      The value must be a non-empty string or C{None}.  Its value is stored in
+      the two forms: "raw" as provided by the client, and "parsed" into a list
+      suitable for being passed to L{util.executeCommand} via
+      L{util.splitCommandLine}.  
+
+      However, all the caller will ever see via the property is the actual
+      value they set (which includes seeing C{None}, even if we translate that
+      internally to C{DEF_RSH_COMMAND}).  Internally, we should always use
+      C{self._rshCommandList} if we want the actual command list.
+
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is None:
+         self._rshCommand = None
+         self._rshCommandList = DEF_RSH_COMMAND
+      else:
+         if len(value) >= 1:
+            self._rshCommand = value
+            self._rshCommandList = splitCommandLine(self._rshCommand)
+         else:
+            raise ValueError("The rsh command must be a non-empty string.")
+
+   def _getRshCommand(self):
+      """
+      Property target used to get the rsh command.
+      """
+      return self._rshCommand
+
+   def _setCbackCommand(self, value):
+      """
+      Property target to set the cback command.
+
+      The value must be a non-empty string or C{None}.  Unlike the other
+      command, this value is only stored in the "raw" form provided by the
+      client.
+
+      @raise ValueError: If the value is an empty string.
+      """
+      if value is None:
+         self._cbackCommand = None
+      else:
+         if len(value) >= 1:
+            self._cbackCommand = value
+         else:
+            raise ValueError("The cback command must be a non-empty string.")
+
+   def _getCbackCommand(self):
+      """
+      Property target used to get the cback command.
+      """
+      return self._cbackCommand
+
    name = property(_getName, _setName, None, "Name of the peer (a valid DNS hostname).")
    collectDir = property(_getCollectDir, _setCollectDir, None, "Path to the peer's collect directory (an absolute local path).")
    workingDir = property(_getWorkingDir, _setWorkingDir, None, "Path to the peer's working directory (an absolute local path).")
    remoteUser = property(_getRemoteUser, _setRemoteUser, None, "Name of the Cedar Backup user on the remote peer.")
    localUser = property(_getLocalUser, _setLocalUser, None, "Name of the Cedar Backup user on the current host.")
    rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "An rcp-compatible copy command to use for copying files.")
+   rshCommand = property(_getRshCommand, _setRshCommand, None, "An rsh-compatible command to use for remote shells to the peer.")
+   cbackCommand = property(_getCbackCommand, _setCbackCommand, None, "A chack-compatible command to use for executing managed actions.")
 
 
    #################
@@ -663,7 +739,6 @@ class RemotePeer(object):
       if count == 0:
          raise IOError("Did not copy any files from local peer.")
       return count
-      
 
    def checkCollectIndicator(self, collectIndicator=None):
       """
@@ -759,6 +834,32 @@ class RemotePeer(object):
             try:
                os.remove(sourceFile)
             except: pass
+
+   def executeRemoteCommand(self, command):
+      """
+      Executes a command on the peer via remote shell.
+
+      @param command: Command to execute
+      @type command: String command-line suitable for use with rsh.
+
+      @raise IOError: If there is an error executing the command on the remote peer.
+      """
+      RemotePeer._executeRemoteCommand(self.remoteUser, self.localUser, 
+                                       self.name, self._rshCommand, 
+                                       self._rshCommandList, command)
+
+   def executeManagedAction(self, action, fullBackup):
+      """
+      Executes a managed action on this peer.
+
+      @param action: Name of the action to execute.
+      @param fullBackup: Whether a full backup should be executed.
+
+      @raise IOError: If there is an error executing the action on the remote peer.
+      """
+      log.debug("Executing managed action [%s] on peer [%s]." % (action, self.name))
+      command = RemotePeer._buildCbackCommand(self.cbackCommand, action, fullBackup)
+      self.executeRemoteCommand(command)
 
 
    ##################
@@ -1035,4 +1136,68 @@ class RemotePeer(object):
          if result != 0:
             raise IOError("Error (%d) copying [%s] to remote host (using no local user)." % (result, sourceFile))
    _pushLocalFile = staticmethod(_pushLocalFile)
+
+   def _executeRemoteCommand(remoteUser, localUser, remoteHost, rshCommand, rshCommandList, remoteCommand):
+      """
+      Executes a command on the peer via remote shell.
+
+      @param remoteUser: Name of the Cedar Backup user on the remote peer
+      @type remoteUser: String representing a username, valid on the remote host
+
+      @param localUser: Name of the Cedar Backup user on the current host
+      @type localUser: String representing a username, valid on the current host
+
+      @param remoteHost: Hostname of the remote peer
+      @type remoteHost: String representing a hostname, accessible via the copy command
+
+      @param rshCommand: An rsh-compatible copy command to use for remote shells to the peer
+      @type rshCommand: String representing a system command including required arguments
+
+      @param rshCommandList: An rsh-compatible copy command to use for remote shells to the peer
+      @type rshCommandList: Command as a list to be passed to L{util.executeCommand}
+
+      @param remoteCommand: The command to be executed on the remote host
+      @type remoteCommand: String command-line, with no special shell characters ($, <, etc.)
+
+      @raise IOError: If there is an error executing the remote command
+      """
+      if localUser is not None:
+         try:
+            if os.getuid() != 0:
+               raise IOError("Only root can remote shell as another user.")
+         except AttributeError: pass
+         command = resolveCommand(SU_COMMAND) 
+         actualCommand = "%s %s@%s '%s'" % (rshCommand, remoteUser, remoteHost, remoteCommand)
+         result = executeCommand(command, [localUser, "-c", actualCommand])[0]
+         if result != 0:
+            raise IOError("Error (%d) executing command on remote host as local user [%s]." % (result, localUser))
+      else:
+         command = resolveCommand(rshCommandList)
+         result = executeCommand(command, ["%s@%s" % (remoteUser, remoteHost), "%s" % remoteCommand])[0]
+         if result != 0:
+            raise IOError("Error (%d) executing command on remote host (using no local user)." % result)
+   _executeRemoteCommand = staticmethod(_executeRemoteCommand)
+
+   def _buildCbackCommand(cbackCommand, action, fullBackup):
+      """
+      Builds a Cedar Backup command line for the named action.
+
+      @note: If the cback command is None, then DEF_CBACK_COMMAND is used.
+
+      @param cbackCommand: cback command to execute, including required options
+      @param action: Name of the action to execute.
+      @param fullBackup: Whether a full backup should be executed.
+
+      @return: String suitable for passing to L{_executeRemoteCommand} as remoteCommand.
+      @raise ValueError: If action is None.
+      """
+      if action is None:
+         raise ValueError("Action cannot be None.")
+      if cbackCommand is None:
+         cbackCommand = DEF_CBACK_COMMAND
+      if fullBackup:
+         return "%s --full %s" % (cbackCommand, action)
+      else:
+         return "%s %s" % (cbackCommand, action)
+   _buildCbackCommand = staticmethod(_buildCbackCommand)
 

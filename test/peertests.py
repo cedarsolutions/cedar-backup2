@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -102,7 +102,8 @@ from CedarBackup2.testutil import findResources, buildPath, removedir, extractTa
 from CedarBackup2.testutil import getMaskAsMode, getLogin, runningAsRoot
 from CedarBackup2.testutil import platformSupportsPermissions, platformWindows
 from CedarBackup2.peer import LocalPeer, RemotePeer
-from CedarBackup2.peer import DEF_RCP_COMMAND, DEF_COLLECT_INDICATOR, DEF_STAGE_INDICATOR
+from CedarBackup2.peer import DEF_RCP_COMMAND, DEF_RSH_COMMAND
+from CedarBackup2.peer import DEF_COLLECT_INDICATOR, DEF_STAGE_INDICATOR
 
 
 #######################################################################
@@ -729,7 +730,10 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(remoteUser, peer.remoteUser)
       self.failUnlessEqual(None, peer.localUser)
       self.failUnlessEqual(None, peer.rcpCommand)
+      self.failUnlessEqual(None, peer.rshCommand)
+      self.failUnlessEqual(None, peer.cbackCommand)
       self.failUnlessEqual(DEF_RCP_COMMAND, peer._rcpCommandList)
+      self.failUnlessEqual(DEF_RSH_COMMAND, peer._rshCommandList)
 
    def testBasic_003(self):
       """
@@ -747,7 +751,10 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(remoteUser, peer.remoteUser)
       self.failUnlessEqual(None, peer.localUser)
       self.failUnlessEqual(None, peer.rcpCommand)
+      self.failUnlessEqual(None, peer.rshCommand)
+      self.failUnlessEqual(None, peer.cbackCommand)
       self.failUnlessEqual(DEF_RCP_COMMAND, peer._rcpCommandList)
+      self.failUnlessEqual(DEF_RSH_COMMAND, peer._rshCommandList)
 
    def testBasic_004(self):
       """
@@ -765,7 +772,10 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(remoteUser, peer.remoteUser)
       self.failUnlessEqual(None, peer.localUser)
       self.failUnlessEqual(rcpCommand, peer.rcpCommand)
+      self.failUnlessEqual(None, peer.rshCommand)
+      self.failUnlessEqual(None, peer.cbackCommand)
       self.failUnlessEqual(["rcp", "-one", "--two", "three", "four five", "'six", "seven'", "eight", ], peer._rcpCommandList)
+      self.failUnlessEqual(DEF_RSH_COMMAND, peer._rshCommandList)
 
    def testBasic_005(self):
       """
@@ -784,6 +794,44 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(localUser, peer.localUser)
       self.failUnlessEqual(None, peer.rcpCommand)
       self.failUnlessEqual(DEF_RCP_COMMAND, peer._rcpCommandList)
+      self.failUnlessEqual(DEF_RSH_COMMAND, peer._rshCommandList)
+
+   def testBasic_006(self):
+      """
+      Make sure attributes are set properly for valid constructor input, custom rsh command.
+      """
+      name = REMOTE_HOST
+      remoteUser = getLogin()
+      rshCommand = "rsh --whatever -something \"a b\" else"
+      peer = RemotePeer(name, remoteUser=remoteUser, rshCommand=rshCommand)
+      self.failUnlessEqual(name, peer.name)
+      self.failUnlessEqual(None, peer.collectDir)
+      self.failUnlessEqual(None, peer.workingDir)
+      self.failUnlessEqual(remoteUser, peer.remoteUser)
+      self.failUnlessEqual(None, peer.localUser)
+      self.failUnlessEqual(None, peer.rcpCommand)
+      self.failUnlessEqual(rshCommand, peer.rshCommand)
+      self.failUnlessEqual(None, peer.cbackCommand)
+      self.failUnlessEqual(DEF_RCP_COMMAND, peer._rcpCommandList)
+      self.failUnlessEqual(DEF_RCP_COMMAND, peer._rcpCommandList)
+      self.failUnlessEqual(["rsh", "--whatever", "-something", "a b", "else", ], peer._rshCommandList)
+
+   def testBasic_007(self):
+      """
+      Make sure attributes are set properly for valid constructor input, custom cback command.
+      """
+      name = REMOTE_HOST
+      remoteUser = getLogin()
+      cbackCommand = "cback --config=whatever --logfile=whatever --mode=064"
+      peer = RemotePeer(name, remoteUser=remoteUser, cbackCommand=cbackCommand)
+      self.failUnlessEqual(name, peer.name)
+      self.failUnlessEqual(None, peer.collectDir)
+      self.failUnlessEqual(None, peer.workingDir)
+      self.failUnlessEqual(remoteUser, peer.remoteUser)
+      self.failUnlessEqual(None, peer.localUser)
+      self.failUnlessEqual(None, peer.rcpCommand)
+      self.failUnlessEqual(None, peer.rshCommand)
+      self.failUnlessEqual(cbackCommand, peer.cbackCommand)
 
 
    ###############################
@@ -1427,6 +1475,56 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(permissions, self.getFileMode(["target", "file005", ]))
       self.failUnlessEqual(permissions, self.getFileMode(["target", "file006", ]))
       self.failUnlessEqual(permissions, self.getFileMode(["target", "file007", ]))
+
+
+   ##############################
+   # Test executeRemoteCommand()
+   ##############################
+
+   def testExecuteRemoteCommand(self):
+      """
+      Test that a simple remote command succeeds.
+      """
+      target = self.buildPath(["test.txt", ])
+      name = REMOTE_HOST
+      remoteUser = getLogin()
+      command = "touch %s" % target;
+      self.failIf(os.path.exists(target))
+      peer = RemotePeer(name=name, remoteUser=remoteUser)
+      peer.executeRemoteCommand(command)
+      self.failUnless(os.path.exists(target))
+
+
+   ############################
+   # Test _buildCbackCommand()
+   ############################
+
+   def testBuildCbackCommand_001(self):
+      """
+      Test with None for cbackCommand and action, False for fullBackup.
+      """
+      self.failUnlessRaises(ValueError, RemotePeer._buildCbackCommand, None, None, False)
+
+   def testBuildCbackCommand_002(self):
+      """
+      Test with None for cbackCommand, "collect" for action, False for fullBackup.
+      """
+      result = RemotePeer._buildCbackCommand(None, "collect", False)
+      self.failUnlessEqual("/usr/bin/cback collect", result)
+
+   def testBuildCbackCommand_003(self):
+      """
+      Test with "cback" for cbackCommand, "collect" for action, False for fullBackup.
+      """
+      result = RemotePeer._buildCbackCommand("cback", "collect", False)
+      self.failUnlessEqual("cback collect", result)
+
+   def testBuildCbackCommand_004(self):
+      """
+      Test with "cback" for cbackCommand, "collect" for action, True for fullBackup.
+      """
+      result = RemotePeer._buildCbackCommand("cback", "collect", True)
+      self.failUnlessEqual("cback --full collect", result)
 
 
 #######################################################################
