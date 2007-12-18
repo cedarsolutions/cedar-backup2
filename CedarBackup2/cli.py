@@ -224,11 +224,21 @@ def cli():
       logger.debug("Using user-supplied configuration file.")
       configPath = options.config
 
+   executeLocal = True
+   if options.managedOnly:
+      executeLocal = False
+      executeManaged = True
+   if options.managed:
+      executeManaged = True
+   logger.debug("Execute local actions: %s" % executeLocal)
+   logger.debug("Execute managed actions: %s" % executeManaged)
+
    try:
       logger.info("Configuration path is [%s]" % configPath)
       config = Config(xmlPath=configPath)
       setupPathResolver(config)
-      actionSet = _ActionSet(options.actions, config.extensions, config.options.hooks)
+      actionSet = _ActionSet(options.actions, config.extensions, config.options, 
+                             config.peers, executeManaged, executeLocal)
    except Exception, e:
       logger.error("Error reading or handling configuration: %s" % e)
       logger.info("Cedar Backup run completed with status 4.")
@@ -278,11 +288,16 @@ class _ActionItem(object):
    (if set).
 
    @note: The comparison operators for this class have been implemented to only
-   compare based on the index value, and ignore all other values.  This is so
-   that the action set list can be easily sorted by index.
+   compare based on the index and SORT_ORDER value, and ignore all other
+   values.  This is so that the action set list can be easily sorted first by
+   type (_ActionItem before _ManagedActionItem) and then by index within type.
+
+   @cvar SORT_ORDER: Defines a sort order to order properly between types.
 
    @sort: __init__, index, module, function 
    """
+   
+   SORT_ORDER = 0
 
    def __init__(self, index, name, preHook, postHook, function):
       """
@@ -312,6 +327,11 @@ class _ActionItem(object):
       """
       if other is None:
          return 1
+      if self.SORT_ORDER != other.SORT_ORDER:
+         if self.SORT_ORDER < other.SORT_ORDER:
+            return -1
+         else:
+            return 1 
       if self.index != other.index:
          if self.index < other.index:
             return -1
@@ -360,6 +380,83 @@ class _ActionItem(object):
       executeCommand(command=fields[0:1], args=fields[1:])
 
 
+###########################
+# _ManagedActionItem class
+###########################
+
+class _ManagedActionItem(object):
+
+   """
+   Class representing a single action to be executed on a managed peer.
+
+   This class represents a single named action to be executed, and understands
+   how to execute that action.   
+
+   Actions to be executed on a managed peer rely on peer configuration and
+   on the full-backup flag.  All other configuration takes place on the remote
+   peer itself.
+
+   @note: The comparison operators for this class have been implemented to only
+   compare based on the index and SORT_ORDER value, and ignore all other
+   values.  This is so that the action set list can be easily sorted first by
+   type (_ActionItem before _ManagedActionItem) and then by index within type.
+
+   @cvar SORT_ORDER: Defines a sort order to order properly between types.
+   """
+
+   SORT_ORDER = 1
+
+   def __init__(self, index, name, remotePeers):
+      """
+      Default constructor.
+
+      @param index: Index of the item (or C{None}).
+      @param name: Name of the action that is being executed.
+      @param remotePeers: List of remote peers on which to execute the action.
+      """
+      self.index = index
+      self.name = name
+      self.remotePeers = remotePeers
+
+   def __cmp__(self, other):
+      """
+      Definition of equals operator for this class.
+      The only thing we compare is the item's index.  
+      @param other: Other object to compare to.
+      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
+      """
+      if other is None:
+         return 1
+      if self.SORT_ORDER != other.SORT_ORDER:
+         if self.SORT_ORDER < other.SORT_ORDER:
+            return -1
+         else:
+            return 1 
+      if self.index != other.index:
+         if self.index < other.index:
+            return -1
+         else:
+            return 1 
+      return 0
+
+   def executeAction(self, configPath, options, config):
+      """
+      Executes the managed action associated with an item.
+
+      @note: Only options.full is actually used.  The rest of
+      the arguments exist to satisfy the ActionItem iterface.
+
+      @param configPath: Path to configuration file on disk.
+      @param options: Command-line options to be passed to action.
+      @param config: Parsed configuration to be passed to action.
+
+      @raise Exception: If there is a problem executing the action.
+      """
+      for peer in remotePeer:
+         log.debug("Executing managed action [%s] on peer [%s]." % (self.name, peer.name))
+         peer.executeManagedAction(self.name, options.full)
+
+
 ###################
 # _ActionSet class
 ###################
@@ -367,9 +464,9 @@ class _ActionItem(object):
 class _ActionSet(object):
 
    """
-   Class representing a set of actions to be executed.
+   Class representing a set of local actions to be executed.
 
-   This class does three different things.  First, it ensures that the actions
+   This class does four different things.  First, it ensures that the actions
    specified on the command-line are sensible.  The command-line can only list
    either built-in actions or extended actions specified in configuration.
    Also, certain actions (in L{NONCOMBINE_ACTIONS}) cannot be combined with
@@ -385,10 +482,13 @@ class _ActionSet(object):
    are executed immediately before their associated action, and post-action
    hooks are executed immediately after their associated action.
 
+   Finally, the class properly interleaves local and managed actions so that
+   the same action gets executed first locally and then on managed peers.
+
    @sort: __init__, executeActions
    """
 
-   def __init__(self, actions, extensions, hooks):
+   def __init__(self, actions, extensions, options, peers, managed, local):
       """
       Constructor for the C{_ActionSet} class.
 
@@ -401,25 +501,31 @@ class _ActionSet(object):
          - C{preHookMap}: Mapping from action name to post C{ActionHook}
          - C{functionMap}: Mapping from action name to Python function
          - C{indexMap}: Mapping from action name to execution index
+         - C{peerMap}: Mapping from action name to set of C{RemotePeer}
          - C{actionMap}: Mapping from action name to C{_ActionItem}
 
       Once these data structures are set up, the command line is validated to
       make sure only valid actions have been requested, and in a sensible
       combination.  Then, all of the data is used to build C{self.actionSet},
-      the set of C{_ActionItem} object to be executed by C{executeActions()}.
+      the set action items to be executed by C{executeActions()}.  This list
+      might contain either C{_ActionItem} or C{_ManagedActionItem}.
 
       @param actions: Names of actions specified on the command-line.
       @param extensions: Extended action configuration (i.e. config.extensions)
-      @param hooks: List of pre- and post-action hooks (i.e. config.options.hooks)
+      @param options: Options configuration (i.e. config.options)
+      @param peers: Peers configuration (i.e. config.peers)
+      @param managed: Whether to include managed actions in the set
+      @param local: Whether to include local actions in the set
 
       @raise ValueError: If one of the specified actions is invalid.
-      @raise ValueError: 
       """
       extensionNames = _ActionSet._deriveExtensionNames(extensions)
-      (preHookMap, postHookMap) = _ActionSet._buildHookMaps(hooks)
+      (preHookMap, postHookMap) = _ActionSet._buildHookMaps(options.hooks)
       functionMap = _ActionSet._buildFunctionMap(extensions)
       indexMap = _ActionSet._buildIndexMap(extensions)
-      actionMap = _ActionSet._buildActionMap(extensionNames, functionMap, indexMap, preHookMap, postHookMap)
+      peerMap = _ActionSet._buildPeerMap(options, peers)
+      actionMap = _ActionSet._buildActionMap(managed, local, extensionNames, functionMap, 
+                                             indexMap, preHookMap, postHookMap, peerMap)
       _ActionSet._validateActions(actions, extensionNames)
       self.actionSet = _ActionSet._buildActionSet(actions, actionMap)
 
@@ -560,22 +666,30 @@ class _ActionSet(object):
       return indexMap
    _buildIndexMap = staticmethod(_buildIndexMap)
 
-   def _buildActionMap(extensionNames, functionMap, indexMap, preHookMap, postHookMap):
+   def _buildActionMap(managed, local, extensionNames, functionMap, indexMap, preHookMap, postHookMap, peerMap):
       """
-      Builds a mapping from action name to list of C{_ActionItem} objects.
+      Builds a mapping from action name to list of action items.
 
-      In most cases, the mapping from action name to C{_ActionItem} is 1:1.  The exception
-      is the "all" action, which is a special case.  However, a list is returned in all
-      cases, just for consistency later.
+      We build either C{_ActionItem} or C{_ManagedActionItem} objects here.  
 
-      Each C{_ActionItem} will be created with a proper function reference and
-      index value for execution ordering.
+      In most cases, the mapping from action name to C{_ActionItem} is 1:1.
+      The exception is the "all" action, which is a special case.  However, a
+      list is returned in all cases, just for consistency later.  Each
+      C{_ActionItem} will be created with a proper function reference and index
+      value for execution ordering.
 
+      The mapping from action name to C{_ManagedActionItem} is always 1:1.
+      Each managed action item contains a list of peers which the action should
+      be executed.
+
+      @param managed: Whether to include managed actions in the set
+      @param local: Whether to include local actions in the set
       @param extensionNames: List of valid extended action names 
       @param functionMap: Dictionary mapping action name to Python function
       @param indexMap: Dictionary mapping action name to integer execution index
       @param preHookMap: Dictionary mapping action name to pre hooks (if any) for the action
       @param postHookMap: Dictionary mapping action name to post hooks (if any) for the action
+      @param peerMap: Dictionary mapping action name to list of remote peers on which to execute the action
 
       @return: Dictionary mapping action name to list of C{_ActionItem} objects.
       """
@@ -584,11 +698,49 @@ class _ActionSet(object):
          if name != 'all': # do this one later
             function = functionMap[name]
             index = indexMap[name]
-            (preHook, postHook) = _ActionSet._deriveHooks(name, preHookMap, postHookMap)
-            actionMap[name] = [ _ActionItem(index, name, preHook, postHook, function), ]
+            actionMap[name] = []
+            if local:
+               (preHook, postHook) = _ActionSet._deriveHooks(name, preHookMap, postHookMap)
+               actionMap[name].append(_ActionItem(index, name, preHook, postHook, function))
+            if managed:
+               if name in peerMap:
+                  actionMap[name].append(_ManagedActionItem(index, name, peerMap[name]))
       actionMap['all'] = actionMap['collect'] + actionMap['stage'] + actionMap['store'] + actionMap['purge']
       return actionMap
    _buildActionMap = staticmethod(_buildActionMap)
+
+   def _buildPeerMap(options, peers):
+      """
+      Build a mapping from action name to list of remote peers.
+
+      There will be one entry in the mapping for each managed action.  If there
+      are no managed peers, the mapping will be empty.  Only managed actions
+      will be listed in the mapping.
+
+      @param options: Option configuration (i.e. config.options)
+      @param peers: Peers configuration (i.e. config.peers)
+      """
+      peerMap = {}
+      if peers is not None:
+         if peers.remotePeers is not None:
+            for peer in peers.remotePeers:
+               if peer.managed:
+                  remoteUser = _ActionSet._getRemoteUser(config, peer)
+                  localUser = _ActionSet._getRemoteUser(config, peer)
+                  rshCommand = _ActionSet._getRshCommand(config, peer)
+                  cbackCommand = _ActionSet._getCbackCommand(config, peer)
+                  managedActions = _ActionSet._getManagedActions(config, peer)
+                  remotePeer = RemotePeer(peer.name, None, options.workingDir, remoteUser, None,
+                                          options.backupUser, rshCommand, cbackCommand)
+                  if managedActions is not None:
+                     for managedAction in managedActions:
+                        if managedAction in peerMap:
+                           if remotePeer not in peerMap[managedAction]:
+                              peerMap[managedAction].append(remotePeer)
+                        else:
+                           peerMap[managedAction] = [ remotePeer, ]
+      return peerMap
+   _buildPeerMap = staticmethod(_buildPeerMap)
 
    def _deriveHooks(action, preHookDict, postHookDict):
       """
@@ -667,8 +819,61 @@ class _ActionSet(object):
 
       @raise Exception: If there is a problem executing the actions.
       """
+      log.debug("Executing local actions.")
       for actionItem in self.actionSet:
          actionItem.executeAction(configPath, options, config)
+
+   def _getRemoteUser(config, remotePeer):
+      """
+      Gets the remote user associated with a remote peer.
+      Use peer's if possible, otherwise take from options section.
+      @param config: Config object.
+      @param remotePeer: Configuration-style remote peer object.
+      @return: Name of remote user associated with remote peer.
+      """
+      if remotePeer.remoteUser is None:
+         return config.options.backupUser
+      return remotePeer.remoteUser
+   _getRemoteUser = staticmethod(_getRemoteUser)
+
+   def _getRshCommand(config, remotePeer):
+      """
+      Gets the RSH command associated with a remote peer.
+      Use peer's if possible, otherwise take from options section.
+      @param config: Config object.
+      @param remotePeer: Configuration-style remote peer object.
+      @return: RSH command associated with remote peer.
+      """
+      if remotePeer.rshCommand is None:
+         return config.options.rshCommand
+      return remotePeer.rshCommand
+   _getRshCommand = staticmethod(_getRshCommand)
+
+   def _getCbackCommand(config, remotePeer):
+      """
+      Gets the cback command associated with a remote peer.
+      Use peer's if possible, otherwise take from options section.
+      @param config: Config object.
+      @param remotePeer: Configuration-style remote peer object.
+      @return: cback command associated with remote peer.
+      """
+      if remotePeer.cbackCommand is None:
+         return config.options.cbackCommand
+      return remotePeer.cbackCommand
+   _getCbackCommand = staticmethod(_getCbackCommand)
+
+   def _getManagedActions(config, remotePeer):
+      """
+      Gets the managed actions list associated with a remote peer.
+      Use peer's if possible, otherwise take from options section.
+      @param config: Config object.
+      @param remotePeer: Configuration-style remote peer object.
+      @return: Set of managed actions associated with remote peer.
+      """
+      if remotePeer.managedActions is None:
+         return config.options.managedActions
+      return remotePeer.managedActions
+   _getManagedActions = staticmethod(_getManagedActions)
 
 
 #######################################################################
