@@ -166,7 +166,7 @@ distribclean: sdistclean debdistclean
 	-@$(RM) -f MANIFEST 
 	-@$(RM) -rf $(DIST_DIR)
 
-sdist: $(SDIST_DIR) docdist
+sdist: $(SDIST_DIR) doc
 	@$(SETUP) sdist --dist-dir $(SDIST_DIR)
 	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz ../
 
