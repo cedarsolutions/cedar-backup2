@@ -2278,7 +2278,7 @@ class OptionsConfig(object):
       @param cbackCommand: Default cback-compatible command to use on managed remote peers.
       @param overrides: List of configured command path overrides, if any.
       @param hooks: List of configured pre- and post-action hooks.
-      @parma managedActions: Default set of actions that are managed on remote peers.
+      @param managedActions: Default set of actions that are managed on remote peers.
 
       @raise ValueError: If one of the values is invalid.
       """
