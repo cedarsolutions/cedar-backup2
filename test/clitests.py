@@ -8609,7 +8609,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -8626,7 +8625,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -8643,7 +8641,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -8660,7 +8657,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 1)
@@ -8677,7 +8673,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failIf(actionSet.actionSet is None)
       self.failUnless(len(actionSet.actionSet) == 4)
@@ -8703,7 +8698,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(0, actionSet.actionSet[0].index)
@@ -8719,7 +8713,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(0, actionSet.actionSet[0].index)
@@ -8735,7 +8728,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -8754,7 +8746,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -8773,7 +8764,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -8792,7 +8782,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -8811,7 +8800,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -8830,7 +8818,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -8849,7 +8836,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(200, actionSet.actionSet[0].index)
@@ -8868,7 +8854,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
@@ -8887,7 +8872,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
@@ -8906,7 +8890,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -8925,7 +8908,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 2)
       self.failUnlessEqual(150, actionSet.actionSet[0].index)
@@ -8944,7 +8926,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 4)
       self.failUnlessEqual(100, actionSet.actionSet[0].index)
@@ -8972,7 +8953,6 @@ class TestActionSet(unittest.TestCase):
                      ExtendedAction("five", "os.path", "exists", 450), ], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 9)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
