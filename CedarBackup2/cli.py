@@ -731,7 +731,6 @@ class _ActionSet(object):
             for peer in peers.remotePeers:
                if peer.managed:
                   remoteUser = _ActionSet._getRemoteUser(options, peer)
-                  localUser = _ActionSet._getRemoteUser(options, peer)
                   rshCommand = _ActionSet._getRshCommand(options, peer)
                   cbackCommand = _ActionSet._getCbackCommand(options, peer)
                   managedActions = _ActionSet._getManagedActions(options, peer)
