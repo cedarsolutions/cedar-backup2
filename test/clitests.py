@@ -8992,7 +8992,6 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
       options = OptionsConfig()
       options.managedActions = [ "collect", "purge", "one", ]
-      peers = PeersConfig()
       actionSet = _ActionSet(actions, extensions, options, None, True, True)
       self.failUnless(len(actionSet.actionSet) == 1)
       self.failUnlessEqual(50, actionSet.actionSet[0].index)
