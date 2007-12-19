@@ -857,7 +857,6 @@ class RemotePeer(object):
 
       @raise IOError: If there is an error executing the action on the remote peer.
       """
-      log.debug("Executing managed action [%s] on peer [%s]." % (action, self.name))
       command = RemotePeer._buildCbackCommand(self.cbackCommand, action, fullBackup)
       self.executeRemoteCommand(command)
 
