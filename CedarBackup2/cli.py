@@ -88,8 +88,10 @@ import getopt
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
 from CedarBackup2.util import RestrictedContentList, DirectedGraph, PathResolverSingleton
-from CedarBackup2.util import sortDict, splitCommandLine, executeCommand, getFunctionReference, getUidGid, encodePath
+from CedarBackup2.util import sortDict, splitCommandLine, executeCommand, getFunctionReference
+from CedarBackup2.util import getUidGid, encodePath
 from CedarBackup2.config import Config
+from CedarBackup2.peer import RemotePeer
 from CedarBackup2.actions.collect import executeCollect
 from CedarBackup2.actions.stage import executeStage
 from CedarBackup2.actions.store import executeStore
@@ -327,16 +329,17 @@ class _ActionItem(object):
       """
       if other is None:
          return 1
-      if self.SORT_ORDER != other.SORT_ORDER:
-         if self.SORT_ORDER < other.SORT_ORDER:
-            return -1
-         else:
-            return 1 
       if self.index != other.index:
          if self.index < other.index:
             return -1
          else:
             return 1 
+      else:
+         if self.SORT_ORDER != other.SORT_ORDER:
+            if self.SORT_ORDER < other.SORT_ORDER:
+               return -1
+            else:
+               return 1 
       return 0
 
    def executeAction(self, configPath, options, config):
@@ -427,16 +430,17 @@ class _ManagedActionItem(object):
       """
       if other is None:
          return 1
-      if self.SORT_ORDER != other.SORT_ORDER:
-         if self.SORT_ORDER < other.SORT_ORDER:
-            return -1
-         else:
-            return 1 
       if self.index != other.index:
          if self.index < other.index:
             return -1
          else:
             return 1 
+      else:
+         if self.SORT_ORDER != other.SORT_ORDER:
+            if self.SORT_ORDER < other.SORT_ORDER:
+               return -1
+            else:
+               return 1 
       return 0
 
    def executeAction(self, configPath, options, config):
@@ -725,11 +729,11 @@ class _ActionSet(object):
          if peers.remotePeers is not None:
             for peer in peers.remotePeers:
                if peer.managed:
-                  remoteUser = _ActionSet._getRemoteUser(config, peer)
-                  localUser = _ActionSet._getRemoteUser(config, peer)
-                  rshCommand = _ActionSet._getRshCommand(config, peer)
-                  cbackCommand = _ActionSet._getCbackCommand(config, peer)
-                  managedActions = _ActionSet._getManagedActions(config, peer)
+                  remoteUser = _ActionSet._getRemoteUser(options, peer)
+                  localUser = _ActionSet._getRemoteUser(options, peer)
+                  rshCommand = _ActionSet._getRshCommand(options, peer)
+                  cbackCommand = _ActionSet._getCbackCommand(options, peer)
+                  managedActions = _ActionSet._getManagedActions(options, peer)
                   remotePeer = RemotePeer(peer.name, None, options.workingDir, remoteUser, None,
                                           options.backupUser, rshCommand, cbackCommand)
                   if managedActions is not None:
@@ -823,55 +827,55 @@ class _ActionSet(object):
       for actionItem in self.actionSet:
          actionItem.executeAction(configPath, options, config)
 
-   def _getRemoteUser(config, remotePeer):
+   def _getRemoteUser(options, remotePeer):
       """
       Gets the remote user associated with a remote peer.
       Use peer's if possible, otherwise take from options section.
-      @param config: Config object.
+      @param options: OptionsConfig object, as from config.options
       @param remotePeer: Configuration-style remote peer object.
       @return: Name of remote user associated with remote peer.
       """
       if remotePeer.remoteUser is None:
-         return config.options.backupUser
+         return options.backupUser
       return remotePeer.remoteUser
    _getRemoteUser = staticmethod(_getRemoteUser)
 
-   def _getRshCommand(config, remotePeer):
+   def _getRshCommand(options, remotePeer):
       """
       Gets the RSH command associated with a remote peer.
       Use peer's if possible, otherwise take from options section.
-      @param config: Config object.
+      @param options: OptionsConfig object, as from config.options
       @param remotePeer: Configuration-style remote peer object.
       @return: RSH command associated with remote peer.
       """
       if remotePeer.rshCommand is None:
-         return config.options.rshCommand
+         return options.rshCommand
       return remotePeer.rshCommand
    _getRshCommand = staticmethod(_getRshCommand)
 
-   def _getCbackCommand(config, remotePeer):
+   def _getCbackCommand(options, remotePeer):
       """
       Gets the cback command associated with a remote peer.
       Use peer's if possible, otherwise take from options section.
-      @param config: Config object.
+      @param options: OptionsConfig object, as from config.options
       @param remotePeer: Configuration-style remote peer object.
       @return: cback command associated with remote peer.
       """
       if remotePeer.cbackCommand is None:
-         return config.options.cbackCommand
+         return options.cbackCommand
       return remotePeer.cbackCommand
    _getCbackCommand = staticmethod(_getCbackCommand)
 
-   def _getManagedActions(config, remotePeer):
+   def _getManagedActions(options, remotePeer):
       """
       Gets the managed actions list associated with a remote peer.
       Use peer's if possible, otherwise take from options section.
-      @param config: Config object.
+      @param options: OptionsConfig object, as from config.options
       @param remotePeer: Configuration-style remote peer object.
       @return: Set of managed actions associated with remote peer.
       """
       if remotePeer.managedActions is None:
-         return config.options.managedActions
+         return options.managedActions
       return remotePeer.managedActions
    _getManagedActions = staticmethod(_getManagedActions)
 

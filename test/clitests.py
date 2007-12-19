@@ -81,7 +81,8 @@ import unittest
 from os.path import isdir, isfile, islink, isabs, exists
 from getopt import GetoptError
 from CedarBackup2.testutil import failUnlessAssignRaises, captureOutput
-from CedarBackup2.config import OptionsConfig, ExtensionsConfig
+from CedarBackup2.config import OptionsConfig, PeersConfig, ExtensionsConfig
+from CedarBackup2.config import LocalPeer, RemotePeer
 from CedarBackup2.config import ExtendedAction, ActionDependencies, PreActionHook, PostActionHook
 from CedarBackup2.cli import _usage, _version
 from CedarBackup2.cli import Options
@@ -8593,6 +8594,4262 @@ class TestActionSet(unittest.TestCase):
       extensions = ExtensionsConfig([ eaction1, eaction2, eaction3, eaction4, eaction5, ], "dependency")
       options = OptionsConfig()
       self.failUnlessRaises(ValueError, _ActionSet, actions, extensions, options, None, False, True)
+
+
+   #########################################
+   # Test constructor, with managed peers
+   #########################################
+
+   def testManagedPeer_001(self):
+      """
+      Test with actions=[ collect ], extensions=[], peers=None, managed=True,
+      local=True
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testManagedPeer_002(self):
+      """
+      Test with actions=[ stage ], extensions=[], peers=None, managed=True,
+      local=True
+      """
+      actions = [ "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+
+   def testManagedPeer_003(self):
+      """
+      Test with actions=[ store ], extensions=[], peers=None, managed=True,
+      local=True
+      """
+      actions = [ "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual("store", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+
+   def testManagedPeer_004(self):
+      """
+      Test with actions=[ purge ], extensions=[], peers=None, managed=True,
+      local=True
+      """
+      actions = [ "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+
+   def testManagedPeer_005(self):
+      """
+      Test with actions=[ all ], extensions=[], peers=None, managed=True,
+      local=True
+      """
+      actions = [ "all", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[3].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+
+   def testManagedPeer_006(self):
+      """
+      Test with actions=[ rebuild ], extensions=[], peers=None, managed=True,
+      local=True
+      """
+      actions = [ "rebuild", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
+      self.failUnlessEqual("rebuild", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeRebuild, actionSet.actionSet[0].function)
+
+   def testManagedPeer_007(self):
+      """
+      Test with actions=[ validate ], extensions=[], peers=None, managed=True,
+      local=True
+      """
+      actions = [ "validate", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
+      self.failUnlessEqual("validate", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeValidate, actionSet.actionSet[0].function)
+
+   def testManagedPeer_008(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[], peers=None,
+      managed=True, local=True
+      """
+      actions = [ "collect", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testManagedPeer_009(self):
+      """
+      Test with actions=[ collect, store ], extensions=[], peers=None,
+      managed=True, local=True
+      """
+      actions = [ "collect", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testManagedPeer_010(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[], peers=None,
+      managed=True, local=True
+      """
+      actions = [ "collect", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testManagedPeer_011(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[], peers=None,
+      managed=True, local=True
+      """
+      actions = [ "stage", "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testManagedPeer_012(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[], peers=None,
+      managed=True, local=True
+      """
+      actions = [ "stage", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testManagedPeer_013(self):
+      """
+      Test with actions=[ stage, store ], extensions=[], peers=None,
+      managed=True, local=True
+      """
+      actions = [ "stage", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testManagedPeer_014(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[], peers=None,
+      managed=True, local=True
+      """
+      actions = [ "stage", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testManagedPeer_015(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 50) ],
+      peers=None, managed=True, local=True
+      """
+      actions = [ "collect", "one",  ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testManagedPeer_016(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 50) ],
+      peers=None, managed=True, local=True
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testManagedPeer_017(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 150) ],
+      peers=None, managed=True, local=True
+      """
+      actions = [ "collect", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(150, actionSet.actionSet[1].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+
+   def testManagedPeer_018(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 150) ],
+      peers=None, managed=True, local=True
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(150, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testManagedPeer_019(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[],
+      peers=None, managed=True, local=True
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[3].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+
+   def testManagedPeer_020(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four,
+      five ], extensions=[ (index 50, 150, 250, 350, 450)], peers=None,
+      managed=True, local=True
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 9)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+      self.failUnlessEqual(150, actionSet.actionSet[2].index)
+      self.failUnlessEqual("two", actionSet.actionSet[2].name)
+      self.failUnlessEqual(isfile, actionSet.actionSet[2].function)
+      self.failUnlessEqual(200, actionSet.actionSet[3].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[3].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[3].function)
+      self.failUnlessEqual(250, actionSet.actionSet[4].index)
+      self.failUnlessEqual("three", actionSet.actionSet[4].name)
+      self.failUnlessEqual(islink, actionSet.actionSet[4].function)
+      self.failUnlessEqual(300, actionSet.actionSet[5].index)
+      self.failUnlessEqual("store", actionSet.actionSet[5].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[5].function)
+      self.failUnlessEqual(350, actionSet.actionSet[6].index)
+      self.failUnlessEqual("four", actionSet.actionSet[6].name)
+      self.failUnlessEqual(isabs, actionSet.actionSet[6].function)
+      self.failUnlessEqual(400, actionSet.actionSet[7].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[7].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[7].function)
+      self.failUnlessEqual(450, actionSet.actionSet[8].index)
+      self.failUnlessEqual("five", actionSet.actionSet[8].name)
+      self.failUnlessEqual(exists, actionSet.actionSet[8].function)
+
+   def testManagedPeer_021(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, index 50) ], peers=None,
+      managed=True, local=True
+      """
+      actions = [ "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, None, True, True)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+   def testManagedPeer_022(self):
+      """
+      Test with actions=[ collect ], extensions=[], no peers, managed=True,
+      local=True
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+   def testManagedPeer_023(self):
+      """
+      Test with actions=[ stage ], extensions=[], no peers, managed=True,
+      local=True
+      """
+      actions = [ "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+
+   def testManagedPeer_024(self):
+      """
+      Test with actions=[ store ], extensions=[], no peers, managed=True,
+      local=True
+      """
+      actions = [ "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual("store", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+
+   def testManagedPeer_025(self):
+      """
+      Test with actions=[ purge ], extensions=[], no peers, managed=True,
+      local=True
+      """
+      actions = [ "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+
+   def testManagedPeer_026(self):
+      """
+      Test with actions=[ all ], extensions=[], no peers, managed=True,
+      local=True
+      """
+      actions = [ "all", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[3].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+
+   def testManagedPeer_027(self):
+      """
+      Test with actions=[ rebuild ], extensions=[], no peers, managed=True,
+      local=True
+      """
+      actions = [ "rebuild", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
+      self.failUnlessEqual("rebuild", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeRebuild, actionSet.actionSet[0].function)
+
+   def testManagedPeer_028(self):
+      """
+      Test with actions=[ validate ], extensions=[], no peers, managed=True,
+      local=True
+      """
+      actions = [ "validate", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
+      self.failUnlessEqual("validate", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeValidate, actionSet.actionSet[0].function)
+
+   def testManagedPeer_029(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[], no peers,
+      managed=True, local=True
+      """
+      actions = [ "collect", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testManagedPeer_030(self):
+      """
+      Test with actions=[ collect, store ], extensions=[], no peers,
+      managed=True, local=True
+      """
+      actions = [ "collect", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testManagedPeer_031(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[], no peers,
+      managed=True, local=True
+      """
+      actions = [ "collect", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testManagedPeer_032(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[], no peers,
+      managed=True, local=True
+      """
+      actions = [ "stage", "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testManagedPeer_033(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[], no peers,
+      managed=True, local=True
+      """
+      actions = [ "stage", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testManagedPeer_034(self):
+      """
+      Test with actions=[ stage, store ], extensions=[], no peers,
+      managed=True, local=True
+      """
+      actions = [ "stage", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testManagedPeer_035(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[], no peers,
+      managed=True, local=True
+      """
+      actions = [ "stage", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+   def testManagedPeer_036(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 50) ],
+      no peers, managed=True, local=True
+      """
+      actions = [ "collect", "one",  ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+
+   def testManagedPeer_037(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 50) ],
+      no peers, managed=True, local=True
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testManagedPeer_038(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 150) ],
+      no peers, managed=True, local=True
+      """
+      actions = [ "collect", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(150, actionSet.actionSet[1].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[1].function)
+
+   def testManagedPeer_039(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 150) ],
+      no peers, managed=True, local=True
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(150, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testManagedPeer_040(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[],
+      no peers, managed=True, local=True
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 4)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[3].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[3].function)
+
+   def testManagedPeer_041(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four,
+      five ], extensions=[ (index 50, 150, 250, 350, 450)], no peers,
+      managed=True, local=True
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 9)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[1].function)
+      self.failUnlessEqual(150, actionSet.actionSet[2].index)
+      self.failUnlessEqual("two", actionSet.actionSet[2].name)
+      self.failUnlessEqual(isfile, actionSet.actionSet[2].function)
+      self.failUnlessEqual(200, actionSet.actionSet[3].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[3].name)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[3].function)
+      self.failUnlessEqual(250, actionSet.actionSet[4].index)
+      self.failUnlessEqual("three", actionSet.actionSet[4].name)
+      self.failUnlessEqual(islink, actionSet.actionSet[4].function)
+      self.failUnlessEqual(300, actionSet.actionSet[5].index)
+      self.failUnlessEqual("store", actionSet.actionSet[5].name)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[5].function)
+      self.failUnlessEqual(350, actionSet.actionSet[6].index)
+      self.failUnlessEqual("four", actionSet.actionSet[6].name)
+      self.failUnlessEqual(isabs, actionSet.actionSet[6].function)
+      self.failUnlessEqual(400, actionSet.actionSet[7].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[7].name)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[7].function)
+      self.failUnlessEqual(450, actionSet.actionSet[8].index)
+      self.failUnlessEqual("five", actionSet.actionSet[8].name)
+      self.failUnlessEqual(exists, actionSet.actionSet[8].function)
+
+   def testManagedPeer_042(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, index 50) ], no peers,
+      managed=True, local=True
+      """
+      actions = [ "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+   def testManagedPeer_043(self):
+      """
+      Test with actions=[ collect ], extensions=[], no peers, managed=True,
+      local=False
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_044(self):
+      """
+      Test with actions=[ stage ], extensions=[], no peers, managed=True,
+      local=False
+      """
+      actions = [ "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_045(self):
+      """
+      Test with actions=[ store ], extensions=[], no peers, managed=True,
+      local=False
+      """
+      actions = [ "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_046(self):
+      """
+      Test with actions=[ purge ], extensions=[], no peers, managed=True,
+      local=False
+      """
+      actions = [ "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_047(self):
+      """
+      Test with actions=[ all ], extensions=[], no peers, managed=True,
+      local=False
+      """
+      actions = [ "all", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_048(self):
+      """
+      Test with actions=[ rebuild ], extensions=[], no peers, managed=True,
+      local=False
+      """
+      actions = [ "rebuild", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_049(self):
+      """
+      Test with actions=[ validate ], extensions=[], no peers, managed=True,
+      local=False
+      """
+      actions = [ "validate", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_050(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[], no peers,
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_051(self):
+      """
+      Test with actions=[ collect, store ], extensions=[], no peers,
+      managed=True, local=False
+      """
+      actions = [ "collect", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_052(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[], no peers,
+      managed=True, local=False
+      """
+      actions = [ "collect", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_053(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[], no peers,
+      managed=True, local=False
+      """
+      actions = [ "stage", "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_054(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[], no peers,
+      managed=True, local=False
+      """
+      actions = [ "stage", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_055(self):
+      """
+      Test with actions=[ stage, store ], extensions=[], no peers,
+      managed=True, local=False
+      """
+      actions = [ "stage", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_056(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[], no peers,
+      managed=True, local=False
+      """
+      actions = [ "stage", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_057(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 50) ],
+      no peers, managed=True, local=False
+      """
+      actions = [ "collect", "one",  ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_058(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 50) ],
+      no peers, managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_059(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 150) ],
+      no peers, managed=True, local=False
+      """
+      actions = [ "collect", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_060(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 150) ],
+      no peers, managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_061(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[],
+      no peers, managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_062(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four,
+      five ], extensions=[ (index 50, 150, 250, 350, 450)], no peers,
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_063(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, index 50) ], no peers,
+      managed=True, local=False
+      """
+      actions = [ "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_064(self):
+      """
+      Test with actions=[ collect ], extensions=[], one peer (not managed), managed=True,
+      local=False
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_065(self):
+      """
+      Test with actions=[ stage ], extensions=[], one peer (not managed), managed=True,
+      local=False
+      """
+      actions = [ "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_066(self):
+      """
+      Test with actions=[ store ], extensions=[], one peer (not managed), managed=True,
+      local=False
+      """
+      actions = [ "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_067(self):
+      """
+      Test with actions=[ purge ], extensions=[], one peer (not managed), managed=True,
+      local=False
+      """
+      actions = [ "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_068(self):
+      """
+      Test with actions=[ all ], extensions=[], one peer (not managed), managed=True,
+      local=False
+      """
+      actions = [ "all", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_069(self):
+      """
+      Test with actions=[ rebuild ], extensions=[], one peer (not managed), managed=True,
+      local=False
+      """
+      actions = [ "rebuild", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_070(self):
+      """
+      Test with actions=[ validate ], extensions=[], one peer (not managed), managed=True,
+      local=False
+      """
+      actions = [ "validate", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_071(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[], one peer (not managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_072(self):
+      """
+      Test with actions=[ collect, store ], extensions=[], one peer (not managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_073(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[], one peer (not managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_074(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[], one peer (not managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_075(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[], one peer (not managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_076(self):
+      """
+      Test with actions=[ stage, store ], extensions=[], one peer (not managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_077(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[], one peer (not managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_078(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 50) ],
+      one peer (not managed), managed=True, local=False
+      """
+      actions = [ "collect", "one",  ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_079(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 50) ],
+      one peer (not managed), managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_080(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 150) ],
+      one peer (not managed), managed=True, local=False
+      """
+      actions = [ "collect", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_081(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 150) ],
+      one peer (not managed), managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_082(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[],
+      one peer (not managed), managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_083(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four,
+      five ], extensions=[ (index 50, 150, 250, 350, 450)], one peer (not managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_084(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, index 50) ], one peer (not managed),
+      managed=True, local=False
+      """
+      actions = [ "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_085(self):
+      """
+      Test with actions=[ collect ], extensions=[], one peer (managed), managed=True,
+      local=False
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", None, "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_086(self):
+      """
+      Test with actions=[ stage ], extensions=[], one peer (managed), managed=True,
+      local=False
+      """
+      actions = [ "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_087(self):
+      """
+      Test with actions=[ store ], extensions=[], one peer (managed), managed=True,
+      local=False
+      """
+      actions = [ "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_088(self):
+      """
+      Test with actions=[ purge ], extensions=[], one peer (managed), managed=True,
+      local=False
+      """
+      actions = [ "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_089(self):
+      """
+      Test with actions=[ all ], extensions=[], one peer (managed), managed=True,
+      local=False
+      """
+      actions = [ "all", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_090(self):
+      """
+      Test with actions=[ rebuild ], extensions=[], one peer (managed), managed=True,
+      local=False
+      """
+      actions = [ "rebuild", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_091(self):
+      """
+      Test with actions=[ validate ], extensions=[], one peer (managed), managed=True,
+      local=False
+      """
+      actions = [ "validate", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_092(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[], one peer (managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_093(self):
+      """
+      Test with actions=[ collect, store ], extensions=[], one peer (managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_094(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[], one peer (managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_095(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[], one peer (managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_096(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[], one peer (managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_097(self):
+      """
+      Test with actions=[ stage, store ], extensions=[], one peer (managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_098(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[], one peer (managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_099(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 50) ],
+      one peer (managed), managed=True, local=False
+      """
+      actions = [ "collect", "one",  ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_100(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 50) ],
+      one peer (managed), managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_101(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 150) ],
+      one peer (managed), managed=True, local=False
+      """
+      actions = [ "collect", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(150, actionSet.actionSet[1].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_102(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 150) ],
+      one peer (managed), managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(150, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_103(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[],
+      one peer (managed), managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_104(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four,
+      five ], extensions=[ (index 50, 150, 250, 350, 450)], one peer (managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 3)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[2].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[2].name)
+      self.failIf(actionSet.actionSet[2].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[2].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[2].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[2].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[2].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[2].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[2].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_105(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, index 50) ], one peer (managed),
+      managed=True, local=False
+      """
+      actions = [ "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_106(self):
+      """
+      Test with actions=[ collect ], extensions=[], two peers (one managed, one not), managed=True,
+      local=False
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", None, "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_107(self):
+      """
+      Test with actions=[ stage ], extensions=[], two peers (one managed, one not), managed=True,
+      local=False
+      """
+      actions = [ "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_108(self):
+      """
+      Test with actions=[ store ], extensions=[], two peers (one managed, one not), managed=True,
+      local=False
+      """
+      actions = [ "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_109(self):
+      """
+      Test with actions=[ purge ], extensions=[], two peers (one managed, one not), managed=True,
+      local=False
+      """
+      actions = [ "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_110(self):
+      """
+      Test with actions=[ all ], extensions=[], two peers (one managed, one not), managed=True,
+      local=False
+      """
+      actions = [ "all", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_111(self):
+      """
+      Test with actions=[ rebuild ], extensions=[], two peers (one managed, one not), managed=True,
+      local=False
+      """
+      actions = [ "rebuild", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_112(self):
+      """
+      Test with actions=[ validate ], extensions=[], two peers (one managed, one not), managed=True,
+      local=False
+      """
+      actions = [ "validate", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_113(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[], two peers (one managed, one not),
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_114(self):
+      """
+      Test with actions=[ collect, store ], extensions=[], two peers (one managed, one not),
+      managed=True, local=False
+      """
+      actions = [ "collect", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_115(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[], two peers (one managed, one not),
+      managed=True, local=False
+      """
+      actions = [ "collect", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_116(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[], two peers (one managed, one not),
+      managed=True, local=False
+      """
+      actions = [ "stage", "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_117(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[], two peers (one managed, one not),
+      managed=True, local=False
+      """
+      actions = [ "stage", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_118(self):
+      """
+      Test with actions=[ stage, store ], extensions=[], two peers (one managed, one not),
+      managed=True, local=False
+      """
+      actions = [ "stage", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_119(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[], two peers (one managed, one not),
+      managed=True, local=False
+      """
+      actions = [ "stage", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_120(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 50) ],
+      two peers (one managed, one not), managed=True, local=False
+      """
+      actions = [ "collect", "one",  ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_121(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 50) ],
+      two peers (one managed, one not), managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_122(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 150) ],
+      two peers (one managed, one not), managed=True, local=False
+      """
+      actions = [ "collect", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(150, actionSet.actionSet[1].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_123(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 150) ],
+      two peers (one managed, one not), managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(150, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_124(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[],
+      two peers (one managed, one not), managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_125(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four,
+      five ], extensions=[ (index 50, 150, 250, 350, 450)], two peers (one managed, one not),
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 3)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[2].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[2].name)
+      self.failIf(actionSet.actionSet[2].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[2].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[2].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[2].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[2].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[2].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[2].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_126(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, index 50) ], two peers (one managed, one not),
+      managed=True, local=False
+      """
+      actions = [ "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=False), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+
+   def testManagedPeer_127(self):
+      """
+      Test with actions=[ collect ], extensions=[], two peers (both managed), managed=True,
+      local=False
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", None, "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_128(self):
+      """
+      Test with actions=[ stage ], extensions=[], two peers (both managed), managed=True,
+      local=False
+      """
+      actions = [ "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_129(self):
+      """
+      Test with actions=[ store ], extensions=[], two peers (both managed), managed=True,
+      local=False
+      """
+      actions = [ "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_130(self):
+      """
+      Test with actions=[ purge ], extensions=[], two peers (both managed), managed=True,
+      local=False
+      """
+      actions = [ "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_131(self):
+      """
+      Test with actions=[ all ], extensions=[], two peers (both managed), managed=True,
+      local=False
+      """
+      actions = [ "all", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_132(self):
+      """
+      Test with actions=[ rebuild ], extensions=[], two peers (both managed), managed=True,
+      local=False
+      """
+      actions = [ "rebuild", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_133(self):
+      """
+      Test with actions=[ validate ], extensions=[], two peers (both managed), managed=True,
+      local=False
+      """
+      actions = [ "validate", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_134(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[], two peers (both managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_135(self):
+      """
+      Test with actions=[ collect, store ], extensions=[], two peers (both managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_136(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[], two peers (both managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_137(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[], two peers (both managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_138(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[], two peers (both managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_139(self):
+      """
+      Test with actions=[ stage, store ], extensions=[], two peers (both managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 0)
+
+   def testManagedPeer_140(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[], two peers (both managed),
+      managed=True, local=False
+      """
+      actions = [ "stage", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_141(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 50) ],
+      two peers (both managed), managed=True, local=False
+      """
+      actions = [ "collect", "one",  ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_142(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 50) ],
+      two peers (both managed), managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_143(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 150) ],
+      two peers (both managed), managed=True, local=False
+      """
+      actions = [ "collect", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(150, actionSet.actionSet[1].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_144(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 150) ],
+      two peers (both managed), managed=True, local=False
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(150, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_145(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[],
+      two peers (both managed), managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_146(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four,
+      five ], extensions=[ (index 50, 150, 250, 350, 450)], two peers (both managed),
+      managed=True, local=False
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", "three", "four", "five", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 3)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[2].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[2].name)
+      self.failIf(actionSet.actionSet[2].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[2].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[2].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[2].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[2].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[2].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[2].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[2].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[2].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[2].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[2].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[2].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_147(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, index 50) ], two peers (both managed),
+      managed=True, local=False
+      """
+      actions = [ "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, False)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failIf(actionSet.actionSet[0].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[0].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[0].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[0].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[0].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[0].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[0].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[0].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[0].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[0].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[0].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_148(self):
+      """
+      Test with actions=[ collect ], extensions=[], two peers (both managed), managed=True,
+      local=True
+      """
+      actions = [ "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", None, "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_149(self):
+      """
+      Test with actions=[ stage ], extensions=[], two peers (both managed), managed=True,
+      local=True
+      """
+      actions = [ "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+
+   def testManagedPeer_150(self):
+      """
+      Test with actions=[ store ], extensions=[], two peers (both managed), managed=True,
+      local=True
+      """
+      actions = [ "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(300, actionSet.actionSet[0].index)
+      self.failUnlessEqual("store", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[0].function)
+
+   def testManagedPeer_151(self):
+      """
+      Test with actions=[ purge ], extensions=[], two peers (both managed), managed=True,
+      local=True
+      """
+      actions = [ "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(400, actionSet.actionSet[0].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_152(self):
+      """
+      Test with actions=[ all ], extensions=[], two peers (both managed), managed=True,
+      local=True
+      """
+      actions = [ "all", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failIf(actionSet.actionSet is None)
+      self.failUnless(len(actionSet.actionSet) == 6)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(200, actionSet.actionSet[2].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[2].function)
+
+      self.failUnlessEqual(300, actionSet.actionSet[3].index)
+      self.failUnlessEqual("store", actionSet.actionSet[3].name)
+      self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[3].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[4].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[4].name)
+      self.failUnlessEqual(None, actionSet.actionSet[4].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[4].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[4].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[5].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[5].name)
+      self.failIf(actionSet.actionSet[5].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[5].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[5].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[5].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[5].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[5].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[5].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[5].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[5].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[5].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[5].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[5].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_153(self):
+      """
+      Test with actions=[ rebuild ], extensions=[], two peers (both managed), managed=True,
+      local=True
+      """
+      actions = [ "rebuild", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
+      self.failUnlessEqual("rebuild", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeRebuild, actionSet.actionSet[0].function)
+
+   def testManagedPeer_154(self):
+      """
+      Test with actions=[ validate ], extensions=[], two peers (both managed), managed=True,
+      local=True
+      """
+      actions = [ "validate", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 1)
+
+      self.failUnlessEqual(0, actionSet.actionSet[0].index)
+      self.failUnlessEqual("validate", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeValidate, actionSet.actionSet[0].function)
+
+   def testManagedPeer_155(self):
+      """
+      Test with actions=[ collect, stage ], extensions=[], two peers (both managed),
+      managed=True, local=True
+      """
+      actions = [ "collect", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 3)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(200, actionSet.actionSet[2].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[2].function)
+
+   def testManagedPeer_156(self):
+      """
+      Test with actions=[ collect, store ], extensions=[], two peers (both managed),
+      managed=True, local=True
+      """
+      actions = [ "collect", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 3)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+
+   def testManagedPeer_157(self):
+      """
+      Test with actions=[ collect, purge ], extensions=[], two peers (both managed),
+      managed=True, local=True
+      """
+      actions = [ "collect", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 4)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(400, actionSet.actionSet[2].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[2].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[3].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[3].name)
+      self.failIf(actionSet.actionSet[3].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[3].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[3].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[3].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[3].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[3].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[3].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[3].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[3].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[3].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[3].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[3].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_158(self):
+      """
+      Test with actions=[ stage, collect ], extensions=[], two peers (both managed),
+      managed=True, local=True
+      """
+      actions = [ "stage", "collect", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 3)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(200, actionSet.actionSet[2].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[2].function)
+
+   def testManagedPeer_159(self):
+      """
+      Test with actions=[ stage, stage ], extensions=[], two peers (both managed),
+      managed=True, local=True
+      """
+      actions = [ "stage", "stage", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(200, actionSet.actionSet[1].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[1].function)
+
+   def testManagedPeer_160(self):
+      """
+      Test with actions=[ stage, store ], extensions=[], two peers (both managed),
+      managed=True, local=True
+      """
+      actions = [ "stage", "store", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(300, actionSet.actionSet[1].index)
+      self.failUnlessEqual("store", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[1].function)
+
+   def testManagedPeer_161(self):
+      """
+      Test with actions=[ stage, purge ], extensions=[], two peers (both managed),
+      managed=True, local=True
+      """
+      actions = [ "stage", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 3)
+
+      self.failUnlessEqual(200, actionSet.actionSet[0].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[1].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[1].name)
+      self.failUnlessEqual(None, actionSet.actionSet[1].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[1].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[1].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[2].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[2].name)
+      self.failIf(actionSet.actionSet[2].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[2].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[2].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[2].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[2].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[2].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[2].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[2].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[2].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[2].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[2].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[2].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_162(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 50) ],
+      two peers (both managed), managed=True, local=True
+      """
+      actions = [ "collect", "one",  ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 4)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(50, actionSet.actionSet[1].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(100, actionSet.actionSet[2].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[2].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[3].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[3].name)
+      self.failIf(actionSet.actionSet[3].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[3].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[3].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[3].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[3].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[3].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[3].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[3].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[3].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[3].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[3].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[3].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_163(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 50) ],
+      two peers (both managed), managed=True, local=True
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 3)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(50, actionSet.actionSet[1].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+
+   def testManagedPeer_164(self):
+      """
+      Test with actions=[ collect, one ], extensions=[ (one, index 150) ],
+      two peers (both managed), managed=True, local=True
+      """
+      actions = [ "collect", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 4)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(150, actionSet.actionSet[2].index)
+      self.failUnlessEqual("one", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[2].function)
+
+      self.failUnlessEqual(150, actionSet.actionSet[3].index)
+      self.failUnlessEqual("one", actionSet.actionSet[3].name)
+      self.failIf(actionSet.actionSet[3].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[3].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[3].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[3].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[3].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[3].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[3].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[3].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[3].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[3].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[3].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[3].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_165(self):
+      """
+      Test with actions=[ store, one ], extensions=[ (one, index 150) ],
+      two peers (both managed), managed=True, local=True
+      """
+      actions = [ "store", "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 150), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 3)
+
+      self.failUnlessEqual(150, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(150, actionSet.actionSet[1].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(300, actionSet.actionSet[2].index)
+      self.failUnlessEqual("store", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[2].function)
+
+   def testManagedPeer_166(self):
+      """
+      Test with actions=[ collect, stage, store, purge ], extensions=[],
+      two peers (both managed), managed=True, local=True
+      """
+      actions = [ "collect", "stage", "store", "purge", ]
+      extensions = ExtensionsConfig([], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 6)
+
+      self.failUnlessEqual(100, actionSet.actionSet[0].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[1].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(200, actionSet.actionSet[2].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[2].function)
+
+      self.failUnlessEqual(300, actionSet.actionSet[3].index)
+      self.failUnlessEqual("store", actionSet.actionSet[3].name)
+      self.failUnlessEqual(None, actionSet.actionSet[3].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[3].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[3].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[4].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[4].name)
+      self.failUnlessEqual(None, actionSet.actionSet[4].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[4].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[4].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[5].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[5].name)
+      self.failIf(actionSet.actionSet[5].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[5].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[5].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[5].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[5].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[5].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[5].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[5].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[5].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[5].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[5].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[5].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_167(self):
+      """
+      Test with actions=[ collect, stage, store, purge, one, two, three, four,
+      five ], extensions=[ (index 50, 150, 250, 350, 450)], two peers (both managed),
+      managed=True, local=True
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 9)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(100, actionSet.actionSet[2].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[2].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[3].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[3].name)
+      self.failIf(actionSet.actionSet[3].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[3].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[3].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[3].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[3].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[3].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[3].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[3].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[3].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[3].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[3].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[3].remotePeers[1].cbackCommand)
+
+      self.failUnlessEqual(150, actionSet.actionSet[4].index)
+      self.failUnlessEqual("two", actionSet.actionSet[4].name)
+      self.failUnlessEqual(None, actionSet.actionSet[4].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[4].postHook)
+      self.failUnlessEqual(isfile, actionSet.actionSet[4].function)
+
+      self.failUnlessEqual(200, actionSet.actionSet[5].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[5].name)
+      self.failUnlessEqual(None, actionSet.actionSet[5].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[5].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[5].function)
+
+      self.failUnlessEqual(300, actionSet.actionSet[6].index)
+      self.failUnlessEqual("store", actionSet.actionSet[6].name)
+      self.failUnlessEqual(None, actionSet.actionSet[6].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[6].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[6].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[7].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[7].name)
+      self.failUnlessEqual(None, actionSet.actionSet[7].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[7].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[7].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[8].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[8].name)
+      self.failIf(actionSet.actionSet[8].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[8].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[8].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[8].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[8].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[8].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[8].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[8].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[8].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[8].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[8].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[8].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_168(self):
+      """
+      Test with actions=[ one ], extensions=[ (one, index 50) ], two peers (both managed),
+      managed=True, local=True
+      """
+      actions = [ "one", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, "ruser", "rcp", "rsh", "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", "rcp2", "rsh2", "cback2", managed=True), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 2)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(50, actionSet.actionSet[1].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 2)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("ruser", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+      self.failUnlessEqual("remote2", actionSet.actionSet[1].remotePeers[1].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[1].remotePeers[1].remoteUser)
+      self.failUnlessEqual(None, actionSet.actionSet[1].remotePeers[1].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[1].remotePeers[1].rshCommand)
+      self.failUnlessEqual("cback2", actionSet.actionSet[1].remotePeers[1].cbackCommand)
+
+   def testManagedPeer_169(self):
+      """
+      Test to make sure that various options all seem to be pulled from the right places with mixed data.
+      """
+      actions = [ "collect", "stage", "store", "purge", "one", "two", ]
+      extensions = ExtensionsConfig([ ExtendedAction("one", "os.path", "isdir", 50), ExtendedAction("two", "os.path", "isfile", 150), 
+                     ExtendedAction("three", "os.path", "islink", 250), ExtendedAction("four", "os.path", "isabs", 350), 
+                     ExtendedAction("five", "os.path", "exists", 450), ], None)
+      options = OptionsConfig()
+      options.managedActions = [ "collect", "purge", "one", ]
+      options.backupUser = "userZ"
+      options.rshCommand = "rshZ"
+      options.cbackCommand = "cbackZ"
+      peers = PeersConfig()
+      peers.localPeers = [ LocalPeer("local", "/collect"), ]
+      peers.remotePeers = [ RemotePeer("remote", None, None, None, None, "cback", managed=True),
+                            RemotePeer("remote2", None, "ruser2", None, "rsh2", None, managed=True, managedActions=[ "stage", ]), ]
+      actionSet = _ActionSet(actions, extensions, options, peers, True, True)
+      self.failUnless(len(actionSet.actionSet) == 10)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[0].name)
+      self.failUnlessEqual(None, actionSet.actionSet[0].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[0].postHook)
+      self.failUnlessEqual(isdir, actionSet.actionSet[0].function)
+
+      self.failUnlessEqual(50, actionSet.actionSet[0].index)
+      self.failUnlessEqual("one", actionSet.actionSet[1].name)
+      self.failIf(actionSet.actionSet[1].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[1].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[1].remotePeers[0].name)
+      self.failUnlessEqual("userZ", actionSet.actionSet[1].remotePeers[0].remoteUser)
+      self.failUnlessEqual("userZ", actionSet.actionSet[1].remotePeers[0].localUser)
+      self.failUnlessEqual("rshZ", actionSet.actionSet[1].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[1].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(100, actionSet.actionSet[2].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[2].name)
+      self.failUnlessEqual(None, actionSet.actionSet[2].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[2].postHook)
+      self.failUnlessEqual(executeCollect, actionSet.actionSet[2].function)
+
+      self.failUnlessEqual(100, actionSet.actionSet[3].index)
+      self.failUnlessEqual("collect", actionSet.actionSet[3].name)
+      self.failIf(actionSet.actionSet[3].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[3].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[3].remotePeers[0].name)
+      self.failUnlessEqual("userZ", actionSet.actionSet[3].remotePeers[0].remoteUser)
+      self.failUnlessEqual("userZ", actionSet.actionSet[3].remotePeers[0].localUser)
+      self.failUnlessEqual("rshZ", actionSet.actionSet[3].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[3].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(150, actionSet.actionSet[4].index)
+      self.failUnlessEqual("two", actionSet.actionSet[4].name)
+      self.failUnlessEqual(None, actionSet.actionSet[4].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[4].postHook)
+      self.failUnlessEqual(isfile, actionSet.actionSet[4].function)
+
+      self.failUnlessEqual(200, actionSet.actionSet[5].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[5].name)
+      self.failUnlessEqual(None, actionSet.actionSet[5].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[5].postHook)
+      self.failUnlessEqual(executeStage, actionSet.actionSet[5].function)
+
+      self.failUnlessEqual(200, actionSet.actionSet[6].index)
+      self.failUnlessEqual("stage", actionSet.actionSet[6].name)
+      self.failIf(actionSet.actionSet[6].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[6].remotePeers) == 1)
+      self.failUnlessEqual("remote2", actionSet.actionSet[6].remotePeers[0].name)
+      self.failUnlessEqual("ruser2", actionSet.actionSet[6].remotePeers[0].remoteUser)
+      self.failUnlessEqual("userZ", actionSet.actionSet[6].remotePeers[0].localUser)
+      self.failUnlessEqual("rsh2", actionSet.actionSet[6].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cbackZ", actionSet.actionSet[6].remotePeers[0].cbackCommand)
+
+      self.failUnlessEqual(300, actionSet.actionSet[7].index)
+      self.failUnlessEqual("store", actionSet.actionSet[7].name)
+      self.failUnlessEqual(None, actionSet.actionSet[7].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[7].postHook)
+      self.failUnlessEqual(executeStore, actionSet.actionSet[7].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[8].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[8].name)
+      self.failUnlessEqual(None, actionSet.actionSet[8].preHook)
+      self.failUnlessEqual(None, actionSet.actionSet[8].postHook)
+      self.failUnlessEqual(executePurge, actionSet.actionSet[8].function)
+
+      self.failUnlessEqual(400, actionSet.actionSet[9].index)
+      self.failUnlessEqual("purge", actionSet.actionSet[9].name)
+      self.failIf(actionSet.actionSet[9].remotePeers is None)
+      self.failUnless(len(actionSet.actionSet[9].remotePeers) == 1)
+      self.failUnlessEqual("remote", actionSet.actionSet[9].remotePeers[0].name)
+      self.failUnlessEqual("userZ", actionSet.actionSet[9].remotePeers[0].remoteUser)
+      self.failUnlessEqual("userZ", actionSet.actionSet[9].remotePeers[0].localUser)
+      self.failUnlessEqual("rshZ", actionSet.actionSet[9].remotePeers[0].rshCommand)
+      self.failUnlessEqual("cback", actionSet.actionSet[9].remotePeers[0].cbackCommand)
 
 
 #######################################################################
