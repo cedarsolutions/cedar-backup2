@@ -227,6 +227,7 @@ def cli():
       configPath = options.config
 
    executeLocal = True
+   executeManaged = False
    if options.managedOnly:
       executeLocal = False
       executeManaged = True
@@ -456,8 +457,8 @@ class _ManagedActionItem(object):
 
       @raise Exception: If there is a problem executing the action.
       """
-      for peer in remotePeer:
-         log.debug("Executing managed action [%s] on peer [%s]." % (self.name, peer.name))
+      for peer in self.remotePeers:
+         logger.debug("Executing managed action [%s] on peer [%s]." % (self.name, peer.name))
          peer.executeManagedAction(self.name, options.full)
 
 
@@ -823,7 +824,7 @@ class _ActionSet(object):
 
       @raise Exception: If there is a problem executing the actions.
       """
-      log.debug("Executing local actions.")
+      logger.debug("Executing local actions.")
       for actionItem in self.actionSet:
          actionItem.executeAction(configPath, options, config)
 
