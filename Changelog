@@ -1,4 +1,4 @@
-Version 2.15.0		unreleased
+Version 2.15.0		18 Dec 2007
 
 	* Minor documentation tweaks discovered during 3.0 development.
 	* Add support for a new managed backup feature.
@@ -6,7 +6,7 @@ Version 2.15.0		unreleased
 	  - Change peers configuration in <stage> to just override <peers>
 	  - Modify stage process to take peers list from peers section (if available)
 	  - Add new configuration in options and remote peers to support remote shells
-	  - Updated user manual to discuss managed backup concept and configuration
+	  - Update user manual to discuss managed backup concept and configuration
 	  - Add executeRemoteCommand() and executeManagedAction() on peer.RemotePeer
 
 Version 2.14.0		19 Sep 2007
