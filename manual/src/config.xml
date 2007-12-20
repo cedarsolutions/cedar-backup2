@@ -3102,6 +3102,14 @@ cback all
          unless otherwise indicated.
       </para>
 
+      <note>
+         <para>
+            See <xref linkend="cedar-securingssh"/> for some important notes on
+            how to optionally further secure password-less SSH connections to
+            your clients.
+         </para>
+      </note>
+
       <!-- ################################################################# -->
 
       <sect2>
