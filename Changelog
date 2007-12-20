@@ -1,3 +1,8 @@
+Version 2.15.1		19 Dec 2007
+
+	* Improve error reporting for managed client action failures.
+	* Make sure that managed client failure does not kill entire backup.
+
 Version 2.15.0		18 Dec 2007
 
 	* Minor documentation tweaks discovered during 3.0 development.
