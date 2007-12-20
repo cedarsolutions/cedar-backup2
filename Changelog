@@ -2,6 +2,7 @@ Version 2.15.1		19 Dec 2007
 
 	* Improve error reporting for managed client action failures.
 	* Make sure that managed client failure does not kill entire backup.
+	* Add appendix "Securing Password-less SSH Connection" to user manual.
 
 Version 2.15.0		18 Dec 2007
 
