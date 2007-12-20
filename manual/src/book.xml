@@ -45,6 +45,7 @@
 <!ENTITY extenspec   SYSTEM "extenspec.xml">
 <!ENTITY depends     SYSTEM "depends.xml">
 <!ENTITY recovering  SYSTEM "recovering.xml">
+<!ENTITY securingssh SYSTEM "securingssh.xml">
 <!ENTITY copyright   SYSTEM "copyright.xml">
 ]>
 
@@ -118,6 +119,7 @@
    &extenspec;
    &depends;
    &recovering;
+   &securingssh;
    &copyright;
 
 </book>

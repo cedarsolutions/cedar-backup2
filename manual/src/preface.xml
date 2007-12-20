@@ -245,6 +245,19 @@
             </listitem>
          </varlistentry>
 
+         <varlistentry>
+            <term><xref linkend="cedar-securingssh"/></term>
+            <listitem>
+               <para>
+                  Password-less SSH connections are a necessary evil when
+                  remote backup processes need to execute without human
+                  interaction.  This appendix describes some ways that you can
+                  reduce the risk to your backup pool should your master
+                  machine be compromised.
+               </para>
+            </listitem>
+         </varlistentry>
+
     </variablelist>
 
    </sect1>
