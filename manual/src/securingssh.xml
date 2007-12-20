@@ -158,7 +158,7 @@ tAZ9U+MmpL901231asdkl;ai1-923ma9s=9=1-2341=-a0sd=-sa0=1z= backup@mickey
       </para>
 
       <screen>
-#!/bin/ksh
+#!/bin/bash
 if [[ "${SSH_ORIGINAL_COMMAND}" == "ls -l" ]] ; then
     ${SSH_ORIGINAL_COMMAND}
 else
