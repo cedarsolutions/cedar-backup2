@@ -448,8 +448,13 @@ class _ManagedActionItem(object):
       """
       Executes the managed action associated with an item.
 
-      @note: Only options.full is actually used.  The rest of
-      the arguments exist to satisfy the ActionItem iterface.
+      @note: Only options.full is actually used.  The rest of the arguments
+      exist to satisfy the ActionItem iterface.
+
+      @note: Errors here result in a message logged to ERROR, but no thrown
+      exception.  The analogy is the stage action where a problem with one host
+      should not kill the entire backup.  Since we're logging an error, the
+      administrator will get an email.
 
       @param configPath: Path to configuration file on disk.
       @param options: Command-line options to be passed to action.
@@ -459,7 +464,10 @@ class _ManagedActionItem(object):
       """
       for peer in self.remotePeers:
          logger.debug("Executing managed action [%s] on peer [%s]." % (self.name, peer.name))
-         peer.executeManagedAction(self.name, options.full)
+         try:
+            peer.executeManagedAction(self.name, options.full)
+         except IOError, e:
+            logger.error(e)   # log the message and go on, so we don't kill the backup
 
 
 ###################

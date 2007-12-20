@@ -857,8 +857,12 @@ class RemotePeer(object):
 
       @raise IOError: If there is an error executing the action on the remote peer.
       """
-      command = RemotePeer._buildCbackCommand(self.cbackCommand, action, fullBackup)
-      self.executeRemoteCommand(command)
+      try:
+         command = RemotePeer._buildCbackCommand(self.cbackCommand, action, fullBackup)
+         self.executeRemoteCommand(command)
+      except IOError, e:
+         logger.info(e)
+         raise IOError("Failed to execute action [%s] on managed client [%s]." % (action, self.name))
 
 
    ##################
@@ -1160,21 +1164,21 @@ class RemotePeer(object):
 
       @raise IOError: If there is an error executing the remote command
       """
+      actualCommand = "%s %s@%s '%s'" % (rshCommand, remoteUser, remoteHost, remoteCommand)
       if localUser is not None:
          try:
             if os.getuid() != 0:
                raise IOError("Only root can remote shell as another user.")
          except AttributeError: pass
          command = resolveCommand(SU_COMMAND) 
-         actualCommand = "%s %s@%s '%s'" % (rshCommand, remoteUser, remoteHost, remoteCommand)
          result = executeCommand(command, [localUser, "-c", actualCommand])[0]
          if result != 0:
-            raise IOError("Error (%d) executing command on remote host as local user [%s]." % (result, localUser))
+            raise IOError("Command failed [su -c %s \"%s\"]" % (localUser, actualCommand))
       else:
          command = resolveCommand(rshCommandList)
          result = executeCommand(command, ["%s@%s" % (remoteUser, remoteHost), "%s" % remoteCommand])[0]
          if result != 0:
-            raise IOError("Error (%d) executing command on remote host (using no local user)." % result)
+            raise IOError("Command failed [%s]" % (actualCommand))
    _executeRemoteCommand = staticmethod(_executeRemoteCommand)
 
    def _buildCbackCommand(cbackCommand, action, fullBackup):
