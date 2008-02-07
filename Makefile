@@ -160,7 +160,7 @@ $(INTERFACE_TEMPDIR):
 # Debian packages are maintained via cvs-buildpackage as usual).  This
 # keeps cedar-backup2 from being a Debian-native package.
 
-distrib: debdist 
+distrib: debdist docdist
 
 distribclean: sdistclean debdistclean
 	-@$(RM) -f MANIFEST 
