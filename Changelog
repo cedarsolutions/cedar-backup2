@@ -1,5 +1,6 @@
-Version 2.15.2		07 Feb 2007
+Version 2.15.2		07 Feb 2008
 
+	* Updated copyright statements now that code changed in year 2008.
 	* Fix two unit test failures when using Python 2.5 (SF #1861878).
 	  - Add new function testtutil.hexFloatLiteralAllowed()
 	  - Fix splittests.TestByteQuantity.testConstructor_004() for 0xAC
