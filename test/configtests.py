@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -102,6 +102,7 @@ Full vs. Reduced Tests
 import os
 import unittest
 from CedarBackup2.testutil import findResources, removedir, failUnlessAssignRaises
+from CedarBackup2.testutil import hexFloatLiteralAllowed
 from CedarBackup2.config import ActionHook, PreActionHook, PostActionHook, CommandOverride
 from CedarBackup2.config import ExtendedAction, ActionDependencies, BlankBehavior
 from CedarBackup2.config import CollectFile, CollectDir, PurgeDir, LocalPeer, RemotePeer
@@ -1084,8 +1085,10 @@ class TestBlankBehavior(unittest.TestCase):
       self.failUnlessEqual("1E6", behavior.blankFactor)
       behavior.blankFactor = "0.25E2"
       self.failUnlessEqual("0.25E2", behavior.blankFactor)
-      behavior.blankFactor = "0xAC"
-      self.failUnlessEqual("0xAC", behavior.blankFactor)
+      if hexFloatLiteralAllowed():
+         # Some interpreters allow this, some don't
+         behavior.blankFactor = "0xAC"
+         self.failUnlessEqual("0xAC", behavior.blankFactor)
 
    def testConstructor_007(self):
       """
