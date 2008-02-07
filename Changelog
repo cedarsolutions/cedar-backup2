@@ -5,10 +5,6 @@ Version 2.15.2		07 Feb 2008
 	  - Add new function testtutil.hexFloatLiteralAllowed()
 	  - Fix splittests.TestByteQuantity.testConstructor_004() for 0xAC
 	  - Fix configtests.TestBlankBehavior.testConstructor_006() for 0xAC
-	  - Octal and hex notations apply only to integer literals.  However,
-	    Python apparently didn't enforce this before 2.5.  These tests
-	    actually did their job, which was to make me aware of the change.
-	    This was a test-only bug, and there was no functional impact.
 
 Version 2.15.1		19 Dec 2007
 
