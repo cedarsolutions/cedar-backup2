@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2006 Kenneth J. Pronovici.
+# Copyright (c) 2004-2006,2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -481,4 +481,29 @@ def availableLocales():
    for line in output:
       locales.append(line.rstrip())
    return locales
+
+
+####################################
+# hexFloatLiteralAllowed() function
+####################################
+
+def hexFloatLiteralAllowed():
+   """
+   Indicates whether hex float literals are allowed by the interpreter.
+
+   As far back as 2004, some Python documentation indicated that octal and hex
+   notation applies only to integer literals.  However, prior to Python 2.5, it
+   was legal to construct a float with an argument like 0xAC.  This check
+   provides a version-based indication of whether the current interpreter
+   supports that behavior.
+
+   This check exists so that unit tests can continue to test the same thing as
+   always for pre-2.5 interpreters (i.e. making sure backwards compatibility
+   doesn't break) while still continuing to work for later interpreters.
+
+   The returned value is True for Python <= 2.5, and False otherwise.
+   """
+   if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 5]:
+      return True
+   return False
 

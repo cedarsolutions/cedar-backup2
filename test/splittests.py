@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2007 Kenneth J. Pronovici.
+# Copyright (c) 2007-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -111,6 +111,7 @@ from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.testutil import failUnlessAssignRaises, platformSupportsLinks, availableLocales
+from CedarBackup2.testutil import hexFloatLiteralAllowed
 from CedarBackup2.xmlutil import createOutputDom, serializeDom
 from CedarBackup2.extend.split import LocalConfig, SplitConfig, ByteQuantity
 from CedarBackup2.extend.split import _splitFile, _splitDailyDir
@@ -221,8 +222,10 @@ class TestByteQuantity(unittest.TestCase):
       self.failUnlessEqual("1E6", quantity.quantity)
       quantity.quantity = "0.25E2"
       self.failUnlessEqual("0.25E2", quantity.quantity)
-      quantity.quantity = "0xAC"
-      self.failUnlessEqual("0xAC", quantity.quantity)
+      if hexFloatLiteralAllowed():
+         # Some interpreters allow this, some don't
+         quantity.quantity = "0xAC"
+         self.failUnlessEqual("0xAC", quantity.quantity)
 
    def testConstructor_005(self):
       """
