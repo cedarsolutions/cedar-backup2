@@ -3273,7 +3273,7 @@ class TestFunctions(unittest.TestCase):
          path = u"\xe2\x99\xaa\xe2\x99\xac"
          safePath = encodePath(path)
          self.failUnless(isinstance(safePath, str))
-         if encoding == "utf-8":
+         if encoding.upper() == "UTF-8":  # apparently, some platforms have "utf-8", some have "UTF-8"
             self.failUnlessEqual('\xc3\xa2\xc2\x99\xc2\xaa\xc3\xa2\xc2\x99\xc2\xac', safePath)
          else:
             self.failUnlessEqual("\xe2\x99\xaa\xe2\x99\xac", safePath)
