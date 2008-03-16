@@ -2,6 +2,7 @@ Version 2.15.3		unreleased
 
 	* Fix testEncodePath_009() to be aware of "UTF-8" encoding.
 	* Fix typos in the PostgreSQL extension section of the manual.
+	* Improve logging when stage action fails (closes: #1854635).
 
 Version 2.15.2		07 Feb 2008
 
