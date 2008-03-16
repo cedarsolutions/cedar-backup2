@@ -116,8 +116,14 @@ def executeStage(configPath, options, config):
          continue
       logger.debug("Found collect indicator.")
       targetDir = stagingDirs[peer.name]
-      ownership = getUidGid(config.options.backupUser,  config.options.backupGroup)
-      logger.debug("Using target dir [%s], ownership [%d:%d]." % (targetDir, ownership[0], ownership[1]))
+      if os.getuid() == 0:
+         # Since we're running as root, we can change ownership
+         ownership = getUidGid(config.options.backupUser,  config.options.backupGroup)
+         logger.debug("Using target dir [%s], ownership [%d:%d]." % (targetDir, ownership[0], ownership[1]))
+      else:
+         # Non-root cannot change ownership, so don't set it
+         ownership = None
+         logger.debug("Using target dir [%s], ownership [None]." % targetDir)
       try:
          count = peer.stagePeer(targetDir=targetDir, ownership=ownership)  # note: utilize effective user's default umask
          logger.info("Staged %d files for peer [%s]." % (count, peer.name))

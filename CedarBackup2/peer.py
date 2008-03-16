@@ -981,14 +981,11 @@ class RemotePeer(object):
       differenceSet = afterSet.difference(beforeSet)  # files we added as part of copy
       if len(differenceSet) == 0:
          raise IOError("Apparently did not copy any new files from remote peer.")
-      if localUser is None:
-         logger.debug("Not root, so not attempting to change owner on staged files.")
-      else:
-         for targetFile in differenceSet:
-            if ownership is not None:
-               os.chown(targetFile, ownership[0], ownership[1])
-            if permissions is not None:
-               os.chmod(targetFile, permissions)
+      for targetFile in differenceSet:
+         if ownership is not None:
+            os.chown(targetFile, ownership[0], ownership[1])
+         if permissions is not None:
+            os.chmod(targetFile, permissions)
       return len(differenceSet)
    _copyRemoteDir = staticmethod(_copyRemoteDir)
 
