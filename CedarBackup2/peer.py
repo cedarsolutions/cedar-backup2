@@ -784,10 +784,13 @@ class RemotePeer(object):
                                        sourceFile, targetFile, 
                                        overwrite=False)
             if os.path.exists(targetFile):
+               logger.debug("Found collect indicator.")
                return True
             else:
+               logger.debug("Did not find collect indicator.")
                return False
-         except:
+         except Exception, e:
+            logger.info("Failed looking for collect indicator: %s" % e)
             return False
       finally:
          if os.path.exists(targetFile):
