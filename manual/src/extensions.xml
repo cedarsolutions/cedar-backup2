@@ -798,11 +798,11 @@ host = remote.host
       </para> 
 
       <programlisting>
-&lt;mysql&gt;
+&lt;postgresql&gt;
    &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
    &lt;user&gt;username&lt;/user&gt;
    &lt;all&gt;Y&lt;/all&gt;
-&lt;/mysql&gt;
+&lt;/postgresql&gt;
       </programlisting>
 
       <para>
@@ -811,13 +811,13 @@ host = remote.host
       </para>
 
       <programlisting>
-&lt;mysql&gt;
+&lt;postgresql&gt;
    &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
    &lt;user&gt;username&lt;/user&gt;
    &lt;all&gt;N&lt;/all&gt;
    &lt;database&gt;db1&lt;/database&gt;
    &lt;database&gt;db2&lt;/database&gt;
-&lt;/mysql&gt;
+&lt;/postgresql&gt;
       </programlisting>
 
       <para>
