@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -248,9 +248,10 @@ def _getRemotePeers(config):
    if configPeers is not None:
       for peer in configPeers:
          remoteUser = _getRemoteUser(config, peer)
+         localUser = _getLocalUser(config)
          rcpCommand = _getRcpCommand(config, peer)
          remotePeer = RemotePeer(peer.name, peer.collectDir, config.options.workingDir,
-                                 remoteUser, rcpCommand, config.options.backupUser)
+                                 remoteUser, rcpCommand, localUser)
          remotePeers.append(remotePeer)
          logger.debug("Found remote peer: [%s]" % remotePeer.name)
    return remotePeers
@@ -271,6 +272,21 @@ def _getRemoteUser(config, remotePeer):
    if remotePeer.remoteUser is None:
       return config.options.backupUser
    return remotePeer.remoteUser
+
+
+###########################
+# _getLocalUser() function
+###########################
+
+def _getLocalUser(config):
+   """
+   Gets the remote user associated with a remote peer.
+   @param config: Config object.
+   @return: Name of local user that should be used
+   """
+   if os.getuid() != 0:
+      return None
+   return config.options.backupUser
 
 
 ############################
