@@ -1,4 +1,4 @@
-Version 2.15.3		unreleased
+Version 2.15.3		16 Mar 2008
 
 	* Fix testEncodePath_009() to be aware of "UTF-8" encoding.
 	* Fix typos in the PostgreSQL extension section of the manual.
