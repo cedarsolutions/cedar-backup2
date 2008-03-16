@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -784,10 +784,8 @@ class RemotePeer(object):
                                        sourceFile, targetFile, 
                                        overwrite=False)
             if os.path.exists(targetFile):
-               logger.debug("Found collect indicator.")
                return True
             else:
-               logger.debug("Did not find collect indicator.")
                return False
          except Exception, e:
             logger.info("Failed looking for collect indicator: %s" % e)
@@ -976,18 +974,21 @@ class RemotePeer(object):
          command = resolveCommand(rcpCommandList)
          result = executeCommand(command, [copySource, targetDir])[0]
          if result != 0:
-            raise IOError("Error (%d) copying files from remote host (using no local user)." % result)
+            raise IOError("Error (%d) copying files from remote host." % result)
       afterSet = RemotePeer._getDirContents(targetDir)
       if len(afterSet) == 0:
          raise IOError("Did not copy any files from remote peer.")
       differenceSet = afterSet.difference(beforeSet)  # files we added as part of copy
       if len(differenceSet) == 0:
          raise IOError("Apparently did not copy any new files from remote peer.")
-      for targetFile in differenceSet:
-         if ownership is not None:
-            os.chown(targetFile, ownership[0], ownership[1])
-         if permissions is not None:
-            os.chmod(targetFile, permissions)
+      if localUser is None:
+         logger.debug("Not root, so not attempting to change owner on staged files.")
+      else:
+         for targetFile in differenceSet:
+            if ownership is not None:
+               os.chown(targetFile, ownership[0], ownership[1])
+            if permissions is not None:
+               os.chmod(targetFile, permissions)
       return len(differenceSet)
    _copyRemoteDir = staticmethod(_copyRemoteDir)
 
@@ -1069,7 +1070,7 @@ class RemotePeer(object):
          command = resolveCommand(rcpCommandList)
          result = executeCommand(command, [copySource, targetFile])[0]
          if result != 0:
-            raise IOError("Error (%d) copying [%s] from remote host (using no local user)." % (result, sourceFile))
+            raise IOError("Error (%d) copying [%s] from remote host." % (result, sourceFile))
       if not os.path.exists(targetFile):
          raise IOError("Apparently unable to copy file from remote host.")
       if ownership is not None:
@@ -1140,7 +1141,7 @@ class RemotePeer(object):
          command = resolveCommand(rcpCommandList)
          result = executeCommand(command, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
          if result != 0:
-            raise IOError("Error (%d) copying [%s] to remote host (using no local user)." % (result, sourceFile))
+            raise IOError("Error (%d) copying [%s] to remote host." % (result, sourceFile))
    _pushLocalFile = staticmethod(_pushLocalFile)
 
    def _executeRemoteCommand(remoteUser, localUser, remoteHost, rshCommand, rshCommandList, remoteCommand):
