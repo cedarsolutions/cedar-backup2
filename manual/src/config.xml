@@ -1459,8 +1459,8 @@
                   </para>
                   <para>
                      This section can be repeated as many times as is
-                     necessary.  At least one collect directory must be
-                     configured when the collect action is executed.
+                     necessary.  At least one collect directory or collect file
+                     must be configured when the collect action is executed.
                   </para>
                   <para>
                      The collect directory subsection contains the following
@@ -1580,6 +1580,32 @@
                            </para>
                            <para>
                               <emphasis>Restrictions:</emphasis> Must be non-empty
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>link_depth</literal></term>
+                        <listitem>
+                           <para>Link depth value to use for this directory.</para>
+                           <para>
+                              The link depth is maximum depth of the tree at
+                              which soft links should be followed.  So, a depth
+                              of 0 does not follow any soft links within the
+                              collect directory, a depth of 1 follows only
+                              links immediately within the collect directory, a
+                              depth of 2 follows the links at the next level
+                              down, etc.
+                           </para>
+                           <para>
+                              This field is optional.  If it doesn't exist,
+                              the backup will assume a value of zero, meaning
+                              that soft links within the collect directory will
+                              never be followed.  
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> If set, must
+                              be an integer &ge; 0.
                            </para>
                         </listitem>
                      </varlistentry>

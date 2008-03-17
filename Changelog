@@ -1,6 +1,11 @@
 Version 2.16.0		unreleased
 
-	* Add linkDepth parameter to FilesystemList.addDirContents().
+	* Make name attribute optional in RemotPeer constructor.
+	* Add support for collecting soft links (closes: #1854631).
+		- Add linkDepth parameter to FilesystemList.addDirContents()
+		- Add CollectDir.linkDepth attribute
+		- Modify collect action to obey CollectDir.linkDepth
+		- Update user manual to discuss new attribute
 
 Version 2.15.3		16 Mar 2008
 

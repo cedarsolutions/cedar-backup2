@@ -396,7 +396,7 @@ class FilesystemList(list):
       @param addSelf: Indicates whether the directory itself should be added to the list.
       @type addSelf: Boolean value
 
-      @param linkDepth: Depth to which soft links should be followed
+      @param linkDepth: Maximum depth of the tree at which soft links should be followed
       @type linkDepth: Integer value, where zero means not to follow any soft links
 
       @return: Number of items recursively added to the list

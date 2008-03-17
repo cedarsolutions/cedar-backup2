@@ -111,6 +111,10 @@
          <abs_path>/root</abs_path>
       </dir>
       <dir>
+         <abs_path>/tmp</abs_path>
+         <link_depth>3</link_depth>
+      </dir>
+      <dir>
          <abs_path>/var/log</abs_path>
          <mode>incr</mode>                   <!-- deprecated form -->
       </dir>
