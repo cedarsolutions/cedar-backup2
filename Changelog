@@ -1,3 +1,7 @@
+Version 2.16.0		unreleased
+
+	* Add linkDepth parameter to FilesystemList.addDirContents().
+
 Version 2.15.3		16 Mar 2008
 
 	* Fix testEncodePath_009() to be aware of "UTF-8" encoding.
