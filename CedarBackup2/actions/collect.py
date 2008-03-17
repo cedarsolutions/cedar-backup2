@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -126,14 +126,15 @@ def executeCollect(configPath, options, config):
          collectMode = _getCollectMode(config, collectDir)
          archiveMode = _getArchiveMode(config, collectDir)
          ignoreFile = _getIgnoreFile(config, collectDir)
+         linkDepth = _getLinkDepth(collectDir)
          digestPath = _getDigestPath(config, collectDir)
          tarfilePath = _getTarfilePath(config, collectDir, archiveMode)
          (excludePaths, excludePatterns) = _getExclusions(config, collectDir)
          if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
             logger.debug("Directory meets criteria to be backed up today.")
             _collectDirectory(config, collectDir.absolutePath, tarfilePath, 
-                              collectMode, archiveMode, ignoreFile, resetDigest, 
-                              digestPath, excludePaths, excludePatterns)
+                              collectMode, archiveMode, ignoreFile, linkDepth,
+                              resetDigest, digestPath, excludePaths, excludePatterns)
          else:
             logger.debug("Directory will not be backed up, per collect mode.")
          logger.info("Completed collecting directory [%s]" % collectDir.absolutePath)
@@ -181,7 +182,8 @@ def _collectFile(config, absolutePath, tarfilePath, collectMode, archiveMode, re
 ###############################
 
 def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMode, 
-                      ignoreFile, resetDigest, digestPath, excludePaths, excludePatterns):
+                      ignoreFile, linkDepth, resetDigest, digestPath, excludePaths, 
+                      excludePatterns):
    """
    Collects a configured collect directory.
    
@@ -200,6 +202,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
    @param collectMode: Collect mode to use.
    @param archiveMode: Archive mode to use.
    @param ignoreFile: Ignore file to use.
+   @param linkDepth: Link depth value to use.
    @param resetDigest: Reset digest flag.
    @param digestPath: Path to digest file on disk, if needed.
    @param excludePaths: List of absolute paths to exclude.
@@ -209,7 +212,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
    backupList.ignoreFile = ignoreFile
    backupList.excludePaths = excludePaths
    backupList.excludePatterns = excludePatterns
-   backupList.addDirContents(absolutePath)
+   backupList.addDirContents(absolutePath, linkDepth=linkDepth)
    _executeBackup(config, backupList, absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath)
 
 
@@ -382,6 +385,25 @@ def _getIgnoreFile(config, item):
       ignoreFile = item.ignoreFile
    logger.debug("Ignore file is [%s]" % ignoreFile)
    return ignoreFile
+
+
+############################
+# _getLinkDepth() function
+############################
+
+def _getLinkDepth(item):
+   """
+   Gets the link depth that should be used for a collect directory.
+   If possible, use the one on the directory, otherwise set a value of 0 (zero).
+   @param item: C{CollectDir} object
+   @return: Ignore file to use.
+   """
+   if item.linkDepth is None:
+      linkDepth = 0
+   else:
+      linkDepth = item.linkDepth
+   logger.debug("Link depth is [%d]" % linkDepth)
+   return linkDepth
 
 
 ############################
