@@ -23,6 +23,10 @@ changes?
 Can configuration be generalized, or is code the right
 way to do it?
 
+Ugh, we're inconsistent and some code still calls os.chmod and os.chown directly?
+
+Maybe we need an isRunningAsRoot() function rather than getuid() all over the place?
+
 ============================
 
 Move to Python 2.5 -- is available in etch
