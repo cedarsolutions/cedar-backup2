@@ -436,7 +436,7 @@ class RemotePeer(object):
    # Constructor
    ##############
 
-   def __init__(self, name, collectDir=None, workingDir=None, remoteUser=None, 
+   def __init__(self, name=None, collectDir=None, workingDir=None, remoteUser=None, 
                 rcpCommand=None, localUser=None, rshCommand=None, cbackCommand=None):
       """
       Initializes a remote backup peer.
