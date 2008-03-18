@@ -71,6 +71,7 @@ from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
 from CedarBackup2.xmlutil import readFirstChild, readString
 from CedarBackup2.actions.util import findDailyDirs, writeIndicatorFile, getBackupFiles
+from CedarBackup2.config import ByteQuantity, readByteQuantity, addByteQuantityNode
 
 
 ########################################################################
@@ -81,125 +82,6 @@ logger = logging.getLogger("CedarBackup2.log.extend.split")
 
 SPLIT_COMMAND = [ "split", ]
 SPLIT_INDICATOR = "cback.split"
-
-VALID_BYTE_UNITS = [ UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES, ]
-
-
-########################################################################
-# ByteQuantity class definition
-########################################################################
-
-class ByteQuantity(object):
-
-   """
-   Class representing a byte quantity.
-
-   A byte quantity has both a quantity and a byte-related unit.  Units are
-   maintained using the constants from util.py.
-
-   The quantity is maintained internally as a string so that issues of
-   precision can be avoided.  It really isn't possible to store a floating
-   point number here while being able to losslessly translate back and forth
-   between XML and object representations.  (Perhaps the Python 2.4 Decimal
-   class would have been an option, but I want to stay compatible with Python
-   2.3.)
-
-   Even though the quantity is maintained as a string, the string must be in a
-   valid floating point positive number.  Technically, any floating point
-   string format supported by Python is allowble.  However, it does not make
-   sense to have a negative quantity of bytes in this context.  
-
-   @sort: __init__, __repr__, __str__, __cmp__, quantity, units
-   """
-
-   def __init__(self, quantity=None, units=None):
-      """
-      Constructor for the C{ByteQuantity} class.
-
-      @param quantity: Quantity of bytes, as string ("1.25")
-      @param units: Unit of bytes, one of VALID_BYTE_UNITS
-
-      @raise ValueError: If one of the values is invalid.
-      """
-      self._quantity = None
-      self._units = None
-      self.quantity = quantity
-      self.units = units
-
-   def __repr__(self):
-      """
-      Official string representation for class instance.
-      """
-      return "ByteQuantity(%s, %s)" % (self.quantity, self.units)
-
-   def __str__(self):
-      """
-      Informal string representation for class instance.
-      """
-      return self.__repr__()
-
-   def __cmp__(self, other):
-      """
-      Definition of equals operator for this class.
-      Lists within this class are "unordered" for equality comparisons.
-      @param other: Other object to compare to.
-      @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
-      """
-      if other is None:
-         return 1
-      if self._quantity != other._quantity:
-         if self._quantity < other._quantity:
-            return -1
-         else:
-            return 1
-      if self._units != other._units:
-         if self._units < other._units:
-            return -1
-         else:
-            return 1
-      return 0
-
-   def _setQuantity(self, value):
-      """
-      Property target used to set the quantity
-      The value must be a non-empty string if it is not C{None}.
-      @raise ValueError: If the value is an empty string.
-      @raise ValueError: If the value is not a valid floating point number
-      @raise ValueError: If the value is less than zero
-      """
-      if value is not None:
-         if len(value) < 1:
-            raise ValueError("Quantity must be a non-empty string.")
-         floatValue = float(value)
-         if floatValue < 0.0:
-            raise ValueError("Quantity cannot be negative.")
-      self._quantity = value # keep around string
-
-   def _getQuantity(self):
-      """
-      Property target used to get the quantity.
-      """
-      return self._quantity
-
-   def _setUnits(self, value):
-      """
-      Property target used to set the units value.
-      If not C{None}, the units value must be one of the values in L{VALID_BYTE_UNITS}.
-      @raise ValueError: If the value is not valid.
-      """
-      if value is not None:
-         if value not in VALID_BYTE_UNITS:
-            raise ValueError("Units value must be one of %s." % VALID_BYTE_UNITS)
-      self._units = value
-
-   def _getUnits(self):
-      """
-      Property target used to get the units value.
-      """
-      return self._units
-
-   quantity = property(_getQuantity, _setQuantity, None, doc="Byte quantity, as a string")
-   units = property(_getUnits, _setUnits, None, doc="Units for byte quantity, for instance UNIT_BYTES")
 
 
 ########################################################################
@@ -461,8 +343,8 @@ class LocalConfig(object):
       """
       if self.split is not None:
          sectionNode = addContainerNode(xmlDom, parentNode, "split")
-         LocalConfig._addByteQuantityNode(xmlDom, sectionNode, "size_limit", self.split.sizeLimit)
-         LocalConfig._addByteQuantityNode(xmlDom, sectionNode, "split_size", self.split.splitSize)
+         addByteQuantityNode(xmlDom, sectionNode, "size_limit", self.split.sizeLimit)
+         addByteQuantityNode(xmlDom, sectionNode, "split_size", self.split.splitSize)
 
    def _parseXmlData(self, xmlData):
       """
@@ -497,73 +379,10 @@ class LocalConfig(object):
       section = readFirstChild(parent, "split")
       if section is not None:
          split = SplitConfig()
-         split.sizeLimit = LocalConfig._readByteQuantity(section, "size_limit")
-         split.splitSize = LocalConfig._readByteQuantity(section, "split_size")
+         split.sizeLimit = readByteQuantity(section, "size_limit")
+         split.splitSize = readByteQuantity(section, "split_size")
       return split
    _parseSplit = staticmethod(_parseSplit)
-
-   def _readByteQuantity(parent, name):
-      """
-      Read a byte size value from an XML document.
-
-      A byte size value is an interpreted string value.  If the string value
-      ends with "MB" or "GB", then the string before that is interpreted as
-      megabytes or gigabytes.  Otherwise, it is intepreted as bytes.  
-
-      @param parent: Parent node to search beneath.
-      @param name: Name of node to search for.
-
-      @return: ByteQuantity parsed from XML document
-      """
-      data = readString(parent, name)
-      if data is None:
-         return None
-      data = data.strip()
-      if data.endswith("KB"):
-         quantity = data[0:data.rfind("KB")].strip()
-         units = UNIT_KBYTES
-      elif data.endswith("MB"):
-         quantity = data[0:data.rfind("MB")].strip()
-         units = UNIT_MBYTES;
-      elif data.endswith("GB"):
-         quantity = data[0:data.rfind("GB")].strip()
-         units = UNIT_GBYTES
-      else:
-         quantity = data.strip()
-         units = UNIT_BYTES
-      return ByteQuantity(quantity, units)
-   _readByteQuantity = staticmethod(_readByteQuantity)
-
-   def _addByteQuantityNode(xmlDom, parentNode, nodeName, byteQuantity):
-      """
-      Adds a text node as the next child of a parent, to contain a byte size.
-
-      If the C{byteQuantity} is None, then the node will be created, but will
-      be empty (i.e. will contain no text node child).
-
-      The size in bytes will be normalized.  If it is larger than 1.0 GB, it will
-      be shown in GB ("1.0 GB").  If it is larger than 1.0 MB ("1.0 MB"), it will
-      be shown in MB.  Otherwise, it will be shown in bytes ("423413").
-
-      @param xmlDom: DOM tree as from C{impl.createDocument()}.
-      @param parentNode: Parent node to create child for.
-      @param nodeName: Name of the new container node.
-      @param byteQuantity: ByteQuantity object to put into the XML document
-
-      @return: Reference to the newly-created node.
-      """
-      if byteQuantity is None:
-         byteString = None
-      elif byteQuantity.units == UNIT_KBYTES:
-         byteString = "%s KB" % byteQuantity.quantity
-      elif byteQuantity.units == UNIT_MBYTES:
-         byteString = "%s MB" % byteQuantity.quantity
-      elif byteQuantity.units == UNIT_GBYTES:
-         byteString = "%s GB" % byteQuantity.quantity
-      else:
-         byteString = byteQuantity.quantity
-      return addStringNode(xmlDom, parentNode, nodeName, byteString)
-   _addByteQuantityNode = staticmethod(_addByteQuantityNode)
 
 
 ########################################################################

@@ -6,6 +6,7 @@ Version 2.16.0		unreleased
 		- Add CollectDir.linkDepth attribute
 		- Modify collect action to obey CollectDir.linkDepth
 		- Update user manual to discuss new attribute
+	* Refactored ByteQuantity functionality out of split and into config.
 
 Version 2.15.3		16 Mar 2008
 
