@@ -52,12 +52,12 @@ than X bytes of capacity remaining.
 ########################################################################
 
 # System modules
-import sys
-import os
 import logging
 
 # Cedar Backup modules
 from CedarBackup2.config import ByteQuantity, readByteQuantity, addByteQuantityNode
+from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
+from CedarBackup2.xmlutil import readFirstChild, readString
 from CedarBackup2.actions.util import createWriter, checkMediaState
 
 
@@ -105,7 +105,7 @@ class PercentageQuantity(object):
       """
       Official string representation for class instance.
       """
-      return "Percentage(%s)" % (self.quantity)
+      return "PercentageQuantity(%s)" % (self.quantity)
 
    def __str__(self):
       """
@@ -175,26 +175,26 @@ class CapacityConfig(object):
       - The maximum percentage utilized must be a PercentageQuantity
       - The minimum bytes remaining must be a ByteQuantity
 
-   @sort: __init__, __repr__, __str__, __cmp__, percentage, bytes
+   @sort: __init__, __repr__, __str__, __cmp__, maxPercentage, minBytes
    """
 
-   def __init__(self, percentage, bytes):
+   def __init__(self, maxPercentage=None, minBytes=None):
       """
       Constructor for the C{CapacityConfig} class.
       
-      @param percentage: Maximum percentage of the media that may be utilized
-      @param bytes: Minimum number of free bytes that must be available
+      @param maxPercentage: Maximum percentage of the media that may be utilized
+      @param minBytes: Minimum number of free bytes that must be available
       """
-      self._percentage = None
-      self._bytes = None
-      self.percentage = percentage
-      self.bytes = bytes
+      self._maxPercentage = None
+      self._minBytes = None
+      self.maxPercentage = maxPercentage
+      self.minBytes = minBytes
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "CapacityConfig(%s, %s)" % (self.percentage, self.bytes)
+      return "CapacityConfig(%s, %s)" % (self.maxPercentage, self.minBytes)
 
    def __str__(self):
       """
@@ -210,58 +210,58 @@ class CapacityConfig(object):
       """
       if other is None:
          return 1
-      if self._percentage != other._percentage:
-         if self._percentage < other._percentage:
+      if self._maxPercentage != other._maxPercentage:
+         if self._maxPercentage < other._maxPercentage:
             return -1
          else:
             return 1
-      if self._bytes != other._bytes:
-         if self._bytes < other._bytes:
+      if self._minBytes != other._minBytes:
+         if self._minBytes < other._minBytes:
             return -1
          else:
             return 1
       return 0
 
-   def _setPercentage(self, value):
+   def _setMaxPercentage(self, value):
       """
-      Property target used to set the percentage utilized value.
+      Property target used to set the maxPercentage value.
       If not C{None}, the value must be a C{PercentageQuantity} object.
       @raise ValueError: If the value is not a C{PercentageQuantity}
       """
       if value is None:
-         self._percentage = None
+         self._maxPercentage = None
       else:
          if not isinstance(value, PercentageQuantity):
             raise ValueError("Value must be a C{PercentageQuantity} object.")
-         self._percentage = value
+         self._maxPercentage = value
 
-   def _getPercentage(self):
+   def _getMaxPercentage(self):
       """
-      Property target used to get the percentage remaining value
+      Property target used to get the maxPercentage value
       """
-      return self._percentage
+      return self._maxPercentage
 
-   def _setBytes(self, value):
+   def _setMinBytes(self, value):
       """
       Property target used to set the bytes utilized value.
       If not C{None}, the value must be a C{ByteQuantity} object.
       @raise ValueError: If the value is not a C{ByteQuantity}
       """
       if value is None:
-         self._bytes = None
+         self._minBytes = None
       else:
          if not isinstance(value, ByteQuantity):
             raise ValueError("Value must be a C{ByteQuantity} object.")
-         self._bytes = value
+         self._minBytes = value
 
-   def _getBytes(self):
+   def _getMinBytes(self):
       """
-      Property target used to get the bytes remaining value
+      Property target used to get the bytes remaining value.
       """
-      return self._bytes
+      return self._minBytes
 
-   percentage = property(_getPercentage, _setPercentage, None, "Maximum percentage of the media that may be utilized.")
-   bytes = property(_getBytes, _setBytes, None, "Minimum number of free bytes that must be available.")
+   maxPercentage = property(_getMaxPercentage, _setMaxPercentage, None, "Maximum percentage of the media that may be utilized.")
+   minBytes = property(_getMinBytes, _setMinBytes, None, "Minimum number of free bytes that must be available.")
 
 
 ########################################################################
@@ -390,10 +390,10 @@ class LocalConfig(object):
       """
       if self.capacity is None:
          raise ValueError("Capacity section is required.")
-      if self.capacity.percentage is None and self.capacity.bytes is None:
-         raise ValueError("Must provide either capacity percentage or capacity bytes.")
-      if self.capacity.percentage is not None and self.capacity.bytes is not None:
-         raise ValueError("Must provide either capacity percentage or capacity bytes, but not both.")
+      if self.capacity.maxPercentage is None and self.capacity.minBytes is None:
+         raise ValueError("Must provide either max percentage or min bytes.")
+      if self.capacity.maxPercentage is not None and self.capacity.minBytes is not None:
+         raise ValueError("Must provide either max percentage or min bytes, but not both.")
 
    def addConfig(self, xmlDom, parentNode):
       """
@@ -404,17 +404,17 @@ class LocalConfig(object):
 
       We add the following fields to the document::
 
-         percentage     //cb_config/capacity/percentage
-         bytes          //cb_config/capacity/bytes
+         maxPercentage  //cb_config/capacity/max_percentage
+         minBytes       //cb_config/capacity/min_bytes
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
       """
       if self.capacity is not None:
          sectionNode = addContainerNode(xmlDom, parentNode, "capacity")
-         addStringNode(xmlDom, parentNode, "percentage", self.capacity.percentage)
-         if self.capacity.bytes is not None: # because utility function fills in empty section on None
-            addByteQuantityNode(xmlDom, sectionNode, "bytes", self.capacity.bytes)
+         LocalConfig._addPercentageQuantity(xmlDom, sectionNode, "max_percentage", self.capacity.maxPercentage)
+         if self.capacity.minBytes is not None: # because utility function fills in empty section on None
+            addByteQuantityNode(xmlDom, sectionNode, "min_bytes", self.capacity.minBytes)
 
    def _parseXmlData(self, xmlData):
       """
@@ -437,8 +437,8 @@ class LocalConfig(object):
       
       We read the following fields::
 
-         percentage     //cb_config/capacity/percentage
-         bytes          //cb_config/capacity/bytes
+         maxPercentage  //cb_config/capacity/max_percentage
+         minBytes       //cb_config/capacity/min_bytes
 
       @param parentNode: Parent node to search beneath.
 
@@ -449,8 +449,8 @@ class LocalConfig(object):
       section = readFirstChild(parentNode, "capacity")
       if section is not None:
          capacity = CapacityConfig()
-         capacity.percentage = LocalConfig._readPercentageQuantity(section, "percentage")
-         capacity.bytes = readByteQuantity(section, "bytes")
+         capacity.maxPercentage = LocalConfig._readPercentageQuantity(section, "max_percentage")
+         capacity.minBytes = readByteQuantity(section, "min_bytes")
       return capacity
    _parseCapacity = staticmethod(_parseCapacity)
 
@@ -462,8 +462,27 @@ class LocalConfig(object):
       @return: Percentage quantity parsed from XML document
       """
       quantity = readString(parent, name)
+      if quantity is None:
+         return None
       return PercentageQuantity(quantity)
    _readPercentageQuantity = staticmethod(_readPercentageQuantity)
+
+   def _addPercentageQuantity(xmlDom, parentNode, nodeName, percentageQuantity):
+      """
+      Adds a text node as the next child of a parent, to contain a percentage quantity.
+
+      If the C{percentageQuantity} is None, then no node will be created.
+
+      @param xmlDom: DOM tree as from C{impl.createDocument()}.
+      @param parentNode: Parent node to create child for.
+      @param nodeName: Name of the new container node.
+      @param percentageQuantity: PercentageQuantity object to put into the XML document
+
+      @return: Reference to the newly-created node.
+      """
+      if percentageQuantity is not None:
+         addStringNode(xmlDom, parentNode, nodeName, percentageQuantity.quantity)
+   _addPercentageQuantity = staticmethod(_addPercentageQuantity)
 
 
 ########################################################################
@@ -498,15 +517,15 @@ def executeAction(configPath, options, config):
       checkMediaState(config.store)  # raises exception if media is not initialized
    writer = createWriter(config)
    capacity = writer.retrieveCapacity()
-   if local.capacity.percentage is not None:
-      if bytesAvailable == 0:
-         logger.error("Media has reached capacity limit: media is 100%% utilized." % utilized)
+   if local.capacity.maxPercentage is not None:
+      if capacity.bytesAvailable == 0:
+         logger.error("Media has reached capacity limit: media is 100%% utilized.")
       else:
          utilized = (float(capacity.bytesUsed) / float(capacity.bytesAvailable)) * 100.0
-         if utilized > local.capacity.percentage.percentage:
+         if utilized > local.capacity.maxPercentage.percentage:
             logger.error("Media has reached capacity limit: media is %.2f%% utilized." % utilized)
    else: # if local.capacity.bytes is not None
-      if capacity.bytesAvailable < local.capacity.bytes.bytes:
+      if capacity.bytesAvailable < local.capacity.minBytes.bytes:
          logger.error("Media has reached capacity limit: only %d free bytes remain." % capacity.bytesAvailable)
    logger.info("Executed the capacity extended action successfully.")
 
