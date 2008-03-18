@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -162,6 +162,7 @@ def main():
       import test.encrypttests as encrypttests
       import test.splittests as splittests
       import test.spantests as spantests
+      import test.capacitytests as capacitytests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -218,6 +219,7 @@ def main():
    if args == [] or "split" in args: unittests["split"] = splittests.suite()
    if args == [] or "encrypt" in args: unittests["encrypt"] = encrypttests.suite()
    if args == [] or "span" in args: unittests["span"] = spantests.suite()
+   if args == [] or "capacity" in args: unittests["capacity"] = capacitytests.suite()
    if args != []: print "*** Executing specific tests: %s" % unittests.keys()
 
    # Create and run the test suite
