@@ -246,7 +246,7 @@ import logging
 from CedarBackup2.writers.util import validateScsiId, validateDriveSpeed
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList
 from CedarBackup2.util import RegexMatchList, RegexList, encodePath
-from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
+from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
 from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild
 from CedarBackup2.xmlutil import readStringList, readString, readInteger, readBoolean
 from CedarBackup2.xmlutil import addContainerNode, addStringNode, addIntegerNode, addBooleanNode
@@ -391,8 +391,15 @@ class ByteQuantity(object):
       """
       return self._units
 
+   def _getBytes(self):
+      """
+      Property target used to return the byte quantity as a floating point number.
+      """
+      return float(convertSize(self.quantity, self.units, UNIT_BYTES))
+
    quantity = property(_getQuantity, _setQuantity, None, doc="Byte quantity, as a string")
    units = property(_getUnits, _setUnits, None, doc="Units for byte quantity, for instance UNIT_BYTES")
+   bytes = property(_getBytes, None, None, doc="Byte quantity, as a floating point number.")
 
 
 ########################################################################

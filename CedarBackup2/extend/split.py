@@ -65,7 +65,7 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import resolveCommand, executeCommand, convertSize
+from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import changeOwnership, buildNormalizedPath
 from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
@@ -444,10 +444,9 @@ def _splitDailyDir(dailyDir, sizeLimit, splitSize, backupUser, backupGroup):
    """
    logger.debug("Begin splitting contents of [%s]." % dailyDir)
    fileList = getBackupFiles(dailyDir)  # ignores indicator files
-   limitBytes = float(convertSize(sizeLimit.quantity, sizeLimit.units, UNIT_BYTES))
    for path in fileList:
       size = float(os.stat(path).st_size)
-      if size > limitBytes:
+      if size > sizeLimit.bytes:
          _splitFile(path, splitSize, backupUser, backupGroup, removeSource=True)
    logger.debug("Completed splitting contents of [%s]." % dailyDir)
 
@@ -479,7 +478,7 @@ def _splitFile(sourcePath, splitSize, backupUser, backupGroup, removeSource=Fals
       dirname = os.path.dirname(sourcePath)
       filename = os.path.basename(sourcePath)
       prefix = "%s_" % filename
-      bytes = int(convertSize(splitSize.quantity, splitSize.units, UNIT_BYTES))
+      bytes = int(splitSize.bytes)
       os.chdir(dirname) # need to operate from directory that we want files written to
       command = resolveCommand(SPLIT_COMMAND)
       args = [ "--verbose", "--numeric-suffixes", "--suffix-length=5", "--bytes=%d" % bytes, filename, prefix, ]
