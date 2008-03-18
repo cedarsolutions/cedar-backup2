@@ -114,6 +114,203 @@ RESOURCES = [ "capacity.conf.1", "capacity.conf.2", "capacity.conf.3", "capacity
 # Test Case Classes
 #######################################################################
 
+###############################
+# TestPercentageQuantity class
+###############################
+
+class TestPercentageQuantity(unittest.TestCase):
+
+   """Tests for the PercentageQuantity class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = PercentageQuantity()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      quantity = PercentageQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessEqual(0.0, quantity.percentage)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values.
+      """
+      quantity = PercentageQuantity("6")
+      self.failUnlessEqual("6", quantity.quantity)
+      self.failUnlessEqual(6.0, quantity.percentage)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of quantity attribute, None value.
+      """
+      quantity = PercentageQuantity(quantity="1.0")
+      self.failUnlessEqual("1.0", quantity.quantity)
+      self.failUnlessEqual(1.0, quantity.percentage)
+      quantity.quantity = None
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessEqual(0.0, quantity.percentage)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of quantity attribute, valid values.
+      """
+      quantity = PercentageQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessEqual(0.0, quantity.percentage)
+      quantity.quantity = "1.0"
+      self.failUnlessEqual("1.0", quantity.quantity)
+      self.failUnlessEqual(1.0, quantity.percentage)
+      quantity.quantity = ".1"
+      self.failUnlessEqual(".1", quantity.quantity)
+      self.failUnlessEqual(0.1, quantity.percentage)
+      quantity.quantity = "12"
+      self.failUnlessEqual("12", quantity.quantity)
+      self.failUnlessEqual(12.0, quantity.percentage)
+      quantity.quantity = "0.5"
+      self.failUnlessEqual("0.5", quantity.quantity)
+      self.failUnlessEqual(0.5, quantity.percentage)
+      quantity.quantity = "0.25E2"
+      self.failUnlessEqual("0.25E2", quantity.quantity)
+      self.failUnlessEqual(0.25e2, quantity.percentage)
+      if hexFloatLiteralAllowed():
+         # Some interpreters allow this, some don't
+         quantity.quantity = "0x0C"
+         self.failUnlessEqual("0x0C", quantity.quantity)
+         self.failUnlessEqual(12.0, quantity.percentage)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of quantity attribute, invalid value (empty).
+      """
+      quantity = PercentageQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "")
+      self.failUnlessEqual(None, quantity.quantity)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of quantity attribute, invalid value (not a floating point number).
+      """
+      quantity = PercentageQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "blech")
+      self.failUnlessEqual(None, quantity.quantity)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of quantity attribute, invalid value (negative number).
+      """
+      quantity = PercentageQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "-3")
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "-6.8")
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "-0.2")
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "-.1")
+      self.failUnlessEqual(None, quantity.quantity)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of quantity attribute, invalid value (larger than 100%).
+      """
+      quantity = PercentageQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "100.0001")
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "101")
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "1e6")
+      self.failUnlessEqual(None, quantity.quantity)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      quantity1 = PercentageQuantity()
+      quantity2 = PercentageQuantity()
+      self.failUnlessEqual(quantity1, quantity2)
+      self.failUnless(quantity1 == quantity2)
+      self.failUnless(not quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(quantity1 >= quantity2)
+      self.failUnless(not quantity1 != quantity2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      quantity1 = PercentageQuantity("12")
+      quantity2 = PercentageQuantity("12")
+      self.failUnlessEqual(quantity1, quantity2)
+      self.failUnless(quantity1 == quantity2)
+      self.failUnless(not quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(quantity1 >= quantity2)
+      self.failUnless(not quantity1 != quantity2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two differing objects, quantity differs (one None).
+      """
+      quantity1 = PercentageQuantity()
+      quantity2 = PercentageQuantity(quantity="12")
+      self.failIfEqual(quantity1, quantity2)
+      self.failUnless(not quantity1 == quantity2)
+      self.failUnless(quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(not quantity1 >= quantity2)
+      self.failUnless(quantity1 != quantity2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two differing objects, quantity differs.
+      """
+      quantity1 = PercentageQuantity("10")
+      quantity2 = PercentageQuantity("12")
+      self.failIfEqual(quantity1, quantity2)
+      self.failUnless(not quantity1 == quantity2)
+      self.failUnless(quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(not quantity1 >= quantity2)
+      self.failUnless(quantity1 != quantity2)
+
+
 ##########################
 # TestCapacityConfig class
 ##########################
@@ -694,7 +891,7 @@ class TestLocalConfig(unittest.TestCase):
 def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
-#                              unittest.makeSuite(TestPercentageQuantity, 'test'), 
+                              unittest.makeSuite(TestPercentageQuantity, 'test'), 
                               unittest.makeSuite(TestCapacityConfig, 'test'), 
                               unittest.makeSuite(TestLocalConfig, 'test'), 
                             ))
