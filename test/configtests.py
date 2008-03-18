@@ -170,6 +170,7 @@ class TestByteQuantity(unittest.TestCase):
       quantity = ByteQuantity()
       self.failUnlessEqual(None, quantity.quantity)
       self.failUnlessEqual(None, quantity.units)
+      self.failUnlessEqual(0.0, quantity.bytes)
 
    def testConstructor_002(self):
       """
@@ -185,33 +186,45 @@ class TestByteQuantity(unittest.TestCase):
       """
       quantity = ByteQuantity(quantity="1.0")
       self.failUnlessEqual("1.0", quantity.quantity)
+      self.failUnlessEqual(0.0, quantity.bytes) # because no units are set
       quantity.quantity = None
       self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessEqual(0.0, quantity.bytes)
 
    def testConstructor_004(self):
       """
       Test assignment of quantity attribute, valid values.
       """
       quantity = ByteQuantity()
+      quantity.units = UNIT_BYTES # so we can test the bytes attribute
       self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessEqual(0.0, quantity.bytes)
       quantity.quantity = "1.0"
       self.failUnlessEqual("1.0", quantity.quantity)
+      self.failUnlessEqual(1.0, quantity.bytes)
       quantity.quantity = ".1"
       self.failUnlessEqual(".1", quantity.quantity)
+      self.failUnlessEqual(0.1, quantity.bytes)
       quantity.quantity = "12"
       self.failUnlessEqual("12", quantity.quantity)
+      self.failUnlessEqual(12.0, quantity.bytes)
       quantity.quantity = "0.5"
       self.failUnlessEqual("0.5", quantity.quantity)
+      self.failUnlessEqual(0.5, quantity.bytes)
       quantity.quantity = "181281"
       self.failUnlessEqual("181281", quantity.quantity)
+      self.failUnlessEqual(181281.0, quantity.bytes)
       quantity.quantity = "1E6"
       self.failUnlessEqual("1E6", quantity.quantity)
+      self.failUnlessEqual(1.0e6, quantity.bytes)
       quantity.quantity = "0.25E2"
       self.failUnlessEqual("0.25E2", quantity.quantity)
+      self.failUnlessEqual(0.25e2, quantity.bytes)
       if hexFloatLiteralAllowed():
          # Some interpreters allow this, some don't
          quantity.quantity = "0xAC"
          self.failUnlessEqual("0xAC", quantity.quantity)
+         self.failUnlessEqual(172.0, quantity.bytes)
 
    def testConstructor_005(self):
       """
