@@ -101,6 +101,7 @@ Full vs. Reduced Tests
 
 import os
 import unittest
+from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
 from CedarBackup2.testutil import findResources, removedir, failUnlessAssignRaises
 from CedarBackup2.testutil import hexFloatLiteralAllowed
 from CedarBackup2.config import ActionHook, PreActionHook, PostActionHook, CommandOverride
@@ -108,6 +109,7 @@ from CedarBackup2.config import ExtendedAction, ActionDependencies, BlankBehavio
 from CedarBackup2.config import CollectFile, CollectDir, PurgeDir, LocalPeer, RemotePeer
 from CedarBackup2.config import ReferenceConfig, ExtensionsConfig, OptionsConfig, PeersConfig
 from CedarBackup2.config import CollectConfig, StageConfig, StoreConfig, PurgeConfig, Config
+from CedarBackup2.config import ByteQuantity
 
 
 #######################################################################
@@ -126,6 +128,267 @@ RESOURCES = [ "cback.conf.1", "cback.conf.2", "cback.conf.3", "cback.conf.4",
 #######################################################################
 # Test Case Classes
 #######################################################################
+
+##########################
+# TestByteQuantity class
+##########################
+
+class TestByteQuantity(unittest.TestCase):
+
+   """Tests for the ByteQuantity class."""
+
+   ##################
+   # Utility methods
+   ##################
+
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
+
+   ############################
+   # Test __repr__ and __str__
+   ############################
+
+   def testStringFuncs_001(self):
+      """
+      Just make sure that the string functions don't have errors (i.e. bad variable names).
+      """
+      obj = ByteQuantity()
+      obj.__repr__()
+      obj.__str__()
+
+
+   ##################################
+   # Test constructor and attributes
+   ##################################
+
+   def testConstructor_001(self):
+      """
+      Test constructor with no values filled in.
+      """
+      quantity = ByteQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessEqual(None, quantity.units)
+
+   def testConstructor_002(self):
+      """
+      Test constructor with all values filled in, with valid values.
+      """
+      quantity = ByteQuantity("6", UNIT_BYTES)
+      self.failUnlessEqual("6", quantity.quantity)
+      self.failUnlessEqual(UNIT_BYTES, quantity.units)
+
+   def testConstructor_003(self):
+      """
+      Test assignment of quantity attribute, None value.
+      """
+      quantity = ByteQuantity(quantity="1.0")
+      self.failUnlessEqual("1.0", quantity.quantity)
+      quantity.quantity = None
+      self.failUnlessEqual(None, quantity.quantity)
+
+   def testConstructor_004(self):
+      """
+      Test assignment of quantity attribute, valid values.
+      """
+      quantity = ByteQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      quantity.quantity = "1.0"
+      self.failUnlessEqual("1.0", quantity.quantity)
+      quantity.quantity = ".1"
+      self.failUnlessEqual(".1", quantity.quantity)
+      quantity.quantity = "12"
+      self.failUnlessEqual("12", quantity.quantity)
+      quantity.quantity = "0.5"
+      self.failUnlessEqual("0.5", quantity.quantity)
+      quantity.quantity = "181281"
+      self.failUnlessEqual("181281", quantity.quantity)
+      quantity.quantity = "1E6"
+      self.failUnlessEqual("1E6", quantity.quantity)
+      quantity.quantity = "0.25E2"
+      self.failUnlessEqual("0.25E2", quantity.quantity)
+      if hexFloatLiteralAllowed():
+         # Some interpreters allow this, some don't
+         quantity.quantity = "0xAC"
+         self.failUnlessEqual("0xAC", quantity.quantity)
+
+   def testConstructor_005(self):
+      """
+      Test assignment of quantity attribute, invalid value (empty).
+      """
+      quantity = ByteQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "")
+      self.failUnlessEqual(None, quantity.quantity)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of quantity attribute, invalid value (not a floating point number).
+      """
+      quantity = ByteQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "blech")
+      self.failUnlessEqual(None, quantity.quantity)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of quantity attribute, invalid value (negative number).
+      """
+      quantity = ByteQuantity()
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "-3")
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "-6.8")
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "-0.2")
+      self.failUnlessEqual(None, quantity.quantity)
+      self.failUnlessAssignRaises(ValueError, quantity, "quantity", "-.1")
+      self.failUnlessEqual(None, quantity.quantity)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of units attribute, None value.
+      """
+      quantity = ByteQuantity(units=UNIT_BYTES)
+      self.failUnlessEqual(UNIT_BYTES, quantity.units)
+      quantity.units = None
+      self.failUnlessEqual(None, quantity.units)
+
+   def testConstructor_009(self):
+      """
+      Test assignment of units attribute, valid values.
+      """
+      quantity = ByteQuantity()
+      self.failUnlessEqual(None, quantity.units)
+      quantity.units = UNIT_BYTES
+      self.failUnlessEqual(UNIT_BYTES, quantity.units)
+      quantity.units = UNIT_KBYTES
+      self.failUnlessEqual(UNIT_KBYTES, quantity.units)
+      quantity.units = UNIT_MBYTES
+      self.failUnlessEqual(UNIT_MBYTES, quantity.units)
+      quantity.units = UNIT_GBYTES
+      self.failUnlessEqual(UNIT_GBYTES, quantity.units)
+
+   def testConstructor_010(self):
+      """
+      Test assignment of units attribute, invalid value (empty).
+      """
+      quantity = ByteQuantity()
+      self.failUnlessEqual(None, quantity.units)
+      self.failUnlessAssignRaises(ValueError, quantity, "units", "")
+      self.failUnlessEqual(None, quantity.units)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of units attribute, invalid value (not a valid unit).
+      """
+      quantity = ByteQuantity()
+      self.failUnlessEqual(None, quantity.units)
+      self.failUnlessAssignRaises(ValueError, quantity, "units", 16)
+      self.failUnlessEqual(None, quantity.units)
+      self.failUnlessAssignRaises(ValueError, quantity, "units", -2)
+      self.failUnlessEqual(None, quantity.units)
+      self.failUnlessAssignRaises(ValueError, quantity, "units", "bytes")
+      self.failUnlessEqual(None, quantity.units)
+      self.failUnlessAssignRaises(ValueError, quantity, "units", "B")
+      self.failUnlessEqual(None, quantity.units)
+      self.failUnlessAssignRaises(ValueError, quantity, "units", "KB")
+      self.failUnlessEqual(None, quantity.units)
+      self.failUnlessAssignRaises(ValueError, quantity, "units", "MB")
+      self.failUnlessEqual(None, quantity.units)
+      self.failUnlessAssignRaises(ValueError, quantity, "units", "GB")
+      self.failUnlessEqual(None, quantity.units)
+
+
+   ############################
+   # Test comparison operators
+   ############################
+
+   def testComparison_001(self):
+      """
+      Test comparison of two identical objects, all attributes None.
+      """
+      quantity1 = ByteQuantity()
+      quantity2 = ByteQuantity()
+      self.failUnlessEqual(quantity1, quantity2)
+      self.failUnless(quantity1 == quantity2)
+      self.failUnless(not quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(quantity1 >= quantity2)
+      self.failUnless(not quantity1 != quantity2)
+
+   def testComparison_002(self):
+      """
+      Test comparison of two identical objects, all attributes non-None.
+      """
+      quantity1 = ByteQuantity("12", UNIT_BYTES)
+      quantity2 = ByteQuantity("12", UNIT_BYTES)
+      self.failUnlessEqual(quantity1, quantity2)
+      self.failUnless(quantity1 == quantity2)
+      self.failUnless(not quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(quantity1 >= quantity2)
+      self.failUnless(not quantity1 != quantity2)
+
+   def testComparison_003(self):
+      """
+      Test comparison of two differing objects, quantity differs (one None).
+      """
+      quantity1 = ByteQuantity()
+      quantity2 = ByteQuantity(quantity="12")
+      self.failIfEqual(quantity1, quantity2)
+      self.failUnless(not quantity1 == quantity2)
+      self.failUnless(quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(not quantity1 >= quantity2)
+      self.failUnless(quantity1 != quantity2)
+
+   def testComparison_004(self):
+      """
+      Test comparison of two differing objects, quantity differs.
+      """
+      quantity1 = ByteQuantity("10", UNIT_BYTES)
+      quantity2 = ByteQuantity("12", UNIT_BYTES)
+      self.failIfEqual(quantity1, quantity2)
+      self.failUnless(not quantity1 == quantity2)
+      self.failUnless(quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(not quantity1 >= quantity2)
+      self.failUnless(quantity1 != quantity2)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two differing objects, units differs (one None).
+      """
+      quantity1 = ByteQuantity()
+      quantity2 = ByteQuantity(units=UNIT_MBYTES)
+      self.failIfEqual(quantity1, quantity2)
+      self.failUnless(not quantity1 == quantity2)
+      self.failUnless(quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(not quantity1 >= quantity2)
+      self.failUnless(quantity1 != quantity2)
+
+   def testComparison_006(self):
+      """
+      Test comparison of two differing objects, units differs.
+      """
+      quantity1 = ByteQuantity("12", UNIT_BYTES)
+      quantity2 = ByteQuantity("12", UNIT_KBYTES)
+      self.failIfEqual(quantity1, quantity2)
+      self.failUnless(not quantity1 == quantity2)
+      self.failUnless(quantity1 < quantity2)
+      self.failUnless(quantity1 <= quantity2)
+      self.failUnless(not quantity1 > quantity2)
+      self.failUnless(not quantity1 >= quantity2)
+      self.failUnless(quantity1 != quantity2)
+
 
 ###############################
 # TestActionDependencies class
@@ -11940,6 +12203,7 @@ class TestConfig(unittest.TestCase):
 def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
+                              unittest.makeSuite(TestByteQuantity, 'test'), 
                               unittest.makeSuite(TestActionDependencies, 'test'), 
                               unittest.makeSuite(TestActionHook, 'test'), 
                               unittest.makeSuite(TestPreActionHook, 'test'), 
