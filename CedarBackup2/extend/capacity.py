@@ -139,10 +139,10 @@ class PercentageQuantity(object):
       """
       if value is not None:
          if len(value) < 1:
-            raise ValueError("Quantity must be a non-empty string.")
+            raise ValueError("Percentage must be a non-empty string.")
          floatValue = float(value)
-         if floatValue < 0.0:
-            raise ValueError("Quantity cannot be negative.")
+         if floatValue < 0.0 or floatValue > 100.0:
+            raise ValueError("Percentage must be a positive value from 0.0 to 100.0")
       self._quantity = value # keep around string
 
    def _getQuantity(self):
@@ -154,8 +154,11 @@ class PercentageQuantity(object):
    def _getPercentage(self):
       """
       Property target used to get the quantity as a floating point number.
+      If there is no quantity set, then a value of 0.0 is returned.
       """
-      return float(self.quantity)
+      if self.quantity is not None:
+         return float(self.quantity)
+      return 0.0
 
    quantity = property(_getQuantity, _setQuantity, None, doc="Percentage value, as a string")
    percentage = property(_getPercentage, None, None, "Percentage value, as a floating point number.")
