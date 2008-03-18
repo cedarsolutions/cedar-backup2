@@ -394,8 +394,11 @@ class ByteQuantity(object):
    def _getBytes(self):
       """
       Property target used to return the byte quantity as a floating point number.
+      If there is no quantity set, then a value of 0.0 is returned.
       """
-      return float(convertSize(self.quantity, self.units, UNIT_BYTES))
+      if self.quantity is not None and self.units is not None:
+         return convertSize(self.quantity, self.units, UNIT_BYTES)
+      return 0.0
 
    quantity = property(_getQuantity, _setQuantity, None, doc="Byte quantity, as a string")
    units = property(_getUnits, _setUnits, None, doc="Units for byte quantity, for instance UNIT_BYTES")
