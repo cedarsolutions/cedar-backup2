@@ -747,7 +747,7 @@ class DirectedGraph(object):
 
 
 ########################################################################
-# PathResolverSingleton class defkinition
+# PathResolverSingleton class definition
 ########################################################################
 
 class PathResolverSingleton(object):
