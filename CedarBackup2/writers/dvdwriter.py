@@ -181,7 +181,7 @@ class MediaCapacity(object):
       """
       Informal string representation for class instance.
       """
-      return "%s of %s (%.2f%%)" % (displayBytes(self.bytesUsed), displayBytes(self.totalCapacity), self.utilized)
+      return "utilized %s of %s (%.2f%%)" % (displayBytes(self.bytesUsed), displayBytes(self.totalCapacity), self.utilized)
 
    def _getBytesUsed(self):
       """
