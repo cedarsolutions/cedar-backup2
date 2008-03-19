@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2007 Kenneth J. Pronovici.
+# Copyright (c) 2005-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -1492,7 +1492,8 @@ host = remote.host
       </para>
       
       <programlisting>
-&lt;extensions&gt; &lt;action&gt;
+&lt;extensions&gt; 
+   &lt;action&gt;
       &lt;name&gt;split&lt;/name&gt;
       &lt;module&gt;CedarBackup2.extend.split&lt;/module&gt;
       &lt;function&gt;executeAction&lt;/function&gt;
@@ -1566,6 +1567,115 @@ host = remote.host
                </para>
                <para>
                   <emphasis>Restrictions:</emphasis> Must be a size as described above.
+               </para>
+            </listitem>
+         </varlistentry>
+
+      </variablelist>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
+   <sect1 id="cedar-extensions-capacity">
+
+      <title>Capacity Extension</title>
+
+      <para>
+         The capacity extension checks the current capacity of the media in the
+         writer and prints a warning if the media exceeds an indicated
+         capacity.  The capacity is indicated either by a maximum percentage
+         utilized or by a minimum number of bytes that must remain unused.
+      </para>
+
+      <para>
+         This action can be run at any time, but is probably best run as the
+         last action on any given day, so you get as much notice as possible
+         that your media is full and needs to be replaced.
+      </para>
+
+      <para>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </para>
+      
+      <programlisting>
+&lt;extensions&gt; &lt;action&gt;
+      &lt;name&gt;capacity&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.capacity&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;299&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </programlisting>
+      
+      <para>
+         This extension relies on the options and store configuration sections
+         in the standard Cedar Backup configuration file, and then also
+         requires its own <literal>capacity</literal> configuration section.
+         This is an example Capacity configuration section that configures the
+         extension to warn if the media is more than 95.5% full:
+      </para> 
+
+      <programlisting>
+&lt;capacity&gt;
+   &lt;max_percentage&gt;95.5&lt;/max_percentage&gt;
+&lt;/capacity&gt;
+      </programlisting>
+
+      <para>
+         This example configures the extension to warn if the media has fewer
+         than 16 MB free:
+      </para>
+
+      <programlisting>
+&lt;capacity&gt;
+   &lt;min_bytes&gt;16 MB&lt;/min_bytes&gt;
+&lt;/capacity&gt;
+      </programlisting>
+
+      <para>
+         The following elements are part of the Capacity configuration section:
+      </para>
+
+      <variablelist>
+
+         <varlistentry>
+            <term><literal>max_percentage</literal></term>
+            <listitem>
+               <para>Maximum percentage of the media that may be utilized.</para>
+               <para>
+                  You must provide either this value <emphasis>or</emphasis> the
+                  <literal>min_bytes</literal> value.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be a floating point
+                  number between 0.0 and 100.0
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>min_bytes</literal></term>
+            <listitem>
+               <para>Minimum number of free bytes that must be available.</para>
+               <para>
+                  You can enter this value in two different forms.  It can
+                  either be a simple number, in which case the value is assumed
+                  to be in bytes; or it can be a number followed by a unit
+                  (KB, MB, GB).  
+               </para>
+               <para>
+                  Valid examples are <quote>10240</quote>, <quote>250
+                  MB</quote> or <quote>1.1 GB</quote>.
+               </para>
+               <para>
+                  You must provide either this value <emphasis>or</emphasis> the
+                  <literal>max_percentage</literal> value.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be a byte quantity as
+                  described above.
                </para>
             </listitem>
          </varlistentry>
