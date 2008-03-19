@@ -55,6 +55,7 @@ than X bytes of capacity remaining.
 import logging
 
 # Cedar Backup modules
+from CedarBackup2.util import displayBytes
 from CedarBackup2.config import ByteQuantity, readByteQuantity, addByteQuantityNode
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
 from CedarBackup2.xmlutil import readFirstChild, readString
@@ -518,17 +519,13 @@ def executeAction(configPath, options, config):
    local = LocalConfig(xmlPath=configPath)
    if config.store.checkMedia:
       checkMediaState(config.store)  # raises exception if media is not initialized
-   writer = createWriter(config)
-   capacity = writer.retrieveCapacity()
+   capacity = createWriter(config).retrieveCapacity()
+   logger.debug("Media capacity: %s" % capacity)
    if local.capacity.maxPercentage is not None:
-      if capacity.bytesAvailable == 0:
-         logger.error("Media has reached capacity limit: media is 100%% utilized.")
-      else:
-         utilized = (float(capacity.bytesUsed) / float(capacity.bytesAvailable)) * 100.0
-         if utilized > local.capacity.maxPercentage.percentage:
-            logger.error("Media has reached capacity limit: media is %.2f%% utilized." % utilized)
+      if capacity.utilized > local.capacity.maxPercentage.percentage:
+         logger.error("Media has reached capacity limit: media is %.2f%% utilized." % capacity.utilized)
    else: # if local.capacity.bytes is not None
       if capacity.bytesAvailable < local.capacity.minBytes.bytes:
-         logger.error("Media has reached capacity limit: only %d free bytes remain." % capacity.bytesAvailable)
+         logger.error("Media has reached capacity limit: only %s remain." % displayBytes(capacity.bytesAvailable))
    logger.info("Executed the capacity extended action successfully.")
 

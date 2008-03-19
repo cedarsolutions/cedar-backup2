@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2007 Kenneth J. Pronovici.
+# Copyright (c) 2007-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -166,7 +166,7 @@ class MediaCapacity(object):
    Space used and space available do not include any information about media
    lead-in or other overhead.
 
-   @sort: __init__, bytesUsed, bytesAvailable
+   @sort: __init__, bytesUsed, bytesAvailable, totalCapacity, utilized
    """
 
    def __init__(self, bytesUsed, bytesAvailable):
@@ -176,6 +176,12 @@ class MediaCapacity(object):
       """
       self._bytesUsed = float(bytesUsed)
       self._bytesAvailable = float(bytesAvailable)
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "%s of %s (%.2f%%)" % (displayBytes(self.bytesUsed), displayBytes(self.totalCapacity), self.utilized)
 
    def _getBytesUsed(self):
       """
@@ -189,8 +195,26 @@ class MediaCapacity(object):
       """
       return self._bytesAvailable
 
+   def _getTotalCapacity(self):
+      """
+      Property target to get the total capacity (used + available).
+      """
+      return self.bytesUsed + self.bytesAvailable
+
+   def _getUtilized(self):
+      """
+      Property target to get the percent of capacity which is utilized.
+      """
+      if self.bytesAvailable <= 0.0:
+         return 100.0
+      elif self.bytesUsed <= 0.0:
+         return 0.0
+      return (self.bytesUsed / self.totalCapacity) * 100.0
+
    bytesUsed = property(_getBytesUsed, None, None, doc="Space used on disc, in bytes.")
    bytesAvailable = property(_getBytesAvailable, None, None, doc="Space available on disc, in bytes.")
+   totalCapacity = property(_getTotalCapacity, None, None, doc="Total capacity of the disc, in bytes.")
+   utilized = property(_getUtilized, None, None, "Percentage of the total capacity which is utilized.")
 
 
 ########################################################################

@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -198,7 +198,7 @@ class MediaCapacity(object):
    supported or if the disc has no boundaries) or in exactly the form provided
    by C{cdrecord -msinfo}.  It can be passed as-is to the C{IsoImage} class.
 
-   @sort: __init__, bytesUsed, bytesAvailable, boundaries
+   @sort: __init__, bytesUsed, bytesAvailable, boundaries, totalCapacity, utilized
    """
 
    def __init__(self, bytesUsed, bytesAvailable, boundaries):
@@ -215,27 +215,51 @@ class MediaCapacity(object):
       else:
          self._boundaries = (int(boundaries[0]), int(boundaries[1]))
 
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return "%s of %s (%.2f%%)" % (displayBytes(self.bytesUsed), displayBytes(self.totalCapacity), self.utilized)
+
    def _getBytesUsed(self):
       """
-      Property target used to get the bytes-used value.
+      Property target to get the bytes-used value.
       """
       return self._bytesUsed
 
    def _getBytesAvailable(self):
       """
-      Property target available to get the bytes-available value.
+      Property target to get the bytes-available value.
       """
       return self._bytesAvailable
 
    def _getBoundaries(self):
       """
-      Property target available to get the boundaries tuple.
+      Property target to get the boundaries tuple.
       """
       return self._boundaries
+
+   def _getTotalCapacity(self):
+      """
+      Property target to get the total capacity (used + available).
+      """
+      return self.bytesUsed + self.bytesAvailable
+
+   def _getUtilized(self):
+      """
+      Property target to get the percent of capacity which is utilized.
+      """
+      if self.bytesAvailable <= 0.0:
+         return 100.0
+      elif self.bytesUsed <= 0.0:
+         return 0.0
+      return (self.bytesUsed / self.totalCapacity) * 100.0
 
    bytesUsed = property(_getBytesUsed, None, None, doc="Space used on disc, in bytes.")
    bytesAvailable = property(_getBytesAvailable, None, None, doc="Space available on disc, in bytes.")
    boundaries = property(_getBoundaries, None, None, doc="Session disc boundaries, in terms of ISO sectors.")
+   totalCapacity = property(_getTotalCapacity, None, None, doc="Total capacity of the disc, in bytes.")
+   utilized = property(_getUtilized, None, None, "Percentage of the total capacity which is utilized.")
 
 
 ########################################################################

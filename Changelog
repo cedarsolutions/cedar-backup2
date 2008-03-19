@@ -7,6 +7,7 @@ Version 2.16.0		unreleased
 		- Modify collect action to obey CollectDir.linkDepth
 		- Update user manual to discuss new attribute
 		- Document "link farm" option for collect configuration
+		- Added total capacity and utilization to MediaCapacity classes
 	* Implement a capacity-checking extension (closes: #1915496).
 		- Add new extension in CedarBackup2/extend/capacity.py
 		- Refactor ByteQuantity out of split.py and into config.py
