@@ -1388,7 +1388,7 @@ host = remote.host
       &lt;name&gt;encrypt&lt;/name&gt;
       &lt;module&gt;CedarBackup2.extend.encrypt&lt;/module&gt;
       &lt;function&gt;executeAction&lt;/function&gt;
-      &lt;index&gt;299&lt;/index&gt;
+      &lt;index&gt;301&lt;/index&gt;
    &lt;/action&gt;
 &lt;/extensions&gt;
       </programlisting>

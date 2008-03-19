@@ -1,3 +1,7 @@
+Version 2.16.0		unreleased
+
+	* Change suggested execution index for Capacity in manual.
+
 Version 2.16.0		18 Mar 2008
 
 	* Make name attribute optional in RemotPeer constructor.
