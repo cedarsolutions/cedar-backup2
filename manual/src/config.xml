@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2007 Kenneth J. Pronovici.
+# Copyright (c) 2005-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -1099,8 +1099,42 @@
             The collect configuration section contains configuration options
             related the the collect action.  This section contains a variable
             number of elements, including an optional exclusion section and a
-            repeating subsection used to specify which directories to collect.
+            repeating subsection used to specify which directories and/or files
+            to collect.  You can also configure an ignore indicator file, which
+            lets users mark their own directories as not backed up.
          </para>
+
+         <sidebar>
+
+            <title>Using a Link Farm</title>
+
+            <para>
+               Sometimes, it's not very convenient to list directories one by
+               one in the Cedar Backup configuration file.  For instance, when
+               backing up your home directory, you often exclude as many
+               directories as you include.  The ignore file mechanism can be of
+               some help, but it still isn't very convenient if there are a lot
+               of directories to ignore (or if new directories pop up all of the
+               time).
+            </para>
+
+            <para>
+               In this situation, one option is to use a <firstterm>link
+               farm</firstterm> rather than listing all of the directories in
+               configuration.  A link farm is a directory that contains nothing
+               but a set of soft links to other files and directories.
+               Normally, Cedar Backup does not follow soft links, but you can
+               override this behavior for individual directories using the
+               <literal>link_depth</literal> option (see below).  
+            </para>
+
+            <para>
+               When using a link farm, you still have to deal with each
+               backed-up directory individually, but you don't have to modify
+               configuration.  Some users find that this works better for them.
+            </para>
+               
+         </sidebar>
 
          <para>
             In order to actually execute the collect action, you must have

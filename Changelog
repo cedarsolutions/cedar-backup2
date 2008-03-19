@@ -6,6 +6,7 @@ Version 2.16.0		unreleased
 		- Add CollectDir.linkDepth attribute
 		- Modify collect action to obey CollectDir.linkDepth
 		- Update user manual to discuss new attribute
+		- Document "link farm" option for collect configuration
 	* Implement a capacity-checking extension (closes: #1915496).
 		- Add new extension in CedarBackup2/extend/capacity.py
 		- Refactor ByteQuantity out of split.py and into config.py
