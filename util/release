@@ -31,7 +31,7 @@ fi
 print "Completed tagging release ${VERSION} of Cedar Backup:"
 print ""
 
-svn list --verbose ${REPO}/tags
+svn list --verbose ${REPO}/tags | $(dirname $0)/sorttags.py
 
 print ""
 print "Make sure to re-run this script if you forgot to update"
