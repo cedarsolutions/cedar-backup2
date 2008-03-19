@@ -18,8 +18,8 @@ BRANCH=${2}
 if [[ "${2}"F = "F" ]]
 then
    svn diff ${REPO}/tags/CEDAR_BACKUP2_V${VERSION} \
-            ${REPO}/trunk | gvim -
+            ${REPO}/trunk | gvim -R -
 else
    svn diff ${REPO}/tags/CEDAR_BACKUP2_V${VERSION} \
-            ${REPO}/branches/${BRANCH} | gvim -
+            ${REPO}/branches/${BRANCH} | gvim -R -
 fi
