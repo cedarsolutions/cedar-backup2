@@ -84,7 +84,7 @@ from CedarBackup2.testutil import failUnlessAssignRaises, captureOutput
 from CedarBackup2.config import OptionsConfig, PeersConfig, ExtensionsConfig
 from CedarBackup2.config import LocalPeer, RemotePeer
 from CedarBackup2.config import ExtendedAction, ActionDependencies, PreActionHook, PostActionHook
-from CedarBackup2.cli import _usage, _version
+from CedarBackup2.cli import _usage, _version, _diagnostics
 from CedarBackup2.cli import Options
 from CedarBackup2.cli import _ActionSet
 from CedarBackup2.action import executeCollect, executeStage, executeStore, executePurge, executeRebuild, executeValidate
@@ -130,6 +130,13 @@ class TestFunctions(unittest.TestCase):
       We don't care what the output is, and we don't check.
       """
       captureOutput(_version)
+
+   def testSimpleFuncs_003(self):
+      """
+      Test that the _diagnostics() function runs without errors.
+      We don't care what the output is, and we don't check.
+      """
+      captureOutput(_diagnostics)
 
 
 ####################
@@ -196,6 +203,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_002(self):
@@ -217,6 +225,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_003(self):
@@ -238,6 +247,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_004(self):
@@ -259,6 +269,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_005(self):
@@ -280,6 +291,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_006(self):
@@ -301,6 +313,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_007(self):
@@ -322,6 +335,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_008(self):
@@ -343,6 +357,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_009(self):
@@ -364,6 +379,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_010(self):
@@ -385,6 +401,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_011(self):
@@ -406,6 +423,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_012(self):
@@ -427,6 +445,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_013(self):
@@ -448,6 +467,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_014(self):
@@ -469,6 +489,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_015(self):
@@ -490,6 +511,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_016(self):
@@ -511,6 +533,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_017(self):
@@ -532,6 +555,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_018(self):
@@ -553,6 +577,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_019(self):
@@ -574,6 +599,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_020(self):
@@ -595,6 +621,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_021(self):
@@ -640,6 +667,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_026(self):
@@ -661,6 +689,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_027(self):
@@ -682,6 +711,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_028(self):
@@ -703,6 +733,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_029(self):
@@ -724,7 +755,9 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_030(self):
@@ -746,6 +779,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_031(self):
@@ -767,6 +801,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_032(self):
@@ -788,6 +823,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_033(self):
@@ -833,6 +869,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_038(self):
@@ -854,6 +891,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_039(self):
@@ -875,6 +913,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_040(self):
@@ -896,6 +935,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_041(self):
@@ -965,6 +1005,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_050(self):
@@ -986,6 +1027,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_051(self):
@@ -1007,6 +1049,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_052(self):
@@ -1028,6 +1071,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_053(self):
@@ -1097,6 +1141,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_062(self):
@@ -1118,6 +1163,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_063(self):
@@ -1139,6 +1185,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_064(self):
@@ -1160,6 +1207,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_065(self):
@@ -1181,6 +1229,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_066(self):
@@ -1202,6 +1251,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_067(self):
@@ -1223,6 +1273,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_068(self):
@@ -1244,6 +1295,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_069(self):
@@ -1265,6 +1317,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_070(self):
@@ -1286,6 +1339,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_071(self):
@@ -1307,6 +1361,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_072(self):
@@ -1328,6 +1383,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_073(self):
@@ -1349,6 +1405,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(True, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_074(self):
@@ -1370,6 +1427,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(True, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_075(self):
@@ -1412,6 +1470,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(True, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_077(self):
@@ -1433,6 +1492,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["all", ], options.actions)
 
    def testConstructor_078(self):
@@ -1454,6 +1514,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["all", ], options.actions)
 
    def testConstructor_079(self):
@@ -1475,6 +1536,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", ], options.actions)
 
    def testConstructor_080(self):
@@ -1496,6 +1558,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", ], options.actions)
 
    def testConstructor_081(self):
@@ -1517,6 +1580,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["stage", ], options.actions)
 
    def testConstructor_082(self):
@@ -1538,6 +1602,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["stage", ], options.actions)
 
    def testConstructor_083(self):
@@ -1559,6 +1624,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["store", ], options.actions)
 
    def testConstructor_084(self):
@@ -1580,6 +1646,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["store", ], options.actions)
 
    def testConstructor_085(self):
@@ -1601,6 +1668,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["purge", ], options.actions)
 
    def testConstructor_086(self):
@@ -1622,6 +1690,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["purge", ], options.actions)
 
    def testConstructor_087(self):
@@ -1643,6 +1712,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
    def testConstructor_088(self):
@@ -1664,6 +1734,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
    def testConstructor_089(self):
@@ -1685,6 +1756,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["validate", ], options.actions)
 
    def testConstructor_090(self):
@@ -1706,6 +1778,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["validate", ], options.actions)
 
    def testConstructor_091(self):
@@ -1727,6 +1800,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "all", ], options.actions)
 
    def testConstructor_092(self):
@@ -1748,6 +1822,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "all", ], options.actions)
 
    def testConstructor_093(self):
@@ -1769,6 +1844,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "rebuild", ], options.actions)
 
    def testConstructor_094(self):
@@ -1790,6 +1866,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "rebuild", ], options.actions)
 
    def testConstructor_095(self):
@@ -1811,6 +1888,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "validate", ], options.actions)
 
    def testConstructor_096(self):
@@ -1832,6 +1910,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "validate", ], options.actions)
 
    def testConstructor_097(self):
@@ -1853,6 +1932,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
    def testConstructor_098(self):
@@ -1874,6 +1954,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
    def testConstructor_099(self):
@@ -1907,6 +1988,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_102(self):
@@ -1928,6 +2010,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_103(self):
@@ -1949,6 +2032,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_104(self):
@@ -1970,6 +2054,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_105(self):
@@ -1991,6 +2076,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_106(self):
@@ -2012,6 +2098,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_107(self):
@@ -2033,6 +2120,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_108(self):
@@ -2054,6 +2142,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_109(self):
@@ -2459,6 +2548,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["all", ], options.actions)
 
    def testConstructor_174(self):
@@ -2480,6 +2570,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["all", ], options.actions)
 
    def testConstructor_175(self):
@@ -2501,6 +2592,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", ], options.actions)
 
    def testConstructor_176(self):
@@ -2522,6 +2614,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", ], options.actions)
 
    def testConstructor_177(self):
@@ -2543,6 +2636,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["stage", ], options.actions)
 
    def testConstructor_178(self):
@@ -2564,6 +2658,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["stage", ], options.actions)
 
    def testConstructor_179(self):
@@ -2585,6 +2680,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["store", ], options.actions)
 
    def testConstructor_180(self):
@@ -2606,6 +2702,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["store", ], options.actions)
 
    def testConstructor_181(self):
@@ -2627,6 +2724,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["purge", ], options.actions)
 
    def testConstructor_182(self):
@@ -2646,6 +2744,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["purge", ], options.actions)
 
    def testConstructor_183(self):
@@ -2667,6 +2766,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
    def testConstructor_184(self):
@@ -2688,6 +2788,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["rebuild", ], options.actions)
 
    def testConstructor_185(self):
@@ -2709,6 +2810,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["validate", ], options.actions)
 
    def testConstructor_186(self):
@@ -2730,6 +2832,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["validate", ], options.actions)
 
    def testConstructor_187(self):
@@ -2751,6 +2854,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
    def testConstructor_188(self):
@@ -2772,6 +2876,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.output)
       self.failUnlessEqual(True, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(["collect", "stage", ], options.actions)
 
    def testConstructor_189(self):
@@ -2793,7 +2898,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
-      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_190(self):
@@ -2815,6 +2920,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_191(self):
@@ -2836,6 +2942,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_192(self):
@@ -2857,6 +2964,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_193(self):
@@ -2878,7 +2986,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
-      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_194(self):
@@ -2900,6 +3008,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_195(self):
@@ -2921,6 +3030,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_196(self):
@@ -2942,6 +3052,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.output)
       self.failUnlessEqual(False, options.debug)
       self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual([], options.actions)
 
    def testConstructor_197(self):
@@ -2992,6 +3103,182 @@ class TestOptions(unittest.TestCase):
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-N", validate=True)
 
+   def testConstructor_205(self):
+      """
+      Test constructor with argumentList=["--diagnostics", ], validate=False.
+      """
+      options = Options(argumentList=["--diagnostics", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(True, options.diagnostics)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_206(self):
+      """
+      Test constructor with argumentString="--diagnostics", validate=False.
+      """
+      options = Options(argumentString="--diagnostics", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(True, options.diagnostics)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_207(self):
+      """
+      Test constructor with argumentList=["-D", ], validate=False.
+      """
+      options = Options(argumentList=["-D", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(True, options.diagnostics)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_208(self):
+      """
+      Test constructor with argumentString="-D", validate=False.
+      """
+      options = Options(argumentString="-D", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(True, options.diagnostics)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_209(self):
+      """
+      Test constructor with argumentList=["--diagnostics", ], validate=True.
+      """
+      options = Options(argumentList=["--diagnostics", ], validate=True)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(True, options.diagnostics)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_210(self):
+      """
+      Test constructor with argumentString="--diagnostics", validate=True.
+      """
+      options = Options(argumentString="--diagnostics", validate=True)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(True, options.diagnostics)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_211(self):
+      """
+      Test constructor with argumentList=["-D", ], validate=True.
+      """
+      options = Options(argumentList=["-D", ], validate=True)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(True, options.diagnostics)
+      self.failUnlessEqual([], options.actions)
+
+   def testConstructor_212(self):
+      """
+      Test constructor with argumentString="-D", validate=True.
+      """
+      options = Options(argumentString="-D", validate=True)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.config)
+      self.failUnlessEqual(False, options.full)
+      self.failUnlessEqual(False, options.managed)
+      self.failUnlessEqual(False, options.managedOnly)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(True, options.diagnostics)
+      self.failUnlessEqual([], options.actions)
+
 
    ############################
    # Test comparison operators
@@ -3032,6 +3319,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3048,6 +3336,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failUnlessEqual(options1, options2)
@@ -3079,6 +3368,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = False
@@ -3095,6 +3385,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3126,6 +3417,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3142,6 +3434,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3173,6 +3466,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3189,6 +3483,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3220,6 +3515,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3236,6 +3532,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3267,6 +3564,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3283,6 +3581,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3314,6 +3613,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3330,6 +3630,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3361,6 +3662,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3377,6 +3679,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3408,6 +3711,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3424,6 +3728,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3455,6 +3760,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3471,6 +3777,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3502,6 +3809,7 @@ class TestOptions(unittest.TestCase):
       options1.output = False
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3518,6 +3826,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3549,6 +3858,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3565,6 +3875,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = False
       options1.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3596,6 +3907,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3612,6 +3924,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = True
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3643,6 +3956,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3659,6 +3973,7 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3690,6 +4005,7 @@ class TestOptions(unittest.TestCase):
       options1.output = True
       options1.debug = True
       options1.stacktrace = False
+      options1.diagnostics = False
       options1.actions = ["collect", ]
 
       options2.help = True
@@ -3706,6 +4022,56 @@ class TestOptions(unittest.TestCase):
       options2.output = True
       options2.debug = True
       options2.stacktrace = False
+      options2.diagnostics = False
+      options2.actions = ["collect", ]
+
+      self.failIfEqual(options1, options2)
+      self.failUnless(not options1 == options2)
+      self.failUnless(options1 < options2)
+      self.failUnless(options1 <= options2)
+      self.failUnless(not options1 > options2)
+      self.failUnless(not options1 >= options2)
+      self.failUnless(options1 != options2)
+
+   def testComparison_017(self):
+      """
+      Test comparison of two identical objects, all attributes filled in, diagnostics different.
+      """
+      options1 = Options()
+      options2 = Options()
+
+      options1.help = True
+      options1.version = True
+      options1.verbose = True
+      options1.quiet = True
+      options1.config = "config"
+      options1.full = True
+      options1.managed = True
+      options1.managedOnly = True
+      options1.logfile = "logfile"
+      options1.owner = ("a", "b")
+      options1.mode = 0631
+      options1.output = True
+      options1.debug = True
+      options1.stacktrace = False
+      options1.diagnostics = False
+      options1.actions = ["collect", ]
+
+      options2.help = True
+      options2.version = True
+      options2.verbose = True
+      options2.quiet = True
+      options2.config = "config"
+      options2.full = True
+      options2.managed = True
+      options2.managedOnly = True
+      options2.logfile = "logfile"
+      options2.owner = ("a", "b")
+      options2.mode = 0631
+      options2.output = True
+      options2.debug = True
+      options2.stacktrace = False
+      options2.diagnostics = True
       options2.actions = ["collect", ]
 
       self.failIfEqual(options1, options2)
@@ -3842,12 +4208,13 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", ]
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
                              "--full", "--managed", "--managed-only", 
                              "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
-                             "--output", "--debug", "--stack", "collect", ], argumentList)
+                             "--output", "--debug", "--stack", "--diagnostics", "collect", ], argumentList)
 
    def testBuildArgumentList_017(self):
       """Test with all values set, actions containing multiple items, validate=False."""
@@ -3866,12 +4233,13 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", "stage", ]
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
                              "--full", "--managed", "--managed-only", 
                              "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
-                             "--output", "--debug", "--stack", "collect", "stage", ], argumentList)
+                             "--output", "--debug", "--stack", "--diagnostics", "collect", "stage", ], argumentList)
 
    def testBuildArgumentList_018(self):
       """Test with no values set, validate=True."""
@@ -3981,11 +4349,12 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", ]
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
                              "--full", "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
-                             "--output", "--debug", "--stack", "collect", ], argumentList)
+                             "--output", "--debug", "--stack", "--diagnostics", "collect", ], argumentList)
 
    def testBuildArgumentList_034(self):
       """Test with all values set (except managed ones), actions containing multiple items, validate=True."""
@@ -4002,11 +4371,12 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", "stage", ]
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", "--config", "config", 
                              "--full", "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
-                             "--output", "--debug", "--stack", "collect", "stage", ], argumentList)
+                             "--output", "--debug", "--stack", "--diagnostics", "collect", "stage", ], argumentList)
 
    def testBuildArgumentList_035(self):
       """Test with managed set, validate=False."""
@@ -4051,6 +4421,7 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", ]
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
@@ -4071,8 +4442,23 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", "stage", ]
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
+
+   def testBuildArgumentList_041(self):
+      """Test with diagnostics set, validate=False."""
+      options = Options()
+      options.diagnostics = True
+      argumentList = options.buildArgumentList(validate=False)
+      self.failUnlessEqual(["--diagnostics", ], argumentList)
+
+   def testBuildArgumentList_042(self):
+      """Test with diagnostics set, validate=True."""
+      options = Options()
+      options.diagnostics = True
+      argumentList = options.buildArgumentList(validate=True)
+      self.failUnlessEqual(["--diagnostics", ], argumentList)
 
 
    #############################
@@ -4200,9 +4586,10 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", ]
       argumentString = options.buildArgumentString(validate=False)
-      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --managed --managed-only --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --managed --managed-only --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack --diagnostics "collect" ', argumentString)
 
    def testBuildArgumentString_017(self):
       """Test with all values set, actions containing multiple items, validate=False."""
@@ -4219,9 +4606,10 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", "stage", ]
       argumentString = options.buildArgumentString(validate=False)
-      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" "stage" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack --diagnostics "collect" "stage" ', argumentString)
 
    def testBuildArgumentString_018(self):
       """Test with no values set, validate=True."""
@@ -4331,9 +4719,10 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", ]
       argumentString = options.buildArgumentString(validate=True)
-      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack --diagnostics "collect" ', argumentString)
 
    def testBuildArgumentString_034(self):
       """Test with all values set (except managed ones), actions containing multiple items, validate=True."""
@@ -4350,9 +4739,10 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", "stage", ]
       argumentString = options.buildArgumentString(validate=True)
-      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack "collect" "stage" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --config "config" --full --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack --diagnostics "collect" "stage" ', argumentString)
 
    def testBuildArgumentString_035(self):
       """Test with managed set, validate=False."""
@@ -4397,6 +4787,7 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", ]
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
@@ -4417,8 +4808,23 @@ class TestOptions(unittest.TestCase):
       options.output = True
       options.debug = True
       options.stacktrace = True
+      options.diagnostics = True
       options.actions = ["collect", "stage", ]
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
+
+   def testBuildArgumentString_041(self):
+      """Test with diagnostics set, validate=False."""
+      options = Options()
+      options.diagnostics = True
+      argumentString = options.buildArgumentString(validate=False)
+      self.failUnlessEqual("--diagnostics ", argumentString)
+
+   def testBuildArgumentString_042(self):
+      """Test with diagnostics set, validate=True."""
+      options = Options()
+      options.diagnostics = True
+      argumentString = options.buildArgumentString(validate=True)
+      self.failUnlessEqual("--diagnostics ", argumentString)
 
 
 ######################

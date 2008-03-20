@@ -15,7 +15,7 @@
 .\" #
 .\" # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 .\"
-.TH cback "1" "December 2007" "Cedar Backup" "Kenneth J. Pronovici"
+.TH cback "1" "March 2008" "Cedar Backup" "Kenneth J. Pronovici"
 .SH NAME
 cback \- Local and remote backups to CD-R/CD-RW media 
 .SH SYNOPSIS
@@ -124,6 +124,10 @@ Backup to dump the entire Python stack trace associated with an error, rather
 than just progating last message it received back up to the user interface.
 Under some circumstances, this is useful information to include along with a
 bug report.
+.TP
+\fB\-s\fR, \fB\-\-diagnostics\fR
+Display runtime diagnostic information and then exit.  This diagnostic
+information is often useful when filing a bug report.
 .SH ACTIONS
 .TP
 \fBall\fR
@@ -215,16 +219,16 @@ also want to investigate the encrypt extension.
 .PP
 There probably are bugs in this code.  However, it is in active use for my own
 backups, and I fix problems as I notice them.  If you find a bug, please report
-it.  If possible, give me all of the error messages that the script printed
-into its log, and also any stack-traces (exceptions) that Python printed.  It
-would be even better if you could tell me how to reproduce the problem (i.e. by
-sending me your configuration file).
+it.  If possible, give me the output from --diagnostics, all of the error
+messages that the script printed into its log, and also any stack-traces
+(exceptions) that Python printed.  It would be even better if you could tell me
+how to reproduce the problem (i.e. by sending me your configuration file).
 .PP
 Report bugs to <support@cedar-solutions.com>.
 .SH AUTHOR
 Written by Kenneth J. Pronovici <pronovic@ieee.org>.
 .SH COPYRIGHT
-Copyright (c) 2004-2007 Kenneth J. Pronovici.
+Copyright (c) 2004-2008 Kenneth J. Pronovici.
 .br
 This is free software; see the source for copying conditions.  There is
 NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR

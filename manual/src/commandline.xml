@@ -109,6 +109,7 @@
    -O, --output       Record some sub-command (i.e. cdrecord) output to the log
    -d, --debug        Write debugging information to the log (implies --output)
    -s, --stack        Dump a Python stack trace instead of swallowing exceptions
+   -D, --diagnostics  Print runtime diagnostics to the screen and exit
 
  The following actions may be specified:
 
@@ -310,6 +311,17 @@
                      just propagating last message it received back up to the
                      user interface.  Under some circumstances, this is useful
                      information to include along with a bug report.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><option>-D</option>, <option>--diagnostics</option></term>
+               <listitem>
+                  <para>
+                     Display runtime diagnostic information and then exit.
+                     This diagnostic information is often useful when filing a
+                     bug report.
                   </para>
                </listitem>
             </varlistentry>
