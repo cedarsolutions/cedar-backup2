@@ -218,6 +218,7 @@ def cli():
    logger.info("Cedar Backup run started.")
    logger.info("Options were [%s]" % options)
    logger.info("Logfile is [%s]" % logfile)
+   Diagnostics().logDiagnostics(method=logger.info)
 
    if options.config is None:
       logger.debug("Using default configuration file.")
