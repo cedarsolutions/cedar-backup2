@@ -170,6 +170,10 @@ sdist: $(SDIST_DIR) doc
 	@$(SETUP) sdist --dist-dir $(SDIST_DIR)
 	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz ../
 
+source: $(SDIST_DIR) 
+	@$(SETUP) sdist --dist-dir $(SDIST_DIR)
+	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz ../
+
 $(SDIST_DIR):
 	@$(MKDIR) -p $(SDIST_DIR)
 
