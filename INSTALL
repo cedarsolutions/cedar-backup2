@@ -37,5 +37,6 @@ Run them like so:
    python util/test.py
 
 If any unit test reports a failure on your system, please email me the
-output from the unit test, so I can fix the problem.  
-
+output from the unit test, so I can fix the problem.  Please make sure
+to include the diagnostic information printed out at the beginning of
+the test run.

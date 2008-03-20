@@ -94,6 +94,36 @@ import os
 import logging
 import unittest
 
+##############################
+# printDiagnostics() function
+##############################
+
+def printDiagnostics():
+   """
+   Print useful diagnostic information to the screen.
+
+   This is the kind of information I usually ask for when I get a bug report.
+   If I print it out here, I shouldn't have to ask for it as often, since
+   people typically email me the test output.
+   """
+   try: 
+      windowsversion = sys.getwindowsversion()
+   except AttributeError: 
+      windowsversion = "N/A"
+
+   try: 
+      uname = os.uname()
+   except AttributeError: 
+      uname = "N/A"
+
+   print ""
+   print "Diagnostics:"
+   print "   version.....:", sys.version_info
+   print "   encoding....: %s" % sys.getfilesystemencoding() or sys.getdefaultencoding()
+   print "   platform....: %s" % sys.platform 
+   print "   win32.......: %s " % windowsversion
+   print "   uname.......: %s %s %s" % (uname[0], uname[2], uname[4])
+
 
 ##################
 # main() function
@@ -221,6 +251,9 @@ def main():
    if args == [] or "span" in args: unittests["span"] = spantests.suite()
    if args == [] or "capacity" in args: unittests["capacity"] = capacitytests.suite()
    if args != []: print "*** Executing specific tests: %s" % unittests.keys()
+
+   # Print some diagnostic information
+   printDiagnostics()
 
    # Create and run the test suite
    print ""
