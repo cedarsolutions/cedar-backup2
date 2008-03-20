@@ -1019,11 +1019,11 @@ class Diagnostics(object):
       values = self.getValues()
       keys = values.keys()
       keys.sort()
-      max = Diagnostics._getMaxLength(keys) + 3  # three extra dots in output
+      tmax = Diagnostics._getMaxLength(keys) + 3  # three extra dots in output
       lines = []
       for key in keys:
          title = key.title()
-         title += (max - len(title)) * '.'
+         title += (tmax - len(title)) * '.'
          value = values[key]
          line = "%s%s: %s" % (prefix, title, value)
          lines.append(line)
@@ -1033,11 +1033,11 @@ class Diagnostics(object):
       """
       Get the maximum length from among a list of strings.
       """
-      max = 0
+      tmax = 0
       for value in values:
-         if len(value) > max:
-            max = len(value)
-      return max
+         if len(value) > tmax:
+            tmax = len(value)
+      return tmax
    _getMaxLength = staticmethod(_getMaxLength)
 
    def _getVersion(self):
@@ -1063,20 +1063,22 @@ class Diagnostics(object):
       """
       Property target to get the operating system platform.
       """
-      platform = sys.platform
-      if platform.startswith("win"):
-         WINDOWS_PLATFORMS = [ "Windows 3.1", "Windows 95/98/ME", "Windows NT/2000/XP", "Windows CE", ]
-         wininfo = sys.getwindowsversion()
-         winversion = "%d.%d.%d" % (wininfo[0], wininfo[1], wininfo[2])
-         winplatform = WINDOWS_PLATFORMS[wininfo[3]]
-         wintext = wininfo[4]  # i.e. "Service Pack 2"
-         return "%s (%s %s %s)" % (platform, winplatform, winversion, wintext)
-      else:
-         uname = os.uname()
-         sysname = uname[0] # i.e. Linux
-         release = uname[2] # i.e. 2.16.18-2
-         machine = uname[4] # i.e. i686
-         return "%s (%s %s %s)" % (platform, sysname, release, machine)
+      try:
+         if sys.platform.startswith("win"):
+            WINDOWS_PLATFORMS = [ "Windows 3.1", "Windows 95/98/ME", "Windows NT/2000/XP", "Windows CE", ]
+            wininfo = sys.getwindowsversion()
+            winversion = "%d.%d.%d" % (wininfo[0], wininfo[1], wininfo[2])
+            winplatform = WINDOWS_PLATFORMS[wininfo[3]]
+            wintext = wininfo[4]  # i.e. "Service Pack 2"
+            return "%s (%s %s %s)" % (sys.platform, winplatform, winversion, wintext)
+         else:
+            uname = os.uname()
+            sysname = uname[0] # i.e. Linux
+            release = uname[2] # i.e. 2.16.18-2
+            machine = uname[4] # i.e. i686
+            return "%s (%s %s %s)" % (sys.platform, sysname, release, machine)
+      except AttributeError:
+         return sys.platform
 
    def _getLocale(self):
       """

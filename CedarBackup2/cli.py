@@ -89,7 +89,7 @@ import getopt
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
 from CedarBackup2.util import RestrictedContentList, DirectedGraph, PathResolverSingleton
 from CedarBackup2.util import sortDict, splitCommandLine, executeCommand, getFunctionReference
-from CedarBackup2.util import getUidGid, encodePath
+from CedarBackup2.util import getUidGid, encodePath, Diagnostics
 from CedarBackup2.config import Config
 from CedarBackup2.peer import RemotePeer
 from CedarBackup2.actions.collect import executeCollect
