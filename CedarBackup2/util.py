@@ -1044,7 +1044,7 @@ class Diagnostics(object):
       """
       Property target to get the Cedar Backup version.
       """
-      return "Cedar Backup v%s (%s)" % (VERSION, DATE)
+      return "Cedar Backup %s (%s)" % (VERSION, DATE)
 
    def _getInterpreter(self):
       """
