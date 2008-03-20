@@ -121,7 +121,7 @@ def printDiagnostics():
    print "   version.....:", sys.version_info
    print "   encoding....: %s" % sys.getfilesystemencoding() or sys.getdefaultencoding()
    print "   platform....: %s" % sys.platform 
-   print "   win32.......: %s " % windowsversion
+   print "   win32.......: %s ", windowsversion
    print "   uname.......: %s %s %s" % (uname[0], uname[2], uname[4])
 
 
