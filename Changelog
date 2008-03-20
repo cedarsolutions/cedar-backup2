@@ -1,6 +1,7 @@
 Version 2.16.0		unreleased
 
 	* Change suggested execution index for Capacity in manual.
+	* Fix utiltests.TestFunctions.testNullDevice_001() for Windows 2000.
 
 Version 2.16.0		18 Mar 2008
 

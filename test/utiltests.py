@@ -3418,7 +3418,7 @@ class TestFunctions(unittest.TestCase):
       """
       device = nullDevice()
       if platformWindows():
-         self.failUnlessEqual("NUL", device)
+         self.failUnlessEqual("NUL", device.upper())
       else:
          self.failUnlessEqual("/dev/null", device)
 
