@@ -84,8 +84,6 @@ import re
 import time
 import logging
 import string
-import locale
-import datetime
 
 from CedarBackup2.release import VERSION, DATE
 
@@ -979,7 +977,7 @@ class Diagnostics(object):
 
    def getValues(self):
       """
-      Get a values map for each diagnostic.
+      Get a map containing all of the diagnostic values.
       @return: Map from diagnostic name to diagnostic value.
       """
       values = {}
@@ -1004,7 +1002,7 @@ class Diagnostics(object):
 
    def logDiagnostics(self, method, prefix=""):
       """
-      Pretty-print diagnostic information to the logger.
+      Pretty-print diagnostic information using a logger method.
       @param method: Logger method to use for logging (i.e. logger.info)
       @param prefix: Prefix string (if any) to place onto printed lines
       """
@@ -1079,20 +1077,28 @@ class Diagnostics(object):
             release = uname[2] # i.e. 2.16.18-2
             machine = uname[4] # i.e. i686
             return "%s (%s %s %s)" % (sys.platform, sysname, release, machine)
-      except AttributeError:
+      except:
          return sys.platform
 
    def _getLocale(self):
       """
       Property target to get the default locale that is in effect.
       """
-      return locale.getdefaultlocale()[0]
+      try:
+         import locale
+         return locale.getdefaultlocale()[0]
+      except:
+         return "(unknown)"
    
    def _getTimestamp(self):
       """
       Property target to get a current date/time stamp.
       """
-      return datetime.datetime.utcnow().ctime() + " UTC"
+      try:
+         import datetime
+         return datetime.datetime.utcnow().ctime() + " UTC"
+      except:
+         return "(unknown)"
 
    version = property(_getVersion, None, None, "Cedar Backup version.")
    interpreter = property(_getInterpreter, None, None, "Python interpreter version.")
