@@ -22,7 +22,7 @@ Most of the source code in this project was written by Kenneth J.
 Pronovici.  Some portions have been based on other pieces of open-source
 software, as indicated in the source code itself.
 
-Unless otherwise indicated, all Cedar Backup source code is copyright
+Unless otherwise indicated, all Cedar Backup source code is Copyright
 (c) 2004-2008 Kenneth J. Pronovici and is released under the GNU General
 Public License.  The contents of the GNU General Public License can be
 found in the LICENSE file, or can be downloaded from http://www.gnu.org/.
@@ -40,7 +40,7 @@ not generally attributed unless I used someone else's source code verbatim.
 
 Source code annotated as "(c) 2001, 2002 Python Software Foundation" was
 originally taken from or derived from code within the Python 2.3 codebase.
-This code was released under the Python 2.3 license, which an MIT-style
+This code was released under the Python 2.3 license, which is an MIT-style
 academic license.  Items under this license include the util.Pipe
 implementation based on popen2.Popen4.
 
