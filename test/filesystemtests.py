@@ -16271,7 +16271,7 @@ class TestBackupFileList(unittest.TestCase):
          fittedList = backupList.generateFitted(80)
          self.failUnlessEqual(1, len(fittedList))
          self.failUnless((self.buildPath([ "tree9", "dir002", "file002", ]) in fittedList) or
-                         (self.buildPath([ "tree9", "dir002", "link004", ] in fittedList)))
+                         (self.buildPath([ "tree9", "dir002", "link004", ]) in fittedList))
       else:
          self.failUnlessEqual(15, count)
          self.failUnlessEqual(15, len(backupList))
