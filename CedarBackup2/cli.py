@@ -130,11 +130,11 @@ VALID_ACTIONS      = [ "collect", "stage", "store", "purge", "rebuild", "validat
 COMBINE_ACTIONS    = [ "collect", "stage", "store", "purge", ]
 NONCOMBINE_ACTIONS = [ "rebuild", "validate", "initialize", "all", ]
 
-SHORT_SWITCHES     = "hVbqc:fMNl:o:m:Ods"
+SHORT_SWITCHES     = "hVbqc:fMNl:o:m:OdsD"
 LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet', 
                        'config=', 'full', 'managed', 'managed-only',
                        'logfile=', 'owner=', 'mode=', 
-                       'output', 'debug', 'stack', ]
+                       'output', 'debug', 'stack', 'diagnostics', ]
 
 
 #######################################################################
@@ -207,6 +207,9 @@ def cli():
       return 0
    if options.version:
       _version()
+      return 0
+   if options.diagnostics:
+      _diagnostics()
       return 0
 
    try:
@@ -922,6 +925,7 @@ def _usage(fd=sys.stderr):
    fd.write("   -O, --output       Record some sub-command (i.e. cdrecord) output to the log\n")
    fd.write("   -d, --debug        Write debugging information to the log (implies --output)\n")
    fd.write("   -s, --stack        Dump a Python stack trace instead of swallowing exceptions\n") # exactly 80 characters in width!
+   fd.write("   -D, --diagnostics  Print runtime diagnostics to the screen and exit\n")
    fd.write("\n")
    fd.write(" The following actions may be specified:\n")
    fd.write("\n")
@@ -965,6 +969,23 @@ def _version(fd=sys.stdout):
    fd.write(" GNU General Public License version 2 for copying conditions.\n")
    fd.write("\n")
    fd.write(" Use the --help option for usage information.\n")
+   fd.write("\n")
+
+
+##########################
+# _diagnostics() function
+##########################
+
+def _diagnostics(fd=sys.stdout):
+   """
+   Prints runtime diagnostics information.
+   @param fd: File descriptor used to print information.
+   @note: The C{fd} is used rather than C{print} to facilitate unit testing.
+   """
+   fd.write("\n")
+   fd.write("Diagnostics:\n")
+   fd.write("\n")
+   Diagnostics().printDiagnostics(fd=fd, prefix="   ")
    fd.write("\n")
 
 
@@ -1264,6 +1285,7 @@ class Options(object):
       self._output = False
       self._debug = False
       self._stacktrace = False
+      self._diagnostics = False
       self._actions = None
       self.actions = []    # initialize to an empty list; remainder are OK
       if argumentList is not None and argumentString is not None:
@@ -1373,6 +1395,11 @@ class Options(object):
             return 1
       if self._stacktrace != other._stacktrace:
          if self._stacktrace < other._stacktrace:
+            return -1
+         else:
+            return 1
+      if self._diagnostics != other._diagnostics:
+         if self._diagnostics < other._diagnostics:
             return -1
          else:
             return 1
@@ -1629,6 +1656,22 @@ class Options(object):
       """
       return self._stacktrace
 
+   def _setDiagnostics(self, value):
+      """
+      Property target used to set the diagnostics flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._diagnostics = True
+      else:
+         self._diagnostics = False
+
+   def _getDiagnostics(self):
+      """
+      Property target used to get the diagnostics flag.
+      """
+      return self._diagnostics
+
    def _setActions(self, value):
       """
       Property target used to set the actions list.
@@ -1666,6 +1709,7 @@ class Options(object):
    output = property(_getOutput, _setOutput, None, "Command-line output (C{-O,--output}) flag.")
    debug = property(_getDebug, _setDebug, None, "Command-line debug (C{-d,--debug}) flag.")
    stacktrace = property(_getStacktrace, _setStacktrace, None, "Command-line stacktrace (C{-s,--stack}) flag.")
+   diagnostics = property(_getDiagnostics, _setDiagnostics, None, "Command-line diagnostics (C{-D,--diagnostics}) flag.")
    actions = property(_getActions, _setActions, None, "Command-line actions list.")
 
 
@@ -1687,7 +1731,7 @@ class Options(object):
 
       @raise ValueError: If one of the validations fails.
       """
-      if not self.help and not self.version:
+      if not self.help and not self.version and not self.diagnostics:
          if self.actions is None or len(self.actions) == 0:
             raise ValueError("At least one action must be specified.")
       if self.managed and self.managedOnly:
@@ -1755,6 +1799,8 @@ class Options(object):
          argumentList.append("--debug")
       if self.stacktrace:
          argumentList.append("--stack")
+      if self.diagnostics:
+         argumentList.append("--diagnostics")
       if self.actions is not None:
          for action in self.actions:
             argumentList.append(action)
@@ -1818,6 +1864,8 @@ class Options(object):
          argumentString += "--debug "
       if self.stacktrace:
          argumentString += "--stack "
+      if self.diagnostics:
+         argumentString += "--diagnostics "
       if self.actions is not None:
          for action in self.actions:
             argumentString +=  "\"%s\" " % action
@@ -1884,6 +1932,8 @@ class Options(object):
          self.debug = True
       if switches.has_key("-s") or switches.has_key("--stack"):
          self.stacktrace = True
+      if switches.has_key("-D") or switches.has_key("--diagnostics"):
+         self.diagnostics = True
 
 
 #########################################################################
