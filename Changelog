@@ -15,7 +15,7 @@ Version 2.17.0		20 Mar 2008
 	  - Change calculateFileAge() to use floats throughout, which is safer
 	  - Change removeYoungFiles() to explicitly check on whole days
 	  - Put a 1-second fudge factor into unit tests when setting file ages
-	* Fix some unit test failures discovered on Windows 2000.
+	* Fix some unit test failures discovered on Windows XP.
 	  - Fix utiltests.TestFunctions.testNullDevice_001()
 	  - Fix filesystemtests.TestBackupFileList.testGenerateFitted_004() 
 	  - Fix typo in filesystemtests.TestFilesystemList.testRemoveLinks_002()
@@ -24,16 +24,16 @@ Version 2.16.0		18 Mar 2008
 
 	* Make name attribute optional in RemotePeer constructor.
 	* Add support for collecting soft links (closes: #1854631).
-		- Add linkDepth parameter to FilesystemList.addDirContents()
-		- Add CollectDir.linkDepth attribute
-		- Modify collect action to obey CollectDir.linkDepth
-		- Update user manual to discuss new attribute
-		- Document "link farm" option for collect configuration
+	  - Add linkDepth parameter to FilesystemList.addDirContents()
+	  - Add CollectDir.linkDepth attribute
+	  - Modify collect action to obey CollectDir.linkDepth
+	  - Update user manual to discuss new attribute
+	  - Document "link farm" option for collect configuration
 	* Implement a capacity-checking extension (closes: #1915496).
-		- Add new extension in CedarBackup2/extend/capacity.py
-		- Refactor ByteQuantity out of split.py and into config.py
-		- Add total capacity and utilization to MediaCapacity classes
-		- Update user manual to discuss new extension
+	  - Add new extension in CedarBackup2/extend/capacity.py
+	  - Refactor ByteQuantity out of split.py and into config.py
+	  - Add total capacity and utilization to MediaCapacity classes
+	  - Update user manual to discuss new extension
 
 Version 2.15.3		16 Mar 2008
 
