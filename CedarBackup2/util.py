@@ -84,6 +84,9 @@ import re
 import time
 import logging
 import string
+import locale
+
+from CedarBackup2.release import VERSION, DATE
 
 try:
    import pwd
@@ -939,6 +942,153 @@ else: # _PIPE_IMPLEMENTATION == "popen2.Popen4"
             self.fromchild = os.fdopen(c2pread, 'r', bufsize)
             _active.append(self)
          self.tochild.close()       # we'll never write to it, and this way we don't confuse anything.
+
+
+########################################################################
+# Diagnostics class definition
+########################################################################
+
+class Diagnostics(object):
+
+   """
+   Class holding runtime diagnostic information.
+
+   Diagnostic information is information that is useful to get from users for
+   debugging purposes.  I'm consolidating it all here into one object.
+
+   @sort: __init__, __repr__, __str__, __cmp__
+   """
+
+   def __init__(self):
+      """
+      Constructor for the C{Diagnostics} class.
+      """
+
+   def __repr__(self):
+      """
+      Official string representation for class instance.
+      """
+      return "Diagnostics()"
+
+   def __str__(self):
+      """
+      Informal string representation for class instance.
+      """
+      return self.__repr__()
+
+   def getValues(self):
+      """
+      Get a values map for each diagnostic.
+      @return: Map from diagnostic name to diagnostic value.
+      """
+      values = {}
+      values['version'] = self.version
+      values['interpreter'] = self.interpreter
+      values['platform'] = self.platform
+      values['encoding'] = self.encoding
+      values['locale'] = self.locale
+      return values;
+
+   def printDiagnostics(self, fd=sys.stdout, prefix=""):
+      """
+      Pretty-print diagnostic information to a file descriptor.
+      @param fd: File descriptor used to print information.
+      @param prefix: Prefix string (if any) to place onto printed lines
+      @note: The C{fd} is used rather than C{print} to facilitate unit testing.
+      """
+      lines = self._buildDiagnosticLines(prefix)
+      for line in lines:
+         fd.write("%s\n" % line)
+
+   def logDiagnostics(self, method, prefix=""):
+      """
+      Pretty-print diagnostic information to the logger.
+      @param method: Logger method to use for logging (i.e. logger.info)
+      @param prefix: Prefix string (if any) to place onto printed lines
+      """
+      lines = self._buildDiagnosticLines(prefix)
+      for line in lines:
+         method("%s" % line)
+
+   def _buildDiagnosticLines(self, prefix=""):
+      """
+      Build a set of pretty-printed diagnostic lines.
+      @param prefix: Prefix string (if any) to place onto printed lines
+      @return: List of strings, not terminated by newlines.
+      """
+      values = self.getValues()
+      keys = values.keys()
+      keys.sort()
+      max = Diagnostics._getMaxLength(keys) + 3  # three extra dots in output
+      lines = []
+      for key in keys:
+         title = key.title()
+         title += (max - len(title)) * '.'
+         value = values[key]
+         line = "%s%s: %s" % (prefix, title, value)
+         lines.append(line)
+      return lines
+
+   def _getMaxLength(values):
+      """
+      Get the maximum length from among a list of strings.
+      """
+      max = 0
+      for value in values:
+         if len(value) > max:
+            max = len(value)
+      return max
+   _getMaxLength = staticmethod(_getMaxLength)
+
+   def _getVersion(self):
+      """
+      Property target to get the Cedar Backup version.
+      """
+      return "Cedar Backup v%s (%s)" % (VERSION, DATE)
+
+   def _getInterpreter(self):
+      """
+      Property target to get the Python interpreter version.
+      """
+      version = sys.version_info
+      return "Python %d.%d.%d (%s)" % (version[0], version[1], version[2], version[3])
+
+   def _getEncoding(self):
+      """
+      Property target to get the filesystem encoding.
+      """
+      return sys.getfilesystemencoding() or sys.getdefaultencoding()
+
+   def _getPlatform(self):
+      """
+      Property target to get the operating system platform.
+      """
+      platform = sys.platform
+      if platform.startswith("win"):
+         WINDOWS_PLATFORMS = [ "Windows 3.1", "Windows 95/98/ME", "Windows NT/2000/XP", "Windows CE", ]
+         wininfo = sys.getwindowsversion()
+         winversion = "%d.%d.%d" % (wininfo[0], wininfo[1], wininfo[2])
+         winplatform = WINDOWS_PLATFORMS[wininfo[3]]
+         wintext = wininfo[4]  # i.e. "Service Pack 2"
+         return "%s (%s %s %s)" % (platform, winplatform, winversion, wintext)
+      else:
+         uname = os.uname()
+         sysname = uname[0] # i.e. Linux
+         release = uname[2] # i.e. 2.16.18-2
+         machine = uname[4] # i.e. i686
+         return "%s (%s %s %s)" % (platform, sysname, release, machine)
+
+   def _getLocale(self):
+      """
+      Property target to get the default locale that is in effect.
+      """
+      return locale.getdefaultlocale()[0]
+
+   version = property(_getVersion, None, None, "Cedar Backup version.")
+   interpreter = property(_getInterpreter, None, None, "Python interpreter version.")
+   platform = property(_getPlatform, None, None, "Platform identifying information.")
+   encoding = property(_getEncoding, None, None, "Filesystem encoding that is in effect.")
+   locale = property(_getLocale, None, None, "Locale that is in effect.")
 
 
 ########################################################################

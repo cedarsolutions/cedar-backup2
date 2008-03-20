@@ -94,36 +94,6 @@ import os
 import logging
 import unittest
 
-##############################
-# printDiagnostics() function
-##############################
-
-def printDiagnostics():
-   """
-   Print useful diagnostic information to the screen.
-
-   This is the kind of information I usually ask for when I get a bug report.
-   If I print it out here, I shouldn't have to ask for it as often, since
-   people typically email me the test output.
-   """
-   try: 
-      windowsversion = sys.getwindowsversion()
-   except AttributeError: 
-      windowsversion = "N/A"
-
-   try: 
-      uname = "%s %s %s" % (os.uname()[0], os.uname()[2], os.uname()[4])
-   except AttributeError: 
-      uname = "N/A"
-
-   print ""
-   print "Diagnostics:"
-   print "   version.....:", sys.version_info
-   print "   encoding....: %s" % sys.getfilesystemencoding() or sys.getdefaultencoding()
-   print "   platform....: %s" % sys.platform 
-   print "   win32.......:", windowsversion
-   print "   uname.......: %s" % uname
-
 
 ##################
 # main() function
@@ -157,7 +127,7 @@ def main():
          print "location.  If the import succeeds, you may be using an"
          print "unexpected version of CedarBackup2."
          print ""
-      from CedarBackup2.util import nullDevice
+      from CedarBackup2.util import nullDevice, Diagnostics
    except ImportError, e:
       print "Failed to import CedarBackup2 util module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -253,7 +223,8 @@ def main():
    if args != []: print "*** Executing specific tests: %s" % unittests.keys()
 
    # Print some diagnostic information
-   printDiagnostics()
+   print ""
+   Diagnostics().printDiagnostics(prefix="*** ")
 
    # Create and run the test suite
    print ""

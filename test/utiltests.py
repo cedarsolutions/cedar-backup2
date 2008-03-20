@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -79,12 +79,13 @@ import os
 import unittest
 import tempfile
 import time
+import logging
 from os.path import isdir
 
-from CedarBackup2.testutil import findResources, removedir, platformHasEcho, platformWindows
+from CedarBackup2.testutil import findResources, removedir, platformHasEcho, platformWindows, captureOutput
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList 
 from CedarBackup2.util import RestrictedContentList, RegexMatchList, RegexList
-from CedarBackup2.util import DirectedGraph, PathResolverSingleton
+from CedarBackup2.util import DirectedGraph, PathResolverSingleton, Diagnostics
 from CedarBackup2.util import sortDict, resolveCommand, executeCommand, getFunctionReference, encodePath
 from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
 from CedarBackup2.util import displayBytes, deriveDayOfWeek, isStartOfWeek
@@ -2010,6 +2011,88 @@ class TestPathResolverSingleton(unittest.TestCase):
       self.failUnlessEqual(result, "/path/to/two")
 
 
+########################
+# TestDiagnostics class
+########################
+
+class TestDiagnostics(unittest.TestCase):
+
+   """Tests for the Diagnostics class."""
+
+   def testMethods_001(self):
+      """
+      Test the version attribute.
+      """
+      diagnostics = Diagnostics()
+      self.failIf(diagnostics.version is None)
+      self.failIfEqual("", diagnostics.version)
+
+   def testMethods_002(self):
+      """
+      Test the interpreter attribute.
+      """
+      diagnostics = Diagnostics()
+      self.failIf(diagnostics.interpreter is None)
+      self.failIfEqual("", diagnostics.interpreter)
+
+   def testMethods_003(self):
+      """
+      Test the platform attribute.
+      """
+      diagnostics = Diagnostics()
+      self.failIf(diagnostics.platform is None)
+      self.failIfEqual("", diagnostics.platform)
+
+   def testMethods_004(self):
+      """
+      Test the encoding attribute.
+      """
+      diagnostics = Diagnostics()
+      self.failIf(diagnostics.encoding is None)
+      self.failIfEqual("", diagnostics.encoding)
+
+   def testMethods_005(self):
+      """
+      Test the locale attribute.
+      """
+      diagnostics = Diagnostics()
+      self.failIf(diagnostics.locale is None)
+      self.failIfEqual("", diagnostics.locale)
+
+   def testMethods_006(self):
+      """
+      Test the getValues() method.
+      """
+      diagnostics = Diagnostics()
+      values = diagnostics.getValues()
+      self.failUnlessEqual(diagnostics.version, values['version'])
+      self.failUnlessEqual(diagnostics.interpreter, values['interpreter'])
+      self.failUnlessEqual(diagnostics.platform, values['platform'])
+      self.failUnlessEqual(diagnostics.encoding, values['encoding'])
+      self.failUnlessEqual(diagnostics.locale, values['locale'])
+
+   def testMethods_007(self):
+      """
+      Test the _buildDiagnosticLines() method.
+      """
+      values = Diagnostics().getValues()
+      lines = Diagnostics()._buildDiagnosticLines()
+      self.failUnlessEqual(len(values), len(lines))
+
+   def testMethods_008(self):
+      """
+      Test the printDiagnostics() method.
+      """
+      captureOutput(Diagnostics().printDiagnostics)
+
+   def testMethods_009(self):
+      """
+      Test the logDiagnostics() method.
+      """
+      logger = logging.getLogger("CedarBackup2.test")
+      Diagnostics().logDiagnostics(logger.info)
+
+
 ######################
 # TestFunctions class
 ######################
@@ -3836,6 +3919,7 @@ def suite():
                               unittest.makeSuite(TestRegexList, 'test'),
                               unittest.makeSuite(TestDirectedGraph, 'test'),
                               unittest.makeSuite(TestPathResolverSingleton, 'test'),
+                              unittest.makeSuite(TestDiagnostics, 'test'),
                               unittest.makeSuite(TestFunctions, 'test'),
                             ))
 
