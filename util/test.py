@@ -112,7 +112,7 @@ def printDiagnostics():
       windowsversion = "N/A"
 
    try: 
-      uname = "%s %s %s" % (sys.uname[0], sys.uname[2], sys.uname[4])
+      uname = "%s %s %s" % (os.uname()[0], os.uname()[2], os.uname()[4])
    except AttributeError: 
       uname = "N/A"
 
