@@ -219,16 +219,25 @@ def extractTar(tmpdir, filepath):
 def changeFileAge(filename, subtract=None):
    """
    Changes a file age using the C{os.utime} function.
+
+   @note: Some platforms don't seem to be able to set an age precisely.  As a
+   result, whereas we might have intended to set an age of 86400 seconds, we
+   actually get an age of 86399.375 seconds.  When util.calculateFileAge()
+   looks at that the file, it calculates an age of 0.999992766204 days, which
+   then gets truncated down to zero whole days.  The tests get very confused.
+   To work around this, I always subtract off one additional second as a fudge
+   factor.  That way, the file age will be I{at least} as old as requested
+   later on.
+
    @param filename: File to operate on.
    @param subtract: Number of seconds to subtract from the current time.
    @raise ValueError: If a path cannot be encoded properly.
    """
    filename = encodePath(filename)
-   if subtract is None:
-      os.utime(filename, None)
-   else:
-      newTime = time.time() - subtract
-      os.utime(filename, (newTime, newTime))
+   newTime = time.time() - 1;
+   if subtract is not None:
+      newTime -= subtract
+   os.utime(filename, (newTime, newTime))
 
 
 ###########################

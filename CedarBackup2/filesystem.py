@@ -52,6 +52,7 @@ import sys
 import os
 import re
 import sha
+import math
 import logging
 import tarfile
 
@@ -1305,8 +1306,9 @@ class PurgeItemList(FilesystemList):
       for entry in self[:]:
          if os.path.isfile(entry) and not os.path.islink(entry):
             try:
-               age = calculateFileAge(entry)
-               if age < daysOld:
+               ageInDays = calculateFileAge(entry)
+               ageInWholeDays = math.floor(ageInDays)
+               if ageInWholeDays < daysOld:
                   removed += 1
                   self.remove(entry)
             except OSError:
