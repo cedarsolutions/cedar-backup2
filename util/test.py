@@ -112,7 +112,7 @@ def printDiagnostics():
       windowsversion = "N/A"
 
    try: 
-      uname = os.uname()
+      uname = "%s %s %s" % (sys.uname[0], sys.uname[2], sys.uname[4])
    except AttributeError: 
       uname = "N/A"
 
@@ -121,8 +121,8 @@ def printDiagnostics():
    print "   version.....:", sys.version_info
    print "   encoding....: %s" % sys.getfilesystemencoding() or sys.getdefaultencoding()
    print "   platform....: %s" % sys.platform 
-   print "   win32.......: %s ", windowsversion
-   print "   uname.......: %s %s %s" % (uname[0], uname[2], uname[4])
+   print "   win32.......:", windowsversion
+   print "   uname.......: %s" % uname
 
 
 ##################
