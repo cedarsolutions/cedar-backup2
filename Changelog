@@ -1,5 +1,6 @@
 Version 2.16.1		unreleased
 
+	* Add diagnostic info to the unit test output, and ask for it in INSTALL.
 	* Change suggested execution index for Capacity extension in manual.
 	* Clean up filesystem code that deals with file age, and improve unit tests.
 	  - Some platforms apparently cannot set file ages precisely
