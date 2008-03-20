@@ -9794,7 +9794,7 @@ class TestFilesystemList(unittest.TestCase):
          fsList = FilesystemList()
          count = fsList.removeLinks(pattern="pattern")
          self.failUnlessEqual(0, count)
-      self.failUnlessRaises(ValueError, fsList.removeLinks, pattern="*.jpg")
+         self.failUnlessRaises(ValueError, fsList.removeLinks, pattern="*.jpg")
 
    def testRemoveLinks_003(self):
       """
