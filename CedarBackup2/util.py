@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # Portions copyright (c) 2001, 2002 Python Software Foundation.
@@ -119,9 +119,9 @@ MBYTES_PER_GBYTE   = 1024.0
 BYTES_PER_MBYTE    = BYTES_PER_KBYTE * KBYTES_PER_MBYTE
 BYTES_PER_GBYTE    = BYTES_PER_MBYTE * MBYTES_PER_GBYTE
 
-SECONDS_PER_MINUTE = 60
-MINUTES_PER_HOUR   = 60
-HOURS_PER_DAY      = 24
+SECONDS_PER_MINUTE = 60.0
+MINUTES_PER_HOUR   = 60.0
+HOURS_PER_DAY      = 24.0
 SECONDS_PER_DAY    = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY
 
 UNIT_BYTES         = 0
@@ -1415,13 +1415,14 @@ def calculateFileAge(file):
 
    @param file: Path to a file on disk.
 
-   @return: Age of the file in days.
+   @return: Age of the file in days (possibly fractional).
    @raise OSError: If the file doesn't exist.
    """
    currentTime = int(time.time())
    fileStats = os.stat(file)
    lastUse = max(fileStats.st_atime, fileStats.st_mtime)  # "most recent" is "largest" 
-   ageInDays = (currentTime - lastUse) / SECONDS_PER_DAY
+   ageInSeconds = currentTime - lastUse
+   ageInDays = ageInSeconds / SECONDS_PER_DAY
    return ageInDays
 
 
