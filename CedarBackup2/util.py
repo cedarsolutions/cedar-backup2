@@ -85,6 +85,7 @@ import time
 import logging
 import string
 import locale
+import datetime
 
 from CedarBackup2.release import VERSION, DATE
 
@@ -987,6 +988,7 @@ class Diagnostics(object):
       values['platform'] = self.platform
       values['encoding'] = self.encoding
       values['locale'] = self.locale
+      values['timestamp'] = self.timestamp
       return values;
 
    def printDiagnostics(self, fd=sys.stdout, prefix=""):
@@ -1085,12 +1087,19 @@ class Diagnostics(object):
       Property target to get the default locale that is in effect.
       """
       return locale.getdefaultlocale()[0]
+   
+   def _getTimestamp(self):
+      """
+      Property target to get a current date/time stamp.
+      """
+      return datetime.datetime.utcnow().ctime() + " UTC"
 
    version = property(_getVersion, None, None, "Cedar Backup version.")
    interpreter = property(_getInterpreter, None, None, "Python interpreter version.")
    platform = property(_getPlatform, None, None, "Platform identifying information.")
    encoding = property(_getEncoding, None, None, "Filesystem encoding that is in effect.")
    locale = property(_getLocale, None, None, "Locale that is in effect.")
+   timestamp = property(_getTimestamp, None, None, "Current timestamp.")
 
 
 ########################################################################
