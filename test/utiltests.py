@@ -2069,6 +2069,7 @@ class TestDiagnostics(unittest.TestCase):
       self.failUnlessEqual(diagnostics.platform, values['platform'])
       self.failUnlessEqual(diagnostics.encoding, values['encoding'])
       self.failUnlessEqual(diagnostics.locale, values['locale'])
+      self.failUnlessEqual(diagnostics.timestamp, values['timestamp'])
 
    def testMethods_007(self):
       """
@@ -2090,6 +2091,14 @@ class TestDiagnostics(unittest.TestCase):
       """
       logger = logging.getLogger("CedarBackup2.test")
       Diagnostics().logDiagnostics(logger.info)
+
+   def testMethods_010(self):
+      """
+      Test the timestamp attribute.
+      """
+      diagnostics = Diagnostics()
+      self.failIf(diagnostics.timestamp is None)
+      self.failIfEqual("", diagnostics.timestamp)
 
 
 ######################
