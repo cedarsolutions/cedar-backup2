@@ -1,14 +1,15 @@
 Version 2.16.1		unreleased
 
-	* Change suggested execution index for Capacity in manual.
-	* Fix utiltests.TestFunctions.testNullDevice_001() for Windows 2000.
-	* Fix typo in filesystemtests.TestFilesystemList.testRemoveLinks_002().
+	* Change suggested execution index for Capacity extension in manual.
 	* Clean up filesystem code that deals with file age, and improve unit tests.
 	  - Some platforms apparently cannot set file ages precisely
 	  - Change calculateFileAge() to use floats throughout, which is safer
 	  - Change removeYoungFiles() to explicitly check on whole days
 	  - Put a 1-second fudge factor into unit tests when setting file ages
-	  - This is really a test-only bug, but better safe than sorry
+	* Fix some unit test failures discovered on Windows 2000.
+	  - Fix utiltests.TestFunctions.testNullDevice_001()
+	  - Fix filesystemtests.TestBackupFileList.testGenerateFitted_004() 
+	  - Fix typo in filesystemtests.TestFilesystemList.testRemoveLinks_002()
 
 Version 2.16.0		18 Mar 2008
 

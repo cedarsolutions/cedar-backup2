@@ -16243,6 +16243,13 @@ class TestBackupFileList(unittest.TestCase):
       """
       Test on a non-empty list containing only valid entries, some of which
       fit.  
+
+      We can get some strange behavior on Windows, which hits the "links not
+      supported" case.  The file tree9/dir002/file002 is 74 bytes, and is
+      supposed to be the only file included because links are not recognized.
+      However, link004 points at file002, and apparently Windows (sometimes?)
+      sees link004 as a real file with a size of 74 bytes.  Since only one of
+      the two fits in the fitted list, we just check for one or the other.
       """
       self.extractTar("tree9")
       path = self.buildPath(["tree9"])
@@ -16263,7 +16270,8 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          fittedList = backupList.generateFitted(80)
          self.failUnlessEqual(1, len(fittedList))
-         self.failUnless(self.buildPath([ "tree9", "dir001", "file002", ]) in fittedList)
+         self.failUnless((self.buildPath([ "tree9", "dir002", "file002", ]) in fittedList) or
+                         (self.buildPath([ "tree9", "dir002", "link004", ] in fittedList)))
       else:
          self.failUnlessEqual(15, count)
          self.failUnlessEqual(15, len(backupList))
