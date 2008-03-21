@@ -131,8 +131,9 @@
       
       <para>
          If you experience a problem, your best bet is to write the Cedar
-         Backup Users mailing list.  <footnote><para>See <ulink
-         url="http://cedar-solutions.com/listarchives/"/>.</para></footnote>
+         Backup Users mailing list.  <footnote><para>See 
+         <quote>SF Mailing Lists</quote> at 
+         <ulink url="http://cedar-backup.sourceforge.net/"/>.</para></footnote>
          This is a public list for all Cedar Backup users.  If you write to
          this list, you might get help from me, or from some other user who has
          experienced the same thing you have.  
@@ -142,8 +143,8 @@
          If you know that the problem you have found constitutes a bug, or
          if you would like to make an enhancement request, then feel free to
          file a bug report in the Cedar Solutions Bug Tracking System.  
-         <footnote><para>See <ulink
-         url="http://cedar-solutions.com/bugzilla/"/>.</para></footnote>
+         <footnote><para>See <quote>SF Bug Tracking</quote> 
+         at <ulink url="http://cedar-backup.sourceforge.net/"/>.</para></footnote>
       </para>
 
       <para>

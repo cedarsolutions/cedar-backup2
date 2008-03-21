@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2007 Kenneth J. Pronovici.
+# Copyright (c) 2005-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -81,8 +81,8 @@
             If you would like to use Cedar Backup on a non-Linux system, you
             should install the Python source distribution along with all of the
             indicated dependencies.  Then, please report back to the Cedar
-            Backup Users mailing list <footnote><para>See <ulink
-            url="http://cedar-solutions.com/listarchives/"/>.</para></footnote>
+            Backup Users mailing list <footnote><para>See <quote>SF Mailing Lists</quote> 
+            at <ulink url="http://cedar-backup.sourceforge.net/"/>.</para></footnote>
             with information about your platform and any problems you
             encountered.
          </para>
@@ -110,7 +110,8 @@
          Backup.) Otherwise, you need to install from the Cedar Solutions APT
          data source.  To do this, add the Cedar Solutions APT data source to
          your <filename>/etc/apt/sources.list</filename> file.  <footnote><para>See
-         <ulink url="http://cedar-solutions.com/debian.html"/>.</para></footnote>
+         <quote>SF Bug Tracking</quote> at 
+         <ulink url="http://cedar-backup.sourceforge.net/"/>.</para></footnote>
       </para>
 
       <para>
@@ -137,10 +138,10 @@ $ apt-get install cedar-backup2 cedar-backup2-doc
       <para>
          If you would prefer, you can also download the
          <filename>.deb</filename> files and install them by hand with a tool
-         such as <command>dpkg</command>.  You can find a link to the
-         <filename>.deb</filename> files on the Cedar Solutions website.
+         such as <command>dpkg</command>.  You can find 
+         these files files in the Cedar Solutions APT source.
          <footnote id="cedar-install-foot-software"><para>See <ulink
-         url="http://cedar-solutions.com/software.html"/>.</para></footnote>
+         url="http://cedar-solutions.com/debian.html"/>.</para></footnote>
       </para>
 
       <para>

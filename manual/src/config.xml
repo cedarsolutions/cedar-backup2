@@ -3064,8 +3064,9 @@
             <emphasis>If Cedar Backup ever completes <quote>normally</quote>
             but the disc that is created is not usable, please report this as a
             bug.
-            <footnote id="cedar-config-foot-bugzilla"><para>
-            See <ulink url="http://cedar-solutions.com/bugzilla/"/>.</para></footnote>
+            <footnote id="cedar-config-foot-bugs"><para>
+            See <quote>SF Bug Tracking</quote> at 
+            <ulink url="http://cedar-backup.sourceforge.net/"/>.</para></footnote>
             To be safe, always enable the consistency check option in the
             store configuration section.</emphasis>
          </para>
@@ -3957,7 +3958,7 @@ The key fingerprint is:
             <emphasis>If Cedar Backup ever completes <quote>normally</quote>
             but the disc that is created is not usable, please report this as a
             bug.
-            <footnoteref linkend="cedar-config-foot-bugzilla"/>
+            <footnoteref linkend="cedar-config-foot-bugs"/>
             To be safe, always enable the consistency check option in the
             store configuration section.</emphasis>
          </para>
