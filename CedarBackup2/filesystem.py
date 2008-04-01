@@ -427,6 +427,12 @@ class FilesystemList(list):
       added as directories, but will not be followed.  This means that links
       are followed to a I{constant depth} starting from the top-most directory.
 
+      There is one difference between soft links and directories: soft links
+      that are added recursively are not placed into the list explicitly.  This
+      is because if we do add the links recursively, the resulting tar file
+      gets a little confused (it has a link and a directory with the same
+      name).
+
       @param path: Directory path whose contents should be added to the list.
       @param includePath: Indicates whether to include the path as well as contents.
       @param recursive: Indicates whether directory contents should be added recursively.
