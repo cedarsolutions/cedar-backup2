@@ -424,7 +424,8 @@ class FilesystemList(list):
       The linkDepth parameter controls whether soft links are followed when we
       are adding the contents recursively.  Any recursive calls reduce the
       value by one.  If the value zero or less, then soft links will just be
-      added as directories, but will not be followed.
+      added as directories, but will not be followed.  This means that links
+      are followed to a I{constant depth} starting from the top-most directory.
 
       @param path: Directory path whose contents should be added to the list.
       @param includePath: Indicates whether to include the path as well as contents.
@@ -463,7 +464,7 @@ class FilesystemList(list):
             if os.path.islink(entrypath):
                if recursive and linkDepth > 0:
                   newDepth = linkDepth - 1;
-                  added += self._addDirContentsInternal(entrypath, linkDepth=newDepth)
+                  added += self._addDirContentsInternal(entrypath, includePath=False, linkDepth=newDepth)
                else:
                   added += self.addDir(entrypath)
             else:
