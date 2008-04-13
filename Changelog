@@ -7,6 +7,7 @@ Version 2.17.1		unreleased
 	* Fixed problem with link_depth (closes: #1930729).
 	  - Can't add links directly, they're implicitly added later by tar
 	  - Changed FilesystemList to use includePath=false for recursive links
+	* Added util.dereferenceLink()
 
 Version 2.17.0		20 Mar 2008
 
