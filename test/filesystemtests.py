@@ -1061,6 +1061,181 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
+#   def testAddFile_044(self):
+#      """
+#      Attempt to add a file that doesn't exist; dereference=True
+#      """
+#      path = self.buildPath([INVALID_FILE])
+#      fsList = FilesystemList()
+#      self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_045(self):
+#      """
+#      Attempt to add a directory; dereference=True
+#      """
+#      self.extractTar("tree5")
+#      path = self.buildPath(["tree5", "dir001"])
+#      fsList = FilesystemList()
+#      self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_046(self):
+#      """
+#      Attempt to add a soft link; dereference=True
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         expected = self.buildPath(["tree5", "file007"]) 
+#         fsList = FilesystemList()
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(1, count)
+#         self.failUnlessEqual([expected], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_047(self):
+#      """
+#      Attempt to add an existing file; dereference=True
+#      """
+#      self.extractTar("tree5")
+#      path = self.buildPath(["tree5", "file001"])
+#      fsList = FilesystemList()
+#      count = fsList.addFile(path, True)
+#      self.failUnlessEqual(1, count)
+#      self.failUnlessEqual([path], fsList)
+#
+#   def testAddFile_048(self):
+#      """
+#      Attempt to add a soft link; with excludeBasenamePatterns matching the
+#      path and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         fsList = FilesystemList()
+#         fsList.excludeBasenamePatterns = [ "link001", ]
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludeBasenamePatterns = [ "link001", ]
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_049(self):
+#      """
+#      Attempt to add an invalid link (i.e. a link that points to something that
+#      doesn't exist), and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree10")
+#         path = self.buildPath(["tree10", "link001"])
+#         fsList = FilesystemList()
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_050(self):
+#      """
+#      Attempt to add a soft link; with excludePatterns matching the path and 
+#      dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         fsList = FilesystemList()
+#         fsList.excludePatterns = [ self.pathPattern(path) ]
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludePatterns = [ self.pathPattern(path) ]
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_051(self):
+#      """
+#      Attempt to add a soft link; with excludePaths including the path
+#      and dereference=True
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         fsList = FilesystemList()
+#         fsList.excludePaths = [ path ]
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludePaths = [ path ]
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_052(self):
+#      """
+#      Attempt to add a soft link; excludeLinks and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeLinks = True
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludeLinks = True
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_053(self):
+#      """
+#      Attempt to add a soft link; excludeDirs and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         expected = self.buildPath(["tree5", "file007"])
+#         fsList = FilesystemList()
+#         fsList.excludeDirs = True
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(1, count)
+#         self.failUnlessEqual([expected], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludeDirs = True
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_054(self):
+#      """
+#      Attempt to add a soft link; excludeFiles and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         fsList = FilesystemList()
+#         fsList.excludeFiles = True
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludeFiles = True
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+
 
    ################
    # Test addDir()
@@ -1600,6 +1775,180 @@ class TestFilesystemList(unittest.TestCase):
       count = fsList.addDir(path)
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
+
+#   def testAddDir_043(self):
+#      """
+#      Attempt to add a directory that doesn't exist; dereference=True.
+#      """
+#      path = self.buildPath([INVALID_FILE])
+#      fsList = FilesystemList()
+#      self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#   def testAddDir_044(self):
+#      """
+#      Attempt to add a file; dereference=True.
+#      """
+#      self.extractTar("tree5")
+#      path = self.buildPath(["tree5", "file001"])
+#      fsList = FilesystemList()
+#      self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#   def testAddDir_045(self):
+#      """
+#      Attempt to add a soft link; dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         expected = self.buildPath(["tree5", "dir002", "dir003"]) 
+#         fsList = FilesystemList()
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(1, count)
+#         self.failUnlessEqual([expected], fsList)
+#
+#   def testAddDir_046(self):
+#      """
+#      Attempt to add an existing directory; dereference=True.
+#      """
+#      self.extractTar("tree5")
+#      path = self.buildPath(["tree5", "dir001"])
+#      fsList = FilesystemList()
+#      count = fsList.addDir(path, True)
+#      self.failUnlessEqual(1, count)
+#      self.failUnlessEqual([path], fsList)
+#
+#   def testAddDir_047(self):
+#      """
+#      Attempt to add a soft link; with excludeBasenamePatterns matching the
+#      path, and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeBasenamePatterns = [ "link001", ]
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludeBasenamePatterns = [ "link001", ]
+#         count = fsList.addDir(path)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList, True)
+#
+#   def testAddDir_048(self):
+#      """
+#      Attempt to add an invalid link (i.e. a link that points to something that
+#      doesn't exist), and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree10")
+#         path = self.buildPath(["tree10", "link001"])
+#         fsList = FilesystemList()
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#   def testAddDir_049(self):
+#      """
+#      Attempt to add a soft link; with excludePatterns matching the path.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludePatterns = [ self.pathPattern(path) ]
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludePatterns = [ self.pathPattern(path) ]
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#   def testAddDir_050(self):
+#      """
+#      Attempt to add a soft link; with excludePaths including the path, 
+#      and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludePaths = [ path ]
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludePaths = [ path ]
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#   def testAddDir_051(self):
+#      """
+#      Attempt to add a soft link; excludeLinks and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeLinks = True
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludeLinks = True
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#   def testAddDir_052(self):
+#      """
+#      Attempt to add a soft link; excludeDirs and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeDirs = True
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludeDirs = True
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#   def testAddDir_053(self):
+#      """
+#      Attempt to add a soft link; excludeFiles and dereference set.
+#      """
+#      if platformSupportsLinks(): 
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeFiles = True
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         expected = self.buildPath(["tree5", "dir002", "dir003"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludeFiles = True
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(1, count)
+#         self.failUnlessEqual([expected], fsList)
 
 
    ########################
@@ -5686,6 +6035,183 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnless(self.buildPath(["tree22", "dir007", ]) in fsList)
          self.failUnless(self.buildPath(["tree22", "dir007", "file001", ]) in fsList)
          self.failUnless(self.buildPath(["tree22", "dir008", "file001", ]) in fsList)
+
+   def testAddDirContents_101(self):
+      """
+      Attempt to add a soft link; excludeFiles and dereference set.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludeFiles = True
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         expected = self.buildPath(["tree5", "dir002", "dir003", ])
+         fsList = FilesystemList()
+         fsList.excludeFiles = True
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(1, count)
+         self.failUnlessEqual([path], fsList)
+
+   def testAddDirContents_102(self):
+      """
+      Attempt to add a soft link; excludeDirs and dereference set.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludeDirs = True
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         fsList = FilesystemList()
+         fsList.excludeDirs = True
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_103(self):
+      """
+      Attempt to add a soft link; excludeLinks and dereference set.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludeLinks = True
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         fsList = FilesystemList()
+         fsList.excludeLinks = True
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_104(self):
+      """
+      Attempt to add a soft link; with excludePaths including the path,
+      with dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludePaths = [ path ]
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         fsList = FilesystemList()
+         fsList.excludePaths = [ path ]
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_105(self):
+      """
+      Attempt to add a soft link; with excludePatterns matching the path,
+      with dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludePatterns = [ self.pathPattern(path) ]
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         fsList = FilesystemList()
+         fsList.excludePatterns = [ self.pathPattern(path) ]
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_106(self):
+      """
+      Attempt to add a link to a file, with dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree9")
+         path = self.buildPath(["tree9", "dir002", "link003", ])
+         fsList = FilesystemList()
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+   def testAddDirContents_107(self):
+      """
+      Attempt to add a link to a directory (which should add its contents),
+      with dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree9")
+         path = self.buildPath(["tree9", "link002" ])
+         fsList = FilesystemList()
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(9, count)
+         self.failUnlessEqual(9, len(fsList))
+         self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "dir002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "file001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "file002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "link001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "link002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "link003", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "link004", ]) in fsList)
+
+   def testAddDirContents_108(self):
+      """
+      Attempt to add an invalid link (i.e. a link that points to something that
+      doesn't exist), and dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree10")
+         path = self.buildPath(["tree10", "link001"])
+         fsList = FilesystemList()
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+   def testAddDirContents_109(self):
+      """
+      Attempt to add directory containing an invalid link (i.e. a link that
+      points to something that doesn't exist), and dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree10")
+         path = self.buildPath(["tree10"])
+         fsList = FilesystemList()
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(3, count)
+         self.failUnlessEqual(3, len(fsList))
+         self.failUnless(self.buildPath([ "tree10", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree10", "file001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree10", "dir002", ]) in fsList)
+
+   def testAddDirContents_110(self):
+      """
+      Attempt to add a soft link; with excludeBasenamePatterns matching the
+      path, and dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludeBasenamePatterns = [ "link001", ]
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+         fsList = FilesystemList()
+         fsList.excludeBasenamePatterns = [ "link001", ]
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
 
 
    #####################
