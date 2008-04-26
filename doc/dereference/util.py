@@ -1987,3 +1987,22 @@ def sanitizeEnvironment():
          os.environ[LANG_VAR] = DEFAULT_LANGUAGE
    return os.environ.copy()
    
+
+#############################
+# dereferenceLink() function
+#############################
+
+def dereferenceLink(path, absolute=True):
+   """
+   Deference a soft link, optionally normalizing it to an absolute path.
+   @param path: Path of link to dereference
+   @param absolute: Whether to normalize the result to an absolute path
+   @return: Dereferenced path, or original path if original is not a link.
+   """
+   if os.path.islink(path):
+      result = os.readlink(path)
+      if absolute and not os.path.isabs(result):
+         result = os.path.abspath(os.path.join(os.path.dirname(path), result))
+      return result
+   return path
+

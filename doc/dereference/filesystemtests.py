@@ -131,7 +131,7 @@ from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemLis
 DATA_DIRS = [ "./data", "./test/data" ]
 RESOURCES = [ "tree1.tar.gz", "tree2.tar.gz", "tree3.tar.gz", "tree4.tar.gz", "tree5.tar.gz",
               "tree6.tar.gz", "tree7.tar.gz", "tree8.tar.gz", "tree9.tar.gz", "tree10.tar.gz", 
-              "tree11.tar.gz", "tree12.tar.gz", "tree13.tar.gz", ]
+              "tree11.tar.gz", "tree12.tar.gz", "tree13.tar.gz", "tree22.tar.gz", ]
 
 INVALID_FILE      = "bogus"         # This file name should never exist
 NOMATCH_PATH      = "/something"    # This path should never match something we put in a file list 
@@ -1061,6 +1061,181 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
 
+#   def testAddFile_044(self):
+#      """
+#      Attempt to add a file that doesn't exist; dereference=True
+#      """
+#      path = self.buildPath([INVALID_FILE])
+#      fsList = FilesystemList()
+#      self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_045(self):
+#      """
+#      Attempt to add a directory; dereference=True
+#      """
+#      self.extractTar("tree5")
+#      path = self.buildPath(["tree5", "dir001"])
+#      fsList = FilesystemList()
+#      self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_046(self):
+#      """
+#      Attempt to add a soft link; dereference=True
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         expected = self.buildPath(["tree5", "file007"]) 
+#         fsList = FilesystemList()
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(1, count)
+#         self.failUnlessEqual([expected], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_047(self):
+#      """
+#      Attempt to add an existing file; dereference=True
+#      """
+#      self.extractTar("tree5")
+#      path = self.buildPath(["tree5", "file001"])
+#      fsList = FilesystemList()
+#      count = fsList.addFile(path, True)
+#      self.failUnlessEqual(1, count)
+#      self.failUnlessEqual([path], fsList)
+#
+#   def testAddFile_048(self):
+#      """
+#      Attempt to add a soft link; with excludeBasenamePatterns matching the
+#      path and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         fsList = FilesystemList()
+#         fsList.excludeBasenamePatterns = [ "link001", ]
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludeBasenamePatterns = [ "link001", ]
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_049(self):
+#      """
+#      Attempt to add an invalid link (i.e. a link that points to something that
+#      doesn't exist), and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree10")
+#         path = self.buildPath(["tree10", "link001"])
+#         fsList = FilesystemList()
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_050(self):
+#      """
+#      Attempt to add a soft link; with excludePatterns matching the path and 
+#      dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         fsList = FilesystemList()
+#         fsList.excludePatterns = [ self.pathPattern(path) ]
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludePatterns = [ self.pathPattern(path) ]
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_051(self):
+#      """
+#      Attempt to add a soft link; with excludePaths including the path
+#      and dereference=True
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         fsList = FilesystemList()
+#         fsList.excludePaths = [ path ]
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludePaths = [ path ]
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_052(self):
+#      """
+#      Attempt to add a soft link; excludeLinks and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeLinks = True
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludeLinks = True
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_053(self):
+#      """
+#      Attempt to add a soft link; excludeDirs and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         expected = self.buildPath(["tree5", "file007"])
+#         fsList = FilesystemList()
+#         fsList.excludeDirs = True
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(1, count)
+#         self.failUnlessEqual([expected], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludeDirs = True
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+#
+#   def testAddFile_054(self):
+#      """
+#      Attempt to add a soft link; excludeFiles and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to file007
+#         fsList = FilesystemList()
+#         fsList.excludeFiles = True
+#         count = fsList.addFile(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+#         fsList = FilesystemList()
+#         fsList.excludeFiles = True
+#         self.failUnlessRaises(ValueError, fsList.addFile, path, True)
+
 
    ################
    # Test addDir()
@@ -1600,6 +1775,180 @@ class TestFilesystemList(unittest.TestCase):
       count = fsList.addDir(path)
       self.failUnlessEqual(1, count)
       self.failUnlessEqual([path], fsList)
+
+#   def testAddDir_043(self):
+#      """
+#      Attempt to add a directory that doesn't exist; dereference=True.
+#      """
+#      path = self.buildPath([INVALID_FILE])
+#      fsList = FilesystemList()
+#      self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#   def testAddDir_044(self):
+#      """
+#      Attempt to add a file; dereference=True.
+#      """
+#      self.extractTar("tree5")
+#      path = self.buildPath(["tree5", "file001"])
+#      fsList = FilesystemList()
+#      self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#   def testAddDir_045(self):
+#      """
+#      Attempt to add a soft link; dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         expected = self.buildPath(["tree5", "dir002", "dir003"]) 
+#         fsList = FilesystemList()
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(1, count)
+#         self.failUnlessEqual([expected], fsList)
+#
+#   def testAddDir_046(self):
+#      """
+#      Attempt to add an existing directory; dereference=True.
+#      """
+#      self.extractTar("tree5")
+#      path = self.buildPath(["tree5", "dir001"])
+#      fsList = FilesystemList()
+#      count = fsList.addDir(path, True)
+#      self.failUnlessEqual(1, count)
+#      self.failUnlessEqual([path], fsList)
+#
+#   def testAddDir_047(self):
+#      """
+#      Attempt to add a soft link; with excludeBasenamePatterns matching the
+#      path, and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeBasenamePatterns = [ "link001", ]
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludeBasenamePatterns = [ "link001", ]
+#         count = fsList.addDir(path)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList, True)
+#
+#   def testAddDir_048(self):
+#      """
+#      Attempt to add an invalid link (i.e. a link that points to something that
+#      doesn't exist), and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree10")
+#         path = self.buildPath(["tree10", "link001"])
+#         fsList = FilesystemList()
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#   def testAddDir_049(self):
+#      """
+#      Attempt to add a soft link; with excludePatterns matching the path.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludePatterns = [ self.pathPattern(path) ]
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludePatterns = [ self.pathPattern(path) ]
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#   def testAddDir_050(self):
+#      """
+#      Attempt to add a soft link; with excludePaths including the path, 
+#      and dereference=True.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludePaths = [ path ]
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludePaths = [ path ]
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#   def testAddDir_051(self):
+#      """
+#      Attempt to add a soft link; excludeLinks and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeLinks = True
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludeLinks = True
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#   def testAddDir_052(self):
+#      """
+#      Attempt to add a soft link; excludeDirs and dereference set.
+#      """
+#      if platformSupportsLinks():
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeDirs = True
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludeDirs = True
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(0, count)
+#         self.failUnlessEqual([], fsList)
+#
+#   def testAddDir_053(self):
+#      """
+#      Attempt to add a soft link; excludeFiles and dereference set.
+#      """
+#      if platformSupportsLinks(): 
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "link001"])     # link to a file
+#         fsList = FilesystemList()
+#         fsList.excludeFiles = True
+#         self.failUnlessRaises(ValueError, fsList.addDir, path, True)
+#
+#         self.extractTar("tree5")
+#         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+#         expected = self.buildPath(["tree5", "dir002", "dir003"])  # link to dir003
+#         fsList = FilesystemList()
+#         fsList.excludeFiles = True
+#         count = fsList.addDir(path, True)
+#         self.failUnlessEqual(1, count)
+#         self.failUnlessEqual([expected], fsList)
 
 
    ########################
@@ -4758,10 +5107,11 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree6")
       path = self.buildPath(["tree6"])
       fsList = FilesystemList()
-      count = fsList.addDirContents(path, addSelf=False, linkDepth=1)
+      count = fsList.addDirContents(path, linkDepth=1)
       if not platformSupportsLinks():
-         self.failUnlessEqual(121, count)
-         self.failUnlessEqual(121, len(fsList))
+         self.failUnlessEqual(122, count)
+         self.failUnlessEqual(122, len(fsList))
+         self.failUnless(self.buildPath([ "tree6", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in fsList)
@@ -4884,8 +5234,9 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
       else:
-         self.failUnlessEqual(164, count)
-         self.failUnlessEqual(164, len(fsList))
+         self.failUnlessEqual(165, count)
+         self.failUnlessEqual(165, len(fsList))
+         self.failUnless(self.buildPath([ "tree6", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in fsList)
@@ -5058,10 +5409,11 @@ class TestFilesystemList(unittest.TestCase):
       self.extractTar("tree6")
       path = self.buildPath(["tree6"])
       fsList = FilesystemList()
-      count = fsList.addDirContents(path, addSelf=False, linkDepth=2)
+      count = fsList.addDirContents(path, linkDepth=2)
       if not platformSupportsLinks():
-         self.failUnlessEqual(121, count)
-         self.failUnlessEqual(121, len(fsList))
+         self.failUnlessEqual(122, count)
+         self.failUnlessEqual(122, len(fsList))
+         self.failUnless(self.buildPath([ "tree6" ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in fsList)
@@ -5184,8 +5536,9 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
       else:
-         self.failUnlessEqual(240, count)
-         self.failUnlessEqual(240, len(fsList))
+         self.failUnlessEqual(241, count)
+         self.failUnlessEqual(241, len(fsList))
+         self.failUnless(self.buildPath([ "tree6" ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in fsList)
@@ -5426,6 +5779,439 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree6", "file001", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "file002", ]) in fsList)
          self.failUnless(self.buildPath([ "tree6", "link001", ]) in fsList)
+
+   def testAddDirContents_093(self):
+      """
+      Attempt to add a directory with linkDepth=0, dereference=False.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path, linkDepth=0, dereference=False)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(12, count)
+         self.failUnlessEqual(12, len(fsList))
+         self.failUnless(self.buildPath(["tree22", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", ]) in fsList)
+
+   def testAddDirContents_094(self):
+      """
+      Attempt to add a directory with linkDepth=1, dereference=False.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path, linkDepth=1, dereference=False)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(16, count)
+         self.failUnlessEqual(16, len(fsList))
+         self.failUnless(self.buildPath(["tree22", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", ]) in fsList)
+
+   def testAddDirContents_095(self):
+      """
+      Attempt to add a directory with linkDepth=2, dereference=False.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path, linkDepth=2, dereference=False)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(20, count)
+         self.failUnlessEqual(20, len(fsList))
+         self.failUnless(self.buildPath(["tree22", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001",]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002",]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "link002", ]) in fsList)
+
+   def testAddDirContents_096(self):
+      """
+      Attempt to add a directory with linkDepth=3, dereference=False.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path, linkDepth=3, dereference=False)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(20, count)
+         self.failUnlessEqual(20, len(fsList))
+         self.failUnless(self.buildPath(["tree22", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001",]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002",]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "link001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "link002", ]) in fsList)
+
+   def testAddDirContents_097(self):
+      """
+      Attempt to add a directory with linkDepth=0, dereference=True.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path, linkDepth=0, dereference=True)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(12, count)
+         self.failUnlessEqual(12, len(fsList))
+         self.failUnless(self.buildPath(["tree22", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", ]) in fsList)
+
+   def testAddDirContents_098(self):
+      """
+      Attempt to add a directory with linkDepth=1, dereference=True.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path, linkDepth=1, dereference=True)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(17, count)
+         self.failUnlessEqual(17, len(fsList))
+         self.failUnless(self.buildPath(["tree22", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005" ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "link002", ]) in fsList)
+
+   def testAddDirContents_099(self):
+      """
+      Attempt to add a directory with linkDepth=2, dereference=True.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path, linkDepth=2, dereference=True)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(23, count)
+         self.failUnlessEqual(23, len(fsList))
+         self.failUnless(self.buildPath(["tree22", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file005", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file002",]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file003",]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file009", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir006", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir006", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir006", "link001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir006", "link002", ]) in fsList)
+
+   def testAddDirContents_100(self):
+      """
+      Attempt to add a directory with linkDepth=3, dereference=True.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      fsList = FilesystemList()
+      count = fsList.addDirContents(path, linkDepth=3, dereference=True)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(24, count)
+         self.failUnlessEqual(24, len(fsList))
+         self.failUnless(self.buildPath(["tree22", "dir003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file005", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir004", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file002",]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file003",]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file002", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file003", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file009", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir006", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir006", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir007", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir007", "file001", ]) in fsList)
+         self.failUnless(self.buildPath(["tree22", "dir008", "file001", ]) in fsList)
+
+   def testAddDirContents_101(self):
+      """
+      Attempt to add a soft link; excludeFiles and dereference set.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludeFiles = True
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         expected = self.buildPath(["tree5", "dir002", "dir003", ])
+         fsList = FilesystemList()
+         fsList.excludeFiles = True
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(1, count)
+         self.failUnlessEqual([path], fsList)
+
+   def testAddDirContents_102(self):
+      """
+      Attempt to add a soft link; excludeDirs and dereference set.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludeDirs = True
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         fsList = FilesystemList()
+         fsList.excludeDirs = True
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_103(self):
+      """
+      Attempt to add a soft link; excludeLinks and dereference set.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludeLinks = True
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         fsList = FilesystemList()
+         fsList.excludeLinks = True
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_104(self):
+      """
+      Attempt to add a soft link; with excludePaths including the path,
+      with dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludePaths = [ path ]
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         fsList = FilesystemList()
+         fsList.excludePaths = [ path ]
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_105(self):
+      """
+      Attempt to add a soft link; with excludePatterns matching the path,
+      with dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludePatterns = [ self.pathPattern(path) ]
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
+         fsList = FilesystemList()
+         fsList.excludePatterns = [ self.pathPattern(path) ]
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
+
+   def testAddDirContents_106(self):
+      """
+      Attempt to add a link to a file, with dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree9")
+         path = self.buildPath(["tree9", "dir002", "link003", ])
+         fsList = FilesystemList()
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+   def testAddDirContents_107(self):
+      """
+      Attempt to add a link to a directory (which should add its contents),
+      with dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree9")
+         path = self.buildPath(["tree9", "link002" ])
+         fsList = FilesystemList()
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(9, count)
+         self.failUnlessEqual(9, len(fsList))
+         self.failUnless(self.buildPath([ "tree9", "link002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "dir001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "dir002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "file001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "file002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "link001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "link002", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "link003", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree9", "link002", "link004", ]) in fsList)
+
+   def testAddDirContents_108(self):
+      """
+      Attempt to add an invalid link (i.e. a link that points to something that
+      doesn't exist), and dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree10")
+         path = self.buildPath(["tree10", "link001"])
+         fsList = FilesystemList()
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+   def testAddDirContents_109(self):
+      """
+      Attempt to add directory containing an invalid link (i.e. a link that
+      points to something that doesn't exist), and dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree10")
+         path = self.buildPath(["tree10"])
+         fsList = FilesystemList()
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(3, count)
+         self.failUnlessEqual(3, len(fsList))
+         self.failUnless(self.buildPath([ "tree10", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree10", "file001", ]) in fsList)
+         self.failUnless(self.buildPath([ "tree10", "dir002", ]) in fsList)
+
+   def testAddDirContents_110(self):
+      """
+      Attempt to add a soft link; with excludeBasenamePatterns matching the
+      path, and dereference=True.
+      """
+      if platformSupportsLinks():
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "link001"])     # link to a file
+         fsList = FilesystemList()
+         fsList.excludeBasenamePatterns = [ "link001", ]
+         self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
+
+         self.extractTar("tree5")
+         path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
+         fsList = FilesystemList()
+         fsList.excludeBasenamePatterns = [ "link001", ]
+         count = fsList.addDirContents(path, True, True, 1, True)
+         self.failUnlessEqual(0, count)
+         self.failUnlessEqual([], fsList)
 
 
    #####################
@@ -21419,6 +22205,1335 @@ class TestPurgeItemList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree6", "file002", ]) in purgeList)
          self.failUnless(self.buildPath([ "tree6", "link001", ]) in purgeList)
          self.failUnless(self.buildPath([ "tree6", "link002", ]) in purgeList)
+
+   def testAddDirContents_088(self):
+      """
+      Attempt to add a large tree, with excludeBasenamePatterns set to exclude
+      some entries.
+      """
+      self.extractTar("tree6")
+      path = self.buildPath(["tree6"])
+      purgeList = PurgeItemList()
+      purgeList.excludeBasenamePatterns = [ "file001", "dir001" ]
+      count = purgeList.addDirContents(path)
+      if not platformSupportsLinks():
+         self.failUnlessEqual(54, count)
+         self.failUnlessEqual(54, len(purgeList))
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in purgeList)
+      else:
+         self.failUnlessEqual(63, count)
+         self.failUnlessEqual(63, len(purgeList))
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", ]) in purgeList)
+
+   def testAddDirContents_089(self):
+      """
+      Attempt to add a large tree with no exclusions
+      """
+      self.extractTar("tree6")
+      path = self.buildPath(["tree6"])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path)
+      if not platformSupportsLinks():
+         self.failUnlessEqual(121, count)
+         self.failUnlessEqual(121, len(purgeList))
+         self.failUnless(self.buildPath([ "tree6", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in purgeList)
+      else:
+         self.failUnlessEqual(135, count)
+         self.failUnlessEqual(135, len(purgeList))
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", ]) in purgeList)
+
+   def testAddDirContents_090(self):
+      """
+      Attempt to add a directory with linkDepth=1.
+      """
+      self.extractTar("tree6")
+      path = self.buildPath(["tree6"])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=1)
+      if not platformSupportsLinks():
+         self.failUnlessEqual(121, count)
+         self.failUnlessEqual(121, len(purgeList))
+         self.failUnless(self.buildPath([ "tree6", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in purgeList)
+      else:
+         self.failUnlessEqual(164, count)
+         self.failUnlessEqual(164, len(purgeList))
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in purgeList)
+
+   def testAddDirContents_091(self):
+      """
+      Attempt to add a directory with linkDepth=2.
+      """
+      self.extractTar("tree6")
+      path = self.buildPath(["tree6"])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=2)
+      if not platformSupportsLinks():
+         self.failUnlessEqual(121, count)
+         self.failUnlessEqual(121, len(purgeList))
+         self.failUnless(self.buildPath([ "tree6", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in purgeList)
+      else:
+         self.failUnlessEqual(240, count)
+         self.failUnlessEqual(240, len(purgeList))
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir001", "link001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir001", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "dir003", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link002", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir002", "link005", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "dir002", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "file008", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "dir003", "link004", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "dir002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "dir002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "dir003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "file006", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "file007", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "ignore", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link002", "link001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath([ "tree6", "link001", ]) in purgeList)
+
+   def testAddDirContents_092(self):
+      """
+      Attempt to add a directory with linkDepth=0, dereference=False.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=0, dereference=False)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(11, count)
+         self.failUnlessEqual(11, len(purgeList))
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", ]) in purgeList)
+
+   def testAddDirContents_093(self):
+      """
+      Attempt to add a directory with linkDepth=1, dereference=False.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=1, dereference=False)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(15, count)
+         self.failUnlessEqual(15, len(purgeList))
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", ]) in purgeList)
+
+   def testAddDirContents_094(self):
+      """
+      Attempt to add a directory with linkDepth=2, dereference=False.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=2, dereference=False)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(19, count)
+         self.failUnlessEqual(19, len(purgeList))
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001",]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002",]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "link002", ]) in purgeList)
+
+   def testAddDirContents_095(self):
+      """
+      Attempt to add a directory with linkDepth=3, dereference=False.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=3, dereference=False)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(19, count)
+         self.failUnlessEqual(19, len(purgeList))
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001",]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002",]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "link001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", "link002", "link002", ]) in purgeList)
+
+   def testAddDirContents_096(self):
+      """
+      Attempt to add a directory with linkDepth=0, dereference=True.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=0, dereference=True)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(11, count)
+         self.failUnlessEqual(11, len(purgeList))
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "link003", ]) in purgeList)
+
+   def testAddDirContents_097(self):
+      """
+      Attempt to add a directory with linkDepth=1, dereference=True.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=1, dereference=True)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(16, count)
+         self.failUnlessEqual(16, len(purgeList))
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "link004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005" ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "link002", ]) in purgeList)
+
+   def testAddDirContents_098(self):
+      """
+      Attempt to add a directory with linkDepth=2, dereference=True.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=2, dereference=True)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(22, count)
+         self.failUnlessEqual(22, len(purgeList))
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file002",]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file003",]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir006", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir006", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir006", "link001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir006", "link002", ]) in purgeList)
+
+   def testAddDirContents_099(self):
+      """
+      Attempt to add a directory with linkDepth=3, dereference=True.
+      """
+      self.extractTar("tree22")
+      path = self.buildPath(["tree22", "dir003", ])
+      purgeList = PurgeItemList()
+      count = purgeList.addDirContents(path, linkDepth=3, dereference=True)
+      if not platformSupportsLinks():
+         pass
+      else:
+         self.failUnlessEqual(23, count)
+         self.failUnlessEqual(23, len(purgeList))
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir003", "dir001", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file005", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir004", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir004", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file002",]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir001", "file003",]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file002", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir005", "file003", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir002", "file009", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir006", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir006", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir007", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir007", "file001", ]) in purgeList)
+         self.failUnless(self.buildPath(["tree22", "dir008", "file001", ]) in purgeList)
 
 
    ####################

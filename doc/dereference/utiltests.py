@@ -82,13 +82,14 @@ import time
 import logging
 from os.path import isdir
 
-from CedarBackup2.testutil import findResources, removedir, platformHasEcho, platformWindows, captureOutput
+from CedarBackup2.testutil import findResources, removedir, extractTar, buildPath, captureOutput
+from CedarBackup2.testutil import platformHasEcho, platformWindows, platformSupportsLinks
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList 
 from CedarBackup2.util import RestrictedContentList, RegexMatchList, RegexList
 from CedarBackup2.util import DirectedGraph, PathResolverSingleton, Diagnostics
 from CedarBackup2.util import sortDict, resolveCommand, executeCommand, getFunctionReference, encodePath
 from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
-from CedarBackup2.util import displayBytes, deriveDayOfWeek, isStartOfWeek
+from CedarBackup2.util import displayBytes, deriveDayOfWeek, isStartOfWeek, dereferenceLink
 from CedarBackup2.util import buildNormalizedPath, splitCommandLine, nullDevice
 
 
@@ -97,7 +98,7 @@ from CedarBackup2.util import buildNormalizedPath, splitCommandLine, nullDevice
 #######################################################################
 
 DATA_DIRS = [ "./data", "./test/data" ]
-RESOURCES = [ "lotsoflines.py", ]
+RESOURCES = [ "lotsoflines.py", "tree10.tar.gz", ]
 
 
 #######################################################################
@@ -2137,6 +2138,15 @@ class TestFunctions(unittest.TestCase):
       except: pass
       return name
 
+   def extractTar(self, tarname):
+      """Extracts a tarfile with a particular name."""
+      extractTar(self.tmpdir, self.resources['%s.tar.gz' % tarname])
+
+   def buildPath(self, components):
+      """Builds a complete search path from a list of components."""
+      components.insert(0, self.tmpdir)
+      return buildPath(components)
+
 
    ##################
    # Test sortDict() 
@@ -3910,6 +3920,105 @@ class TestFunctions(unittest.TestCase):
       commandLine = "cback 'this is a really long single-quoted argument'"
       result = splitCommandLine(commandLine)
       self.failUnlessEqual(["cback", "'this", "is", "a", "really", "long", "single-quoted", "argument'", ], result)
+
+
+   #########################
+   # Test dereferenceLink() 
+   #########################
+
+   def testDereferenceLink_001(self):
+      """
+      Test for a path that is a link, absolute=false.
+      """
+      self.extractTar("tree10")
+      path = self.buildPath(["tree10", "link002"])
+      if platformSupportsLinks():
+         expected = "file002"
+      else:
+         expected = path
+      actual = dereferenceLink(path, absolute=False)
+      self.failUnlessEqual(expected, actual)
+
+   def testDereferenceLink_002(self):
+      """
+      Test for a path that is a link, absolute=true.
+      """
+      self.extractTar("tree10")
+      path = self.buildPath(["tree10", "link002"])
+      if platformSupportsLinks():
+         expected = self.buildPath(["tree10", "file002"])
+      else:
+         expected = path
+      actual = dereferenceLink(path)
+      self.failUnlessEqual(expected, actual)
+      actual = dereferenceLink(path, absolute=True)
+      self.failUnlessEqual(expected, actual)
+
+   def testDereferenceLink_003(self):
+      """
+      Test for a path that is a file (not a link), absolute=false.
+      """
+      self.extractTar("tree10")
+      path = self.buildPath(["tree10", "file001"])
+      expected = path
+      actual = dereferenceLink(path, absolute=False)
+      self.failUnlessEqual(expected, actual)
+
+   def testDereferenceLink_004(self):
+      """
+      Test for a path that is a file (not a link), absolute=true.
+      """
+      self.extractTar("tree10")
+      path = self.buildPath(["tree10", "file001"])
+      expected = path
+      actual = dereferenceLink(path)
+      self.failUnlessEqual(expected, actual)
+      actual = dereferenceLink(path, absolute=True)
+      self.failUnlessEqual(expected, actual)
+
+   def testDereferenceLink_005(self):
+      """
+      Test for a path that is a directory (not a link), absolute=false.
+      """
+      self.extractTar("tree10")
+      path = self.buildPath(["tree10", "dir001"])
+      expected = path
+      actual = dereferenceLink(path, absolute=False)
+      self.failUnlessEqual(expected, actual)
+
+   def testDereferenceLink_006(self):
+      """
+      Test for a path that is a directory (not a link), absolute=true.
+      """
+      self.extractTar("tree10")
+      path = self.buildPath(["tree10", "dir001"])
+      expected = path
+      actual = dereferenceLink(path)
+      self.failUnlessEqual(expected, actual)
+      actual = dereferenceLink(path, absolute=True)
+      self.failUnlessEqual(expected, actual)
+
+   def testDereferenceLink_007(self):
+      """
+      Test for a path that does not exist, absolute=false.
+      """
+      self.extractTar("tree10")
+      path = self.buildPath(["tree10", "blech"])
+      expected = path
+      actual = dereferenceLink(path, absolute=False)
+      self.failUnlessEqual(expected, actual)
+
+   def testDereferenceLink_008(self):
+      """
+      Test for a path that does not exist, absolute=true.
+      """
+      self.extractTar("tree10")
+      path = self.buildPath(["tree10", "blech"])
+      expected = path
+      actual = dereferenceLink(path)
+      self.failUnlessEqual(expected, actual)
+      actual = dereferenceLink(path, absolute=True)
+      self.failUnlessEqual(expected, actual)
 
 
 #######################################################################
