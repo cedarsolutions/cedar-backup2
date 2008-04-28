@@ -3,6 +3,9 @@ Version 2.18.0		unreleased
 	* Add the ability to dereference links when following them.
 	  - Add util.dereferenceLink() function
 	  - Add dereference flag to FilesystemList.addDirContents()
+	  - Add CollectDir.dereference attribute
+	  - Modify collect action to obey CollectDir.dereference
+	  - Update user manual to discuss new attribute
 
 Version 2.17.1		26 Apr 2008
 

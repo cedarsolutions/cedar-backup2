@@ -1359,13 +1359,13 @@ class CollectDir(object):
    @note: Lists within this class are "unordered" for equality comparisons.
 
    @sort: __init__, __repr__, __str__, __cmp__, absolutePath, collectMode,
-          archiveMode, ignoreFile, linkDepth, absoluteExcludePaths, 
+          archiveMode, ignoreFile, linkDepth, dereference, absoluteExcludePaths, 
           relativeExcludePaths, excludePatterns
    """
 
    def __init__(self, absolutePath=None, collectMode=None, archiveMode=None, ignoreFile=None,
                 absoluteExcludePaths=None, relativeExcludePaths=None, excludePatterns=None,
-                linkDepth=None):
+                linkDepth=None, dereference=False):
       """
       Constructor for the C{CollectDir} class.
 
@@ -1374,6 +1374,7 @@ class CollectDir(object):
       @param archiveMode: Overridden archive mode for this directory.
       @param ignoreFile: Overidden ignore file name for this directory.
       @param linkDepth: Maximum at which soft links should be followed.
+      @param dereference: Whether to dereference links that are followed.
       @param absoluteExcludePaths: List of absolute paths to exclude.
       @param relativeExcludePaths: List of relative paths to exclude.
       @param excludePatterns: List of regular expression patterns to exclude.
@@ -1385,6 +1386,7 @@ class CollectDir(object):
       self._archiveMode = None
       self._ignoreFile = None
       self._linkDepth = None
+      self._deference = None
       self._absoluteExcludePaths = None
       self._relativeExcludePaths = None
       self._excludePatterns = None
@@ -1393,6 +1395,7 @@ class CollectDir(object):
       self.archiveMode = archiveMode
       self.ignoreFile = ignoreFile
       self.linkDepth = linkDepth
+      self.dereference = dereference
       self.absoluteExcludePaths = absoluteExcludePaths
       self.relativeExcludePaths = relativeExcludePaths
       self.excludePatterns = excludePatterns
@@ -1401,12 +1404,12 @@ class CollectDir(object):
       """
       Official string representation for class instance.
       """
-      return "CollectDir(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.absolutePath, self.collectMode, 
-                                                             self.archiveMode, self.ignoreFile, 
-                                                             self.absoluteExcludePaths, 
-                                                             self.relativeExcludePaths, 
-                                                             self.excludePatterns, 
-                                                             self.linkDepth)
+      return "CollectDir(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.absolutePath, self.collectMode, 
+                                                                 self.archiveMode, self.ignoreFile, 
+                                                                 self.absoluteExcludePaths, 
+                                                                 self.relativeExcludePaths, 
+                                                                 self.excludePatterns, 
+                                                                 self.linkDepth, self.dereference)
 
    def __str__(self):
       """
@@ -1445,6 +1448,11 @@ class CollectDir(object):
             return 1 
       if self._linkDepth != other._linkDepth: 
          if self._linkDepth < other._linkDepth: 
+            return -1
+         else:
+            return 1 
+      if self._dereference != other._dereference: 
+         if self._dereference < other._dereference: 
             return -1
          else:
             return 1 
@@ -1558,6 +1566,22 @@ class CollectDir(object):
       """
       return self._linkDepth
 
+   def _setDereference(self, value):
+      """
+      Property target used to set the dereference flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._dereference = True
+      else:
+         self._dereference = False
+
+   def _getDereference(self):
+      """
+      Property target used to get the dereference flag.
+      """
+      return self._dereference
+
    def _setAbsoluteExcludePaths(self, value):
       """
       Property target used to set the absolute exclude paths list.
@@ -1630,6 +1654,7 @@ class CollectDir(object):
    archiveMode = property(_getArchiveMode, _setArchiveMode, None, doc="Overridden archive mode for this directory.")
    ignoreFile = property(_getIgnoreFile, _setIgnoreFile, None, doc="Overridden ignore file name for this directory.")
    linkDepth = property(_getLinkDepth, _setLinkDepth, None, doc="Maximum at which soft links should be followed.")
+   dereference = property(_getDereference, _setDereference, None, doc="Whether to dereference links that are followed.")
    absoluteExcludePaths = property(_getAbsoluteExcludePaths, _setAbsoluteExcludePaths, None, "List of absolute paths to exclude.")
    relativeExcludePaths = property(_getRelativeExcludePaths, _setRelativeExcludePaths, None, "List of relative paths to exclude.")
    excludePatterns = property(_getExcludePatterns, _setExcludePatterns, None, "List of regular expression patterns to exclude.")
@@ -4714,6 +4739,7 @@ class Config(object):
          archiveMode             archive_mode
          ignoreFile              ignore_file
          linkDepth               link_depth
+         dereference             dereference
 
       The collect mode is a special case.  Just a C{mode} tag is accepted for
       backwards compatibility, but we prefer C{collect_mode} for consistency
@@ -4745,6 +4771,7 @@ class Config(object):
             cdir.archiveMode = readString(entry, "archive_mode")
             cdir.ignoreFile = readString(entry, "ignore_file")
             cdir.linkDepth = readInteger(entry, "link_depth")
+            cdir.dereference = readBoolean(entry, "dereference")
             (cdir.absoluteExcludePaths, cdir.relativeExcludePaths, cdir.excludePatterns) = Config._parseExclusions(entry)
             lst.append(cdir)
       if lst == []:
@@ -5365,6 +5392,7 @@ class Config(object):
          archiveMode             dir/archive_mode
          ignoreFile              dir/ignore_file
          linkDepth               dir/link_depth
+         dereference             dir/dereference
    
       Note that an original XML document might have listed the collect mode
       using the C{mode} tag, since we accept both C{collect_mode} and C{mode}.
@@ -5393,6 +5421,7 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "archive_mode", collectDir.archiveMode)
          addStringNode(xmlDom, sectionNode, "ignore_file", collectDir.ignoreFile)
          addIntegerNode(xmlDom, sectionNode, "link_depth", collectDir.linkDepth)
+         addBooleanNode(xmlDom, sectionNode, "dereference", collectDir.dereference)
          if ((collectDir.absoluteExcludePaths is not None and collectDir.absoluteExcludePaths != []) or
              (collectDir.relativeExcludePaths is not None and collectDir.relativeExcludePaths != []) or
              (collectDir.excludePatterns is not None and collectDir.excludePatterns != [])):
@@ -5706,6 +5735,8 @@ class Config(object):
                   raise ValueError("Archive mode must either be set in parent collect section or individual collect directory.")
                if self.collect.ignoreFile is None and collectDir.ignoreFile is None:
                   raise ValueError("Ignore file must either be set in parent collect section or individual collect directory.")
+               if (collectDir.linkDepth is None or collectDir.linkDepth < 1) and collectDir.dereference:
+                  raise ValueError("Dereference flag is only valid when a non-zero link depth is in use.")
 
    def _validateStage(self):
       """

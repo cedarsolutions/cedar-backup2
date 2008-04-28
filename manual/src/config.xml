@@ -1125,7 +1125,8 @@
                but a set of soft links to other files and directories.
                Normally, Cedar Backup does not follow soft links, but you can
                override this behavior for individual directories using the
-               <literal>link_depth</literal> option (see below).  
+               <literal>link_depth</literal> and <literal>dereference</literal> 
+               options (see below).  
             </para>
 
             <para>
@@ -1635,11 +1636,43 @@
                               This field is optional.  If it doesn't exist,
                               the backup will assume a value of zero, meaning
                               that soft links within the collect directory will
-                              never be followed.  
+                              never be followed.
                            </para>
                            <para>
                               <emphasis>Restrictions:</emphasis> If set, must
                               be an integer &ge; 0.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>dereference</literal></term>
+                        <listitem>
+                           <para>Whether to dereference soft links.</para>
+                           <para>
+                              If this flag is set, links that are being
+                              followed will be dereferenced before being added
+                              to the backup.  The link will be added (as a
+                              link), and then the directory or file that the
+                              link points at will be added as well.  
+                           </para>
+                           <para>
+                              This value only applies to a directory where soft
+                              links are being followed (per the
+                              <literal>link_depth</literal> configuration
+                              option).  It never applies to a configured
+                              collect directory itself, only to other
+                              directories within the collect directory.
+                           </para>
+                           <para>
+                              This field is optional.  If it doesn't exist,
+                              the backup will assume that links should never be
+                              dereferenced.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> Must be a
+                              boolean (<literal>Y</literal> or
+                              <literal>N</literal>).
                            </para>
                         </listitem>
                      </varlistentry>
