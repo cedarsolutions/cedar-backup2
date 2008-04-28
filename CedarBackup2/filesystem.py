@@ -59,7 +59,7 @@ import tarfile
 # Cedar Backup modules
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 from CedarBackup2.util import AbsolutePathList, ObjectTypeList, UnorderedList, RegexList
-from CedarBackup2.util import removeKeys, displayBytes, calculateFileAge, encodePath
+from CedarBackup2.util import removeKeys, displayBytes, calculateFileAge, encodePath, dereferenceLink
 
 
 ########################################################################
@@ -358,7 +358,7 @@ class FilesystemList(list):
       logger.debug("Added directory to list: [%s]" % path)
       return 1
 
-   def addDirContents(self, path, recursive=True, addSelf=True, linkDepth=0):
+   def addDirContents(self, path, recursive=True, addSelf=True, linkDepth=0, dereference=False):
       """
       Adds the contents of a directory to the list.
 
@@ -387,6 +387,9 @@ class FilesystemList(list):
       @note: The L{excludeDirs} flag only controls whether any given directory
       path itself is added to the list once it has been discovered.  It does
       I{not} modify any behavior related to directory recursion.
+
+      @note: If you call this method I{on a link to a directory} that link will
+      never be dereferenced (it may, however, be followed).
    
       @param path: Directory path whose contents should be added to the list
       @type path: String representing a path on disk
@@ -400,6 +403,9 @@ class FilesystemList(list):
       @param linkDepth: Maximum depth of the tree at which soft links should be followed
       @type linkDepth: Integer value, where zero means not to follow any soft links
 
+      @param dereference: Indicates whether soft links, if followed, should be dereferenced
+      @type dereference: Boolean value
+
       @return: Number of items recursively added to the list
 
       @raise ValueError: If path is not a directory or does not exist.
@@ -407,9 +413,9 @@ class FilesystemList(list):
       """
       path = encodePath(path)
       path = normalizeDir(path)
-      return self._addDirContentsInternal(path, addSelf, recursive, linkDepth)
+      return self._addDirContentsInternal(path, addSelf, recursive, linkDepth, dereference)
 
-   def _addDirContentsInternal(self, path, includePath=True, recursive=True, linkDepth=0):
+   def _addDirContentsInternal(self, path, includePath=True, recursive=True, linkDepth=0, dereference=False):
       """
       Internal implementation of C{addDirContents}.
 
@@ -433,10 +439,14 @@ class FilesystemList(list):
       gets a little confused (it has a link and a directory with the same
       name).
 
+      @note: If you call this method I{on a link to a directory} that link will
+      never be dereferenced (it may, however, be followed).
+
       @param path: Directory path whose contents should be added to the list.
       @param includePath: Indicates whether to include the path as well as contents.
       @param recursive: Indicates whether directory contents should be added recursively.
       @param linkDepth: Depth of soft links that should be followed
+      @param dereference: Indicates whether soft links, if followed, should be dereferenced
 
       @return: Number of items recursively added to the list
 
@@ -465,18 +475,31 @@ class FilesystemList(list):
       for entry in os.listdir(path):
          entrypath = os.path.join(path, entry)
          if os.path.isfile(entrypath):
+            if linkDepth > 0 and dereference:
+               derefpath = dereferenceLink(entrypath)
+               if derefpath != entrypath:
+                  added += self.addFile(derefpath)
             added += self.addFile(entrypath)
          elif os.path.isdir(entrypath):
             if os.path.islink(entrypath):
-               if recursive and linkDepth > 0:
-                  newDepth = linkDepth - 1;
-                  added += self._addDirContentsInternal(entrypath, includePath=False, linkDepth=newDepth)
+               if recursive:
+                  if linkDepth > 0:
+                     newDepth = linkDepth - 1;
+                     if dereference:
+                        derefpath = dereferenceLink(entrypath)
+                        if derefpath != entrypath:
+                           added += self._addDirContentsInternal(derefpath, True, recursive, newDepth, dereference)
+                        added += self.addDir(entrypath)
+                     else:
+                        added += self._addDirContentsInternal(entrypath, False, recursive, newDepth, dereference)
+                  else:
+                     added += self.addDir(entrypath)
                else:
                   added += self.addDir(entrypath)
             else:
                if recursive:
                   newDepth = linkDepth - 1;
-                  added += self._addDirContentsInternal(entrypath, linkDepth=newDepth)
+                  added += self._addDirContentsInternal(entrypath, True, recursive, newDepth, dereference)
                else:
                   added += self.addDir(entrypath)
       return added
@@ -1221,7 +1244,7 @@ class PurgeItemList(FilesystemList):
    # Add methods
    ##############
 
-   def addDirContents(self, path, recursive=True, addSelf=True, linkDepth=0):
+   def addDirContents(self, path, recursive=True, addSelf=True, linkDepth=0, dereference=False):
       """
       Adds the contents of a directory to the list.
 
@@ -1255,6 +1278,9 @@ class PurgeItemList(FilesystemList):
       path itself is added to the list once it has been discovered.  It does
       I{not} modify any behavior related to directory recursion.
 
+      @note: If you call this method I{on a link to a directory} that link will
+      never be dereferenced (it may, however, be followed).
+
       @param path: Directory path whose contents should be added to the list
       @type path: String representing a path on disk
 
@@ -1266,6 +1292,9 @@ class PurgeItemList(FilesystemList):
       @param linkDepth: Depth of soft links that should be followed
       @type linkDepth: Integer value, where zero means not to follow any soft links
 
+      @param dereference: Indicates whether soft links, if followed, should be dereferenced
+      @type dereference: Boolean value
+
       @return: Number of items recursively added to the list
 
       @raise ValueError: If path is not a directory or does not exist.
@@ -1273,7 +1302,7 @@ class PurgeItemList(FilesystemList):
       """
       path = encodePath(path)
       path = normalizeDir(path)
-      return super(PurgeItemList, self)._addDirContentsInternal(path, False, recursive, linkDepth)
+      return super(PurgeItemList, self)._addDirContentsInternal(path, False, recursive, linkDepth, dereference)
 
 
    ##################
