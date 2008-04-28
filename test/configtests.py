@@ -2439,6 +2439,7 @@ class TestCollectDir(unittest.TestCase):
       self.failUnlessEqual(None, collectDir.archiveMode)
       self.failUnlessEqual(None, collectDir.ignoreFile)
       self.failUnlessEqual(None, collectDir.linkDepth)
+      self.failUnlessEqual(False, collectDir.dereference)
       self.failUnlessEqual(None, collectDir.absoluteExcludePaths)
       self.failUnlessEqual(None, collectDir.relativeExcludePaths)
       self.failUnlessEqual(None, collectDir.excludePatterns)
@@ -2447,12 +2448,13 @@ class TestCollectDir(unittest.TestCase):
       """
       Test constructor with all values filled in, with valid values.
       """
-      collectDir = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 2)
+      collectDir = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 2, True)
       self.failUnlessEqual("/etc/whatever", collectDir.absolutePath)
       self.failUnlessEqual("incr", collectDir.collectMode)
       self.failUnlessEqual("tar", collectDir.archiveMode)
       self.failUnlessEqual(".ignore", collectDir.ignoreFile)
       self.failUnlessEqual(2, collectDir.linkDepth)
+      self.failUnlessEqual(True, collectDir.dereference)
       self.failUnlessEqual([], collectDir.absoluteExcludePaths)
       self.failUnlessEqual([], collectDir.relativeExcludePaths)
       self.failUnlessEqual([], collectDir.excludePatterns)
@@ -2807,6 +2809,43 @@ class TestCollectDir(unittest.TestCase):
       self.failUnlessAssignRaises(ValueError, collectDir, "linkDepth", "ken")
       self.failUnlessEqual(None, collectDir.linkDepth)
 
+   def testConstructor_039(self):
+      """
+      Test assignment of dereference attribute, None value.
+      """
+      collectDir = CollectDir(dereference=True)
+      self.failUnlessEqual(True, collectDir.dereference)
+      collectDir.dereference = None
+      self.failUnlessEqual(False, collectDir.dereference)
+
+   def testConstructor_040(self):
+      """
+      Test assignment of dereference attribute, valid value (real boolean).
+      """
+      collectDir = CollectDir()
+      self.failUnlessEqual(False, collectDir.dereference)
+      collectDir.dereference = True
+      self.failUnlessEqual(True, collectDir.dereference)
+      collectDir.dereference = False
+      self.failUnlessEqual(False, collectDir.dereference)
+
+   def testConstructor_041(self):
+      """
+      Test assignment of dereference attribute, valid value (expression).
+      """
+      collectDir = CollectDir()
+      self.failUnlessEqual(False, collectDir.dereference)
+      collectDir.dereference = 0
+      self.failUnlessEqual(False, collectDir.dereference)
+      collectDir.dereference = []
+      self.failUnlessEqual(False, collectDir.dereference)
+      collectDir.dereference = None
+      self.failUnlessEqual(False, collectDir.dereference)
+      collectDir.dereference = ['a']
+      self.failUnlessEqual(True, collectDir.dereference)
+      collectDir.dereference = 3
+      self.failUnlessEqual(True, collectDir.dereference)
+
 
    ############################
    # Test comparison operators
@@ -2831,8 +2870,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two identical objects, all attributes non-None (empty
       lists).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
       self.failUnless(collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -2845,8 +2884,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two identical objects, all attributes non-None
       (non-empty lists).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one",], ["two",], ["three",], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one",], ["two",], ["three",], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one",], ["two",], ["three",], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one",], ["two",], ["three",], 1, True)
       self.failUnless(collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -2872,8 +2911,8 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, absolutePath differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1)
-      collectDir2 = CollectDir("/stuff", "incr", "tar", ".ignore", [], [], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir2 = CollectDir("/stuff", "incr", "tar", ".ignore", [], [], [], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -2900,8 +2939,8 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, collectMode differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1)
-      collectDir2 = CollectDir("/etc/whatever", "daily", "tar", ".ignore", [], [], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "daily", "tar", ".ignore", [], [], [], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -2928,8 +2967,8 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, archiveMode differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "targz", ".ignore", [], [], [], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "targz", ".ignore", [], [], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -2956,8 +2995,8 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, ignoreFile differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -3001,8 +3040,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, absoluteExcludePaths differs
       (one empty, one not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/whatever", ], [], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/whatever", ], [], [], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -3016,8 +3055,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, absoluteExcludePaths differs
       (both not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", ], [], [], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", "/something", ], [], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", ], [], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", "/something", ], [], [], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)     # note: different than standard due to unsorted list
@@ -3061,8 +3100,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, relativeExcludePaths differs
       (one empty, one not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -3076,8 +3115,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, relativeExcludePaths differs
       (both not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["two", ], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["two", ], [], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -3121,8 +3160,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, excludePatterns differs (one
       empty, one not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["pattern", ], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["pattern", ], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -3136,8 +3175,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, excludePatterns differs (both
       not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p1", ], 1)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p2", ], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p1", ], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p2", ], 1, True)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -3164,8 +3203,36 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, linkDepth differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 2)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 2, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True)
+      self.failIfEqual(collectDir1, collectDir2)
+      self.failUnless(not collectDir1 == collectDir2)
+      self.failUnless(not collectDir1 < collectDir2)
+      self.failUnless(not collectDir1 <= collectDir2)
+      self.failUnless(collectDir1 > collectDir2)
+      self.failUnless(collectDir1 >= collectDir2)
+      self.failUnless(collectDir1 != collectDir2)
+
+   def testComparison_026(self):
+      """
+      Test comparison of two differing objects, dereference differs (one None).
+      """
+      collectDir1 = CollectDir()
+      collectDir2 = CollectDir(dereference=True)
+      self.failIfEqual(collectDir1, collectDir2)
+      self.failUnless(not collectDir1 == collectDir2)
+      self.failUnless(collectDir1 < collectDir2)
+      self.failUnless(collectDir1 <= collectDir2)
+      self.failUnless(not collectDir1 > collectDir2)
+      self.failUnless(not collectDir1 >= collectDir2)
+      self.failUnless(collectDir1 != collectDir2)
+
+   def testComparison_027(self):
+      """
+      Test comparison of two differing objects, dereference differs.
+      """
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, False)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -10696,6 +10763,66 @@ class TestConfig(unittest.TestCase):
       config.peers.remotePeers[0].managedActions = ["collect", ]
       config._validatePeers()
 
+   def testValidate_078(self):
+      """
+      Test case where dereference is True but link depth is None.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff", collectMode="incr", archiveMode="tar", ignoreFile="i", linkDepth=None, dereference=True), ]
+      self.failUnlessRaises(ValueError, config._validateCollect)
+
+   def testValidate_079(self):
+      """
+      Test case where dereference is True but link depth is zero.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff", collectMode="incr", archiveMode="tar", ignoreFile="i", linkDepth=0, dereference=True), ]
+      self.failUnlessRaises(ValueError, config._validateCollect)
+
+   def testValidate_080(self):
+      """
+      Test case where dereference is False and linkDepth is None.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff", collectMode="incr", archiveMode="tar", ignoreFile="i", linkDepth=None, dereference=False), ]
+      config._validateCollect()
+
+   def testValidate_081(self):
+      """
+      Test case where dereference is None and linkDepth is None.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff", collectMode="incr", archiveMode="tar", ignoreFile="i", linkDepth=None, dereference=None), ]
+      config._validateCollect()
+
+   def testValidate_082(self):
+      """
+      Test case where dereference is False and linkDepth is zero.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff", collectMode="incr", archiveMode="tar", ignoreFile="i", linkDepth=0, dereference=False), ]
+      config._validateCollect()
+
+   def testValidate_083(self):
+      """
+      Test case where dereference is None and linkDepth is zero.
+      """
+      config = Config()
+      config.collect = CollectConfig()
+      config.collect.targetDir = "/whatever"
+      config.collect.collectDirs = [ CollectDir(absolutePath="/stuff", collectMode="incr", archiveMode="tar", ignoreFile="i", linkDepth=0, dereference=None), ]
+      config._validateCollect()
+
 
    ############################
    # Test parsing of documents
@@ -10939,6 +11066,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
@@ -11126,6 +11254,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
@@ -11193,6 +11322,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
@@ -11257,6 +11387,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
@@ -11324,6 +11455,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt") 
@@ -11479,6 +11611,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
@@ -11550,6 +11683,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")

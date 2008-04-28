@@ -127,13 +127,14 @@ def executeCollect(configPath, options, config):
          archiveMode = _getArchiveMode(config, collectDir)
          ignoreFile = _getIgnoreFile(config, collectDir)
          linkDepth = _getLinkDepth(collectDir)
+         dereference = _getDereference(collectDir)
          digestPath = _getDigestPath(config, collectDir)
          tarfilePath = _getTarfilePath(config, collectDir, archiveMode)
          (excludePaths, excludePatterns) = _getExclusions(config, collectDir)
          if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
             logger.debug("Directory meets criteria to be backed up today.")
             _collectDirectory(config, collectDir.absolutePath, tarfilePath, 
-                              collectMode, archiveMode, ignoreFile, linkDepth,
+                              collectMode, archiveMode, ignoreFile, linkDepth, dereference,
                               resetDigest, digestPath, excludePaths, excludePatterns)
          else:
             logger.debug("Directory will not be backed up, per collect mode.")
@@ -182,8 +183,8 @@ def _collectFile(config, absolutePath, tarfilePath, collectMode, archiveMode, re
 ###############################
 
 def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMode, 
-                      ignoreFile, linkDepth, resetDigest, digestPath, excludePaths, 
-                      excludePatterns):
+                      ignoreFile, linkDepth, dereference, resetDigest, digestPath, 
+                      excludePaths, excludePatterns):
    """
    Collects a configured collect directory.
    
@@ -203,6 +204,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
    @param archiveMode: Archive mode to use.
    @param ignoreFile: Ignore file to use.
    @param linkDepth: Link depth value to use.
+   @param dereference: Dereference flag to use.
    @param resetDigest: Reset digest flag.
    @param digestPath: Path to digest file on disk, if needed.
    @param excludePaths: List of absolute paths to exclude.
@@ -212,7 +214,7 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
    backupList.ignoreFile = ignoreFile
    backupList.excludePaths = excludePaths
    backupList.excludePatterns = excludePatterns
-   backupList.addDirContents(absolutePath, linkDepth=linkDepth)
+   backupList.addDirContents(absolutePath, linkDepth=linkDepth, dereference=dereference)
    _executeBackup(config, backupList, absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath)
 
 
@@ -404,6 +406,25 @@ def _getLinkDepth(item):
       linkDepth = item.linkDepth
    logger.debug("Link depth is [%d]" % linkDepth)
    return linkDepth
+
+
+############################
+# _getDereference() function
+############################
+
+def _getDereference(item):
+   """
+   Gets the dereference flag that should be used for a collect directory.
+   If possible, use the one on the directory, otherwise set a value of False.
+   @param item: C{CollectDir} object
+   @return: Ignore file to use.
+   """
+   if item.dereference is None:
+      dereference = False
+   else:
+      dereference = item.dereference
+   logger.debug("Dereference flag is [%s]" % dereference)
+   return dereference
 
 
 ############################
