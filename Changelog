@@ -1,4 +1,4 @@
-Version 2.18.0		unreleased 
+Version 2.18.0		05 May 2008
 
 	* Add the ability to dereference links when following them.
 	  - Add util.dereferenceLink() function
