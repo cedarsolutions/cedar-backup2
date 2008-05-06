@@ -1,0 +1,24 @@
+Release Procedure
+=================
+
+- Make final update to Changelog
+- Update CedarBackup2/release.py
+- Run unit tests one last time (make test)
+- Run pychecker tests one last time (make check)
+- Build the source distributions (make distrib)
+
+- Copy source package to hcoop and install it
+- Copy source package to shell.sourceforge.net and install it
+- Copy htmldocs.tar.gz to sourceforge and install it
+- FTP the source package to upload.sourceforge.net/incoming
+
+- Do a new file release at SourceForge
+- Put a new release announcement out on FreshMeat
+- Send a release email to cedar-backup-users
+
+- Build the Debian package for unstable in a chroot
+- Build the Debian package for stable in a chroot
+- Push the latest Debian packages to daystrom
+- Sync daystrom's FTP directory structure with hcoop
+- Upload the new packages to the Debian servers
+
