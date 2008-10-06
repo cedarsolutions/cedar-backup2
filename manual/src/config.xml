@@ -775,6 +775,7 @@
       &lt;type&gt;remote&lt;/type&gt;
       &lt;backup_user&gt;backup&lt;/backup_user&gt;
       &lt;collect_dir&gt;/opt/backup/collect&lt;/collect_dir&gt;
+      &lt;ignore_failures&gt;all&lt;/ignore_failures&gt;
    &lt;/peer&gt;
    &lt;peer&gt;
       &lt;name&gt;machine3&lt;/name&gt;
@@ -846,7 +847,6 @@
                         </listitem>
                      </varlistentry>
 
-
                      <varlistentry>
                         <term><literal>collect_dir</literal></term>
                         <listitem>
@@ -860,6 +860,36 @@
                            </para>
                            <para>
                               <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>ignore_failures</literal></term>
+                        <listitem>
+                           <para>Ignore failure mode for this peer</para>
+                           <para>
+                              The ignore failure mode indicates whether
+                              <quote>not ready to be staged</quote> errors
+                              should be ignored for this peer.  This option is
+                              intended to be used for peers that are up only
+                              intermittently, to cut down on the number of
+                              error emails received by the Cedar Backup
+                              administrator.
+                           </para>
+                           <para>
+                              The "none" mode means that all errors will be
+                              reported.  This is the default behavior.  The
+                              "all" mode means to ignore all failures.  The
+                              "weekly" mode means to ignore failures for a
+                              start-of-week or full backup.  The "daily" mode
+                              means to ignore failures for any backup that is
+                              not either a full backup or a start-of-week
+                              backup.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> If set, must
+                              be one of "none", "all", "daily", or "weekly".
                            </para>
                         </listitem>
                      </varlistentry>
@@ -953,6 +983,36 @@
                            </para>
                            <para>
                               <emphasis>Restrictions:</emphasis> Must be an absolute path.
+                           </para>
+                        </listitem>
+                     </varlistentry>
+
+                     <varlistentry>
+                        <term><literal>ignore_failures</literal></term>
+                        <listitem>
+                           <para>Ignore failure mode for this peer</para>
+                           <para>
+                              The ignore failure mode indicates whether
+                              <quote>not ready to be staged</quote> errors
+                              should be ignored for this peer.  This option is
+                              intended to be used for peers that are up only
+                              intermittently, to cut down on the number of
+                              error emails received by the Cedar Backup
+                              administrator.
+                           </para>
+                           <para>
+                              The "none" mode means that all errors will be
+                              reported.  This is the default behavior.  The
+                              "all" mode means to ignore all failures.  The
+                              "weekly" mode means to ignore failures for a
+                              start-of-week or full backup.  The "daily" mode
+                              means to ignore failures for any backup that is
+                              not either a full backup or a start-of-week
+                              backup.
+                           </para>
+                           <para>
+                              <emphasis>Restrictions:</emphasis> If set, must
+                              be one of "none", "all", "daily", or "weekly".
                            </para>
                         </listitem>
                      </varlistentry>

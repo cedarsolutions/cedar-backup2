@@ -3512,14 +3512,16 @@ class TestLocalPeer(unittest.TestCase):
       localPeer = LocalPeer()
       self.failUnlessEqual(None, localPeer.name)
       self.failUnlessEqual(None, localPeer.collectDir)
+      self.failUnlessEqual(None, localPeer.ignoreFailureMode)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      localPeer = LocalPeer("myname", "/whatever")
+      localPeer = LocalPeer("myname", "/whatever", "all")
       self.failUnlessEqual("myname", localPeer.name)
       self.failUnlessEqual("/whatever", localPeer.collectDir)
+      self.failUnlessEqual("all", localPeer.ignoreFailureMode)
 
    def testConstructor_003(self):
       """
@@ -3584,6 +3586,38 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnlessAssignRaises(ValueError, localPeer, "collectDir", "bogus")
       self.failUnlessEqual(None, localPeer.collectDir)
 
+   def testConstructor_010(self):
+      """
+      Test assignment of ignoreFailureMode attribute, valid values.
+      """
+      localPeer = LocalPeer()
+      self.failUnlessEqual(None, localPeer.ignoreFailureMode)
+      localPeer.ignoreFailureMode = "none"
+      self.failUnlessEqual("none", localPeer.ignoreFailureMode)
+      localPeer.ignoreFailureMode = "all"
+      self.failUnlessEqual("all", localPeer.ignoreFailureMode)
+      localPeer.ignoreFailureMode = "daily"
+      self.failUnlessEqual("daily", localPeer.ignoreFailureMode)
+      localPeer.ignoreFailureMode = "weekly"
+      self.failUnlessEqual("weekly", localPeer.ignoreFailureMode)
+
+   def testConstructor_011(self):
+      """
+      Test assignment of ignoreFailureMode attribute, invalid value.
+      """
+      localPeer = LocalPeer()
+      self.failUnlessEqual(None, localPeer.ignoreFailureMode)
+      self.failUnlessAssignRaises(ValueError, localPeer, "ignoreFailureMode", "bogus")
+
+   def testConstructor_012(self):
+      """
+      Test assignment of ignoreFailureMode attribute, None value.
+      """
+      localPeer = LocalPeer()
+      self.failUnlessEqual(None, localPeer.ignoreFailureMode)
+      localPeer.ignoreFailureMode = None;
+      self.failUnlessEqual(None, localPeer.ignoreFailureMode)
+
 
    ############################
    # Test comparison operators
@@ -3607,8 +3641,8 @@ class TestLocalPeer(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      localPeer1 = LocalPeer("myname", "/etc/stuff")
-      localPeer2 = LocalPeer("myname", "/etc/stuff")
+      localPeer1 = LocalPeer("myname", "/etc/stuff", "all")
+      localPeer2 = LocalPeer("myname", "/etc/stuff", "all")
       self.failUnless(localPeer1 == localPeer2)
       self.failUnless(not localPeer1 < localPeer2)
       self.failUnless(localPeer1 <= localPeer2)
@@ -3634,8 +3668,8 @@ class TestLocalPeer(unittest.TestCase):
       """
       Test comparison of two differing objects, name differs.
       """
-      localPeer1 = LocalPeer("name", "/etc/stuff")
-      localPeer2 = LocalPeer("name", "/etc/whatever")
+      localPeer1 = LocalPeer("name", "/etc/stuff", "all")
+      localPeer2 = LocalPeer("name", "/etc/whatever", "all")
       self.failIfEqual(localPeer1, localPeer2)
       self.failUnless(not localPeer1 == localPeer2)
       self.failUnless(localPeer1 < localPeer2)
@@ -3662,8 +3696,36 @@ class TestLocalPeer(unittest.TestCase):
       """
       Test comparison of two differing objects, collectDir differs.
       """
-      localPeer1 = LocalPeer("name2", "/etc/stuff")
-      localPeer2 = LocalPeer("name1", "/etc/stuff")
+      localPeer1 = LocalPeer("name2", "/etc/stuff", "all")
+      localPeer2 = LocalPeer("name1", "/etc/stuff", "all")
+      self.failIfEqual(localPeer1, localPeer2)
+      self.failUnless(not localPeer1 == localPeer2)
+      self.failUnless(not localPeer1 < localPeer2)
+      self.failUnless(not localPeer1 <= localPeer2)
+      self.failUnless(localPeer1 > localPeer2)
+      self.failUnless(localPeer1 >= localPeer2)
+      self.failUnless(localPeer1 != localPeer2)
+
+   def testComparison_008(self):
+      """
+      Test comparison of two differing objects, ignoreFailureMode differs (one None).
+      """
+      localPeer1 = LocalPeer()
+      localPeer2 = LocalPeer(ignoreFailureMode="all")
+      self.failIfEqual(localPeer1, localPeer2)
+      self.failUnless(not localPeer1 == localPeer2)
+      self.failUnless(localPeer1 < localPeer2)
+      self.failUnless(localPeer1 <= localPeer2)
+      self.failUnless(not localPeer1 > localPeer2)
+      self.failUnless(not localPeer1 >= localPeer2)
+      self.failUnless(localPeer1 != localPeer2)
+
+   def testComparison_009(self):
+      """
+      Test comparison of two differing objects, collectDir differs.
+      """
+      localPeer1 = LocalPeer("name1", "/etc/stuff", "none")
+      localPeer2 = LocalPeer("name1", "/etc/stuff", "all")
       self.failIfEqual(localPeer1, localPeer2)
       self.failUnless(not localPeer1 == localPeer2)
       self.failUnless(not localPeer1 < localPeer2)
@@ -3720,12 +3782,13 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(None, remotePeer.cbackCommand)
       self.failUnlessEqual(False, remotePeer.managed)
       self.failUnlessEqual(None, remotePeer.managedActions)
+      self.failUnlessEqual(None, remotePeer.ignoreFailureMode)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      remotePeer = RemotePeer("myname", "/stuff", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer = RemotePeer("myname", "/stuff", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failUnlessEqual("myname", remotePeer.name)
       self.failUnlessEqual("/stuff", remotePeer.collectDir)
       self.failUnlessEqual("backup", remotePeer.remoteUser)
@@ -3734,6 +3797,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual("cback", remotePeer.cbackCommand)
       self.failUnlessEqual(True, remotePeer.managed)
       self.failUnlessEqual(["collect", ], remotePeer.managedActions)
+      self.failUnlessEqual("all", remotePeer.ignoreFailureMode)
 
    def testConstructor_003(self):
       """
@@ -3977,6 +4041,38 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(None, remotePeer.managedActions)
       self.failUnlessAssignRaises(ValueError, remotePeer, "managedActions", ["ken", "dash-word", ])
 
+   def testConstructor_029(self):
+      """
+      Test assignment of ignoreFailureMode attribute, valid values.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.ignoreFailureMode)
+      remotePeer.ignoreFailureMode = "none"
+      self.failUnlessEqual("none", remotePeer.ignoreFailureMode)
+      remotePeer.ignoreFailureMode = "all"
+      self.failUnlessEqual("all", remotePeer.ignoreFailureMode)
+      remotePeer.ignoreFailureMode = "daily"
+      self.failUnlessEqual("daily", remotePeer.ignoreFailureMode)
+      remotePeer.ignoreFailureMode = "weekly"
+      self.failUnlessEqual("weekly", remotePeer.ignoreFailureMode)
+
+   def testConstructor_030(self):
+      """
+      Test assignment of ignoreFailureMode attribute, invalid value.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.ignoreFailureMode)
+      self.failUnlessAssignRaises(ValueError, remotePeer, "ignoreFailureMode", "bogus")
+
+   def testConstructor_031(self):
+      """
+      Test assignment of ignoreFailureMode attribute, None value.
+      """
+      remotePeer = RemotePeer()
+      self.failUnlessEqual(None, remotePeer.ignoreFailureMode)
+      remotePeer.ignoreFailureMode = None;
+      self.failUnlessEqual(None, remotePeer.ignoreFailureMode)
+
 
    ############################
    # Test comparison operators
@@ -4000,8 +4096,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failUnless(remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
       self.failUnless(remotePeer1 <= remotePeer2)
@@ -4027,8 +4123,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, name differs.
       """
-      remotePeer1 = RemotePeer("name1", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
-      remotePeer2 = RemotePeer("name2", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name1", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
+      remotePeer2 = RemotePeer("name2", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
@@ -4055,8 +4151,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, collectDir differs.
       """
-      remotePeer1 = RemotePeer("name", "/etc", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
@@ -4083,8 +4179,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, remoteUser differs.
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "spot", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "spot", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
@@ -4111,8 +4207,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, rcpCommand differs.
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -2 -B", "ssh", "cback", True, [ "collect", ])
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -2 -B", "ssh", "cback", True, [ "collect", ], "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
@@ -4139,8 +4235,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, rshCommand differs.
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh2", "cback", True, [ "collect", ])
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh1", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh2", "cback", True, [ "collect", ], "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh1", "cback", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
@@ -4167,8 +4263,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, cbackCommand differs.
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback2", True, [ "collect", ])
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback1", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback2", True, [ "collect", ], "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback1", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
@@ -4195,8 +4291,8 @@ class TestRemotePeer(unittest.TestCase):
       """
       Test comparison of two differing objects, managed differs.
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", False, [ "collect", ])
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", False, [ "collect", ], "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
@@ -4210,8 +4306,8 @@ class TestRemotePeer(unittest.TestCase):
       Test comparison of two differing objects, managedActions differs (one
       None, one empty).
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, None)
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, None, "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
@@ -4225,8 +4321,8 @@ class TestRemotePeer(unittest.TestCase):
       Test comparison of two differing objects, managedActions differs (one
       None, one not empty).
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, None)
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, None, "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
@@ -4240,8 +4336,8 @@ class TestRemotePeer(unittest.TestCase):
       Test comparison of two differing objects, managedActions differs (one
       empty, one not empty).
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [] )
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [], "all" )
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(remotePeer1 < remotePeer2)
@@ -4255,14 +4351,42 @@ class TestRemotePeer(unittest.TestCase):
       Test comparison of two differing objects, managedActions differs (both
       not empty).
       """
-      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "purge", ])
-      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ])
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "purge", ], "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
       self.failIfEqual(remotePeer1, remotePeer2)
       self.failUnless(not remotePeer1 == remotePeer2)
       self.failUnless(not remotePeer1 < remotePeer2)
       self.failUnless(not remotePeer1 <= remotePeer2)
       self.failUnless(remotePeer1 > remotePeer2)
       self.failUnless(remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_021(self):
+      """
+      Test comparison of two differing objects, ignoreFailureMode differs (one None).
+      """
+      remotePeer1 = RemotePeer()
+      remotePeer2 = RemotePeer(ignoreFailureMode="all")
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
+      self.failUnless(remotePeer1 != remotePeer2)
+
+   def testComparison_022(self):
+      """
+      Test comparison of two differing objects, ignoreFailureMode differs.
+      """
+      remotePeer1 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "all")
+      remotePeer2 = RemotePeer("name", "/etc/stuff/tmp/X11", "backup", "scp -1 -B", "ssh", "cback", True, [ "collect", ], "none")
+      self.failIfEqual(remotePeer1, remotePeer2)
+      self.failUnless(not remotePeer1 == remotePeer2)
+      self.failUnless(remotePeer1 < remotePeer2)
+      self.failUnless(remotePeer1 <= remotePeer2)
+      self.failUnless(not remotePeer1 > remotePeer2)
+      self.failUnless(not remotePeer1 >= remotePeer2)
       self.failUnless(remotePeer1 != remotePeer2)
 
 
@@ -11120,7 +11244,7 @@ class TestConfig(unittest.TestCase):
       expected.stage.remotePeers = []
       expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
       expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
-      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       self.failUnlessEqual(expected, config)
 
@@ -11268,7 +11392,7 @@ class TestConfig(unittest.TestCase):
       expected.stage.remotePeers = []
       expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
       expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
-      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.store = StoreConfig()
       expected.store.sourceDir = "/opt/backup/staging"
@@ -11336,7 +11460,7 @@ class TestConfig(unittest.TestCase):
       expected.stage.remotePeers = []
       expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
       expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
-      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.store = StoreConfig()
       expected.store.sourceDir = "/opt/backup/staging"
@@ -11401,7 +11525,7 @@ class TestConfig(unittest.TestCase):
       expected.stage.remotePeers = []
       expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
       expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
-      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.store = StoreConfig()
       expected.store.sourceDir = "/opt/backup/staging"
@@ -11469,7 +11593,7 @@ class TestConfig(unittest.TestCase):
       expected.stage.remotePeers = []
       expected.stage.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
       expected.stage.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
-      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.stage.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.stage.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.store = StoreConfig()
       expected.store.sourceDir = "/opt/backup/staging"
@@ -11597,7 +11721,7 @@ class TestConfig(unittest.TestCase):
       expected.peers.remotePeers = []
       expected.peers.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
       expected.peers.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
-      expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.peers.remotePeers.append(RemotePeer("machine4", "/aa", remoteUser="someone", rcpCommand="scp -B", rshCommand="ssh", cbackCommand="cback", managed=True, managedActions=None))
       expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge",]))
@@ -11669,7 +11793,7 @@ class TestConfig(unittest.TestCase):
       expected.peers.remotePeers = []
       expected.peers.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
       expected.peers.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
-      expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.peers.remotePeers.append(RemotePeer("machine4", "/aa", remoteUser="someone", rcpCommand="scp -B", rshCommand="ssh", cbackCommand="cback", managed=True, managedActions=None))
       expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge",]))
@@ -11750,7 +11874,7 @@ class TestConfig(unittest.TestCase):
       expected.peers.remotePeers = []
       expected.peers.localPeers.append(LocalPeer("machine1-1", "/opt/backup/collect"))
       expected.peers.localPeers.append(LocalPeer("machine1-2", "/var/backup"))
-      expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect"))
+      expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.peers.remotePeers.append(RemotePeer("machine4", "/aa", remoteUser="someone", rcpCommand="scp -B", rshCommand="ssh", cbackCommand="cback", managed=True, managedActions=None))
       expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge",]))

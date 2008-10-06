@@ -2,6 +2,7 @@ Version 2.18.1		unreleased
 
 	* Fix a few typos in the CREDITS file.
 	* Update README to properly reference SourceForge site.
+	* Add <ignore_failures> option to peer configuration.
 
 Version 2.18.0		05 May 2008
 

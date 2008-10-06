@@ -16,6 +16,7 @@
          <name>machine2</name>
          <type>remote</type>
          <collect_dir>/backup/collect</collect_dir>
+         <ignore_failures>all</ignore_failures>
       </peer>
       <peer>
          <name>machine3</name>
