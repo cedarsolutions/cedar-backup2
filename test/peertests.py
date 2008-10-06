@@ -99,7 +99,7 @@ import tempfile
 import tarfile
 import getpass
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
-from CedarBackup2.testutil import getMaskAsMode, getLogin, runningAsRoot
+from CedarBackup2.testutil import getMaskAsMode, getLogin, runningAsRoot, failUnlessAssignRaises
 from CedarBackup2.testutil import platformSupportsPermissions, platformWindows
 from CedarBackup2.peer import LocalPeer, RemotePeer
 from CedarBackup2.peer import DEF_RCP_COMMAND, DEF_RSH_COMMAND
@@ -178,6 +178,10 @@ class TestLocalPeer(unittest.TestCase):
       """Calls buildPath on components and then returns file mode for the file."""
       return stat.S_IMODE(os.stat(self.buildPath(components)).st_mode)
 
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
 
    ###########################
    # Test basic functionality
@@ -197,9 +201,11 @@ class TestLocalPeer(unittest.TestCase):
       """
       name = "peer1"
       collectDir = "/absolute/path/name"
-      peer = LocalPeer(name, collectDir)
+      ignoreFailureMode = "all"
+      peer = LocalPeer(name, collectDir, ignoreFailureMode)
       self.failUnlessEqual(name, peer.name)
       self.failUnlessEqual(collectDir, peer.collectDir)
+      self.failUnlessEqual(ignoreFailureMode, peer.ignoreFailureMode)
 
    def testBasic_003(self):
       """
@@ -211,6 +217,23 @@ class TestLocalPeer(unittest.TestCase):
       peer = LocalPeer(name, collectDir)
       self.failUnlessEqual(name, peer.name)
       self.failUnlessEqual(collectDir, peer.collectDir)
+
+   def testBasic_004(self):
+      """
+      Make sure assignment works for all valid failure modes.
+      """
+      name = "peer1"
+      collectDir = "/absolute/path/name"
+      ignoreFailureMode = "all"
+      peer = LocalPeer(name, collectDir, ignoreFailureMode)
+      self.failUnlessEqual("all", peer.ignoreFailureMode)
+      peer.ignoreFailureMode = "none"
+      self.failUnlessEqual("none", peer.ignoreFailureMode)
+      peer.ignoreFailureMode = "daily"
+      self.failUnlessEqual("daily", peer.ignoreFailureMode)
+      peer.ignoreFailureMode = "weekly"
+      self.failUnlessEqual("weekly", peer.ignoreFailureMode)
+      self.failUnlessAssignRaises(ValueError, peer, "ignoreFailureMode", "bogus") 
 
 
    ###############################
@@ -694,6 +717,10 @@ class TestRemotePeer(unittest.TestCase):
       """Calls buildPath on components and then returns file mode for the file."""
       return stat.S_IMODE(os.stat(self.buildPath(components)).st_mode)
 
+   def failUnlessAssignRaises(self, exception, object, property, value):
+      """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
+      failUnlessAssignRaises(self, exception, object, property, value)
+
 
    ############################
    # Tests basic functionality
@@ -734,6 +761,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(None, peer.cbackCommand)
       self.failUnlessEqual(DEF_RCP_COMMAND, peer._rcpCommandList)
       self.failUnlessEqual(DEF_RSH_COMMAND, peer._rshCommandList)
+      self.failUnlessEqual(None, peer.ignoreFailureMode)
 
    def testBasic_003(self):
       """
@@ -832,6 +860,20 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnlessEqual(None, peer.rcpCommand)
       self.failUnlessEqual(None, peer.rshCommand)
       self.failUnlessEqual(cbackCommand, peer.cbackCommand)
+
+   def testBasic_008(self):
+      """
+      Make sure assignment works for all valid failure modes.
+      """
+      peer = RemotePeer(name="name", remoteUser="user", ignoreFailureMode="all")
+      self.failUnlessEqual("all", peer.ignoreFailureMode)
+      peer.ignoreFailureMode = "none"
+      self.failUnlessEqual("none", peer.ignoreFailureMode)
+      peer.ignoreFailureMode = "daily"
+      self.failUnlessEqual("daily", peer.ignoreFailureMode)
+      peer.ignoreFailureMode = "weekly"
+      self.failUnlessEqual("weekly", peer.ignoreFailureMode)
+      self.failUnlessAssignRaises(ValueError, peer, "ignoreFailureMode", "bogus") 
 
 
    ###############################

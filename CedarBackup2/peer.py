@@ -63,6 +63,7 @@ import re
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import splitCommandLine, encodePath
+from CedarBackup2.config import VALID_FAILURE_MODES
 
 
 ########################################################################
@@ -110,7 +111,7 @@ class LocalPeer(object):
    # Constructor
    ##############
 
-   def __init__(self, name, collectDir):
+   def __init__(self, name, collectDir, ignoreFailureMode=None):
       """
       Initializes a local backup peer.
 
@@ -125,13 +126,18 @@ class LocalPeer(object):
       @param collectDir: Path to the peer's collect directory 
       @type collectDir: String representing an absolute local path on disk
 
+      @param ignoreFailureMode: Ignore failure mode for this peer
+      @type ignoreFailureMode: One of VALID_FAILURE_MODES
+
       @raise ValueError: If the name is empty.
       @raise ValueError: If collect directory is not an absolute path.
       """
       self._name = None
       self._collectDir = None
+      self._ignoreFailureMode = None
       self.name = name
       self.collectDir = collectDir
+      self.ignoreFailureMode = ignoreFailureMode
 
 
    #############
@@ -172,8 +178,26 @@ class LocalPeer(object):
       """
       return self._collectDir
 
+   def _setIgnoreFailureMode(self, value):
+      """
+      Property target used to set the ignoreFailure mode.
+      If not C{None}, the mode must be one of the values in L{VALID_FAILURE_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_FAILURE_MODES:
+            raise ValueError("Ignore failure mode must be one of %s." % VALID_FAILURE_MODES)
+      self._ignoreFailureMode = value
+
+   def _getIgnoreFailureMode(self):
+      """
+      Property target used to get the ignoreFailure mode.
+      """
+      return self._ignoreFailureMode 
+
    name = property(_getName, _setName, None, "Name of the peer.")
    collectDir = property(_getCollectDir, _setCollectDir, None, "Path to the peer's collect directory (an absolute local path).")
+   ignoreFailureMode = property(_getIgnoreFailureMode, _setIgnoreFailureMode, None, "Ignore failure mode for peer.")
 
 
    #################
@@ -437,7 +461,8 @@ class RemotePeer(object):
    ##############
 
    def __init__(self, name=None, collectDir=None, workingDir=None, remoteUser=None, 
-                rcpCommand=None, localUser=None, rshCommand=None, cbackCommand=None):
+                rcpCommand=None, localUser=None, rshCommand=None, cbackCommand=None,
+                ignoreFailureMode=None):
       """
       Initializes a remote backup peer.
 
@@ -471,6 +496,9 @@ class RemotePeer(object):
       @param cbackCommand: A chack-compatible command to use for executing managed actions
       @type cbackCommand: String representing a system command including required arguments
 
+      @param ignoreFailureMode: Ignore failure mode for this peer
+      @type ignoreFailureMode: One of VALID_FAILURE_MODES
+
       @raise ValueError: If collect directory is not an absolute path
       """
       self._name = None
@@ -483,6 +511,7 @@ class RemotePeer(object):
       self._rshCommand = None
       self._rshCommandList = None
       self._cbackCommand = None
+      self._ignoreFailureMode = None
       self.name = name
       self.collectDir = collectDir
       self.workingDir = workingDir
@@ -491,6 +520,7 @@ class RemotePeer(object):
       self.rcpCommand = rcpCommand
       self.rshCommand = rshCommand
       self.cbackCommand = cbackCommand
+      self.ignoreFailureMode = ignoreFailureMode
 
 
    #############
@@ -671,6 +701,23 @@ class RemotePeer(object):
       """
       return self._cbackCommand
 
+   def _setIgnoreFailureMode(self, value):
+      """
+      Property target used to set the ignoreFailure mode.
+      If not C{None}, the mode must be one of the values in L{VALID_FAILURE_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_FAILURE_MODES:
+            raise ValueError("Ignore failure mode must be one of %s." % VALID_FAILURE_MODES)
+      self._ignoreFailureMode = value
+
+   def _getIgnoreFailureMode(self):
+      """
+      Property target used to get the ignoreFailure mode.
+      """
+      return self._ignoreFailureMode 
+
    name = property(_getName, _setName, None, "Name of the peer (a valid DNS hostname).")
    collectDir = property(_getCollectDir, _setCollectDir, None, "Path to the peer's collect directory (an absolute local path).")
    workingDir = property(_getWorkingDir, _setWorkingDir, None, "Path to the peer's working directory (an absolute local path).")
@@ -679,6 +726,7 @@ class RemotePeer(object):
    rcpCommand = property(_getRcpCommand, _setRcpCommand, None, "An rcp-compatible copy command to use for copying files.")
    rshCommand = property(_getRshCommand, _setRshCommand, None, "An rsh-compatible command to use for remote shells to the peer.")
    cbackCommand = property(_getCbackCommand, _setCbackCommand, None, "A chack-compatible command to use for executing managed actions.")
+   ignoreFailureMode = property(_getIgnoreFailureMode, _setIgnoreFailureMode, None, "Ignore failure mode for peer.")
 
 
    #################
