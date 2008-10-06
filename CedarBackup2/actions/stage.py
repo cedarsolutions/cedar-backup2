@@ -253,7 +253,7 @@ def _getLocalPeers(config):
       configPeers = config.peers.localPeers
    if configPeers is not None:
       for peer in configPeers:
-         localPeer = LocalPeer(peer.name, peer.collectDir)
+         localPeer = LocalPeer(peer.name, peer.collectDir, peer.ignoreFailureMode)
          localPeers.append(localPeer)
          logger.debug("Found local peer: [%s]" % localPeer.name)
    return localPeers
@@ -283,7 +283,7 @@ def _getRemotePeers(config):
          localUser = _getLocalUser(config)
          rcpCommand = _getRcpCommand(config, peer)
          remotePeer = RemotePeer(peer.name, peer.collectDir, config.options.workingDir,
-                                 remoteUser, rcpCommand, localUser)
+                                 remoteUser, rcpCommand, localUser, peer.ignoreFailureMode)
          remotePeers.append(remotePeer)
          logger.debug("Found remote peer: [%s]" % remotePeer.name)
    return remotePeers
