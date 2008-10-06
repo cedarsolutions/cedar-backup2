@@ -54,7 +54,7 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.peer import RemotePeer, LocalPeer
-from CedarBackup2.util import getUidGid, changeOwnership
+from CedarBackup2.util import getUidGid, changeOwnership, isStartOfWeek
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR
 from CedarBackup2.actions.util import writeIndicatorFile
 
@@ -111,7 +111,7 @@ def executeStage(configPath, options, config):
    stagingDirs = _createStagingDirs(config, dailyDir, allPeers)
    for peer in allPeers:
       logger.info("Staging peer [%s]." % peer.name)
-      ignoreFailures = _getIgnoreFailuresFlag(options, peer)
+      ignoreFailures = _getIgnoreFailuresFlag(options, config, peer)
       if not peer.checkCollectIndicator():
          if not ignoreFailures:
             logger.error("Peer [%s] was not ready to be staged." % peer.name)
@@ -194,13 +194,15 @@ def _createStagingDirs(config, dailyDir, peers):
 # _getIgnoreFailuresFlag() function
 ####################################
 
-def _getIgnoreFailuresFlag(options, peer):
+def _getIgnoreFailuresFlag(options, config, peer):
    """
-   Gets the ignore failures flag based on options and peer configuration.
+   Gets the ignore failures flag based on options, configuration, and peer.
    @param options: Options object
-   @param peer: Peer configuration to check
+   @param config: Configuration object
+   @param peer: Peer to check
    @return: Whether to ignore stage failures for this peer
    """
+   logger.debug("Ignore failure mode for this peer: %s" % peer.ignoreFailureMode)
    if peer.ignoreFailureMode is None or peer.ignoreFailureMode == "none":
       return False
    elif peer.ignoreFailureMode == "all":
@@ -283,7 +285,8 @@ def _getRemotePeers(config):
          localUser = _getLocalUser(config)
          rcpCommand = _getRcpCommand(config, peer)
          remotePeer = RemotePeer(peer.name, peer.collectDir, config.options.workingDir,
-                                 remoteUser, rcpCommand, localUser, peer.ignoreFailureMode)
+                                 remoteUser, rcpCommand, localUser, 
+                                 ignoreFailureMode=peer.ignoreFailureMode)
          remotePeers.append(remotePeer)
          logger.debug("Found remote peer: [%s]" % remotePeer.name)
    return remotePeers
