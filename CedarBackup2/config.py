@@ -272,6 +272,7 @@ VALID_COMPRESS_MODES  = [ "none", "gzip", "bzip2", ]
 VALID_ORDER_MODES     = [ "index", "dependency", ]
 VALID_BLANK_MODES     = [ "daily", "weekly", ]
 VALID_BYTE_UNITS      = [ UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES, ] 
+VALID_FAILURE_MODES   = [ "none", "all", "daily", "weekly", ]
 
 REWRITABLE_MEDIA_TYPES = [ "cdrw-74", "cdrw-80", "dvd+rw", ]
 
@@ -1794,29 +1795,33 @@ class LocalPeer(object):
 
       - The peer name must be a non-empty string.
       - The collect directory must be an absolute path.
+      - The ignore failure mode must be one of the values in L{VALID_FAILURE_MODES}.
    
    @sort: __init__, __repr__, __str__, __cmp__, name, collectDir
    """
 
-   def __init__(self, name=None, collectDir=None):
+   def __init__(self, name=None, collectDir=None, ignoreFailureMode=None):
       """
       Constructor for the C{LocalPeer} class.
 
       @param name: Name of the peer, typically a valid hostname.
       @param collectDir: Collect directory to stage files from on peer.
+      @param ignoreFailureMode: Ignore failure mode for peer.
 
       @raise ValueError: If one of the values is invalid.
       """
       self._name = None
       self._collectDir = None
+      self._ignoreFailureMode = None
       self.name = name
       self.collectDir = collectDir
+      self.ignoreFailureMode = ignoreFailureMode
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "LocalPeer(%s, %s)" % (self.name, self.collectDir)
+      return "LocalPeer(%s, %s, %s)" % (self.name, self.collectDir, self.ignoreFailureMode)
 
    def __str__(self):
       """
@@ -1839,6 +1844,11 @@ class LocalPeer(object):
             return 1
       if self._collectDir != other._collectDir:
          if self._collectDir < other._collectDir:
+            return -1
+         else:
+            return 1
+      if self._ignoreFailureMode != other._ignoreFailureMode:
+         if self._ignoreFailureMode < other._ignoreFailureMode:
             return -1
          else:
             return 1
@@ -1880,8 +1890,26 @@ class LocalPeer(object):
       """
       return self._collectDir
 
+   def _setIgnoreFailureMode(self, value):
+      """
+      Property target used to set the ignoreFailure mode.
+      If not C{None}, the mode must be one of the values in L{VALID_FAILURE_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_FAILURE_MODES:
+            raise ValueError("Ignore failure mode must be one of %s." % VALID_FAILURE_MODES)
+      self._ignoreFailureMode = value
+
+   def _getIgnoreFailureMode(self):
+      """
+      Property target used to get the ignoreFailure mode.
+      """
+      return self._ignoreFailureMode
+
    name = property(_getName, _setName, None, "Name of the peer, typically a valid hostname.")
    collectDir = property(_getCollectDir, _setCollectDir, None, "Collect directory to stage files from on peer.")
+   ignoreFailureMode = property(_getIgnoreFailureMode, _setIgnoreFailureMode, None, "Ignore failure mode for peer.")
 
 
 ########################################################################
@@ -1908,13 +1936,14 @@ class RemotePeer(object):
       - The rsh command must be a non-empty string.
       - The cback command must be a non-empty string.
       - Any managed action name must be a non-empty string matching C{ACTION_NAME_REGEX}
+      - The ignore failure mode must be one of the values in L{VALID_FAILURE_MODES}.
 
    @sort: __init__, __repr__, __str__, __cmp__, name, collectDir, remoteUser, rcpCommand
    """
 
    def __init__(self, name=None, collectDir=None, remoteUser=None, 
                 rcpCommand=None, rshCommand=None, cbackCommand=None, 
-                managed=False, managedActions=None):
+                managed=False, managedActions=None, ignoreFailureMode=None):
       """
       Constructor for the C{RemotePeer} class.
 
@@ -1926,6 +1955,7 @@ class RemotePeer(object):
       @param cbackCommand: Overridden cback-compatible command to use on remote peer.
       @param managed: Indicates whether this is a managed peer.
       @param managedActions: Overridden set of actions that are managed on the peer.
+      @param ignoreFailureMode: Ignore failure mode for peer.
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -1937,6 +1967,7 @@ class RemotePeer(object):
       self._cbackCommand = None
       self._managed = None
       self._managedActions = None
+      self._ignoreFailureMode = None
       self.name = name
       self.collectDir = collectDir
       self.remoteUser = remoteUser
@@ -1945,14 +1976,15 @@ class RemotePeer(object):
       self.cbackCommand = cbackCommand
       self.managed = managed
       self.managedActions = managedActions
+      self.ignoreFailureMode = ignoreFailureMode
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "RemotePeer(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.name, self.collectDir, self.remoteUser, 
-                                                             self.rcpCommand, self.rshCommand, self.cbackCommand,
-                                                             self.managed, self.managedActions)
+      return "RemotePeer(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.name, self.collectDir, self.remoteUser, 
+                                                                 self.rcpCommand, self.rshCommand, self.cbackCommand,
+                                                                 self.managed, self.managedActions, self.ignoreFailureMode)
 
    def __str__(self):
       """
@@ -2005,6 +2037,11 @@ class RemotePeer(object):
             return 1
       if self._managedActions != other._managedActions:
          if self._managedActions < other._managedActions:
+            return -1
+         else:
+            return 1
+      if self._ignoreFailureMode != other._ignoreFailureMode:
+         if self._ignoreFailureMode < other._ignoreFailureMode:
             return -1
          else:
             return 1
@@ -2152,6 +2189,23 @@ class RemotePeer(object):
       """
       return self._managedActions
 
+   def _setIgnoreFailureMode(self, value):
+      """
+      Property target used to set the ignoreFailure mode.
+      If not C{None}, the mode must be one of the values in L{VALID_FAILURE_MODES}.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is not None:
+         if value not in VALID_FAILURE_MODES:
+            raise ValueError("Ignore failure mode must be one of %s." % VALID_FAILURE_MODES)
+      self._ignoreFailureMode = value
+
+   def _getIgnoreFailureMode(self):
+      """
+      Property target used to get the ignoreFailure mode.
+      """
+      return self._ignoreFailureMode
+
    name = property(_getName, _setName, None, "Name of the peer, must be a valid hostname.")
    collectDir = property(_getCollectDir, _setCollectDir, None, "Collect directory to stage files from on peer.")
    remoteUser = property(_getRemoteUser, _setRemoteUser, None, "Name of backup user on remote peer.")
@@ -2160,6 +2214,7 @@ class RemotePeer(object):
    cbackCommand = property(_getCbackCommand, _setCbackCommand, None, "Overridden cback-compatible command to use on remote peer.")
    managed = property(_getManaged, _setManaged, None, "Indicates whether this is a managed peer.")
    managedActions = property(_getManagedActions, _setManagedActions, None, "Overridden set of actions that are managed on the peer.")
+   ignoreFailureMode = property(_getIgnoreFailureMode, _setIgnoreFailureMode, None, "Ignore failure mode for peer.")
 
 
 ########################################################################
@@ -4846,6 +4901,7 @@ class Config(object):
                localPeer = LocalPeer()
                localPeer.name = readString(entry, "name")
                localPeer.collectDir = readString(entry, "collect_dir")
+               localPeer.ignoreFailureMode = readString(entry, "ignore_failures")
                localPeers.append(localPeer)
             elif peerType == "remote":
                remotePeer = RemotePeer()
@@ -4855,6 +4911,7 @@ class Config(object):
                remotePeer.rcpCommand = readString(entry, "rcp_command")
                remotePeer.rshCommand = readString(entry, "rsh_command")
                remotePeer.cbackCommand = readString(entry, "cback_command")
+               remotePeer.ignoreFailureMode = readString(entry, "ignore_failures")
                remotePeer.managed = readBoolean(entry, "managed")
                managedActions = readString(entry, "managed_actions")
                remotePeer.managedActions = Config._parseCommaSeparatedString(managedActions)
@@ -5443,8 +5500,9 @@ class Config(object):
 
       We add the following fields to the document::
 
-         name        peer/name
-         collectDir  peer/collect_dir
+         name                peer/name
+         collectDir          peer/collect_dir
+         ignoreFailureMode   peer/ignore_failures
 
       Additionally, C{peer/type} is filled in with C{"local"}, since this is a
       local peer.
@@ -5464,6 +5522,7 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "name", localPeer.name)
          addStringNode(xmlDom, sectionNode, "type", "local")
          addStringNode(xmlDom, sectionNode, "collect_dir", localPeer.collectDir)
+         addStringNode(xmlDom, sectionNode, "ignore_failures", localPeer.ignoreFailureMode)
    _addLocalPeer = staticmethod(_addLocalPeer)
 
    def _addRemotePeer(xmlDom, parentNode, remotePeer):
@@ -5472,15 +5531,16 @@ class Config(object):
 
       We add the following fields to the document::
 
-         name            peer/name
-         collectDir      peer/collect_dir
-         remoteUser      peer/backup_user
-         rcpCommand      peer/rcp_command
-         rcpCommand      peer/rcp_command
-         rshCommand      peer/rsh_command
-         cbackCommand    peer/cback_command
-         managed         peer/managed
-         managedActions  peer/managed_actions
+         name                peer/name
+         collectDir          peer/collect_dir
+         remoteUser          peer/backup_user
+         rcpCommand          peer/rcp_command
+         rcpCommand          peer/rcp_command
+         rshCommand          peer/rsh_command
+         cbackCommand        peer/cback_command
+         ignoreFailureMode   peer/ignore_failures
+         managed             peer/managed
+         managedActions      peer/managed_actions
 
       Additionally, C{peer/type} is filled in with C{"remote"}, since this is a
       remote peer.
@@ -5504,6 +5564,7 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "rcp_command", remotePeer.rcpCommand)
          addStringNode(xmlDom, sectionNode, "rsh_command", remotePeer.rshCommand)
          addStringNode(xmlDom, sectionNode, "cback_command", remotePeer.cbackCommand)
+         addStringNode(xmlDom, sectionNode, "ignore_failures", remotePeer.ignoreFailureMode)
          addBooleanNode(xmlDom, sectionNode, "managed", remotePeer.managed)
          managedActions = Config._buildCommaSeparatedString(remotePeer.managedActions)
          addStringNode(xmlDom, sectionNode, "managed_actions", managedActions)

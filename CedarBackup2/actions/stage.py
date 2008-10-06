@@ -111,8 +111,12 @@ def executeStage(configPath, options, config):
    stagingDirs = _createStagingDirs(config, dailyDir, allPeers)
    for peer in allPeers:
       logger.info("Staging peer [%s]." % peer.name)
+      ignoreFailures = _getIgnoreFailuresFlag(options, peer)
       if not peer.checkCollectIndicator():
-         logger.error("Peer [%s] was not ready to be staged." % peer.name)
+         if not ignoreFailures:
+            logger.error("Peer [%s] was not ready to be staged." % peer.name)
+         else:
+            logger.info("Peer [%s] was not ready to be staged." % peer.name)
          continue
       logger.debug("Found collect indicator.")
       targetDir = stagingDirs[peer.name]
@@ -185,6 +189,28 @@ def _createStagingDirs(config, dailyDir, peers):
 ########################################################################
 # Private attribute "getter" functions
 ########################################################################
+
+####################################
+# _getIgnoreFailuresFlag() function
+####################################
+
+def _getIgnoreFailuresFlag(options, peer):
+   """
+   Gets the ignore failures flag based on options and peer configuration.
+   @param options: Options object
+   @param peer: Peer configuration to check
+   @return: Whether to ignore stage failures for this peer
+   """
+   if peer.ignoreFailureMode is None or peer.ignoreFailureMode == "none":
+      return False
+   elif peer.ignoreFailureMode == "all":
+      return True
+   else: 
+      if options.full or isStartOfWeek(config.options.startingDay):
+         return peer.ignoreFailureMode == "weekly"
+      else:
+         return peer.ignoreFailureMode == "daily"
+
 
 ##########################
 # _getDailyDir() function
