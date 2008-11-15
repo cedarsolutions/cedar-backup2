@@ -304,10 +304,12 @@ class FilesystemList(list):
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return 0
       for pattern in self.excludePatterns:
+         pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(path): # safe to assume all are valid due to RegexList
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       for pattern in self.excludeBasenamePatterns: # safe to assume all are valid due to RegexList
+         pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
             logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
             return 0
@@ -347,10 +349,12 @@ class FilesystemList(list):
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return 0
       for pattern in self.excludePatterns: # safe to assume all are valid due to RegexList
+         pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return 0
       for pattern in self.excludeBasenamePatterns: # safe to assume all are valid due to RegexList
+         pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
             logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
             return 0
@@ -460,10 +464,12 @@ class FilesystemList(list):
          logger.debug("Path [%s] is excluded based on excludePaths." % path)
          return added
       for pattern in self.excludePatterns: # safe to assume all are valid due to RegexList
+         pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(path):
             logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
             return added
       for pattern in self.excludeBasenamePatterns: # safe to assume all are valid due to RegexList
+         pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
             logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
             return added
@@ -537,6 +543,7 @@ class FilesystemList(list):
                removed += 1
       else:
          try:
+            pattern = encodePath(pattern)  # use same encoding as filenames
             compiled = re.compile(pattern)
          except re.error:
             raise ValueError("Pattern is not a valid regular expression.")
@@ -579,6 +586,7 @@ class FilesystemList(list):
                removed += 1
       else:
          try:
+            pattern = encodePath(pattern)  # use same encoding as filenames
             compiled = re.compile(pattern)
          except re.error:
             raise ValueError("Pattern is not a valid regular expression.")
@@ -619,6 +627,7 @@ class FilesystemList(list):
                removed += 1
       else:
          try:
+            pattern = encodePath(pattern)  # use same encoding as filenames
             compiled = re.compile(pattern)
          except re.error:
             raise ValueError("Pattern is not a valid regular expression.")
@@ -653,6 +662,7 @@ class FilesystemList(list):
       @raise ValueError: If the passed-in pattern is not a valid regular expression.
       """
       try:
+         pattern = encodePath(pattern)  # use same encoding as filenames
          compiled = re.compile(pattern)
       except re.error:
          raise ValueError("Pattern is not a valid regular expression.")
