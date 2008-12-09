@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2007 Kenneth J. Pronovici.
+# Copyright (c) 2007-2008 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -71,7 +71,7 @@ from CedarBackup2.cli import Options, setupLogging, setupPathResolver
 from CedarBackup2.cli import DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, DEFAULT_MODE
 from CedarBackup2.actions.constants import STORE_INDICATOR
 from CedarBackup2.actions.util import createWriter
-from CedarBackup2.actions.store import consistencyCheck, writeStoreIndicator
+from CedarBackup2.actions.store import consistencyCheck, writeIndicatorFile
 from CedarBackup2.actions.util import findDailyDirs
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 
@@ -413,7 +413,7 @@ def _executeAction(options, config):
       _getReturn("Please replace the disc in your backup device.\nPress return when ready.")
       print "==="
 
-   writeStoreIndicator(config, dailyDirs)
+   _writeStoreIndicator(config, dailyDirs)
 
    print ""
    print "Completed writing all discs."
@@ -446,6 +446,23 @@ def _findDailyDirs(stagingDir):
    for item in results:
       fileList.addDirContents(item)
    return (results, fileList)
+
+
+##################################
+# _writeStoreIndicator() function
+##################################
+
+def _writeStoreIndicator(config, dailyDirs):
+   """
+   Writes a store indicator file into daily directories.
+
+   @param config: Config object.
+   @param dailyDirs: List of daily directories
+   """
+   for dailyDir in dailyDirs:
+      writeIndicatorFile(dailyDir, STORE_INDICATOR,
+                         config.options.backupUser,
+                         config.options.backupGroup)
 
 
 ########################
