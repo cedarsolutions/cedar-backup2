@@ -1,6 +1,6 @@
 Version 2.19.2    unreleased
 
-	* 
+	* Fix cback-span problem when writing store indicators.
 
 Version 2.19.1    15 Nov 2008
 
