@@ -11,16 +11,19 @@ def compare(x, y):
 
 def numify(x):
    """Numify a 'svn list --verbose' line, extracting the version and making it into a float."""
-   x = re.sub("^.*CEDAR_BACKUP2_V", "", x)
-   x = re.sub("/", "", x)
-   x = re.sub("\n", "", x)
-   components = x.split(".")
-   numified = components[0]
-   numified += "."
-   for component in components[1:]:
-      component = re.sub("[^0-9].*$", "", component)
-      numified += "%03d" % int(component)
-   return float(numified)
+   if re.match("^.*CEDAR_BACKUP2_V", x):
+      x = re.sub("^.*CEDAR_BACKUP2_V", "", x)
+      x = re.sub("/", "", x)
+      x = re.sub("\n", "", x)
+      components = x.split(".")
+      print components
+      numified = components[0]
+      numified += "."
+      for component in components[1:]:
+         component = re.sub("[^0-9].*$", "", component)
+         numified += "%03d" % int(component)
+      return float(numified)
+   return 0 # ignore the line if we can't parse it
 
 lines = sys.stdin.readlines()
 lines.sort(compare)
