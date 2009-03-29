@@ -300,8 +300,6 @@ class _ActionItem(object):
    type (_ActionItem before _ManagedActionItem) and then by index within type.
 
    @cvar SORT_ORDER: Defines a sort order to order properly between types.
-
-   @sort: __init__, index, module, function 
    """
    
    SORT_ORDER = 0
