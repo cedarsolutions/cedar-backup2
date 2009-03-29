@@ -1,4 +1,4 @@
-Version 2.19.3    unreleased
+Version 2.19.3    29 Mar 2009
 
 	* Fix minor epydoc typos, mostly in @sort directives.
 	* Removed support for user manual PDF format (see doc/pdf).
