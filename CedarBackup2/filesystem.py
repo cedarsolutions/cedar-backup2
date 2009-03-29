@@ -115,7 +115,7 @@ class FilesystemList(list):
    because the operating system never reports a file as a soft link.
 
    @sort: __init__, addFile, addDir, addDirContents, removeFiles, removeDirs,
-          removeLinks, removeMatch, removeInvalid, normalize, validate, 
+          removeLinks, removeMatch, removeInvalid, normalize,
           excludeFiles, excludeDirs, excludeLinks, excludePaths, 
           excludePatterns, excludeBasenamePatterns, ignoreFile 
    """

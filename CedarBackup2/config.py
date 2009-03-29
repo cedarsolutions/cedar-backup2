@@ -430,7 +430,7 @@ class ActionDependencies(object):
 
       - Any action name must be a non-empty string matching C{ACTION_NAME_REGEX}
 
-   @sort: __init__, __repr__, __str__, __cmp__, action, command, before, after
+   @sort: __init__, __repr__, __str__, __cmp__, beforeList, afterList
    """
 
    def __init__(self, beforeList=None, afterList=None):

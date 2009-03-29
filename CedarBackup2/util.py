@@ -42,7 +42,7 @@
 """
 Provides general-purpose utilities. 
 
-@sort: AbsolutePathList, ObjectTypeList, RestrictedValueList, RegexMatchList,
+@sort: AbsolutePathList, ObjectTypeList, RestrictedContentList, RegexMatchList,
        RegexList, _Vertex, DirectedGraph, PathResolverSingleton, 
        sortDict, convertSize, getUidGid, changeOwnership, splitCommandLine,
        resolveCommand, executeCommand, calculateFileAge, encodePath, nullDevice,
@@ -955,7 +955,7 @@ class Diagnostics(object):
    Diagnostic information is information that is useful to get from users for
    debugging purposes.  I'm consolidating it all here into one object.
 
-   @sort: __init__, __repr__, __str__, __cmp__
+   @sort: __init__, __repr__, __str__
    """
 
    def __init__(self):

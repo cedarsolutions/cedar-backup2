@@ -124,7 +124,7 @@ class RepositoryDir(object):
    Relative exclusions are allowed here.  However, there is no configured
    ignore file, because repository dir backups are not recursive.
 
-   @sort: __init__, __repr__, __str__, __cmp__, directoryPat, collectMode, compressMode
+   @sort: __init__, __repr__, __str__, __cmp__, directoryPath, collectMode, compressMode
    """
 
    def __init__(self, repositoryType=None, directoryPath=None, collectMode=None, compressMode=None,

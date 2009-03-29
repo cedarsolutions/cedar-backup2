@@ -39,7 +39,7 @@
 """
 Provides backup peer-related objects and utility functions.
 
-@sort: LocalPeer, Remote Peer
+@sort: LocalPeer, RemotePeer
 
 @var DEF_COLLECT_INDICATOR: Name of the default collect indicator file.
 @var DEF_STAGE_INDICATOR: Name of the default stage indicator file.
