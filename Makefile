@@ -35,8 +35,8 @@ MV                = mv
 EPYDOC            = epydoc
 FIND              = find
 MKDIR             = mkdir
-PYCHECKER         = PYTHONVER=2.3 pychecker
-PYTHON            = python2.3
+PYCHECKER         = PYTHONVER=2.4 pychecker
+PYTHON            = python2.4
 RM                = rm
 SETUP             = $(PYTHON) ./setup.py
 SUDO              = sudo
