@@ -1,3 +1,7 @@
+Version 2.19.4    unreleased
+
+	* Fix testGenerateTarfile_002() so it works with Python 2.6.
+
 Version 2.19.3    29 Mar 2009
 
 	* Fix minor epydoc typos, mostly in @sort directives.
