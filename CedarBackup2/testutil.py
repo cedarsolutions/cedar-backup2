@@ -207,7 +207,10 @@ def extractTar(tmpdir, filepath):
    tmpdir = encodePath(tmpdir)
    filepath = encodePath(filepath)
    tar = tarfile.open(filepath)
-   tar.posix = False
+   try:
+      tar.format = tarfile.GNU_FORMAT
+   except:
+      tar.posix = False
    for tarinfo in tar:
       tar.extract(tarinfo, tmpdir)
 

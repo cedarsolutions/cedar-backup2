@@ -1105,7 +1105,10 @@ class BackupFileList(FilesystemList):
       else: raise ValueError("Mode [%s] is not valid." % mode)
       try:
          tar = tarfile.open(path, tarmode)
-         tar.posix = False    # make a GNU-compatible archive without file length limits
+         try:
+            tar.format = tarfile.GNU_FORMAT
+         except:
+            tar.posix = False
          for entry in self:
             try:
                if flat:
