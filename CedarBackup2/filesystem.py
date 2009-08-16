@@ -51,7 +51,6 @@ Provides filesystem-related objects.
 import sys
 import os
 import re
-import sha
 import math
 import logging
 import tarfile
@@ -899,7 +898,7 @@ class BackupFileList(FilesystemList):
       requires 111 seconds.  This implementation requires only 40-45 seconds,
       which is a pretty substantial speed-up.  
 
-      Practice shows that reading in around 4kB (4096 bytes) at a time yields
+      Experience shows that reading in around 4kB (4096 bytes) at a time yields
       the best performance.  Smaller reads are quite a bit slower, and larger
       reads don't make much of a difference.  The 4kB number makes me a little
       suspicious, and I think it might be related to the size of a filesystem
@@ -912,7 +911,12 @@ class BackupFileList(FilesystemList):
       @return: ASCII-safe SHA digest for the file.
       @raise OSError: If the file cannot be opened.
       """
-      s = sha.new()
+      try:
+         import hashlib
+         s = hashlib.sha1()
+      except Exception, e:
+         import sha
+         s = sha.new()
       f = open(path, mode="rb")  # in case platform cares about binary reads
       readBytes = 4096  # see notes above
       while(readBytes > 0):
