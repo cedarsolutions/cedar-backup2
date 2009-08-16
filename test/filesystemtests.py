@@ -112,7 +112,6 @@ Full vs. Reduced Tests
 
 import sys
 import os
-import sha
 import time
 import unittest
 import tempfile
@@ -19381,9 +19380,19 @@ class TestBackupFileList(unittest.TestCase):
       for key in self.resources.keys():
          path = self.resources[key]
          if platformRequiresBinaryRead():
-            digest1 = sha.new(open(path, mode="rb").read()).hexdigest()
+            try:
+               import hashlib
+               digest1 = haslib.sha1(open(path, mode="rb").read()).hexdigest()
+            except:
+               import sha
+               digest1 = sha.new(open(path, mode="rb").read()).hexdigest()
          else:
-            digest1 = sha.new(open(path).read()).hexdigest()
+            try:
+               import hashlib
+               digest1 = hashlib.sha1(open(path).read()).hexdigest()
+            except:
+               import sha
+               digest1 = sha.new(open(path).read()).hexdigest()
          digest2 = BackupFileList._generateDigest(path)
          self.failUnlessEqual(digest1, digest2, "Digest for %s varies: [%s] vs [%s]." % (path, digest1, digest2))
 
