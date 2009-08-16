@@ -56,7 +56,6 @@ Provides backup peer-related objects and utility functions.
 import os
 import logging
 import shutil
-import sets
 import re
 
 # Cedar Backup modules
@@ -923,8 +922,7 @@ class RemotePeer(object):
       Returns the contents of a directory in terms of a Set.
       
       The directory's contents are read as a L{FilesystemList} containing only
-      files, and then the list is converted into a C{sets.Set} object for later
-      use.
+      files, and then the list is converted into a set object for later use.
 
       @param path: Directory path to get contents for
       @type path: String representing a path on disk
@@ -936,7 +934,11 @@ class RemotePeer(object):
       contents.excludeDirs = True
       contents.excludeLinks = True
       contents.addDirContents(path)
-      return sets.Set(contents)
+      try:
+         return set(contents)
+      except:
+         import sets
+         return sets.Set(contents)
    _getDirContents = staticmethod(_getDirContents)
 
    def _copyRemoteDir(remoteUser, localUser, remoteHost, rcpCommand, rcpCommandList, 
