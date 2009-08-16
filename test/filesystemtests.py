@@ -17212,7 +17212,8 @@ class TestBackupFileList(unittest.TestCase):
          tarFile.close()
          self.failUnlessEqual(11, len(tarList))
          self.failUnless(self.tarPath([ "tree9", "dir001/" ]) in tarList 
-                         or self.tarPath([ "tree9", "dir001//" ]) in tarList)  # Grr... Python 2.5 behavior differs
+                         or self.tarPath([ "tree9", "dir001//" ]) in tarList  # Grr... Python 2.5 behavior differs
+                         or self.tarPath([ "tree9", "dir001", ]) in tarList)  # Grr... Python 2.6 behavior differs
          self.failUnless(self.tarPath([ "tree9", "dir001", "file001", ]) in tarList)
          self.failUnless(self.tarPath([ "tree9", "dir001", "file002", ]) in tarList)
          self.failUnless(self.tarPath([ "tree9", "dir001", "link001", ]) in tarList)
@@ -17252,7 +17253,8 @@ class TestBackupFileList(unittest.TestCase):
          tarFile.close()
          self.failUnlessEqual(16, len(tarList))
          self.failUnless(self.tarPath([ "tree9", "dir001/" ]) in tarList 
-                         or self.tarPath([ "tree9", "dir001//" ]) in tarList)  # Grr... Python 2.5 behavior differs
+                         or self.tarPath([ "tree9", "dir001//" ]) in tarList  # Grr... Python 2.5 behavior differs
+                         or self.tarPath([ "tree9", "dir001", ]) in tarList)  # Grr... Python 2.6 behavior differs
          self.failUnless(self.tarPath([ "tree9", "dir001", "file001", ]) in tarList)
          self.failUnless(self.tarPath([ "tree9", "dir001", "file002", ]) in tarList)
          self.failUnless(self.tarPath([ "tree9", "dir001", "link001", ]) in tarList)
