@@ -914,7 +914,7 @@ class BackupFileList(FilesystemList):
       try:
          import hashlib
          s = hashlib.sha1()
-      except Exception, e:
+      except:
          import sha
          s = sha.new()
       f = open(path, mode="rb")  # in case platform cares about binary reads

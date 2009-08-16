@@ -1,9 +1,10 @@
-Version 2.19.4    unreleased
+Version 2.19.4    16 Aug 2009
 
-	* Use hashlib module instead of deprecated sha module when available.
-	* Use set built-in type rather than deprecated sets.Set class when available.
-	* Use tarfile.format=GNU_FORMAT rather than deprecated tarfile.posix=False.
-	* Fix testGenerateTarfile_002() so expectations match Python 2.6 results.
+	* Add support for the Python 2.6 interpreter.
+		- Use hashlib instead of deprecated sha module when available
+		- Use set type rather than deprecated sets.Set when available
+		- Use tarfile.format rather than deprecated tarfile.posix when available
+		- Fix testGenerateTarfile_002() so expectations match Python 2.6 results
 
 Version 2.19.3    29 Mar 2009
 
