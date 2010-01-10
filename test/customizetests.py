@@ -49,7 +49,7 @@ Unit tests for CedarBackup2/customize.py.
 
 import unittest
 
-from CedarBackup2.customize import customizeOverrides
+from CedarBackup2.customize import PLATFORM, customizeOverrides
 from CedarBackup2.config import Config, OptionsConfig, CommandOverride
 
 
@@ -78,9 +78,10 @@ class TestFunctions(unittest.TestCase):
       config = Config()
       options = OptionsConfig();
       options.overrides = []
-      config.options = options
-      customizeOverrides(config)    # relies on default, which should be "standard"
-      self.failUnlessEqual([], options.overrides); 
+      if PLATFORM == "standard":
+         config.options = options
+         customizeOverrides(config)
+         self.failUnlessEqual([], options.overrides); 
       config.options = options
       customizeOverrides(config, platform="standard")
       self.failUnlessEqual([], options.overrides); 
@@ -92,9 +93,10 @@ class TestFunctions(unittest.TestCase):
       config = Config()
       options = OptionsConfig();
       options.overrides = [ CommandOverride("cdrecord", "/blech"), ]
-      config.options = options
-      customizeOverrides(config)    # relies on default, which should be "standard"
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), ], options.overrides); 
+      if PLATFORM == "standard":
+         config.options = options
+         customizeOverrides(config)
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), ], options.overrides); 
       config.options = options
       customizeOverrides(config, platform="standard")
       self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), ], options.overrides); 
@@ -106,9 +108,10 @@ class TestFunctions(unittest.TestCase):
       config = Config()
       options = OptionsConfig();
       options.overrides = [ CommandOverride("mkisofs", "/blech"), ]
-      config.options = options
-      customizeOverrides(config)    # relies on default, which should be "standard"
-      self.failUnlessEqual([ CommandOverride("mkisofs", "/blech"), ], options.overrides); 
+      if PLATFORM == "standard":
+         config.options = options
+         customizeOverrides(config)
+         self.failUnlessEqual([ CommandOverride("mkisofs", "/blech"), ], options.overrides); 
       config.options = options
       customizeOverrides(config, platform="standard")
       self.failUnlessEqual([ CommandOverride("mkisofs", "/blech"), ], options.overrides); 
@@ -120,9 +123,10 @@ class TestFunctions(unittest.TestCase):
       config = Config()
       options = OptionsConfig();
       options.overrides = [ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ]
-      config.options = options
-      customizeOverrides(config)    # relies on default, which should be "standard"
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides); 
+      if PLATFORM == "standard":
+         config.options = options
+         customizeOverrides(config)
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides); 
       config.options = options
       customizeOverrides(config, platform="standard")
       self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides); 
@@ -134,6 +138,10 @@ class TestFunctions(unittest.TestCase):
       config = Config()
       options = OptionsConfig();
       options.overrides = []
+      if PLATFORM == "debian":
+         config.options = options
+         customizeOverrides(config)
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides); 
       config.options = options
       customizeOverrides(config, platform="debian")
       self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides); 
@@ -145,6 +153,10 @@ class TestFunctions(unittest.TestCase):
       config = Config()
       options = OptionsConfig();
       options.overrides = [ CommandOverride("cdrecord", "/blech"), ]
+      if PLATFORM == "debian":
+         config.options = options
+         customizeOverrides(config)
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides); 
       config.options = options
       customizeOverrides(config, platform="debian")
       self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides); 
@@ -156,6 +168,10 @@ class TestFunctions(unittest.TestCase):
       config = Config()
       options = OptionsConfig();
       options.overrides = [ CommandOverride("mkisofs", "/blech"), ]
+      if PLATFORM == "debian":
+         config.options = options
+         customizeOverrides(config)
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/blech"), ], options.overrides); 
       config.options = options
       customizeOverrides(config, platform="debian")
       self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/blech"), ], options.overrides); 
@@ -167,6 +183,10 @@ class TestFunctions(unittest.TestCase):
       config = Config()
       options = OptionsConfig();
       options.overrides = [ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ]
+      if PLATFORM == "debian":
+         config.options = options
+         customizeOverrides(config)
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides); 
       config.options = options
       customizeOverrides(config, platform="debian")
       self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides); 
