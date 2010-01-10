@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007,2010 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -87,6 +87,7 @@ import getopt
 
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
+from CedarBackup2.customize import customizeOverrides
 from CedarBackup2.util import RestrictedContentList, DirectedGraph, PathResolverSingleton
 from CedarBackup2.util import sortDict, splitCommandLine, executeCommand, getFunctionReference
 from CedarBackup2.util import getUidGid, encodePath, Diagnostics
@@ -243,6 +244,7 @@ def cli():
    try:
       logger.info("Configuration path is [%s]" % configPath)
       config = Config(xmlPath=configPath)
+      customizeOverrides(config)
       setupPathResolver(config)
       actionSet = _ActionSet(options.actions, config.extensions, config.options, 
                              config.peers, executeManaged, executeLocal)

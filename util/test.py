@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2008 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008,2010 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -163,6 +163,7 @@ def main():
       import test.splittests as splittests
       import test.spantests as spantests
       import test.capacitytests as capacitytests
+      import test.customizetests as customizetests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -220,6 +221,7 @@ def main():
    if args == [] or "encrypt" in args: unittests["encrypt"] = encrypttests.suite()
    if args == [] or "span" in args: unittests["span"] = spantests.suite()
    if args == [] or "capacity" in args: unittests["capacity"] = capacitytests.suite()
+   if args == [] or "customize" in args: unittests["customize"] = customizetests.suite()
    if args != []: print "*** Executing specific tests: %s" % unittests.keys()
 
    # Print some diagnostic information

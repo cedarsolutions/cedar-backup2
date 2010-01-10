@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2008 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008,2010 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -2621,6 +2621,35 @@ class OptionsConfig(object):
          else:
             return 1
       return 0
+
+   def addOverride(self, command, absolutePath):
+      """
+      If no override currently exists for the command, add one.
+      @param command: Name of command to be overridden.
+      @param absolutePath: Absolute path of the overrridden command.
+      """
+      exists = False
+      for object in self.overrides:
+         if object.command == command:
+            exists = True
+            break
+      if not exists:
+         self.overrides.append(CommandOverride(command, absolutePath))
+
+   def replaceOverride(self, command, absolutePath):
+      """
+      If override currently exists for the command, replace it; otherwise add it.
+      @param command: Name of command to be overridden.
+      @param absolutePath: Absolute path of the overrridden command.
+      """
+      exists = False
+      for object in self.overrides:
+         if object.command == command:
+            exists = True
+            object.absolutePath = absolutePath
+            break
+      if not exists:
+         self.overrides.append(CommandOverride(command, absolutePath))
 
    def _setStartingDay(self, value):
       """
