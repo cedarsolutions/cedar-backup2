@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2008 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008,2010 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -6029,6 +6029,66 @@ class TestOptionsConfig(unittest.TestCase):
       self.failUnless(not options1 > options2)
       self.failUnless(not options1 >= options2)
       self.failUnless(options1 != options2)
+
+
+   ####################################
+   # Test add and replace of overrides
+   ####################################
+
+   def testOverrides_001(self):
+      """
+      Test addOverride() with no existing overrides.
+      """
+      options = OptionsConfig();
+      options.overrides = []
+      options.addOverride("cdrecord", "/usr/bin/wodim")
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+
+   def testOverrides_002(self):
+      """
+      Test addOverride() with no existing override that matches.
+      """
+      options = OptionsConfig();
+      options.overrides = [ CommandOverride("one", "/one"), ]
+      options.addOverride("cdrecord", "/usr/bin/wodim")
+      self.failUnlessEqual([ CommandOverride("one", "/one"), CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+
+   def testOverrides_003(self):
+      """
+      Test addOverride(), with existing override that matches.
+      """
+      options = OptionsConfig();
+      options.overrides = [ CommandOverride("cdrecord", "/one"), ]
+      options.addOverride("cdrecord", "/usr/bin/wodim")
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/one"), ], options.overrides);
+
+   def testOverrides_004(self):
+      """
+      Test replaceOverride() with no existing overrides.
+      """
+      options = OptionsConfig();
+      options.overrides = []
+      options.replaceOverride("cdrecord", "/usr/bin/wodim")
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+
+   def testOverrides_005(self):
+      """
+      Test replaceOverride() with no existing override that matches.
+      """
+      options = OptionsConfig();
+      options.overrides = [ CommandOverride("one", "/one"), ]
+      options.replaceOverride("cdrecord", "/usr/bin/wodim")
+      self.failUnlessEqual([ CommandOverride("one", "/one"), CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+
+   def testOverrides_006(self):
+      """
+      Test replaceOverride(), with existing override that matches.
+      """
+      options = OptionsConfig();
+      options.overrides = [ CommandOverride("cdrecord", "/one"), ]
+      options.replaceOverride("cdrecord", "/usr/bin/wodim")
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+
 
 
 ########################
