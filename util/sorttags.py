@@ -16,7 +16,6 @@ def numify(x):
       x = re.sub("/", "", x)
       x = re.sub("\n", "", x)
       components = x.split(".")
-      print components
       numified = components[0]
       numified += "."
       for component in components[1:]:
