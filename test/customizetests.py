@@ -77,14 +77,13 @@ class TestFunctions(unittest.TestCase):
       """
       config = Config()
       options = OptionsConfig();
-      options.overrides = []
       if PLATFORM == "standard":
          config.options = options
          customizeOverrides(config)
-         self.failUnlessEqual([], options.overrides); 
+         self.failUnlessEqual(None, options.overrides); 
       config.options = options
       customizeOverrides(config, platform="standard")
-      self.failUnlessEqual([], options.overrides); 
+      self.failUnlessEqual(None, options.overrides); 
 
    def testCustomizeOverrides_002(self):
       """
@@ -137,7 +136,6 @@ class TestFunctions(unittest.TestCase):
       """
       config = Config()
       options = OptionsConfig();
-      options.overrides = []
       if PLATFORM == "debian":
          config.options = options
          customizeOverrides(config)
