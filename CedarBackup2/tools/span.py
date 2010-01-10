@@ -401,17 +401,18 @@ def _executeAction(options, config):
          happy = True
       print "==="
 
-   print ""
-   _getReturn("Please place the first disc in your backup device.\nPress return when ready.")
-   print "==="
-
    counter = 0
    for spanItem in spanSet:
       counter += 1
+      if counter == 1:
+         print ""
+         _getReturn("Please place the first disc in your backup device.\nPress return when ready.")
+         print "==="
+      else:
+         print ""
+         _getReturn("Please replace the disc in your backup device.\nPress return when ready.")
+         print "==="
       _writeDisc(config, writer, spanItem)
-      print ""
-      _getReturn("Please replace the disc in your backup device.\nPress return when ready.")
-      print "==="
 
    _writeStoreIndicator(config, dailyDirs)
 

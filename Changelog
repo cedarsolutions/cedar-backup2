@@ -1,6 +1,7 @@
 Version 2.19.5    unreleased
 
 	* Add customization support, so Debian can use wodim and genisoimage.
+	* SF bug #2929447 - fix cback-span to only ask for media when needed
 	* SF bug #2929446 - add retry logic for writes in cback-span
 
 Version 2.19.4    16 Aug 2009
