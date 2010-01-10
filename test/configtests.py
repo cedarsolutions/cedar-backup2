@@ -6040,7 +6040,6 @@ class TestOptionsConfig(unittest.TestCase):
       Test addOverride() with no existing overrides.
       """
       options = OptionsConfig();
-      options.overrides = []
       options.addOverride("cdrecord", "/usr/bin/wodim")
       self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
 
@@ -6067,7 +6066,6 @@ class TestOptionsConfig(unittest.TestCase):
       Test replaceOverride() with no existing overrides.
       """
       options = OptionsConfig();
-      options.overrides = []
       options.replaceOverride("cdrecord", "/usr/bin/wodim")
       self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
 

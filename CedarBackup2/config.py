@@ -2628,13 +2628,17 @@ class OptionsConfig(object):
       @param command: Name of command to be overridden.
       @param absolutePath: Absolute path of the overrridden command.
       """
-      exists = False
-      for object in self.overrides:
-         if object.command == command:
-            exists = True
-            break
-      if not exists:
-         self.overrides.append(CommandOverride(command, absolutePath))
+      override = CommandOverride(command, absolutePath)
+      if self.overrides is None:
+         self.overrides = [ override, ]
+      else:
+         exists = False
+         for object in self.overrides:
+            if object.command == override.command:
+               exists = True
+               break
+         if not exists:
+            self.overrides.append(override)
 
    def replaceOverride(self, command, absolutePath):
       """
@@ -2642,14 +2646,18 @@ class OptionsConfig(object):
       @param command: Name of command to be overridden.
       @param absolutePath: Absolute path of the overrridden command.
       """
-      exists = False
-      for object in self.overrides:
-         if object.command == command:
-            exists = True
-            object.absolutePath = absolutePath
-            break
-      if not exists:
-         self.overrides.append(CommandOverride(command, absolutePath))
+      override = CommandOverride(command, absolutePath)
+      if self.overrides is None:
+         self.overrides = [ override, ]
+      else:
+         exists = False
+         for object in self.overrides:
+            if object.command == override.command:
+               exists = True
+               object.absolutePath = override.absolutePath
+               break
+         if not exists:
+            self.overrides.append(override)
 
    def _setStartingDay(self, value):
       """
