@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2007-2008 Kenneth J. Pronovici.
+# Copyright (c) 2007-2008,2010 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -493,17 +493,91 @@ def _writeDisc(config, writer, spanItem):
    @param spanItem: Span item to write
    """
    print ""
-   print "Initializing image..."
-   writer.initializeImage(newDisc=True, tmpdir=config.options.workingDir)
-   for path in spanItem.fileList:
-      graftPoint = os.path.dirname(path.replace(config.store.sourceDir, "", 1))
-      writer.addImageEntry(path, graftPoint)
-   print "Writing image to disc..."
-   writer.writeImage()
-   if config.store.checkData:
-      print "Running consistency check..."
-      _consistencyCheck(config, spanItem.fileList)
+   _discInitializeImage(config, writer, spanItem)
+   _discWriteImage(config, writer, spanItem)
+   _discConsistencyCheck(config, writer, spanItem)
    print "Write process is complete."
+   print "==="
+
+def _discInitializeImage(config, writer, spanItem):
+   """
+   Initialize an ISO image for a span item.
+   @param config: Cedar Backup configuration
+   @param writer: Writer to use
+   @param spanItem: Span item to write
+   """
+   complete = False
+   while not complete:
+      try:
+         print "Initializing image..."
+         writer.initializeImage(newDisc=True, tmpdir=config.options.workingDir)
+         for path in spanItem.fileList:
+            graftPoint = os.path.dirname(path.replace(config.store.sourceDir, "", 1))
+            writer.addImageEntry(path, graftPoint)
+         complete = True
+      except KeyboardInterrupt, e:
+         raise e
+      except Exception, e:
+         logger.error("Failed to initialize image: %s" % e)
+         if not _getYesNoAnswer("Retry initialization step?", default="Y"):
+            raise e
+         print "Ok, attempting retry."
+         print "==="
+   print "Completed initializing image."
+
+def _discWriteImage(config, writer, spanItem):
+   """
+   Writes a ISO image for a span item.
+   @param config: Cedar Backup configuration
+   @param writer: Writer to use
+   @param spanItem: Span item to write
+   """
+   complete = False
+   while not complete:
+      try:
+         print "Writing image to disc..."
+         writer.writeImage()
+         complete = True
+      except KeyboardInterrupt, e:
+         raise e
+      except Exception, e:
+         logger.error("Failed to write image: %s" % e)
+         if not _getYesNoAnswer("Retry this step?", default="Y"):
+            raise e
+         print "Ok, attempting retry."
+         _getReturn("Please replace media if needed.\nPress return when ready.")
+         print "==="
+   print "Completed writing image."
+
+def _discConsistencyCheck(config, writer, spanItem):
+   """
+   Run a consistency check on an ISO image for a span item.
+   @param config: Cedar Backup configuration
+   @param writer: Writer to use
+   @param spanItem: Span item to write
+   """
+   if config.store.checkData:
+      complete = False
+      while not complete:
+         try:
+            print "Running consistency check..."
+            _consistencyCheck(config, spanItem.fileList)
+            complete = True
+         except KeyboardInterrupt, e:
+            raise e
+         except Exception, e:
+            logger.error("Consistency check failed: %s" % e)
+            if not _getYesNoAnswer("Retry the consistency check?", default="Y"):
+               raise e
+            if _getYesNoAnswer("Rewrite the disc first?", default="N"):
+               print "Ok, attempting retry."
+               _getReturn("Please replace the disc in your backup device.\nPress return when ready.")
+               print "==="
+               _discWriteImage(config, writer, spanItem)
+            else:
+               print "Ok, attempting retry."
+               print "==="
+      print "Completed consistency check."
 
 
 ###############################
