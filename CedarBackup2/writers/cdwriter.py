@@ -911,8 +911,8 @@ class CdWriter(object):
       capacity = self.retrieveCapacity(entireDisc=self._image.newDisc)
       image = IsoImage(self.device, capacity.boundaries)
       image.volumeId = self._image.mediaLabel  # may be None, which is also valid
-      for path in self._image.entries.keys():
-         image.addEntry(path, self._image.entries[path], override=False, contentsOnly=True)
+      for key in self._image.entries.keys():
+         image.addEntry(key, self._image.entries[key], override=False, contentsOnly=True)
       size = image.getEstimatedSize()
       logger.info("Image size will be %s." % displayBytes(size))
       available = capacity.bytesAvailable
