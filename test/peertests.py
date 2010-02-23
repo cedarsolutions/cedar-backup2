@@ -100,7 +100,7 @@ import tarfile
 import getpass
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.testutil import getMaskAsMode, getLogin, runningAsRoot, failUnlessAssignRaises
-from CedarBackup2.testutil import platformSupportsPermissions, platformWindows
+from CedarBackup2.testutil import platformSupportsPermissions, platformWindows, platformCygwin
 from CedarBackup2.peer import LocalPeer, RemotePeer
 from CedarBackup2.peer import DEF_RCP_COMMAND, DEF_RSH_COMMAND
 from CedarBackup2.peer import DEF_COLLECT_INDICATOR, DEF_STAGE_INDICATOR
@@ -345,7 +345,7 @@ class TestLocalPeer(unittest.TestCase):
       with spaces in the collect directory path and collect indicator file name.
       """
       name = "peer1"
-      if platformWindows():
+      if platformWindows() or platformCygwin():
          # os.listdir has problems with trailing spaces
          collectDir = self.buildPath([" collect dir", ])
          collectIndicator = self.buildPath([" collect dir", "different, file", ])

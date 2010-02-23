@@ -387,6 +387,8 @@ def _isPlatform(name):
       return platform.platform(True, True).startswith("Windows")
    elif name == "macosx":
       return sys.platform == "darwin"
+   elif name == "cygwin":
+      return platform.platform(True, True).startswith("CYGWIN")
    else:
       raise ValueError("Unknown platform [%s]." % name)
 
@@ -411,6 +413,17 @@ def platformWindows():
    Returns boolean indicating whether this is the Windows platform.
    """
    return _isPlatform("windows")
+
+
+############################
+# platformCygwin() function
+############################
+
+def platformCygwin():
+   """
+   Returns boolean indicating whether this is the Cygwin platform.
+   """
+   return _isPlatform("cygwin")
 
 
 ###################################

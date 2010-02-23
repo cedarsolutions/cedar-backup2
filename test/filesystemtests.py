@@ -118,7 +118,8 @@ import tempfile
 import tarfile
 
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, changeFileAge, randomFilename
-from CedarBackup2.testutil import platformMacOsX, platformWindows, platformSupportsLinks, platformRequiresBinaryRead
+from CedarBackup2.testutil import platformMacOsX, platformWindows, platformCygwin
+from CedarBackup2.testutil import platformSupportsLinks, platformRequiresBinaryRead
 from CedarBackup2.testutil import failUnlessAssignRaises
 from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemList, normalizeDir, compareContents
 
@@ -17902,7 +17903,10 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         tarPath = self.buildRandomPath(260, ".tar")
+         if platformCygwin():
+            tarPath = self.buildRandomPath(255, ".tar")  # Cygwin inherits the Windows 255-char limit
+         else:
+            tarPath = self.buildRandomPath(260, ".tar")
          backupList.generateTarfile(tarPath, mode="tar")
          self.failUnless(tarfile.is_tarfile(tarPath))
          tarFile = tarfile.open(tarPath)
@@ -17981,7 +17985,10 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         tarPath = self.buildRandomPath(260, ".tar.gz")
+         if platformCygwin():
+            tarPath = self.buildRandomPath(255, ".tar")  # Cygwin inherits the Windows 255-char limit
+         else:
+            tarPath = self.buildRandomPath(260, ".tar")
          backupList.generateTarfile(tarPath, mode="targz")
          self.failUnless(tarfile.is_tarfile(tarPath))
          tarFile = tarfile.open(tarPath)
@@ -18060,7 +18067,10 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         tarPath = self.buildRandomPath(260, ".tar.bz2")
+         if platformCygwin():
+            tarPath = self.buildRandomPath(255, ".tar")  # Cygwin inherits the Windows 255-char limit
+         else:
+            tarPath = self.buildRandomPath(260, ".tar")
          backupList.generateTarfile(tarPath, mode="tarbz2")
          self.failUnless(tarfile.is_tarfile(tarPath))
          tarFile = tarfile.open(tarPath)

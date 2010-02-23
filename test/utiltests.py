@@ -83,7 +83,7 @@ import logging
 from os.path import isdir
 
 from CedarBackup2.testutil import findResources, removedir, extractTar, buildPath, captureOutput
-from CedarBackup2.testutil import platformHasEcho, platformWindows, platformSupportsLinks
+from CedarBackup2.testutil import platformHasEcho, platformWindows, platformCygwin, platformSupportsLinks
 from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList 
 from CedarBackup2.util import RestrictedContentList, RegexMatchList, RegexList
 from CedarBackup2.util import DirectedGraph, PathResolverSingleton, Diagnostics
@@ -3370,7 +3370,7 @@ class TestFunctions(unittest.TestCase):
       seems to result in the exact same file on disk, so the test is valid.  
       """
       encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
-      if encoding != 'mbcs' and encoding.find("ANSI") != 0:    # test can't work on some filesystems
+      if not platformCygwin() and encoding != 'mbcs' and encoding.find("ANSI") != 0:    # test can't work on some filesystems
          path = u"\xe2\x99\xaa\xe2\x99\xac"
          safePath = encodePath(path)
          self.failUnless(isinstance(safePath, str))
