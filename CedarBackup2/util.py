@@ -1535,7 +1535,13 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    fields.extend(args)
    try:
       sanitizeEnvironment()   # make sure we have a consistent environment
-      pipe = Pipe(fields, ignoreStderr=ignoreStderr)
+      try:
+         pipe = Pipe(fields, ignoreStderr=ignoreStderr)
+      except OSError:
+         # On some platforms (i.e. Cygwin) this intermittently fails the first time we do it.
+         # So, we attempt it a second time and if that works, we just go on as usual.
+         # The problem appears to be that we sometimes get a bad stderr file descriptor.
+         pipe = Pipe(fields, ignoreStderr=ignoreStderr)
       while True:
          line = pipe.fromchild.readline()
          if not line: break
