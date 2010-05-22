@@ -2,6 +2,7 @@ Version 2.19.6    unreleased
 
 	* Work around strange stderr file descriptor bugs discovered on Cygwin.
 	* Tweak expected results for tests that fail on Cygwin with Python 2.5.x.
+	* Set up command overrides properly so full test suite works on Debian.
 
 Version 2.19.5    10 Jan 2010
 
