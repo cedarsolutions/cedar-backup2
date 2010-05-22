@@ -147,14 +147,15 @@ def createWriter(config):
    deviceScsiId = config.store.deviceScsiId
    driveSpeed = config.store.driveSpeed
    noEject = config.store.noEject
+   refreshMediaDelay = config.store.refreshMediaDelay
    deviceType = _getDeviceType(config)
    mediaType = _getMediaType(config)
    if deviceMounted(devicePath):
       raise IOError("Device [%s] is currently mounted." % (devicePath))
    if deviceType == "cdwriter":
-      return CdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject)
+      return CdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject, refreshMediaDelay)
    elif deviceType == "dvdwriter":
-      return DvdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject)
+      return DvdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject, refreshMediaDelay)
    else:
       raise ValueError("Device type [%s] is invalid." % deviceType)
 
