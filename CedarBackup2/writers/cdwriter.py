@@ -862,7 +862,7 @@ class CdWriter(object):
       self.openTray()
       self.closeTray()
       if self.refreshMediaDelay is not None:
-         logger.debug("Per configuration, sleeping %d seconds to stabilize media state." % self.refreshDelay)
+         logger.debug("Per configuration, sleeping %d seconds to stabilize media state." % self.refreshMediaDelay)
          time.sleep(self.refreshMediaDelay)
          logger.debug("Sleep is complete; hopefully media state is stable now.")
 
