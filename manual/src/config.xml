@@ -2198,6 +2198,7 @@
    &lt;check_media&gt;Y&lt;/check_media&gt;
    &lt;warn_midnite&gt;Y&lt;/warn_midnite&gt;
    &lt;no_eject&gt;N&lt;/no_eject&gt;
+   &lt;refresh_media_delay&gt;5&lt;/refresh_media_delay&gt;
    &lt;blank_behavior&gt;
       &lt;mode&gt;weekly&lt;/mode&gt;
       &lt;factor&gt;1.3&lt;/factor&gt;
@@ -2492,6 +2493,27 @@
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
+               <term><literal>refresh_media_delay</literal></term>
+               <listitem>
+                  <para>Number of seconds to delay after refreshing media</para>
+                  <para>
+                     This field is optional.  If it doesn't exist, no delay
+                     will occur.
+                  </para>
+                  <para>
+                     Some devices seem to take a little while to stablize after
+                     refreshing the media (i.e. closing and opening the tray).
+                     During this period, operations on the media may fail.  If
+                     your device behaves like this, you can try setting a delay
+                     of a few seconds to remedy the problem.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> If set, must be an integer &ge; 1.
                   </para>
                </listitem>
             </varlistentry>

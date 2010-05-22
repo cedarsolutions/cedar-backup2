@@ -57,6 +57,7 @@ import os
 import re
 import logging
 import tempfile
+import time
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import BackupFileList
@@ -361,7 +362,8 @@ class DvdWriter(object):
    ##############
 
    def __init__(self, device, scsiId=None, driveSpeed=None, 
-                mediaType=MEDIA_DVDPLUSRW, noEject=False, unittest=False):
+                mediaType=MEDIA_DVDPLUSRW, noEject=False, 
+                refreshMediaDelay=0, unittest=False):
       """
       Initializes a DVD writer object.
 
@@ -394,6 +396,9 @@ class DvdWriter(object):
       @param noEject: Tells Cedar Backup that the device cannot safely be ejected
       @type noEject: Boolean true/false
 
+      @param refreshMediaDelay: Refresh media delay to use, if any
+      @type refreshMediaDelay: Number of seconds, an integer >= 0
+
       @param unittest: Turns off certain validations, for use in unit testing.
       @type unittest: Boolean true/false 
 
@@ -408,6 +413,7 @@ class DvdWriter(object):
       self._scsiId = scsiId  # not validated, because it's just for reference
       self._driveSpeed = validateDriveSpeed(driveSpeed)
       self._media = MediaDefinition(mediaType)
+      self._refreshMediaDelay = refreshMediaDelay
       if noEject:
          self._deviceHasTray = False
          self._deviceCanEject = False
@@ -462,6 +468,12 @@ class DvdWriter(object):
       """
       return self._deviceCanEject
 
+   def _getRefreshMediaDelay(self):
+      """
+      Property target used to get the configured refresh media delay, in seconds.
+      """
+      return self._refreshMediaDelay
+
    device = property(_getDevice, None, None, doc="Filesystem device name for this writer.")
    scsiId = property(_getScsiId, None, None, doc="SCSI id for the device (saved for reference only).")
    hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer (always the device path).");
@@ -469,6 +481,7 @@ class DvdWriter(object):
    media = property(_getMedia, None, None, doc="Definition of media that is expected to be in the device.")
    deviceHasTray = property(_getDeviceHasTray, None, None, doc="Indicates whether the device has a media tray.")
    deviceCanEject = property(_getDeviceCanEject, None, None, doc="Indicates whether the device supports ejecting its media.")
+   refreshMediaDelay = property(_getRefreshMediaDelay, None, None, doc="Refresh media delay, in seconds.")
 
 
    #################################################
@@ -635,18 +648,24 @@ class DvdWriter(object):
 
       Sometimes, a device gets confused about the state of its media.  Often,
       all it takes to solve the problem is to eject the media and then
-      immediately reload it.  
+      immediately reload it.  (There is also a configurable refresh media delay
+      which can be applied after the tray is closed, for situations where this
+      makes a difference.)
 
       This only works if the device has a tray and supports ejecting its media.
       We have no way to know if the tray is currently open or closed, so we
       just send the appropriate command and hope for the best.  If the device
       does not have a tray or does not support ejecting its media, then we do
-      nothing.
+      nothing.  The configured delay still applies, though.
 
       @raise IOError: If there is an error talking to the device.
       """
       self.openTray()
       self.closeTray()
+      if self.refreshMediaDelay is not None:
+         logger.debug("Per configuration, sleeping %d seconds to stabilize media state.")
+         time.sleep(self.refreshMediaDelay)
+         logger.debug("Sleep is complete; hopefully media state is stable now.")
 
    def writeImage(self, imagePath=None, newDisc=False, writeMulti=True):
       """

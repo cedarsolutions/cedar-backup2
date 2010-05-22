@@ -3490,6 +3490,7 @@ class StoreConfig(object):
       - The SCSI id, if provided, must be in the form specified by L{validateScsiId}.
       - The drive speed must be an integer >= 1
       - The blanking behavior must be a C{BlankBehavior} object
+      - The refresh media delay must be an integer >= 0
 
    Note that although the blanking factor must be a positive floating point
    number, it is stored as a string. This is done so that we can losslessly go
@@ -3497,13 +3498,14 @@ class StoreConfig(object):
 
    @sort: __init__, __repr__, __str__, __cmp__, sourceDir, 
           mediaType, deviceType, devicePath, deviceScsiId, 
-          driveSpeed, checkData, checkMedia, warnMidnite, noEject, blankBehavior
+          driveSpeed, checkData, checkMedia, warnMidnite, noEject, 
+          blankBehavior, refreshMediaDelay
    """
 
    def __init__(self, sourceDir=None, mediaType=None, deviceType=None, 
                 devicePath=None, deviceScsiId=None, driveSpeed=None,
                 checkData=False, warnMidnite=False, noEject=False,
-                checkMedia=False, blankBehavior=None):
+                checkMedia=False, blankBehavior=None, refreshMediaDelay=None):
       """
       Constructor for the C{StoreConfig} class.
 
@@ -3518,6 +3520,7 @@ class StoreConfig(object):
       @param warnMidnite: Whether to generate warnings for crossing midnite.
       @param noEject: Indicates that the writer device should not be ejected.
       @param blankBehavior: Controls optimized blanking behavior.
+      @param refreshMediaDelay: Delay, in seconds, to add after refreshing media
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -3532,6 +3535,7 @@ class StoreConfig(object):
       self._warnMidnite = None
       self._noEject = None
       self._blankBehavior = None
+      self._refreshMediaDelay = None
       self.sourceDir = sourceDir
       self.mediaType = mediaType
       self.deviceType = deviceType
@@ -3543,15 +3547,16 @@ class StoreConfig(object):
       self.warnMidnite = warnMidnite
       self.noEject = noEject
       self.blankBehavior = blankBehavior
+      self.refreshMediaDelay = refreshMediaDelay
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType, 
-                                                                          self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                                          self.checkData, self.warnMidnite, self.noEject,
-                                                                          self.checkMedia, self.blankBehavior)
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType, 
+                                                                              self.devicePath, self.deviceScsiId, self.driveSpeed,
+                                                                              self.checkData, self.warnMidnite, self.noEject,
+                                                                              self.checkMedia, self.blankBehavior, self.refreshMediaDelay)
 
    def __str__(self):
       """
@@ -3619,6 +3624,11 @@ class StoreConfig(object):
             return 1
       if self._blankBehavior != other._blankBehavior:
          if self._blankBehavior < other._blankBehavior:
+            return -1
+         else:
+            return 1
+      if self._refreshMediaDelay != other._refreshMediaDelay:
+         if self._refreshMediaDelay < other._refreshMediaDelay:
             return -1
          else:
             return 1
@@ -3810,6 +3820,31 @@ class StoreConfig(object):
       """
       return self._blankBehavior
 
+   def _setRefreshMediaDelay(self, value):
+      """
+      Property target used to set the refreshMediaDelay.
+      The value must be an integer >= 0.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is None:
+         self._refreshMediaDelay = None
+      else:
+         try:
+            value = int(value)
+         except TypeError:
+            raise ValueError("Action refreshMediaDelay value must be an integer >= 0.")
+         if value < 0:
+            raise ValueError("Action refreshMediaDelay value must be an integer >= 0.")
+         if value == 0:
+            value = None  # normalize this out, since it's the default
+         self._refreshMediaDelay = value
+
+   def _getRefreshMediaDelay(self):
+      """
+      Property target used to get the action refreshMediaDelay.
+      """
+      return self._refreshMediaDelay
+
    sourceDir = property(_getSourceDir, _setSourceDir, None, "Directory whose contents should be written to media.")
    mediaType = property(_getMediaType, _setMediaType, None, "Type of the media (see notes above).")
    deviceType = property(_getDeviceType, _setDeviceType, None, "Type of the device (optional, see notes above).")
@@ -3821,6 +3856,7 @@ class StoreConfig(object):
    warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
    noEject = property(_getNoEject, _setNoEject, None, "Indicates that the writer device should not be ejected.")
    blankBehavior = property(_getBlankBehavior, _setBlankBehavior, None, "Controls optimized blanking behavior.")
+   refreshMediaDelay = property(_getRefreshMediaDelay, _setRefreshMediaDelay, None, "Delay, in seconds, to add after refreshing media.")
 
 
 ########################################################################
@@ -4635,6 +4671,7 @@ class Config(object):
          store.warnMidnite = readBoolean(sectionNode, "warn_midnite")
          store.noEject = readBoolean(sectionNode, "no_eject")
          store.blankBehavior = Config._parseBlankBehavior(sectionNode)
+         store.refreshMediaDelay = readInteger(sectionNode, "refresh_media_delay")
       return store
    _parseStore = staticmethod(_parseStore)
 
@@ -5325,6 +5362,7 @@ class Config(object):
          addBooleanNode(xmlDom, sectionNode, "check_media", storeConfig.checkMedia)
          addBooleanNode(xmlDom, sectionNode, "warn_midnite", storeConfig.warnMidnite)
          addBooleanNode(xmlDom, sectionNode, "no_eject", storeConfig.noEject)
+         addIntegerNode(xmlDom, sectionNode, "refresh_media_delay", storeConfig.refreshMediaDelay)
          Config._addBlankBehavior(xmlDom, sectionNode, storeConfig.blankBehavior)
    _addStore = staticmethod(_addStore)
 
