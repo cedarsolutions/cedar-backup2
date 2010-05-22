@@ -1,4 +1,4 @@
-Version 2.19.6    unreleased
+Version 2.19.6    22 May 2010
 
 	* Work around strange stderr file descriptor bugs discovered on Cygwin.
 	* Tweak expected results for tests that fail on Cygwin with Python 2.5.x.
