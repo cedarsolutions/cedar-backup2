@@ -52,8 +52,8 @@ making them available to others.
 @sort: findResources, commandAvailable,
        buildPath, removedir, extractTar, changeFileAge,
        getMaskAsMode, getLogin, failUnlessAssignRaises, runningAsRoot,
-       platformMacOsX, platformWindows, platformHasEcho, 
-       platformSupportsLinks, platformSupportsPermissions,
+       platformDebian, platformMacOsX, platformCygwin, platformWindows, 
+       platformHasEcho, platformSupportsLinks, platformSupportsPermissions,
        platformRequiresBinaryRead
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
@@ -76,6 +76,9 @@ import logging
 from StringIO import StringIO
 
 from CedarBackup2.util import encodePath, executeCommand
+from CedarBackup2.config import Config, OptionsConfig
+from CedarBackup2.customize import customizeOverrides
+from CedarBackup2.cli import setupPathResolver
 
 
 ########################################################################
@@ -103,6 +106,33 @@ def setupDebugLogger():
    handler.setFormatter(formatter)
    handler.setLevel(logging.DEBUG)
    logger.addHandler(handler)
+
+
+#################
+# setupOverrides
+#################
+
+def setupOverrides():
+   """
+   Set up any platform-specific overrides that might be required.
+
+   When packages are built, this is done manually (hardcoded) in customize.py
+   and the overrides are set up in cli.cli().  This way, no runtime checks need
+   to be done.  This is safe, because the package maintainer knows exactly
+   which platform (Debian or not) the package is being built for.  
+
+   Unit tests are different, because they might be run anywhere.  So, we
+   attempt to make a guess about plaform using platformDebian(), and use that
+   to set up the custom overrides so that platform-specific unit tests continue
+   to work.
+   """
+   config = Config()
+   config.options = OptionsConfig()
+   if platformDebian():
+      customizeOverrides(config, platform="debian")
+   else:
+      customizeOverrides(config, platform="standard")
+   setupPathResolver(config)
 
 
 ###########################
@@ -387,10 +417,23 @@ def _isPlatform(name):
       return platform.platform(True, True).startswith("Windows")
    elif name == "macosx":
       return sys.platform == "darwin"
+   elif name == "debian":
+      return platform.platform(False, False).find("debian") > 0
    elif name == "cygwin":
       return platform.platform(True, True).startswith("CYGWIN")
    else:
       raise ValueError("Unknown platform [%s]." % name)
+
+
+############################
+# platformDebian() function
+############################
+
+def platformDebian():
+   """
+   Returns boolean indicating whether this is the Debian platform.
+   """
+   return _isPlatform("debian")
 
 
 ############################
