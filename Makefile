@@ -69,6 +69,9 @@ clean: docclean distribclean
 	-@$(FIND) . -name "*.pyc" | xargs rm -f
 	-@rm -f PKG-INFO
 
+tags:
+	ctags `find . -name "*.py"`
+
 # This uses the "full" argument to get all tests
 test:
 	@$(SUDO) -v
@@ -204,5 +207,5 @@ docdist: doc
 # Phony rules for use by GNU make
 ##################################
 
-.PHONY: all clean test usertest check allcheck doc docs docclean docsclean epydoc interface interface-doc interface-html book validate manual manual-doc distrib distribclean sdist sdistclean debdist debdistclean docdist
+.PHONY: all clean tags test usertest check allcheck doc docs docclean docsclean epydoc interface interface-doc interface-html book validate manual manual-doc distrib distribclean sdist sdistclean debdist debdistclean docdist
 
