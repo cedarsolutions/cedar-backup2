@@ -2284,8 +2284,8 @@
                   </para>
                   <para>
                      This is the UNIX device name for the writer drive, for
-                     instance <filename>/dev/scd0</filename> or
-                     <filename>/dev/cdrw</filename>.   
+                     instance <filename>/dev/scd0</filename> or a symlink
+                     like <filename>/dev/cdrw</filename>.   
                   </para>
                   <para>
                      In some cases, this device name is used to directly write
@@ -2298,6 +2298,12 @@
                      do several pre-write checks (such as whether the device
                      might already be mounted) as well as the post-write
                      consistency check, if enabled.
+                  </para>
+                  <para>
+                     Note: some users have reported intermittent problems when
+                     using a symlink as the target device on Linux, especially
+                     with DVD media.  If you experience problems, try using the
+                     real device name rather than the symlink.
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be an absolute path.
