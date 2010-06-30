@@ -106,7 +106,7 @@ from CedarBackup2.extend.capacity import LocalConfig, CapacityConfig, ByteQuanti
 # Module-wide configuration and constants
 #######################################################################
 
-DATA_DIRS = [ "./data", "./test/data", ]
+DATA_DIRS = [ "./data", "./testcase/data", ]
 RESOURCES = [ "capacity.conf.1", "capacity.conf.2", "capacity.conf.3", "capacity.conf.4", ]
 
 

@@ -140,34 +140,34 @@ def main():
 
    # Import the unit test modules
    try:
-      if os.path.exists(os.path.join(".", "test", "filesystemtests.py")):
+      if os.path.exists(os.path.join(".", "testcase", "filesystemtests.py")):
          sys.path.insert(0, ".")
-      elif os.path.basename(os.getcwd()) == "test" and os.path.exists(os.path.join("..", "test", "filesystemtests.py")):
+      elif os.path.basename(os.getcwd()) == "testcase" and os.path.exists(os.path.join("..", "testcase", "filesystemtests.py")):
          sys.path.insert(0, "..")
       else:
          print "WARNING: CedarBackup2 unit test modules were not found in"
          print "the expected location.  If the import succeeds, you may be"
          print "using an unexpected version of the test suite."
          print ""
-      import test.utiltests as utiltests
-      import test.knapsacktests as knapsacktests
-      import test.filesystemtests as filesystemtests
-      import test.peertests as peertests
-      import test.actionsutiltests as actionsutiltests
-      import test.writersutiltests as writersutiltests
-      import test.cdwritertests as cdwritertests
-      import test.dvdwritertests as dvdwritertests
-      import test.configtests as configtests
-      import test.clitests as clitests
-      import test.mysqltests as mysqltests
-      import test.postgresqltests as postgresqltests
-      import test.subversiontests as subversiontests
-      import test.mboxtests as mboxtests
-      import test.encrypttests as encrypttests
-      import test.splittests as splittests
-      import test.spantests as spantests
-      import test.capacitytests as capacitytests
-      import test.customizetests as customizetests
+      from testcase import utiltests
+      from testcase import knapsacktests
+      from testcase import filesystemtests
+      from testcase import peertests
+      from testcase import actionsutiltests
+      from testcase import writersutiltests
+      from testcase import cdwritertests
+      from testcase import dvdwritertests
+      from testcase import configtests
+      from testcase import clitests
+      from testcase import mysqltests
+      from testcase import postgresqltests
+      from testcase import subversiontests
+      from testcase import mboxtests
+      from testcase import encrypttests
+      from testcase import splittests
+      from testcase import spantests
+      from testcase import capacitytests
+      from testcase import customizetests
    except ImportError, e:
       print "Failed to import CedarBackup2 unit test module: %s" % e
       print "You must either run the unit tests from the CedarBackup2 source"
@@ -235,9 +235,9 @@ def main():
    # Create and run the test suite
    print ""
    suite = unittest.TestSuite(unittests.values())
-   result = unittest.TextTestRunner(verbosity=1).run(suite)
+   suiteResult = unittest.TextTestRunner(verbosity=1).run(suite)
    print ""
-   if not result.wasSuccessful():
+   if not suiteResult.wasSuccessful():
       return 1
    else:
       return 0

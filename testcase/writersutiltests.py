@@ -108,7 +108,7 @@ from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYT
 # Module-wide configuration and constants
 #######################################################################
 
-DATA_DIRS = [ "./data", "./test/data", ]
+DATA_DIRS = [ "./data", "./testcase/data", ]
 RESOURCES = [ "tree9.tar.gz", ]
 
 SUDO_CMD = [ "sudo", ]

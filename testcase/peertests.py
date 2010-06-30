@@ -110,7 +110,7 @@ from CedarBackup2.peer import DEF_COLLECT_INDICATOR, DEF_STAGE_INDICATOR
 # Module-wide configuration and constants
 #######################################################################
 
-DATA_DIRS = [ "./data", "./test/data", ]
+DATA_DIRS = [ "./data", "./testcase/data", ]
 RESOURCES = [ "tree1.tar.gz", "tree2.tar.gz", "tree9.tar.gz", ]
 
 REMOTE_HOST      = "localhost"                        # Always use login@localhost as our "remote" host

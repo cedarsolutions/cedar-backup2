@@ -107,7 +107,7 @@ from CedarBackup2.testutil import findResources, buildPath, removedir, extractTa
 GB44        = (4.4*1024.0*1024.0*1024.0)  # 4.4 GB 
 GB44SECTORS = GB44/2048.0                 # 4.4 GB in 2048-byte sectors
 
-DATA_DIRS = [ "./data", "./test/data", ]
+DATA_DIRS = [ "./data", "./testcase/data", ]
 RESOURCES = [ "tree9.tar.gz", ]
 
 
