@@ -35,5 +35,5 @@ library interface.
 # Imported modules
 ########################################################################
 
-from CedarBackup2.writers.util import IsoImage
+from CedarBackup2.writers.util import IsoImage  # pylint: disable-msg=W0611
 

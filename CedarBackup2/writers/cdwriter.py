@@ -62,7 +62,6 @@ import tempfile
 import time
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, displayBytes, encodePath
 from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES
@@ -570,7 +569,7 @@ class CdWriter(object):
 
    device = property(_getDevice, None, None, doc="Filesystem device name for this writer.")
    scsiId = property(_getScsiId, None, None, doc="SCSI id for the device, in the form C{[<method>:]scsibus,target,lun}.")
-   hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer, either SCSI id or device path.");
+   hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer, either SCSI id or device path.")
    driveSpeed = property(_getDriveSpeed, None, None, doc="Speed at which the drive writes.")
    media = property(_getMedia, None, None, doc="Definition of media that is expected to be in the device.")
    deviceType = property(_getDeviceType, None, None, doc="Type of the device, as returned from C{cdrecord -prcap}.")

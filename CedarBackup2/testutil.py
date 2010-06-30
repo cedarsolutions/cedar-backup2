@@ -70,7 +70,7 @@ import tarfile
 import time
 import getpass
 import random
-import string
+import string # pylint: disable-msg=W0402
 import platform
 import logging
 from StringIO import StringIO
@@ -150,7 +150,7 @@ def findResources(resources, dataDirs):
    mapping = { }
    for resource in resources:
       for resourceDir in dataDirs:
-         path = os.path.join(resourceDir, resource);
+         path = os.path.join(resourceDir, resource)
          if os.path.exists(path):
             mapping[resource] = path
             break
@@ -234,12 +234,13 @@ def extractTar(tmpdir, filepath):
    @param filepath: Path to tarfile to extract.
    @raise ValueError: If a path cannot be encoded properly.
    """
+   # pylint: disable-msg=E1101
    tmpdir = encodePath(tmpdir)
    filepath = encodePath(filepath)
    tar = tarfile.open(filepath)
    try:
       tar.format = tarfile.GNU_FORMAT
-   except:
+   except AttributeError:
       tar.posix = False
    for tarinfo in tar:
       tar.extract(tarinfo, tmpdir)
@@ -267,7 +268,7 @@ def changeFileAge(filename, subtract=None):
    @raise ValueError: If a path cannot be encoded properly.
    """
    filename = encodePath(filename)
-   newTime = time.time() - 1;
+   newTime = time.time() - 1
    if subtract is not None:
       newTime -= subtract
    os.utime(filename, (newTime, newTime))
@@ -312,7 +313,7 @@ def randomFilename(length, prefix=None, suffix=None):
    """
    characters = [None] * length
    for i in xrange(length):
-      characters[i] = random.choice(string.uppercase)
+      characters[i] = random.choice(string.ascii_uppercase)
    if prefix is None:
       prefix = ""
    if suffix is None:
@@ -324,7 +325,7 @@ def randomFilename(length, prefix=None, suffix=None):
 # failUnlessAssignRaises() function
 ####################################
 
-def failUnlessAssignRaises(testCase, exception, object, property, value):
+def failUnlessAssignRaises(testCase, exception, obj, prop, value):
    """
    Equivalent of C{failUnlessRaises}, but used for property assignments instead.
 
@@ -356,8 +357,8 @@ def failUnlessAssignRaises(testCase, exception, object, property, value):
 
    @param testCase: PyUnit test case object (i.e. self).
    @param exception: Exception that is expected to be raised.
-   @param object: Object whose property is to be assigned to.
-   @param property: Name of the property, as a string.
+   @param obj: Object whose property is to be assigned to.
+   @param prop: Name of the property, as a string.
    @param value: Value that is to be assigned to the property.
 
    @see: C{unittest.TestCase.failUnlessRaises}
@@ -365,7 +366,7 @@ def failUnlessAssignRaises(testCase, exception, object, property, value):
    missed = False
    instead = None
    try:
-      exec "object.%s = value" % property
+      exec "obj.%s = value" % prop    # pylint: disable-msg=W0122
       missed = True
    except exception: pass
    except Exception, e: instead = e
@@ -379,7 +380,7 @@ def failUnlessAssignRaises(testCase, exception, object, property, value):
 # captureOutput() function
 ###########################
 
-def captureOutput(callable):
+def captureOutput(c):
    """
    Captures the output (stdout, stderr) of a function or a method.
 
@@ -393,12 +394,12 @@ def captureOutput(callable):
    @note: This method assumes that C{callable} doesn't take any arguments
    besides keyword argument C{fd} to specify the file descriptor.
 
-   @param callable: Callable function or method.
+   @param c: Callable function or method.
 
    @return: Output of function, as one big string.
    """
    fd = StringIO()
-   callable(fd=fd)
+   c(fd=fd)
    result = fd.getvalue()
    fd.close()
    return result

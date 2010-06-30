@@ -60,7 +60,6 @@ import tempfile
 import time
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import BackupFileList
 from CedarBackup2.writers.util import IsoImage
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, displayBytes, encodePath
@@ -361,7 +360,7 @@ class DvdWriter(object):
    # Constructor
    ##############
 
-   def __init__(self, device, scsiId=None, driveSpeed=None, 
+   def __init__(self, device, scsiId=None, driveSpeed=None,
                 mediaType=MEDIA_DVDPLUSRW, noEject=False, 
                 refreshMediaDelay=0, unittest=False):
       """
@@ -476,7 +475,7 @@ class DvdWriter(object):
 
    device = property(_getDevice, None, None, doc="Filesystem device name for this writer.")
    scsiId = property(_getScsiId, None, None, doc="SCSI id for the device (saved for reference only).")
-   hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer (always the device path).");
+   hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer (always the device path).")
    driveSpeed = property(_getDriveSpeed, None, None, doc="Speed at which the drive writes.")
    media = property(_getMedia, None, None, doc="Definition of media that is expected to be in the device.")
    deviceHasTray = property(_getDeviceHasTray, None, None, doc="Indicates whether the device has a media tray.")

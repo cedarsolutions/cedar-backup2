@@ -341,13 +341,13 @@ class ByteQuantity(object):
       """
       if other is None:
          return 1
-      if self._quantity != other._quantity:
-         if self._quantity < other._quantity:
+      if self.quantity != other.quantity:
+         if self.quantity < other.quantity:
             return -1
          else:
             return 1
-      if self._units != other._units:
-         if self._units < other._units:
+      if self.units != other.units:
+         if self.units < other.units:
             return -1
          else:
             return 1
@@ -467,13 +467,13 @@ class ActionDependencies(object):
       """
       if other is None:
          return 1
-      if self._beforeList != other._beforeList:
-         if self._beforeList < other._beforeList:
+      if self.beforeList != other.beforeList:
+         if self.beforeList < other.beforeList:
             return -1
          else:
             return 1
-      if self._afterList != other._afterList:
-         if self._afterList < other._afterList:
+      if self.afterList != other.afterList:
+         if self.afterList < other.afterList:
             return -1
          else:
             return 1
@@ -594,23 +594,23 @@ class ActionHook(object):
       """
       if other is None:
          return 1
-      if self._action != other._action:
-         if self._action < other._action:
+      if self.action != other.action:
+         if self.action < other.action:
             return -1
          else:
             return 1
-      if self._command != other._command: 
-         if self._command < other._command: 
+      if self.command != other.command: 
+         if self.command < other.command: 
             return -1
          else:
             return 1
-      if self._before != other._before: 
-         if self._before < other._before: 
+      if self.before != other.before: 
+         if self.before < other.before: 
             return -1
          else:
             return 1
-      if self._after != other._after: 
-         if self._after < other._after: 
+      if self.after != other.after: 
+         if self.after < other.after: 
             return -1
          else:
             return 1
@@ -817,13 +817,13 @@ class BlankBehavior(object):
       """
       if other is None:
          return 1
-      if self._blankMode != other._blankMode:
-         if self._blankMode < other._blankMode:
+      if self.blankMode != other.blankMode:
+         if self.blankMode < other.blankMode:
             return -1
          else:
             return 1
-      if self._blankFactor != other._blankFactor:
-         if self._blankFactor < other._blankFactor:
+      if self.blankFactor != other.blankFactor:
+         if self.blankFactor < other.blankFactor:
             return -1
          else:
             return 1
@@ -946,28 +946,28 @@ class ExtendedAction(object):
       """
       if other is None:
          return 1
-      if self._name != other._name:
-         if self._name < other._name:
+      if self.name != other.name:
+         if self.name < other.name:
             return -1
          else:
             return 1
-      if self._module != other._module: 
-         if self._module < other._module: 
+      if self.module != other.module: 
+         if self.module < other.module: 
             return -1
          else:
             return 1
-      if self._function != other._function:
-         if self._function < other._function:
+      if self.function != other.function:
+         if self.function < other.function:
             return -1
          else:
             return 1
-      if self._index != other._index:
-         if self._index < other._index:
+      if self.index != other.index:
+         if self.index < other.index:
             return -1
          else:
             return 1
-      if self._dependencies != other._dependencies:
-         if self._dependencies < other._dependencies:
+      if self.dependencies != other.dependencies:
+         if self.dependencies < other.dependencies:
             return -1
          else:
             return 1
@@ -1143,13 +1143,13 @@ class CommandOverride(object):
       """
       if other is None:
          return 1
-      if self._command != other._command: 
-         if self._command < other.command:
+      if self.command != other.command: 
+         if self.command < other.command:
             return -1
          else:
             return 1 
-      if self._absolutePath != other._absolutePath: 
-         if self._absolutePath < other.absolutePath:
+      if self.absolutePath != other.absolutePath: 
+         if self.absolutePath < other.absolutePath:
             return -1
          else:
             return 1 
@@ -1256,18 +1256,18 @@ class CollectFile(object):
       """
       if other is None:
          return 1
-      if self._absolutePath != other._absolutePath: 
-         if self._absolutePath < other.absolutePath:
+      if self.absolutePath != other.absolutePath: 
+         if self.absolutePath < other.absolutePath:
             return -1
          else:
             return 1 
-      if self._collectMode != other._collectMode: 
-         if self._collectMode < other._collectMode: 
+      if self.collectMode != other.collectMode: 
+         if self.collectMode < other.collectMode: 
             return -1
          else:
             return 1 
-      if self._archiveMode != other._archiveMode: 
-         if self._archiveMode < other._archiveMode: 
+      if self.archiveMode != other.archiveMode: 
+         if self.archiveMode < other.archiveMode: 
             return -1
          else:
             return 1 
@@ -1387,7 +1387,7 @@ class CollectDir(object):
       self._archiveMode = None
       self._ignoreFile = None
       self._linkDepth = None
-      self._deference = None
+      self._dereference = None
       self._absoluteExcludePaths = None
       self._relativeExcludePaths = None
       self._excludePatterns = None
@@ -1427,48 +1427,48 @@ class CollectDir(object):
       """
       if other is None:
          return 1
-      if self._absolutePath != other._absolutePath: 
-         if self._absolutePath < other.absolutePath:
+      if self.absolutePath != other.absolutePath: 
+         if self.absolutePath < other.absolutePath:
             return -1
          else:
             return 1 
-      if self._collectMode != other._collectMode: 
-         if self._collectMode < other._collectMode: 
+      if self.collectMode != other.collectMode: 
+         if self.collectMode < other.collectMode: 
             return -1
          else:
             return 1 
-      if self._archiveMode != other._archiveMode: 
-         if self._archiveMode < other._archiveMode: 
+      if self.archiveMode != other.archiveMode: 
+         if self.archiveMode < other.archiveMode: 
             return -1
          else:
             return 1 
-      if self._ignoreFile != other._ignoreFile: 
-         if self._ignoreFile < other._ignoreFile: 
+      if self.ignoreFile != other.ignoreFile: 
+         if self.ignoreFile < other.ignoreFile: 
             return -1
          else:
             return 1 
-      if self._linkDepth != other._linkDepth: 
-         if self._linkDepth < other._linkDepth: 
+      if self.linkDepth != other.linkDepth: 
+         if self.linkDepth < other.linkDepth: 
             return -1
          else:
             return 1 
-      if self._dereference != other._dereference: 
-         if self._dereference < other._dereference: 
+      if self.dereference != other.dereference: 
+         if self.dereference < other.dereference: 
             return -1
          else:
             return 1 
-      if self._absoluteExcludePaths != other._absoluteExcludePaths: 
-         if self._absoluteExcludePaths < other._absoluteExcludePaths: 
+      if self.absoluteExcludePaths != other.absoluteExcludePaths: 
+         if self.absoluteExcludePaths < other.absoluteExcludePaths: 
             return -1
          else:
             return 1 
-      if self._relativeExcludePaths != other._relativeExcludePaths:  
-         if self._relativeExcludePaths < other._relativeExcludePaths:  
+      if self.relativeExcludePaths != other.relativeExcludePaths:  
+         if self.relativeExcludePaths < other.relativeExcludePaths:  
             return -1
          else:
             return 1 
-      if self._excludePatterns != other._excludePatterns: 
-         if self._excludePatterns < other._excludePatterns: 
+      if self.excludePatterns != other.excludePatterns: 
+         if self.excludePatterns < other.excludePatterns: 
             return -1
          else:
             return 1 
@@ -1718,13 +1718,13 @@ class PurgeDir(object):
       """
       if other is None:
          return 1
-      if self._absolutePath != other._absolutePath: 
-         if self._absolutePath < other._absolutePath: 
+      if self.absolutePath != other.absolutePath: 
+         if self.absolutePath < other.absolutePath: 
             return -1
          else:
             return 1
-      if self._retainDays != other._retainDays: 
-         if self._retainDays < other._retainDays: 
+      if self.retainDays != other.retainDays: 
+         if self.retainDays < other.retainDays: 
             return -1
          else:
             return 1
@@ -1837,18 +1837,18 @@ class LocalPeer(object):
       """
       if other is None:
          return 1
-      if self._name != other._name: 
-         if self._name < other._name: 
+      if self.name != other.name: 
+         if self.name < other.name: 
             return -1
          else:
             return 1
-      if self._collectDir != other._collectDir:
-         if self._collectDir < other._collectDir:
+      if self.collectDir != other.collectDir:
+         if self.collectDir < other.collectDir:
             return -1
          else:
             return 1
-      if self._ignoreFailureMode != other._ignoreFailureMode:
-         if self._ignoreFailureMode < other._ignoreFailureMode:
+      if self.ignoreFailureMode != other.ignoreFailureMode:
+         if self.ignoreFailureMode < other.ignoreFailureMode:
             return -1
          else:
             return 1
@@ -2000,48 +2000,48 @@ class RemotePeer(object):
       """
       if other is None:
          return 1
-      if self._name != other._name:
-         if self._name < other._name:
+      if self.name != other.name:
+         if self.name < other.name:
             return -1
          else:
             return 1
-      if self._collectDir != other._collectDir: 
-         if self._collectDir < other._collectDir: 
+      if self.collectDir != other.collectDir: 
+         if self.collectDir < other.collectDir: 
             return -1
          else:
             return 1
-      if self._remoteUser != other._remoteUser:
-         if self._remoteUser < other._remoteUser:
+      if self.remoteUser != other.remoteUser:
+         if self.remoteUser < other.remoteUser:
             return -1
          else:
             return 1
-      if self._rcpCommand != other._rcpCommand:
-         if self._rcpCommand < other._rcpCommand:
+      if self.rcpCommand != other.rcpCommand:
+         if self.rcpCommand < other.rcpCommand:
             return -1
          else:
             return 1
-      if self._rshCommand != other._rshCommand:
-         if self._rshCommand < other._rshCommand:
+      if self.rshCommand != other.rshCommand:
+         if self.rshCommand < other.rshCommand:
             return -1
          else:
             return 1
-      if self._cbackCommand != other._cbackCommand:
-         if self._cbackCommand < other._cbackCommand:
+      if self.cbackCommand != other.cbackCommand:
+         if self.cbackCommand < other.cbackCommand:
             return -1
          else:
             return 1
-      if self._managed != other._managed:
-         if self._managed < other._managed:
+      if self.managed != other.managed:
+         if self.managed < other.managed:
             return -1
          else:
             return 1
-      if self._managedActions != other._managedActions:
-         if self._managedActions < other._managedActions:
+      if self.managedActions != other.managedActions:
+         if self.managedActions < other.managedActions:
             return -1
          else:
             return 1
-      if self._ignoreFailureMode != other._ignoreFailureMode:
-         if self._ignoreFailureMode < other._ignoreFailureMode:
+      if self.ignoreFailureMode != other.ignoreFailureMode:
+         if self.ignoreFailureMode < other.ignoreFailureMode:
             return -1
          else:
             return 1
@@ -2277,23 +2277,23 @@ class ReferenceConfig(object):
       """
       if other is None:
          return 1
-      if self._author != other._author:
-         if self._author < other._author:
+      if self.author != other.author:
+         if self.author < other.author:
             return -1
          else:
             return 1
-      if self._revision != other._revision:
-         if self._revision < other._revision:
+      if self.revision != other.revision:
+         if self.revision < other.revision:
             return -1
          else:
             return 1
-      if self._description != other._description:
-         if self._description < other._description:
+      if self.description != other.description:
+         if self.description < other.description:
             return -1
          else:
             return 1
-      if self._generator != other._generator:
-         if self._generator < other._generator:
+      if self.generator != other.generator:
+         if self.generator < other.generator:
             return -1
          else:
             return 1
@@ -2417,13 +2417,13 @@ class ExtensionsConfig(object):
       """
       if other is None:
          return 1
-      if self._orderMode != other._orderMode:
-         if self._orderMode < other._orderMode:
+      if self.orderMode != other.orderMode:
+         if self.orderMode < other.orderMode:
             return -1
          else:
             return 1
-      if self._actions != other._actions:
-         if self._actions < other._actions:
+      if self.actions != other.actions:
+         if self.actions < other.actions:
             return -1
          else:
             return 1
@@ -2570,53 +2570,53 @@ class OptionsConfig(object):
       """
       if other is None:
          return 1
-      if self._startingDay != other._startingDay:
-         if self._startingDay < other._startingDay:
+      if self.startingDay != other.startingDay:
+         if self.startingDay < other.startingDay:
             return -1
          else:
             return 1
-      if self._workingDir != other._workingDir:
-         if self._workingDir < other._workingDir:
+      if self.workingDir != other.workingDir:
+         if self.workingDir < other.workingDir:
             return -1
          else:
             return 1
-      if self._backupUser != other._backupUser:
-         if self._backupUser < other._backupUser:
+      if self.backupUser != other.backupUser:
+         if self.backupUser < other.backupUser:
             return -1
          else:
             return 1
-      if self._backupGroup != other._backupGroup:
-         if self._backupGroup < other._backupGroup:
+      if self.backupGroup != other.backupGroup:
+         if self.backupGroup < other.backupGroup:
             return -1
          else:
             return 1
-      if self._rcpCommand != other._rcpCommand:
-         if self._rcpCommand < other._rcpCommand:
+      if self.rcpCommand != other.rcpCommand:
+         if self.rcpCommand < other.rcpCommand:
             return -1
          else:
             return 1
-      if self._rshCommand != other._rshCommand:
-         if self._rshCommand < other._rshCommand:
+      if self.rshCommand != other.rshCommand:
+         if self.rshCommand < other.rshCommand:
             return -1
          else:
             return 1
-      if self._cbackCommand != other._cbackCommand:
-         if self._cbackCommand < other._cbackCommand:
+      if self.cbackCommand != other.cbackCommand:
+         if self.cbackCommand < other.cbackCommand:
             return -1
          else:
             return 1
-      if self._overrides != other._overrides:
-         if self._overrides < other._overrides:
+      if self.overrides != other.overrides:
+         if self.overrides < other.overrides:
             return -1
          else:
             return 1
-      if self._hooks != other._hooks:
-         if self._hooks < other._hooks:
+      if self.hooks != other.hooks:
+         if self.hooks < other.hooks:
             return -1
          else:
             return 1
-      if self._managedActions != other._managedActions:
-         if self._managedActions < other._managedActions:
+      if self.managedActions != other.managedActions:
+         if self.managedActions < other.managedActions:
             return -1
          else:
             return 1
@@ -2926,13 +2926,13 @@ class PeersConfig(object):
       """
       if other is None:
          return 1
-      if self._localPeers != other._localPeers:
-         if self._localPeers < other._localPeers:
+      if self.localPeers != other.localPeers:
+         if self.localPeers < other.localPeers:
             return -1
          else:
             return 1
-      if self._remotePeers != other._remotePeers:
-         if self._remotePeers < other._remotePeers:
+      if self.remotePeers != other.remotePeers:
+         if self.remotePeers < other.remotePeers:
             return -1
          else:
             return 1
@@ -3093,43 +3093,43 @@ class CollectConfig(object):
       """
       if other is None:
          return 1
-      if self._targetDir != other._targetDir:
-         if self._targetDir < other._targetDir:
+      if self.targetDir != other.targetDir:
+         if self.targetDir < other.targetDir:
             return -1
          else:
             return 1
-      if self._collectMode != other._collectMode:
-         if self._collectMode < other._collectMode:
+      if self.collectMode != other.collectMode:
+         if self.collectMode < other.collectMode:
             return -1
          else:
             return 1
-      if self._archiveMode != other._archiveMode:
-         if self._archiveMode < other._archiveMode:
+      if self.archiveMode != other.archiveMode:
+         if self.archiveMode < other.archiveMode:
             return -1
          else:
             return 1
-      if self._ignoreFile != other._ignoreFile:
-         if self._ignoreFile < other._ignoreFile:
+      if self.ignoreFile != other.ignoreFile:
+         if self.ignoreFile < other.ignoreFile:
             return -1
          else:
             return 1
-      if self._absoluteExcludePaths != other._absoluteExcludePaths:
-         if self._absoluteExcludePaths < other._absoluteExcludePaths:
+      if self.absoluteExcludePaths != other.absoluteExcludePaths:
+         if self.absoluteExcludePaths < other.absoluteExcludePaths:
             return -1
          else:
             return 1
-      if self._excludePatterns != other._excludePatterns:
-         if self._excludePatterns < other._excludePatterns:
+      if self.excludePatterns != other.excludePatterns:
+         if self.excludePatterns < other.excludePatterns:
             return -1
          else:
             return 1
-      if self._collectFiles != other._collectFiles:
-         if self._collectFiles < other._collectFiles:
+      if self.collectFiles != other.collectFiles:
+         if self.collectFiles < other.collectFiles:
             return -1
          else:
             return 1
-      if self._collectDirs != other._collectDirs:
-         if self._collectDirs < other._collectDirs:
+      if self.collectDirs != other.collectDirs:
+         if self.collectDirs < other.collectDirs:
             return -1
          else:
             return 1
@@ -3371,18 +3371,18 @@ class StageConfig(object):
       """
       if other is None:
          return 1
-      if self._targetDir != other._targetDir:
-         if self._targetDir < other._targetDir:
+      if self.targetDir != other.targetDir:
+         if self.targetDir < other.targetDir:
             return -1
          else:
             return 1
-      if self._localPeers != other._localPeers:
-         if self._localPeers < other._localPeers:
+      if self.localPeers != other.localPeers:
+         if self.localPeers < other.localPeers:
             return -1
          else:
             return 1
-      if self._remotePeers != other._remotePeers:
-         if self._remotePeers < other._remotePeers:
+      if self.remotePeers != other.remotePeers:
+         if self.remotePeers < other.remotePeers:
             return -1
          else:
             return 1
@@ -3553,10 +3553,11 @@ class StoreConfig(object):
       """
       Official string representation for class instance.
       """
-      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.sourceDir, self.mediaType, self.deviceType, 
-                                                                              self.devicePath, self.deviceScsiId, self.driveSpeed,
-                                                                              self.checkData, self.warnMidnite, self.noEject,
-                                                                              self.checkMedia, self.blankBehavior, self.refreshMediaDelay)
+      return "StoreConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (
+                self.sourceDir, self.mediaType, self.deviceType, 
+                self.devicePath, self.deviceScsiId, self.driveSpeed,
+                self.checkData, self.warnMidnite, self.noEject,
+                self.checkMedia, self.blankBehavior, self.refreshMediaDelay)
 
    def __str__(self):
       """
@@ -3572,63 +3573,63 @@ class StoreConfig(object):
       """
       if other is None:
          return 1
-      if self._sourceDir != other._sourceDir:
-         if self._sourceDir < other._sourceDir:
+      if self.sourceDir != other.sourceDir:
+         if self.sourceDir < other.sourceDir:
             return -1
          else:
             return 1
-      if self._mediaType != other._mediaType:
-         if self._mediaType < other._mediaType:
+      if self.mediaType != other.mediaType:
+         if self.mediaType < other.mediaType:
             return -1
          else:
             return 1
-      if self._deviceType != other._deviceType:
-         if self._deviceType < other._deviceType:
+      if self.deviceType != other.deviceType:
+         if self.deviceType < other.deviceType:
             return -1
          else:
             return 1
-      if self._devicePath != other._devicePath:
-         if self._devicePath < other._devicePath:
+      if self.devicePath != other.devicePath:
+         if self.devicePath < other.devicePath:
             return -1
          else:
             return 1
-      if self._deviceScsiId != other._deviceScsiId:
-         if self._deviceScsiId < other._deviceScsiId:
+      if self.deviceScsiId != other.deviceScsiId:
+         if self.deviceScsiId < other.deviceScsiId:
             return -1
          else:
             return 1
-      if self._driveSpeed != other._driveSpeed:
-         if self._driveSpeed < other._driveSpeed:
+      if self.driveSpeed != other.driveSpeed:
+         if self.driveSpeed < other.driveSpeed:
             return -1
          else:
             return 1
-      if self._checkData != other._checkData:
-         if self._checkData < other._checkData:
+      if self.checkData != other.checkData:
+         if self.checkData < other.checkData:
             return -1
          else:
             return 1
-      if self._checkMedia != other._checkMedia:
-         if self._checkMedia < other._checkMedia:
+      if self.checkMedia != other.checkMedia:
+         if self.checkMedia < other.checkMedia:
             return -1
          else:
             return 1
-      if self._warnMidnite != other._warnMidnite:
-         if self._warnMidnite < other._warnMidnite:
+      if self.warnMidnite != other.warnMidnite:
+         if self.warnMidnite < other.warnMidnite:
             return -1
          else:
             return 1
-      if self._noEject != other._noEject:
-         if self._noEject < other._noEject:
+      if self.noEject != other.noEject:
+         if self.noEject < other.noEject:
             return -1
          else:
             return 1
-      if self._blankBehavior != other._blankBehavior:
-         if self._blankBehavior < other._blankBehavior:
+      if self.blankBehavior != other.blankBehavior:
+         if self.blankBehavior < other.blankBehavior:
             return -1
          else:
             return 1
-      if self._refreshMediaDelay != other._refreshMediaDelay:
-         if self._refreshMediaDelay < other._refreshMediaDelay:
+      if self.refreshMediaDelay != other.refreshMediaDelay:
+         if self.refreshMediaDelay < other.refreshMediaDelay:
             return -1
          else:
             return 1
@@ -3917,8 +3918,8 @@ class PurgeConfig(object):
       """
       if other is None:
          return 1
-      if self._purgeDirs != other._purgeDirs:
-         if self._purgeDirs < other._purgeDirs:
+      if self.purgeDirs != other.purgeDirs:
+         if self.purgeDirs < other.purgeDirs:
             return -1
          else:
             return 1
@@ -4098,43 +4099,43 @@ class Config(object):
       """
       if other is None:
          return 1
-      if self._reference != other._reference:
-         if self._reference < other._reference:
+      if self.reference != other.reference:
+         if self.reference < other.reference:
             return -1
          else:
             return 1
-      if self._extensions != other._extensions:
-         if self._extensions < other._extensions:
+      if self.extensions != other.extensions:
+         if self.extensions < other.extensions:
             return -1
          else:
             return 1
-      if self._options != other._options:
-         if self._options < other._options:
+      if self.options != other.options:
+         if self.options < other.options:
             return -1
          else:
             return 1
-      if self._peers != other._peers:
-         if self._peers < other._peers:
+      if self.peers != other.peers:
+         if self.peers < other.peers:
             return -1
          else:
             return 1
-      if self._collect != other._collect:
-         if self._collect < other._collect:
+      if self.collect != other.collect:
+         if self.collect < other.collect:
             return -1
          else:
             return 1
-      if self._stage != other._stage:
-         if self._stage < other._stage:
+      if self.stage != other.stage:
+         if self.stage < other.stage:
             return -1
          else:
             return 1
-      if self._store != other._store:
-         if self._store < other._store:
+      if self.store != other.store:
+         if self.store < other.store:
             return -1
          else:
             return 1
-      if self._purge != other._purge:
-         if self._purge < other._purge:
+      if self.purge != other.purge:
+         if self.purge < other.purge:
             return -1
          else:
             return 1
@@ -4578,9 +4579,9 @@ class Config(object):
          collectFiles         //cb_config/collect/file
          collectDirs          //cb_config/collect/dir
    
-		The exclusions are parsed by L{_parseExclusions}, the collect files are
-		parsed by L{_parseCollectFiles}, and the directories are parsed by
-		L{_parseCollectDirs}.
+      The exclusions are parsed by L{_parseExclusions}, the collect files are
+      parsed by L{_parseCollectFiles}, and the directories are parsed by
+      L{_parseCollectDirs}.
 
       @param parentNode: Parent node to search beneath.
 
@@ -4727,7 +4728,7 @@ class Config(object):
             action.function = readString(entry, "function")
             action.index = readInteger(entry, "index")
             action.dependencies = Config._parseDependencies(entry)
-            lst.append(action);
+            lst.append(action)
       if lst == []:
          lst = None
       return lst
@@ -4823,38 +4824,38 @@ class Config(object):
    _parseHooks = staticmethod(_parseHooks)
 
    def _parseCollectFiles(parentNode):
-		"""
-		Reads a list of C{CollectFile} objects from immediately beneath the parent.
+      """
+      Reads a list of C{CollectFile} objects from immediately beneath the parent.
 
-		We read the following individual fields::
+      We read the following individual fields::
 
-			absolutePath            abs_path
-			collectMode             mode I{or} collect_mode
-			archiveMode             archive_mode
+         absolutePath            abs_path
+         collectMode             mode I{or} collect_mode
+         archiveMode             archive_mode
 
-		The collect mode is a special case.  Just a C{mode} tag is accepted, but
-		we prefer C{collect_mode} for consistency with the rest of the config
-		file and to avoid confusion with the archive mode.  If both are provided,
-		only C{mode} will be used.
+      The collect mode is a special case.  Just a C{mode} tag is accepted, but
+      we prefer C{collect_mode} for consistency with the rest of the config
+      file and to avoid confusion with the archive mode.  If both are provided,
+      only C{mode} will be used.
 
-		@param parentNode: Parent node to search beneath.
+      @param parentNode: Parent node to search beneath.
 
-		@return: List of C{CollectFile} objects or C{None} if none are found.
-		@raise ValueError: If some filled-in value is invalid.
-		"""
-		lst = []
-		for entry in readChildren(parentNode, "file"):
-			if isElement(entry):
-				cfile = CollectFile()
-				cfile.absolutePath = readString(entry, "abs_path")
-				cfile.collectMode = readString(entry, "mode")
-				if cfile.collectMode is None:
-					cfile.collectMode = readString(entry, "collect_mode")
-				cfile.archiveMode = readString(entry, "archive_mode")
-				lst.append(cfile)
-		if lst == []:
-			lst = None
-		return lst
+      @return: List of C{CollectFile} objects or C{None} if none are found.
+      @raise ValueError: If some filled-in value is invalid.
+      """
+      lst = []
+      for entry in readChildren(parentNode, "file"):
+         if isElement(entry):
+            cfile = CollectFile()
+            cfile.absolutePath = readString(entry, "abs_path")
+            cfile.collectMode = readString(entry, "mode")
+            if cfile.collectMode is None:
+               cfile.collectMode = readString(entry, "collect_mode")
+            cfile.archiveMode = readString(entry, "archive_mode")
+            lst.append(cfile)
+      if lst == []:
+         lst = None
+      return lst
    _parseCollectFiles = staticmethod(_parseCollectFiles)
 
    def _parseCollectDirs(parentNode):
@@ -5484,33 +5485,33 @@ class Config(object):
    _addHook = staticmethod(_addHook)
 
    def _addCollectFile(xmlDom, parentNode, collectFile):
-		"""
-		Adds a collect file container as the next child of a parent.
+      """
+      Adds a collect file container as the next child of a parent.
 
-		We add the following fields to the document::
+      We add the following fields to the document::
 
-			absolutePath            dir/abs_path
-			collectMode             dir/collect_mode
-			archiveMode             dir/archive_mode
+         absolutePath            dir/abs_path
+         collectMode             dir/collect_mode
+         archiveMode             dir/archive_mode
 
-		Note that for consistency with collect directory handling we'll only emit
-		the preferred C{collect_mode} tag.
+      Note that for consistency with collect directory handling we'll only emit
+      the preferred C{collect_mode} tag.
 
-		The <file> node itself is created as the next child of the parent node.
-		This method only adds one collect file node.  The parent must loop
-		for each collect file in the C{CollectConfig} object.
+      The <file> node itself is created as the next child of the parent node.
+      This method only adds one collect file node.  The parent must loop
+      for each collect file in the C{CollectConfig} object.
 
-		If C{collectFile} is C{None}, this method call will be a no-op.
+      If C{collectFile} is C{None}, this method call will be a no-op.
 
-		@param xmlDom: DOM tree as from L{createOutputDom}.
-		@param parentNode: Parent that the section should be appended to.
-		@param collectFile: Collect file to be added to the document.
-		"""
-		if collectFile is not None:
-			sectionNode = addContainerNode(xmlDom, parentNode, "file")
-			addStringNode(xmlDom, sectionNode, "abs_path", collectFile.absolutePath)
-			addStringNode(xmlDom, sectionNode, "collect_mode", collectFile.collectMode)
-			addStringNode(xmlDom, sectionNode, "archive_mode", collectFile.archiveMode)
+      @param xmlDom: DOM tree as from L{createOutputDom}.
+      @param parentNode: Parent that the section should be appended to.
+      @param collectFile: Collect file to be added to the document.
+      """
+      if collectFile is not None:
+         sectionNode = addContainerNode(xmlDom, parentNode, "file")
+         addStringNode(xmlDom, sectionNode, "abs_path", collectFile.absolutePath)
+         addStringNode(xmlDom, sectionNode, "collect_mode", collectFile.collectMode)
+         addStringNode(xmlDom, sectionNode, "archive_mode", collectFile.archiveMode)
    _addCollectFile = staticmethod(_addCollectFile)
 
    def _addCollectDir(xmlDom, parentNode, collectDir):
@@ -6066,7 +6067,7 @@ def readByteQuantity(parent, name):
       units = UNIT_KBYTES
    elif data.endswith("MB"):
       quantity = data[0:data.rfind("MB")].strip()
-      units = UNIT_MBYTES;
+      units = UNIT_MBYTES
    elif data.endswith("GB"):
       quantity = data[0:data.rfind("GB")].strip()
       units = UNIT_GBYTES

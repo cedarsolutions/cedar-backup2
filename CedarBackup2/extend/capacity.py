@@ -123,8 +123,8 @@ class PercentageQuantity(object):
       """
       if other is None:
          return 1
-      if self._quantity != other._quantity:
-         if self._quantity < other._quantity:
+      if self.quantity != other.quantity:
+         if self.quantity < other.quantity:
             return -1
          else:
             return 1
@@ -214,13 +214,13 @@ class CapacityConfig(object):
       """
       if other is None:
          return 1
-      if self._maxPercentage != other._maxPercentage:
-         if self._maxPercentage < other._maxPercentage:
+      if self.maxPercentage != other.maxPercentage:
+         if self.maxPercentage < other.maxPercentage:
             return -1
          else:
             return 1
-      if self._minBytes != other._minBytes:
-         if self._minBytes < other._minBytes:
+      if self.minBytes != other.minBytes:
+         if self.minBytes < other.minBytes:
             return -1
          else:
             return 1
@@ -358,8 +358,8 @@ class LocalConfig(object):
       """
       if other is None:
          return 1
-      if self._capacity != other._capacity:
-         if self._capacity < other._capacity:
+      if self.capacity != other.capacity:
+         if self.capacity < other.capacity:
             return -1
          else:
             return 1

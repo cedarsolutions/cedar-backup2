@@ -368,7 +368,7 @@ def _getMediaType(config):
       return MEDIA_DVDPLUSR
    elif mediaType == "dvd+rw":
       logger.debug("Media type is MEDIA_DVDPLUSRW.")
-      return MEDIA_DVDPLUSR
+      return MEDIA_DVDPLUSRW
    else:
       raise ValueError("Media type [%s] is not valid." % mediaType)
 

@@ -52,8 +52,6 @@ import re
 import logging
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.knapsack import worstFit
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, encodePath
 

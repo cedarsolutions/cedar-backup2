@@ -57,7 +57,7 @@ import tempfile
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import compareContents
-from CedarBackup2.util import isStartOfWeek, getUidGid, changeOwnership
+from CedarBackup2.util import isStartOfWeek
 from CedarBackup2.util import mount, unmount, displayBytes
 from CedarBackup2.actions.util import createWriter, checkMediaState, buildMediaLabel, writeIndicatorFile
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR, STORE_INDICATOR
@@ -362,11 +362,11 @@ def _findCorrectDailyDir(options, config):
    """
    oneDay = datetime.timedelta(days=1)
    today = datetime.date.today()
-   yesterday = today - oneDay;
-   tomorrow = today + oneDay;
-   todayDate = today.strftime(DIR_TIME_FORMAT);
-   yesterdayDate = yesterday.strftime(DIR_TIME_FORMAT);
-   tomorrowDate = tomorrow.strftime(DIR_TIME_FORMAT);
+   yesterday = today - oneDay
+   tomorrow = today + oneDay
+   todayDate = today.strftime(DIR_TIME_FORMAT)
+   yesterdayDate = yesterday.strftime(DIR_TIME_FORMAT)
+   tomorrowDate = tomorrow.strftime(DIR_TIME_FORMAT)
    todayPath = os.path.join(config.stage.targetDir, todayDate)
    yesterdayPath = os.path.join(config.stage.targetDir, yesterdayDate)
    tomorrowPath = os.path.join(config.stage.targetDir, tomorrowDate)

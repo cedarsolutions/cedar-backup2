@@ -48,7 +48,6 @@ Provides filesystem-related objects.
 ########################################################################
 
 # System modules
-import sys
 import os
 import re
 import math
@@ -57,7 +56,7 @@ import tarfile
 
 # Cedar Backup modules
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
-from CedarBackup2.util import AbsolutePathList, ObjectTypeList, UnorderedList, RegexList
+from CedarBackup2.util import AbsolutePathList, UnorderedList, RegexList
 from CedarBackup2.util import removeKeys, displayBytes, calculateFileAge, encodePath, dereferenceLink
 
 
@@ -202,15 +201,15 @@ class FilesystemList(list):
       Elements do not have to exist on disk at the time of assignment.
       @raise ValueError: If any list element is not an absolute path.
       """
-      self._absoluteExcludePaths = AbsolutePathList()
+      self._excludePaths = AbsolutePathList()
       if value is not None:
-         self._absoluteExcludePaths.extend(value)
+         self._excludePaths.extend(value)
 
    def _getExcludePaths(self):
       """
       Property target used to get the absolute exclude paths list.
       """
-      return self._absoluteExcludePaths
+      return self._excludePaths
 
    def _setExcludePatterns(self, value):
       """
@@ -489,7 +488,7 @@ class FilesystemList(list):
             if os.path.islink(entrypath):
                if recursive:
                   if linkDepth > 0:
-                     newDepth = linkDepth - 1;
+                     newDepth = linkDepth - 1
                      if dereference:
                         derefpath = dereferenceLink(entrypath)
                         if derefpath != entrypath:
@@ -503,7 +502,7 @@ class FilesystemList(list):
                   added += self.addDir(entrypath)
             else:
                if recursive:
-                  newDepth = linkDepth - 1;
+                  newDepth = linkDepth - 1
                   added += self._addDirContentsInternal(entrypath, True, recursive, newDepth, dereference)
                else:
                   added += self.addDir(entrypath)
@@ -552,7 +551,7 @@ class FilesystemList(list):
                   self.remove(entry)
                   logger.debug("Removed path [%s] from list." % entry)
                   removed += 1
-      logger.debug("Removed a total of %d entries." % removed);
+      logger.debug("Removed a total of %d entries." % removed)
       return removed
 
    def removeDirs(self, pattern=None):
@@ -595,7 +594,7 @@ class FilesystemList(list):
                   self.remove(entry)
                   logger.debug("Removed path [%s] from list based on pattern [%s]." % (entry, pattern))
                   removed += 1
-      logger.debug("Removed a total of %d entries." % removed);
+      logger.debug("Removed a total of %d entries." % removed)
       return removed
 
    def removeLinks(self, pattern=None):
@@ -636,7 +635,7 @@ class FilesystemList(list):
                   self.remove(entry)
                   logger.debug("Removed path [%s] from list based on pattern [%s]." % (entry, pattern))
                   removed += 1
-      logger.debug("Removed a total of %d entries." % removed);
+      logger.debug("Removed a total of %d entries." % removed)
       return removed
 
    def removeMatch(self, pattern):
@@ -671,7 +670,7 @@ class FilesystemList(list):
             self.remove(entry)
             logger.debug("Removed path [%s] from list based on pattern [%s]." % (entry, pattern))
             removed += 1
-      logger.debug("Removed a total of %d entries." % removed);
+      logger.debug("Removed a total of %d entries." % removed)
       return removed
 
    def removeInvalid(self):
@@ -690,7 +689,7 @@ class FilesystemList(list):
             self.remove(entry)
             logger.debug("Removed path [%s] from list." % entry)
             removed += 1
-      logger.debug("Removed a total of %d entries." % removed);
+      logger.debug("Removed a total of %d entries." % removed)
       return removed
 
 
@@ -725,7 +724,7 @@ class FilesystemList(list):
 # SpanItem class definition
 ########################################################################
 
-class SpanItem(object):
+class SpanItem(object): # pylint: disable-msg=R0903
    """
    Item returned by L{BackupFileList.generateSpan}.
    """
@@ -746,7 +745,7 @@ class SpanItem(object):
 # BackupFileList class definition
 ########################################################################
 
-class BackupFileList(FilesystemList):
+class BackupFileList(FilesystemList): # pylint: disable-msg=R0904
 
    ######################
    # Class documentation
@@ -911,10 +910,11 @@ class BackupFileList(FilesystemList):
       @return: ASCII-safe SHA digest for the file.
       @raise OSError: If the file cannot be opened.
       """
+      # pylint: disable-msg=C0103
       try:
          import hashlib
          s = hashlib.sha1()
-      except:
+      except ImportError:
          import sha
          s = sha.new()
       f = open(path, mode="rb")  # in case platform cares about binary reads
@@ -1033,7 +1033,7 @@ class BackupFileList(FilesystemList):
       elif algorithm == "alternate_fit":
          return alternateFit
       else:
-         raise ValueError("Algorithm [%s] is invalid." % algorithm);
+         raise ValueError("Algorithm [%s] is invalid." % algorithm)
    _getKnapsackFunction = staticmethod(_getKnapsackFunction)
 
    def generateTarfile(self, path, mode='tar', ignore=False, flat=False):
@@ -1097,6 +1097,7 @@ class BackupFileList(FilesystemList):
       @raise ValueError: If the path could not be encoded properly.
       @raise TarError: If there is a problem creating the tar file
       """
+      # pylint: disable-msg=E1101
       path = encodePath(path)
       if len(self) == 0: raise ValueError("Empty list cannot be used to generate tarfile.")
       if(mode == 'tar'): tarmode = "w:"
@@ -1107,7 +1108,7 @@ class BackupFileList(FilesystemList):
          tar = tarfile.open(path, tarmode)
          try:
             tar.format = tarfile.GNU_FORMAT
-         except:
+         except AttributeError:
             tar.posix = False
          for entry in self:
             try:
@@ -1227,7 +1228,7 @@ class BackupFileList(FilesystemList):
 # PurgeItemList class definition
 ########################################################################
 
-class PurgeItemList(FilesystemList):
+class PurgeItemList(FilesystemList): # pylint: disable-msg=R0904
 
    ######################
    # Class documentation

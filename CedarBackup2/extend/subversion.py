@@ -37,7 +37,7 @@
 ########################################################################
 
 """
-Provides an extension to back up Subversion databases.
+Provides an extension to back up Subversion repositories.
 
 This is a Cedar Backup extension used to back up Subversion repositories via
 the Cedar Backup command line.  Each Subversion repository can be backed using
@@ -173,33 +173,33 @@ class RepositoryDir(object):
       """
       if other is None:
          return 1
-      if self._repositoryType != other._repositoryType:
-         if self._repositoryType < other._repositoryType:
+      if self.repositoryType != other.repositoryType:
+         if self.repositoryType < other.repositoryType:
             return -1
          else:
             return 1
-      if self._directoryPath != other._directoryPath:
-         if self._directoryPath < other._directoryPath:
+      if self.directoryPath != other.directoryPath:
+         if self.directoryPath < other.directoryPath:
             return -1
          else:
             return 1
-      if self._collectMode != other._collectMode:
-         if self._collectMode < other._collectMode:
+      if self.collectMode != other.collectMode:
+         if self.collectMode < other.collectMode:
             return -1
          else:
             return 1
-      if self._compressMode != other._compressMode:
-         if self._compressMode < other._compressMode:
+      if self.compressMode != other.compressMode:
+         if self.compressMode < other.compressMode:
             return -1
          else:
             return 1
-      if self._relativeExcludePaths != other._relativeExcludePaths:
-         if self._relativeExcludePaths < other._relativeExcludePaths:
+      if self.relativeExcludePaths != other.relativeExcludePaths:
+         if self.relativeExcludePaths < other.relativeExcludePaths:
             return -1
          else:
             return 1
-      if self._excludePatterns != other._excludePatterns:
-         if self._excludePatterns < other._excludePatterns:
+      if self.excludePatterns != other.excludePatterns:
+         if self.excludePatterns < other.excludePatterns:
             return -1
          else:
             return 1
@@ -381,23 +381,23 @@ class Repository(object):
       """
       if other is None:
          return 1
-      if self._repositoryType != other._repositoryType:
-         if self._repositoryType < other._repositoryType:
+      if self.repositoryType != other.repositoryType:
+         if self.repositoryType < other.repositoryType:
             return -1
          else:
             return 1
-      if self._repositoryPath != other._repositoryPath:
-         if self._repositoryPath < other._repositoryPath:
+      if self.repositoryPath != other.repositoryPath:
+         if self.repositoryPath < other.repositoryPath:
             return -1
          else:
             return 1
-      if self._collectMode != other._collectMode:
-         if self._collectMode < other._collectMode:
+      if self.collectMode != other.collectMode:
+         if self.collectMode < other.collectMode:
             return -1
          else:
             return 1
-      if self._compressMode != other._compressMode:
-         if self._compressMode < other._compressMode:
+      if self.compressMode != other.compressMode:
+         if self.compressMode < other.compressMode:
             return -1
          else:
             return 1
@@ -543,23 +543,23 @@ class SubversionConfig(object):
       """
       if other is None:
          return 1
-      if self._collectMode != other._collectMode:
-         if self._collectMode < other._collectMode:
+      if self.collectMode != other.collectMode:
+         if self.collectMode < other.collectMode:
             return -1
          else:
             return 1
-      if self._compressMode != other._compressMode:
-         if self._compressMode < other._compressMode:
+      if self.compressMode != other.compressMode:
+         if self.compressMode < other.compressMode:
             return -1
          else:
             return 1
-      if self._repositories != other._repositories:
-         if self._repositories < other._repositories:
+      if self.repositories != other.repositories:
+         if self.repositories < other.repositories:
             return -1
          else:
             return 1
-      if self._repositoryDirs != other._repositoryDirs:
-         if self._repositoryDirs < other._repositoryDirs:
+      if self.repositoryDirs != other.repositoryDirs:
+         if self.repositoryDirs < other.repositoryDirs:
             return -1
          else:
             return 1
@@ -741,8 +741,8 @@ class LocalConfig(object):
       """
       if other is None:
          return 1
-      if self._subversion != other._subversion:
-         if self._subversion < other._subversion:
+      if self.subversion != other.subversion:
+         if self.subversion < other.subversion:
             return -1
          else:
             return 1
@@ -1460,7 +1460,7 @@ def backupBDBRepository(repositoryPath, backupFile, startRevision=None, endRevis
    Backs up an individual Subversion BDB repository.
    This function is deprecated.  Use L{backupRepository} instead.
    """
-   return backupRepository(repositoryPath, backupFile, startRevision, endRevision);
+   return backupRepository(repositoryPath, backupFile, startRevision, endRevision)
 
 
 def backupFSFSRepository(repositoryPath, backupFile, startRevision=None, endRevision=None):
@@ -1468,5 +1468,5 @@ def backupFSFSRepository(repositoryPath, backupFile, startRevision=None, endRevi
    Backs up an individual Subversion FSFS repository.
    This function is deprecated.  Use L{backupRepository} instead.
    """
-   return backupRepository(repositoryPath, backupFile, startRevision, endRevision);
+   return backupRepository(repositoryPath, backupFile, startRevision, endRevision)
 
