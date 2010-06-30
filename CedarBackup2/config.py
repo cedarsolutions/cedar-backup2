@@ -2633,8 +2633,8 @@ class OptionsConfig(object):
          self.overrides = [ override, ]
       else:
          exists = False
-         for object in self.overrides:
-            if object.command == override.command:
+         for obj in self.overrides:
+            if obj.command == override.command:
                exists = True
                break
          if not exists:
@@ -2651,10 +2651,10 @@ class OptionsConfig(object):
          self.overrides = [ override, ]
       else:
          exists = False
-         for object in self.overrides:
-            if object.command == override.command:
+         for obj in self.overrides:
+            if obj.command == override.command:
                exists = True
-               object.absolutePath = override.absolutePath
+               obj.absolutePath = override.absolutePath
                break
          if not exists:
             self.overrides.append(override)

@@ -59,6 +59,7 @@ import os
 import re
 import logging
 import tempfile
+import time
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
