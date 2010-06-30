@@ -97,7 +97,7 @@ from CedarBackup2.util import buildNormalizedPath, splitCommandLine, nullDevice
 # Module-wide configuration and constants
 #######################################################################
 
-DATA_DIRS = [ "./data", "./test/data" ]
+DATA_DIRS = [ "./data", "./testcase/data" ]
 RESOURCES = [ "lotsoflines.py", "tree10.tar.gz", ]
 
 

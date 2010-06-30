@@ -116,7 +116,7 @@ from CedarBackup2.config import ByteQuantity
 # Module-wide configuration and constants
 #######################################################################
 
-DATA_DIRS = [ "./data", "./test/data", ]
+DATA_DIRS = [ "./data", "./testcase/data", ]
 RESOURCES = [ "cback.conf.1", "cback.conf.2", "cback.conf.3", "cback.conf.4", 
               "cback.conf.5", "cback.conf.6", "cback.conf.7", "cback.conf.8", 
               "cback.conf.9", "cback.conf.10", "cback.conf.11", "cback.conf.12", 

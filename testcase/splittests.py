@@ -121,7 +121,7 @@ from CedarBackup2.extend.split import _splitFile, _splitDailyDir
 # Module-wide configuration and constants
 #######################################################################
 
-DATA_DIRS = [ "./data", "./test/data", ]
+DATA_DIRS = [ "./data", "./testcase/data", ]
 RESOURCES = [ "split.conf.1", "split.conf.2", "split.conf.3", "split.conf.4", "split.conf.5", "tree21.tar.gz", ]
 
 INVALID_PATH = "bogus"  # This path name should never exist
