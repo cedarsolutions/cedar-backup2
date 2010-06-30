@@ -80,6 +80,8 @@ BYTES_PER_MBYTE = BYTES_PER_KBYTE * KBYTES_PER_MBYTE
 
 def main():
 
+   """Main routine."""
+
    # Check arguments
    if len(sys.argv) != 3:
       print "Usage: %s dir capacity" % sys.argv[0]
@@ -138,7 +140,7 @@ def main():
              '  ALT FIT': alternateFit } 
 
    # Run each test
-   total_elapsed = 0.0
+   totalElapsed = 0.0
    for key in tests.keys():
 
       # Run and time the test
@@ -148,20 +150,20 @@ def main():
       count = len(items)
 
       # Calculate derived values
-      count_pct = (float(count)/float(len(files))) * 100.0
-      used_pct = (float(used)/(float(capacity)*BYTES_PER_MBYTE)) * 100.0
+      countPercent = (float(count)/float(len(files))) * 100.0
+      usedPercent = (float(used)/(float(capacity)*BYTES_PER_MBYTE)) * 100.0
       elapsed = end - start
-      total_elapsed += elapsed
+      totalElapsed += elapsed
 
       # Display the results
       print "%s: %5d files (%6.2f%%), %6.2f MB (%6.2f%%), elapsed: %8.5f sec" % (
             key,
-            count, count_pct,
-            used/BYTES_PER_MBYTE, used_pct,
+            count, countPercent,
+            used/BYTES_PER_MBYTE, usedPercent,
             elapsed)
 
    # And, print the total elapsed time
-   print "\nTotal elapsed processing time was about %.3f seconds." % total_elapsed
+   print "\nTotal elapsed processing time was about %.3f seconds." % totalElapsed
 
 
 ########################################################################

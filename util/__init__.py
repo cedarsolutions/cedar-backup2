@@ -20,7 +20,9 @@
 # Package initialization
 ########################################################################
 
-# This causes the util directory to be a package.
+"""
+This causes the util directory to be a package.
+"""
 
 __all__ = [ ]
 

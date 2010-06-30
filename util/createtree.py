@@ -99,9 +99,9 @@ Example of Configuration
 
 import sys
 import os
-import string
+import string  # pylint: disable-msg=W0402
 import random
-from ConfigParser import SafeConfigParser, ParsingError
+from ConfigParser import SafeConfigParser
 
 
 #######################################################################
@@ -152,11 +152,10 @@ def createfile(config, filepath):
 
    @return: Size of file that was created.
    """
-
-   CHARACTER_SET = string.letters + string.digits + "\n"
+   characterSet = string.letters + string.digits + "\n"
    filesize = random.randint(config['minsize'], config['maxsize'])
    fp = open(filepath, "w")
-   fp.write("".join([random.choice(CHARACTER_SET) for i in xrange(1, filesize)]))
+   fp.write("".join([random.choice(characterSet) for i in xrange(1, filesize)]))
    fp.write("\n")
    fp.close()
    return filesize
