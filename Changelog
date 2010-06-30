@@ -1,3 +1,7 @@
+Version 2.19.7    unreleased
+
+	* Fix minor Pychecker warnings.
+
 Version 2.19.6    22 May 2010
 
 	* Work around strange stderr file descriptor bugs discovered on Cygwin.

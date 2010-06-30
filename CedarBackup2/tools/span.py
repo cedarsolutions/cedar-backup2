@@ -495,7 +495,7 @@ def _writeDisc(config, writer, spanItem):
    """
    print ""
    _discInitializeImage(config, writer, spanItem)
-   _discWriteImage(config, writer, spanItem)
+   _discWriteImage(config, writer)
    _discConsistencyCheck(config, writer, spanItem)
    print "Write process is complete."
    print "==="
@@ -526,12 +526,11 @@ def _discInitializeImage(config, writer, spanItem):
          print "==="
    print "Completed initializing image."
 
-def _discWriteImage(config, writer, spanItem):
+def _discWriteImage(config, writer):
    """
    Writes a ISO image for a span item.
    @param config: Cedar Backup configuration
    @param writer: Writer to use
-   @param spanItem: Span item to write
    """
    complete = False
    while not complete:
@@ -574,7 +573,7 @@ def _discConsistencyCheck(config, writer, spanItem):
                print "Ok, attempting retry."
                _getReturn("Please replace the disc in your backup device.\nPress return when ready.")
                print "==="
-               _discWriteImage(config, writer, spanItem)
+               _discWriteImage(config, writer)
             else:
                print "Ok, attempting retry."
                print "==="
