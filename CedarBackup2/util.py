@@ -83,7 +83,7 @@ import os
 import re
 import time
 import logging
-import string
+import string  # pylint: disable-msg=W0402
 
 from CedarBackup2.release import VERSION, DATE
 
@@ -341,6 +341,7 @@ class ObjectTypeList(UnorderedList):
       @param objectType: Type that the list elements must match.
       @param objectName: Short string containing the "name" of the type.
       """
+      super(ObjectTypeList, self).__init__()
       self.objectType = objectType
       self.objectName = objectName
 
@@ -406,6 +407,7 @@ class RestrictedContentList(UnorderedList):
       @param valuesDescr: Short string describing list of values.
       @param prefix: Prefix to use in error messages (None results in prefix "Item")
       """
+      super(RestrictedContentList, self).__init__()
       self.prefix = "Item"
       if prefix is not None: self.prefix = prefix
       self.valuesList = valuesList
@@ -470,6 +472,7 @@ class RegexMatchList(UnorderedList):
       @param emptyAllowed: Indicates whether empty or None values are allowed.
       @param prefix: Prefix to use in error messages (None results in prefix "Item")
       """
+      super(RegexMatchList, self).__init__()
       self.prefix = "Item"
       if prefix is not None: self.prefix = prefix
       self.valuesRegex = valuesRegex
@@ -645,10 +648,11 @@ class DirectedGraph(object):
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
+      # pylint: disable-msg=W0212
       if other is None:
          return 1
-      if self._name != other._name:
-         if self._name < other._name:
+      if self.name != other.name:
+         if self.name < other.name:
             return -1
          else:
             return 1
@@ -805,10 +809,13 @@ class PathResolverSingleton(object):
 
    class _Helper:
       """Helper class to provide a singleton factory method."""
+      def __init__(self):
+         pass
       def __call__(self, *args, **kw):
+         # pylint: disable-msg=W0212,R0201
          if PathResolverSingleton._instance is None:
-            object = PathResolverSingleton()
-            PathResolverSingleton._instance = object
+            obj = PathResolverSingleton()
+            PathResolverSingleton._instance = obj
          return PathResolverSingleton._instance
     
    getInstance = _Helper()    # Method that callers will use to get an instance
@@ -957,6 +964,7 @@ class Diagnostics(object):
 
    @sort: __init__, __repr__, __str__
    """
+   # pylint: disable-msg=R0201
 
    def __init__(self):
       """
@@ -987,7 +995,7 @@ class Diagnostics(object):
       values['encoding'] = self.encoding
       values['locale'] = self.locale
       values['timestamp'] = self.timestamp
-      return values;
+      return values
 
    def printDiagnostics(self, fd=sys.stdout, prefix=""):
       """
@@ -1065,10 +1073,10 @@ class Diagnostics(object):
       """
       try:
          if sys.platform.startswith("win"):
-            WINDOWS_PLATFORMS = [ "Windows 3.1", "Windows 95/98/ME", "Windows NT/2000/XP", "Windows CE", ]
-            wininfo = sys.getwindowsversion()
+            windowsPlatforms = [ "Windows 3.1", "Windows 95/98/ME", "Windows NT/2000/XP", "Windows CE", ]
+            wininfo = sys.getwindowsversion()  # pylint: disable-msg=E1101
             winversion = "%d.%d.%d" % (wininfo[0], wininfo[1], wininfo[2])
-            winplatform = WINDOWS_PLATFORMS[wininfo[3]]
+            winplatform = windowsPlatforms[wininfo[3]]
             wintext = wininfo[4]  # i.e. "Service Pack 2"
             return "%s (%s %s %s)" % (sys.platform, winplatform, winversion, wintext)
          else:
@@ -1298,7 +1306,7 @@ def getFunctionReference(module, function):
    if module is not None and module != "":
       parts = module.split(".")
    if function is not None and function != "":
-      parts.append(function);
+      parts.append(function)
    copy = parts[:]
    while copy:
       try:
@@ -1345,7 +1353,7 @@ def getUidGid(user, group):
          logger.debug("Error looking up uid and gid for [%s:%s]: %s" % (user, group, e))
          raise ValueError("Unable to lookup up uid and gid for passed in user/group.")
    else:
-      return (0,0)
+      return (0, 0)
 
 
 #############################
@@ -1576,7 +1584,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
 # calculateFileAge() function
 ##############################
 
-def calculateFileAge(file):
+def calculateFileAge(path):
    """
    Calculates the age (in days) of a file.
 
@@ -1586,13 +1594,13 @@ def calculateFileAge(file):
    Technically, we only intend this function to work with files, but it will
    probably work with anything on the filesystem.
 
-   @param file: Path to a file on disk.
+   @param path: Path to a file on disk.
 
    @return: Age of the file in days (possibly fractional).
    @raise OSError: If the file doesn't exist.
    """
    currentTime = int(time.time())
-   fileStats = os.stat(file)
+   fileStats = os.stat(path)
    lastUse = max(fileStats.st_atime, fileStats.st_mtime)  # "most recent" is "largest" 
    ageInSeconds = currentTime - lastUse
    ageInDays = ageInSeconds / SECONDS_PER_DAY

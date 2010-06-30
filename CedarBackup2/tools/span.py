@@ -66,14 +66,13 @@ from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
 from CedarBackup2.util import displayBytes, convertSize, mount, unmount
 from CedarBackup2.util import UNIT_SECTORS, UNIT_BYTES
 from CedarBackup2.config import Config
-from CedarBackup2.filesystem import FilesystemList, BackupFileList, compareDigestMaps, normalizeDir
+from CedarBackup2.filesystem import BackupFileList, compareDigestMaps, normalizeDir
 from CedarBackup2.cli import Options, setupLogging, setupPathResolver
 from CedarBackup2.cli import DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, DEFAULT_MODE
 from CedarBackup2.actions.constants import STORE_INDICATOR
 from CedarBackup2.actions.util import createWriter
-from CedarBackup2.actions.store import consistencyCheck, writeIndicatorFile
+from CedarBackup2.actions.store import writeIndicatorFile
 from CedarBackup2.actions.util import findDailyDirs
-from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 
 
 ########################################################################
@@ -289,9 +288,9 @@ def _executeAction(options, config):
    @raise Exception: Under many generic error conditions
    """
    print ""
-   print "================================================";
+   print "================================================"
    print "           Cedar Backup 'span' tool"
-   print "================================================";
+   print "================================================"
    print ""
    print "This the Cedar Backup span tool.  It is used to split up staging"
    print "data when that staging data does not fit onto a single disc."
@@ -354,7 +353,7 @@ def _executeAction(options, config):
    print "==="
 
    realCapacity = ((100.0 - cushion)/100.0) * mediaCapacity
-   minimumDiscs = (totalSize/realCapacity) + 1;
+   minimumDiscs = (totalSize/realCapacity) + 1
    print ""
    print "The real capacity, taking into account the %.2f%% cushion, is %s." % (cushion, displayBytes(realCapacity))
    print "It will take at least %d disc(s) to store your %s of data." % (minimumDiscs, displayBytes(totalSize))
@@ -379,7 +378,7 @@ def _executeAction(options, config):
       print "If you don't like the results you will have a chance to try a"
       print "different one later."
       print ""
-      algorithm = _getChoiceAnswer("Which algorithm?", "worst", [ "first", "best", "worst", "alternate",])
+      algorithm = _getChoiceAnswer("Which algorithm?", "worst", [ "first", "best", "worst", "alternate", ])
       print "==="
 
       print ""

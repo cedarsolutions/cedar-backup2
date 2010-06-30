@@ -56,7 +56,6 @@ Provides backup peer-related objects and utility functions.
 import os
 import logging
 import shutil
-import re
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList

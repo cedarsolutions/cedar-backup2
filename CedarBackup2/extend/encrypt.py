@@ -62,7 +62,6 @@ import os
 import logging
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import resolveCommand, executeCommand, changeOwnership
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
 from CedarBackup2.xmlutil import readFirstChild, readString
@@ -134,13 +133,13 @@ class EncryptConfig(object):
       """
       if other is None:
          return 1
-      if self._encryptMode != other._encryptMode:
-         if self._encryptMode < other._encryptMode:
+      if self.encryptMode != other.encryptMode:
+         if self.encryptMode < other.encryptMode:
             return -1
          else:
             return 1
-      if self._encryptTarget != other._encryptTarget:
-         if self._encryptTarget < other._encryptTarget:
+      if self.encryptTarget != other.encryptTarget:
+         if self.encryptTarget < other.encryptTarget:
             return -1
          else:
             return 1
@@ -272,8 +271,8 @@ class LocalConfig(object):
       """
       if other is None:
          return 1
-      if self._encrypt != other._encrypt:
-         if self._encrypt < other._encrypt:
+      if self.encrypt != other.encrypt:
+         if self.encrypt < other.encrypt:
             return -1
          else:
             return 1
@@ -404,7 +403,7 @@ def executeAction(configPath, options, config):
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
    if local.encrypt.encryptMode not in ["gpg", ]:
-      raise ValueError("Unknown encrypt mode [%s]" % local.encrypt.encryptMode);
+      raise ValueError("Unknown encrypt mode [%s]" % local.encrypt.encryptMode)
    if local.encrypt.encryptMode == "gpg":
       _confirmGpgRecipient(local.encrypt.encryptTarget)
    dailyDirs = findDailyDirs(config.stage.targetDir, ENCRYPT_INDICATOR)
@@ -469,11 +468,11 @@ def _encryptFile(sourcePath, encryptMode, encryptTarget, backupUser, backupGroup
    @raise IOError: If there is a problem accessing, encrypting or removing the source file.
    """
    if not os.path.exists(sourcePath):
-      raise ValueError("Source path [%s] does not exist." % sourcePath);
+      raise ValueError("Source path [%s] does not exist." % sourcePath)
    if encryptMode == 'gpg':
       encryptedPath = _encryptFileWithGpg(sourcePath, recipient=encryptTarget)
    else:
-      raise ValueError("Unknown encrypt mode [%s]" % encryptMode); 
+      raise ValueError("Unknown encrypt mode [%s]" % encryptMode)
    changeOwnership(encryptedPath, backupUser, backupGroup)
    if removeSource:
       if os.path.exists(sourcePath):

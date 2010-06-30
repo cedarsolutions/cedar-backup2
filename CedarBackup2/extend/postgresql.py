@@ -84,8 +84,8 @@ from bz2 import BZ2File
 
 # Cedar Backup modules
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode, addBooleanNode
-from CedarBackup2.xmlutil import readChildren, readFirstChild, readString, readStringList, readBoolean
-from CedarBackup2.config import VALID_COLLECT_MODES, VALID_COMPRESS_MODES
+from CedarBackup2.xmlutil import readFirstChild, readString, readStringList, readBoolean
+from CedarBackup2.config import VALID_COMPRESS_MODES
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.util import ObjectTypeList, changeOwnership
 
@@ -120,7 +120,7 @@ class PostgresqlConfig(object):
    @sort: __init__, __repr__, __str__, __cmp__, user, all, databases
    """
 
-   def __init__(self, user=None, compressMode=None, all=None, databases=None):
+   def __init__(self, user=None, compressMode=None, all=None, databases=None):  # pylint: disable-msg=W0622
       """
       Constructor for the C{PostgresqlConfig} class.
       
@@ -158,23 +158,23 @@ class PostgresqlConfig(object):
       """
       if other is None:
          return 1
-      if self._user != other._user:
-         if self._user < other._user:
+      if self.user != other.user:
+         if self.user < other.user:
             return -1
          else:
             return 1
-      if self._compressMode != other._compressMode:
-         if self._compressMode < other._compressMode:
+      if self.compressMode != other.compressMode:
+         if self.compressMode < other.compressMode:
             return -1
          else:
             return 1
-      if self._all != other._all:
-         if self._all < other._all:
+      if self.all != other.all:
+         if self.all < other.all:
             return -1
          else:
             return 1
-      if self._databases != other._databases:
-         if self._databases < other._databases:
+      if self.databases != other.databases:
+         if self.databases < other.databases:
             return -1
          else:
             return 1
@@ -350,8 +350,8 @@ class LocalConfig(object):
       """
       if other is None:
          return 1
-      if self._postgresql != other._postgresql:
-         if self._postgresql < other._postgresql:
+      if self.postgresql != other.postgresql:
+         if self.postgresql < other.postgresql:
             return -1
          else:
             return 1

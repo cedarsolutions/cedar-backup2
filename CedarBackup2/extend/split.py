@@ -64,12 +64,9 @@ import re
 import logging
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import resolveCommand, executeCommand
-from CedarBackup2.util import changeOwnership, buildNormalizedPath
-from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
-from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
-from CedarBackup2.xmlutil import readFirstChild, readString
+from CedarBackup2.util import resolveCommand, executeCommand, changeOwnership
+from CedarBackup2.xmlutil import createInputDom, addContainerNode
+from CedarBackup2.xmlutil import readFirstChild
 from CedarBackup2.actions.util import findDailyDirs, writeIndicatorFile, getBackupFiles
 from CedarBackup2.config import ByteQuantity, readByteQuantity, addByteQuantityNode
 
@@ -138,13 +135,13 @@ class SplitConfig(object):
       """
       if other is None:
          return 1
-      if self._sizeLimit != other._sizeLimit:
-         if self._sizeLimit < other._sizeLimit:
+      if self.sizeLimit != other.sizeLimit:
+         if self.sizeLimit < other.sizeLimit:
             return -1
          else:
             return 1
-      if self._splitSize != other._splitSize:
-         if self._splitSize < other._splitSize:
+      if self.splitSize != other.splitSize:
+         if self.splitSize < other.splitSize:
             return -1
          else:
             return 1
@@ -282,8 +279,8 @@ class LocalConfig(object):
       """
       if other is None:
          return 1
-      if self._split != other._split:
-         if self._split < other._split:
+      if self.split != other.split:
+         if self.split < other.split:
             return -1
          else:
             return 1
@@ -474,7 +471,7 @@ def _splitFile(sourcePath, splitSize, backupUser, backupGroup, removeSource=Fals
    cwd = os.getcwd()
    try:
       if not os.path.exists(sourcePath):
-         raise ValueError("Source path [%s] does not exist." % sourcePath);
+         raise ValueError("Source path [%s] does not exist." % sourcePath)
       dirname = os.path.dirname(sourcePath)
       filename = os.path.basename(sourcePath)
       prefix = "%s_" % filename

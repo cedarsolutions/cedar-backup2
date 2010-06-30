@@ -35,6 +35,7 @@ file remains to preserve the Cedar Backup library interface.
 # Imported modules
 ########################################################################
 
+# pylint: disable-msg=W0611
 from CedarBackup2.actions.collect import executeCollect
 from CedarBackup2.actions.stage import executeStage
 from CedarBackup2.actions.store import executeStore

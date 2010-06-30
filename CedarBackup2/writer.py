@@ -35,6 +35,7 @@ library interface.
 # Imported modules
 ########################################################################
 
+# pylint: disable-msg=W0611
 from CedarBackup2.writers.util import validateScsiId, validateDriveSpeed
 from CedarBackup2.writers.cdwriter import MediaDefinition, MediaCapacity, CdWriter
 from CedarBackup2.writers.cdwriter import MEDIA_CDRW_74, MEDIA_CDR_74, MEDIA_CDRW_80, MEDIA_CDR_80

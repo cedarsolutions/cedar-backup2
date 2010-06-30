@@ -88,7 +88,7 @@ import getopt
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
 from CedarBackup2.customize import customizeOverrides
-from CedarBackup2.util import RestrictedContentList, DirectedGraph, PathResolverSingleton
+from CedarBackup2.util import DirectedGraph, PathResolverSingleton
 from CedarBackup2.util import sortDict, splitCommandLine, executeCommand, getFunctionReference
 from CedarBackup2.util import getUidGid, encodePath, Diagnostics
 from CedarBackup2.config import Config
@@ -377,7 +377,7 @@ class _ActionItem(object):
       logger.debug("Calling action function [%s], execution index [%d]" % (name, self.index))
       self.function(configPath, options, config)
 
-   def _executeHook(self, type, hook):
+   def _executeHook(self, type, hook):  # pylint: disable-msg=W0622,R0201
       """
       Executes a hook command via L{util.executeCommand()}.
       @param type: String describing the type of hook, for logging.
@@ -615,25 +615,25 @@ class _ActionSet(object):
       indexMap = {}
       if extensions is None or extensions.actions is None or extensions.actions == []:
          logger.info("Action ordering will use 'index' order mode.")
-         indexMap['rebuild'] = REBUILD_INDEX;
-         indexMap['validate'] = VALIDATE_INDEX;
-         indexMap['initialize'] = INITIALIZE_INDEX;
-         indexMap['collect'] = COLLECT_INDEX;
-         indexMap['stage'] = STAGE_INDEX;
-         indexMap['store'] = STORE_INDEX;
-         indexMap['purge'] = PURGE_INDEX;
+         indexMap['rebuild'] = REBUILD_INDEX
+         indexMap['validate'] = VALIDATE_INDEX
+         indexMap['initialize'] = INITIALIZE_INDEX
+         indexMap['collect'] = COLLECT_INDEX
+         indexMap['stage'] = STAGE_INDEX
+         indexMap['store'] = STORE_INDEX
+         indexMap['purge'] = PURGE_INDEX
          logger.debug("Completed filling in action indices for built-in actions.")
          logger.info("Action order will be: %s" % sortDict(indexMap))
       else:
          if extensions.orderMode is None or extensions.orderMode == "index":
             logger.info("Action ordering will use 'index' order mode.")
-            indexMap['rebuild'] = REBUILD_INDEX;
-            indexMap['validate'] = VALIDATE_INDEX;
-            indexMap['initialize'] = INITIALIZE_INDEX;
-            indexMap['collect'] = COLLECT_INDEX;
-            indexMap['stage'] = STAGE_INDEX;
-            indexMap['store'] = STORE_INDEX;
-            indexMap['purge'] = PURGE_INDEX;
+            indexMap['rebuild'] = REBUILD_INDEX
+            indexMap['validate'] = VALIDATE_INDEX
+            indexMap['initialize'] = INITIALIZE_INDEX
+            indexMap['collect'] = COLLECT_INDEX
+            indexMap['stage'] = STAGE_INDEX
+            indexMap['store'] = STORE_INDEX
+            indexMap['purge'] = PURGE_INDEX
             logger.debug("Completed filling in action indices for built-in actions.")
             for action in extensions.actions:
                indexMap[action.name] = action.index
@@ -1328,83 +1328,83 @@ class Options(object):
       """
       if other is None:
          return 1
-      if self._help != other._help:
-         if self._help < other._help:
+      if self.help != other.help:
+         if self.help < other.help:
             return -1
          else:
             return 1
-      if self._version != other._version:
-         if self._version < other._version:
+      if self.version != other.version:
+         if self.version < other.version:
             return -1
          else:
             return 1
-      if self._verbose != other._verbose:
-         if self._verbose < other._verbose:
+      if self.verbose != other.verbose:
+         if self.verbose < other.verbose:
             return -1
          else:
             return 1
-      if self._quiet != other._quiet:
-         if self._quiet < other._quiet:
+      if self.quiet != other.quiet:
+         if self.quiet < other.quiet:
             return -1
          else:
             return 1
-      if self._config != other._config:
-         if self._config < other._config:
+      if self.config != other.config:
+         if self.config < other.config:
             return -1
          else:
             return 1
-      if self._full != other._full:
-         if self._full < other._full:
+      if self.full != other.full:
+         if self.full < other.full:
             return -1
          else:
             return 1
-      if self._managed != other._managed:
-         if self._managed < other._managed:
+      if self.managed != other.managed:
+         if self.managed < other.managed:
             return -1
          else:
             return 1
-      if self._managedOnly != other._managedOnly:
-         if self._managedOnly < other._managedOnly:
+      if self.managedOnly != other.managedOnly:
+         if self.managedOnly < other.managedOnly:
             return -1
          else:
             return 1
-      if self._logfile != other._logfile:
-         if self._logfile < other._logfile:
+      if self.logfile != other.logfile:
+         if self.logfile < other.logfile:
             return -1
          else:
             return 1
-      if self._owner != other._owner:
-         if self._owner < other._owner:
+      if self.owner != other.owner:
+         if self.owner < other.owner:
             return -1
          else:
             return 1
-      if self._mode != other._mode:
-         if self._mode < other._mode:
+      if self.mode != other.mode:
+         if self.mode < other.mode:
             return -1
          else:
             return 1
-      if self._output != other._output:
-         if self._output < other._output:
+      if self.output != other.output:
+         if self.output < other.output:
             return -1
          else:
             return 1
-      if self._debug != other._debug:
-         if self._debug < other._debug:
+      if self.debug != other.debug:
+         if self.debug < other.debug:
             return -1
          else:
             return 1
-      if self._stacktrace != other._stacktrace:
-         if self._stacktrace < other._stacktrace:
+      if self.stacktrace != other.stacktrace:
+         if self.stacktrace < other.stacktrace:
             return -1
          else:
             return 1
-      if self._diagnostics != other._diagnostics:
-         if self._diagnostics < other._diagnostics:
+      if self.diagnostics != other.diagnostics:
+         if self.diagnostics < other.diagnostics:
             return -1
          else:
             return 1
-      if self._actions != other._actions:
-         if self._actions < other._actions:
+      if self.actions != other.actions:
+         if self.actions < other.actions:
             return -1
          else:
             return 1
@@ -1894,7 +1894,7 @@ class Options(object):
       """
       switches = { }
       opts, self.actions = getopt.getopt(argumentList, SHORT_SWITCHES, LONG_SWITCHES)
-      for o,a in opts:  # push the switches into a hash
+      for o, a in opts:  # push the switches into a hash
          switches[o] = a
       if switches.has_key("-h") or switches.has_key("--help"):
          self.help = True

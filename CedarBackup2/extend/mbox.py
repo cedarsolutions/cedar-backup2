@@ -173,18 +173,18 @@ class MboxFile(object):
       """
       if other is None:
          return 1
-      if self._absolutePath != other._absolutePath:
-         if self._absolutePath < other._absolutePath:
+      if self.absolutePath != other.absolutePath:
+         if self.absolutePath < other.absolutePath:
             return -1
          else:
             return 1
-      if self._collectMode != other._collectMode:
-         if self._collectMode < other._collectMode:
+      if self.collectMode != other.collectMode:
+         if self.collectMode < other.collectMode:
             return -1
          else:
             return 1
-      if self._compressMode != other._compressMode:
-         if self._compressMode < other._compressMode:
+      if self.compressMode != other.compressMode:
+         if self.compressMode < other.compressMode:
             return -1
          else:
             return 1
@@ -317,28 +317,28 @@ class MboxDir(object):
       """
       if other is None:
          return 1
-      if self._absolutePath != other._absolutePath:
-         if self._absolutePath < other._absolutePath:
+      if self.absolutePath != other.absolutePath:
+         if self.absolutePath < other.absolutePath:
             return -1
          else:
             return 1
-      if self._collectMode != other._collectMode:
-         if self._collectMode < other._collectMode:
+      if self.collectMode != other.collectMode:
+         if self.collectMode < other.collectMode:
             return -1
          else:
             return 1
-      if self._compressMode != other._compressMode:
-         if self._compressMode < other._compressMode:
+      if self.compressMode != other.compressMode:
+         if self.compressMode < other.compressMode:
             return -1
          else:
             return 1
-      if self._relativeExcludePaths != other._relativeExcludePaths:
-         if self._relativeExcludePaths < other._relativeExcludePaths:
+      if self.relativeExcludePaths != other.relativeExcludePaths:
+         if self.relativeExcludePaths < other.relativeExcludePaths:
             return -1
          else:
             return 1
-      if self._excludePatterns != other._excludePatterns:
-         if self._excludePatterns < other._excludePatterns:
+      if self.excludePatterns != other.excludePatterns:
+         if self.excludePatterns < other.excludePatterns:
             return -1
          else:
             return 1
@@ -521,23 +521,23 @@ class MboxConfig(object):
       """
       if other is None:
          return 1
-      if self._collectMode != other._collectMode:
-         if self._collectMode < other._collectMode:
+      if self.collectMode != other.collectMode:
+         if self.collectMode < other.collectMode:
             return -1
          else:
             return 1
-      if self._compressMode != other._compressMode:
-         if self._compressMode < other._compressMode:
+      if self.compressMode != other.compressMode:
+         if self.compressMode < other.compressMode:
             return -1
          else:
             return 1
-      if self._mboxFiles != other._mboxFiles:
-         if self._mboxFiles < other._mboxFiles:
+      if self.mboxFiles != other.mboxFiles:
+         if self.mboxFiles < other.mboxFiles:
             return -1
          else:
             return 1
-      if self._mboxDirs != other._mboxDirs:
-         if self._mboxDirs < other._mboxDirs:
+      if self.mboxDirs != other.mboxDirs:
+         if self.mboxDirs < other.mboxDirs:
             return -1
          else:
             return 1
@@ -719,8 +719,8 @@ class LocalConfig(object):
       """
       if other is None:
          return 1
-      if self._mbox != other._mbox:
-         if self._mbox < other._mbox:
+      if self.mbox != other.mbox:
+         if self.mbox < other.mbox:
             return -1
          else:
             return 1
