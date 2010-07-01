@@ -35,8 +35,8 @@ MV                = mv
 EPYDOC            = epydoc
 FIND              = find
 MKDIR             = mkdir
-PYCHECKER         = PYTHONVER=2.4 pychecker
-PYTHON            = python2.4
+PYLINT            = pylint
+PYTHON            = python
 RM                = rm
 SETUP             = $(PYTHON) ./setup.py
 SUDO              = sudo
@@ -85,30 +85,17 @@ usertest:
 ##################################
 # Stylistic and function checking
 ##################################
-# Pycheck catches a lot of different things.  It's kind of like lint for
-# Python.  A few warnings are expected.  The main check rule only checks the
-# implementation in CedarBackup2/.  The other rule checks all of the python
-# code in the system.
-#
-# Normally, I would run just one command-line here, but it turns out that
-# having util.py and writers/util.py (i.e. duplicated names) confuses
-# pychecker.
+# Previously, I used pychecker.  However, it's getting a little long in the
+# tooth, and it doesn't work as well with newer versions of Python.  I've
+# switched to pylint, which seems a bit more reliable and can be configured at
+# a finer-grained level.
 
-check: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/actions/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/extend/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/tools/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/writers/*.py 2>/dev/null
+check:
+	-@$(PYLINT) --rcfile=pylint-code.rc CedarBackup2
 
-allcheck: 
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/actions/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/extend/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/tools/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc CedarBackup2/writers/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc test/*.py 2>/dev/null
-	-@$(PYCHECKER) --config pycheckrc util/*.py 2>/dev/null
+allcheck:
+	-@$(PYLINT) --rcfile=pylint-code.rc CedarBackup2 util setup.py
+	-@$(PYLINT) --rcfile=pylint-test.rc testcase
 
 
 ################
