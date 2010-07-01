@@ -93,7 +93,6 @@ Full vs. Reduced Tests
 
 # System modules
 import unittest
-import os
 
 # Cedar Backup modules
 from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
@@ -126,9 +125,9 @@ class TestPercentageQuantity(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -323,9 +322,9 @@ class TestCapacityConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -549,9 +548,9 @@ class TestLocalConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
    def validateAddConfig(self, origConfig):
       """

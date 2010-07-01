@@ -74,11 +74,9 @@ Full vs. Reduced Tests
 # Import modules and do runtime validations
 ########################################################################
 
-import sys
 import os
 import unittest
 import tempfile
-import tarfile
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.actions.util import findDailyDirs, writeIndicatorFile
 from CedarBackup2.extend.encrypt import ENCRYPT_INDICATOR
@@ -154,7 +152,7 @@ class TestFunctions(unittest.TestCase):
       Test with an empty staging directory.
       """
       self.extractTar("tree8")
-      stagingDir = self.buildPath(["tree8", "dir001",])
+      stagingDir = self.buildPath(["tree8", "dir001", ])
       dailyDirs = findDailyDirs(stagingDir, ENCRYPT_INDICATOR)
       self.failUnlessEqual([], dailyDirs)
 
@@ -163,7 +161,7 @@ class TestFunctions(unittest.TestCase):
       Test with a staging directory containing only files.
       """
       self.extractTar("tree1")
-      stagingDir = self.buildPath(["tree1",])
+      stagingDir = self.buildPath(["tree1", ])
       dailyDirs = findDailyDirs(stagingDir, ENCRYPT_INDICATOR)
       self.failUnlessEqual([], dailyDirs)
 
@@ -248,9 +246,9 @@ class TestFunctions(unittest.TestCase):
       Test with a valid staging directory.
       """
       self.extractTar("tree8")
-      stagingDir = self.buildPath(["tree8", "dir001",])
+      stagingDir = self.buildPath(["tree8", "dir001", ])
       writeIndicatorFile(stagingDir, ENCRYPT_INDICATOR, None, None)
-      self.failUnless(os.path.exists(self.buildPath(["tree8", "dir001", ENCRYPT_INDICATOR,])))
+      self.failUnless(os.path.exists(self.buildPath(["tree8", "dir001", ENCRYPT_INDICATOR, ])))
 
 
 #######################################################################

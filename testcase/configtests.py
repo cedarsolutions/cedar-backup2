@@ -99,10 +99,9 @@ Full vs. Reduced Tests
 # Import modules and do runtime validations
 ########################################################################
 
-import os
 import unittest
 from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
-from CedarBackup2.testutil import findResources, removedir, failUnlessAssignRaises
+from CedarBackup2.testutil import findResources, failUnlessAssignRaises
 from CedarBackup2.testutil import hexFloatLiteralAllowed
 from CedarBackup2.config import ActionHook, PreActionHook, PostActionHook, CommandOverride
 from CedarBackup2.config import ExtendedAction, ActionDependencies, BlankBehavior
@@ -141,9 +140,9 @@ class TestByteQuantity(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -415,9 +414,9 @@ class TestActionDependencies(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -674,9 +673,9 @@ class TestActionHook(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -874,9 +873,9 @@ class TestPreActionHook(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -1074,9 +1073,9 @@ class TestPostActionHook(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -1274,9 +1273,9 @@ class TestBlankBehavior(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -1497,9 +1496,9 @@ class TestExtendedAction(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -1930,9 +1929,9 @@ class TestCommandOverride(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -2122,9 +2121,9 @@ class TestCollectFile(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -2407,9 +2406,9 @@ class TestCollectDir(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -2884,8 +2883,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two identical objects, all attributes non-None
       (non-empty lists).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one",], ["two",], ["three",], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one",], ["two",], ["three",], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one", ], ["two", ], ["three", ], 1, True)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one", ], ["two", ], ["three", ], 1, True)
       self.failUnless(collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -3026,7 +3025,7 @@ class TestCollectDir(unittest.TestCase):
       (one None, one not empty).
       """
       collectDir1 = CollectDir()
-      collectDir2 = CollectDir(absoluteExcludePaths=["/whatever",])
+      collectDir2 = CollectDir(absoluteExcludePaths=["/whatever", ])
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -3254,9 +3253,9 @@ class TestPurgeDir(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -3483,9 +3482,9 @@ class TestLocalPeer(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -3615,7 +3614,7 @@ class TestLocalPeer(unittest.TestCase):
       """
       localPeer = LocalPeer()
       self.failUnlessEqual(None, localPeer.ignoreFailureMode)
-      localPeer.ignoreFailureMode = None;
+      localPeer.ignoreFailureMode = None
       self.failUnlessEqual(None, localPeer.ignoreFailureMode)
 
 
@@ -3747,9 +3746,9 @@ class TestRemotePeer(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -4070,7 +4069,7 @@ class TestRemotePeer(unittest.TestCase):
       """
       remotePeer = RemotePeer()
       self.failUnlessEqual(None, remotePeer.ignoreFailureMode)
-      remotePeer.ignoreFailureMode = None;
+      remotePeer.ignoreFailureMode = None
       self.failUnlessEqual(None, remotePeer.ignoreFailureMode)
 
 
@@ -4403,9 +4402,9 @@ class TestReferenceConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -4767,9 +4766,9 @@ class TestExtensionsConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -5071,9 +5070,9 @@ class TestOptionsConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -6039,53 +6038,53 @@ class TestOptionsConfig(unittest.TestCase):
       """
       Test addOverride() with no existing overrides.
       """
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.addOverride("cdrecord", "/usr/bin/wodim")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides)
 
    def testOverrides_002(self):
       """
       Test addOverride() with no existing override that matches.
       """
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("one", "/one"), ]
       options.addOverride("cdrecord", "/usr/bin/wodim")
-      self.failUnlessEqual([ CommandOverride("one", "/one"), CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+      self.failUnlessEqual([ CommandOverride("one", "/one"), CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides)
 
    def testOverrides_003(self):
       """
       Test addOverride(), with existing override that matches.
       """
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("cdrecord", "/one"), ]
       options.addOverride("cdrecord", "/usr/bin/wodim")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/one"), ], options.overrides);
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/one"), ], options.overrides)
 
    def testOverrides_004(self):
       """
       Test replaceOverride() with no existing overrides.
       """
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.replaceOverride("cdrecord", "/usr/bin/wodim")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides)
 
    def testOverrides_005(self):
       """
       Test replaceOverride() with no existing override that matches.
       """
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("one", "/one"), ]
       options.replaceOverride("cdrecord", "/usr/bin/wodim")
-      self.failUnlessEqual([ CommandOverride("one", "/one"), CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+      self.failUnlessEqual([ CommandOverride("one", "/one"), CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides)
 
    def testOverrides_006(self):
       """
       Test replaceOverride(), with existing override that matches.
       """
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("cdrecord", "/one"), ]
       options.replaceOverride("cdrecord", "/usr/bin/wodim")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides);
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), ], options.overrides)
 
 
 
@@ -6101,9 +6100,9 @@ class TestPeersConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -6461,9 +6460,9 @@ class TestCollectConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -6513,15 +6512,15 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test constructor with all values filled in, with valid values (lists not empty).
       """
-      collect = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failUnlessEqual("/target", collect.targetDir)
       self.failUnlessEqual("incr", collect.collectMode)
       self.failUnlessEqual("tar", collect.archiveMode)
       self.failUnlessEqual("ignore", collect.ignoreFile)
-      self.failUnlessEqual(["/path",], collect.absoluteExcludePaths)
-      self.failUnlessEqual(["pattern",], collect.excludePatterns)
-      self.failUnlessEqual([CollectFile(),], collect.collectFiles)
-      self.failUnlessEqual([CollectDir(),], collect.collectDirs)
+      self.failUnlessEqual(["/path", ], collect.absoluteExcludePaths)
+      self.failUnlessEqual(["pattern", ], collect.excludePatterns)
+      self.failUnlessEqual([CollectFile(), ], collect.collectFiles)
+      self.failUnlessEqual([CollectDir(), ], collect.collectDirs)
 
    def testConstructor_004(self):
       """
@@ -6690,7 +6689,7 @@ class TestCollectConfig(unittest.TestCase):
       """
       collect = CollectConfig()
       self.failUnlessEqual(None, collect.absoluteExcludePaths)
-      collect.absoluteExcludePaths = ["/whatever",]
+      collect.absoluteExcludePaths = ["/whatever", ]
       self.failUnlessEqual(["/whatever", ], collect.absoluteExcludePaths)
 
    def testConstructor_022(self):
@@ -6954,8 +6953,8 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failUnlessEqual(collect1, collect2)
       self.failUnless(collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -6968,8 +6967,8 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, targetDir differs (one None).
       """
-      collect1 = CollectConfig(None, "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target2", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig(None, "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target2", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -6982,8 +6981,8 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, targetDir differs.
       """
-      collect1 = CollectConfig("/target1", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target2", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target1", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target2", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -6996,8 +6995,8 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, collectMode differs (one None).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", None, "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", None, "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7010,8 +7009,8 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, collectMode differs.
       """
-      collect1 = CollectConfig("/target", "daily", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "daily", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7024,8 +7023,8 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, archiveMode differs (one None).
       """
-      collect1 = CollectConfig("/target", "incr", None, "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", None, "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7038,8 +7037,8 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, archiveMode differs.
       """
-      collect1 = CollectConfig("/target", "incr", "targz", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tarbz2", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "targz", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tarbz2", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7052,8 +7051,8 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, ignoreFile differs (one None).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", None, ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", None, ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7066,8 +7065,8 @@ class TestCollectConfig(unittest.TestCase):
       """
       Test comparison of two differing objects, ignoreFile differs.
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore1", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore2", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore1", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore2", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7081,8 +7080,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, absoluteExcludePaths differs
       (one None, one empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", None, ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", [], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", None, ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", [], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7096,8 +7095,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, absoluteExcludePaths differs
       (one None, one not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", None, ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", None, ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7111,8 +7110,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, absoluteExcludePaths differs
       (one empty, one not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", [], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", [], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7126,8 +7125,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, absoluteExcludePaths differs
       (both not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", "/path2", ], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", "/path2", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7141,8 +7140,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, excludePatterns differs (one
       None, one empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], None, [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], [], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], None, [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], [], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7156,8 +7155,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, excludePatterns differs (one
       None, one not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], None, [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], None, [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7171,8 +7170,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, excludePatterns differs (one
       empty, one not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], [], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], [], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7186,8 +7185,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, excludePatterns differs (both
       not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern", "bogus", ], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", "bogus", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7201,8 +7200,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, collectDirs differs (one
       None, one empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], None)
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], None)
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7216,8 +7215,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, collectDirs differs (one
       None, one not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], None)
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], None)
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7231,8 +7230,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, collectDirs differs (one
       empty, one not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7246,8 +7245,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, collectDirs differs (both
       not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(), CollectDir(), ])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7261,8 +7260,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, collectFiles differs (one
       None, one empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], None, [CollectDir(), ])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [], [CollectDir(), ])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], None, [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7276,8 +7275,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, collectFiles differs (one
       None, one not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], None, [CollectDir(), ])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(), ])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], None, [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(collect1 < collect2)
@@ -7291,8 +7290,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, collectFiles differs (one
       empty, one not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(), ])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [], [CollectDir(), ])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7306,8 +7305,8 @@ class TestCollectConfig(unittest.TestCase):
       Test comparison of two differing objects, collectFiles differs (both
       not empty).
       """
-      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), CollectFile(), ], [CollectDir() ])
-      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path",], ["pattern",], [CollectFile(), ], [CollectDir(),])
+      collect1 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), CollectFile(), ], [CollectDir() ])
+      collect2 = CollectConfig("/target", "incr", "tar", "ignore", ["/path", ], ["pattern", ], [CollectFile(), ], [CollectDir(), ])
       self.failIfEqual(collect1, collect2)
       self.failUnless(not collect1 == collect2)
       self.failUnless(not collect1 < collect2)
@@ -7329,9 +7328,9 @@ class TestStageConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -7756,9 +7755,9 @@ class TestStoreConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -8589,9 +8588,9 @@ class TestPurgeConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -8823,9 +8822,9 @@ class TestConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -9561,7 +9560,7 @@ class TestConfig(unittest.TestCase):
       config2.reference = ReferenceConfig()
       config2.extensions = ExtensionsConfig()
       config2.options = OptionsConfig()
-      config2.peers = PeersConfig(localPeers=[LocalPeer(),])
+      config2.peers = PeersConfig(localPeers=[LocalPeer(), ])
       config2.collect = CollectConfig()
       config2.stage = StageConfig()
       config2.store = StoreConfig()
@@ -9965,7 +9964,7 @@ class TestConfig(unittest.TestCase):
       config._validateCollect()
       config.collect.collectDirs.append(CollectDir(absolutePath="/stuff2"))
       self.failUnlessRaises(ValueError, config._validateCollect)
-      config.collect.collectDirs[-1].collectMode="daily"
+      config.collect.collectDirs[-1].collectMode = "daily"
       config._validateCollect()
 
    def testValidate_022a(self):
@@ -9981,7 +9980,7 @@ class TestConfig(unittest.TestCase):
       config._validateCollect()
       config.collect.collectFiles.append(CollectFile(absolutePath="/stuff2"))
       self.failUnlessRaises(ValueError, config._validateCollect)
-      config.collect.collectFiles[-1].collectMode="daily"
+      config.collect.collectFiles[-1].collectMode = "daily"
       config._validateCollect()
 
    def testValidate_023(self):
@@ -11186,19 +11185,19 @@ class TestConfig(unittest.TestCase):
                                                         dependencies=ActionDependencies()))
       expected.extensions.actions.append(ExtendedAction("postgresql", "CedarBackup2.extend.postgresql", "executeAction", 
                                                         index=None, 
-                                                        dependencies=ActionDependencies(beforeList=["one",])))
+                                                        dependencies=ActionDependencies(beforeList=["one", ])))
       expected.extensions.actions.append(ExtendedAction("subversion", "CedarBackup2.extend.subversion", "executeAction", 
                                                         index=None, 
-                                                        dependencies=ActionDependencies(afterList=["one",])))
+                                                        dependencies=ActionDependencies(afterList=["one", ])))
       expected.extensions.actions.append(ExtendedAction("mbox", "CedarBackup2.extend.mbox", "executeAction", 
                                                         index=None, 
-                                                        dependencies=ActionDependencies(beforeList=["one",], afterList=["one",])))
+                                                        dependencies=ActionDependencies(beforeList=["one", ], afterList=["one", ])))
       expected.extensions.actions.append(ExtendedAction("encrypt", "CedarBackup2.extend.encrypt", "executeAction", 
                                                         index=None, 
-                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c", "d",],
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c", "d", ],
                                                                                         afterList=["one", "two", "three",
                                                                                                    "four", "five", "six",
-                                                                                                   "seven", "eight",])))
+                                                                                                   "seven", "eight", ])))
       self.failUnlessEqual(expected, config)
 
    def testParse_010(self):
@@ -11312,13 +11311,13 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectFiles = []
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
-      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases", collectMode="daily", archiveMode="tarbz2"))
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
-      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc", collectMode="incr", archiveMode="tar", ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
       collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
       collectDir.relativeExcludePaths = [ "large", "backup", ]
@@ -11501,13 +11500,13 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectFiles = []
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
-      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases", collectMode="daily", archiveMode="tarbz2"))
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
-      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc", collectMode="incr", archiveMode="tar", ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
       collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
       collectDir.relativeExcludePaths = [ "large", "backup", ]
@@ -11557,8 +11556,8 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", index=None,
                                                         dependencies=ActionDependencies()))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
-                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
-                                                                                        afterList=["one",])))
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c", ], 
+                                                                                        afterList=["one", ])))
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
@@ -11569,13 +11568,13 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectFiles = []
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
-      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases", collectMode="daily", archiveMode="tarbz2"))
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
-      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc", collectMode="incr", archiveMode="tar", ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
       collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
       collectDir.relativeExcludePaths = [ "large", "backup", ]
@@ -11634,13 +11633,13 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectFiles = []
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
-      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases", collectMode="daily", archiveMode="tarbz2"))
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
-      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc", collectMode="incr", archiveMode="tar", ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
       collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
       collectDir.relativeExcludePaths = [ "large", "backup", ]
@@ -11690,8 +11689,8 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", index=None,
                                                         dependencies=ActionDependencies()))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
-                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
-                                                                                        afterList=["one",])))
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c", ], 
+                                                                                        afterList=["one", ])))
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
@@ -11702,13 +11701,13 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectFiles = []
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
-      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases", collectMode="daily", archiveMode="tarbz2"))
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
-      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc", collectMode="incr", archiveMode="tar", ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt") 
       collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
       collectDir.relativeExcludePaths = [ "large", "backup", ]
@@ -11837,8 +11836,8 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", index=None,
                                                         dependencies=ActionDependencies()))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
-                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
-                                                                                        afterList=["one",])))
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c", ], 
+                                                                                        afterList=["one", ])))
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
@@ -11851,20 +11850,20 @@ class TestConfig(unittest.TestCase):
       expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.peers.remotePeers.append(RemotePeer("machine4", "/aa", remoteUser="someone", rcpCommand="scp -B", rshCommand="ssh", cbackCommand="cback", managed=True, managedActions=None))
-      expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge",]))
+      expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge", ]))
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
       expected.collect.collectFiles = []
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
-      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases", collectMode="daily", archiveMode="tarbz2"))
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
-      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc", collectMode="incr", archiveMode="tar", ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
       collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
       collectDir.relativeExcludePaths = [ "large", "backup", ]
@@ -11909,8 +11908,8 @@ class TestConfig(unittest.TestCase):
       expected.extensions.actions.append(ExtendedAction("example", "something.whatever", "example", index=None,
                                                         dependencies=ActionDependencies()))
       expected.extensions.actions.append(ExtendedAction("bogus", "module", "something", index=None,
-                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c",], 
-                                                                                        afterList=["one",])))
+                                                        dependencies=ActionDependencies(beforeList=["a", "b", "c", ], 
+                                                                                        afterList=["one", ])))
       expected.options = OptionsConfig("tuesday", "/opt/backup/tmp", "backup", "group", "/usr/bin/scp -1 -B", [], [], "/usr/bin/ssh", "/usr/bin/cback", [])
       expected.options.overrides = [ CommandOverride("mkisofs", "/usr/bin/mkisofs"), CommandOverride("svnlook", "/svnlook"), ]
       expected.options.hooks = [ PreActionHook("collect", "ls -l"), PreActionHook("subversion", "mailx -S \"hello\""), PostActionHook("stage", "df -k"), ]
@@ -11923,20 +11922,20 @@ class TestConfig(unittest.TestCase):
       expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.peers.remotePeers.append(RemotePeer("machine4", "/aa", remoteUser="someone", rcpCommand="scp -B", rshCommand="ssh", cbackCommand="cback", managed=True, managedActions=None))
-      expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge",]))
+      expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge", ]))
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
       expected.collect.collectFiles = []
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.profile"))
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
-      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases",collectMode="daily",archiveMode="tarbz2"))
+      expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases", collectMode="daily", archiveMode="tarbz2"))
       expected.collect.collectDirs = []
       expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
-      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc",collectMode="incr",archiveMode="tar",ignoreFile=".ignore"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/etc", collectMode="incr", archiveMode="tar", ignoreFile=".ignore"))
       collectDir = CollectDir(absolutePath="/opt")
       collectDir.absoluteExcludePaths = [ "/opt/share", "/opt/tmp", ]
       collectDir.relativeExcludePaths = [ "large", "backup", ]
@@ -12004,7 +12003,7 @@ class TestConfig(unittest.TestCase):
       expected.peers.remotePeers.append(RemotePeer("machine2", "/backup/collect", ignoreFailureMode="all"))
       expected.peers.remotePeers.append(RemotePeer("machine3", "/home/whatever/tmp", remoteUser="someone", rcpCommand="scp -B"))
       expected.peers.remotePeers.append(RemotePeer("machine4", "/aa", remoteUser="someone", rcpCommand="scp -B", rshCommand="ssh", cbackCommand="cback", managed=True, managedActions=None))
-      expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge",]))
+      expected.peers.remotePeers.append(RemotePeer("machine5", "/bb", managed=False, managedActions=["collect", "purge", ]))
       self.failUnlessEqual(expected, config)
 
    def testParse_040(self):
@@ -12089,7 +12088,7 @@ class TestConfig(unittest.TestCase):
       before.extensions.orderMode = "dependency"
       before.extensions.actions = []
       before.extensions.actions.append(ExtendedAction("name", "module", "function", 
-                                                      dependencies=ActionDependencies(beforeList=["b",], afterList=["a",])))
+                                                      dependencies=ActionDependencies(beforeList=["b", ], afterList=["a", ])))
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
    def testExtractXml_007(self):

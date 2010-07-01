@@ -76,118 +76,118 @@ class TestFunctions(unittest.TestCase):
       Test platform=standard, no existing overrides.
       """
       config = Config()
-      options = OptionsConfig();
+      options = OptionsConfig()
       if PLATFORM == "standard":
          config.options = options
          customizeOverrides(config)
-         self.failUnlessEqual(None, options.overrides); 
+         self.failUnlessEqual(None, options.overrides)
       config.options = options
       customizeOverrides(config, platform="standard")
-      self.failUnlessEqual(None, options.overrides); 
+      self.failUnlessEqual(None, options.overrides)
 
    def testCustomizeOverrides_002(self):
       """
       Test platform=standard, existing override for cdrecord. 
       """
       config = Config()
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("cdrecord", "/blech"), ]
       if PLATFORM == "standard":
          config.options = options
          customizeOverrides(config)
-         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), ], options.overrides); 
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), ], options.overrides)
       config.options = options
       customizeOverrides(config, platform="standard")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), ], options.overrides); 
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), ], options.overrides)
 
    def testCustomizeOverrides_003(self):
       """
       Test platform=standard, existing override for mkisofs. 
       """
       config = Config()
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("mkisofs", "/blech"), ]
       if PLATFORM == "standard":
          config.options = options
          customizeOverrides(config)
-         self.failUnlessEqual([ CommandOverride("mkisofs", "/blech"), ], options.overrides); 
+         self.failUnlessEqual([ CommandOverride("mkisofs", "/blech"), ], options.overrides)
       config.options = options
       customizeOverrides(config, platform="standard")
-      self.failUnlessEqual([ CommandOverride("mkisofs", "/blech"), ], options.overrides); 
+      self.failUnlessEqual([ CommandOverride("mkisofs", "/blech"), ], options.overrides)
 
    def testCustomizeOverrides_004(self):
       """
       Test platform=standard, existing override for cdrecord and mkisofs. 
       """
       config = Config()
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ]
       if PLATFORM == "standard":
          config.options = options
          customizeOverrides(config)
-         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides); 
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides)
       config.options = options
       customizeOverrides(config, platform="standard")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides); 
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides)
 
    def testCustomizeOverrides_005(self):
       """
       Test platform=debian, no existing overrides.
       """
       config = Config()
-      options = OptionsConfig();
+      options = OptionsConfig()
       if PLATFORM == "debian":
          config.options = options
          customizeOverrides(config)
-         self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides); 
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides)
       config.options = options
       customizeOverrides(config, platform="debian")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides); 
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides)
 
    def testCustomizeOverrides_006(self):
       """
       Test platform=debian, existing override for cdrecord. 
       """
       config = Config()
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("cdrecord", "/blech"), ]
       if PLATFORM == "debian":
          config.options = options
          customizeOverrides(config)
-         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides); 
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides)
       config.options = options
       customizeOverrides(config, platform="debian")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides); 
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/usr/bin/genisoimage"), ], options.overrides)
 
    def testCustomizeOverrides_007(self):
       """
       Test platform=debian, existing override for mkisofs. 
       """
       config = Config()
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("mkisofs", "/blech"), ]
       if PLATFORM == "debian":
          config.options = options
          customizeOverrides(config)
-         self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/blech"), ], options.overrides); 
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/blech"), ], options.overrides)
       config.options = options
       customizeOverrides(config, platform="debian")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/blech"), ], options.overrides); 
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/usr/bin/wodim"), CommandOverride("mkisofs", "/blech"), ], options.overrides)
 
    def testCustomizeOverrides_008(self):
       """
       Test platform=debian, existing override for cdrecord and mkisofs. 
       """
       config = Config()
-      options = OptionsConfig();
+      options = OptionsConfig()
       options.overrides = [ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ]
       if PLATFORM == "debian":
          config.options = options
          customizeOverrides(config)
-         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides); 
+         self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides)
       config.options = options
       customizeOverrides(config, platform="debian")
-      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides); 
+      self.failUnlessEqual([ CommandOverride("cdrecord", "/blech"), CommandOverride("mkisofs", "/blech2"), ], options.overrides)
 
 
 #######################################################################
