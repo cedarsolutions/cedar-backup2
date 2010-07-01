@@ -105,13 +105,9 @@ Full vs. Reduced Tests
 
 # System modules
 import unittest
-from gzip import GzipFile
-from bz2 import BZ2File
-import os
-from StringIO import StringIO
 
 # Cedar Backup modules
-from CedarBackup2.testutil import findResources, buildPath, removedir, failUnlessAssignRaises
+from CedarBackup2.testutil import findResources, failUnlessAssignRaises
 from CedarBackup2.xmlutil import createOutputDom, serializeDom
 from CedarBackup2.extend.subversion import LocalConfig, SubversionConfig
 from CedarBackup2.extend.subversion import Repository, RepositoryDir, BDBRepository, FSFSRepository
@@ -147,9 +143,9 @@ class TestBDBRepository(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -442,9 +438,9 @@ class TestFSFSRepository(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -732,9 +728,9 @@ class TestRepository(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -1068,9 +1064,9 @@ class TestRepositoryDir(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -1517,9 +1513,9 @@ class TestSubversionConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -1921,9 +1917,9 @@ class TestLocalConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
    def validateAddConfig(self, origConfig):
       """
@@ -2457,7 +2453,7 @@ class TestLocalConfig(unittest.TestCase):
       """
       repositoryDirs = []
       repositoryDirs.append(RepositoryDir(directoryPath="/opt/public/svn/one"))
-      repositoryDirs.append(RepositoryDir(repositoryType="BDB", directoryPath="/opt/public/svn/two", collectMode="weekly", relativeExcludePaths=["software",]))
+      repositoryDirs.append(RepositoryDir(repositoryType="BDB", directoryPath="/opt/public/svn/two", collectMode="weekly", relativeExcludePaths=["software", ]))
       repositoryDirs.append(RepositoryDir(directoryPath="/opt/public/svn/three", compressMode="bzip2", excludePatterns=[".*software.*", ]))
       repositoryDirs.append(RepositoryDir(repositoryType="FSFS", directoryPath="/opt/public/svn/four", collectMode="incr", compressMode="bzip2", relativeExcludePaths=["cedar", "banner", ], excludePatterns=[".*software.*", ".*database.*", ]))
       path = self.resources["subversion.conf.7"]

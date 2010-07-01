@@ -94,13 +94,9 @@ Full vs. Reduced Tests
 
 # System modules
 import unittest
-from gzip import GzipFile
-from bz2 import BZ2File
-import os
-from StringIO import StringIO
 
 # Cedar Backup modules
-from CedarBackup2.testutil import findResources, buildPath, removedir, failUnlessAssignRaises
+from CedarBackup2.testutil import findResources, failUnlessAssignRaises
 from CedarBackup2.xmlutil import createOutputDom, serializeDom
 from CedarBackup2.extend.mbox import LocalConfig, MboxConfig, MboxFile, MboxDir
 
@@ -129,9 +125,9 @@ class TestMboxFile(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -415,9 +411,9 @@ class TestMboxDir(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -934,9 +930,9 @@ class TestMboxConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -1464,9 +1460,9 @@ class TestLocalConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
    def validateAddConfig(self, origConfig):
       """
@@ -2184,7 +2180,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with defaults set, single mbox directory with relativeExcludePaths set.
       """
       mboxDirs = []
-      mboxDirs.append(MboxDir(absolutePath="/path", relativeExcludePaths=["one", "two",]))
+      mboxDirs.append(MboxDir(absolutePath="/path", relativeExcludePaths=["one", "two", ]))
       mbox = MboxConfig(collectMode="daily", compressMode="gzip", mboxDirs=mboxDirs)
       config = LocalConfig()
       config.mbox = mbox
@@ -2195,7 +2191,7 @@ class TestLocalConfig(unittest.TestCase):
       Test with defaults set, single mbox directory with excludePatterns set.
       """
       mboxDirs = []
-      mboxDirs.append(MboxDir(absolutePath="/path", excludePatterns=["one", "two",]))
+      mboxDirs.append(MboxDir(absolutePath="/path", excludePatterns=["one", "two", ]))
       mbox = MboxConfig(collectMode="daily", compressMode="gzip", mboxDirs=mboxDirs)
       config = LocalConfig()
       config.mbox = mbox

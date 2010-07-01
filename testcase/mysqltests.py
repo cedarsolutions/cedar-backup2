@@ -105,14 +105,11 @@ Full vs. Reduced Tests
 
 # System modules
 import unittest
-from bz2 import BZ2File
-import os
-from StringIO import StringIO
 
 # Cedar Backup modules
-from CedarBackup2.testutil import findResources, buildPath, removedir, failUnlessAssignRaises
+from CedarBackup2.testutil import findResources, failUnlessAssignRaises
 from CedarBackup2.xmlutil import createOutputDom, serializeDom
-from CedarBackup2.extend.mysql import LocalConfig, MysqlConfig, _getOutputFile
+from CedarBackup2.extend.mysql import LocalConfig, MysqlConfig
 
 
 #######################################################################
@@ -139,9 +136,9 @@ class TestMysqlConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -597,7 +594,7 @@ class TestMysqlConfig(unittest.TestCase):
       Test comparison of two differing objects, databases differs (one None, one not empty).
       """
       mysql1 = MysqlConfig()
-      mysql2 = MysqlConfig(databases=["whatever",])
+      mysql2 = MysqlConfig(databases=["whatever", ])
       self.failIfEqual(mysql1, mysql2)
       self.failUnless(not mysql1 == mysql2)
       self.failUnless(mysql1 < mysql2)
@@ -661,9 +658,9 @@ class TestLocalConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
    def validateAddConfig(self, origConfig):
       """

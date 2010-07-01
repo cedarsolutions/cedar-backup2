@@ -91,13 +91,10 @@ Full vs. Reduced Tests
 ########################################################################
 
 # Import standard modules
-import sys
 import os
 import stat
 import unittest
 import tempfile
-import tarfile
-import getpass
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.testutil import getMaskAsMode, getLogin, runningAsRoot, failUnlessAssignRaises
 from CedarBackup2.testutil import platformSupportsPermissions, platformWindows, platformCygwin
@@ -178,9 +175,9 @@ class TestLocalPeer(unittest.TestCase):
       """Calls buildPath on components and then returns file mode for the file."""
       return stat.S_IMODE(os.stat(self.buildPath(components)).st_mode)
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ###########################
@@ -386,7 +383,7 @@ class TestLocalPeer(unittest.TestCase):
          self.failUnless(os.path.exists(collectDir))
          os.chmod(collectDir, 0500)    # read-only for user
          peer = LocalPeer(name, collectDir)
-         self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
+         self.failUnlessRaises((IOError, OSError), peer.writeStageIndicator)
          os.chmod(collectDir, 0777)    # so we can remove it safely
 
    def testWriteStageIndicator_003(self):
@@ -400,7 +397,7 @@ class TestLocalPeer(unittest.TestCase):
          self.failUnless(os.path.exists(collectDir))
          os.chmod(collectDir, 0500)    # read-only for user
          peer = LocalPeer(name, collectDir)
-         self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator, stageIndicator="something")
+         self.failUnlessRaises((IOError, OSError), peer.writeStageIndicator, stageIndicator="something")
          os.chmod(collectDir, 0777)    # so we can remove it safely
 
    def testWriteStageIndicator_004(self):
@@ -488,7 +485,7 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnless(os.path.exists(targetDir))
       os.chmod(collectDir, 0200)    # user can't read his own directory
       peer = LocalPeer(name, collectDir)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
       os.chmod(collectDir, 0777)    # so we can remove it safely
 
    def testStagePeer_003(self):
@@ -530,7 +527,7 @@ class TestLocalPeer(unittest.TestCase):
          self.failUnless(os.path.exists(targetDir))
          os.chmod(targetDir, 0500)    # read-only for user
          peer = LocalPeer(name, collectDir)
-         self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+         self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
          os.chmod(targetDir, 0777)    # so we can remove it safely
          self.failUnlessEqual(0, len(os.listdir(targetDir)))
 
@@ -547,7 +544,7 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = LocalPeer(name, collectDir)
-      self.failUnlessRaises(IOError, peer.stagePeer,targetDir=targetDir)
+      self.failUnlessRaises(IOError, peer.stagePeer, targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual([], stagedFiles)
 
@@ -567,7 +564,7 @@ class TestLocalPeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = LocalPeer(name, collectDir)
-      self.failUnlessRaises(IOError, peer.stagePeer,targetDir=targetDir)
+      self.failUnlessRaises(IOError, peer.stagePeer, targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual([], stagedFiles)
 
@@ -717,9 +714,9 @@ class TestRemotePeer(unittest.TestCase):
       """Calls buildPath on components and then returns file mode for the file."""
       return stat.S_IMODE(os.stat(self.buildPath(components)).st_mode)
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -1105,7 +1102,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       remoteUser = getLogin()
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
+      self.failUnlessRaises((IOError, OSError), peer.writeStageIndicator)
 
    def testWriteStageIndicator_002(self):
       """
@@ -1118,7 +1115,7 @@ class TestRemotePeer(unittest.TestCase):
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
+      self.failUnlessRaises((IOError, OSError), peer.writeStageIndicator)
 
    def testWriteStageIndicator_003(self):
       """
@@ -1132,7 +1129,7 @@ class TestRemotePeer(unittest.TestCase):
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand)
-      self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
+      self.failUnlessRaises((IOError, OSError), peer.writeStageIndicator)
 
    def testWriteStageIndicator_004(self):
       """
@@ -1160,7 +1157,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(not os.path.exists(stageIndicator))
       os.chmod(collectDir, 0400)    # read-only for user
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.writeStageIndicator)
+      self.failUnlessRaises((IOError, OSError), peer.writeStageIndicator)
       self.failUnless(not os.path.exists(stageIndicator))
       os.chmod(collectDir, 0777)    # so we can remove it safely
 
@@ -1249,7 +1246,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_002(self):
       """
@@ -1265,7 +1262,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_003(self):
       """
@@ -1282,7 +1279,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_004(self):
       """
@@ -1297,7 +1294,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(not os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_005(self):
       """
@@ -1314,7 +1311,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(targetDir))
       os.chmod(collectDir, 0200)    # user can't read his own directory
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
       os.chmod(collectDir, 0777)    # so we can remove it safely
 
    def testStagePeer_006(self):
@@ -1360,7 +1357,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(targetDir))
       os.chmod(targetDir, 0400)    # read-only for user
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
       os.chmod(collectDir, 0777)    # so we can remove it safely
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
 
@@ -1379,7 +1376,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual([], stagedFiles)
 
@@ -1399,7 +1396,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual([], stagedFiles)
 
@@ -1474,7 +1471,7 @@ class TestRemotePeer(unittest.TestCase):
       self.failUnless(os.path.exists(targetDir))
       self.failUnlessEqual(0, len(os.listdir(targetDir)))
       peer = RemotePeer(name, collectDir, workingDir, remoteUser)
-      self.failUnlessRaises((IOError,OSError), peer.stagePeer, targetDir=targetDir)
+      self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
       stagedFiles = os.listdir(targetDir)
       self.failUnlessEqual(2, len(stagedFiles))
       self.failUnless("file001" in stagedFiles)
@@ -1530,7 +1527,7 @@ class TestRemotePeer(unittest.TestCase):
       target = self.buildPath(["test.txt", ])
       name = REMOTE_HOST
       remoteUser = getLogin()
-      command = "touch %s" % target;
+      command = "touch %s" % target
       self.failIf(os.path.exists(target))
       peer = RemotePeer(name=name, remoteUser=remoteUser)
       peer.executeRemoteCommand(command)

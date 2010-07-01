@@ -92,12 +92,11 @@ Full vs. Reduced Tests
 import os
 import unittest
 import tempfile
-import tarfile
 
 from CedarBackup2.writers.dvdwriter import MediaDefinition, MediaCapacity, DvdWriter
 from CedarBackup2.writers.dvdwriter import MEDIA_DVDPLUSR, MEDIA_DVDPLUSRW
 
-from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, platformSupportsLinks
+from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 
 
 #######################################################################
@@ -235,7 +234,7 @@ class TestDvdWriter(unittest.TestCase):
       """
       Test with an empty device.
       """
-      self.failUnlessRaises(ValueError, DvdWriter, None);
+      self.failUnlessRaises(ValueError, DvdWriter, None)
 
    def testConstructor_002(self):
       """

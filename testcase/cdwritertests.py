@@ -100,20 +100,10 @@ Full vs. Reduced Tests
 # Import modules and do runtime validations
 ########################################################################
 
-import sys
-import os
-import re
 import unittest
-import tempfile
-import tarfile
 
 from CedarBackup2.writers.cdwriter import MediaDefinition, MediaCapacity, CdWriter
 from CedarBackup2.writers.cdwriter import MEDIA_CDR_74, MEDIA_CDRW_74, MEDIA_CDR_80, MEDIA_CDRW_80
-
-from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYTES
-from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
-from CedarBackup2.testutil import platformMacOsX, platformSupportsLinks
 
 
 #######################################################################
@@ -604,7 +594,7 @@ class TestCdWriter(unittest.TestCase):
       capacity = CdWriter._calculateCapacity(media, boundaries)
       self.failUnlessEqual(expectedUsed, capacity.bytesUsed)
       self.failUnlessEqual(expectedAvailable, capacity.bytesAvailable)
-      self.failUnlessEqual((0,999), capacity.boundaries)
+      self.failUnlessEqual((0, 999), capacity.boundaries)
 
    def testCapacity_010(self):
       """
@@ -702,7 +692,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is False; entireDisc=False, useMulti=True.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer._deviceSupportsMulti = False;
+      writer._deviceSupportsMulti = False
       boundaries = writer._getBoundaries(entireDisc=False, useMulti=True)
       self.failUnlessEqual(None, boundaries)
 
@@ -711,7 +701,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is False; entireDisc=True, useMulti=True.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer._deviceSupportsMulti = False;
+      writer._deviceSupportsMulti = False
       boundaries = writer._getBoundaries(entireDisc=True, useMulti=True)
       self.failUnlessEqual(None, boundaries)
 
@@ -720,7 +710,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is False; entireDisc=True, useMulti=False.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer._deviceSupportsMulti = False;
+      writer._deviceSupportsMulti = False
       boundaries = writer._getBoundaries(entireDisc=False, useMulti=False)
       self.failUnlessEqual(None, boundaries)
 
@@ -729,7 +719,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is False; entireDisc=False, useMulti=False.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer._deviceSupportsMulti = False;
+      writer._deviceSupportsMulti = False
       boundaries = writer._getBoundaries(entireDisc=False, useMulti=False)
       self.failUnlessEqual(None, boundaries)
 
@@ -738,7 +728,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is True; entireDisc=True, useMulti=True.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer._deviceSupportsMulti = True;
+      writer._deviceSupportsMulti = True
       boundaries = writer._getBoundaries(entireDisc=True, useMulti=True)
       self.failUnlessEqual(None, boundaries)
 
@@ -747,7 +737,7 @@ class TestCdWriter(unittest.TestCase):
       Test _getBoundaries when self.deviceSupportsMulti is True; entireDisc=True, useMulti=False.
       """
       writer = CdWriter(device="/dev/cdrw", scsiId="0,0,0", unittest=True)
-      writer._deviceSupportsMulti = True;
+      writer._deviceSupportsMulti = True
       boundaries = writer._getBoundaries(entireDisc=True, useMulti=False)
       self.failUnlessEqual(None, boundaries)
 
@@ -767,7 +757,7 @@ class TestCdWriter(unittest.TestCase):
 
    def testCapacity_024(self):
       """
-      Test _calculateCapacity for boundaries of (0,330042) and MEDIA_CDRW_74.
+      Test _calculateCapacity for boundaries of (0, 330042) and MEDIA_CDRW_74.
       This was a bug fixed for v2.1.3.
       """
       expectedUsed = (330042*2048.0)   # 330042 sectors

@@ -105,14 +105,11 @@ Full vs. Reduced Tests
 
 # System modules
 import unittest
-from bz2 import BZ2File
-import os
-from StringIO import StringIO
 
 # Cedar Backup modules
-from CedarBackup2.testutil import findResources, buildPath, removedir, failUnlessAssignRaises
+from CedarBackup2.testutil import findResources, failUnlessAssignRaises
 from CedarBackup2.xmlutil import createOutputDom, serializeDom
-from CedarBackup2.extend.postgresql import LocalConfig, PostgresqlConfig, _getOutputFile
+from CedarBackup2.extend.postgresql import LocalConfig, PostgresqlConfig
 
 
 #######################################################################
@@ -139,9 +136,9 @@ class TestPostgresqlConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -537,7 +534,7 @@ class TestPostgresqlConfig(unittest.TestCase):
       Test comparison of two differing objects, databases differs (one None, one not empty).
       """
       postgresql1 = PostgresqlConfig()
-      postgresql2 = PostgresqlConfig(databases=["whatever",])
+      postgresql2 = PostgresqlConfig(databases=["whatever", ])
       self.failIfEqual(postgresql1, postgresql2)
       self.failUnless(not postgresql1 == postgresql2)
       self.failUnless(postgresql1 < postgresql2)
@@ -601,9 +598,9 @@ class TestLocalConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
    def validateAddConfig(self, origConfig):
       """

@@ -104,14 +104,11 @@ Full vs. Reduced Tests
 import unittest
 import os
 import tempfile
-import tarfile
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
-from CedarBackup2.testutil import failUnlessAssignRaises, platformSupportsLinks, availableLocales
-from CedarBackup2.testutil import hexFloatLiteralAllowed
+from CedarBackup2.testutil import failUnlessAssignRaises, availableLocales
 from CedarBackup2.xmlutil import createOutputDom, serializeDom
 from CedarBackup2.extend.split import LocalConfig, SplitConfig, ByteQuantity
 from CedarBackup2.extend.split import _splitFile, _splitDailyDir
@@ -155,9 +152,9 @@ class TestSplitConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
 
    ############################
@@ -381,9 +378,9 @@ class TestLocalConfig(unittest.TestCase):
    # Utility methods
    ##################
 
-   def failUnlessAssignRaises(self, exception, object, property, value):
+   def failUnlessAssignRaises(self, exception, obj, prop, value):
       """Equivalent of L{failUnlessRaises}, but used for property assignments instead."""
-      failUnlessAssignRaises(self, exception, object, property, value)
+      failUnlessAssignRaises(self, exception, obj, prop, value)
 
    def validateAddConfig(self, origConfig):
       """

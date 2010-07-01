@@ -92,16 +92,14 @@ Full vs. Reduced Tests
 # Import modules and do runtime validations
 ########################################################################
 
-import sys
 import os
 import unittest
 import tempfile
-import tarfile
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.testutil import platformMacOsX, platformSupportsLinks
 from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.writers.util import validateScsiId, validateDriveSpeed, IsoImage
-from CedarBackup2.util import executeCommand, convertSize, UNIT_BYTES, UNIT_MBYTES
+from CedarBackup2.util import executeCommand
 
 
 #######################################################################
@@ -1057,7 +1055,6 @@ class TestIsoImage(unittest.TestCase):
       """
       Test with an empty list.
       """
-      pass
       self.extractTar("tree9")
       isoImage = IsoImage()
       self.failUnlessRaises(ValueError, isoImage.getEstimatedSize)

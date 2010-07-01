@@ -82,7 +82,6 @@ Full vs. Reduced Tests
 ########################################################################
 
 # Import standard modules
-import sys
 import unittest
 from CedarBackup2.knapsack import firstFit, bestFit, worstFit, alternateFit
 
