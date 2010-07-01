@@ -120,7 +120,7 @@ def main():
    try:
       if os.path.exists(os.path.join(".", "CedarBackup2", "filesystem.py")):
          sys.path.insert(0, ".")
-      elif os.path.basename(os.getcwd()) == "test" and os.path.exists(os.path.join("..", "CedarBackup2", "filesystem.py")):
+      elif os.path.basename(os.getcwd()) == "testcase" and os.path.exists(os.path.join("..", "CedarBackup2", "filesystem.py")):
          sys.path.insert(0, "..")
       else:
          print "WARNING: CedarBackup2 modules were not found in the expected"
