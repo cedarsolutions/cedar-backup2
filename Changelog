@@ -1,4 +1,4 @@
-Version 2.19.7    unreleased
+Version 2.19.7    01 Jul 2010
 
 	* Configure pylint and execute it against the entire codebase.
 	  - Fix a variety of minor warnings and suggestions from pylint
