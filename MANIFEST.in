@@ -14,8 +14,8 @@ include util/cback-span
 include util/test.py
 include util/knapsackdemo.py
 include util/docbook/*
-include test/*.py
-include test/data/*
+include testcase/*.py
+include testcase/data/*
 include manual/Makefile
 include manual/src/*.xml
 include manual/src/images/html/*.png
