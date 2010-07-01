@@ -1,5 +1,6 @@
 Version 2.19.7    01 Jul 2010
 
+	* Make cback script more robust in the case of a bad interpreter version.
 	* Configure pylint and execute it against the entire codebase.
 	  - Fix a variety of minor warnings and suggestions from pylint
 	  - Move unit tests into testcase folder to avoid test.py naming conflict
