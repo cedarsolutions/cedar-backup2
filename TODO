@@ -34,9 +34,6 @@ way to do it?
 
 ============================
 
-Move to Python 2.5 -- is available in etch
-Move to decorators for things like staticmethod (more readable)
-Change all checks to match new version -- maybe list required version in release file or something?
 New images for manual (something I have given up on several times)
 Remove action.py
 Use decorator in places like cli._usage() rather than passing in file descriptor?
