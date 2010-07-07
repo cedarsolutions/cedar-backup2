@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2008 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008,2010 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # Portions copyright (c) 2001, 2002 Python Software Foundation.

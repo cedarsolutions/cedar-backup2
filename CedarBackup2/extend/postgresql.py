@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2006 Kenneth J. Pronovici.
+# Copyright (c) 2006,2010 Kenneth J. Pronovici.
 # Copyright (c) 2006 Antoine Beaupre.
 # All rights reserved.
 #
