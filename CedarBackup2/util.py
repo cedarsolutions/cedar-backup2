@@ -1347,7 +1347,6 @@ def getUidGid(user, group):
       try:
          uid = pwd.getpwnam(user)[2]
          gid = grp.getgrnam(group)[2]
-         logger.debug("Translated [%s:%s] into [%d:%d]." % (user, group, uid, gid))
          return (uid, gid)
       except Exception, e:
          logger.debug("Error looking up uid and gid for [%s:%s]: %s" % (user, group, e))
@@ -1365,7 +1364,8 @@ def changeOwnership(path, user, group):
    Changes ownership of path to match the user and group.
 
    This is a no-op if user/group functionality is not available on the
-   platform, or if the either passed-in user or group is C{None}.
+   platform, or if the either passed-in user or group is C{None}.  Further, we
+   won't even try to do it unless running as root, since it's unlikely to work.
 
    @param path: Path whose ownership to change.
    @param user: User which owns file.
@@ -1374,7 +1374,7 @@ def changeOwnership(path, user, group):
    if _UID_GID_AVAILABLE:
       if user is None or group is None:
          logger.debug("User or group is None, so not attempting to change owner on [%s]." % path)
-      elif os.getuid() != 0:
+      elif not isRunningAsRoot():
          logger.debug("Not root, so not attempting to change owner on [%s]." % path)
       else:
          try:
@@ -1382,6 +1382,17 @@ def changeOwnership(path, user, group):
             os.chown(path, uid, gid)
          except Exception, e:
             logger.error("Error changing ownership of [%s]: %s" % (path, e))
+
+
+#############################
+# isRunningAsRoot() function
+#############################
+
+def isRunningAsRoot():
+   """
+   Indicates whether the program is running as the root user.
+   """
+   return os.getuid() == 0
 
 
 ##############################

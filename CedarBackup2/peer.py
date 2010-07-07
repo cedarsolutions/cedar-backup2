@@ -59,7 +59,7 @@ import shutil
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import resolveCommand, executeCommand
+from CedarBackup2.util import resolveCommand, executeCommand, isRunningAsRoot
 from CedarBackup2.util import splitCommandLine, encodePath
 from CedarBackup2.config import VALID_FAILURE_MODES
 
@@ -1010,7 +1010,7 @@ class RemotePeer(object):
       beforeSet = RemotePeer._getDirContents(targetDir)
       if localUser is not None:
          try:
-            if os.getuid() != 0:
+            if not isRunningAsRoot():
                raise IOError("Only root can remote copy as another user.")
          except AttributeError: pass
          actualCommand = "%s %s@%s:%s/* %s" % (rcpCommand, remoteUser, remoteHost, sourceDir, targetDir)
@@ -1103,7 +1103,7 @@ class RemotePeer(object):
             raise IOError("Target file [%s] already exists." % targetFile)
       if localUser is not None:
          try:
-            if os.getuid() != 0:
+            if not isRunningAsRoot():
                raise IOError("Only root can remote copy as another user.")
          except AttributeError: pass
          actualCommand = "%s %s@%s:%s %s" % (rcpCommand, remoteUser, remoteHost, sourceFile.replace(" ", "\\ "), targetFile)
@@ -1174,7 +1174,7 @@ class RemotePeer(object):
             raise IOError("Target file [%s] already exists." % targetFile)
       if localUser is not None:
          try:
-            if os.getuid() != 0:
+            if not isRunningAsRoot():
                raise IOError("Only root can remote copy as another user.")
          except AttributeError: pass
          actualCommand = '%s "%s" "%s@%s:%s"' % (rcpCommand, sourceFile, remoteUser, remoteHost, targetFile)
@@ -1217,7 +1217,7 @@ class RemotePeer(object):
       actualCommand = "%s %s@%s '%s'" % (rshCommand, remoteUser, remoteHost, remoteCommand)
       if localUser is not None:
          try:
-            if os.getuid() != 0:
+            if not isRunningAsRoot():
                raise IOError("Only root can remote shell as another user.")
          except AttributeError: pass
          command = resolveCommand(SU_COMMAND) 

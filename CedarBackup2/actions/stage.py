@@ -54,7 +54,7 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.peer import RemotePeer, LocalPeer
-from CedarBackup2.util import getUidGid, changeOwnership, isStartOfWeek
+from CedarBackup2.util import getUidGid, changeOwnership, isStartOfWeek, isRunningAsRoot
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR
 from CedarBackup2.actions.util import writeIndicatorFile
 
@@ -120,7 +120,7 @@ def executeStage(configPath, options, config):
          continue
       logger.debug("Found collect indicator.")
       targetDir = stagingDirs[peer.name]
-      if os.getuid() == 0:
+      if isRunningAsRoot():
          # Since we're running as root, we can change ownership
          ownership = getUidGid(config.options.backupUser,  config.options.backupGroup)
          logger.debug("Using target dir [%s], ownership [%d:%d]." % (targetDir, ownership[0], ownership[1]))
@@ -319,7 +319,7 @@ def _getLocalUser(config):
    @param config: Config object.
    @return: Name of local user that should be used
    """
-   if os.getuid() != 0:
+   if not isRunningAsRoot():
       return None
    return config.options.backupUser
 
