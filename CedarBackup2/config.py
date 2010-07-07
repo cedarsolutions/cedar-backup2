@@ -420,12 +420,6 @@ class ActionDependencies(object):
    dependencies in terms of other named actions.  This class encapsulates the dependency
    information for an extended action.
 
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
-
    The following restrictions exist on data in this class:
 
       - Any action name must be a non-empty string matching C{ACTION_NAME_REGEX}
@@ -540,12 +534,6 @@ class ActionHook(object):
 
    A hook associated with an action is a shell command to be executed either
    before or after a named action is executed.  
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -680,12 +668,6 @@ class PreActionHook(ActionHook):
    before or after a named action is executed.  In this case, a pre-action hook
    is executed before the named action.
 
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
-
    The following restrictions exist on data in this class:
 
       - The action name must be a non-empty string consisting of lower-case letters and digits.
@@ -723,12 +705,6 @@ class PostActionHook(ActionHook):
    A hook associated with an action is a shell command to be executed either
    before or after a named action is executed.  In this case, a post-action hook
    is executed after the named action.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -768,12 +744,6 @@ class BlankBehavior(object):
 
    """
    Class representing optimized store-action media blanking behavior.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -880,12 +850,6 @@ class ExtendedAction(object):
 
    """
    Class representing an extended action.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    Essentially, an extended action needs to allow the following to happen::
 
@@ -1094,12 +1058,6 @@ class CommandOverride(object):
    """
    Class representing a piece of Cedar Backup command override configuration.
 
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
-
    The following restrictions exist on data in this class:
 
       - The absolute path must be absolute
@@ -1203,12 +1161,6 @@ class CollectFile(object):
 
    """
    Class representing a Cedar Backup collect file.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -1339,12 +1291,6 @@ class CollectDir(object):
 
    """
    Class representing a Cedar Backup collect directory.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -1670,12 +1616,6 @@ class PurgeDir(object):
    """
    Class representing a Cedar Backup purge directory.
 
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
-
    The following restrictions exist on data in this class:
 
       - The absolute path must be an absolute path
@@ -1784,12 +1724,6 @@ class LocalPeer(object):
 
    """
    Class representing a Cedar Backup peer.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -1920,12 +1854,6 @@ class RemotePeer(object):
 
    """
    Class representing a Cedar Backup peer.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -2230,12 +2158,6 @@ class ReferenceConfig(object):
    configuration and exists mostly for backwards-compatibility with Cedar
    Backup 1.x.
 
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   We don't do any
-   validation on the contents of any of the fields, although we generally
-   expect them to be strings.
-
    @sort: __init__, __repr__, __str__, __cmp__, author, revision, description, generator
    """
 
@@ -2373,12 +2295,6 @@ class ExtensionsConfig(object):
    configuration to map a command-line Cedar Backup action (i.e. "database")
    to their function.
    
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
-
    The following restrictions exist on data in this class:
 
       - If set, the order mode must be one of the values in C{VALID_ORDER_MODES}
@@ -2484,12 +2400,6 @@ class OptionsConfig(object):
 
    The options section is used to store global configuration options and
    defaults that can be applied to other sections. 
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -2877,10 +2787,6 @@ class PeersConfig(object):
    configured, then peers may be managed or unmanaged, and the stage section
    peer configuration (if any) completely overrides this configuration.
 
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.
-
    The following restrictions exist on data in this class:
 
       - The list of local peers must contain only C{LocalPeer} objects
@@ -3004,12 +2910,6 @@ class CollectConfig(object):
 
    """
    Class representing a Cedar Backup collect configuration.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -3316,12 +3216,6 @@ class StageConfig(object):
    """
    Class representing a Cedar Backup stage configuration.
 
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
-
    The following restrictions exist on data in this class:
 
       - The target directory must be an absolute path
@@ -3474,12 +3368,6 @@ class StoreConfig(object):
 
    """
    Class representing a Cedar Backup store configuration.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
@@ -3868,12 +3756,6 @@ class PurgeConfig(object):
 
    """
    Class representing a Cedar Backup purge configuration.
-
-   As with all of the other classes that represent configuration sections, all
-   of these values are optional.  It is up to some higher-level construct to
-   decide whether everything they need is filled in.   Some validation is done
-   on non-C{None} assignments through the use of the Python C{property()}
-   construct.
 
    The following restrictions exist on data in this class:
 
