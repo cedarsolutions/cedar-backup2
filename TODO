@@ -34,6 +34,7 @@ way to do it?
 
 ============================
 
+Probably move to Python 3.x for any Cedar Backup 3 rewrite.
 New images for manual (something I have given up on several times)
 Remove action.py
 Use decorator in places like cli._usage() rather than passing in file descriptor?
