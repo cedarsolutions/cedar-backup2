@@ -435,6 +435,7 @@ class LocalConfig(object):
       (xmlDom, parentNode) = createInputDom(xmlData)
       self._capacity = LocalConfig._parseCapacity(parentNode)
 
+   @staticmethod
    def _parseCapacity(parentNode):
       """
       Parses a capacity configuration section.
@@ -456,8 +457,8 @@ class LocalConfig(object):
          capacity.maxPercentage = LocalConfig._readPercentageQuantity(section, "max_percentage")
          capacity.minBytes = readByteQuantity(section, "min_bytes")
       return capacity
-   _parseCapacity = staticmethod(_parseCapacity)
 
+   @staticmethod
    def _readPercentageQuantity(parent, name):
       """
       Read a percentage quantity value from an XML document.
@@ -469,8 +470,8 @@ class LocalConfig(object):
       if quantity is None:
          return None
       return PercentageQuantity(quantity)
-   _readPercentageQuantity = staticmethod(_readPercentageQuantity)
 
+   @staticmethod
    def _addPercentageQuantity(xmlDom, parentNode, nodeName, percentageQuantity):
       """
       Adds a text node as the next child of a parent, to contain a percentage quantity.
@@ -486,7 +487,6 @@ class LocalConfig(object):
       """
       if percentageQuantity is not None:
          addStringNode(xmlDom, parentNode, nodeName, percentageQuantity.quantity)
-   _addPercentageQuantity = staticmethod(_addPercentageQuantity)
 
 
 ########################################################################

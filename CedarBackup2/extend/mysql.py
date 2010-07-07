@@ -479,6 +479,7 @@ class LocalConfig(object):
       (xmlDom, parentNode) = createInputDom(xmlData)
       self._mysql = LocalConfig._parseMysql(parentNode)
 
+   @staticmethod
    def _parseMysql(parentNode):
       """
       Parses a mysql configuration section.
@@ -510,7 +511,6 @@ class LocalConfig(object):
          mysql.all = readBoolean(section, "all")
          mysql.databases = readStringList(section, "database")
       return mysql
-   _parseMysql = staticmethod(_parseMysql)
 
 
 ########################################################################

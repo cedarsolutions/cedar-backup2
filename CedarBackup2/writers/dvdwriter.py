@@ -747,6 +747,7 @@ class DvdWriter(object):
          raise IOError("Error (%d) executing command to write disc." % result)
       self.refreshMedia()
 
+   @staticmethod
    def _getEstimatedImageSize(entries):
       """
       Gets the estimated size of a set of image entries.
@@ -773,7 +774,6 @@ class DvdWriter(object):
          image.addEntry(path, entries[path], override=False, contentsOnly=True)
       estimatedSize = image.getEstimatedSize() + fudgeFactor
       return estimatedSize
-   _getEstimatedImageSize = staticmethod(_getEstimatedImageSize)
 
    def _retrieveSectorsUsed(self):
       """
@@ -808,6 +808,7 @@ class DvdWriter(object):
                os.rmdir(tempdir)
             except: pass
 
+   @staticmethod
    def _parseSectorsUsed(output):
       """
       Parse sectors used information out of C{growisofs} output.
@@ -838,8 +839,8 @@ class DvdWriter(object):
                   raise ValueError("Unable to parse sectors used out of growisofs output.")
       logger.warn("Unable to read disc (might not be initialized); returning zero sectors used.")
       return 0.0
-   _parseSectorsUsed = staticmethod(_parseSectorsUsed)
 
+   @staticmethod
    def _searchForOverburn(output):
       """
       Search for an "overburn" error message in C{growisofs} output.
@@ -874,8 +875,8 @@ class DvdWriter(object):
             except ValueError: 
                logger.error("Image does not fit in available capacity (no useful capacity info available).")
             raise IOError("Media does not contain enough capacity to store image.")
-   _searchForOverburn = staticmethod(_searchForOverburn)
          
+   @staticmethod
    def _buildWriteArgs(newDisc, hardwareId, driveSpeed, imagePath, entries, mediaLabel=None, dryRun=False):
       """
       Builds a list of arguments to be passed to a C{growisofs} command.
@@ -941,5 +942,4 @@ class DvdWriter(object):
             else:
                args.append("%s/=%s" % (entries[key].strip("/"), key))
       return args
-   _buildWriteArgs = staticmethod(_buildWriteArgs)
 

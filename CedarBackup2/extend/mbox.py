@@ -833,6 +833,7 @@ class LocalConfig(object):
       (xmlDom, parentNode) = createInputDom(xmlData)
       self._mbox = LocalConfig._parseMbox(parentNode)
 
+   @staticmethod
    def _parseMbox(parent):
       """
       Parses an mbox configuration section.
@@ -865,8 +866,8 @@ class LocalConfig(object):
          mbox.mboxFiles = LocalConfig._parseMboxFiles(section)
          mbox.mboxDirs = LocalConfig._parseMboxDirs(section)
       return mbox
-   _parseMbox = staticmethod(_parseMbox)
 
+   @staticmethod
    def _parseMboxFiles(parent):
       """
       Reads a list of C{MboxFile} objects from immediately beneath the parent.
@@ -893,8 +894,8 @@ class LocalConfig(object):
       if lst == []:
          lst = None
       return lst
-   _parseMboxFiles = staticmethod(_parseMboxFiles)
 
+   @staticmethod
    def _parseMboxDirs(parent):
       """
       Reads a list of C{MboxDir} objects from immediately beneath the parent.
@@ -930,8 +931,8 @@ class LocalConfig(object):
       if lst == []:
          lst = None
       return lst
-   _parseMboxDirs = staticmethod(_parseMboxDirs)
 
+   @staticmethod
    def _parseExclusions(parentNode):
       """
       Reads exclusions data from immediately beneath the parent.
@@ -955,8 +956,8 @@ class LocalConfig(object):
          relative = readStringList(section, "rel_path")
          patterns = readStringList(section, "pattern")
          return (relative, patterns)
-   _parseExclusions = staticmethod(_parseExclusions)
 
+   @staticmethod
    def _addMboxFile(xmlDom, parentNode, mboxFile):
       """
       Adds an mbox file container as the next child of a parent.
@@ -982,8 +983,8 @@ class LocalConfig(object):
          addStringNode(xmlDom, sectionNode, "abs_path", mboxFile.absolutePath)
          addStringNode(xmlDom, sectionNode, "collect_mode", mboxFile.collectMode)
          addStringNode(xmlDom, sectionNode, "compress_mode", mboxFile.compressMode)
-   _addMboxFile = staticmethod(_addMboxFile)
 
+   @staticmethod
    def _addMboxDir(xmlDom, parentNode, mboxDir):
       """
       Adds an mbox directory container as the next child of a parent.
@@ -1023,7 +1024,6 @@ class LocalConfig(object):
             if mboxDir.excludePatterns is not None:
                for pattern in mboxDir.excludePatterns:
                   addStringNode(xmlDom, excludeNode, "pattern", pattern)
-   _addMboxDir = staticmethod(_addMboxDir)
 
 
 ########################################################################

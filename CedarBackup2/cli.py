@@ -546,6 +546,7 @@ class _ActionSet(object):
       _ActionSet._validateActions(actions, extensionNames)
       self.actionSet = _ActionSet._buildActionSet(actions, actionMap)
 
+   @staticmethod
    def _deriveExtensionNames(extensions):
       """
       Builds a list of extended actions that are available in configuration.
@@ -557,8 +558,8 @@ class _ActionSet(object):
          for action in extensions.actions:
             extensionNames.append(action.name)
       return extensionNames
-   _deriveExtensionNames = staticmethod(_deriveExtensionNames)
 
+   @staticmethod
    def _buildHookMaps(hooks):
       """
       Build two mappings from action name to configured C{ActionHook}.
@@ -574,8 +575,8 @@ class _ActionSet(object):
             elif hook.after:
                postHookMap[hook.action] = hook
       return (preHookMap, postHookMap)
-   _buildHookMaps = staticmethod(_buildHookMaps)
 
+   @staticmethod
    def _buildFunctionMap(extensions):
       """
       Builds a mapping from named action to action function.
@@ -594,8 +595,8 @@ class _ActionSet(object):
          for action in extensions.actions:
             functionMap[action.name] = getFunctionReference(action.module, action.function)
       return functionMap
-   _buildFunctionMap = staticmethod(_buildFunctionMap)
 
+   @staticmethod
    def _buildIndexMap(extensions):
       """
       Builds a mapping from action name to proper execution index.
@@ -681,8 +682,8 @@ class _ActionSet(object):
                logger.error("Extensions configuration is invalid (check for loops).")
                raise ValueError("Unable to determine proper action order due to dependency recursion.")
       return indexMap
-   _buildIndexMap = staticmethod(_buildIndexMap)
 
+   @staticmethod
    def _buildActionMap(managed, local, extensionNames, functionMap, indexMap, preHookMap, postHookMap, peerMap):
       """
       Builds a mapping from action name to list of action items.
@@ -724,8 +725,8 @@ class _ActionSet(object):
                   actionMap[name].append(_ManagedActionItem(index, name, peerMap[name]))
       actionMap['all'] = actionMap['collect'] + actionMap['stage'] + actionMap['store'] + actionMap['purge']
       return actionMap
-   _buildActionMap = staticmethod(_buildActionMap)
 
+   @staticmethod
    def _buildPeerMap(options, peers):
       """
       Build a mapping from action name to list of remote peers.
@@ -756,8 +757,8 @@ class _ActionSet(object):
                         else:
                            peerMap[managedAction] = [ remotePeer, ]
       return peerMap
-   _buildPeerMap = staticmethod(_buildPeerMap)
 
+   @staticmethod
    def _deriveHooks(action, preHookDict, postHookDict):
       """
       Derive pre- and post-action hooks, if any, associated with named action.
@@ -773,8 +774,8 @@ class _ActionSet(object):
       if postHookDict.has_key(action):
          postHook = postHookDict[action]
       return (preHook, postHook)
-   _deriveHooks = staticmethod(_deriveHooks)
 
+   @staticmethod
    def _validateActions(actions, extensionNames):
       """
       Validate that the set of specified actions is sensible.
@@ -796,8 +797,8 @@ class _ActionSet(object):
       for action in NONCOMBINE_ACTIONS:
          if action in actions and actions != [ action, ]:
             raise ValueError("Action [%s] may not be combined with other actions." % action)
-   _validateActions = staticmethod(_validateActions)
 
+   @staticmethod
    def _buildActionSet(actions, actionMap):
       """
       Build set of actions to be executed.
@@ -818,7 +819,6 @@ class _ActionSet(object):
          actionSet.extend(actionMap[action])
       actionSet.sort()  # sort the actions in order by index
       return actionSet
-   _buildActionSet = staticmethod(_buildActionSet)
 
    def executeActions(self, configPath, options, config):
       """
@@ -839,6 +839,7 @@ class _ActionSet(object):
       for actionItem in self.actionSet:
          actionItem.executeAction(configPath, options, config)
 
+   @staticmethod
    def _getRemoteUser(options, remotePeer):
       """
       Gets the remote user associated with a remote peer.
@@ -850,8 +851,8 @@ class _ActionSet(object):
       if remotePeer.remoteUser is None:
          return options.backupUser
       return remotePeer.remoteUser
-   _getRemoteUser = staticmethod(_getRemoteUser)
 
+   @staticmethod
    def _getRshCommand(options, remotePeer):
       """
       Gets the RSH command associated with a remote peer.
@@ -863,8 +864,8 @@ class _ActionSet(object):
       if remotePeer.rshCommand is None:
          return options.rshCommand
       return remotePeer.rshCommand
-   _getRshCommand = staticmethod(_getRshCommand)
 
+   @staticmethod
    def _getCbackCommand(options, remotePeer):
       """
       Gets the cback command associated with a remote peer.
@@ -876,8 +877,8 @@ class _ActionSet(object):
       if remotePeer.cbackCommand is None:
          return options.cbackCommand
       return remotePeer.cbackCommand
-   _getCbackCommand = staticmethod(_getCbackCommand)
 
+   @staticmethod
    def _getManagedActions(options, remotePeer):
       """
       Gets the managed actions list associated with a remote peer.
@@ -889,7 +890,6 @@ class _ActionSet(object):
       if remotePeer.managedActions is None:
          return options.managedActions
       return remotePeer.managedActions
-   _getManagedActions = staticmethod(_getManagedActions)
 
 
 #######################################################################
