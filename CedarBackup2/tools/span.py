@@ -130,7 +130,7 @@ def cli():
 
    A different error code is returned for each type of failure:
 
-      - C{1}: The Python interpreter version is < 2.3
+      - C{1}: The Python interpreter version is < 2.5
       - C{2}: Error processing command-line arguments
       - C{3}: Error configuring logging
       - C{4}: Error parsing indicated configuration file
@@ -144,12 +144,12 @@ def cli():
    @return: Error code as described above.
    """
    try:
-      if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 3]:
-         sys.stderr.write("Python version 2.3 or greater required.\n")
+      if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 5]:
+         sys.stderr.write("Python version 2.5 or greater required.\n")
          return 1
    except:
       # sys.version_info isn't available before 2.0
-      sys.stderr.write("Python version 2.3 or greater required.\n")
+      sys.stderr.write("Python version 2.5 or greater required.\n")
       return 1
 
    try:

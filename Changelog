@@ -1,14 +1,15 @@
 Version 2.20.0    unreleased
 
-	* Make cback script more robust in the case of a bad interpreter version.
-	* Remove "Translate [x:y] into [a:b]" debug message for uid/gid translation.
-	* Refactor out util.isRunningAsRoot() to replace scattered os.getuid() calls.
 	* Switch to minimum Python version of 2.5 (everyone should have it now).
+	  - Make cback script more robust in the case of a bad interpreter version
 	  - Change file headers, comments, manual, etc. to reference Python 2.5
 	  - Convert to use @staticmethod rather than x = staticmethod(x)
+	  - Change interpreter checks in test.py, cli.py and span.py
 	* Configure pylint and execute it against the entire codebase.
 	  - Fix a variety of minor warnings and suggestions from pylint
 	  - Move unit tests into testcase folder to avoid test.py naming conflict
+	* Remove "Translate [x:y] into [a:b]" debug message for uid/gid translation.
+	* Refactor out util.isRunningAsRoot() to replace scattered os.getuid() calls.
 
 Version 2.19.6    22 May 2010
 
