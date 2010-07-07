@@ -94,6 +94,7 @@
             return prunedEntries
       raise IOError("Unable to prune image to fit the capacity after four tries.")
 
+   @staticmethod
    def _calculateSizes(entries):
       """
       Calculates sizes for files in an entries dictionary.
@@ -121,8 +122,8 @@
             else:
                table[entry] = (entry, 0)
       return (table, total)
-   _calculateSizes = staticmethod(_calculateSizes)
 
+   @staticmethod
    def _buildEntries(entries, items):
       """
       Builds an entries dictionary.
@@ -143,8 +144,8 @@
       for i in items:
          newEntries[i] = entries[i]
       return newEntries
-   _buildEntries = staticmethod(_buildEntries)
 
+   @staticmethod
    def _expandEntries(entries):
       """
       Expands entries in an image to include only files.
@@ -209,5 +210,4 @@
                      graft = os.path.join(entries[entry].strip(os.sep), subdir.strip(os.sep), os.path.basename(item))
                      newEntries[item] = graft.strip(os.sep)
       return newEntries
-   _expandEntries = staticmethod(_expandEntries)
 

@@ -608,6 +608,7 @@ class IsoImage(object):
    # Methods used to build mkisofs commands
    #########################################
 
+   @staticmethod
    def _buildDirEntries(entries):
       """
       Uses an entries dictionary to build a list of directory locations for use
@@ -629,7 +630,6 @@ class IsoImage(object):
          else:
             dirEntries.append("%s/=%s" % (entries[key].strip("/"), key))
       return dirEntries
-   _buildDirEntries = staticmethod(_buildDirEntries)
 
    def _buildGeneralArgs(self):
       """

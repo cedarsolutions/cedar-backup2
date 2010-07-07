@@ -1037,6 +1037,7 @@ class Diagnostics(object):
          lines.append(line)
       return lines
 
+   @staticmethod
    def _getMaxLength(values):
       """
       Get the maximum length from among a list of strings.
@@ -1046,7 +1047,6 @@ class Diagnostics(object):
          if len(value) > tmax:
             tmax = len(value)
       return tmax
-   _getMaxLength = staticmethod(_getMaxLength)
 
    def _getVersion(self):
       """

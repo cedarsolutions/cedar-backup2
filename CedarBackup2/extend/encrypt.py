@@ -350,6 +350,7 @@ class LocalConfig(object):
       (xmlDom, parentNode) = createInputDom(xmlData)
       self._encrypt = LocalConfig._parseEncrypt(parentNode)
 
+   @staticmethod
    def _parseEncrypt(parent):
       """
       Parses an encrypt configuration section.
@@ -371,7 +372,6 @@ class LocalConfig(object):
          encrypt.encryptMode = readString(section, "encrypt_mode")
          encrypt.encryptTarget = readString(section, "encrypt_target")
       return encrypt
-   _parseEncrypt = staticmethod(_parseEncrypt)
 
 
 ########################################################################

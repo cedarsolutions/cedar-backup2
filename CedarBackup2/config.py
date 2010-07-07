@@ -4427,6 +4427,7 @@ class Config(object):
       self._store = Config._parseStore(parentNode)
       self._purge = Config._parsePurge(parentNode)
 
+   @staticmethod
    def _parseReference(parentNode):
       """
       Parses a reference configuration section.
@@ -4452,8 +4453,8 @@ class Config(object):
          reference.description = readString(sectionNode, "description")
          reference.generator = readString(sectionNode, "generator")
       return reference
-   _parseReference = staticmethod(_parseReference)
 
+   @staticmethod
    def _parseExtensions(parentNode):
       """
       Parses an extensions configuration section.
@@ -4484,8 +4485,8 @@ class Config(object):
          extensions.orderMode = readString(sectionNode, "order_mode")
          extensions.actions = Config._parseExtendedActions(sectionNode)
       return extensions
-   _parseExtensions = staticmethod(_parseExtensions)
 
+   @staticmethod
    def _parseOptions(parentNode):
       """
       Parses a options configuration section.
@@ -4533,8 +4534,8 @@ class Config(object):
          managedActions = readString(sectionNode, "managed_actions")
          options.managedActions = Config._parseCommaSeparatedString(managedActions)
       return options
-   _parseOptions = staticmethod(_parseOptions)
 
+   @staticmethod
    def _parsePeers(parentNode):
       """
       Parses a peers configuration section.
@@ -4558,8 +4559,8 @@ class Config(object):
          peers = PeersConfig()
          (peers.localPeers, peers.remotePeers) = Config._parsePeerList(sectionNode)
       return peers
-   _parsePeers = staticmethod(_parsePeers)
 
+   @staticmethod
    def _parseCollect(parentNode):
       """
       Parses a collect configuration section.
@@ -4600,8 +4601,8 @@ class Config(object):
          collect.collectFiles = Config._parseCollectFiles(sectionNode)
          collect.collectDirs = Config._parseCollectDirs(sectionNode)
       return collect
-   _parseCollect = staticmethod(_parseCollect)
 
+   @staticmethod
    def _parseStage(parentNode):
       """
       Parses a stage configuration section.
@@ -4630,8 +4631,8 @@ class Config(object):
          stage.targetDir = readString(sectionNode, "staging_dir")
          (stage.localPeers, stage.remotePeers) = Config._parsePeerList(sectionNode)
       return stage
-   _parseStage = staticmethod(_parseStage)
 
+   @staticmethod
    def _parseStore(parentNode):
       """
       Parses a store configuration section.
@@ -4674,8 +4675,8 @@ class Config(object):
          store.blankBehavior = Config._parseBlankBehavior(sectionNode)
          store.refreshMediaDelay = readInteger(sectionNode, "refresh_media_delay")
       return store
-   _parseStore = staticmethod(_parseStore)
 
+   @staticmethod
    def _parsePurge(parentNode):
       """
       Parses a purge configuration section.
@@ -4698,8 +4699,8 @@ class Config(object):
          purge = PurgeConfig()
          purge.purgeDirs = Config._parsePurgeDirs(sectionNode)
       return purge
-   _parsePurge = staticmethod(_parsePurge)
 
+   @staticmethod
    def _parseExtendedActions(parentNode):
       """
       Reads extended actions data from immediately beneath the parent.
@@ -4732,8 +4733,8 @@ class Config(object):
       if lst == []:
          lst = None
       return lst
-   _parseExtendedActions = staticmethod(_parseExtendedActions)
 
+   @staticmethod
    def _parseExclusions(parentNode):
       """
       Reads exclusions data from immediately beneath the parent.
@@ -4763,8 +4764,8 @@ class Config(object):
          relative = readStringList(sectionNode, "rel_path")
          patterns = readStringList(sectionNode, "pattern")
          return (absolute, relative, patterns)
-   _parseExclusions = staticmethod(_parseExclusions)
 
+   @staticmethod
    def _parseOverrides(parentNode):
       """
       Reads a list of C{CommandOverride} objects from immediately beneath the parent.
@@ -4789,8 +4790,8 @@ class Config(object):
       if lst == []:
          lst = None
       return lst
-   _parseOverrides = staticmethod(_parseOverrides)
 
+   @staticmethod
    def _parseHooks(parentNode):
       """
       Reads a list of C{ActionHook} objects from immediately beneath the parent.
@@ -4821,8 +4822,8 @@ class Config(object):
       if lst == []:
          lst = None
       return lst
-   _parseHooks = staticmethod(_parseHooks)
 
+   @staticmethod
    def _parseCollectFiles(parentNode):
       """
       Reads a list of C{CollectFile} objects from immediately beneath the parent.
@@ -4856,8 +4857,8 @@ class Config(object):
       if lst == []:
          lst = None
       return lst
-   _parseCollectFiles = staticmethod(_parseCollectFiles)
 
+   @staticmethod
    def _parseCollectDirs(parentNode):
       """
       Reads a list of C{CollectDir} objects from immediately beneath the parent.
@@ -4907,8 +4908,8 @@ class Config(object):
       if lst == []:
          lst = None
       return lst
-   _parseCollectDirs = staticmethod(_parseCollectDirs)
 
+   @staticmethod
    def _parsePurgeDirs(parentNode):
       """
       Reads a list of C{PurgeDir} objects from immediately beneath the parent.
@@ -4933,8 +4934,8 @@ class Config(object):
       if lst == []:
          lst = None
       return lst
-   _parsePurgeDirs = staticmethod(_parsePurgeDirs)
 
+   @staticmethod
    def _parsePeerList(parentNode):
       """
       Reads remote and local peer data from immediately beneath the parent.
@@ -4996,8 +4997,8 @@ class Config(object):
       if remotePeers == []:
          remotePeers = None
       return (localPeers, remotePeers)
-   _parsePeerList = staticmethod(_parsePeerList)
 
+   @staticmethod
    def _parseDependencies(parentNode):
       """
       Reads extended action dependency information from a parent node.
@@ -5029,8 +5030,8 @@ class Config(object):
          beforeList = Config._parseCommaSeparatedString(runBefore)
          afterList = Config._parseCommaSeparatedString(runAfter)
          return ActionDependencies(beforeList, afterList)
-   _parseDependencies = staticmethod(_parseDependencies)
    
+   @staticmethod
    def _parseCommaSeparatedString(commaString):
       """
       Parses a list of values out of a comma-separated string.
@@ -5052,8 +5053,8 @@ class Config(object):
             if len(item) > 0:
                pass2.append(item)
          return pass2
-   _parseCommaSeparatedString = staticmethod(_parseCommaSeparatedString)
 
+   @staticmethod
    def _parseBlankBehavior(parentNode):
       """
       Reads a single C{BlankBehavior} object from immediately beneath the parent.
@@ -5075,7 +5076,6 @@ class Config(object):
          blankBehavior.blankMode = readString(sectionNode, "mode")
          blankBehavior.blankFactor = readString(sectionNode, "factor")
       return blankBehavior
-   _parseBlankBehavior = staticmethod(_parseBlankBehavior)
 
 
    ########################################
@@ -5108,6 +5108,7 @@ class Config(object):
       xmlDom.unlink()
       return xmlData
 
+   @staticmethod
    def _addReference(xmlDom, parentNode, referenceConfig):
       """
       Adds a <reference> configuration section as the next child of a parent.
@@ -5131,8 +5132,8 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "revision", referenceConfig.revision)
          addStringNode(xmlDom, sectionNode, "description", referenceConfig.description)
          addStringNode(xmlDom, sectionNode, "generator", referenceConfig.generator)
-   _addReference = staticmethod(_addReference)
 
+   @staticmethod
    def _addExtensions(xmlDom, parentNode, extensionsConfig):
       """
       Adds an <extensions> configuration section as the next child of a parent.
@@ -5159,8 +5160,8 @@ class Config(object):
          if extensionsConfig.actions is not None:
             for action in extensionsConfig.actions:
                Config._addExtendedAction(xmlDom, sectionNode, action)
-   _addExtensions = staticmethod(_addExtensions)
 
+   @staticmethod
    def _addOptions(xmlDom, parentNode, optionsConfig):
       """
       Adds a <options> configuration section as the next child of a parent.
@@ -5209,8 +5210,8 @@ class Config(object):
          if optionsConfig.hooks is not None:
             for hook in optionsConfig.hooks:
                Config._addHook(xmlDom, sectionNode, hook)
-   _addOptions = staticmethod(_addOptions)
 
+   @staticmethod
    def _addPeers(xmlDom, parentNode, peersConfig):
       """
       Adds a <peers> configuration section as the next child of a parent.
@@ -5238,8 +5239,8 @@ class Config(object):
          if peersConfig.remotePeers is not None:
             for remotePeer in peersConfig.remotePeers:
                Config._addRemotePeer(xmlDom, sectionNode, remotePeer)
-   _addPeers = staticmethod(_addPeers)
 
+   @staticmethod
    def _addCollect(xmlDom, parentNode, collectConfig):
       """
       Adds a <collect> configuration section as the next child of a parent.
@@ -5289,8 +5290,8 @@ class Config(object):
          if collectConfig.collectDirs is not None:
             for collectDir in collectConfig.collectDirs:
                Config._addCollectDir(xmlDom, sectionNode, collectDir)
-   _addCollect = staticmethod(_addCollect)
 
+   @staticmethod
    def _addStage(xmlDom, parentNode, stageConfig):
       """
       Adds a <stage> configuration section as the next child of a parent.
@@ -5323,8 +5324,8 @@ class Config(object):
          if stageConfig.remotePeers is not None:
             for remotePeer in stageConfig.remotePeers:
                Config._addRemotePeer(xmlDom, sectionNode, remotePeer)
-   _addStage = staticmethod(_addStage)
 
+   @staticmethod
    def _addStore(xmlDom, parentNode, storeConfig):
       """
       Adds a <store> configuration section as the next child of a parent.
@@ -5365,8 +5366,8 @@ class Config(object):
          addBooleanNode(xmlDom, sectionNode, "no_eject", storeConfig.noEject)
          addIntegerNode(xmlDom, sectionNode, "refresh_media_delay", storeConfig.refreshMediaDelay)
          Config._addBlankBehavior(xmlDom, sectionNode, storeConfig.blankBehavior)
-   _addStore = staticmethod(_addStore)
 
+   @staticmethod
    def _addPurge(xmlDom, parentNode, purgeConfig):
       """
       Adds a <purge> configuration section as the next child of a parent.
@@ -5388,8 +5389,8 @@ class Config(object):
          if purgeConfig.purgeDirs is not None:
             for purgeDir in purgeConfig.purgeDirs:
                Config._addPurgeDir(xmlDom, sectionNode, purgeDir)
-   _addPurge = staticmethod(_addPurge)
 
+   @staticmethod
    def _addExtendedAction(xmlDom, parentNode, action):
       """
       Adds an extended action container as the next child of a parent.
@@ -5421,8 +5422,8 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "function", action.function)
          addIntegerNode(xmlDom, sectionNode, "index", action.index)
          Config._addDependencies(xmlDom, sectionNode, action.dependencies)
-   _addExtendedAction = staticmethod(_addExtendedAction)
 
+   @staticmethod
    def _addOverride(xmlDom, parentNode, override):
       """
       Adds a command override container as the next child of a parent.
@@ -5446,8 +5447,8 @@ class Config(object):
          sectionNode = addContainerNode(xmlDom, parentNode, "override")
          addStringNode(xmlDom, sectionNode, "command", override.command)
          addStringNode(xmlDom, sectionNode, "abs_path", override.absolutePath)
-   _addOverride = staticmethod(_addOverride)
 
+   @staticmethod
    def _addHook(xmlDom, parentNode, hook):
       """
       Adds an action hook container as the next child of a parent.
@@ -5482,8 +5483,8 @@ class Config(object):
             sectionNode = addContainerNode(xmlDom, parentNode, "post_action_hook")
          addStringNode(xmlDom, sectionNode, "action", hook.action)
          addStringNode(xmlDom, sectionNode, "command", hook.command)
-   _addHook = staticmethod(_addHook)
 
+   @staticmethod
    def _addCollectFile(xmlDom, parentNode, collectFile):
       """
       Adds a collect file container as the next child of a parent.
@@ -5512,8 +5513,8 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "abs_path", collectFile.absolutePath)
          addStringNode(xmlDom, sectionNode, "collect_mode", collectFile.collectMode)
          addStringNode(xmlDom, sectionNode, "archive_mode", collectFile.archiveMode)
-   _addCollectFile = staticmethod(_addCollectFile)
 
+   @staticmethod
    def _addCollectDir(xmlDom, parentNode, collectDir):
       """
       Adds a collect directory container as the next child of a parent.
@@ -5568,8 +5569,8 @@ class Config(object):
             if collectDir.excludePatterns is not None:
                for pattern in collectDir.excludePatterns:
                   addStringNode(xmlDom, excludeNode, "pattern", pattern)
-   _addCollectDir = staticmethod(_addCollectDir)
 
+   @staticmethod
    def _addLocalPeer(xmlDom, parentNode, localPeer):
       """
       Adds a local peer container as the next child of a parent.
@@ -5599,8 +5600,8 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "type", "local")
          addStringNode(xmlDom, sectionNode, "collect_dir", localPeer.collectDir)
          addStringNode(xmlDom, sectionNode, "ignore_failures", localPeer.ignoreFailureMode)
-   _addLocalPeer = staticmethod(_addLocalPeer)
 
+   @staticmethod
    def _addRemotePeer(xmlDom, parentNode, remotePeer):
       """
       Adds a remote peer container as the next child of a parent.
@@ -5644,8 +5645,8 @@ class Config(object):
          addBooleanNode(xmlDom, sectionNode, "managed", remotePeer.managed)
          managedActions = Config._buildCommaSeparatedString(remotePeer.managedActions)
          addStringNode(xmlDom, sectionNode, "managed_actions", managedActions)
-   _addRemotePeer = staticmethod(_addRemotePeer)
 
+   @staticmethod
    def _addPurgeDir(xmlDom, parentNode, purgeDir):
       """
       Adds a purge directory container as the next child of a parent.
@@ -5669,8 +5670,8 @@ class Config(object):
          sectionNode = addContainerNode(xmlDom, parentNode, "dir")
          addStringNode(xmlDom, sectionNode, "abs_path", purgeDir.absolutePath)
          addIntegerNode(xmlDom, sectionNode, "retain_days", purgeDir.retainDays)
-   _addPurgeDir = staticmethod(_addPurgeDir)
 
+   @staticmethod
    def _addDependencies(xmlDom, parentNode, dependencies):
       """
       Adds a extended action dependencies to parent node.
@@ -5692,8 +5693,8 @@ class Config(object):
          runAfter = Config._buildCommaSeparatedString(dependencies.afterList)
          addStringNode(xmlDom, sectionNode, "run_before", runBefore)
          addStringNode(xmlDom, sectionNode, "run_after", runAfter)
-   _addDependencies = staticmethod(_addDependencies)
 
+   @staticmethod
    def _buildCommaSeparatedString(valueList):
       """
       Creates a comma-separated string from a list of values.
@@ -5708,8 +5709,8 @@ class Config(object):
       if valueList is None:
          return None
       return ",".join(valueList)
-   _buildCommaSeparatedString = staticmethod(_buildCommaSeparatedString)
 
+   @staticmethod
    def _addBlankBehavior(xmlDom, parentNode, blankBehavior):
       """
       Adds a blanking behavior container as the next child of a parent.
@@ -5732,7 +5733,6 @@ class Config(object):
          sectionNode = addContainerNode(xmlDom, parentNode, "blank_behavior")
          addStringNode(xmlDom, sectionNode, "mode", blankBehavior.blankMode)
          addStringNode(xmlDom, sectionNode, "factor", blankBehavior.blankFactor)
-   _addBlankBehavior = staticmethod(_addBlankBehavior)
 
 
    #################################################
@@ -6018,6 +6018,7 @@ class Config(object):
    # Utility methods used for validating content
    ##############################################
 
+   @staticmethod
    def _checkUnique(prefix, values):
       """
       Checks that all values are unique.
@@ -6038,7 +6039,6 @@ class Config(object):
             duplicates.append(values[i])
       if duplicates:
          raise ValueError("%s %s" % (prefix, duplicates))
-   _checkUnique = staticmethod(_checkUnique)
 
 
 ########################################################################

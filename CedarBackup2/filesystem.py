@@ -876,6 +876,7 @@ class BackupFileList(FilesystemList): # pylint: disable-msg=R0904
                table[entry] = BackupFileList._generateDigest(entry)
       return table
    
+   @staticmethod
    def _generateDigest(path):
       """
       Generates an SHA digest for a given file on disk.
@@ -927,7 +928,6 @@ class BackupFileList(FilesystemList): # pylint: disable-msg=R0904
       digest = s.hexdigest()
       logger.debug("Generated digest [%s] for file [%s]." % (digest, path))
       return digest
-   _generateDigest = staticmethod(_generateDigest)
 
    def generateFitted(self, capacity, algorithm="worst_fit"):
       """
@@ -1016,6 +1016,7 @@ class BackupFileList(FilesystemList): # pylint: disable-msg=R0904
             table[entry] = (entry, size)
       return table
 
+   @staticmethod
    def _getKnapsackFunction(algorithm):
       """
       Returns a reference to the function associated with an algorithm name.
@@ -1034,7 +1035,6 @@ class BackupFileList(FilesystemList): # pylint: disable-msg=R0904
          return alternateFit
       else:
          raise ValueError("Algorithm [%s] is invalid." % algorithm)
-   _getKnapsackFunction = staticmethod(_getKnapsackFunction)
 
    def generateTarfile(self, path, mode='tar', ignore=False, flat=False):
       """

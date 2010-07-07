@@ -316,6 +316,7 @@ class LocalPeer(object):
    # Private methods
    ##################
 
+   @staticmethod
    def _copyLocalDir(sourceDir, targetDir, ownership=None, permissions=None):
       """
       Copies files from the source directory to the target directory.
@@ -357,8 +358,8 @@ class LocalPeer(object):
          LocalPeer._copyLocalFile(sourceFile, targetFile, ownership, permissions)
          filesCopied += 1
       return filesCopied
-   _copyLocalDir = staticmethod(_copyLocalDir)
 
+   @staticmethod
    def _copyLocalFile(sourceFile=None, targetFile=None, ownership=None, permissions=None, overwrite=True):
       """
       Copies a source file to a target file.
@@ -414,7 +415,6 @@ class LocalPeer(object):
          os.chown(targetFile, ownership[0], ownership[1])
       if permissions is not None:
          os.chmod(targetFile, permissions)
-   _copyLocalFile = staticmethod(_copyLocalFile)
 
 
 ########################################################################
@@ -916,6 +916,7 @@ class RemotePeer(object):
    # Private methods
    ##################
 
+   @staticmethod
    def _getDirContents(path):
       """
       Returns the contents of a directory in terms of a Set.
@@ -938,8 +939,8 @@ class RemotePeer(object):
       except:
          import sets
          return sets.Set(contents)
-   _getDirContents = staticmethod(_getDirContents)
 
+   @staticmethod
    def _copyRemoteDir(remoteUser, localUser, remoteHost, rcpCommand, rcpCommandList, 
                       sourceDir, targetDir, ownership=None, permissions=None):
       """
@@ -1036,8 +1037,8 @@ class RemotePeer(object):
          if permissions is not None:
             os.chmod(targetFile, permissions)
       return len(differenceSet)
-   _copyRemoteDir = staticmethod(_copyRemoteDir)
 
+   @staticmethod
    def _copyRemoteFile(remoteUser, localUser, remoteHost, 
                        rcpCommand, rcpCommandList,
                        sourceFile, targetFile, ownership=None, 
@@ -1123,8 +1124,8 @@ class RemotePeer(object):
          os.chown(targetFile, ownership[0], ownership[1])
       if permissions is not None:
          os.chmod(targetFile, permissions)
-   _copyRemoteFile = staticmethod(_copyRemoteFile)
 
+   @staticmethod
    def _pushLocalFile(remoteUser, localUser, remoteHost, 
                       rcpCommand, rcpCommandList,
                       sourceFile, targetFile, overwrite=True):
@@ -1188,8 +1189,8 @@ class RemotePeer(object):
          result = executeCommand(command, [sourceFile.replace(" ", "\\ "), copyTarget])[0]
          if result != 0:
             raise IOError("Error (%d) copying [%s] to remote host." % (result, sourceFile))
-   _pushLocalFile = staticmethod(_pushLocalFile)
 
+   @staticmethod
    def _executeRemoteCommand(remoteUser, localUser, remoteHost, rshCommand, rshCommandList, remoteCommand):
       """
       Executes a command on the peer via remote shell.
@@ -1229,8 +1230,8 @@ class RemotePeer(object):
          result = executeCommand(command, ["%s@%s" % (remoteUser, remoteHost), "%s" % remoteCommand])[0]
          if result != 0:
             raise IOError("Command failed [%s]" % (actualCommand))
-   _executeRemoteCommand = staticmethod(_executeRemoteCommand)
 
+   @staticmethod
    def _buildCbackCommand(cbackCommand, action, fullBackup):
       """
       Builds a Cedar Backup command line for the named action.
@@ -1252,5 +1253,4 @@ class RemotePeer(object):
          return "%s --full %s" % (cbackCommand, action)
       else:
          return "%s %s" % (cbackCommand, action)
-   _buildCbackCommand = staticmethod(_buildCbackCommand)
 

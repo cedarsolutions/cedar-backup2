@@ -852,6 +852,7 @@ class LocalConfig(object):
       (xmlDom, parentNode) = createInputDom(xmlData)
       self._subversion = LocalConfig._parseSubversion(parentNode)
 
+   @staticmethod
    def _parseSubversion(parent):
       """
       Parses a subversion configuration section.
@@ -884,8 +885,8 @@ class LocalConfig(object):
          subversion.repositories = LocalConfig._parseRepositories(section)
          subversion.repositoryDirs = LocalConfig._parseRepositoryDirs(section)
       return subversion
-   _parseSubversion = staticmethod(_parseSubversion)
 
+   @staticmethod
    def _parseRepositories(parent):
       """
       Reads a list of C{Repository} objects from immediately beneath the parent.
@@ -917,8 +918,8 @@ class LocalConfig(object):
       if lst == []:
          lst = None
       return lst
-   _parseRepositories = staticmethod(_parseRepositories)
 
+   @staticmethod
    def _addRepository(xmlDom, parentNode, repository):
       """
       Adds a repository container as the next child of a parent.
@@ -946,8 +947,8 @@ class LocalConfig(object):
          addStringNode(xmlDom, sectionNode, "abs_path", repository.repositoryPath)
          addStringNode(xmlDom, sectionNode, "collect_mode", repository.collectMode)
          addStringNode(xmlDom, sectionNode, "compress_mode", repository.compressMode)
-   _addRepository = staticmethod(_addRepository)
 
+   @staticmethod
    def _parseRepositoryDirs(parent):
       """
       Reads a list of C{RepositoryDir} objects from immediately beneath the parent.
@@ -988,8 +989,8 @@ class LocalConfig(object):
       if lst == []:
          lst = None
       return lst
-   _parseRepositoryDirs = staticmethod(_parseRepositoryDirs)
 
+   @staticmethod
    def _parseExclusions(parentNode):
       """
       Reads exclusions data from immediately beneath the parent.
@@ -1013,8 +1014,8 @@ class LocalConfig(object):
          relative = readStringList(section, "rel_path")
          patterns = readStringList(section, "pattern")
          return (relative, patterns)
-   _parseExclusions = staticmethod(_parseExclusions) 
 
+   @staticmethod
    def _addRepositoryDir(xmlDom, parentNode, repositoryDir):
       """
       Adds a repository dir container as the next child of a parent.
@@ -1056,7 +1057,6 @@ class LocalConfig(object):
             if repositoryDir.excludePatterns is not None:
                for pattern in repositoryDir.excludePatterns:
                   addStringNode(xmlDom, excludeNode, "pattern", pattern)
-   _addRepositoryDir = staticmethod(_addRepositoryDir)
 
 
 ########################################################################

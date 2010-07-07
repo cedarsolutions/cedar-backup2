@@ -444,6 +444,7 @@ class LocalConfig(object):
       (xmlDom, parentNode) = createInputDom(xmlData)
       self._postgresql = LocalConfig._parsePostgresql(parentNode)
 
+   @staticmethod
    def _parsePostgresql(parent):
       """
       Parses a postgresql configuration section.
@@ -473,7 +474,6 @@ class LocalConfig(object):
          postgresql.all = readBoolean(section, "all")
          postgresql.databases = readStringList(section, "database")
       return postgresql
-   _parsePostgresql = staticmethod(_parsePostgresql)
 
 
 ########################################################################

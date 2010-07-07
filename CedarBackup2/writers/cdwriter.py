@@ -685,6 +685,7 @@ class CdWriter(object):
             logger.debug("Returning disc boundaries: (%d, %d)" % (boundaries[0], boundaries[1]))
          return boundaries
 
+   @staticmethod
    def _calculateCapacity(media, boundaries):
       """
       Calculates capacity for the media in terms of boundaries.
@@ -713,7 +714,6 @@ class CdWriter(object):
          bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
       logger.debug("Used [%s], available [%s]." % (displayBytes(bytesUsed), displayBytes(bytesAvailable)))
       return MediaCapacity(bytesUsed, bytesAvailable, boundaries)
-   _calculateCapacity = staticmethod(_calculateCapacity)
 
 
    #######################################################
@@ -986,6 +986,7 @@ class CdWriter(object):
    # Methods used to parse command output
    #######################################
 
+   @staticmethod
    def _parsePropertiesOutput(output):
       """
       Parses the output from a C{cdrecord} properties command.
@@ -1059,8 +1060,8 @@ class CdWriter(object):
             deviceCanEject = True
             logger.info("Device can eject its media.")
       return (deviceType, deviceVendor, deviceId, deviceBufferSize, deviceSupportsMulti, deviceHasTray, deviceCanEject)
-   _parsePropertiesOutput = staticmethod(_parsePropertiesOutput)
 
+   @staticmethod
    def _parseBoundariesOutput(output):
       """
       Parses the output from a C{cdrecord} capacity command.
@@ -1102,13 +1103,13 @@ class CdWriter(object):
       except TypeError:
          raise IOError("Unable to parse output of boundaries command.")
       return boundaries
-   _parseBoundariesOutput = staticmethod(_parseBoundariesOutput)
 
 
    #################################
    # Methods used to build commands
    #################################
 
+   @staticmethod
    def _buildOpenTrayArgs(device):
       """
       Builds a list of arguments to be passed to a C{eject} command.
@@ -1124,8 +1125,8 @@ class CdWriter(object):
       args = []
       args.append(device)
       return args
-   _buildOpenTrayArgs = staticmethod(_buildOpenTrayArgs)
 
+   @staticmethod
    def _buildCloseTrayArgs(device):
       """
       Builds a list of arguments to be passed to a C{eject} command.
@@ -1142,8 +1143,8 @@ class CdWriter(object):
       args.append("-t")
       args.append(device)
       return args
-   _buildCloseTrayArgs = staticmethod(_buildCloseTrayArgs)
 
+   @staticmethod
    def _buildPropertiesArgs(hardwareId):
       """
       Builds a list of arguments to be passed to a C{cdrecord} command.
@@ -1159,8 +1160,8 @@ class CdWriter(object):
       args.append("-prcap")
       args.append("dev=%s" % hardwareId)
       return args
-   _buildPropertiesArgs = staticmethod(_buildPropertiesArgs)
 
+   @staticmethod
    def _buildBoundariesArgs(hardwareId):
       """
       Builds a list of arguments to be passed to a C{cdrecord} command.
@@ -1177,8 +1178,8 @@ class CdWriter(object):
       args.append("-msinfo")
       args.append("dev=%s" % hardwareId)
       return args
-   _buildBoundariesArgs = staticmethod(_buildBoundariesArgs)
 
+   @staticmethod
    def _buildBlankArgs(hardwareId, driveSpeed=None):
       """
       Builds a list of arguments to be passed to a C{cdrecord} command.
@@ -1200,8 +1201,8 @@ class CdWriter(object):
          args.append("speed=%d" % driveSpeed)
       args.append("dev=%s" % hardwareId)
       return args
-   _buildBlankArgs = staticmethod(_buildBlankArgs)
 
+   @staticmethod
    def _buildWriteArgs(hardwareId, imagePath, driveSpeed=None, writeMulti=True):
       """
       Builds a list of arguments to be passed to a C{cdrecord} command.
@@ -1230,5 +1231,4 @@ class CdWriter(object):
       args.append("-data")
       args.append(imagePath) 
       return args
-   _buildWriteArgs = staticmethod(_buildWriteArgs)
 

@@ -358,6 +358,7 @@ class LocalConfig(object):
       (xmlDom, parentNode) = createInputDom(xmlData)
       self._split = LocalConfig._parseSplit(parentNode)
 
+   @staticmethod
    def _parseSplit(parent):
       """
       Parses an split configuration section.
@@ -379,7 +380,6 @@ class LocalConfig(object):
          split.sizeLimit = readByteQuantity(section, "size_limit")
          split.splitSize = readByteQuantity(section, "split_size")
       return split
-   _parseSplit = staticmethod(_parseSplit)
 
 
 ########################################################################
