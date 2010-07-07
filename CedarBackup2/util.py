@@ -855,11 +855,6 @@ class Pipe(Popen):
    never writes to it.  Second, C{executeCommand} needs a way to discard all
    output written to C{stderr}, as a means of simulating the shell
    C{2>/dev/null} construct.  
-
-   All of this functionality is provided (in Python 2.4 or later) by the
-   C{subprocess.Popen} class, so when that class is available, we'll use it.
-   Otherwise, there's another implementation based on C{popen2.Popen4},
-   which unfortunately only works on UNIX platforms.
    """
    def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
       stderr = STDOUT
@@ -867,7 +862,6 @@ class Pipe(Popen):
          devnull = nullDevice()
          stderr = os.open(devnull, os.O_RDWR) 
       Popen.__init__(self, shell=False, args=cmd, bufsize=bufsize, stdin=None, stdout=PIPE, stderr=stderr)
-      self.fromchild = self.stdout  # for compatibility with original interface based on popen2.Popen4
 
 
 ########################################################################
@@ -1485,7 +1479,7 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
          # The problem appears to be that we sometimes get a bad stderr file descriptor.
          pipe = Pipe(fields, ignoreStderr=ignoreStderr)
       while True:
-         line = pipe.fromchild.readline()
+         line = pipe.stdout.readline()
          if not line: break
          if returnOutput: output.append(line)
          if outputFile is not None: outputFile.write(line)
