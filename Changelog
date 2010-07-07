@@ -1,4 +1,4 @@
-Version 2.20.0    unreleased
+Version 2.20.0    07 Jul 2010
 
 	* This is a cleanup release with no functional changes.
 	* Switch to minimum Python version of 2.5 (everyone should have it now).
