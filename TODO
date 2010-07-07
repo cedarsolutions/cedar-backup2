@@ -78,9 +78,6 @@ Maybe have standard functions we can use for property assignment
 If each extension really has its own Config object (?) pull out common parsing code
 Config code is generally readable, might not be worth abstracting it
    - Not sure that comments are worth it -- they're longer than the method body
-Pull out general utilities from config parsing
-   - Comma-separated string
-   - Check unique
 FilesystemList
    - excludePaths should become excludedPaths (to differentiate from flags)
    - same goes for other lists and maybe ignoreFile (ignoreFileName?)
@@ -90,7 +87,6 @@ Rework knapsack algorithms to take a less confusing (nasty) argument that I can 
    - In fact, maybe the knapsack algorithms could operate on a filesystem list instead of the the other way around?
    - or, a knapsack algorithm is some sort of predicate or "filter" on a list ???
 remove image.py
-maybe get rid of epydoc @type declarations -- they clutter things up and aren't that useful (?)
 should common test methods be put into a test case superclass?
    - here, I'm thinking of the tar stuff, the "raise on assign failure" etc.
    - maybe looking up resources is something a test class always does?
@@ -104,7 +100,7 @@ Pull out common functionality like openTray() and closeTray() somehow?
 Get rid of specialized Subversion repository configuration (BDBRepository, FSFSRepository, etc.)
 Come up with standard parsing for config items lots of code uses -- exclusions, for example
 Spread out the functionality for the validate action
-Standardize on a way to "merge" several levels of configuration for a parmeters that exist on more than one level
+Standardize on a way to "merge" several levels of configuration for a parameters that exist on more than one level
 get rid of store.writeImage() -- or rather, rename writeImageBlankSafe to be writeImage
 Come up with a way to better share store and rebuild functionality 
    - Can one extension class provide more than one command, maybe with two named methods?

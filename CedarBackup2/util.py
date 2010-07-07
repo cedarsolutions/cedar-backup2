@@ -1936,3 +1936,56 @@ def dereferenceLink(path, absolute=True):
       return result
    return path
 
+
+#########################
+# checkUnique() function
+#########################
+
+def checkUnique(prefix, values):
+   """
+   Checks that all values are unique.
+
+   The values list is checked for duplicate values.  If there are
+   duplicates, an exception is thrown.  All duplicate values are listed in
+   the exception.
+
+   @param prefix: Prefix to use in the thrown exception
+   @param values: List of values to check
+
+   @raise ValueError: If there are duplicates in the list
+   """
+   values.sort()
+   duplicates = []
+   for i in range(1, len(values)):
+      if values[i-1] == values[i]:
+         duplicates.append(values[i])
+   if duplicates:
+      raise ValueError("%s %s" % (prefix, duplicates))
+
+
+#######################################
+# parseCommaSeparatedString() function
+#######################################
+
+def parseCommaSeparatedString(commaString):
+   """
+   Parses a list of values out of a comma-separated string.
+
+   The items in the list are split by comma, and then have whitespace
+   stripped.  As a special case, if C{commaString} is C{None}, then C{None}
+   will be returned.
+
+   @param commaString: List of values in comma-separated string format.
+   @return: Values from commaString split into a list, or C{None}.
+   """
+   if commaString is None:
+      return None
+   else:
+      pass1 = commaString.split(",")
+      pass2 = []
+      for item in pass1:
+         item = item.strip()
+         if len(item) > 0:
+            pass2.append(item)
+      return pass2
+

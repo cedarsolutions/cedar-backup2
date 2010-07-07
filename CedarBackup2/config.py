@@ -244,8 +244,8 @@ import logging
 
 # Cedar Backup modules
 from CedarBackup2.writers.util import validateScsiId, validateDriveSpeed
-from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList
-from CedarBackup2.util import RegexMatchList, RegexList, encodePath
+from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList, parseCommaSeparatedString
+from CedarBackup2.util import RegexMatchList, RegexList, encodePath, checkUnique
 from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
 from CedarBackup2.xmlutil import isElement, readChildren, readFirstChild
 from CedarBackup2.xmlutil import readStringList, readString, readInteger, readBoolean
@@ -4414,7 +4414,7 @@ class Config(object):
          options.overrides = Config._parseOverrides(sectionNode)
          options.hooks = Config._parseHooks(sectionNode)
          managedActions = readString(sectionNode, "managed_actions")
-         options.managedActions = Config._parseCommaSeparatedString(managedActions)
+         options.managedActions = parseCommaSeparatedString(managedActions)
       return options
 
    @staticmethod
@@ -4872,7 +4872,7 @@ class Config(object):
                remotePeer.ignoreFailureMode = readString(entry, "ignore_failures")
                remotePeer.managed = readBoolean(entry, "managed")
                managedActions = readString(entry, "managed_actions")
-               remotePeer.managedActions = Config._parseCommaSeparatedString(managedActions)
+               remotePeer.managedActions = parseCommaSeparatedString(managedActions)
                remotePeers.append(remotePeer)
       if localPeers == []:
          localPeers = None
@@ -4909,33 +4909,10 @@ class Config(object):
       else:
          runBefore = readString(sectionNode, "run_before")
          runAfter = readString(sectionNode, "run_after")
-         beforeList = Config._parseCommaSeparatedString(runBefore)
-         afterList = Config._parseCommaSeparatedString(runAfter)
+         beforeList = parseCommaSeparatedString(runBefore)
+         afterList = parseCommaSeparatedString(runAfter)
          return ActionDependencies(beforeList, afterList)
    
-   @staticmethod
-   def _parseCommaSeparatedString(commaString):
-      """
-      Parses a list of values out of a comma-separated string.
-
-      The items in the list are split by comma, and then have whitespace
-      stripped.  As a special case, if C{commaString} is C{None}, then C{None}
-      will be returned.
-
-      @param commaString: List of values in comma-separated string format.
-      @return: Values from commaString split into a list, or C{None}.
-      """
-      if commaString is None:
-         return None
-      else:
-         pass1 = commaString.split(",")
-         pass2 = []
-         for item in pass1:
-            item = item.strip()
-            if len(item) > 0:
-               pass2.append(item)
-         return pass2
-
    @staticmethod
    def _parseBlankBehavior(parentNode):
       """
@@ -5680,7 +5657,7 @@ class Config(object):
                elif self.extensions.orderMode == "dependency":
                   if action.dependencies is None:
                      raise ValueError("Each extended action must set dependency information, based on order mode.")
-            Config._checkUnique("Duplicate extension names exist:", names)
+            checkUnique("Duplicate extension names exist:", names)
 
    def _validateOptions(self):
       """
@@ -5893,34 +5870,7 @@ class Config(object):
                if ((self.options is None or self.options.managedActions is None or len(self.options.managedActions) < 1) 
                     and (remotePeer.managedActions is None or len(remotePeer.managedActions) < 1)):
                   raise ValueError("Managed actions list must be set in options section or individual remote peer.")
-      Config._checkUnique("Duplicate peer names exist:", names)
-
-
-   ##############################################
-   # Utility methods used for validating content
-   ##############################################
-
-   @staticmethod
-   def _checkUnique(prefix, values):
-      """
-      Checks that all values are unique.
-
-      The values list is checked for duplicate values.  If there are
-      duplicates, an exception is thrown.  All duplicate values are listed in
-      the exception.
-
-      @param prefix: Prefix to use in the thrown exception
-      @param values: List of values to check
-
-      @raise ValueError: If there are duplicates in the list
-      """
-      values.sort()
-      duplicates = []
-      for i in range(1, len(values)):
-         if values[i-1] == values[i]:
-            duplicates.append(values[i])
-      if duplicates:
-         raise ValueError("%s %s" % (prefix, duplicates))
+      checkUnique("Duplicate peer names exist:", names)
 
 
 ########################################################################

@@ -1,5 +1,6 @@
 Version 2.20.0    unreleased
 
+	* This is a cleanup release with no functional changes.
 	* Switch to minimum Python version of 2.5 (everyone should have it now).
 	  - Make cback script more robust in the case of a bad interpreter version
 	  - Change file headers, comments, manual, etc. to reference Python 2.5
@@ -11,7 +12,8 @@ Version 2.20.0    unreleased
 	  - Move unit tests into testcase folder to avoid test.py naming conflict
 	* Remove "Translate [x:y] into [a:b]" debug message for uid/gid translation.
 	* Refactor out util.isRunningAsRoot() to replace scattered os.getuid() calls.
-	* Remove configuration boilerplate "As with all of the ... are optional..."
+	* Remove boilerplate comments "As with all of the ... " in config code.
+	* Refactor checkUnique() and parseCommaSeparatedString() from config to util.
 
 Version 2.19.6    22 May 2010
 
