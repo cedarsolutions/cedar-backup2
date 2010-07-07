@@ -98,9 +98,6 @@ should common test methods be put into a test case superclass?
    - or maybe we have a flag (or several different parent classes) that control this behavior?
 isn't buildPath() redundant -- doesn't os.path.join() do this?
 what about captureOutput() -- can this kind of thing be done with a decorator now?
-implement Pipe only in terms of subprocess.Popen (get rid of popen2.Popen4-based implementation)
-   - might be able to remove self.fromchild attribute (there for backwards compatibility)
-get rid of nullDevice(), since Python 2.5 should have os.devnull
 remove writer.py
 prune IsoImage and CdWriter to include only methods and attributes that we actually use
 Pull out common functionality like openTray() and closeTray() somehow?
