@@ -85,9 +85,9 @@ from os.path import isdir
 
 from CedarBackup2.testutil import findResources, removedir, extractTar, buildPath, captureOutput
 from CedarBackup2.testutil import platformHasEcho, platformWindows, platformCygwin, platformSupportsLinks
-from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList 
+from CedarBackup2.util import UnorderedList, AbsolutePathList, ObjectTypeList
 from CedarBackup2.util import RestrictedContentList, RegexMatchList, RegexList
-from CedarBackup2.util import DirectedGraph, PathResolverSingleton, Diagnostics
+from CedarBackup2.util import DirectedGraph, PathResolverSingleton, Diagnostics, parseCommaSeparatedString
 from CedarBackup2.util import sortDict, resolveCommand, executeCommand, getFunctionReference, encodePath
 from CedarBackup2.util import convertSize, UNIT_BYTES, UNIT_SECTORS, UNIT_KBYTES, UNIT_MBYTES, UNIT_GBYTES
 from CedarBackup2.util import displayBytes, deriveDayOfWeek, isStartOfWeek, dereferenceLink
@@ -4021,6 +4021,56 @@ class TestFunctions(unittest.TestCase):
       self.failUnlessEqual(expected, actual)
       actual = dereferenceLink(path, absolute=True)
       self.failUnlessEqual(expected, actual)
+
+
+   ###################################
+   # Test parseCommaSeparatedString()
+   ###################################
+
+   def testParseCommaSeparatedString_001(self):
+      """
+      Test parseCommaSeparatedString() for a None string.
+      """
+      actual = parseCommaSeparatedString(None)
+      self.failUnlessEqual(None, actual)
+
+   def testParseCommaSeparatedString_002(self):
+      """
+      Test parseCommaSeparatedString() for an empty string.
+      """
+      actual = parseCommaSeparatedString("")
+      self.failUnlessEqual([], actual)
+
+   def testParseCommaSeparatedString_003(self):
+      """
+      Test parseCommaSeparatedString() for a string with one value.
+      """
+      actual = parseCommaSeparatedString("ken")
+      self.failUnlessEqual(["ken", ], actual)
+
+   def testParseCommaSeparatedString_004(self):
+      """ 
+      Test parseCommaSeparatedString() for a string with multiple values, no
+      spaces.
+      """
+      actual = parseCommaSeparatedString("a,b,c")
+      self.failUnlessEqual(["a", "b", "c", ], actual)
+
+   def testParseCommaSeparatedString_005(self):
+      """ 
+      Test parseCommaSeparatedString() for a string with multiple values, with
+      spaces.
+      """
+      actual = parseCommaSeparatedString("a, b, c")
+      self.failUnlessEqual(["a", "b", "c", ], actual)
+
+   def testParseCommaSeparatedString_006(self):
+      """ 
+      Test parseCommaSeparatedString() for a string with multiple values,
+      worst-case kind of value.
+      """
+      actual = parseCommaSeparatedString("   one,  two,three,   four , five   , six,   seven,,eight    ,")
+      self.failUnlessEqual(["one", "two", "three", "four", "five", "six", "seven", "eight", ], actual)
 
 
 #######################################################################
