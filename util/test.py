@@ -26,7 +26,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-# Language : Python (>= 2.3)
+# Language : Python (>= 2.5)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
 # Purpose  : Run all of the unit tests for the project.
@@ -77,7 +77,7 @@ instance passing "config" runs only the tests for config.py.  Any number of
 individual tests may be listed on the command line, and unknown values will
 simply be ignored.
 
-@note: Even if you run this test with the C{python2.3} interpreter, some of the
+@note: Even if you run this test with the C{python2.5} interpreter, some of the
 individual unit tests require the C{python} interpreter.  In particular, the
 utility tests (in test/utiltests.py) use brief Python script snippets with
 known results to verify the behavior of C{executeCommand}.

@@ -28,7 +28,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-# Language : Python (>= 2.3)
+# Language : Python (>= 2.5)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
 # Purpose  : Provides general-purpose utilities.
@@ -1127,7 +1127,10 @@ class Diagnostics(object):
 def sortDict(d):
    """
    Returns the keys of the dictionary sorted by value.
-   There are cuter ways to do this in Python 2.4, but we're compatible with 2.3.
+
+   There are cuter ways to do this in Python 2.4, but we were originally
+   attempting to stay compatible with Python 2.3.
+
    @param d: Dictionary to operate on
    @return: List of dictionary keys sorted in order by dictionary value.
    """

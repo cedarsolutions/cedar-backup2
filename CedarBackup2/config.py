@@ -25,7 +25,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-# Language : Python (>= 2.3)
+# Language : Python (>= 2.5)
 # Project  : Cedar Backup, release 2
 # Revision : $Id$
 # Purpose  : Provides configuration-related objects.
@@ -295,8 +295,8 @@ class ByteQuantity(object):
    precision can be avoided.  It really isn't possible to store a floating
    point number here while being able to losslessly translate back and forth
    between XML and object representations.  (Perhaps the Python 2.4 Decimal
-   class would have been an option, but I want to stay compatible with Python
-   2.3.)
+   class would have been an option, but I originally wanted to stay compatible 
+   with Python 2.3.)
 
    Even though the quantity is maintained as a string, the string must be in a
    valid floating point positive number.  Technically, any floating point

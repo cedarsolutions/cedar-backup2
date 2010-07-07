@@ -9,7 +9,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-# Language : Python (>= 2.3)
+# Language : Python (>= 2.5)
 # Project  : Official Cedar Backup Extensions
 # Revision : $Id$
 # Purpose  : Provides package initialization
