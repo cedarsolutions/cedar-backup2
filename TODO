@@ -75,7 +75,6 @@ Maybe have standard functions we can use for property assignment
    - List versions of other fancy checks (i.e. abs path or whatever)
    - Might not really be worth it (really worth sacrificing "local" readability?)
    - Maybe some of this (and __cmp___) could be done with a superclass?
-Remove configuration boilerplate "As with all of the ... are optional..."
 If each extension really has its own Config object (?) pull out common parsing code
 Config code is generally readable, might not be worth abstracting it
    - Not sure that comments are worth it -- they're longer than the method body
