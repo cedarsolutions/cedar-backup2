@@ -9575,56 +9575,6 @@ class TestConfig(unittest.TestCase):
       self.failUnless(config1 != config2)
 
 
-   #########################
-   # Test certain utilities 
-   #########################
-
-   def testUtilities_001(self):
-      """
-      Test _parseCommaSeparatedString() for a None string.
-      """
-      actual = Config._parseCommaSeparatedString(None)
-      self.failUnlessEqual(None, actual)
-
-   def testUtilities_002(self):
-      """
-      Test _parseCommaSeparatedString() for an empty string.
-      """
-      actual = Config._parseCommaSeparatedString("")
-      self.failUnlessEqual([], actual)
-
-   def testUtilities_003(self):
-      """
-      Test _parseCommaSeparatedString() for a string with one value.
-      """
-      actual = Config._parseCommaSeparatedString("ken")
-      self.failUnlessEqual(["ken", ], actual)
-
-   def testUtilities_004(self):
-      """ 
-      Test _parseCommaSeparatedString() for a string with multiple values, no
-      spaces.
-      """
-      actual = Config._parseCommaSeparatedString("a,b,c")
-      self.failUnlessEqual(["a", "b", "c", ], actual)
-
-   def testUtilities_005(self):
-      """ 
-      Test _parseCommaSeparatedString() for a string with multiple values, with
-      spaces.
-      """
-      actual = Config._parseCommaSeparatedString("a, b, c")
-      self.failUnlessEqual(["a", "b", "c", ], actual)
-
-   def testUtilities_006(self):
-      """ 
-      Test _parseCommaSeparatedString() for a string with multiple values,
-      worst-case kind of value.
-      """
-      actual = Config._parseCommaSeparatedString("   one,  two,three,   four , five   , six,   seven,,eight    ,")
-      self.failUnlessEqual(["one", "two", "three", "four", "five", "six", "seven", "eight", ], actual)
-
-
    ######################
    # Test validate logic 
    ######################
