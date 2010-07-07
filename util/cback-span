@@ -1,4 +1,4 @@
-#!/usr/bin/python2.3
+#!/usr/bin/python
 # -*- coding: iso-8859-1 -*-
 # vim: set ft=python ts=3 sw=3 expandtab:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -10,7 +10,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-# Language : Python (>= 2.3)
+# Language : Python (>= 2.5)
 # Project  : Cedar Backup, release 2
 # Revision : $Id: cback 605 2005-02-25 00:51:07Z pronovic $
 # Purpose  : Implements Cedar Backup cback-span script.

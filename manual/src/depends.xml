@@ -41,14 +41,13 @@
       <variablelist>
 
          <varlistentry>
-            <term>Python 2.3</term>
+            <term>Python 2.5</term>
             <listitem>
 
                <para>
-                  Version 2.3 of the Python interpreter was released on 29 July
-                  2003, so most <quote>current</quote> Linux and BSD distributions
-                  should include it (although Debian <quote>woody</quote> does
-                  not include it.)
+                  Version 2.5 of the Python interpreter was released on 19 Sep
+                  2006, so most current Linux and BSD distributions should
+                  include it.
                </para>
 
                <informaltable>
@@ -68,7 +67,7 @@
                         </row>
                         <row>
                            <entry>Debian</entry>
-                           <entry><ulink url="http://packages.debian.org/stable/python/python2.3"/></entry>
+                           <entry><ulink url="http://packages.debian.org/stable/python/python2.5"/></entry>
                         </row>
                         <row>
                            <entry>Gentoo</entry>
@@ -80,7 +79,7 @@
                         </row>
                         <row>
                            <entry>Mac OS X (fink)</entry>
-                           <entry><ulink url="http://fink.sourceforge.net/pdb/package.php/python23"/></entry>
+                           <entry><ulink url="http://fink.sourceforge.net/pdb/package.php/python25"/></entry>
                         </row>
                      </tbody>
                   </tgroup>

@@ -19,7 +19,7 @@ This module is distributed in standard Python distutils form.  Use:
    python setup.py --help 
 
 For more information on how to install it.  You must have a Python
-interpreter version 2.3 or better to use these modules.
+interpreter version 2.5 or better to use these modules.
 
 In the simplest case, you will probably just use:
 
