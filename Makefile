@@ -67,7 +67,7 @@ all:
 
 clean: docclean distribclean 
 	-@$(FIND) . -name "*.pyc" | xargs rm -f
-	-@rm -f PKG-INFO
+	-@rm -f PKG-INFO tags
 
 tags:
 	ctags `find . -name "*.py"`
