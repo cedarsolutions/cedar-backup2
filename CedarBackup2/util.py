@@ -84,6 +84,7 @@ import re
 import time
 import logging
 import string  # pylint: disable-msg=W0402
+from subprocess import Popen, STDOUT, PIPE
 
 from CedarBackup2.release import VERSION, DATE
 
@@ -93,16 +94,6 @@ try:
    _UID_GID_AVAILABLE = True   
 except ImportError:
    _UID_GID_AVAILABLE = False   
-
-try:
-   from subprocess import Popen
-   _PIPE_IMPLEMENTATION = "subprocess.Popen"
-except ImportError:
-   try:
-      from popen2 import Popen4
-      _PIPE_IMPLEMENTATION = "popen2.Popen4"
-   except ImportError:
-      raise ImportError("Unable to import either subprocess.Popen or popen2.Popen4 for use by Pipe class.")
 
 
 ########################################################################
@@ -855,99 +846,28 @@ class PathResolverSingleton(object):
 # Pipe class definition
 ########################################################################
 
-if _PIPE_IMPLEMENTATION == "subprocess.Popen":
+class Pipe(Popen):
+   """
+   Specialized pipe class for use by C{executeCommand}.
 
-   from subprocess import STDOUT, PIPE
+   The L{executeCommand} function needs a specialized way of interacting
+   with a pipe.  First, C{executeCommand} only reads from the pipe, and
+   never writes to it.  Second, C{executeCommand} needs a way to discard all
+   output written to C{stderr}, as a means of simulating the shell
+   C{2>/dev/null} construct.  
 
-   class Pipe(Popen):
-      """
-      Specialized pipe class for use by C{executeCommand}.
-
-      The L{executeCommand} function needs a specialized way of interacting
-      with a pipe.  First, C{executeCommand} only reads from the pipe, and
-      never writes to it.  Second, C{executeCommand} needs a way to discard all
-      output written to C{stderr}, as a means of simulating the shell
-      C{2>/dev/null} construct.  
-
-      All of this functionality is provided (in Python 2.4 or later) by the
-      C{subprocess.Popen} class, so when that class is available, we'll use it.
-      Otherwise, there's another implementation based on C{popen2.Popen4},
-      which unfortunately only works on UNIX platforms.
-      """
-      def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
-         stderr = STDOUT
-         if ignoreStderr:
-            devnull = nullDevice()
-            stderr = os.open(devnull, os.O_RDWR) 
-         Popen.__init__(self, shell=False, args=cmd, bufsize=bufsize, stdin=None, stdout=PIPE, stderr=stderr)
-         self.fromchild = self.stdout  # for compatibility with original interface based on popen2.Popen4
-
-else: # _PIPE_IMPLEMENTATION == "popen2.Popen4" 
-
-   from popen2 import _cleanup, _active
-
-   class Pipe(Popen4):
-      """
-      Specialized pipe class for use by C{executeCommand}.
-
-      The L{executeCommand} function needs a specialized way of interacting with a
-      pipe that isn't satisfied by the standard C{Popen3} and C{Popen4} classes in
-      C{popen2}.  First, C{executeCommand} only reads from the pipe, and never
-      writes to it.  Second, C{executeCommand} needs a way to discard all output
-      written to C{stderr}, as a means of simulating the shell C{2>/dev/null}
-      construct.  
-
-      This class inherits from C{Popen4}.  If the C{ignoreStderr} flag is passed in
-      as C{False}, then the standard C{Popen4} constructor will be called and
-      C{stdout} and C{stderr} will be intermingled in the output.  
-
-      Otherwise, we'll call a custom version of the constructor which was
-      basically stolen from the real constructor in C{python2.3/Lib/popen2.py}.
-      This custom constructor will redirect the C{stderr} file descriptor to
-      C{/dev/null}.  I've done this based on a suggestion from Donn Cave on
-      comp.lang.python.
-
-      In either case, the C{tochild} file object is always closed before returning
-      from the constructor, since it is never needed by C{executeCommand}.
-
-      I really wish there were a prettier way to do this.  Unfortunately, I
-      need access to the guts of the constructor implementation because of the
-      way the pipe process is forked, etc.  It doesn't work to just call the
-      superclass constructor and then modify a few things afterwards.  Even
-      worse, I have to access private C{popen2} module members C{_cleanup} and
-      C{_active} in order to duplicate the implementation.  
-
-      Hopefully this whole thing will continue to work properly.  At least we
-      can use the other L{subprocess.Popen}-based implementation when that
-      class is available.
-      
-      @copyright: Some of this code, prior to customization, was originally part
-      of the Python 2.3 codebase.  Python code is copyright (c) 2001, 2002 Python
-      Software Foundation; All Rights Reserved.
-      """
-      
-      def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
-         if not ignoreStderr:
-            Popen4.__init__(self, cmd, bufsize)
-         else:
-            _cleanup()
-            p2cread, p2cwrite = os.pipe()
-            c2pread, c2pwrite = os.pipe()
-            self.pid = os.fork()
-            if self.pid == 0: # Child
-               os.dup2(p2cread, 0)
-               os.dup2(c2pwrite, 1)
-               devnull = nullDevice()
-               null = os.open(devnull, os.O_RDWR)
-               os.dup2(null, 2)
-               os.close(null)
-               self._run_child(cmd)
-            os.close(p2cread)
-            self.tochild = os.fdopen(p2cwrite, 'w', bufsize)
-            os.close(c2pwrite)
-            self.fromchild = os.fdopen(c2pread, 'r', bufsize)
-            _active.append(self)
-         self.tochild.close()       # we'll never write to it, and this way we don't confuse anything.
+   All of this functionality is provided (in Python 2.4 or later) by the
+   C{subprocess.Popen} class, so when that class is available, we'll use it.
+   Otherwise, there's another implementation based on C{popen2.Popen4},
+   which unfortunately only works on UNIX platforms.
+   """
+   def __init__(self, cmd, bufsize=-1, ignoreStderr=False):
+      stderr = STDOUT
+      if ignoreStderr:
+         devnull = nullDevice()
+         stderr = os.open(devnull, os.O_RDWR) 
+      Popen.__init__(self, shell=False, args=cmd, bufsize=bufsize, stdin=None, stdout=PIPE, stderr=stderr)
+      self.fromchild = self.stdout  # for compatibility with original interface based on popen2.Popen4
 
 
 ########################################################################
@@ -1863,20 +1783,8 @@ def nullDevice():
 
    The null device is something like C{/dev/null} on a UNIX system.  The name
    varies on other platforms.
-
-   In Python 2.4 and better, we can use C{os.devnull}.  Since we want to be
-   portable to python 2.3, getting the value in earlier versions of Python
-   takes some screwing around.  Basically, this function will only work on
-   either UNIX-like systems (the default) or Windows.
    """
-   try:
-      return os.devnull
-   except AttributeError: 
-      import platform
-      if platform.platform().startswith("Windows"):
-         return "NUL"
-      else:
-         return "/dev/null"
+   return os.devnull
 
 
 ##############################

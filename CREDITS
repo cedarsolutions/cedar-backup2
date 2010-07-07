@@ -41,8 +41,8 @@ not generally attributed unless I used someone else's source code verbatim.
 Source code annotated as "(c) 2001, 2002 Python Software Foundation" was
 originally taken from or derived from code within the Python 2.3 codebase.
 This code was released under the Python 2.3 license, which is an MIT-style
-academic license.  Items under this license include the util.Pipe
-implementation based on popen2.Popen4.
+academic license.  Items under this license include the function
+util.getFunctionReference().
 
 Source code annotated as "(c) 2000-2004 CollabNet" was originally released
 under the CollabNet License, which is an Apache/BSD-style license.  Items

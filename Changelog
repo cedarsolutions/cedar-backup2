@@ -5,6 +5,7 @@ Version 2.20.0    unreleased
 	  - Change file headers, comments, manual, etc. to reference Python 2.5
 	  - Convert to use @staticmethod rather than x = staticmethod(x)
 	  - Change interpreter checks in test.py, cli.py and span.py
+	  - Remove Python 2.3-compatible versions of util.nullDevice() and util.Pipe
 	* Configure pylint and execute it against the entire codebase.
 	  - Fix a variety of minor warnings and suggestions from pylint
 	  - Move unit tests into testcase folder to avoid test.py naming conflict
