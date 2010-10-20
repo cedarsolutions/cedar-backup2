@@ -539,13 +539,13 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          count = fsList.addFile(path)
          self.failUnlessEqual(1, count)
          self.failUnlessEqual([path], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          self.failUnlessRaises(ValueError, fsList.addFile, path)
@@ -586,6 +586,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeFiles = True
@@ -593,7 +594,6 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnlessEqual(0, count)
          self.failUnlessEqual([], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeFiles = True
@@ -636,6 +636,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeDirs = True
@@ -643,7 +644,6 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnlessEqual(1, count)
          self.failUnlessEqual([path], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeDirs = True
@@ -688,6 +688,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeLinks = True
@@ -695,7 +696,6 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnlessEqual(0, count)
          self.failUnlessEqual([], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeLinks = True
@@ -740,6 +740,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePaths = [ path ]
@@ -747,7 +748,6 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnlessEqual(0, count)
          self.failUnlessEqual([], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePaths = [ path ]
@@ -791,6 +791,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePaths = [ NOMATCH_PATH ]
@@ -798,7 +799,6 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnlessEqual(1, count)
          self.failUnlessEqual([path], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePaths = [ NOMATCH_PATH ]
@@ -842,6 +842,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePatterns = [ self.pathPattern(path) ]
@@ -849,7 +850,6 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnlessEqual(0, count)
          self.failUnlessEqual([], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePatterns = [ self.pathPattern(path) ]
@@ -893,6 +893,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePaths = [ NOMATCH_PATH ]
@@ -900,7 +901,6 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnlessEqual(1, count)
          self.failUnlessEqual([path], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePaths = [ NOMATCH_PATH ]
@@ -980,6 +980,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ "link001", ]
@@ -987,7 +988,6 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnlessEqual(0, count)
          self.failUnlessEqual([], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ "link001", ]
@@ -1034,6 +1034,7 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeBasenamePaths = [ NOMATCH_BASENAME ]
@@ -1041,7 +1042,6 @@ class TestFilesystemList(unittest.TestCase):
          self.failUnlessEqual(1, count)
          self.failUnlessEqual([path], fsList)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeBasenamePaths = [ NOMATCH_BASENAME ]
@@ -1088,11 +1088,11 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          count = fsList.addDir(path)
@@ -1135,12 +1135,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks(): 
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeFiles = True
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeFiles = True
@@ -1185,12 +1185,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeDirs = True
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeDirs = True
@@ -1237,12 +1237,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeLinks = True
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeLinks = True
@@ -1289,12 +1289,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePaths = [ path ]
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePaths = [ path ]
@@ -1341,12 +1341,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePaths = [ NOMATCH_PATH ]
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePaths = [ NOMATCH_PATH ]
@@ -1393,12 +1393,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePatterns = [ self.pathPattern(path) ]
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePatterns = [ self.pathPattern(path) ]
@@ -1445,12 +1445,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePatterns = [ NOMATCH_PATH ]
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePatterns = [ NOMATCH_PATH ]
@@ -1520,12 +1520,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ "link001", ]
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ "link001", ]
@@ -1574,12 +1574,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ NOMATCH_BASENAME ]
          self.failUnlessRaises(ValueError, fsList.addDir, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ NOMATCH_BASENAME ]
@@ -1628,11 +1628,11 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          count = fsList.addDir(path)
@@ -1719,12 +1719,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeFiles = True
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeFiles = True
@@ -1812,12 +1812,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeDirs = True
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeDirs = True
@@ -1905,12 +1905,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeLinks = True
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeLinks = True
@@ -2005,12 +2005,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePaths = [ path ]
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePaths = [ path ]
@@ -2097,12 +2097,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePaths = [ NOMATCH_PATH ]
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePaths = [ NOMATCH_PATH ]
@@ -2198,12 +2198,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePatterns = [ self.pathPattern(path) ]
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePatterns = [ self.pathPattern(path) ]
@@ -2291,12 +2291,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePatterns = [ NOMATCH_PATH ]
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludePatterns = [ NOMATCH_PATH ]
@@ -3900,12 +3900,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ "link001", ]
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ "link001", ]
@@ -3995,12 +3995,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ NOMATCH_PATH ]
          self.failUnlessRaises(ValueError, fsList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ NOMATCH_BASENAME ]
@@ -5715,12 +5715,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeFiles = True
          self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
          fsList = FilesystemList()
          fsList.excludeFiles = True
@@ -5734,12 +5734,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeDirs = True
          self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
          fsList = FilesystemList()
          fsList.excludeDirs = True
@@ -5753,12 +5753,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeLinks = True
          self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
          fsList = FilesystemList()
          fsList.excludeLinks = True
@@ -5773,12 +5773,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePaths = [ path ]
          self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
          fsList = FilesystemList()
          fsList.excludePaths = [ path ]
@@ -5793,12 +5793,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludePatterns = [ self.pathPattern(path) ]
          self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to dir003
          fsList = FilesystemList()
          fsList.excludePatterns = [ self.pathPattern(path) ]
@@ -5872,12 +5872,12 @@ class TestFilesystemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ "link001", ]
          self.failUnlessRaises(ValueError, fsList.addDirContents, path, True, True, 1, True)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          fsList = FilesystemList()
          fsList.excludeBasenamePatterns = [ "link001", ]
@@ -19476,11 +19476,11 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          count = purgeList.addDir(path)
@@ -19566,12 +19566,12 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          purgeList.excludeFiles = True
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          purgeList.excludeFiles = True
@@ -19658,12 +19658,12 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          purgeList.excludeDirs = True
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          purgeList.excludeDirs = True
@@ -19751,12 +19751,12 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          purgeList.excludeLinks = True
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          purgeList.excludeLinks = True
@@ -19850,12 +19850,12 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          purgeList.excludePaths = [ path ]
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          purgeList.excludePaths = [ path ]
@@ -19942,12 +19942,12 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          purgeList.excludePaths = [ NOMATCH_PATH ]
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          purgeList.excludePaths = [ NOMATCH_PATH ]
@@ -20042,12 +20042,12 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          purgeList.excludePatterns = [ self.pathPattern(path) ]
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          purgeList.excludePatterns = [ self.pathPattern(path) ]
@@ -20135,12 +20135,12 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          purgeList.excludePatterns = [ NOMATCH_PATH ]
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          purgeList.excludePatterns = [ NOMATCH_PATH ]
@@ -21596,12 +21596,12 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          purgeList.excludeBasenamePatterns = [ "link001", ]
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          purgeList.excludeBasenamePatterns = [ "link001", ]
@@ -21691,12 +21691,12 @@ class TestPurgeItemList(unittest.TestCase):
       """
       if platformSupportsLinks():
          self.extractTar("tree5")
+
          path = self.buildPath(["tree5", "link001"])     # link to a file
          purgeList = PurgeItemList()
          purgeList.excludeBasenamePatterns = [ NOMATCH_BASENAME ]
          self.failUnlessRaises(ValueError, purgeList.addDirContents, path)
 
-         self.extractTar("tree5")
          path = self.buildPath(["tree5", "dir002", "link001"])  # link to a dir
          purgeList = PurgeItemList()
          purgeList.excludeBasenamePatterns = [ NOMATCH_BASENAME ]
