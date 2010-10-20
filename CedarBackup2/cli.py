@@ -1058,9 +1058,9 @@ def _setupLogfile(options):
       logfile = options.logfile
    if not os.path.exists(logfile):
       if options.mode is None: 
-         os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND, DEFAULT_MODE)).write("")
+         os.fdopen(os.open(logfile, os.O_RDWR|os.O_CREAT|os.O_APPEND, DEFAULT_MODE), "a+").write("")
       else:
-         os.fdopen(os.open(logfile, os.O_CREAT|os.O_APPEND, options.mode)).write("")
+         os.fdopen(os.open(logfile, os.O_RDWR|os.O_CREAT|os.O_APPEND, options.mode), "a+").write("")
       try:
          if options.owner is None or len(options.owner) < 2:
             (uid, gid) = getUidGid(DEFAULT_OWNERSHIP[0], DEFAULT_OWNERSHIP[1])
@@ -1114,7 +1114,7 @@ def _setupScreenFlowLogging(flowLogger, options):
    @param options: Command-line options.
    """
    formatter = logging.Formatter(fmt=SCREEN_LOG_FORMAT)
-   handler = logging.StreamHandler(strm=SCREEN_LOG_STREAM)
+   handler = logging.StreamHandler(SCREEN_LOG_STREAM)
    handler.setFormatter(formatter)
    if options.quiet:
       handler.setLevel(logging.CRITICAL)  # effectively turn it off

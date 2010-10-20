@@ -1,6 +1,9 @@
 Version 2.20.1    unreleased
 
 	* Fix minor formatting issues in manpages, pointed out by Debian lintian.
+	* Changes required to make code compatible with Python 2.7
+	  - StreamHandler no longer accepts strm= argument (closes: #3079930)
+	  - Modify logfile os.fdopen() to be explicit about read/write mode
 
 Version 2.20.0    07 Jul 2010
 
