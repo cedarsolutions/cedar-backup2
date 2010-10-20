@@ -1,4 +1,4 @@
-Version 2.20.1    unreleased
+Version 2.20.1    19 Oct 2010
 
 	* Fix minor formatting issues in manpages, pointed out by Debian lintian.
 	* Changes required to make code compatible with Python 2.7
