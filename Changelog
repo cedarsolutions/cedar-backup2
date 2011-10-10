@@ -1,3 +1,10 @@
+Version 2.21.0    unreleased
+
+	* Implement configurable recursion for collect action.
+	  - Update collect.py to handle recursion (patch by Zoran Bosnjak)
+	  - Add new configuration item CollectDir.recursionLevel
+	  - Update user manual, CREDITS, etc. for new functionality
+
 Version 2.20.1    19 Oct 2010
 
 	* Fix minor formatting issues in manpages, pointed out by Debian lintian.

@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2008,2010 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008,2011 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ import logging
 import pickle
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import BackupFileList
+from CedarBackup2.filesystem import BackupFileList, FilesystemList
 from CedarBackup2.util import isStartOfWeek, changeOwnership, displayBytes, buildNormalizedPath
 from CedarBackup2.actions.constants import DIGEST_EXTENSION, COLLECT_INDICATOR
 from CedarBackup2.actions.util import writeIndicatorFile
@@ -111,8 +111,8 @@ def executeCollect(configPath, options, config):
          logger.debug("Working with collect file [%s]" % collectFile.absolutePath)
          collectMode = _getCollectMode(config, collectFile)
          archiveMode = _getArchiveMode(config, collectFile)
-         digestPath = _getDigestPath(config, collectFile)
-         tarfilePath = _getTarfilePath(config, collectFile, archiveMode)
+         digestPath = _getDigestPath(config, collectFile.absolutePath)
+         tarfilePath = _getTarfilePath(config, collectFile.absolutePath, archiveMode)
          if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
             logger.debug("File meets criteria to be backed up today.")
             _collectFile(config, collectFile.absolutePath, tarfilePath, 
@@ -128,14 +128,13 @@ def executeCollect(configPath, options, config):
          ignoreFile = _getIgnoreFile(config, collectDir)
          linkDepth = _getLinkDepth(collectDir)
          dereference = _getDereference(collectDir)
-         digestPath = _getDigestPath(config, collectDir)
-         tarfilePath = _getTarfilePath(config, collectDir, archiveMode)
+         recursionLevel = _getRecursionLevel(collectDir)
          (excludePaths, excludePatterns) = _getExclusions(config, collectDir)
          if fullBackup or (collectMode in ['daily', 'incr', ]) or (collectMode == 'weekly' and todayIsStart):
             logger.debug("Directory meets criteria to be backed up today.")
-            _collectDirectory(config, collectDir.absolutePath, tarfilePath, 
+            _collectDirectory(config, collectDir.absolutePath, 
                               collectMode, archiveMode, ignoreFile, linkDepth, dereference,
-                              resetDigest, digestPath, excludePaths, excludePatterns)
+                              resetDigest, excludePaths, excludePatterns, recursionLevel)
          else:
             logger.debug("Directory will not be backed up, per collect mode.")
          logger.info("Completed collecting directory [%s]" % collectDir.absolutePath)
@@ -182,9 +181,9 @@ def _collectFile(config, absolutePath, tarfilePath, collectMode, archiveMode, re
 # _collectDirectory() function
 ###############################
 
-def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMode, 
-                      ignoreFile, linkDepth, dereference, resetDigest, digestPath, 
-                      excludePaths, excludePatterns):
+def _collectDirectory(config, absolutePath, collectMode, archiveMode, 
+                      ignoreFile, linkDepth, dereference, resetDigest, 
+                      excludePaths, excludePatterns, recursionLevel):
    """
    Collects a configured collect directory.
    
@@ -199,23 +198,49 @@ def _collectDirectory(config, absolutePath, tarfilePath, collectMode, archiveMod
 
    @param config: Config object.
    @param absolutePath: Absolute path of directory to collect.
-   @param tarfilePath: Path to tarfile that should be created.
    @param collectMode: Collect mode to use.
    @param archiveMode: Archive mode to use.
    @param ignoreFile: Ignore file to use.
    @param linkDepth: Link depth value to use.
    @param dereference: Dereference flag to use.
    @param resetDigest: Reset digest flag.
-   @param digestPath: Path to digest file on disk, if needed.
    @param excludePaths: List of absolute paths to exclude.
    @param excludePatterns: List of patterns to exclude.
+   @param recursionLevel: Recursion level (zero for no recursion)
    """
-   backupList = BackupFileList()
-   backupList.ignoreFile = ignoreFile
-   backupList.excludePaths = excludePaths
-   backupList.excludePatterns = excludePatterns
-   backupList.addDirContents(absolutePath, linkDepth=linkDepth, dereference=dereference)
-   _executeBackup(config, backupList, absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath)
+   if recursionLevel  == 0:
+      # Collect the actual directory because we're at recursion level 0
+      logger.info("Collecting directory [%s]" % absolutePath)
+      tarfilePath = _getTarfilePath(config, absolutePath, archiveMode)
+      digestPath = _getDigestPath(config, absolutePath)
+
+      backupList = BackupFileList()
+      backupList.ignoreFile = ignoreFile
+      backupList.excludePaths = excludePaths
+      backupList.excludePatterns = excludePatterns
+      backupList.addDirContents(absolutePath, linkDepth=linkDepth, dereference=dereference)
+
+      _executeBackup(config, backupList, absolutePath, tarfilePath, collectMode, archiveMode, resetDigest, digestPath)
+   else:
+      # Find all of the immediate subdirectories
+      subdirs = FilesystemList()
+      subdirs.excludeFiles = True
+      subdirs.excludeLinks = True
+      subdirs.excludePaths = excludePaths
+      subdirs.excludePatterns = excludePatterns
+      subdirs.addDirContents(path=absolutePath, recursive=False, addSelf=False)
+
+      # Back up the subdirectories separately
+      for subdir in subdirs:
+         _collectDirectory(config, subdir, collectMode, archiveMode, 
+                           ignoreFile, linkDepth, dereference, resetDigest, 
+                           excludePaths, excludePatterns, recursionLevel-1)
+         excludePaths.append(subdir) # this directory is already backed up, so exclude it
+
+      # Back up everything that hasn't previously been backed up
+      _collectDirectory(config, absolutePath, collectMode, archiveMode, 
+                        ignoreFile, linkDepth, dereference, resetDigest,
+                        excludePaths, excludePatterns, 0)
 
 
 ############################
@@ -398,7 +423,7 @@ def _getLinkDepth(item):
    Gets the link depth that should be used for a collect directory.
    If possible, use the one on the directory, otherwise set a value of 0 (zero).
    @param item: C{CollectDir} object
-   @return: Ignore file to use.
+   @return: Link depth to use.
    """
    if item.linkDepth is None:
       linkDepth = 0
@@ -417,7 +442,7 @@ def _getDereference(item):
    Gets the dereference flag that should be used for a collect directory.
    If possible, use the one on the directory, otherwise set a value of False.
    @param item: C{CollectDir} object
-   @return: Ignore file to use.
+   @return: Dereference flag to use.
    """
    if item.dereference is None:
       dereference = False
@@ -427,18 +452,37 @@ def _getDereference(item):
    return dereference
 
 
+################################
+# _getRecursionLevel() function
+################################
+
+def _getRecursionLevel(item):
+   """
+   Gets the recursion level that should be used for a collect directory.
+   If possible, use the one on the directory, otherwise set a value of 0 (zero).
+   @param item: C{CollectDir} object
+   @return: Recursion level to use.
+   """
+   if item.recursionLevel is None:
+      recursionLevel = 0
+   else:
+      recursionLevel = item.recursionLevel
+   logger.debug("Recursion level is [%d]" % recursionLevel)
+   return recursionLevel
+
+
 ############################
 # _getDigestPath() function
 ############################
 
-def _getDigestPath(config, item):
+def _getDigestPath(config, absolutePath):
    """
    Gets the digest path associated with a collect directory or file.
    @param config: Config object.
-   @param item: C{CollectFile} or C{CollectDir} object
+   @param absolutePath: Absolute path to generate digest for
    @return: Absolute path to the digest associated with the collect directory or file.
    """
-   normalized = buildNormalizedPath(item.absolutePath)
+   normalized = buildNormalizedPath(absolutePath)
    filename = "%s.%s" % (normalized, DIGEST_EXTENSION)
    digestPath = os.path.join(config.options.workingDir, filename)
    logger.debug("Digest path is [%s]" % digestPath)
@@ -449,11 +493,11 @@ def _getDigestPath(config, item):
 # _getTarfilePath() function
 #############################
 
-def _getTarfilePath(config, item, archiveMode):
+def _getTarfilePath(config, absolutePath, archiveMode):
    """
    Gets the tarfile path (including correct extension) associated with a collect directory.
    @param config: Config object.
-   @param item: C{CollectFile} or C{CollectDir} object
+   @param absolutePath: Absolute path to generate tarfile for
    @param archiveMode: Archive mode to use for this tarfile.
    @return: Absolute path to the tarfile associated with the collect directory.
    """
@@ -463,7 +507,7 @@ def _getTarfilePath(config, item, archiveMode):
       extension = "tar.gz"
    elif archiveMode == 'tarbz2':
       extension = "tar.bz2"
-   normalized = buildNormalizedPath(item.absolutePath)
+   normalized = buildNormalizedPath(absolutePath)
    filename = "%s.%s" % (normalized, extension)
    tarfilePath = os.path.join(config.collect.targetDir, filename)
    logger.debug("Tarfile path is [%s]" % tarfilePath)
