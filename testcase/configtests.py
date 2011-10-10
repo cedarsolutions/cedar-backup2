@@ -11256,6 +11256,7 @@ class TestConfig(unittest.TestCase):
       config = Config(xmlPath=path, validate=False)
       expected = Config()
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
+      expected.collect.recursionLevel = 1
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
       expected.collect.collectFiles = []

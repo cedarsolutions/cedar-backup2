@@ -1366,6 +1366,53 @@
             </varlistentry>
 
             <varlistentry>
+               <term><literal>recursion_level</literal></term>
+               <listitem>
+                  <para>Recursion level to use when collecting directories.</para>
+                  <para>
+                     This is an integer value that Cedar Backup will consider
+                     when generating archive files for a configured collect
+                     directory.
+                  </para>
+                  <para>
+                     Normally, Cedar Backup generates one archive file per
+                     collect directory.  So, if you collect
+                     <literal>/etc</literal> you get
+                     <literal>etc.tar.gz</literal>.  Most of the time, this is
+                     what you want.  However, you may sometimes wish to
+                     generate multiple archive files for a single collect
+                     directory.  
+                  </para>
+                  <para>
+                     The most obvious example is for <literal>/home</literal>.
+                     By default, Cedar Backup will generate
+                     <literal>home.tar.gz</literal>. If instead, you want one
+                     archive file per home directory you can set a recursion
+                     level of <literal>1</literal>.  Cedar Backup will generate
+                     <literal>home-user1.tar.gz</literal>,
+                     <literal>home-user2.tar.gz</literal>, etc.
+                  </para>
+                  <para>
+                     Higher recursion levels (<literal>2</literal>,
+                     <literal>3</literal>, etc.) are legal, and it doesn't
+                     matter if the configured recursion level is deeper than
+                     the directory tree that is being collected.  You can use a
+                     negative recursion level (like <literal>-1</literal>) to
+                     specify an infinite level of recursion.  This will exhaust
+                     the tree in the same way as if the recursion level is set
+                     too high.
+                  </para>
+                  <para>
+                     This field is optional.  if it doesn't exist, the backup
+                     will use the default list recursion level of zero.
+                  </para>
+                  <para>
+                     <emphasis>Restrictions:</emphasis> Must be an integer.
+                  </para>
+               </listitem>
+            </varlistentry>
+
+            <varlistentry>
                <term><literal>exclude</literal></term>
                <listitem>
                   <para>List of paths or patterns to exclude from the backup.</para>
