@@ -1134,7 +1134,7 @@ def convertSize(size, fromUnit, toUnit):
 # displayBytes() function
 ##########################
 
-def displayBytes(bytes, digits=2):
+def displayBytes(bytes, digits=2): # pylint: disable=W0622
    """
    Format a byte quantity so it can be sensibly displayed.
 
@@ -1167,18 +1167,18 @@ def displayBytes(bytes, digits=2):
       raise ValueError("Cannot display byte value of None.")
    bytes = float(bytes)
    if math.fabs(bytes) < BYTES_PER_KBYTE:
-      format = "%.0f bytes"
+      fmt = "%.0f bytes"
       value = bytes
    elif math.fabs(bytes) < BYTES_PER_MBYTE:
-      format = "%." + "%d" % digits + "f kB"
+      fmt = "%." + "%d" % digits + "f kB"
       value = bytes / BYTES_PER_KBYTE
    elif math.fabs(bytes) < BYTES_PER_GBYTE:
-      format = "%." + "%d" % digits + "f MB"
+      fmt = "%." + "%d" % digits + "f MB"
       value = bytes / BYTES_PER_MBYTE
    else:
-      format = "%." + "%d" % digits + "f GB"
+      fmt = "%." + "%d" % digits + "f GB"
       value = bytes / BYTES_PER_GBYTE
-   return format % value
+   return fmt % value
 
 
 ##################################

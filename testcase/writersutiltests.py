@@ -503,21 +503,21 @@ class TestIsoImage(unittest.TestCase):
       have complete control over the mounting and unmounting process.  So, for
       these tests to work, we need to disable GNOME auto-mounting.  
       """
-      self.orig_media_automount = None
-      self.orig_media_automount_open = None
+      self.origMediaAutomount = None
+      self.origMediaAutomountOpen = None
       if runAllTests():
          args = [ "--get", "/apps/nautilus/preferences/media_automount", ]
          (result, output) = executeCommand(GCONF_CMD, args, returnOutput=True)
          if result == 0:
-            self.orig_media_automount = output[0][:-1] 
-            if self.orig_media_automount == "true":
+            self.origMediaAutomount = output[0][:-1]  # pylint: disable=W0201
+            if self.origMediaAutomount == "true":
                args = [ "--type", "bool", "--set", "/apps/nautilus/preferences/media_automount", "false", ]
                executeCommand(GCONF_CMD, args)
          args = [ "--get", "/apps/nautilus/preferences/media_automount_open", ]
          (result, output) = executeCommand(GCONF_CMD, args, returnOutput=True)
          if result == 0:
-            self.orig_media_automount_open = output[0][:-1]  # should be either "true" or "false"
-            if self.orig_media_automount_open == "true":
+            self.origMediaAutomountOpen = output[0][:-1]  # pylint: disable=W0201
+            if self.origMediaAutomountOpen == "true":
                args = [ "--type", "bool", "--set", "/apps/nautilus/preferences/media_automount_open", "false", ]
                executeCommand(GCONF_CMD, args)
 
@@ -525,10 +525,10 @@ class TestIsoImage(unittest.TestCase):
       """
       Resets GNOME auto-mounting options back to their state prior to disableGnomeAutomount().
       """
-      if self.orig_media_automount == "true":
+      if self.origMediaAutomount == "true":
          args = [ "--type", "bool", "--set", "/apps/nautilus/preferences/media_automount", "true", ]
          executeCommand(GCONF_CMD, args)
-      if self.orig_media_automount_open == "true":
+      if self.origMediaAutomountOpen == "true":
          args = [ "--type", "bool", "--set", "/apps/nautilus/preferences/media_automount_open", "true", ]
          executeCommand(GCONF_CMD, args)
 

@@ -3534,7 +3534,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a positive value < 1 KB
       """
-      bytes = 12
+      bytes = 12  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("12 bytes", result)
       result = displayBytes(bytes, 3)
@@ -3544,7 +3544,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a negative value < 1 KB
       """
-      bytes = -12
+      bytes = -12  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("-12 bytes", result)
       result = displayBytes(bytes, 3)
@@ -3554,7 +3554,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a positive value = 1kB
       """
-      bytes = 1024
+      bytes = 1024  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("1.00 kB", result)
       result = displayBytes(bytes, 3)
@@ -3564,7 +3564,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a positive value >= 1kB
       """
-      bytes = 5678
+      bytes = 5678  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("5.54 kB", result)
       result = displayBytes(bytes, 3)
@@ -3574,7 +3574,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a negative value >= 1kB
       """
-      bytes = -5678
+      bytes = -5678  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("-5.54 kB", result)
       result = displayBytes(bytes, 3)
@@ -3584,7 +3584,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a positive value = 1MB
       """
-      bytes = 1024.0 * 1024.0
+      bytes = 1024.0 * 1024.0  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("1.00 MB", result)
       result = displayBytes(bytes, 3)
@@ -3594,7 +3594,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a positive value >= 1MB
       """
-      bytes = 72372224
+      bytes = 72372224  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("69.02 MB", result)
       result = displayBytes(bytes, 3)
@@ -3604,7 +3604,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a negative value >= 1MB
       """
-      bytes = -72372224.0
+      bytes = -72372224.0  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("-69.02 MB", result)
       result = displayBytes(bytes, 3)
@@ -3614,7 +3614,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a positive value = 1GB
       """
-      bytes = 1024.0 * 1024.0 * 1024.0
+      bytes = 1024.0 * 1024.0 * 1024.0  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("1.00 GB", result)
       result = displayBytes(bytes, 3)
@@ -3624,7 +3624,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a positive value >= 1GB
       """
-      bytes = 4.4 * 1024.0 * 1024.0 * 1024.0
+      bytes = 4.4 * 1024.0 * 1024.0 * 1024.0  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("4.40 GB", result)
       result = displayBytes(bytes, 3)
@@ -3634,7 +3634,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test display for a negative value >= 1GB
       """
-      bytes = -1234567891011
+      bytes = -1234567891011  # pylint: disable=W0622
       result = displayBytes(bytes)
       self.failUnlessEqual("-1149.78 GB", result)
       result = displayBytes(bytes, 3)
@@ -3644,14 +3644,14 @@ class TestFunctions(unittest.TestCase):
       """
       Test display with an invalid quantity (None).
       """
-      bytes = None
+      bytes = None  # pylint: disable=W0622
       self.failUnlessRaises(ValueError, displayBytes, bytes)
 
    def testDisplayBytes_013(self):
       """
       Test display with an invalid quantity (not a floating point).
       """
-      bytes = "ken"
+      bytes = "ken"  # pylint: disable=W0622
       self.failUnlessRaises(ValueError, displayBytes, bytes)
 
 
