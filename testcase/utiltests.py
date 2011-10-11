@@ -32,7 +32,7 @@
 # Purpose  : Tests utility functionality.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# pylint: disable-msg=C0322,C0324
+# pylint: disable=C0322,C0324
 
 ########################################################################
 # Module documentation
@@ -2057,7 +2057,7 @@ class TestDiagnostics(unittest.TestCase):
       """
       Test the locale attribute.
       """
-      # pylint: disable-msg=W0104
+      # pylint: disable=W0104
       diagnostics = Diagnostics()
       diagnostics.locale  # might not be set, so just make sure method doesn't fail
 

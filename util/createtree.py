@@ -99,7 +99,7 @@ Example of Configuration
 
 import sys
 import os
-import string  # pylint: disable-msg=W0402
+import string  # pylint: disable=W0402
 import random
 from ConfigParser import SafeConfigParser
 
