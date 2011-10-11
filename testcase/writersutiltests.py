@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2007,2010 Kenneth J. Pronovici.
+# Copyright (c) 2004-2007,2010,2011 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -95,6 +95,7 @@ Full vs. Reduced Tests
 import os
 import unittest
 import tempfile
+import time
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar
 from CedarBackup2.testutil import platformMacOsX, platformSupportsLinks
 from CedarBackup2.filesystem import FilesystemList
@@ -111,6 +112,7 @@ RESOURCES = [ "tree9.tar.gz", ]
 
 SUDO_CMD = [ "sudo", ]
 HDIUTIL_CMD = [ "hdiutil", ]
+GCONF_CMD = [ "gconftool-2", ]
 
 INVALID_FILE = "bogus"         # This file name should never exist
 
@@ -331,6 +333,7 @@ class TestIsoImage(unittest.TestCase):
 
    def setUp(self):
       try:
+         self.disableGnomeAutomount()
          self.mounted = False
          self.tmpdir = tempfile.mkdtemp()
          self.resources = findResources(RESOURCES, DATA_DIRS)
@@ -341,6 +344,7 @@ class TestIsoImage(unittest.TestCase):
       if self.mounted: 
          self.unmountImage()
       removedir(self.tmpdir)
+      self.enableGnomeAutomount()
 
 
    ##################
@@ -403,7 +407,7 @@ class TestIsoImage(unittest.TestCase):
       Note that this will fail unless the user has been granted permissions via
       sudo, using something like this:
 
-         Cmnd_Alias LOOPMOUNT = /bin/mount -t iso9660 -o loop * *
+         Cmnd_Alias LOOPMOUNT = /bin/mount -d -t iso9660 -o loop * *
 
       Keep in mind that this entry is a security hole, so you might not want to
       keep it in C{/etc/sudoers} all of the time.
@@ -460,10 +464,16 @@ class TestIsoImage(unittest.TestCase):
       """
       Unmounts an ISO image from C{self.tmpdir/mnt}.
 
+      Sometimes, multiple tries are needed because the ISO filesystem is still
+      in use.  We try twice with a 1-second pause between attempts.  If this 
+      isn't successful, you may run out of loopback devices.  Check for leftover
+      mounts using 'losetup -a' as root.  You can remove a leftover mount using
+      something like 'losetup -d /dev/loop0'.
+
       Note that this will fail unless the user has been granted permissions via
       sudo, using something like this:
 
-         Cmnd_Alias LOOPUNMOUNT  = /bin/umount -t iso9660 *
+         Cmnd_Alias LOOPUNMOUNT  = /bin/umount -d -t iso9660 *
 
       Keep in mind that this entry is a security hole, so you might not want to
       keep it in C{/etc/sudoers} all of the time.
@@ -474,8 +484,53 @@ class TestIsoImage(unittest.TestCase):
       args = [ "umount", "-d", "-t", "iso9660", mountPath, ]
       (result, output) = executeCommand(SUDO_CMD, args, returnOutput=True)
       if result != 0:
-         raise IOError("Error (%d) executing command to unmount image." % result)
+         time.sleep(1)
+         (result, output) = executeCommand(SUDO_CMD, args, returnOutput=True)
+         if result != 0:
+            raise IOError("Error (%d) executing command to unmount image." % result)
       self.mounted = False
+
+   def disableGnomeAutomount(self):
+      """
+      Disables GNOME auto-mounting of ISO volumes when full tests are enabled.
+
+      As of this writing (October 2011), recent versions of GNOME in Debian
+      come pre-configured to auto-mount various kinds of media (like CDs and
+      thumb drives).  Besides auto-mounting the media, GNOME also often opens
+      up a Nautilus browser window to explore the newly-mounted media.
+
+      This causes lots of problems for these unit tests, which assume that they
+      have complete control over the mounting and unmounting process.  So, for
+      these tests to work, we need to disable GNOME auto-mounting.  
+      """
+      self.orig_media_automount = None
+      self.orig_media_automount_open = None
+      if runAllTests():
+         args = [ "--get", "/apps/nautilus/preferences/media_automount", ]
+         (result, output) = executeCommand(GCONF_CMD, args, returnOutput=True)
+         if result == 0:
+            self.orig_media_automount = output[0][:-1] 
+            if self.orig_media_automount == "true":
+               args = [ "--type", "bool", "--set", "/apps/nautilus/preferences/media_automount", "false", ]
+               executeCommand(GCONF_CMD, args)
+         args = [ "--get", "/apps/nautilus/preferences/media_automount_open", ]
+         (result, output) = executeCommand(GCONF_CMD, args, returnOutput=True)
+         if result == 0:
+            self.orig_media_automount_open = output[0][:-1]  # should be either "true" or "false"
+            if self.orig_media_automount_open == "true":
+               args = [ "--type", "bool", "--set", "/apps/nautilus/preferences/media_automount_open", "false", ]
+               executeCommand(GCONF_CMD, args)
+
+   def enableGnomeAutomount(self):
+      """
+      Resets GNOME auto-mounting options back to their state prior to disableGnomeAutomount().
+      """
+      if self.orig_media_automount == "true":
+         args = [ "--type", "bool", "--set", "/apps/nautilus/preferences/media_automount", "true", ]
+         executeCommand(GCONF_CMD, args)
+      if self.orig_media_automount_open == "true":
+         args = [ "--type", "bool", "--set", "/apps/nautilus/preferences/media_automount_open", "true", ]
+         executeCommand(GCONF_CMD, args)
 
 
    ###################
