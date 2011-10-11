@@ -369,7 +369,8 @@ def failUnlessAssignRaises(testCase, exception, obj, prop, value):
       exec "obj.%s = value" % prop    # pylint: disable=W0122
       missed = True
    except exception: pass
-   except Exception, e: instead = e
+   except Exception, e: 
+      instead = e
    if missed:
       testCase.fail("Expected assignment to raise %s, but got no exception." % (exception.__name__))
    if instead is not None:
