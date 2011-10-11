@@ -1312,7 +1312,7 @@ class CollectDir(object):
 
    def __init__(self, absolutePath=None, collectMode=None, archiveMode=None, ignoreFile=None,
                 absoluteExcludePaths=None, relativeExcludePaths=None, excludePatterns=None,
-                linkDepth=None, dereference=False):
+                linkDepth=None, dereference=False, recursionLevel=None):
       """
       Constructor for the C{CollectDir} class.
 
@@ -1334,6 +1334,7 @@ class CollectDir(object):
       self._ignoreFile = None
       self._linkDepth = None
       self._dereference = None
+      self._recursionLevel = None
       self._absoluteExcludePaths = None
       self._relativeExcludePaths = None
       self._excludePatterns = None
@@ -1343,6 +1344,7 @@ class CollectDir(object):
       self.ignoreFile = ignoreFile
       self.linkDepth = linkDepth
       self.dereference = dereference
+      self.recursionLevel = recursionLevel
       self.absoluteExcludePaths = absoluteExcludePaths
       self.relativeExcludePaths = relativeExcludePaths
       self.excludePatterns = excludePatterns
@@ -1351,12 +1353,13 @@ class CollectDir(object):
       """
       Official string representation for class instance.
       """
-      return "CollectDir(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.absolutePath, self.collectMode, 
-                                                                 self.archiveMode, self.ignoreFile, 
-                                                                 self.absoluteExcludePaths, 
-                                                                 self.relativeExcludePaths, 
-                                                                 self.excludePatterns, 
-                                                                 self.linkDepth, self.dereference)
+      return "CollectDir(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.absolutePath, self.collectMode, 
+                                                                     self.archiveMode, self.ignoreFile, 
+                                                                     self.absoluteExcludePaths, 
+                                                                     self.relativeExcludePaths, 
+                                                                     self.excludePatterns, 
+                                                                     self.linkDepth, self.dereference,
+                                                                     self.recursionLevel)
 
    def __str__(self):
       """
@@ -1400,6 +1403,11 @@ class CollectDir(object):
             return 1 
       if self.dereference != other.dereference: 
          if self.dereference < other.dereference: 
+            return -1
+         else:
+            return 1 
+      if self.recursionLevel != other.recursionLevel: 
+         if self.recursionLevel < other.recursionLevel: 
             return -1
          else:
             return 1 
@@ -1529,6 +1537,27 @@ class CollectDir(object):
       """
       return self._dereference
 
+   def _setRecursionLevel(self, value):
+      """
+      Property target used to set the recursionLevel.
+      The value must be an integer.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is None:
+         self._recursionLevel = None
+      else:
+         try:
+            value = int(value)
+         except TypeError:
+            raise ValueError("Recusion level value must be an integer.")
+         self._recursionLevel = value
+
+   def _getRecursionLevel(self):
+      """
+      Property target used to get the action recursionLevel.
+      """
+      return self._recursionLevel
+
    def _setAbsoluteExcludePaths(self, value):
       """
       Property target used to set the absolute exclude paths list.
@@ -1602,6 +1631,7 @@ class CollectDir(object):
    ignoreFile = property(_getIgnoreFile, _setIgnoreFile, None, doc="Overridden ignore file name for this directory.")
    linkDepth = property(_getLinkDepth, _setLinkDepth, None, doc="Maximum at which soft links should be followed.")
    dereference = property(_getDereference, _setDereference, None, doc="Whether to dereference links that are followed.")
+   recursionLevel = property(_getRecursionLevel, _setRecursionLevel, None, "Recursion level to use for recursive directory collection")
    absoluteExcludePaths = property(_getAbsoluteExcludePaths, _setAbsoluteExcludePaths, None, "List of absolute paths to exclude.")
    relativeExcludePaths = property(_getRelativeExcludePaths, _setRelativeExcludePaths, None, "List of relative paths to exclude.")
    excludePatterns = property(_getExcludePatterns, _setExcludePatterns, None, "List of regular expression patterns to exclude.")
@@ -2934,12 +2964,12 @@ class CollectConfig(object):
 
    @sort: __init__, __repr__, __str__, __cmp__, targetDir, 
           collectMode, archiveMode, ignoreFile, absoluteExcludePaths, 
-          excludePatterns, collectFiles, collectDirs, recursionLevel
+          excludePatterns, collectFiles, collectDirs
    """
 
    def __init__(self, targetDir=None, collectMode=None, archiveMode=None, ignoreFile=None,
                 absoluteExcludePaths=None, excludePatterns=None, collectFiles=None, 
-                collectDirs=None, recursionLevel=None):
+                collectDirs=None):
       """
       Constructor for the C{CollectConfig} class.
 
@@ -2951,7 +2981,6 @@ class CollectConfig(object):
       @param excludePatterns: List of regular expression patterns to exclude.
       @param collectFiles: List of collect files.
       @param collectDirs: List of collect directories.
-      @param recursionLevel: Recursion level to use for recursive directory collection
 
       @raise ValueError: If one of the values is invalid.
       """
@@ -2963,7 +2992,6 @@ class CollectConfig(object):
       self._excludePatterns = None
       self._collectFiles = None
       self._collectDirs = None
-      self._recursionLevel = None
       self.targetDir = targetDir
       self.collectMode = collectMode
       self.archiveMode = archiveMode
@@ -2972,16 +3000,14 @@ class CollectConfig(object):
       self.excludePatterns = excludePatterns
       self.collectFiles = collectFiles
       self.collectDirs = collectDirs
-      self.recursionLevel = recursionLevel
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "CollectConfig(%s, %s, %s, %s, %s, %s, %s, %s, %s)" % (self.targetDir, self.collectMode, self.archiveMode, 
-                                                                    self.ignoreFile, self.absoluteExcludePaths,
-                                                                    self.excludePatterns, self.collectFiles, 
-                                                                    self.collectDirs, self.recursionLevel)
+      return "CollectConfig(%s, %s, %s, %s, %s, %s, %s, %s)" % (self.targetDir, self.collectMode, self.archiveMode, 
+                                                                self.ignoreFile, self.absoluteExcludePaths,
+                                                                self.excludePatterns, self.collectFiles, self.collectDirs)
   
    def __str__(self):
       """
@@ -3035,11 +3061,6 @@ class CollectConfig(object):
             return 1
       if self.collectDirs != other.collectDirs:
          if self.collectDirs < other.collectDirs:
-            return -1
-         else:
-            return 1
-      if self.recursionLevel != other.recursionLevel:
-         if self.recursionLevel < other.recursionLevel:
             return -1
          else:
             return 1
@@ -3207,27 +3228,6 @@ class CollectConfig(object):
       """
       return self._collectDirs
 
-   def _setRecursionLevel(self, value):
-      """
-      Property target used to set the recursionLevel.
-      The value must be an integer.
-      @raise ValueError: If the value is not valid.
-      """
-      if value is None:
-         self._recursionLevel = None
-      else:
-         try:
-            value = int(value)
-         except TypeError:
-            raise ValueError("Recusion level value must be an integer.")
-         self._recursionLevel = value
-
-   def _getRecursionLevel(self):
-      """
-      Property target used to get the action recursionLevel.
-      """
-      return self._recursionLevel
-
    targetDir = property(_getTargetDir, _setTargetDir, None, "Directory to collect files into.")
    collectMode = property(_getCollectMode, _setCollectMode, None, "Default collect mode.")
    archiveMode = property(_getArchiveMode, _setArchiveMode, None, "Default archive mode for collect files.")
@@ -3236,7 +3236,6 @@ class CollectConfig(object):
    excludePatterns = property(_getExcludePatterns, _setExcludePatterns, None, "List of regular expressions patterns to exclude.")
    collectFiles = property(_getCollectFiles, _setCollectFiles, None, "List of collect files.")
    collectDirs = property(_getCollectDirs, _setCollectDirs, None, "List of collect directories.")
-   recursionLevel = property(_getRecursionLevel, _setRecursionLevel, None, "Recursion level to use for recursive directory collection")
 
 
 ########################################################################
@@ -4485,7 +4484,6 @@ class Config(object):
          collectMode          //cb_config/collect/collect_mode
          archiveMode          //cb_config/collect/archive_mode
          ignoreFile           //cb_config/collect/ignore_file
-         recursionLevel       //cb_config/collect/recursion_level
 
       We also read groups of the following items, one list element per
       item::
@@ -4512,7 +4510,6 @@ class Config(object):
          collect.collectMode = readString(sectionNode, "collect_mode")
          collect.archiveMode = readString(sectionNode, "archive_mode")
          collect.ignoreFile = readString(sectionNode, "ignore_file")
-         collect.recursionLevel = readInteger(sectionNode, "recursion_level")
          (collect.absoluteExcludePaths, unused, collect.excludePatterns) = Config._parseExclusions(sectionNode)
          collect.collectFiles = Config._parseCollectFiles(sectionNode)
          collect.collectDirs = Config._parseCollectDirs(sectionNode)
@@ -4787,6 +4784,7 @@ class Config(object):
          ignoreFile              ignore_file
          linkDepth               link_depth
          dereference             dereference
+         recursionLevel          recursion_level
 
       The collect mode is a special case.  Just a C{mode} tag is accepted for
       backwards compatibility, but we prefer C{collect_mode} for consistency
@@ -4819,6 +4817,7 @@ class Config(object):
             cdir.ignoreFile = readString(entry, "ignore_file")
             cdir.linkDepth = readInteger(entry, "link_depth")
             cdir.dereference = readBoolean(entry, "dereference")
+            cdir.recursionLevel = readInteger(entry, "recursion_level")
             (cdir.absoluteExcludePaths, cdir.relativeExcludePaths, cdir.excludePatterns) = Config._parseExclusions(entry)
             lst.append(cdir)
       if lst == []:
@@ -5144,7 +5143,6 @@ class Config(object):
          collectMode          //cb_config/collect/collect_mode
          archiveMode          //cb_config/collect/archive_mode
          ignoreFile           //cb_config/collect/ignore_file
-         recursionLevel       //cb_config/collect/recursion_level
 
       We also add groups of the following items, one list element per
       item::
@@ -5169,7 +5167,6 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "collect_mode", collectConfig.collectMode)
          addStringNode(xmlDom, sectionNode, "archive_mode", collectConfig.archiveMode)
          addStringNode(xmlDom, sectionNode, "ignore_file", collectConfig.ignoreFile)
-         addStringNode(xmlDom, sectionNode, "recursion_level", collectConfig.recursionLevel)
          if ((collectConfig.absoluteExcludePaths is not None and collectConfig.absoluteExcludePaths != []) or
              (collectConfig.excludePatterns is not None and collectConfig.excludePatterns != [])):
             excludeNode = addContainerNode(xmlDom, sectionNode, "exclude")
@@ -5422,6 +5419,7 @@ class Config(object):
          ignoreFile              dir/ignore_file
          linkDepth               dir/link_depth
          dereference             dir/dereference
+         recursionLevel          dir/recursion_level
    
       Note that an original XML document might have listed the collect mode
       using the C{mode} tag, since we accept both C{collect_mode} and C{mode}.
@@ -5451,6 +5449,7 @@ class Config(object):
          addStringNode(xmlDom, sectionNode, "ignore_file", collectDir.ignoreFile)
          addIntegerNode(xmlDom, sectionNode, "link_depth", collectDir.linkDepth)
          addBooleanNode(xmlDom, sectionNode, "dereference", collectDir.dereference)
+         addIntegerNode(xmlDom, sectionNode, "recursion_level", collectDir.recursionLevel)
          if ((collectDir.absoluteExcludePaths is not None and collectDir.absoluteExcludePaths != []) or
              (collectDir.relativeExcludePaths is not None and collectDir.relativeExcludePaths != []) or
              (collectDir.excludePatterns is not None and collectDir.excludePatterns != [])):

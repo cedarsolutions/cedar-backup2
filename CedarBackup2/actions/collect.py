@@ -208,7 +208,7 @@ def _collectDirectory(config, absolutePath, collectMode, archiveMode,
    @param excludePatterns: List of patterns to exclude.
    @param recursionLevel: Recursion level (zero for no recursion)
    """
-   if recursionLevel  == 0:
+   if recursionLevel == 0:
       # Collect the actual directory because we're at recursion level 0
       logger.info("Collecting directory [%s]" % absolutePath)
       tarfilePath = _getTarfilePath(config, absolutePath, archiveMode)
