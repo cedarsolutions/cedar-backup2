@@ -1404,7 +1404,7 @@
                   </para>
                   <para>
                      This field is optional.  if it doesn't exist, the backup
-                     will use the default list recursion level of zero.
+                     will use the default recursion level of zero.
                   </para>
                   <para>
                      <emphasis>Restrictions:</emphasis> Must be an integer.
