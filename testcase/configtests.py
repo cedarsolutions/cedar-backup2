@@ -9,7 +9,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2008,2010 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008,2010,2011 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -2439,6 +2439,7 @@ class TestCollectDir(unittest.TestCase):
       self.failUnlessEqual(None, collectDir.ignoreFile)
       self.failUnlessEqual(None, collectDir.linkDepth)
       self.failUnlessEqual(False, collectDir.dereference)
+      self.failUnlessEqual(None, collectDir.recursionLevel)
       self.failUnlessEqual(None, collectDir.absoluteExcludePaths)
       self.failUnlessEqual(None, collectDir.relativeExcludePaths)
       self.failUnlessEqual(None, collectDir.excludePatterns)
@@ -2447,13 +2448,14 @@ class TestCollectDir(unittest.TestCase):
       """
       Test constructor with all values filled in, with valid values.
       """
-      collectDir = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 2, True)
+      collectDir = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 2, True, 6)
       self.failUnlessEqual("/etc/whatever", collectDir.absolutePath)
       self.failUnlessEqual("incr", collectDir.collectMode)
       self.failUnlessEqual("tar", collectDir.archiveMode)
       self.failUnlessEqual(".ignore", collectDir.ignoreFile)
       self.failUnlessEqual(2, collectDir.linkDepth)
       self.failUnlessEqual(True, collectDir.dereference)
+      self.failUnlessEqual(6, collectDir.recursionLevel)
       self.failUnlessEqual([], collectDir.absoluteExcludePaths)
       self.failUnlessEqual([], collectDir.relativeExcludePaths)
       self.failUnlessEqual([], collectDir.excludePatterns)
@@ -2845,6 +2847,33 @@ class TestCollectDir(unittest.TestCase):
       collectDir.dereference = 3
       self.failUnlessEqual(True, collectDir.dereference)
 
+   def testConstructor_042(self):
+      """
+      Test assignment of recursionLevel attribute, None value.
+      """
+      collectDir = CollectDir(recursionLevel=1)
+      self.failUnlessEqual(1, collectDir.recursionLevel)
+      collectDir.recursionLevel = None
+      self.failUnlessEqual(None, collectDir.recursionLevel)
+
+   def testConstructor_043(self):
+      """
+      Test assignment of recursionLevel attribute, valid value.
+      """
+      collectDir = CollectDir()
+      self.failUnlessEqual(None, collectDir.recursionLevel)
+      collectDir.recursionLevel = 1
+      self.failUnlessEqual(1, collectDir.recursionLevel)
+
+   def testConstructor_044(self):
+      """
+      Test assignment of recursionLevel attribute, invalid value.
+      """
+      collectDir = CollectDir()
+      self.failUnlessEqual(None, collectDir.recursionLevel)
+      self.failUnlessAssignRaises(ValueError, collectDir, "recursionLevel", "ken")
+      self.failUnlessEqual(None, collectDir.recursionLevel)
+
 
    ############################
    # Test comparison operators
@@ -2869,8 +2898,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two identical objects, all attributes non-None (empty
       lists).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
       self.failUnless(collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -2883,8 +2912,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two identical objects, all attributes non-None
       (non-empty lists).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one", ], ["two", ], ["three", ], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one", ], ["two", ], ["three", ], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one", ], ["two", ], ["three", ], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/one", ], ["two", ], ["three", ], 1, True, 6)
       self.failUnless(collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
       self.failUnless(collectDir1 <= collectDir2)
@@ -2910,8 +2939,8 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, absolutePath differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
-      collectDir2 = CollectDir("/stuff", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/stuff", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -2938,8 +2967,8 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, collectMode differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "daily", "tar", ".ignore", [], [], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "daily", "tar", ".ignore", [], [], [], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -2966,8 +2995,8 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, archiveMode differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "targz", ".ignore", [], [], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "targz", ".ignore", [], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -2994,8 +3023,8 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, ignoreFile differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -3039,8 +3068,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, absoluteExcludePaths differs
       (one empty, one not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/whatever", ], [], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/whatever", ], [], [], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -3054,8 +3083,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, absoluteExcludePaths differs
       (both not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", ], [], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", "/something", ], [], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", ], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", ["/stuff", "/something", ], [], [], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)     # note: different than standard due to unsorted list
@@ -3099,8 +3128,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, relativeExcludePaths differs
       (one empty, one not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -3114,8 +3143,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, relativeExcludePaths differs
       (both not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["two", ], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["one", ], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], ["two", ], [], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -3159,8 +3188,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, excludePatterns differs (one
       empty, one not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["pattern", ], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["pattern", ], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -3174,8 +3203,8 @@ class TestCollectDir(unittest.TestCase):
       Test comparison of two differing objects, excludePatterns differs (both
       not empty).
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p1", ], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p2", ], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p1", ], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", ".ignore", [], [], ["p2", ], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(collectDir1 < collectDir2)
@@ -3202,8 +3231,8 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, linkDepth differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 2, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 2, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True, 6)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -3230,8 +3259,36 @@ class TestCollectDir(unittest.TestCase):
       """
       Test comparison of two differing objects, dereference differs.
       """
-      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True)
-      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, False)
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, False, 6)
+      self.failIfEqual(collectDir1, collectDir2)
+      self.failUnless(not collectDir1 == collectDir2)
+      self.failUnless(not collectDir1 < collectDir2)
+      self.failUnless(not collectDir1 <= collectDir2)
+      self.failUnless(collectDir1 > collectDir2)
+      self.failUnless(collectDir1 >= collectDir2)
+      self.failUnless(collectDir1 != collectDir2)
+
+   def testComparison_028(self):
+      """
+      Test comparison of two differing objects, recursionLevel differs (one None).
+      """
+      collectDir1 = CollectDir()
+      collectDir2 = CollectDir(recursionLevel=1)
+      self.failIfEqual(collectDir1, collectDir2)
+      self.failUnless(not collectDir1 == collectDir2)
+      self.failUnless(collectDir1 < collectDir2)
+      self.failUnless(collectDir1 <= collectDir2)
+      self.failUnless(not collectDir1 > collectDir2)
+      self.failUnless(not collectDir1 >= collectDir2)
+      self.failUnless(collectDir1 != collectDir2)
+
+   def testComparison_029(self):
+      """
+      Test comparison of two differing objects, recursionLevel differs.
+      """
+      collectDir1 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True, 6)
+      collectDir2 = CollectDir("/etc/whatever", "incr", "tar", "ignore", [], [], [], 1, True, 5)
       self.failIfEqual(collectDir1, collectDir2)
       self.failUnless(not collectDir1 == collectDir2)
       self.failUnless(not collectDir1 < collectDir2)
@@ -11256,7 +11313,6 @@ class TestConfig(unittest.TestCase):
       config = Config(xmlPath=path, validate=False)
       expected = Config()
       expected.collect = CollectConfig("/opt/backup/collect", "daily", "targz", ".cbignore")
-      expected.collect.recursionLevel = 1
       expected.collect.absoluteExcludePaths = ["/etc/cback.conf", "/etc/X11", ]
       expected.collect.excludePatterns = [".*tmp.*", ".*\.netscape\/.*", ]
       expected.collect.collectFiles = []
@@ -11264,7 +11320,7 @@ class TestConfig(unittest.TestCase):
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.kshrc", collectMode="weekly"))
       expected.collect.collectFiles.append(CollectFile(absolutePath="/home/root/.aliases", collectMode="daily", archiveMode="tarbz2"))
       expected.collect.collectDirs = []
-      expected.collect.collectDirs.append(CollectDir(absolutePath="/root"))
+      expected.collect.collectDirs.append(CollectDir(absolutePath="/root", recursionLevel=1))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/tmp", linkDepth=3))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/ken", linkDepth=1, dereference=True))
       expected.collect.collectDirs.append(CollectDir(absolutePath="/var/log", collectMode="incr"))
