@@ -724,7 +724,7 @@ class FilesystemList(list):
 # SpanItem class definition
 ########################################################################
 
-class SpanItem(object): # pylint: disable-msg=R0903
+class SpanItem(object): # pylint: disable=R0903
    """
    Item returned by L{BackupFileList.generateSpan}.
    """
@@ -745,7 +745,7 @@ class SpanItem(object): # pylint: disable-msg=R0903
 # BackupFileList class definition
 ########################################################################
 
-class BackupFileList(FilesystemList): # pylint: disable-msg=R0904
+class BackupFileList(FilesystemList): # pylint: disable=R0904
 
    ######################
    # Class documentation
@@ -911,7 +911,7 @@ class BackupFileList(FilesystemList): # pylint: disable-msg=R0904
       @return: ASCII-safe SHA digest for the file.
       @raise OSError: If the file cannot be opened.
       """
-      # pylint: disable-msg=C0103
+      # pylint: disable=C0103
       try:
          import hashlib
          s = hashlib.sha1()
@@ -1097,7 +1097,7 @@ class BackupFileList(FilesystemList): # pylint: disable-msg=R0904
       @raise ValueError: If the path could not be encoded properly.
       @raise TarError: If there is a problem creating the tar file
       """
-      # pylint: disable-msg=E1101
+      # pylint: disable=E1101
       path = encodePath(path)
       if len(self) == 0: raise ValueError("Empty list cannot be used to generate tarfile.")
       if(mode == 'tar'): tarmode = "w:"
@@ -1228,7 +1228,7 @@ class BackupFileList(FilesystemList): # pylint: disable-msg=R0904
 # PurgeItemList class definition
 ########################################################################
 
-class PurgeItemList(FilesystemList): # pylint: disable-msg=R0904
+class PurgeItemList(FilesystemList): # pylint: disable=R0904
 
    ######################
    # Class documentation

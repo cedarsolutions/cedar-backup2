@@ -2,7 +2,7 @@
 # Sort the output of 'svn list --verbose' on a tags directory, by version
 # The output is assumed to be piped in.
 
-# pylint: disable-msg=C0111,C0103
+# pylint: disable=C0111,C0103
 
 import sys
 import re

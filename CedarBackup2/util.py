@@ -83,7 +83,7 @@ import os
 import re
 import time
 import logging
-import string  # pylint: disable-msg=W0402
+import string  # pylint: disable=W0402
 from subprocess import Popen, STDOUT, PIPE
 
 from CedarBackup2.release import VERSION, DATE
@@ -639,7 +639,7 @@ class DirectedGraph(object):
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
-      # pylint: disable-msg=W0212
+      # pylint: disable=W0212
       if other is None:
          return 1
       if self.name != other.name:
@@ -803,7 +803,7 @@ class PathResolverSingleton(object):
       def __init__(self):
          pass
       def __call__(self, *args, **kw):
-         # pylint: disable-msg=W0212,R0201
+         # pylint: disable=W0212,R0201
          if PathResolverSingleton._instance is None:
             obj = PathResolverSingleton()
             PathResolverSingleton._instance = obj
@@ -878,7 +878,7 @@ class Diagnostics(object):
 
    @sort: __init__, __repr__, __str__
    """
-   # pylint: disable-msg=R0201
+   # pylint: disable=R0201
 
    def __init__(self):
       """
@@ -988,7 +988,7 @@ class Diagnostics(object):
       try:
          if sys.platform.startswith("win"):
             windowsPlatforms = [ "Windows 3.1", "Windows 95/98/ME", "Windows NT/2000/XP", "Windows CE", ]
-            wininfo = sys.getwindowsversion()  # pylint: disable-msg=E1101
+            wininfo = sys.getwindowsversion()  # pylint: disable=E1101
             winversion = "%d.%d.%d" % (wininfo[0], wininfo[1], wininfo[2])
             winplatform = windowsPlatforms[wininfo[3]]
             wintext = wininfo[4]  # i.e. "Service Pack 2"

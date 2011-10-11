@@ -129,7 +129,7 @@ class MysqlConfig(object):
    @sort: __init__, __repr__, __str__, __cmp__, user, password, all, databases
    """
 
-   def __init__(self, user=None, password=None, compressMode=None, all=None, databases=None):  # pylint: disable-msg=W0622
+   def __init__(self, user=None, password=None, compressMode=None, all=None, databases=None):  # pylint: disable=W0622
       """
       Constructor for the C{MysqlConfig} class.
       

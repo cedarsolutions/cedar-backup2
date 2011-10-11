@@ -377,7 +377,7 @@ class _ActionItem(object):
       logger.debug("Calling action function [%s], execution index [%d]" % (name, self.index))
       self.function(configPath, options, config)
 
-   def _executeHook(self, type, hook):  # pylint: disable-msg=W0622,R0201
+   def _executeHook(self, type, hook):  # pylint: disable=W0622,R0201
       """
       Executes a hook command via L{util.executeCommand()}.
       @param type: String describing the type of hook, for logging.

@@ -70,7 +70,7 @@ import tarfile
 import time
 import getpass
 import random
-import string # pylint: disable-msg=W0402
+import string # pylint: disable=W0402
 import platform
 import logging
 from StringIO import StringIO
@@ -234,7 +234,7 @@ def extractTar(tmpdir, filepath):
    @param filepath: Path to tarfile to extract.
    @raise ValueError: If a path cannot be encoded properly.
    """
-   # pylint: disable-msg=E1101
+   # pylint: disable=E1101
    tmpdir = encodePath(tmpdir)
    filepath = encodePath(filepath)
    tar = tarfile.open(filepath)
@@ -366,7 +366,7 @@ def failUnlessAssignRaises(testCase, exception, obj, prop, value):
    missed = False
    instead = None
    try:
-      exec "obj.%s = value" % prop    # pylint: disable-msg=W0122
+      exec "obj.%s = value" % prop    # pylint: disable=W0122
       missed = True
    except exception: pass
    except Exception, e: instead = e
