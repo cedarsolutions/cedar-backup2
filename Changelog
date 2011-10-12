@@ -1,12 +1,14 @@
 Version 2.21.0    unreleased
 
+	* Update CREDITS file to consistently credit all contributers.
+	* Minor tweaks based on PyLint analysis (mostly config changes).
 	* Make ISO image unit tests more robust in writersutiltests.py.
 	  - Handle failures with unmount (wait 1 second and try again)
 	  - Programmatically disable (and re-enable) the GNOME auto-mounter 
 	* Implement configurable recursion for collect action.
 	  - Update collect.py to handle recursion (patch by Zoran Bosnjak)
 	  - Add new configuration item CollectDir.recursionLevel
-	  - Update user manual, CREDITS, etc. for new functionality
+	  - Update user manual to discuss new functionality
 
 Version 2.20.1    19 Oct 2010
 
