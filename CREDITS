@@ -32,11 +32,14 @@ Dmitry Rutsky.  Major contributions include the initial implementation for
 the optimized media blanking strategy as well as improvements to the DVD
 writer implementation.
 
-Zoran Bosnjak contributed changes to collect.py to implement recursive
-collect behavior based on recursion level.
-
 The PostgreSQL extension was contributed by Antoine Beaupre, based on
 the existing MySQL extension.
+
+Lukasz K. Nowak helped debug the split functionality and also provided
+patches for parts of the documentation.
+
+Zoran Bosnjak contributed changes to collect.py to implement recursive
+collect behavior based on recursion level.
 
 Minor code snippets derived from newsgroup and mailing list postings are
 not generally attributed unless I used someone else's source code verbatim.
