@@ -35,6 +35,6 @@ AUTHOR      = "Kenneth J. Pronovici"
 EMAIL       = "pronovic@ieee.org"
 COPYRIGHT   = "2004-2011"
 VERSION     = "2.21.0"
-DATE        = "unreleased"
+DATE        = "12 Oct 2011"
 URL         = "http://cedar-backup.sourceforge.net/"
 
