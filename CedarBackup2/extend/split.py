@@ -482,7 +482,7 @@ def _splitFile(sourcePath, splitSize, backupUser, backupGroup, removeSource=Fals
       (result, output) = executeCommand(command, args, returnOutput=True, ignoreStderr=False)
       if result != 0:
          raise IOError("Error [%d] calling split for [%s]." % (result, sourcePath))
-      pattern = re.compile(r"(creating file `)(%s)(.*)(')" % prefix)
+      pattern = re.compile(r"(creating file [`'])(%s)(.*)(')" % prefix)
       match = pattern.search(output[-1:][0])
       if match is None:
          raise IOError("Unable to parse output from split command.")
