@@ -22,10 +22,10 @@ Most of the source code in this project was written by Kenneth J.
 Pronovici.  Some portions have been based on other pieces of open-source
 software, as indicated in the source code itself.
 
-Unless otherwise indicated, all Cedar Backup source code is Copyright
-(c) 2004-2011 Kenneth J. Pronovici and is released under the GNU General
-Public License.  The contents of the GNU General Public License can be
-found in the LICENSE file, or can be downloaded from http://www.gnu.org/.
+Unless otherwise indicated, all Cedar Backup source code is Copyright (c)
+2004-2011,2013 Kenneth J. Pronovici and is released under the GNU General
+Public License, version 2.  The contents of the GNU General Public License
+can be found in the LICENSE file, or can be downloaded from http://www.gnu.org/.
 
 Various patches have been contributed to the Cedar Backup codebase by
 Dmitry Rutsky.  Major contributions include the initial implementation for
@@ -40,6 +40,9 @@ patches for parts of the documentation.
 
 Zoran Bosnjak contributed changes to collect.py to implement recursive
 collect behavior based on recursion level.
+
+Jan Medlock contributed patches to improve the manpage and to support
+recent versions of the /usr/bin/split command.
 
 Minor code snippets derived from newsgroup and mailing list postings are
 not generally attributed unless I used someone else's source code verbatim.
