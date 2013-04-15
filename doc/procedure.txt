@@ -6,6 +6,7 @@ Release Procedure
 - Run unit tests one last time (make test)
 - Run pychecker tests one last time (make check)
 - Build the source distributions (make distrib)
+- Run the util/release script for the right version
 
 - Copy source package to hcoop and install it
 - Copy source package to shell.sourceforge.net and install it
