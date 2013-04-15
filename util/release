@@ -1,7 +1,9 @@
 #!/bin/ksh
 # Sensibly creates a release label in Subversion.
 
-REPO=https://cedar-backup.svn.sourceforge.net/svnroot/cedar-backup/cedar-backup2
+echo "You'll have to enter your SF password a lot of times, sorry"
+
+REPO=svn+ssh://pronovic@svn.code.sf.net/p/cedar-backup/code/cedar-backup2
 
 if [[ $# != 1 || ${1} == "--help" ]]
 then
