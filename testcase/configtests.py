@@ -7851,13 +7851,14 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual(False, store.noEject)
       self.failUnlessEqual(None, store.blankBehavior)
       self.failUnlessEqual(None, store.refreshMediaDelay)
+      self.failUnlessEqual(None, store.ejectDelay)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
       behavior = BlankBehavior("weekly", "1.3")
-      store = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior, 12)
+      store = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior, 12, 13)
       self.failUnlessEqual("/source", store.sourceDir)
       self.failUnlessEqual("cdr-74", store.mediaType)
       self.failUnlessEqual("cdwriter", store.deviceType)
@@ -7870,6 +7871,7 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessEqual(True, store.noEject)
       self.failUnlessEqual(behavior, store.blankBehavior)
       self.failUnlessEqual(12, store.refreshMediaDelay)
+      self.failUnlessEqual(13, store.ejectDelay)
 
    def testConstructor_003(self):
       """
@@ -8306,6 +8308,40 @@ class TestStoreConfig(unittest.TestCase):
       self.failUnlessAssignRaises(ValueError, store, "refreshMediaDelay", CollectDir())
       self.failUnlessEqual(None, store.refreshMediaDelay)
 
+   def testConstructor_044(self):
+      """
+      Test assignment of ejectDelay attribute, None value.
+      """
+      store = StoreConfig(ejectDelay=4)
+      self.failUnlessEqual(4, store.ejectDelay)
+      store.ejectDelay = None
+      self.failUnlessEqual(None, store.ejectDelay)
+
+   def testConstructor_045(self):
+      """
+      Test assignment of ejectDelay attribute, valid value.
+      """
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.ejectDelay)
+      store.ejectDelay = 4
+      self.failUnlessEqual(4, store.ejectDelay)
+      store.ejectDelay = "12"
+      self.failUnlessEqual(12, store.ejectDelay)
+      store.ejectDelay = "0"
+      self.failUnlessEqual(None, store.ejectDelay)
+      store.ejectDelay = 0
+      self.failUnlessEqual(None, store.ejectDelay)
+
+   def testConstructor_046(self):
+      """
+      Test assignment of ejectDelay attribute, invalid value (not an integer).
+      """
+      store = StoreConfig()
+      self.failUnlessEqual(None, store.ejectDelay)
+      self.failUnlessAssignRaises(ValueError, store, "ejectDelay", "blech")
+      self.failUnlessEqual(None, store.ejectDelay)
+      self.failUnlessAssignRaises(ValueError, store, "ejectDelay", CollectDir())
+      self.failUnlessEqual(None, store.ejectDelay)
 
 
    ############################
@@ -8332,8 +8368,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failUnlessEqual(store1, store2)
       self.failUnless(store1 == store2)
       self.failUnless(not store1 < store2)
@@ -8362,8 +8398,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4)
-      store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source1", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source2", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8392,8 +8428,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdrw-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(not store1 < store2)
@@ -8436,8 +8472,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/hdd", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8466,8 +8502,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "ATA:0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8496,8 +8532,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, True, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8512,8 +8548,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False, True, True, True, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, False, True, True, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8528,8 +8564,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, False, True, True, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, False, True, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8544,8 +8580,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, False, True, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, False, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8560,8 +8596,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, False, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, False, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8591,8 +8627,8 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("daily", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior1, 4, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 4, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -8621,8 +8657,38 @@ class TestStoreConfig(unittest.TestCase):
       """
       behavior1 = BlankBehavior("weekly", "1.3")
       behavior2 = BlankBehavior("weekly", "1.3")
-      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, True, behavior1, 1)
-      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, True, behavior2, 4)
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, True, behavior1, 1, 5)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, True, behavior2, 4, 5)
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
+
+   def testComparison_022(self):
+      """
+      Test comparison of two differing objects, ejectDelay differs (one None).
+      """
+      store1 = StoreConfig()
+      store2 = StoreConfig(ejectDelay=3)
+      self.failIfEqual(store1, store2)
+      self.failUnless(not store1 == store2)
+      self.failUnless(store1 < store2)
+      self.failUnless(store1 <= store2)
+      self.failUnless(not store1 > store2)
+      self.failUnless(not store1 >= store2)
+      self.failUnless(store1 != store2)
+
+   def testComparison_023(self):
+      """
+      Test comparison of two differing objects, ejectDelay differs.
+      """
+      behavior1 = BlankBehavior("weekly", "1.3")
+      behavior2 = BlankBehavior("weekly", "1.3")
+      store1 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, True, behavior1, 4, 1)
+      store2 = StoreConfig("/source", "cdr-74", "cdwriter", "/dev/cdrw", "0,0,0", 1, True, True, True, True, behavior2, 4, 5)
       self.failIfEqual(store1, store2)
       self.failUnless(not store1 == store2)
       self.failUnless(store1 < store2)
@@ -11427,6 +11493,7 @@ class TestConfig(unittest.TestCase):
       expected.store.warnMidnite = True
       expected.store.noEject = True
       expected.store.refreshMediaDelay = 12
+      expected.store.ejectDelay = 13
       expected.store.blankBehavior = BlankBehavior()
       expected.store.blankBehavior.blankMode = "weekly"
       expected.store.blankBehavior.blankFactor = "1.3"
@@ -12416,6 +12483,7 @@ class TestConfig(unittest.TestCase):
       before.store.warnMidnite = True
       before.store.noEject = True
       before.store.refreshMediaDelay = 12
+      before.store.ejectDelay = 13
       self.failUnlessRaises(ValueError, before.extractXml, validate=True)
 
    def testExtractXml_028(self):
@@ -12434,6 +12502,7 @@ class TestConfig(unittest.TestCase):
       before.store.warnMidnite = True
       before.store.noEject = True
       before.store.refreshMediaDelay = 12
+      before.store.ejectDelay = 13
       beforeXml = before.extractXml(validate=False)
       after = Config(xmlData=beforeXml, validate=False)
       self.failUnlessEqual(before, after)

@@ -414,7 +414,7 @@ class CdWriter(object):
 
    def __init__(self, device, scsiId=None, driveSpeed=None, 
                 mediaType=MEDIA_CDRW_74, noEject=False, 
-                refreshMediaDelay=0, unittest=False):
+                refreshMediaDelay=0, ejectDelay=0, unittest=False):
       """
       Initializes a CD writer object.
 
@@ -458,6 +458,9 @@ class CdWriter(object):
       @param refreshMediaDelay: Refresh media delay to use, if any
       @type refreshMediaDelay: Number of seconds, an integer >= 0
 
+      @param ejectDelay: Eject delay to use, if any
+      @type ejectDelay: Number of seconds, an integer >= 0
+
       @param unittest: Turns off certain validations, for use in unit testing.
       @type unittest: Boolean true/false
 
@@ -473,6 +476,7 @@ class CdWriter(object):
       self._media = MediaDefinition(mediaType)
       self._noEject = noEject
       self._refreshMediaDelay = refreshMediaDelay
+      self._ejectDelay = ejectDelay
       if not unittest:
          (self._deviceType,
           self._deviceVendor,
@@ -567,6 +571,12 @@ class CdWriter(object):
       """
       return self._refreshMediaDelay
 
+   def _getEjectDelay(self):
+      """
+      Property target used to get the configured eject delay, in seconds.
+      """
+      return self._ejectDelay
+
    device = property(_getDevice, None, None, doc="Filesystem device name for this writer.")
    scsiId = property(_getScsiId, None, None, doc="SCSI id for the device, in the form C{[<method>:]scsibus,target,lun}.")
    hardwareId = property(_getHardwareId, None, None, doc="Hardware id for this writer, either SCSI id or device path.")
@@ -580,6 +590,7 @@ class CdWriter(object):
    deviceHasTray = property(_getDeviceHasTray, None, None, doc="Indicates whether the device has a media tray.")
    deviceCanEject = property(_getDeviceCanEject, None, None, doc="Indicates whether the device supports ejecting its media.")
    refreshMediaDelay = property(_getRefreshMediaDelay, None, None, doc="Refresh media delay, in seconds.")
+   ejectDelay = property(_getEjectDelay, None, None, doc="Eject delay, in seconds.")
 
 
    #################################################
@@ -808,15 +819,47 @@ class CdWriter(object):
 
       If the writer was constructed with C{noEject=True}, then this is a no-op.
 
+      Starting with Debian wheezy on my backup hardware, I started seeing
+      consistent problems with the eject command.  I couldn't tell whether
+      these problems were due to the device management system or to the new
+      kernel (3.2.0).  Initially, I saw simple eject failures, possibly because
+      I was opening and closing the tray too quickly.  I worked around that
+      behavior with the new ejectDelay flag.  
+      
+      Later, I sometimes ran into issues after writing an image to a disc:
+      eject would give errors like "unable to eject, last error: Inappropriate
+      ioctl for device".  Various sources online (like Ubuntu bug #875543)
+      suggested that the drive was being locked somehow, and that the
+      workaround was to run 'eject -i off' to unlock it.  Sure enough, that
+      fixed the problem for me, so now it's a normal error-handling strategy.
+
       @raise IOError: If there is an error talking to the device.
       """
       if not self._noEject:
          if self._deviceHasTray and self._deviceCanEject:
             args = CdWriter._buildOpenTrayArgs(self._device)
-            command = resolveCommand(EJECT_COMMAND)
-            result = executeCommand(command, args)[0]
+            result = executeCommand(EJECT_COMMAND, args)[0]
             if result != 0:
-               raise IOError("Error (%d) executing eject command to open tray." % result)
+               logger.debug("Eject failed; attempting kludge of unlocking the tray before retrying.")
+               self.unlockTray()
+               result = executeCommand(EJECT_COMMAND, args)[0]
+               if result != 0:
+                  raise IOError("Error (%d) executing eject command to open tray (failed even after unlocking tray)." % result)
+               logger.debug("Kludge was apparently successful.")
+            if self.ejectDelay is not None:
+               logger.debug("Per configuration, sleeping %d seconds after opening tray." % self.ejectDelay)
+               time.sleep(self.ejectDelay)
+
+   def unlockTray(self):
+      """
+      Unlocks the device's tray.
+      @raise IOError: If there is an error talking to the device.
+      """
+      args = CdWriter._buildUnlockTrayArgs(self._device)
+      command = resolveCommand(EJECT_COMMAND)
+      result = executeCommand(command, args)[0]
+      if result != 0:
+         raise IOError("Error (%d) executing eject command to unlock tray." % result)
 
    def closeTray(self):
       """
@@ -847,24 +890,25 @@ class CdWriter(object):
 
       Sometimes, a device gets confused about the state of its media.  Often,
       all it takes to solve the problem is to eject the media and then
-      immediately reload it.  (There is also a configurable refresh media delay
-      which can be applied after the tray is closed, for situations where this
-      makes a difference.)
+      immediately reload it.  (There are also configurable eject and refresh
+      media delays which can be applied, for situations where this makes a
+      difference.)
 
       This only works if the device has a tray and supports ejecting its media.
       We have no way to know if the tray is currently open or closed, so we
       just send the appropriate command and hope for the best.  If the device
       does not have a tray or does not support ejecting its media, then we do
-      nothing.  The configured delay still applies, though.
+      nothing.  The configured delays still apply, though.
 
       @raise IOError: If there is an error talking to the device.
       """
       self.openTray()
       self.closeTray()
+      self.unlockTray()  # on some systems, writing a disc leaves the tray locked, yikes!
       if self.refreshMediaDelay is not None:
          logger.debug("Per configuration, sleeping %d seconds to stabilize media state." % self.refreshMediaDelay)
          time.sleep(self.refreshMediaDelay)
-         logger.debug("Sleep is complete; hopefully media state is stable now.")
+      logger.debug("Media refresh complete; hopefully media state is stable now.")
 
    def writeImage(self, imagePath=None, newDisc=False, writeMulti=True):
       """
@@ -1123,6 +1167,23 @@ class CdWriter(object):
       @return: List suitable for passing to L{util.executeCommand} as C{args}.
       """
       args = []
+      args.append(device)
+      return args
+
+   @staticmethod
+   def _buildUnlockTrayArgs(device):
+      """
+      Builds a list of arguments to be passed to a C{eject} command.
+
+      The arguments will cause the C{eject} command to unlock the tray.
+
+      @param device: Filesystem device name for this writer, i.e. C{/dev/cdrw}.
+
+      @return: List suitable for passing to L{util.executeCommand} as C{args}.
+      """
+      args = []
+      args.append("-i")
+      args.append("off")
       args.append(device)
       return args
 
