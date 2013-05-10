@@ -1453,6 +1453,9 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
    @param returnOutput: Indicates whether to return the output of the command
    @type returnOutput: Boolean C{True} or C{False}
 
+   @param ignoreStderr: Whether stderr should be discarded
+   @type ignoreSdderr: Boolean True or False
+
    @param doNotLog: Indicates that output should not be logged.
    @type doNotLog: Boolean C{True} or C{False}
 
