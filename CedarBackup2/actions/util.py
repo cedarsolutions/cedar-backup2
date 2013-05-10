@@ -148,14 +148,15 @@ def createWriter(config):
    driveSpeed = config.store.driveSpeed
    noEject = config.store.noEject
    refreshMediaDelay = config.store.refreshMediaDelay
+   ejectDelay = config.store.ejectDelay
    deviceType = _getDeviceType(config)
    mediaType = _getMediaType(config)
    if deviceMounted(devicePath):
       raise IOError("Device [%s] is currently mounted." % (devicePath))
    if deviceType == "cdwriter":
-      return CdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject, refreshMediaDelay)
+      return CdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject, refreshMediaDelay, ejectDelay)
    elif deviceType == "dvdwriter":
-      return DvdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject, refreshMediaDelay)
+      return DvdWriter(devicePath, deviceScsiId, driveSpeed, mediaType, noEject, refreshMediaDelay, ejectDelay)
    else:
       raise ValueError("Device type [%s] is invalid." % deviceType)
 
@@ -270,6 +271,7 @@ def initializeMediaState(config):
       raise ValueError("Only rewritable media types can be initialized.")
    mediaLabel = buildMediaLabel()
    writer = createWriter(config)
+   writer.refreshMedia()
    writer.initializeImage(True, config.options.workingDir, mediaLabel) # always create a new disc
    tempdir = tempfile.mkdtemp(dir=config.options.workingDir)
    try:
