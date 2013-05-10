@@ -1,7 +1,8 @@
-Version 2.22.0    unreleased 
+Version 2.22.0    09 May 2013
 
 	* Add eject-related kludges to work around observed behavior.
-
+		* New config option eject_delay, to slow down open/close
+		* Unlock tray with 'eject -i off' to handle potential problems
 
 Version 2.21.1    21 Mar 2013
 
