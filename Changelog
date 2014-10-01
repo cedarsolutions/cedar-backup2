@@ -1,14 +1,18 @@
+Version 2.23.0    unreleased
+
+	* Add new extension amazons3, as a new store-type action.
+
 Version 2.22.0    09 May 2013
 
 	* Add eject-related kludges to work around observed behavior.
-		* New config option eject_delay, to slow down open/close
-		* Unlock tray with 'eject -i off' to handle potential problems
+	* New config option eject_delay, to slow down open/close
+	* Unlock tray with 'eject -i off' to handle potential problems
 
 Version 2.21.1    21 Mar 2013
 
 	* Apply patches provided by Jan Medlock as Debian bugs.
-		* Fix typo in manpage (showed -s instead of -D)
-		* Support output from latest /usr/bin/split (' vs. `)
+	* Fix typo in manpage (showed -s instead of -D)
+	* Support output from latest /usr/bin/split (' vs. `)
 
 Version 2.21.0    12 Oct 2011
 

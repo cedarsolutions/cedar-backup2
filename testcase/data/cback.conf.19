@@ -50,5 +50,12 @@
             <run_after>   one,  two,three,   four , five   , six,   seven,,eight    ,</run_after>
          </depends>
       </action>
+      <action>
+         <name>amazons3</name>
+         <module>CedarBackup2.extend.amazons3</module>
+         <function>executeAction</function>
+         <depends>
+         </depends>
+      </action>
    </extensions>
 </cb_config>

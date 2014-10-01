@@ -11271,6 +11271,9 @@ class TestConfig(unittest.TestCase):
                                                                                         afterList=["one", "two", "three",
                                                                                                    "four", "five", "six",
                                                                                                    "seven", "eight", ])))
+      expected.extensions.actions.append(ExtendedAction("amazons3", "CedarBackup2.extend.amazons3", "executeAction", 
+                                                        index=None, 
+                                                        dependencies=ActionDependencies()))
       self.failUnlessEqual(expected, config)
 
    def testParse_010(self):
