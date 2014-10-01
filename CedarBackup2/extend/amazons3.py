@@ -423,10 +423,10 @@ def _deriveS3BucketUrl(stagingDir, dailyDir, s3Bucket):
    @param s3Bucket: The Amazon S3 bucket to use as the target
    @return: S3 bucket URL, with no trailing slash
    """
-   subdir = dailyDir.replace("/opt/backup/staging", "")
+   subdir = dailyDir.replace(stagingDir, "")
    if subdir.startswith("/"):
       subdir = subdir[1:]
-   return "s3://%s/staging/%s" % (s3Bucket, dailyDir)
+   return "s3://%s/%s" % (s3Bucket, dailyDir)
 
 
 ##################################
