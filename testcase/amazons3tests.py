@@ -149,20 +149,23 @@ class TestAmazonS3Config(unittest.TestCase):
       Test constructor with no values filled in.
       """
       amazons3 =  AmazonS3Config()
+      self.failUnlessEqual(False, amazons3.warnMidnite)
       self.failUnlessEqual(None, amazons3.s3Bucket)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      amazons3 =  AmazonS3Config("bucket")
+      amazons3 =  AmazonS3Config(True, "bucket")
+      self.failUnlessEqual(True, amazons3.warnMidnite)
       self.failUnlessEqual("bucket", amazons3.s3Bucket)
 
    def testConstructor_003(self):
       """
       Test assignment of s3Bucket attribute, None value.
       """
-      amazons3 =  AmazonS3Config(s3Bucket="bucket")
+      amazons3 =  AmazonS3Config(warnMidnite=True, s3Bucket="bucket")
+      self.failUnlessEqual(True, amazons3.warnMidnite)
       self.failUnlessEqual("bucket", amazons3.s3Bucket)
       amazons3.s3Bucket = None
       self.failUnlessEqual(None, amazons3.s3Bucket)
@@ -184,6 +187,34 @@ class TestAmazonS3Config(unittest.TestCase):
       self.failUnlessEqual(None, amazons3.s3Bucket)
       self.failUnlessAssignRaises(ValueError, amazons3, "s3Bucket", "")
       self.failUnlessEqual(None, amazons3.s3Bucket)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of warnMidnite attribute, valid value (real boolean).
+      """
+      amazons3 =  AmazonS3Config()
+      self.failUnlessEqual(False, amazons3.warnMidnite)
+      amazons3.warnMidnite = True
+      self.failUnlessEqual(True, amazons3.warnMidnite)
+      amazons3.warnMidnite = False
+      self.failUnlessEqual(False, amazons3.warnMidnite)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of warnMidnite attribute, valid value (expression).
+      """
+      amazons3 =  AmazonS3Config()
+      self.failUnlessEqual(False, amazons3.warnMidnite)
+      amazons3.warnMidnite = 0
+      self.failUnlessEqual(False, amazons3.warnMidnite)
+      amazons3.warnMidnite = []
+      self.failUnlessEqual(False, amazons3.warnMidnite)
+      amazons3.warnMidnite = None
+      self.failUnlessEqual(False, amazons3.warnMidnite)
+      amazons3.warnMidnite = ['a']
+      self.failUnlessEqual(True, amazons3.warnMidnite)
+      amazons3.warnMidnite = 3
+      self.failUnlessEqual(True, amazons3.warnMidnite)
 
 
    ############################
@@ -236,8 +267,22 @@ class TestAmazonS3Config(unittest.TestCase):
       """
       Test comparison of two differing objects, s3Bucket differs.
       """
-      amazons31 = AmazonS3Config("bucket1")
-      amazons32 = AmazonS3Config("bucket2")
+      amazons31 = AmazonS3Config(True, "bucket1")
+      amazons32 = AmazonS3Config(True, "bucket2")
+      self.failIfEqual(amazons31, amazons32)
+      self.failUnless(not amazons31 == amazons32)
+      self.failUnless(amazons31 < amazons32)
+      self.failUnless(amazons31 <= amazons32)
+      self.failUnless(not amazons31 > amazons32)
+      self.failUnless(not amazons31 >= amazons32)
+      self.failUnless(amazons31 != amazons32)
+
+   def testComparison_005(self):
+      """
+      Test comparison of two differing objects, warnMidnite differs.
+      """
+      amazons31 = AmazonS3Config(warnMidnite=False)
+      amazons32 = AmazonS3Config(warnMidnite=True)
       self.failIfEqual(amazons31, amazons32)
       self.failUnless(not amazons31 == amazons32)
       self.failUnless(amazons31 < amazons32)
@@ -414,13 +459,13 @@ class TestLocalConfig(unittest.TestCase):
 
    def testComparison_004(self):
       """
-      Test comparison of two differing objects, s3Bucket  differs.
+      Test comparison of two differing objects, s3Bucket differs.
       """
       config1 = LocalConfig()
-      config1.amazons3 =  AmazonS3Config("bucket1")
+      config1.amazons3 =  AmazonS3Config(True, "bucket1")
 
       config2 = LocalConfig()
-      config2.amazons3 =  AmazonS3Config("bucket2")
+      config2.amazons3 =  AmazonS3Config(True, "bucket2")
 
       self.failIfEqual(config1, config2)
       self.failUnless(not config1 == config2)
@@ -464,7 +509,7 @@ class TestLocalConfig(unittest.TestCase):
       Test validate on a non-empty amazons3 section with valid values filled in.
       """
       config = LocalConfig()
-      config.amazons3 =  AmazonS3Config("bucket")
+      config.amazons3 =  AmazonS3Config(True, "bucket")
       config.validate()
 
 
@@ -493,9 +538,11 @@ class TestLocalConfig(unittest.TestCase):
       contents = open(path).read()
       config = LocalConfig(xmlPath=path, validate=False)
       self.failIfEqual(None, config.amazons3)
+      self.failUnlessEqual(True, config.amazons3.warnMidnite)
       self.failUnlessEqual("mybucket", config.amazons3.s3Bucket)
       config = LocalConfig(xmlData=contents, validate=False)
       self.failIfEqual(None, config.amazons3)
+      self.failUnlessEqual(True, config.amazons3.warnMidnite)
       self.failUnlessEqual("mybucket", config.amazons3.s3Bucket)
 
 
@@ -516,7 +563,7 @@ class TestLocalConfig(unittest.TestCase):
       """
       Test with values set.
       """
-      amazons3 =  AmazonS3Config("bucket")
+      amazons3 =  AmazonS3Config(True, "bucket")
       config = LocalConfig()
       config.amazons3 =  amazons3
       self.validateAddConfig(config)
