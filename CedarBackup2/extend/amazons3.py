@@ -79,7 +79,7 @@ import tempfile
 from CedarBackup2.util import resolveCommand, executeCommand
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
 from CedarBackup2.xmlutil import readFirstChild, readString
-from CedarBackup2.actions.util import findDailyDirs, writeIndicatorFile, getBackupFiles
+from CedarBackup2.actions.util import findDailyDirs, writeIndicatorFile
 
 
 ########################################################################
@@ -384,7 +384,7 @@ def executeAction(configPath, options, config):
    local = LocalConfig(xmlPath=configPath)
    dailyDirs = findDailyDirs(config.stage.targetDir, STORE_INDICATOR)
    for dailyDir in dailyDirs:
-      _storeDailyDir(dailyDir, local.amazons3.s3Bucket, config.options.backupUser, config.options.backupGroup)
+      _storeDailyDir(config.stage.targetDir, dailyDir, local.amazons3.s3Bucket)
       writeIndicatorFile(dailyDir, STORE_INDICATOR, config.options.backupUser, config.options.backupGroup)
    logger.info("Executed the amazons3 extended action successfully.")
 
@@ -397,14 +397,12 @@ def executeAction(configPath, options, config):
 # _storeDailyDir() function
 ############################
 
-def _storeDailyDir(stagingDir, dailyDir, s3Bucket, backupUser, backupGroup):
+def _storeDailyDir(stagingDir, dailyDir, s3Bucket):
    """
    Store the contents of a daily staging directory to a bucket in the Amazon S3 cloud.
    @param stagingDir: Configured staging directory (config.targetDir)
    @param dailyDir: Daily directory to store in the cloud
    @param s3Bucket: The Amazon S3 bucket to use as the target
-   @param backupUser: User that target files should be owned by
-   @param backupGroup: Group that target files should be owned by
    """
    s3BucketUrl = _deriveS3BucketUrl(stagingDir, dailyDir, s3Bucket)
    _clearExistingBackup(s3BucketUrl)
@@ -441,19 +439,20 @@ def _clearExistingBackup(s3BucketUrl):
    emptydir = tempfile.mkdtemp()
    try:
       command = resolveCommand(S3CMD_COMMAND)
-      args = [ "sync", "--no-encrypt", "--recursive", "--delete-removed", emptyDir + "/", s3BucketUrl + "/", ]
+      args = [ "sync", "--no-encrypt", "--recursive", "--delete-removed", emptydir + "/", s3BucketUrl + "/", ]
       result = executeCommand(command, args)[0]
       if result != 0:
          raise IOError("Error [%d] calling s3Cmd to clear existing backup [%s]." % (result, s3BucketUrl))
    finally:
-      os.rmdir(emptydir)
+      if os.path.exists(emptydir):
+         os.rmdir(emptydir)
 
 
 ############################
 # _writeDailyDir() function
 ############################
 
-def __writeDailyDir(dailyDir, s3BucketUrl):
+def _writeDailyDir(dailyDir, s3BucketUrl):
    """
    Write the daily directory out to the Amazon S3 cloud.
    @param dailyDir: Daily directory to store
