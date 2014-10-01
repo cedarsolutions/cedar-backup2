@@ -93,6 +93,134 @@
 
    <!-- ################################################################# -->
 
+   <sect1 id="cedar-extensions-amazons3">
+
+      <title>Amazon S3 Extension</title>
+
+      <para>
+         The Amazon S3 extension writes data to Amazon S3 cloud storage rather
+         than to physical media.  It is intended to replace the store action,
+         but you can also use it alongside the store action if you'd prefer to
+         backup your data in more than one place.  This extension must be run
+         after the stage action.
+      </para>
+
+      <para>
+         The underlying functionality relies on the 
+         <ulink url="http://s3tools.org/">Amazon S3 Tools</ulink> package.  It
+         is a very thin wrapper around the <literal>s3cmd put</literal>
+         command.  Before you use this extension, you need to set up your
+         Amazon S3 account and configure <literal>s3cmd</literal> as detailed
+         in the <ulink url="http://s3tools.org/s3cmd-howto">HOWTO</ulink>.
+         The extension assumes that the backup is being executed as root, and
+         switches over to the configured backup user to run the
+         <literal>s3cmd</literal> program.  So, make sure you configure the S3
+         tools as the backup user and not root.
+      </para>
+
+      <para>
+         When configuring the S3 tools connection to Amazon AWS, you probably want
+         to configure GPG encryption using a strong passphrase.  One way
+         to generate a strong passphrase is using your system random number generator,
+         i.e. <literal>dd if=/dev/urandom count=20 bs=1 | xxd -ps</literal>.  (See 
+         <ulink url="http://security.stackexchange.com/questions/14867/gpg-encryption-security">StackExchange</ulink>
+         for more details about that advice.) If you decide to use encryption, make sure
+         you save off the passphrase in a safe place, so you can get at your backup data
+         later if you need to.
+      </para>
+
+      <para>
+         This extension was written for and tested on Linux.  It will throw an exception
+         if run on Windows.
+      </para>
+
+      <para>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </para>
+      
+      <programlisting>
+&lt;extensions&gt; &lt;action&gt;
+   &lt;action&gt;
+      &lt;name&gt;amazons3&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.amazons3&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;201&lt;/index&gt; &lt;!-- just after stage --&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </programlisting>
+      
+      <para>
+         This extension relies on the options and staging configuration sections
+         in the standard Cedar Backup configuration file, and then also
+         requires its own <literal>amazons3</literal> configuration section.
+         This is an example configuration section:
+      </para> 
+
+      <programlisting>
+&lt;amazons3&gt;
+      &lt;s3_bucket&gt;example.com-backup/staging&lt;/s3_bucket&gt;
+&lt;/amazons3&gt;
+      </programlisting>
+
+      <para>
+         The following elements are part of the Amazon S3 configuration section:
+      </para>
+
+      <variablelist>
+
+         <varlistentry>
+            <term><literal>warn_midnite</literal></term>
+            <listitem>
+               <para>Whether to generate warnings for crossing midnite.</para>
+               <para>
+                  This field indicates whether warnings should be generated
+                  if the Amazon S3 operation has to cross a midnite boundary in
+                  order to find data to write to the cloud.  For instance, a
+                  warning would be generated if valid store data was only
+                  found in the day before or day after the current day.
+               </para>
+               <para>
+                  Configuration for some users is such that the store
+                  operation will always cross a midnite boundary, so they
+                  will not care about this warning.  Other users will expect
+                  to never cross a boundary, and want to be notified that
+                  something <quote>strange</quote> might have happened.
+               </para>
+               <para>
+                  This field is optional.  If it doesn't exist, then
+                  <literal>N</literal> will be assumed.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be a boolean (<literal>Y</literal> or <literal>N</literal>).
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>s3_bucket</literal></term>
+            <listitem>
+               <para>The name of the Amazon S3 bucket that data will be written to.</para>
+               <para>
+                  This field configures the S3 bucket that your data will be
+                  written to.  In S3, buckets are named globally.  For
+                  uniqueness, you would typically use the name of your domain
+                  followed by some suffix, such as <literal>example.com-backup</literal>.  
+                  If you want, you can specify a subdirectory within the bucket,
+                  such as <literal>example.com-backup/staging</literal>.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> Must be non-empty.
+               </para>
+            </listitem>
+         </varlistentry>
+
+      </variablelist>
+
+   </sect1>
+
+   <!-- ################################################################# -->
+
    <sect1 id="cedar-extensions-subversion">
 
       <title>Subversion Extension</title>
