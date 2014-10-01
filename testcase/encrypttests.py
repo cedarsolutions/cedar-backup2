@@ -87,9 +87,9 @@ Full vs. Reduced Tests
    want to run all of the tests, set ENCRYPTTESTS_FULL to "Y" in the environment.
 
    In this module, the primary dependency is that for some tests, GPG must have
-   access to the public key for "Kenneth J. Pronovici".  There is also an
-   assumption that GPG does I{not} have access to a public key for anyone named
-   "Bogus J. User" (so we can test failure scenarios).  
+   access to the public key EFD75934.  There is also an assumption that GPG
+   does I{not} have access to a public key for anyone named "Bogus J. User" (so
+   we can test failure scenarios).  
 
 @author Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -121,7 +121,7 @@ RESOURCES = [ "encrypt.conf.1", "encrypt.conf.2", "tree1.tar.gz", "tree2.tar.gz"
               "tree8.tar.gz", "tree15.tar.gz", "tree16.tar.gz", "tree17.tar.gz",
               "tree18.tar.gz", "tree19.tar.gz", "tree20.tar.gz", ]
 
-VALID_GPG_RECIPIENT = "Kenneth J. Pronovici"
+VALID_GPG_RECIPIENT = "EFD75934"
 INVALID_GPG_RECIPIENT = "Bogus J. User"
 
 INVALID_PATH = "bogus"  # This path name should never exist
