@@ -43,25 +43,28 @@ This extension requires a new configuration section <amazons3> and is intended
 to be run immediately after the standard stage action, replacing the standard
 store action.  Aside from its own configuration, it requires the options and
 staging configuration sections in the standard Cedar Backup configuration file.
+Since it is intended to replace the store action, it does not rely on any store
+configuration.
 
-This extension relies on the U{{Amazon S3Tools} <http://s3tools.org/>} package.
-It is a very thin wrapper around the C{s3cmd put} command.  Before you use this
-extension, you need to set up your Amazon S3 account and configure C{s3cmd} as
-detailed in the U{{HOWTO} <http://s3tools.org/s3cmd-howto>}.  The configured
-backup user will run the C{s3cmd} program, so make sure you configure S3 Tools
-as that user, and not root.
+The underlying functionality relies on the U{{Amazon S3Tools} <http://s3tools.org/>} 
+package.  It is a very thin wrapper around the C{s3cmd put} command.  Before
+you use this extension, you need to set up your Amazon S3 account and configure
+C{s3cmd} as detailed in the U{{HOWTO} <http://s3tools.org/s3cmd-howto>}.  The
+extension assumes that the backup is being executed as root, and switches over
+to the configured backup user to run the C{s3cmd} program.  So, make sure you
+configure S3 Tools as the backup user and not root.
 
 It's up to you how to configure the S3 Tools connection to Amazon, but I
-recommend that you configure GPG encrpytion using a strong passphrase.  One way
-to generate a strong passphrase is using your random number generator, i.e.
-C{dd if=/dev/urandom count=20 bs=1 | xxd -ps}.  (See U{{StackExchange}
+recommend that you configure GPG encryption using a strong passphrase.  One way
+to generate a strong passphrase is using your system random number generator,
+i.e.  C{dd if=/dev/urandom count=20 bs=1 | xxd -ps}.  (See U{{StackExchange}
 <http://security.stackexchange.com/questions/14867/gpg-encryption-security>}
-for more details about that advice.) If decide to use encryption, make sure you
-save off the passphrase in a safe place, so you can get at your backup data
+for more details about that advice.) If you decide to use encryption, make sure
+you save off the passphrase in a safe place, so you can get at your backup data
 later if you need to.
 
-This extension was written for and tested on Linux.  I do not expect it to
-work on non-UNIX platforms.
+This extension was written for and tested on Linux.  It will throw an exception
+if run on Windows.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
@@ -71,15 +74,18 @@ work on non-UNIX platforms.
 ########################################################################
 
 # System modules
+import sys
 import os
 import logging
 import tempfile
+import datetime
 
 # Cedar Backup modules
-from CedarBackup2.util import resolveCommand, executeCommand
+from CedarBackup2.util import resolveCommand, executeCommand, isRunningAsRoot
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
 from CedarBackup2.xmlutil import readFirstChild, readString
-from CedarBackup2.actions.util import findDailyDirs, writeIndicatorFile
+from CedarBackup2.actions.util import writeIndicatorFile
+from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR
 
 
 ########################################################################
@@ -88,7 +94,9 @@ from CedarBackup2.actions.util import findDailyDirs, writeIndicatorFile
 
 logger = logging.getLogger("CedarBackup2.log.extend.amazons3")
 
+SU_COMMAND    = [ "su" ]
 S3CMD_COMMAND = [ "s3cmd", ]
+
 STORE_INDICATOR = "cback.amazons3"
 
 
@@ -101,32 +109,35 @@ class AmazonS3Config(object):
    """
    Class representing Amazon S3 configuration.
 
-   Amazon S3 configuration is used for storing staging directories
-   in Amazon's cloud storage using the C{s3cmd} tool.
+   Amazon S3 configuration is used for storing backup data in Amazon's S3 cloud
+   storage using the C{s3cmd} tool.
 
    The following restrictions exist on data in this class:
 
       - The s3Bucket value must be a non-empty string
 
-   @sort: __init__, __repr__, __str__, __cmp__, s3Bucket
+   @sort: __init__, __repr__, __str__, __cmp__, warnMidnite, s3Bucket
    """
 
-   def __init__(self, s3Bucket=None):
+   def __init__(self, warnMidnite=None, s3Bucket=None):
       """
       Constructor for the C{AmazonS3Config} class.
 
       @param s3Bucket: Name of the Amazon S3 bucket in which to store the data
+      @param warnMidnite: Whether to generate warnings for crossing midnite.
 
       @raise ValueError: If one of the values is invalid.
       """
+      self._warnMidnite = None
       self._s3Bucket = None
+      self.warnMidnite = warnMidnite
       self.s3Bucket = s3Bucket
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "AmazonS3Config(%s)" % (self.s3Bucket)
+      return "AmazonS3Config(%s, %s)" % (self.warnMidnite, self.s3Bucket)
 
    def __str__(self):
       """
@@ -137,18 +148,38 @@ class AmazonS3Config(object):
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
-      Lists within this class are "unordered" for equality comparisons.
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
       if other is None:
          return 1
+      if self.warnMidnite != other.warnMidnite:
+         if self.warnMidnite < other.warnMidnite:
+            return -1
+         else:
+            return 1
       if self.s3Bucket != other.s3Bucket:
          if self.s3Bucket < other.s3Bucket:
             return -1
          else:
             return 1
       return 0
+
+   def _setWarnMidnite(self, value):
+      """
+      Property target used to set the midnite warning flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._warnMidnite = True
+      else:
+         self._warnMidnite = False
+
+   def _getWarnMidnite(self):
+      """
+      Property target used to get the midnite warning flag.
+      """
+      return self._warnMidnite
 
    def _setS3Bucket(self, value):
       """
@@ -165,7 +196,8 @@ class AmazonS3Config(object):
       """
       return self._s3Bucket
 
-   s3Bucket = property(_getS3Bucket, _setS3Bucket, None, doc="Amazon S3 Bucket")
+   warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
+   s3Bucket = property(_getS3Bucket, _setS3Bucket, None, doc="Amazon S3 Bucket in which to store data")
 
 
 ########################################################################
@@ -379,88 +411,165 @@ def executeAction(configPath, options, config):
    @raise IOError: If there are I/O problems reading or writing files
    """
    logger.debug("Executing amazons3 extended action.")
+   if not isRunningAsRoot():
+      logger.error("Error: the amazons3 extended action must be run as root.")
+      raise ValueError("The amazons3 extended action must be run as root.")
+   if sys.platform == "win32":
+      logger.error("Error: the amazons3 extended action is not supported on Windows.")
+      raise ValueError("The amazons3 extended action is not supported on Windows.")
    if config.options is None or config.stage is None:
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
-   dailyDirs = findDailyDirs(config.stage.targetDir, STORE_INDICATOR)
-   for dailyDir in dailyDirs:
-      _storeDailyDir(config.stage.targetDir, dailyDir, local.amazons3.s3Bucket)
-      writeIndicatorFile(dailyDir, STORE_INDICATOR, config.options.backupUser, config.options.backupGroup)
+   stagingDirs = _findCorrectDailyDir(options, config, local)
+   _writeToAmazonS3(config, local, stagingDirs)
+   _writeStoreIndicator(config, stagingDirs)
    logger.info("Executed the amazons3 extended action successfully.")
 
 
 ########################################################################
-# Utility functions
+# Private utility functions
 ########################################################################
 
-############################
-# _storeDailyDir() function
-############################
+#########################
+# _findCorrectDailyDir()
+#########################
 
-def _storeDailyDir(stagingDir, dailyDir, s3Bucket):
+def _findCorrectDailyDir(options, config, local):
    """
-   Store the contents of a daily staging directory to a bucket in the Amazon S3 cloud.
-   @param stagingDir: Configured staging directory (config.targetDir)
-   @param dailyDir: Daily directory to store in the cloud
-   @param s3Bucket: The Amazon S3 bucket to use as the target
+   Finds the correct daily staging directory to be written to Amazon S3.
+
+   This is substantially similar to the same function in store.py.  The
+   main difference is that it doesn't rely on store configuration at all.
+
+   @param options: Options object.
+   @param config: Config object.
+   @param local: Local config object.
+
+   @return: Correct staging dir, as a dict mapping directory to date suffix.
+   @raise IOError: If the staging directory cannot be found.
    """
-   s3BucketUrl = _deriveS3BucketUrl(stagingDir, dailyDir, s3Bucket)
-   _clearExistingBackup(s3BucketUrl)
-   _writeDailyDir(dailyDir, s3BucketUrl)
+   oneDay = datetime.timedelta(days=1)
+   today = datetime.date.today()
+   yesterday = today - oneDay
+   tomorrow = today + oneDay
+   todayDate = today.strftime(DIR_TIME_FORMAT)
+   yesterdayDate = yesterday.strftime(DIR_TIME_FORMAT)
+   tomorrowDate = tomorrow.strftime(DIR_TIME_FORMAT)
+   todayPath = os.path.join(config.stage.targetDir, todayDate)
+   yesterdayPath = os.path.join(config.stage.targetDir, yesterdayDate)
+   tomorrowPath = os.path.join(config.stage.targetDir, tomorrowDate)
+   todayStageInd = os.path.join(todayPath, STAGE_INDICATOR)
+   yesterdayStageInd = os.path.join(yesterdayPath, STAGE_INDICATOR)
+   tomorrowStageInd = os.path.join(tomorrowPath, STAGE_INDICATOR)
+   todayStoreInd = os.path.join(todayPath, STORE_INDICATOR)
+   yesterdayStoreInd = os.path.join(yesterdayPath, STORE_INDICATOR)
+   tomorrowStoreInd = os.path.join(tomorrowPath, STORE_INDICATOR)
+   if options.full:
+      if os.path.isdir(todayPath) and os.path.exists(todayStageInd):
+         logger.info("Amazon S3 process will use current day's staging directory [%s]" % todayPath)
+         return { todayPath:todayDate }
+      raise IOError("Unable to find staging directory to process (only tried today due to full option).")
+   else:
+      if os.path.isdir(todayPath) and os.path.exists(todayStageInd) and not os.path.exists(todayStoreInd):
+         logger.info("Amazon S3 process will use current day's staging directory [%s]" % todayPath)
+         return { todayPath:todayDate }
+      elif os.path.isdir(yesterdayPath) and os.path.exists(yesterdayStageInd) and not os.path.exists(yesterdayStoreInd):
+         logger.info("Amazon S3 process will use previous day's staging directory [%s]" % yesterdayPath)
+         if local.amazons3.warnMidnite:
+            logger.warn("Warning: Amazon S3 process crossed midnite boundary to find data.")
+         return { yesterdayPath:yesterdayDate }
+      elif os.path.isdir(tomorrowPath) and os.path.exists(tomorrowStageInd) and not os.path.exists(tomorrowStoreInd):
+         logger.info("Amazon S3 process will use next day's staging directory [%s]" % tomorrowPath)
+         if local.amazons3.warnMidnite:
+            logger.warn("Warning: Amazon S3 process crossed midnite boundary to find data.")
+         return { tomorrowPath:tomorrowDate }
+      raise IOError("Unable to find unused staging directory to process (tried today, yesterday, tomorrow).")
 
 
 ##############################
-# _deriveBucketUrl() function
+# _writeToAmazonS3() function
 ##############################
 
-def _deriveS3BucketUrl(stagingDir, dailyDir, s3Bucket):
+def _writeToAmazonS3(config, local, stagingDirs):
    """
-   Derive the correct bucket URL for a daily directory.
-   @param stagingDir: Configured staging directory (config.targetDir)
-   @param dailyDir: Daily directory to store
-   @param s3Bucket: The Amazon S3 bucket to use as the target
-   @return: S3 bucket URL, with no trailing slash
+   Writes the indicated staging directories to an Amazon S3 bucket.
+
+   Each of the staging directories listed in C{stagingDirs} will be written to
+   the configured Amazon S3 bucket from local configuration.  The directories
+   will be placed into the image at the root by date, so staging directory
+   C{/opt/stage/2005/02/10} will be placed into the S3 bucket at C{/2005/02/10}.  
+
+   @param config: Config object.
+   @param local: Local config object.
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+
+   @raise ValueError: Under many generic error conditions
+   @raise IOError: If there is a problem writing to Amazon S3
    """
-   subdir = dailyDir.replace(stagingDir, "")
-   if subdir.startswith("/"):
-      subdir = subdir[1:]
-   return "s3://%s/%s" % (s3Bucket, dailyDir)
+   for stagingDir in stagingDirs.keys():
+      logger.debug("Storing stage directory to Amazon S3 [%s]." % stagingDir)
+      dateSuffix = stagingDirs[stagingDir]
+      s3BucketUrl = "s3://%s/%s" % (local.amazons3.s3Bucket, dateSuffix)
+      logger.debug("S3 bucket URL is [%s]" % s3BucketUrl)
+      _clearExistingBackup(config, s3BucketUrl)
+      _writeStagingDir(config, stagingDir, s3BucketUrl)
+
+
+##################################
+# _writeStoreIndicator() function
+##################################
+
+def _writeStoreIndicator(config, stagingDirs):
+   """
+   Writes a store indicator file into staging directories.
+   @param config: Config object.
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+   """
+   for stagingDir in stagingDirs.keys():
+      writeIndicatorFile(stagingDir, STORE_INDICATOR, 
+                         config.options.backupUser, 
+                         config.options.backupGroup)
 
 
 ##################################
 # _clearExistingBackup() function
 ##################################
 
-def _clearExistingBackup(s3BucketUrl):
+def _clearExistingBackup(config, s3BucketUrl):
    """
-   Clear any existing backup files for a daily directory.
-   @param s3BucketUrl: S3 bucket URL derived for the daily directory
+   Clear any existing backup files for an S3 bucket URL.
+   @param config: Config object.
+   @param s3BucketUrl: S3 bucket URL derived for the staging directory
    """
-   emptydir = tempfile.mkdtemp()
+   emptyDir = tempfile.mkdtemp()
    try:
-      command = resolveCommand(S3CMD_COMMAND)
-      args = [ "sync", "--no-encrypt", "--recursive", "--delete-removed", emptydir + "/", s3BucketUrl + "/", ]
-      result = executeCommand(command, args)[0]
+      suCommand = resolveCommand(SU_COMMAND)
+      s3CmdCommand = resolveCommand(S3CMD_COMMAND)
+      actualCommand = "%s sync --no-encrypt --recursive --delete-removed %s/ %s/" % (s3CmdCommand, emptyDir, s3BucketUrl)
+      result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
       if result != 0:
          raise IOError("Error [%d] calling s3Cmd to clear existing backup [%s]." % (result, s3BucketUrl))
    finally:
-      if os.path.exists(emptydir):
-         os.rmdir(emptydir)
+      if os.path.exists(emptyDir):
+         os.rmdir(emptyDir)
 
 
-############################
-# _writeDailyDir() function
-############################
+###########################
+# _writeStaging() function
+###########################
 
-def _writeDailyDir(dailyDir, s3BucketUrl):
+def _writeStagingDir(config, stagingDir, s3BucketUrl):
    """
-   Write the daily directory out to the Amazon S3 cloud.
-   @param dailyDir: Daily directory to store
-   @param s3BucketUrl: S3 bucket URL derived for the daily directory
+   Write a staging directory out to the Amazon S3 cloud.
+   @param config: Config object.
+   @param stagingDir: Staging directory to write
+   @param s3BucketUrl: S3 bucket URL derived for the staging directory
    """
-   command = resolveCommand(S3CMD_COMMAND)
-   args = [ "put", "--recursive", dailyDir + "/", s3BucketUrl + "/", ]
-   result = executeCommand(command, args)[0]
+   suCommand = resolveCommand(SU_COMMAND)
+   s3CmdCommand = resolveCommand(S3CMD_COMMAND)
+   actualCommand = "%s put --recursive %s/ %s/" % (s3CmdCommand, stagingDir, s3BucketUrl)
+   result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
    if result != 0:
-      raise IOError("Error [%d] calling s3Cmd to store daily directory [%s]." % (result, s3BucketUrl))
+      raise IOError("Error [%d] calling s3Cmd to store staging directory [%s]." % (result, s3BucketUrl))
+
 
