@@ -44,6 +44,9 @@ of each week.  If your hardware is new enough, Cedar Backup can write
 multisession discs, allowing you to add incremental data to a disc on a daily
 basis.
 
+Alternately, Cedar Backup can write your backups to the Amazon S3 cloud
+rather than relying on physical media.
+
 Besides offering command-line utilities to manage the backup process, Cedar
 Backup provides a well-organized library of backup-related functionality,
 written in the Python programming language.
