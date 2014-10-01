@@ -82,8 +82,8 @@ import datetime
 
 # Cedar Backup modules
 from CedarBackup2.util import resolveCommand, executeCommand, isRunningAsRoot
-from CedarBackup2.xmlutil import createInputDom, addContainerNode, addStringNode
-from CedarBackup2.xmlutil import readFirstChild, readString
+from CedarBackup2.xmlutil import createInputDom, addContainerNode, addBooleanNode, addStringNode
+from CedarBackup2.xmlutil import readFirstChild, readString, readBoolean
 from CedarBackup2.actions.util import writeIndicatorFile
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR
 
@@ -340,6 +340,7 @@ class LocalConfig(object):
 
       We add the following fields to the document::
 
+         warnMidnite //cb_config/amazons3/warn_midnite
          s3Bucket    //cb_config/amazons3/s3_bucket
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
@@ -347,6 +348,7 @@ class LocalConfig(object):
       """
       if self.amazons3 is not None:
          sectionNode = addContainerNode(xmlDom, parentNode, "amazons3")
+         addBooleanNode(xmlDom, sectionNode, "warn_midnite", self.amazons3.warnMidnite)
          addStringNode(xmlDom, sectionNode, "s3_bucket", self.amazons3.s3Bucket)
 
    def _parseXmlData(self, xmlData):
@@ -371,6 +373,7 @@ class LocalConfig(object):
       
       We read the following individual fields::
 
+         warnMidnite //cb_config/amazons3/warn_midnite
          s3Bucket    //cb_config/amazons3/s3_bucket
 
       @param parent: Parent node to search beneath.
@@ -382,6 +385,7 @@ class LocalConfig(object):
       section = readFirstChild(parent, "amazons3")
       if section is not None:
          amazons3 = AmazonS3Config()
+         amazons3.warnMidnite = readBoolean(section, "warn_midnite")
          amazons3.s3Bucket = readString(section, "s3_bucket")
       return amazons3
 
