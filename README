@@ -24,7 +24,10 @@ Cedar Backup is focused around weekly backups to a single CD or DVD disc,
 with the expectation that the disc will be changed or overwritten at the
 beginning of each week.  If your hardware is new enough, Cedar Backup can
 write multisession discs, allowing you to add incremental data to a disc on
-a daily basis.
+a daily basis.  
+
+Alternately, Cedar Backup can write your backups to the Amazon S3 cloud
+rather than relying on physical media.
 
 Besides offering command-line utilities to manage the backup process, Cedar
 Backup provides a well-organized library of backup-related functionality,
