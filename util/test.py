@@ -164,6 +164,7 @@ def main():
       from testcase import subversiontests
       from testcase import mboxtests
       from testcase import encrypttests
+      from testcase import amazons3tests
       from testcase import splittests
       from testcase import spantests
       from testcase import capacitytests
@@ -223,6 +224,7 @@ def main():
    if args == [] or "mbox" in args: unittests["mbox"] = mboxtests.suite()
    if args == [] or "split" in args: unittests["split"] = splittests.suite()
    if args == [] or "encrypt" in args: unittests["encrypt"] = encrypttests.suite()
+   if args == [] or "amazons3" in args: unittests["amazons3"] = amazons3tests.suite()
    if args == [] or "span" in args: unittests["span"] = spantests.suite()
    if args == [] or "capacity" in args: unittests["capacity"] = capacitytests.suite()
    if args == [] or "customize" in args: unittests["customize"] = customizetests.suite()
