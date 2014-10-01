@@ -41,13 +41,13 @@
       <variablelist>
 
          <varlistentry>
-            <term>Python 2.5</term>
+            <term>Python 2.5 (or later)</term>
             <listitem>
 
                <para>
                   Version 2.5 of the Python interpreter was released on 19 Sep
-                  2006, so most current Linux and BSD distributions should
-                  include it.
+                  2006, so virtually any current Linux and BSD distributions should
+                  include it or a later version.
                </para>
 
                <informaltable>
@@ -554,6 +554,47 @@
 
             </listitem>
          </varlistentry>
+
+         <varlistentry>
+            <term><command>s3cmd</command></term>
+            <listitem>
+
+               <para>
+                  The <command>s3cmd</command> command is used by the Amazon S3
+                  extension to communicate with Amazon AWS.  
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="http://s3tools.org/s3cmd"/></entry>
+                        </row>
+                        <row>
+                           <entry>Debian</entry>
+                           <entry><ulink url="https://packages.debian.org/stable/s3cmd"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  If you can't find a package for your system, install from the package
+                  source, using the <quote>upstream</quote> link.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
 
          <varlistentry>
             <term><command>split</command></term>
