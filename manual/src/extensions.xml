@@ -107,11 +107,12 @@
 
       <para>
          The underlying functionality relies on the 
-         <ulink url="http://s3tools.org/">Amazon S3 Tools</ulink> package.  It
-         is a very thin wrapper around the <literal>s3cmd put</literal>
-         command.  Before you use this extension, you need to set up your
-         Amazon S3 account and configure <literal>s3cmd</literal> as detailed
-         in the <ulink url="http://s3tools.org/s3cmd-howto">HOWTO</ulink>.
+         <ulink url="http://s3tools.org/">Amazon S3 Tools</ulink> package, version
+         1.5.0-rc1 or newer.  It is a very thin wrapper around the
+         <literal>s3cmd put</literal> command.  Before you use this extension,
+         you need to set up your Amazon S3 account and configure
+         <literal>s3cmd</literal> as detailed in the 
+         <ulink url="http://s3tools.org/s3cmd-howto">HOWTO</ulink>.
          The extension assumes that the backup is being executed as root, and
          switches over to the configured backup user to run the
          <literal>s3cmd</literal> program.  So, make sure you configure the S3
