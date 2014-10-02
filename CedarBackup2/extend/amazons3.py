@@ -47,12 +47,13 @@ Since it is intended to replace the store action, it does not rely on any store
 configuration.
 
 The underlying functionality relies on the U{Amazon S3Tools <http://s3tools.org/>} 
-package.  It is a very thin wrapper around the C{s3cmd put} command.  Before
-you use this extension, you need to set up your Amazon S3 account and configure
-C{s3cmd} as detailed in the U{HOWTO <http://s3tools.org/s3cmd-howto>}.  The
-extension assumes that the backup is being executed as root, and switches over
-to the configured backup user to run the C{s3cmd} program.  So, make sure you
-configure S3 Tools as the backup user and not root.
+package, version 1.5.0-rc1 or newer.  It is a very thin wrapper around the
+C{s3cmd put} command.  Before you use this extension, you need to set up your
+Amazon S3 account and configure C{s3cmd} as detailed in the U{HOWTO
+<http://s3tools.org/s3cmd-howto>}.  The extension assumes that the backup is
+being executed as root, and switches over to the configured backup user to run
+the C{s3cmd} program.  So, make sure you configure S3 Tools as the backup user
+and not root.
 
 It's up to you how to configure the S3 Tools connection to Amazon, but I
 recommend that you configure GPG encryption using a strong passphrase.  One way

@@ -561,7 +561,22 @@
 
                <para>
                   The <command>s3cmd</command> command is used by the Amazon S3
-                  extension to communicate with Amazon AWS.  
+                  extension to communicate with Amazon AWS.  Cedar Backup requires
+                  version 1.5.0-rc1 or later.  Earlier versions have problems
+                  uploading large files in the background (non-TTY), and there
+                  was also a syntax change that the extension relies on.
+               </para>
+               
+               <para>
+                  As of this writing, the version of s3cmd in Debian wheezy is
+                  not new enough, and it is not possible to pin the correct
+                  version from testing or unstable due to a generated
+                  dependency on python:all (which does not exist in wheezy).
+                  It is possible to force dpkg to install the package anyway:
+                  download the appropriate <literal>.deb</literal> file, and
+                  then install with <literal>dpkg --force-all</literal>.
+                  Alternately, the Cedar Solutions APT source contains a
+                  backported version of 1.5.0~rc1-2.
                </para>
 
                <informaltable>
@@ -578,10 +593,6 @@
                         <row>
                            <entry>upstream</entry>
                            <entry><ulink url="http://s3tools.org/s3cmd"/></entry>
-                        </row>
-                        <row>
-                           <entry>Debian</entry>
-                           <entry><ulink url="https://packages.debian.org/stable/s3cmd"/></entry>
                         </row>
                      </tbody>
                   </tgroup>
