@@ -549,7 +549,7 @@ def _clearExistingBackup(config, s3BucketUrl):
    try:
       suCommand = resolveCommand(SU_COMMAND)
       s3CmdCommand = resolveCommand(S3CMD_COMMAND)
-      actualCommand = "%s sync --no-encrypt --recursive --delete-removed %s/ %s/" % (s3CmdCommand[0], emptyDir, s3BucketUrl)
+      actualCommand = "%s sync --no-encrypt --recursive --delete-removed --force %s/ %s/" % (s3CmdCommand[0], emptyDir, s3BucketUrl)
       result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
       if result != 0:
          raise IOError("Error [%d] calling s3Cmd to clear existing backup [%s]." % (result, s3BucketUrl))
