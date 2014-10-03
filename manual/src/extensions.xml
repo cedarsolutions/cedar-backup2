@@ -107,32 +107,47 @@
 
       <para>
          The underlying functionality relies on the 
-         <ulink url="http://s3tools.org/">Amazon S3 Tools</ulink> package, version
-         1.5.0-rc1 or newer.  It is a very thin wrapper around the
-         <literal>s3cmd put</literal> command.  Before you use this extension,
-         you need to set up your Amazon S3 account and configure
-         <literal>s3cmd</literal> as detailed in the 
-         <ulink url="http://s3tools.org/s3cmd-howto">HOWTO</ulink>.
+         <ulink url="http://aws.amazon.com/documentation/cli/">AWS CLI</ulink> toolset.
+         Before you use this extension, you need to set up your Amazon S3
+         account and configure AWS CLI as detailed in Amazons's 
+         <ulink url="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html">setup guide</ulink>.
          The extension assumes that the backup is being executed as root, and
          switches over to the configured backup user to run the
-         <literal>s3cmd</literal> program.  So, make sure you configure the S3
-         tools as the backup user and not root.
+         <literal>aws</literal> program.  So, make sure you configure the AWS
+         CLI tools as the backup user and not root.
       </para>
 
       <para>
-         When configuring the S3 tools connection to Amazon AWS, you probably want
-         to configure GPG encryption using a strong passphrase.  One way
-         to generate a strong passphrase is using your system random number generator,
-         i.e. <literal>dd if=/dev/urandom count=20 bs=1 | xxd -ps</literal>.  (See 
-         <ulink url="http://security.stackexchange.com/questions/14867/gpg-encryption-security">StackExchange</ulink>
-         for more details about that advice.) If you decide to use encryption, make sure
-         you save off the passphrase in a safe place, so you can get at your backup data
-         later if you need to.
+         You can optionally configure Cedar Backup to encrypt data before
+         sending it to S3.  To do that, provide a complete command line using
+         the <literal>${input}</literal> and <literal>${output}</literal>
+         variables to represent the original input file and the encrypted
+         output file.  This command will be executed as the backup user.
       </para>
 
       <para>
-         This extension was written for and tested on Linux.  It will throw an exception
-         if run on Windows.
+         For instance, you can use something like this with GPG:
+      </para>
+
+      <programlisting>
+/usr/bin/gpg -c --no-use-agent --batch --yes --passphrase-file /home/backup/.passphrase -o ${output} ${input}
+      </programlisting>
+
+      <para>
+         The GPG mechanism depends on a strong passphrase for security.  One way to
+         generate a strong passphrase is using your system random number generator, i.e.:
+      </para>
+
+      <programlisting>
+dd if=/dev/urandom count=20 bs=1 | xxd -ps
+      </programlisting>
+
+      <para>
+         (See <ulink url="http://security.stackexchange.com/questions/14867/gpg-encryption-security">StackExchange</ulink>
+         for more details about that advice.) If you decide to use encryption, make sure you
+         save off the passphrase in a safe place, so you can get at your backup data
+         later if you need to.  And obviously, make sure to set permissions on the
+         passphrase file so it can only be read by the backup user.
       </para>
 
       <para>
@@ -155,7 +170,7 @@
          This extension relies on the options and staging configuration sections
          in the standard Cedar Backup configuration file, and then also
          requires its own <literal>amazons3</literal> configuration section.
-         This is an example configuration section:
+         This is an example configuration section with encryption disabled:
       </para> 
 
       <programlisting>
@@ -178,11 +193,11 @@
                   This field indicates whether warnings should be generated
                   if the Amazon S3 operation has to cross a midnite boundary in
                   order to find data to write to the cloud.  For instance, a
-                  warning would be generated if valid store data was only
+                  warning would be generated if valid data was only
                   found in the day before or day after the current day.
                </para>
                <para>
-                  Configuration for some users is such that the store
+                  Configuration for some users is such that the amazons3
                   operation will always cross a midnite boundary, so they
                   will not care about this warning.  Other users will expect
                   to never cross a boundary, and want to be notified that
@@ -212,6 +227,25 @@
                </para>
                <para>
                   <emphasis>Restrictions:</emphasis> Must be non-empty.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>encrypt</literal></term>
+            <listitem>
+               <para>Command used to encrypt backup data before upload to S3</para>
+               <para>
+                  If this field is provided, then data will be encrypted before
+                  it is uploaded to Amazon S3.  You must provide the entire
+                  command used to encrypt a file, including the
+                  <literal>${input}</literal> and <literal>${output}</literal>
+                  variables.  An example GPG command is shown above, but you
+                  can use any mechanism you choose.  The command will be run as
+                  the configured backup user.
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> If provided, must be non-empty.
                </para>
             </listitem>
          </varlistentry>

@@ -55,8 +55,8 @@ communicate with AWS.  So, make sure you configure AWS CLI as the backup user
 and not root.
 
 You can optionally configure Cedar Backup to encrypt data before sending it
-to S3.  To do that, provide a complete command line using the ${input} and
-${output} variables to represent the original input file and the encrypted
+to S3.  To do that, provide a complete command line using the C{${input}} and
+C{${output}} variables to represent the original input file and the encrypted
 output file.  This command will be executed as the backup user.  
 
 For instance, you can use something like this with GPG::
@@ -64,11 +64,13 @@ For instance, you can use something like this with GPG::
    /usr/bin/gpg -c --no-use-agent --batch --yes --passphrase-file /home/backup/.passphrase -o ${output} ${input}
 
 The GPG mechanism depends on a strong passphrase for security.  One way to
-generate a strong passphrase is using your system random number generator, i.e.
-C{dd if=/dev/urandom count=20 bs=1 | xxd -ps}.  (See U{StackExchange
-http://security.stackexchange.com/questions/14867/gpg-encryption-security>} for
-more details about that advice.) If you decide to use encryption, make sure you
-save off the passphrase in a safe place, so you can get at your backup data
+generate a strong passphrase is using your system random number generator, i.e.::
+
+   dd if=/dev/urandom count=20 bs=1 | xxd -ps
+
+(See U{StackExchange <http://security.stackexchange.com/questions/14867/gpg-encryption-security>}
+for more details about that advice.) If you decide to use encryption, make sure
+you save off the passphrase in a safe place, so you can get at your backup data
 later if you need to.  And obviously, make sure to set permissions on the
 passphrase file so it can only be read by the backup user.
 
