@@ -90,7 +90,6 @@ import tempfile
 import datetime
 import json
 import shutil
-from string import Template
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
@@ -686,7 +685,7 @@ def _encryptStagingDir(config, local, stagingDir, encryptedDir):
          if long(os.stat(cleartext).st_size) == 0:
             open(encrypted, 'a').close() # don't bother encrypting empty files
          else:
-            actualCommand = Template(local.amazons3.encryptCommand).substitute(input=cleartext, output=encrypted)
+            actualCommand = local.amazons3.encryptCommand.replace("${input}", cleartext).replace("${output}", encrypted)
             subdir = os.path.dirname(encrypted)
             if not os.path.isdir(subdir):
                os.makedirs(subdir)
