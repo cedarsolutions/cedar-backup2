@@ -46,23 +46,31 @@ staging configuration sections in the standard Cedar Backup configuration file.
 Since it is intended to replace the store action, it does not rely on any store
 configuration.
 
-The underlying functionality relies on the U{Amazon S3Tools <http://s3tools.org/>} 
-package, version 1.5.0-rc1 or newer.  It is a very thin wrapper around the
-C{s3cmd put} command.  Before you use this extension, you need to set up your
-Amazon S3 account and configure C{s3cmd} as detailed in the U{HOWTO
-<http://s3tools.org/s3cmd-howto>}.  The extension assumes that the backup is
-being executed as root, and switches over to the configured backup user to run
-the C{s3cmd} program.  So, make sure you configure S3 Tools as the backup user
+The underlying functionality relies on the U{AWS CLI interface
+<http://aws.amazon.com/documentation/cli/>}.  Before you use this extension,
+you need to set up your Amazon S3 account and configure the AWS CLI connection
+per Amazon's documentation.  The extension assumes that the backup is being
+executed as root, and switches over to the configured backup user to
+communicate with AWS.  So, make sure you configure AWS CLI as the backup user
 and not root.
 
-It's up to you how to configure the S3 Tools connection to Amazon, but I
-recommend that you configure GPG encryption using a strong passphrase.  One way
-to generate a strong passphrase is using your system random number generator,
-i.e.  C{dd if=/dev/urandom count=20 bs=1 | xxd -ps}.  (See U{StackExchange
-<http://security.stackexchange.com/questions/14867/gpg-encryption-security>}
-for more details about that advice.) If you decide to use encryption, make sure
-you save off the passphrase in a safe place, so you can get at your backup data
-later if you need to.
+You can optionally configure Cedar Backup to encrypt data before sending it
+to S3.  To do that, provide a complete command line using the ${input} and
+${output} variables to represent the original input file and the encrypted
+output file.  This command will be executed as the backup user.  
+
+For instance, you can use something like this with GPG::
+
+   /usr/bin/gpg -c --no-use-agent --batch --yes --passphrase-file /home/backup/.passphrase -o ${output} ${input}
+
+The GPG mechanism depends on a strong passprhase for security.  One way to
+generate a strong passphrase is using your system random number generator, i.e.
+C{dd if=/dev/urandom count=20 bs=1 | xxd -ps}.  (See U{StackExchange
+http://security.stackexchange.com/questions/14867/gpg-encryption-security>} for
+more details about that advice.) If you decide to use encryption, make sure you
+save off the passphrase in a safe place, so you can get at your backup data
+later if you need to.  And obviously, make sure to set permissions on the
+passphrase file so it can only be read by the backup user.
 
 This extension was written for and tested on Linux.  It will throw an exception
 if run on Windows.
@@ -96,7 +104,7 @@ from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR
 logger = logging.getLogger("CedarBackup2.log.extend.amazons3")
 
 SU_COMMAND    = [ "su" ]
-S3CMD_COMMAND = [ "s3cmd", ]
+AWS_COMMAND   = [ "aws" ]
 
 STORE_INDICATOR = "cback.amazons3"
 
@@ -115,30 +123,34 @@ class AmazonS3Config(object):
 
    The following restrictions exist on data in this class:
 
-      - The s3Bucket value must be a non-empty string
+      - The s3Bucket value, if set, must be a non-empty string
+      - The encryptCommand valu, if set,  must be a non-empty string
 
    @sort: __init__, __repr__, __str__, __cmp__, warnMidnite, s3Bucket
    """
 
-   def __init__(self, warnMidnite=None, s3Bucket=None):
+   def __init__(self, warnMidnite=None, s3Bucket=None, encryptCommand=None):
       """
       Constructor for the C{AmazonS3Config} class.
 
-      @param s3Bucket: Name of the Amazon S3 bucket in which to store the data
       @param warnMidnite: Whether to generate warnings for crossing midnite.
+      @param s3Bucket: Name of the Amazon S3 bucket in which to store the data
+      @param encryptCommand: Command used to encrypt backup data before upload to S3
 
       @raise ValueError: If one of the values is invalid.
       """
       self._warnMidnite = None
       self._s3Bucket = None
+      self._encryptCommand = None
       self.warnMidnite = warnMidnite
       self.s3Bucket = s3Bucket
+      self.encryptCommand = encryptCommand
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "AmazonS3Config(%s, %s)" % (self.warnMidnite, self.s3Bucket)
+      return "AmazonS3Config(%s, %s, %s)" % (self.warnMidnite, self.s3Bucket, self.encryptCommand)
 
    def __str__(self):
       """
@@ -161,6 +173,11 @@ class AmazonS3Config(object):
             return 1
       if self.s3Bucket != other.s3Bucket:
          if self.s3Bucket < other.s3Bucket:
+            return -1
+         else:
+            return 1
+      if self.encryptCommand != other.encryptCommand:
+         if self.encryptCommand < other.encryptCommand:
             return -1
          else:
             return 1
@@ -197,8 +214,24 @@ class AmazonS3Config(object):
       """
       return self._s3Bucket
 
+   def _setEncryptCommand(self, value):
+      """
+      Property target used to set the encrypt command.
+      """
+      if value is not None:
+         if len(value) < 1:
+            raise ValueError("Encrypt command must be non-empty string.")
+      self._encryptCommand = value
+
+   def _getEncryptCommand(self):
+      """
+      Property target used to get the encrypt command.
+      """
+      return self._encryptCommand
+
    warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
    s3Bucket = property(_getS3Bucket, _setS3Bucket, None, doc="Amazon S3 Bucket in which to store data")
+   encryptCommand = property(_getEncryptCommand, _setEncryptCommand, None, doc="Command used to encrypt backup data before upload to S3")
 
 
 ########################################################################
@@ -341,8 +374,9 @@ class LocalConfig(object):
 
       We add the following fields to the document::
 
-         warnMidnite //cb_config/amazons3/warn_midnite
-         s3Bucket    //cb_config/amazons3/s3_bucket
+         warnMidnite     //cb_config/amazons3/warn_midnite
+         s3Bucket        //cb_config/amazons3/s3_bucket
+         encryptCommand  //cb_config/amazons3/encrypt
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
@@ -351,6 +385,7 @@ class LocalConfig(object):
          sectionNode = addContainerNode(xmlDom, parentNode, "amazons3")
          addBooleanNode(xmlDom, sectionNode, "warn_midnite", self.amazons3.warnMidnite)
          addStringNode(xmlDom, sectionNode, "s3_bucket", self.amazons3.s3Bucket)
+         addStringNode(xmlDom, sectionNode, "encrypt", self.amazons3.encryptCommand)
 
    def _parseXmlData(self, xmlData):
       """
@@ -374,8 +409,9 @@ class LocalConfig(object):
       
       We read the following individual fields::
 
-         warnMidnite //cb_config/amazons3/warn_midnite
-         s3Bucket    //cb_config/amazons3/s3_bucket
+         warnMidnite     //cb_config/amazons3/warn_midnite
+         s3Bucket        //cb_config/amazons3/s3_bucket
+         encryptCommand  //cb_config/amazons3/encrypt
 
       @param parent: Parent node to search beneath.
 
@@ -388,6 +424,7 @@ class LocalConfig(object):
          amazons3 = AmazonS3Config()
          amazons3.warnMidnite = readBoolean(section, "warn_midnite")
          amazons3.s3Bucket = readString(section, "s3_bucket")
+         amazons3.encryptCommand = readString(section, "encrypt")
       return amazons3
 
 
@@ -503,6 +540,7 @@ def _writeToAmazonS3(config, local, stagingDirs):
    the configured Amazon S3 bucket from local configuration.  The directories
    will be placed into the image at the root by date, so staging directory
    C{/opt/stage/2005/02/10} will be placed into the S3 bucket at C{/2005/02/10}.  
+   If an encrypt commmand is provided, the files will be encrypted first.
 
    @param config: Config object.
    @param local: Local config object.
@@ -518,6 +556,7 @@ def _writeToAmazonS3(config, local, stagingDirs):
       logger.debug("S3 bucket URL is [%s]" % s3BucketUrl)
       _clearExistingBackup(config, s3BucketUrl)
       _writeStagingDir(config, stagingDir, s3BucketUrl)
+      _verifyStagingDir(config, stagingDir, s3BucketUrl)
 
 
 ##################################
@@ -546,22 +585,17 @@ def _clearExistingBackup(config, s3BucketUrl):
    @param config: Config object.
    @param s3BucketUrl: S3 bucket URL derived for the staging directory
    """
-   emptyDir = tempfile.mkdtemp()
-   try:
-      suCommand = resolveCommand(SU_COMMAND)
-      s3CmdCommand = resolveCommand(S3CMD_COMMAND)
-      actualCommand = "%s sync --no-encrypt --recursive --delete-removed --force %s/ %s/" % (s3CmdCommand[0], emptyDir, s3BucketUrl)
-      result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
-      if result != 0:
-         raise IOError("Error [%d] calling s3Cmd to clear existing backup [%s]." % (result, s3BucketUrl))
-   finally:
-      if os.path.exists(emptyDir):
-         os.rmdir(emptyDir)
+   suCommand = resolveCommand(SU_COMMAND)
+   awsCommand = resolveCommand(AWS_COMMAND)
+   actualCommand = "%s s3 rm --recursive %s/" % (awsCommand[0], s3BucketUrl)
+   result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
+   if result != 0:
+      raise IOError("Error [%d] calling AWS CLI to clear existing backup [%s]." % (result, s3BucketUrl))
 
 
-###########################
-# _writeStaging() function
-###########################
+##############################
+# _writeStagingDir() function
+##############################
 
 def _writeStagingDir(config, stagingDir, s3BucketUrl):
    """
@@ -570,11 +604,19 @@ def _writeStagingDir(config, stagingDir, s3BucketUrl):
    @param stagingDir: Staging directory to write
    @param s3BucketUrl: S3 bucket URL derived for the staging directory
    """
-   suCommand = resolveCommand(SU_COMMAND)
-   s3CmdCommand = resolveCommand(S3CMD_COMMAND)
-   actualCommand = "%s put --recursive %s/ %s/" % (s3CmdCommand[0], stagingDir, s3BucketUrl)
-   result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
-   if result != 0:
-      raise IOError("Error [%d] calling s3Cmd to store staging directory [%s]." % (result, s3BucketUrl))
+   pass
 
+
+###############################
+# _verifyStagingDir() function
+###############################
+
+def _verifyStagingDir(config, stagingDir, s3BucketUrl):
+   """
+   Verify that a staging directory was properly written to the Amazon S3 cloud.
+   @param config: Config object.
+   @param stagingDir: Staging directory to write
+   @param s3BucketUrl: S3 bucket URL derived for the staging directory
+   """
+   pass
 
