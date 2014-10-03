@@ -88,8 +88,11 @@ import os
 import logging
 import tempfile
 import datetime
+import json
+from string import Template
 
 # Cedar Backup modules
+from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.util import resolveCommand, executeCommand, isRunningAsRoot
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addBooleanNode, addStringNode
 from CedarBackup2.xmlutil import readFirstChild, readString, readBoolean
@@ -231,7 +234,7 @@ class AmazonS3Config(object):
 
    warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
    s3Bucket = property(_getS3Bucket, _setS3Bucket, None, doc="Amazon S3 Bucket in which to store data")
-   encryptCommand = property(_getEncryptCommand, _setEncryptCommand, None, doc="Command used to encrypt backup data before upload to S3")
+   encryptCommand = property(_getEncryptCommand, _setEncryptCommand, None, doc="Command used to encrypt data before upload to S3")
 
 
 ########################################################################
@@ -555,8 +558,18 @@ def _writeToAmazonS3(config, local, stagingDirs):
       s3BucketUrl = "s3://%s/%s" % (local.amazons3.s3Bucket, dateSuffix)
       logger.debug("S3 bucket URL is [%s]" % s3BucketUrl)
       _clearExistingBackup(config, s3BucketUrl)
-      _writeStagingDir(config, stagingDir, s3BucketUrl)
-      _verifyStagingDir(config, stagingDir, s3BucketUrl)
+      if local.encrypt is None:
+         _uploadStagingDir(config, stagingDir, s3BucketUrl)
+         _verifyUpload(config, stagingDir, s3BucketUrl)
+      else:
+         encryptedDir = tempfile.mkdtemp(dir=config.options.workingDir)
+         try:
+            _encryptStagingDir(config, local, stagingDir, encryptedDir)
+            _uploadStagingDir(config, encryptedDir, s3BucketUrl)
+            _verifyUpload(config, stagingDir, s3BucketUrl)
+         finally:
+            if os.path.exists(encryptedDir):
+               os.rmdir(encryptedDir)
 
 
 ##################################
@@ -583,40 +596,88 @@ def _clearExistingBackup(config, s3BucketUrl):
    """
    Clear any existing backup files for an S3 bucket URL.
    @param config: Config object.
-   @param s3BucketUrl: S3 bucket URL derived for the staging directory
+   @param s3BucketUrl: S3 bucket URL associated with the staging directory
    """
    suCommand = resolveCommand(SU_COMMAND)
    awsCommand = resolveCommand(AWS_COMMAND)
    actualCommand = "%s s3 rm --recursive %s/" % (awsCommand[0], s3BucketUrl)
    result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
    if result != 0:
-      raise IOError("Error [%d] calling AWS CLI to clear existing backup [%s]." % (result, s3BucketUrl))
-
-
-##############################
-# _writeStagingDir() function
-##############################
-
-def _writeStagingDir(config, stagingDir, s3BucketUrl):
-   """
-   Write a staging directory out to the Amazon S3 cloud.
-   @param config: Config object.
-   @param stagingDir: Staging directory to write
-   @param s3BucketUrl: S3 bucket URL derived for the staging directory
-   """
-   pass
+      raise IOError("Error [%d] calling AWS CLI to clear existing backup for [%s]." % (result, s3BucketUrl))
 
 
 ###############################
-# _verifyStagingDir() function
+# _uploadStagingDir() function
 ###############################
 
-def _verifyStagingDir(config, stagingDir, s3BucketUrl):
+def _uploadStagingDir(config, stagingDir, s3BucketUrl):
    """
-   Verify that a staging directory was properly written to the Amazon S3 cloud.
+   Upload the contents of a staging directory out to the Amazon S3 cloud.
    @param config: Config object.
-   @param stagingDir: Staging directory to write
-   @param s3BucketUrl: S3 bucket URL derived for the staging directory
+   @param stagingDir: Staging directory to upload
+   @param s3BucketUrl: S3 bucket URL associated with the staging directory
    """
-   pass
+   suCommand = resolveCommand(SU_COMMAND)
+   awsCommand = resolveCommand(AWS_COMMAND)
+   actualCommand = "%s s3 cp --recursive %s/ %s/" % (awsCommand[0], stagingDir, s3BucketUrl)
+   result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
+   if result != 0:
+      raise IOError("Error [%d] calling AWS CLI to upload staging directory to [%s]." % (result, s3BucketUrl))
+
+
+###########################
+# _verifyUpload() function
+###########################
+
+def _verifyUpload(config, stagingDir, s3BucketUrl):
+   """
+   Verify that a staging directory was properly uploaded to the Amazon S3 cloud.
+   @param config: Config object.
+   @param stagingDir: Staging directory to verify
+   @param s3BucketUrl: S3 bucket URL associated with the staging directory
+   """
+   (bucket, prefix) = s3BucketUrl.replace("s3://", "").split("/")
+   suCommand = resolveCommand(SU_COMMAND)
+   awsCommand = resolveCommand(AWS_COMMAND)
+   query = "Contents[].{Key: Key, Size: Size}"
+   actualCommand = "%s s3api list-objects --bucket %s --prefix %s --query '%s'" % (awsCommand[0], bucket, prefix, query)
+   (result, text) = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand], returnOutput=True)
+   if result != 0:
+      raise IOError("Error [%d] calling AWS CLI verify upload to [%s]." % (result, s3BucketUrl))
+   contents = { }
+   for entry in json.loads(text):
+      contents[entry["Key"]] = float(entry["Size"])
+   files = FilesystemList()
+   files.addDirContents(stagingDir)   
+   for entry in files:
+      key = entry.replace(config.stage.targetDir, "")
+      if not key in contents:
+         raise IOError("File was apparently not uploaded: [%s]" % entry)
+      else:
+         size = float(os.stat(entry).st_size)
+         if size != contents[key]:
+            raise IOError("File was uploaded but size differs (%f.0 vs %f.0): [%s]" % (size, contents[key], entry))
+
+
+################################
+# _encryptStagingDir() function
+################################
+
+def _encryptStagingDir(config, local, stagingDir, encryptedDir):
+   """
+   Encrypt a staging directory, creating a new directory in the process.
+   @param config: Config object.
+   @param stagingDir: Staging directory to use as source
+   @param encryptedDir: Target directory into which encrypted files should be written
+   """
+   suCommand = resolveCommand(SU_COMMAND)
+   files = FilesystemList()
+   files.addDirContents(stagingDir)   
+   for cleartext in files:
+      encrypted = os.path.join(encryptedDir, cleartext.replace(config.stage.targetDir, ""))
+      actualCommand = Template(local.encrypt).substitute(input=cleartext, output=encrypted)
+      os.makedirs(os.path.dirname(encrypted))
+      result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
+      if result != 0:
+         raise IOError("Error [%d] encrypting [%s]." % (result, cleartext))
 
