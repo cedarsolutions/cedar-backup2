@@ -151,44 +151,31 @@ class TestAmazonS3Config(unittest.TestCase):
       amazons3 =  AmazonS3Config()
       self.failUnlessEqual(False, amazons3.warnMidnite)
       self.failUnlessEqual(None, amazons3.s3Bucket)
+      self.failUnlessEqual(None, amazons3.encryptCommand)
 
    def testConstructor_002(self):
       """
       Test constructor with all values filled in, with valid values.
       """
-      amazons3 =  AmazonS3Config(True, "bucket")
+      amazons3 =  AmazonS3Config(True, "bucket", "encrypt")
       self.failUnlessEqual(True, amazons3.warnMidnite)
       self.failUnlessEqual("bucket", amazons3.s3Bucket)
+      self.failUnlessEqual("encrypt", amazons3.encryptCommand)
 
    def testConstructor_003(self):
       """
       Test assignment of s3Bucket attribute, None value.
       """
-      amazons3 =  AmazonS3Config(warnMidnite=True, s3Bucket="bucket")
+      amazons3 =  AmazonS3Config(warnMidnite=True, s3Bucket="bucket", encryptCommand="encrypt")
       self.failUnlessEqual(True, amazons3.warnMidnite)
       self.failUnlessEqual("bucket", amazons3.s3Bucket)
+      self.failUnlessEqual("encrypt", amazons3.encryptCommand)
       amazons3.s3Bucket = None
+      self.failUnlessEqual(True, amazons3.warnMidnite)
       self.failUnlessEqual(None, amazons3.s3Bucket)
+      self.failUnlessEqual("encrypt", amazons3.encryptCommand)
 
    def testConstructor_004(self):
-      """
-      Test assignment of s3Bucket attribute, valid value.
-      """
-      amazons3 =  AmazonS3Config()
-      self.failUnlessEqual(None, amazons3.s3Bucket)
-      amazons3.s3Bucket = "bucket"
-      self.failUnlessEqual("bucket", amazons3.s3Bucket)
-
-   def testConstructor_005(self):
-      """
-      Test assignment of s3Bucket attribute, invalid value (empty).
-      """
-      amazons3 =  AmazonS3Config()
-      self.failUnlessEqual(None, amazons3.s3Bucket)
-      self.failUnlessAssignRaises(ValueError, amazons3, "s3Bucket", "")
-      self.failUnlessEqual(None, amazons3.s3Bucket)
-
-   def testConstructor_006(self):
       """
       Test assignment of warnMidnite attribute, valid value (real boolean).
       """
@@ -199,7 +186,7 @@ class TestAmazonS3Config(unittest.TestCase):
       amazons3.warnMidnite = False
       self.failUnlessEqual(False, amazons3.warnMidnite)
 
-   def testConstructor_007(self):
+   def testConstructor_005(self):
       """
       Test assignment of warnMidnite attribute, valid value (expression).
       """
@@ -215,6 +202,42 @@ class TestAmazonS3Config(unittest.TestCase):
       self.failUnlessEqual(True, amazons3.warnMidnite)
       amazons3.warnMidnite = 3
       self.failUnlessEqual(True, amazons3.warnMidnite)
+
+   def testConstructor_006(self):
+      """
+      Test assignment of s3Bucket attribute, valid value.
+      """
+      amazons3 =  AmazonS3Config()
+      self.failUnlessEqual(None, amazons3.s3Bucket)
+      amazons3.s3Bucket = "bucket"
+      self.failUnlessEqual("bucket", amazons3.s3Bucket)
+
+   def testConstructor_007(self):
+      """
+      Test assignment of s3Bucket attribute, invalid value (empty).
+      """
+      amazons3 =  AmazonS3Config()
+      self.failUnlessEqual(None, amazons3.s3Bucket)
+      self.failUnlessAssignRaises(ValueError, amazons3, "s3Bucket", "")
+      self.failUnlessEqual(None, amazons3.s3Bucket)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of encryptCommand attribute, valid value.
+      """
+      amazons3 =  AmazonS3Config()
+      self.failUnlessEqual(None, amazons3.encryptCommand)
+      amazons3.encryptCommand = "encrypt"
+      self.failUnlessEqual("encrypt", amazons3.encryptCommand)
+
+   def testConstructor_008(self):
+      """
+      Test assignment of encryptCommand attribute, invalid value (empty).
+      """
+      amazons3 =  AmazonS3Config()
+      self.failUnlessEqual(None, amazons3.encryptCommand)
+      self.failUnlessAssignRaises(ValueError, amazons3, "encryptCommand", "")
+      self.failUnlessEqual(None, amazons3.encryptCommand)
 
 
    ############################
@@ -239,8 +262,8 @@ class TestAmazonS3Config(unittest.TestCase):
       """
       Test comparison of two identical objects, all attributes non-None.
       """
-      amazons31 = AmazonS3Config("bucket")
-      amazons32 = AmazonS3Config("bucket")
+      amazons31 = AmazonS3Config(True, "bucket", "encrypt")
+      amazons32 = AmazonS3Config(True, "bucket", "encrypt")
       self.failUnlessEqual(amazons31, amazons32)
       self.failUnless(amazons31 == amazons32)
       self.failUnless(not amazons31 < amazons32)
@@ -250,6 +273,20 @@ class TestAmazonS3Config(unittest.TestCase):
       self.failUnless(not amazons31 != amazons32)
 
    def testComparison_003(self):
+      """
+      Test comparison of two differing objects, warnMidnite differs.
+      """
+      amazons31 = AmazonS3Config(warnMidnite=False)
+      amazons32 = AmazonS3Config(warnMidnite=True)
+      self.failIfEqual(amazons31, amazons32)
+      self.failUnless(not amazons31 == amazons32)
+      self.failUnless(amazons31 < amazons32)
+      self.failUnless(amazons31 <= amazons32)
+      self.failUnless(not amazons31 > amazons32)
+      self.failUnless(not amazons31 >= amazons32)
+      self.failUnless(amazons31 != amazons32)
+
+   def testComparison_004(self):
       """
       Test comparison of two differing objects, s3Bucket differs (one None).
       """
@@ -263,12 +300,12 @@ class TestAmazonS3Config(unittest.TestCase):
       self.failUnless(not amazons31 >= amazons32)
       self.failUnless(amazons31 != amazons32)
 
-   def testComparison_004(self):
+   def testComparison_005(self):
       """
       Test comparison of two differing objects, s3Bucket differs.
       """
-      amazons31 = AmazonS3Config(True, "bucket1")
-      amazons32 = AmazonS3Config(True, "bucket2")
+      amazons31 = AmazonS3Config(True, "bucket1", "encrypt")
+      amazons32 = AmazonS3Config(True, "bucket2", "encrypt")
       self.failIfEqual(amazons31, amazons32)
       self.failUnless(not amazons31 == amazons32)
       self.failUnless(amazons31 < amazons32)
@@ -277,12 +314,26 @@ class TestAmazonS3Config(unittest.TestCase):
       self.failUnless(not amazons31 >= amazons32)
       self.failUnless(amazons31 != amazons32)
 
-   def testComparison_005(self):
+   def testComparison_006(self):
       """
-      Test comparison of two differing objects, warnMidnite differs.
+      Test comparison of two differing objects, encryptCommand differs (one None).
       """
-      amazons31 = AmazonS3Config(warnMidnite=False)
-      amazons32 = AmazonS3Config(warnMidnite=True)
+      amazons31 = AmazonS3Config()
+      amazons32 = AmazonS3Config(encryptCommand="encrypt")
+      self.failIfEqual(amazons31, amazons32)
+      self.failUnless(not amazons31 == amazons32)
+      self.failUnless(amazons31 < amazons32)
+      self.failUnless(amazons31 <= amazons32)
+      self.failUnless(not amazons31 > amazons32)
+      self.failUnless(not amazons31 >= amazons32)
+      self.failUnless(amazons31 != amazons32)
+
+   def testComparison_007(self):
+      """
+      Test comparison of two differing objects, encryptCommand differs.
+      """
+      amazons31 = AmazonS3Config(True, "bucket", "encrypt1")
+      amazons32 = AmazonS3Config(True, "bucket", "encrypt2")
       self.failIfEqual(amazons31, amazons32)
       self.failUnless(not amazons31 == amazons32)
       self.failUnless(amazons31 < amazons32)
@@ -462,10 +513,10 @@ class TestLocalConfig(unittest.TestCase):
       Test comparison of two differing objects, s3Bucket differs.
       """
       config1 = LocalConfig()
-      config1.amazons3 =  AmazonS3Config(True, "bucket1")
+      config1.amazons3 =  AmazonS3Config(True, "bucket1", "encrypt")
 
       config2 = LocalConfig()
-      config2.amazons3 =  AmazonS3Config(True, "bucket2")
+      config2.amazons3 =  AmazonS3Config(True, "bucket2", "encrypt")
 
       self.failIfEqual(config1, config2)
       self.failUnless(not config1 == config2)
@@ -540,10 +591,12 @@ class TestLocalConfig(unittest.TestCase):
       self.failIfEqual(None, config.amazons3)
       self.failUnlessEqual(True, config.amazons3.warnMidnite)
       self.failUnlessEqual("mybucket", config.amazons3.s3Bucket)
+      self.failUnlessEqual("encrypt", config.amazons3.encryptCommand)
       config = LocalConfig(xmlData=contents, validate=False)
       self.failIfEqual(None, config.amazons3)
       self.failUnlessEqual(True, config.amazons3.warnMidnite)
       self.failUnlessEqual("mybucket", config.amazons3.s3Bucket)
+      self.failUnlessEqual("encrypt", config.amazons3.encryptCommand)
 
 
    ###################
@@ -563,49 +616,10 @@ class TestLocalConfig(unittest.TestCase):
       """
       Test with values set.
       """
-      amazons3 =  AmazonS3Config(True, "bucket")
+      amazons3 =  AmazonS3Config(True, "bucket", "encrypt")
       config = LocalConfig()
       config.amazons3 =  amazons3
       self.validateAddConfig(config)
-
-
-######################
-# TestFunctions class
-######################
-
-class TestFunctions(unittest.TestCase):
-
-   """Tests for the functions in amazons3.py."""
-
-   ################
-   # Setup methods
-   ################
-
-   def setUp(self):
-      try:
-         self.tmpdir = tempfile.mkdtemp()
-         self.resources = findResources(RESOURCES, DATA_DIRS)
-      except Exception, e:
-         self.fail(e)
-
-   def tearDown(self):
-      try:
-         removedir(self.tmpdir)
-      except: pass
-
-
-   ##################
-   # Utility methods
-   ##################
-
-   def extractTar(self, tarname):
-      """Extracts a tarfile with a particular name."""
-      extractTar(self.tmpdir, self.resources['%s.tar.gz' % tarname])
-
-   def buildPath(self, components):
-      """Builds a complete search path from a list of components."""
-      components.insert(0, self.tmpdir)
-      return buildPath(components)
 
 
 #######################################################################
@@ -617,7 +631,6 @@ def suite():
    return unittest.TestSuite((
                               unittest.makeSuite(TestAmazonS3Config, 'test'), 
                               unittest.makeSuite(TestLocalConfig, 'test'), 
-                              unittest.makeSuite(TestFunctions, 'test'), 
                             ))
 
 
