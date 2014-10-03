@@ -9,17 +9,18 @@ Release Procedure
 - Run the util/release script for the right version
 
 - Copy source package to hcoop and install it
-- Copy source package to shell.sourceforge.net and install it
 - Copy htmldocs.tar.gz to sourceforge and install it
-- FTP the source package to upload.sourceforge.net/incoming
 
-- Do a new file release at SourceForge
-- Put a new release announcement out on FreshMeat
-- Send a release email to cedar-backup-users
+- Copy the source package to daystrom's FTP directory
+- Sync daystrom's FTP directory structure with hcoop
 
+- Copy the orig file into the tarballs directory for stable and unstable
 - Build the Debian package for unstable in a chroot
 - Build the Debian package for stable in a chroot
 - Push the latest Debian packages to daystrom
-- Sync daystrom's FTP directory structure with hcoop
 - Upload the new packages to the Debian servers
+- Sync daystrom's FTP directory structure with hcoop
+
+- Do a new file release at SourceForge
+- Send a release email to cedar-backup-users
 
