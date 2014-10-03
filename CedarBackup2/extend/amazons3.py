@@ -89,11 +89,12 @@ import logging
 import tempfile
 import datetime
 import json
+import shutil
 from string import Template
 
 # Cedar Backup modules
 from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import resolveCommand, executeCommand, isRunningAsRoot
+from CedarBackup2.util import resolveCommand, executeCommand, isRunningAsRoot, changeOwnership
 from CedarBackup2.xmlutil import createInputDom, addContainerNode, addBooleanNode, addStringNode
 from CedarBackup2.xmlutil import readFirstChild, readString, readBoolean
 from CedarBackup2.actions.util import writeIndicatorFile
@@ -558,18 +559,21 @@ def _writeToAmazonS3(config, local, stagingDirs):
       s3BucketUrl = "s3://%s/%s" % (local.amazons3.s3Bucket, dateSuffix)
       logger.debug("S3 bucket URL is [%s]" % s3BucketUrl)
       _clearExistingBackup(config, s3BucketUrl)
-      if local.encrypt is None:
+      if local.amazons3.encryptCommand is None:
+         logger.debug("Encryption is disabled; files will be uploaded in cleartext.")
          _uploadStagingDir(config, stagingDir, s3BucketUrl)
          _verifyUpload(config, stagingDir, s3BucketUrl)
       else:
+         logger.debug("Encryption is enabled; files will be uploaded after being encrypted.")
          encryptedDir = tempfile.mkdtemp(dir=config.options.workingDir)
+         changeOwnership(encryptedDir, config.options.backupUser, config.options.backupGroup)
          try:
             _encryptStagingDir(config, local, stagingDir, encryptedDir)
             _uploadStagingDir(config, encryptedDir, s3BucketUrl)
-            _verifyUpload(config, stagingDir, s3BucketUrl)
+            _verifyUpload(config, encryptedDir, s3BucketUrl)
          finally:
             if os.path.exists(encryptedDir):
-               os.rmdir(encryptedDir)
+               shutil.rmtree(encryptedDir)
 
 
 ##################################
@@ -636,27 +640,30 @@ def _verifyUpload(config, stagingDir, s3BucketUrl):
    @param stagingDir: Staging directory to verify
    @param s3BucketUrl: S3 bucket URL associated with the staging directory
    """
-   (bucket, prefix) = s3BucketUrl.replace("s3://", "").split("/")
+   (bucket, prefix) = s3BucketUrl.replace("s3://", "").split("/", 1)
    suCommand = resolveCommand(SU_COMMAND)
    awsCommand = resolveCommand(AWS_COMMAND)
    query = "Contents[].{Key: Key, Size: Size}"
    actualCommand = "%s s3api list-objects --bucket %s --prefix %s --query '%s'" % (awsCommand[0], bucket, prefix, query)
-   (result, text) = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand], returnOutput=True)
+   (result, data) = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand], returnOutput=True)
    if result != 0:
       raise IOError("Error [%d] calling AWS CLI verify upload to [%s]." % (result, s3BucketUrl))
    contents = { }
-   for entry in json.loads(text):
-      contents[entry["Key"]] = float(entry["Size"])
+   for entry in json.loads("".join(data)):
+      key = entry["Key"].replace(prefix, "")
+      size = long(entry["Size"])
+      contents[key] = size
    files = FilesystemList()
-   files.addDirContents(stagingDir)   
+   files.addDirContents(stagingDir)
    for entry in files:
-      key = entry.replace(config.stage.targetDir, "")
-      if not key in contents:
-         raise IOError("File was apparently not uploaded: [%s]" % entry)
-      else:
-         size = float(os.stat(entry).st_size)
-         if size != contents[key]:
-            raise IOError("File was uploaded but size differs (%f.0 vs %f.0): [%s]" % (size, contents[key], entry))
+      if os.path.isfile(entry):
+         key = entry.replace(stagingDir, "")
+         size = long(os.stat(entry).st_size)
+         if not key in contents:
+            raise IOError("File was apparently not uploaded: [%s]" % entry)
+         else:
+            if size != contents[key]:
+               raise IOError("File size differs [%s], expected %s bytes but got %s bytes" % (entry, size, contents[key]))
 
 
 ################################
@@ -672,12 +679,19 @@ def _encryptStagingDir(config, local, stagingDir, encryptedDir):
    """
    suCommand = resolveCommand(SU_COMMAND)
    files = FilesystemList()
-   files.addDirContents(stagingDir)   
+   files.addDirContents(stagingDir)
    for cleartext in files:
-      encrypted = os.path.join(encryptedDir, cleartext.replace(config.stage.targetDir, ""))
-      actualCommand = Template(local.encrypt).substitute(input=cleartext, output=encrypted)
-      os.makedirs(os.path.dirname(encrypted))
-      result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
-      if result != 0:
-         raise IOError("Error [%d] encrypting [%s]." % (result, cleartext))
+      if os.path.isfile(cleartext):
+         encrypted = "%s%s" % (encryptedDir, cleartext.replace(stagingDir, ""))
+         if long(os.stat(cleartext).st_size) == 0:
+            open(encrypted, 'a').close() # don't bother encrypting empty files
+         else:
+            actualCommand = Template(local.amazons3.encryptCommand).substitute(input=cleartext, output=encrypted)
+            subdir = os.path.dirname(encrypted)
+            if not os.path.isdir(subdir):
+               os.makedirs(subdir)
+               changeOwnership(subdir, config.options.backupUser, config.options.backupGroup)
+            result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
+            if result != 0:
+               raise IOError("Error [%d] encrypting [%s]." % (result, cleartext))
 
