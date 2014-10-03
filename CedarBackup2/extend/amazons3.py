@@ -63,7 +63,7 @@ For instance, you can use something like this with GPG::
 
    /usr/bin/gpg -c --no-use-agent --batch --yes --passphrase-file /home/backup/.passphrase -o ${output} ${input}
 
-The GPG mechanism depends on a strong passprhase for security.  One way to
+The GPG mechanism depends on a strong passphrase for security.  One way to
 generate a strong passphrase is using your system random number generator, i.e.
 C{dd if=/dev/urandom count=20 bs=1 | xxd -ps}.  (See U{StackExchange
 http://security.stackexchange.com/questions/14867/gpg-encryption-security>} for
@@ -126,8 +126,8 @@ class AmazonS3Config(object):
 
    The following restrictions exist on data in this class:
 
-      - The s3Bucket value, if set, must be a non-empty string
-      - The encryptCommand valu, if set,  must be a non-empty string
+      - The s3Bucket value must be a non-empty string
+      - The encryptCommand value, if set, must be a non-empty string
 
    @sort: __init__, __repr__, __str__, __cmp__, warnMidnite, s3Bucket
    """
@@ -607,6 +607,7 @@ def _clearExistingBackup(config, s3BucketUrl):
    result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
    if result != 0:
       raise IOError("Error [%d] calling AWS CLI to clear existing backup for [%s]." % (result, s3BucketUrl))
+   logger.debug("Completed clearing any existing backup in S3 for [%s]" % s3BucketUrl)
 
 
 ###############################
@@ -626,6 +627,7 @@ def _uploadStagingDir(config, stagingDir, s3BucketUrl):
    result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
    if result != 0:
       raise IOError("Error [%d] calling AWS CLI to upload staging directory to [%s]." % (result, s3BucketUrl))
+   logger.debug("Completed uploading staging dir [%s] to [%s]" % (stagingDir, s3BucketUrl))
 
 
 ###########################
@@ -663,6 +665,7 @@ def _verifyUpload(config, stagingDir, s3BucketUrl):
          else:
             if size != contents[key]:
                raise IOError("File size differs [%s], expected %s bytes but got %s bytes" % (entry, size, contents[key]))
+   logger.debug("Completed verifying upload from [%s] to [%s]." % (stagingDir, s3BucketUrl))
 
 
 ################################
@@ -693,4 +696,5 @@ def _encryptStagingDir(config, local, stagingDir, encryptedDir):
             result = executeCommand(suCommand, [config.options.backupUser, "-c", actualCommand])[0]
             if result != 0:
                raise IOError("Error [%d] encrypting [%s]." % (result, cleartext))
+   logger.debug("Completed encrypting staging directory [%s] into [%s]" % (stagingDir, encryptedDir))
 
