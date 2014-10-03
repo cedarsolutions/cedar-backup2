@@ -1,7 +1,7 @@
 Version 2.23.3    unreleased
 
-	* Add new extension amazons3 to replace the store action.
-	* Update user manual to clarify a few of the dependencies.
+	* Add new extension amazons3 as an optional replacement for the store action.
+	* Update user manual and INSTALL to clarify a few of the dependencies.
 	* Fix encryption unit test that started failing due to my new GPG key.
 
 Version 2.22.0    09 May 2013
