@@ -1,4 +1,4 @@
-Version 2.23.3    unreleased
+Version 2.23.3    03 Oct 2014
 
 	* Add new extension amazons3 as an optional replacement for the store action.
 	* Update user manual and INSTALL to clarify a few of the dependencies.
