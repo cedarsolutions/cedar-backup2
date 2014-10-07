@@ -113,8 +113,10 @@
          <ulink url="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html">setup guide</ulink>.
          The extension assumes that the backup is being executed as root, and
          switches over to the configured backup user to run the
-         <literal>aws</literal> program.  So, make sure you configure the AWS
-         CLI tools as the backup user and not root.
+         <command>aws</command> program.  So, make sure you configure the AWS
+         CLI tools as the backup user and not root.  (This is different than
+         the amazons3 sync tool extension, which exceutes AWS CLI command as
+         the same user that is running the tool.)
       </para>
 
       <para>
