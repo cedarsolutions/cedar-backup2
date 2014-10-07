@@ -56,11 +56,16 @@ import sys
 import os
 import logging
 import getopt
+import json
+import chardet
+import warnings
 
 # Cedar Backup modules 
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT
+from CedarBackup2.filesystem import FilesystemList
 from CedarBackup2.cli import setupLogging, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, DEFAULT_MODE
 from CedarBackup2.util import Diagnostics, splitCommandLine, encodePath
+from CedarBackup2.util import executeCommand
 
 
 ########################################################################
@@ -69,10 +74,13 @@ from CedarBackup2.util import Diagnostics, splitCommandLine, encodePath
 
 logger = logging.getLogger("CedarBackup2.log.tools.amazons3")
 
-SHORT_SWITCHES     = "hVbql:o:m:OdsDv"
+AWS_COMMAND   = [ "aws" ]
+
+SHORT_SWITCHES     = "hVbql:o:m:OdsDvw"
 LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet', 
                        'logfile=', 'owner=', 'mode=', 
-                       'output', 'debug', 'stack', 'diagnostics', "verifyOnly", ]
+                       'output', 'debug', 'stack', 'diagnostics', 
+                       'verifyOnly', 'ignoreWarnings', ]
 
 
 #######################################################################
@@ -189,6 +197,7 @@ class Options(object):
       self._stacktrace = False
       self._diagnostics = False
       self._verifyOnly = False
+      self._ignoreWarnings = False
       self._sourceDir = None
       self._s3BucketUrl = None
       if argumentList is not None and argumentString is not None:
@@ -288,6 +297,11 @@ class Options(object):
             return 1
       if self.verifyOnly != other.verifyOnly:
          if self.verifyOnly < other.verifyOnly:
+            return -1
+         else:
+            return 1
+      if self.ignoreWarnings != other.ignoreWarnings:
+         if self.ignoreWarnings < other.ignoreWarnings:
             return -1
          else:
             return 1
@@ -518,6 +532,22 @@ class Options(object):
       """
       return self._verifyOnly
 
+   def _setIgnoreWarnings(self, value):
+      """
+      Property target used to set the ignoreWarnings flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._ignoreWarnings = True
+      else:
+         self._ignoreWarnings = False
+
+   def _getIgnoreWarnings(self):
+      """
+      Property target used to get the ignoreWarnings flag.
+      """
+      return self._ignoreWarnings
+
    def _setSourceDir(self, value):
       """
       Property target used to set the sourceDir parameter.
@@ -560,6 +590,7 @@ class Options(object):
    stacktrace = property(_getStacktrace, _setStacktrace, None, "Command-line stacktrace (C{-s,--stack}) flag.")
    diagnostics = property(_getDiagnostics, _setDiagnostics, None, "Command-line diagnostics (C{-D,--diagnostics}) flag.")
    verifyOnly = property(_getVerifyOnly, _setVerifyOnly, None, "Command-line verifyOnly (C{-v,--verifyOnly}) flag.")
+   ignoreWarnings = property(_getIgnoreWarnings, _setIgnoreWarnings, None, "Command-line ignoreWarnings (C{-w,--ignoreWarnings}) flag.")
    sourceDir = property(_getSourceDir, _setSourceDir, None, "Command-line sourceDir, source of sync.")
    s3BucketUrl = property(_getS3BucketUrl, _setS3BucketUrl, None, "Command-line s3BucketUrl, target of sync.")
 
@@ -643,6 +674,8 @@ class Options(object):
          argumentList.append("--diagnostics")
       if self.verifyOnly:
          argumentList.append("--verifyOnly")
+      if self.ignoreWarnings:
+         argumentList.append("--ignoreWarnings")
       if self.sourceDir is not None:
          argumentList.append(self.sourceDir)
       if self.s3BucketUrl is not None:
@@ -703,6 +736,8 @@ class Options(object):
          argumentString += "--diagnostics "
       if self.verifyOnly:
          argumentString += "--verifyOnly "
+      if self.ignoreWarnings:
+         argumentString += "--ignoreWarnings "
       if self.sourceDir is not None:
          argumentString +=  "\"%s\" " % self.sourceDir
       if self.s3BucketUrl is not None:
@@ -764,6 +799,8 @@ class Options(object):
          self.diagnostics = True
       if switches.has_key("-v") or switches.has_key("--verifyOnly"):
          self.verifyOnly = True
+      if switches.has_key("-w") or switches.has_key("--ignoreWarnings"):
+         self.ignoreWarnings = True
       try:
          (self.sourceDir, self.s3BucketUrl) = remaining
       except ValueError:
@@ -839,6 +876,7 @@ def cli():
    logger.info("Cedar Backup Amazon S3 sync run started.")
    logger.info("Options were [%s]" % options)
    logger.info("Logfile is [%s]" % logfile)
+   Diagnostics().logDiagnostics(method=logger.info)
 
    if options.stacktrace:
       _executeAction(options)
@@ -964,8 +1002,155 @@ def _executeAction(options):
 
    @raise Exception: Under many generic error conditions
    """
-   if not os.path.isdir(options.sourceDir):
-      raise Exception("Source directory does not exist on disk.")
+   sourceFiles = _buildSourceFiles(options.sourceDir)
+   if not options.ignoreWarnings:
+      _checkSourceFiles(options.sourceDir, sourceFiles)
+   if not options.verifyOnly:
+      _synchronizeBucket(options.sourceDir, options.s3BucketUrl)
+   _verifyBucketContents(options.sourceDir, sourceFiles, options.s3BucketUrl)
+
+
+################################
+# _buildSourceFiles() function
+################################
+
+def _buildSourceFiles(sourceDir):
+   """
+   Build a list of files in a source directory
+   @param sourceDir: Local source directory 
+   @return: FilesystemList with contents of source directory
+   """
+   if not os.path.isdir(sourceDir):
+      raise ValueError("Source directory does not exist on disk.")
+   sourceFiles = FilesystemList()
+   sourceFiles.addDirContents(sourceDir)
+   return sourceFiles
+
+
+###############################
+# _checkSourceFiles() function
+###############################
+
+def _checkSourceFiles(sourceDir, sourceFiles):
+   """
+   Check source files, trying to guess which ones will have encoding problems.
+   @param sourceDir: Local source directory 
+   @param sourceDir: Local source directory 
+   @raises ValueError: If a problem file is found
+   @see U{http://opensourcehacker.com/2011/09/16/fix-linux-filename-encodings-with-python/}
+   @see U{http://serverfault.com/questions/82821/how-to-tell-the-language-encoding-of-a-filename-on-linux}
+   @see U{http://randysofia.com/2014/06/06/aws-cli-and-your-locale/}
+   """
+   with warnings.catch_warnings():
+      warnings.simplefilter("ignore") # So we don't print unicode warnings from comparisons
+
+      encoding = Diagnostics().encoding
+
+      failed = False
+      for entry in sourceFiles:
+         result = chardet.detect(entry)
+         source = entry.decode(result["encoding"])
+         try:
+            target = source.encode(encoding)
+            if source != target:
+               logger.error("Inconsistent encoding for [%s]: got %s, but need %s" % (entry, result["encoding"], encoding))
+               failed = True
+         except UnicodeEncodeError:
+            logger.error("Inconsistent encoding for [%s]: got %s, but need %s" % (entry, result["encoding"], encoding))
+            failed = True
+      
+      if not failed:
+         logger.info("Completed checking source filename encoding (no problems found).")
+      else:
+         logger.error("Some filenames have inconsistent encodings and will likely cause sync problems.")
+         logger.error("You may be able to fix this by setting a more sensible locale in your environment.")
+         logger.error("Aternately, you can rename the problem files to be valid in the indicated locale.")
+         logger.error("To ignore this warning and proceed anyway, use --ignoreWarnings")
+         raise ValueError("Some filenames have inconsistent encodings and will likely cause sync problems.")
+
+
+################################
+# _synchronizeBucket() function
+################################
+
+def _synchronizeBucket(sourceDir, s3BucketUrl):
+   """
+   Synchronize a local directory to an Amazon S3 bucket.
+   @param sourceDir: Local source directory 
+   @param s3BucketUrl: Target S3 bucket URL 
+   """
+   logger.info("Synchronizing local source directory up to Amazon S3.")
+   args = [ "s3", "sync", sourceDir, s3BucketUrl, "--delete", "--recursive", ]
+   result = executeCommand(AWS_COMMAND, args, returnOutput=False)[0]
+   if result != 0:
+      raise IOError("Error [%d] calling AWS CLI synchronize bucket." % result)
+
+
+###################################
+# _verifyBucketContents() function
+###################################
+
+def _verifyBucketContents(sourceDir, sourceFiles, s3BucketUrl):
+   """
+   Verify that a source directory is equivalent to an Amazon S3 bucket.
+   @param sourceDir: Local source directory 
+   @param sourceFiles: Filesystem list containing contents of source directory
+   @param s3BucketUrl: Target S3 bucket URL 
+   """
+   # As of this writing, the documentation for the S3 API that we're using
+   # below says that up to 1000 elements at a time are returned, and that we
+   # have to manually handle pagination by looking for the IsTruncated element.
+   # However, in practice, this is not true.  I have been testing with
+   # "aws-cli/1.4.4 Python/2.7.3 Linux/3.2.0-4-686-pae", installed through PIP.
+   # No matter how many items exist in my bucket and prefix, I get back a
+   # single JSON result.  I've tested with buckets containing nearly 6000
+   # elements.
+   #
+   # If I turn on debugging, it's clear that underneath, something in the API
+   # is executing multiple list-object requests against AWS, and stiching
+   # results together to give me back the final JSON result.  The debug output
+   # clearly incldues multiple requests, and each XML response (except for the
+   # final one) contains <IsTruncated>true</IsTruncated>.
+   #
+   # This feature is not mentioned in the offical changelog for any of the
+   # releases going back to 1.0.0.  It appears to happen in the botocore
+   # library, but I'll admit I can't actually find the code that implements it.
+   # For now, all I can do is rely on this behavior and hope that the
+   # documentation is out-of-date.  I'm not going to write code that tries to
+   # parse out IsTruncated if I can't actually test that code.
+
+   (bucket, prefix) = s3BucketUrl.replace("s3://", "").split("/", 1)
+
+   query = "Contents[].{Key: Key, Size: Size}"
+   args = [ "s3api", "list-objects", "--bucket", bucket, "--prefix", prefix, "--query", query, ]
+   (result, data) = executeCommand(AWS_COMMAND, args, returnOutput=True)
+   if result != 0:
+      raise IOError("Error [%d] calling AWS CLI verify bucket contents." % result)
+
+   contents = { }
+   for entry in json.loads("".join(data)):
+      key = entry["Key"].replace(prefix, "")
+      size = long(entry["Size"])
+      contents[key] = size
+
+   failed = False
+   for entry in sourceFiles:
+      if os.path.isfile(entry):
+         key = entry.replace(sourceDir, "")
+         size = long(os.stat(entry).st_size)
+         if not key in contents:
+            logger.error("File was apparently not uploaded: [%s]" % entry)
+            failed = True
+         else:
+            if size != contents[key]:
+               logger.error("File size differs [%s]: expected %s bytes but got %s bytes" % (entry, size, contents[key]))
+               failed = True
+
+   if not failed:
+      logger.info("Completed verifying Amazon S3 bucket contents (no problems found).")
+   else:
+      logger.error("There were differences between source directory and target S3 bucket.")
+      raise ValueError("There were differences between source directory and target S3 bucket.")
 
 
 #########################################################################
@@ -973,6 +1158,5 @@ def _executeAction(options):
 ########################################################################
 
 if __name__ == "__main__":
-   result = cli()
-   sys.exit(result)
+   sys.exit(cli())
 
