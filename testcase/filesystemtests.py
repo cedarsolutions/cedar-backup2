@@ -19381,6 +19381,7 @@ class TestBackupFileList(unittest.TestCase):
    # Test _generateDigest()
    #########################
          
+   # pylint: disable=E1101
    def testGenerateDigest_001(self):
       """
       Test that _generateDigest gives back same result as the slower simplistic
