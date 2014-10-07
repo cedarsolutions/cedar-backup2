@@ -15,7 +15,7 @@
 .\" #
 .\" # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 .\"
-.TH cback\-span "1" "July 2010" "Cedar Backup" "Kenneth J. Pronovici"
+.TH cback\-span "1" "Oct 2014" "Cedar Backup" "Kenneth J. Pronovici"
 .SH NAME
 cback\-span \- Span staged data among multiple discs
 .SH SYNOPSIS
@@ -87,6 +87,10 @@ Backup to dump the entire Python stack trace associated with an error, rather
 than just progating last message it received back up to the user interface.
 Under some circumstances, this is useful information to include along with a
 bug report.
+.TP
+\fB\-D\fR, \fB\-\-diagnostics\fR
+Display runtime diagnostic information and then exit.  This diagnostic
+information is often useful when filing a bug report.
 .SH RETURN VALUES
 .PP
 This command returns 0 (zero) upon normal completion, and six other error

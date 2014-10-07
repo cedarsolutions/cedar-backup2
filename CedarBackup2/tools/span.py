@@ -73,6 +73,7 @@ from CedarBackup2.actions.constants import STORE_INDICATOR
 from CedarBackup2.actions.util import createWriter
 from CedarBackup2.actions.store import writeIndicatorFile
 from CedarBackup2.actions.util import findDailyDirs
+from CedarBackup2.util import Diagnostics
 
 
 ########################################################################
@@ -164,6 +165,9 @@ def cli():
       return 0
    if options.version:
       _version()
+      return 0
+   if options.diagnostics:
+      _diagnostics()
       return 0
 
    try:
@@ -268,6 +272,23 @@ def _version(fd=sys.stdout):
    fd.write(" GNU General Public License version 2 for copying conditions.\n")
    fd.write("\n")
    fd.write(" Use the --help option for usage information.\n")
+   fd.write("\n")
+
+
+##########################
+# _diagnostics() function
+##########################
+
+def _diagnostics(fd=sys.stdout):
+   """
+   Prints runtime diagnostics information.
+   @param fd: File descriptor used to print information.
+   @note: The C{fd} is used rather than C{print} to facilitate unit testing.
+   """
+   fd.write("\n")
+   fd.write("Diagnostics:\n")
+   fd.write("\n")
+   Diagnostics().printDiagnostics(fd=fd, prefix="   ")
    fd.write("\n")
 
 
