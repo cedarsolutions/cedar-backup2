@@ -10,8 +10,8 @@
 .\" # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 .\" # Language : nroff
 .\" # Project  : Cedar Backup, release 2
-.\" # Revision : $Id: cback-span.1 1011 2010-07-10 23:58:29Z pronovic $
-.\" # Purpose  : Manpage for cback-span script
+.\" # Revision : $Id$
+.\" # Purpose  : Manpage for cback-amazons3-sync script
 .\" #
 .\" # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 .\"
@@ -114,16 +114,17 @@ Other error during processing.
 .SH NOTES
 .PP
 This tool is a wrapper over the Amazon AWS CLI interface found in the aws(1)
-command.  
+command.  Specifically, cback\-amazons3\-sync invokes "aws s3 sync" followed by
+"aws s3api list-objects".
 .PP
 Cedar Backup itself is designed to run as root.  However, this command can be
 run safely as any user that is configured to use the Amazon AWS CLI interface.
-The aws(1) command will be executed by the same user which is executing the
-cback-amazons3-sync.
+The aws(1) command will be executed by the same user which is executing 
+cback\-amazons3\-sync.
 .PP
 You must configure the AWS CLI interface to have a valid connection to Amazon
-S3 infrastructure before using this command. For more information about how to
-accomplish this, see the Cedar Backup user guide.
+S3 infrastructure before using cback\-amazons3\-sync. For more information
+about how to accomplish this, see the Cedar Backup user guide.
 .SH SEE ALSO
 cback(1)
 .SH FILES

@@ -188,6 +188,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -208,6 +209,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -228,6 +230,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -248,6 +251,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -268,6 +272,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -288,6 +293,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -308,6 +314,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -328,6 +335,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -348,6 +356,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -368,6 +377,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -388,6 +398,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -408,6 +419,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -428,6 +440,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -448,6 +461,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -468,6 +482,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -488,6 +503,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -508,6 +524,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -528,6 +545,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -548,6 +566,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -568,6 +587,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -612,6 +632,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -632,6 +653,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -652,6 +674,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -672,6 +695,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -740,6 +764,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -760,6 +785,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -780,6 +806,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -800,6 +827,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -868,6 +896,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -888,6 +917,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -908,6 +938,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -928,6 +959,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -948,6 +980,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -968,6 +1001,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -988,6 +1022,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1008,6 +1043,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1028,6 +1064,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1048,6 +1085,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1068,6 +1106,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1088,6 +1127,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1108,6 +1148,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1128,6 +1169,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1148,6 +1190,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1168,6 +1211,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(True, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1188,6 +1232,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(True, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1208,6 +1253,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(True, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1228,6 +1274,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(True, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1248,6 +1295,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(True, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1268,6 +1316,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(True, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1288,6 +1337,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(True, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1308,6 +1358,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(True, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
@@ -1328,10 +1379,95 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(True, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
    def testConstructor_082(self):
+      """
+      Test constructor with argumentList=["--ignoreWarnings", ], validate=False.
+      """
+      options = Options(argumentList=["--ignoreWarnings", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
+      self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(True, options.ignoreWarnings)
+      self.failUnlessEqual(None, options.sourceDir)
+      self.failUnlessEqual(None, options.s3BucketUrl)
+
+   def testConstructor_083(self):
+      """
+      Test constructor with argumentString="--ignoreWarnings", validate=False.
+      """
+      options = Options(argumentString="--ignoreWarnings", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
+      self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(True, options.ignoreWarnings)
+      self.failUnlessEqual(None, options.sourceDir)
+      self.failUnlessEqual(None, options.s3BucketUrl)
+
+   def testConstructor_084(self):
+      """
+      Test constructor with argumentList=["-w", ], validate=False.
+      """
+      options = Options(argumentList=["-w", ], validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
+      self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(True, options.ignoreWarnings)
+      self.failUnlessEqual(None, options.sourceDir)
+      self.failUnlessEqual(None, options.s3BucketUrl)
+
+   def testConstructor_085(self):
+      """
+      Test constructor with argumentString="-w", validate=False.
+      """
+      options = Options(argumentString="-w", validate=False)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
+      self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(True, options.ignoreWarnings)
+      self.failUnlessEqual(None, options.sourceDir)
+      self.failUnlessEqual(None, options.s3BucketUrl)
+
+   def testConstructor_086(self):
       """
       Test constructor with argumentList=["source", "bucket", ], validate=False.
       """
@@ -1348,10 +1484,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual("source", options.sourceDir)
       self.failUnlessEqual("bucket", options.s3BucketUrl)
 
-   def testConstructor_083(self):
+   def testConstructor_087(self):
       """
       Test constructor with argumentString="source bucket", validate=False.
       """
@@ -1368,10 +1505,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual("source", options.sourceDir)
       self.failUnlessEqual("bucket", options.s3BucketUrl)
 
-   def testConstructor_084(self):
+   def testConstructor_088(self):
       """
       Test constructor with argumentList=["-d", "--verbose", "-O", "--mode", "600", "source", "bucket", ], validate=False.
       """
@@ -1388,10 +1526,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual("source", options.sourceDir)
       self.failUnlessEqual("bucket", options.s3BucketUrl)
 
-   def testConstructor_085(self):
+   def testConstructor_089(self):
       """
       Test constructor with argumentString="-d --verbose -O --mode 600 source bucket", validate=False.
       """
@@ -1408,22 +1547,23 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual("source", options.sourceDir)
       self.failUnlessEqual("bucket", options.s3BucketUrl)
 
-   def testConstructor_086(self):
+   def testConstructor_090(self):
       """
       Test constructor with argumentList=[], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=[], validate=True)
 
-   def testConstructor_087(self):
+   def testConstructor_091(self):
       """
       Test constructor with argumentString="", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="", validate=True)
 
-   def testConstructor_088(self):
+   def testConstructor_092(self):
       """
       Test constructor with argumentList=["--help", ], validate=True.
       """
@@ -1440,10 +1580,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_089(self):
+   def testConstructor_093(self):
       """
       Test constructor with argumentString="--help", validate=True.
       """
@@ -1460,10 +1601,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_099(self):
+   def testConstructor_094(self):
       """
       Test constructor with argumentList=["-h", ], validate=True.
       """
@@ -1480,10 +1622,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_100(self):
+   def testConstructor_095(self):
       """
       Test constructor with argumentString="-h", validate=True.
       """
@@ -1500,10 +1643,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_101(self):
+   def testConstructor_096(self):
       """
       Test constructor with argumentList=["--version", ], validate=True.
       """
@@ -1520,10 +1664,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_102(self):
+   def testConstructor_097(self):
       """
       Test constructor with argumentString="--version", validate=True.
       """
@@ -1540,10 +1685,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_103(self):
+   def testConstructor_098(self):
       """
       Test constructor with argumentList=["-V", ], validate=True.
       """
@@ -1560,10 +1706,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_104(self):
+   def testConstructor_099(self):
       """
       Test constructor with argumentString="-V", validate=True.
       """
@@ -1580,322 +1727,323 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_105(self):
+   def testConstructor_100(self):
       """
       Test constructor with argumentList=["--verbose", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--verbose", ], validate=True)
 
-   def testConstructor_106(self):
+   def testConstructor_101(self):
       """
       Test constructor with argumentString="--verbose", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--verbose", validate=True)
 
-   def testConstructor_107(self):
+   def testConstructor_102(self):
       """
       Test constructor with argumentList=["-b", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-b", ], validate=True)
 
-   def testConstructor_108(self):
+   def testConstructor_103(self):
       """
       Test constructor with argumentString="-b", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-b", validate=True)
 
-   def testConstructor_109(self):
+   def testConstructor_104(self):
       """
       Test constructor with argumentList=["--quiet", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--quiet", ], validate=True)
 
-   def testConstructor_110(self):
+   def testConstructor_105(self):
       """
       Test constructor with argumentString="--quiet", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--quiet", validate=True)
 
-   def testConstructor_111(self):
+   def testConstructor_106(self):
       """
       Test constructor with argumentList=["-q", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-q", ], validate=True)
 
-   def testConstructor_112(self):
+   def testConstructor_107(self):
       """
       Test constructor with argumentString="-q", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-q", validate=True)
 
-   def testConstructor_113(self):
+   def testConstructor_108(self):
       """
       Test constructor with argumentList=["--logfile", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--logfile", ], validate=True)
 
-   def testConstructor_114(self):
+   def testConstructor_109(self):
       """
       Test constructor with argumentString="--logfile", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--logfile", validate=True)
 
-   def testConstructor_115(self):
+   def testConstructor_110(self):
       """
       Test constructor with argumentList=["-l", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-l", ], validate=True)
 
-   def testConstructor_116(self):
+   def testConstructor_111(self):
       """
       Test constructor with argumentString="-l", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-l", validate=True)
 
-   def testConstructor_117(self):
+   def testConstructor_112(self):
       """
       Test constructor with argumentList=["--logfile", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--logfile", "something", ], validate=True)
 
-   def testConstructor_118(self):
+   def testConstructor_113(self):
       """
       Test constructor with argumentString="--logfile something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--logfile something", validate=True)
 
-   def testConstructor_119(self):
+   def testConstructor_114(self):
       """
       Test constructor with argumentList=["-l", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-l", "something", ], validate=True)
 
-   def testConstructor_120(self):
+   def testConstructor_115(self):
       """
       Test constructor with argumentString="-l something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-l something", validate=True)
 
-   def testConstructor_121(self):
+   def testConstructor_116(self):
       """
       Test constructor with argumentList=["--owner", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--owner", ], validate=True)
 
-   def testConstructor_122(self):
+   def testConstructor_117(self):
       """
       Test constructor with argumentString="--owner", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--owner", validate=True)
 
-   def testConstructor_123(self):
+   def testConstructor_118(self):
       """
       Test constructor with argumentList=["-o", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-o", ], validate=True)
 
-   def testConstructor_124(self):
+   def testConstructor_119(self):
       """
       Test constructor with argumentString="-o", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-o", validate=True)
 
-   def testConstructor_125(self):
+   def testConstructor_120(self):
       """
       Test constructor with argumentList=["--owner", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--owner", "something", ], validate=True)
 
-   def testConstructor_126(self):
+   def testConstructor_121(self):
       """
       Test constructor with argumentString="--owner something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--owner something", validate=True)
 
-   def testConstructor_127(self):
+   def testConstructor_122(self):
       """
       Test constructor with argumentList=["-o", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-o", "something", ], validate=True)
 
-   def testConstructor_128(self):
+   def testConstructor_123(self):
       """
       Test constructor with argumentString="-o something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-o something", validate=True)
 
-   def testConstructor_129(self):
+   def testConstructor_124(self):
       """
       Test constructor with argumentList=["--owner", "a:b", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--owner", "a:b", ], validate=True)
 
-   def testConstructor_130(self):
+   def testConstructor_125(self):
       """
       Test constructor with argumentString="--owner a:b", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--owner a:b", validate=True)
 
-   def testConstructor_131(self):
+   def testConstructor_126(self):
       """
       Test constructor with argumentList=["-o", "a:b", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-o", "a:b", ], validate=True)
 
-   def testConstructor_132(self):
+   def testConstructor_127(self):
       """
       Test constructor with argumentString="-o a:b", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-o a:b", validate=True)
 
-   def testConstructor_133(self):
+   def testConstructor_128(self):
       """
       Test constructor with argumentList=["--mode", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["--mode", ], validate=True)
 
-   def testConstructor_134(self):
+   def testConstructor_129(self):
       """
       Test constructor with argumentString="--mode", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="--mode", validate=True)
 
-   def testConstructor_135(self):
+   def testConstructor_130(self):
       """
       Test constructor with argumentList=["-m", ], validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentList=["-m", ], validate=True)
 
-   def testConstructor_136(self):
+   def testConstructor_131(self):
       """
       Test constructor with argumentString="-m", validate=True.
       """
       self.failUnlessRaises(GetoptError, Options, argumentString="-m", validate=True)
 
-   def testConstructor_137(self):
+   def testConstructor_132(self):
       """
       Test constructor with argumentList=["--mode", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--mode", "something", ], validate=True)
 
-   def testConstructor_138(self):
+   def testConstructor_133(self):
       """
       Test constructor with argumentString="--mode something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--mode something", validate=True)
 
-   def testConstructor_139(self):
+   def testConstructor_134(self):
       """
       Test constructor with argumentList=["-m", "something", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-m", "something", ], validate=True)
 
-   def testConstructor_140(self):
+   def testConstructor_135(self):
       """
       Test constructor with argumentString="-m something", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-m something", validate=True)
 
-   def testConstructor_141(self):
+   def testConstructor_136(self):
       """
       Test constructor with argumentList=["--mode", "631", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--mode", "631", ], validate=True)
 
-   def testConstructor_142(self):
+   def testConstructor_137(self):
       """
       Test constructor with argumentString="--mode 631", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--mode 631", validate=True)
 
-   def testConstructor_143(self):
+   def testConstructor_138(self):
       """
       Test constructor with argumentList=["-m", "631", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-m", "631", ], validate=True)
 
-   def testConstructor_144(self):
+   def testConstructor_139(self):
       """
       Test constructor with argumentString="-m 631", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-m 631", validate=True)
 
-   def testConstructor_145(self):
+   def testConstructor_140(self):
       """
       Test constructor with argumentList=["--output", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--output", ], validate=True)
 
-   def testConstructor_146(self):
+   def testConstructor_141(self):
       """
       Test constructor with argumentString="--output", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--output", validate=True)
 
-   def testConstructor_147(self):
+   def testConstructor_142(self):
       """
       Test constructor with argumentList=["-O", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-O", ], validate=True)
 
-   def testConstructor_148(self):
+   def testConstructor_143(self):
       """
       Test constructor with argumentString="-O", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-O", validate=True)
 
-   def testConstructor_149(self):
+   def testConstructor_144(self):
       """
       Test constructor with argumentList=["--debug", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--debug", ], validate=True)
 
-   def testConstructor_150(self):
+   def testConstructor_145(self):
       """
       Test constructor with argumentString="--debug", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--debug", validate=True)
 
-   def testConstructor_151(self):
+   def testConstructor_146(self):
       """
       Test constructor with argumentList=["-d", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-d", ], validate=True)
 
-   def testConstructor_152(self):
+   def testConstructor_147(self):
       """
       Test constructor with argumentString="-d", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-d", validate=True)
 
-   def testConstructor_153(self):
+   def testConstructor_148(self):
       """
       Test constructor with argumentList=["--stack", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--stack", ], validate=True)
 
-   def testConstructor_154(self):
+   def testConstructor_149(self):
       """
       Test constructor with argumentString="--stack", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--stack", validate=True)
 
-   def testConstructor_155(self):
+   def testConstructor_150(self):
       """
       Test constructor with argumentList=["-s", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-s", ], validate=True)
 
-   def testConstructor_156(self):
+   def testConstructor_151(self):
       """
       Test constructor with argumentString="-s", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-s", validate=True)
 
-   def testConstructor_157(self):
+   def testConstructor_152(self):
       """
       Test constructor with argumentList=["--diagnostics", ], validate=True.
       """
@@ -1912,10 +2060,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(True, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_158(self):
+   def testConstructor_153(self):
       """
       Test constructor with argumentString="--diagnostics", validate=True.
       """
@@ -1932,10 +2081,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(True, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_159(self):
+   def testConstructor_154(self):
       """
       Test constructor with argumentList=["-D", ], validate=True.
       """
@@ -1952,10 +2102,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(True, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_160(self):
+   def testConstructor_155(self):
       """
       Test constructor with argumentString="-D", validate=True.
       """
@@ -1972,34 +2123,59 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(True, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual(None, options.sourceDir)
       self.failUnlessEqual(None, options.s3BucketUrl)
 
-   def testConstructor_161(self):
+   def testConstructor_156(self):
       """
       Test constructor with argumentList=["--verifyOnly", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["--verifyOnly", ], validate=True)
 
-   def testConstructor_162(self):
+   def testConstructor_157(self):
       """
       Test constructor with argumentString="--verifyOnly", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="--verifyOnly", validate=True)
 
-   def testConstructor_163(self):
+   def testConstructor_158(self):
       """
       Test constructor with argumentList=["-v", ], validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentList=["-v", ], validate=True)
 
-   def testConstructor_164(self):
+   def testConstructor_159(self):
       """
       Test constructor with argumentString="-v", validate=True.
       """
       self.failUnlessRaises(ValueError, Options, argumentString="-v", validate=True)
 
-   def testConstructor_165(self):
+   def testConstructor_160(self):
+      """
+      Test constructor with argumentList=["--ignoreWarnings", ], validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentList=["--ignoreWarnings", ], validate=True)
+
+   def testConstructor_161(self):
+      """
+      Test constructor with argumentString="--ignoreWarnings", validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentString="--ignoreWarnings", validate=True)
+
+   def testConstructor_162(self):
+      """
+      Test constructor with argumentList=["-w", ], validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentList=["-w", ], validate=True)
+
+   def testConstructor_163(self):
+      """
+      Test constructor with argumentString="-w", validate=True.
+      """
+      self.failUnlessRaises(ValueError, Options, argumentString="-w", validate=True)
+
+   def testConstructor_164(self):
       """
       Test constructor with argumentList=["source", "bucket", ], validate=True.
       """
@@ -2016,31 +2192,33 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
+      self.failUnlessEqual("source", options.sourceDir)
+      self.failUnlessEqual("bucket", options.s3BucketUrl)
+
+   def testConstructor_165(self):
+      """
+      Test constructor with argumentString="source bucket", validate=True.
+      """
+      options = Options(argumentString="source bucket", validate=True)
+      self.failUnlessEqual(False, options.help)
+      self.failUnlessEqual(False, options.version)
+      self.failUnlessEqual(False, options.verbose)
+      self.failUnlessEqual(False, options.quiet)
+      self.failUnlessEqual(None, options.logfile)
+      self.failUnlessEqual(None, options.owner)
+      self.failUnlessEqual(None, options.mode)
+      self.failUnlessEqual(False, options.output)
+      self.failUnlessEqual(False, options.debug)
+      self.failUnlessEqual(False, options.stacktrace)
+      self.failUnlessEqual(False, options.diagnostics)
+      self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual("source", options.sourceDir)
       self.failUnlessEqual("bucket", options.s3BucketUrl)
 
    def testConstructor_166(self):
       """
-      Test constructor with argumentString="source bucket", validate=True.
-      """
-      options = Options(argumentString="source bucket", validate=True)
-      self.failUnlessEqual(False, options.help)
-      self.failUnlessEqual(False, options.version)
-      self.failUnlessEqual(False, options.verbose)
-      self.failUnlessEqual(False, options.quiet)
-      self.failUnlessEqual(None, options.logfile)
-      self.failUnlessEqual(None, options.owner)
-      self.failUnlessEqual(None, options.mode)
-      self.failUnlessEqual(False, options.output)
-      self.failUnlessEqual(False, options.debug)
-      self.failUnlessEqual(False, options.stacktrace)
-      self.failUnlessEqual(False, options.diagnostics)
-      self.failUnlessEqual(False, options.verifyOnly)
-      self.failUnlessEqual("source", options.sourceDir)
-      self.failUnlessEqual("bucket", options.s3BucketUrl)
-
-   def testConstructor_167(self):
-      """
       Test constructor with argumentList=["source", "bucket", ], validate=True.
       """
       options = Options(argumentList=["source", "bucket", ], validate=True)
@@ -2056,10 +2234,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual("source", options.sourceDir)
       self.failUnlessEqual("bucket", options.s3BucketUrl)
 
-   def testConstructor_168(self):
+   def testConstructor_167(self):
       """
       Test constructor with argumentString="source bucket", validate=True.
       """
@@ -2076,10 +2255,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual("source", options.sourceDir)
       self.failUnlessEqual("bucket", options.s3BucketUrl)
 
-   def testConstructor_169(self):
+   def testConstructor_168(self):
       """
       Test constructor with argumentList=["-d", "--verbose", "-O", "--mode", "600", "source", "bucket", ], validate=True.
       """
@@ -2096,10 +2276,11 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual("source", options.sourceDir)
       self.failUnlessEqual("bucket", options.s3BucketUrl)
 
-   def testConstructor_170(self):
+   def testConstructor_169(self):
       """
       Test constructor with argumentString="-d --verbose -O --mode 600 source bucket", validate=True.
       """
@@ -2116,6 +2297,7 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(False, options.stacktrace)
       self.failUnlessEqual(False, options.diagnostics)
       self.failUnlessEqual(False, options.verifyOnly)
+      self.failUnlessEqual(False, options.ignoreWarnings)
       self.failUnlessEqual("source", options.sourceDir)
       self.failUnlessEqual("bucket", options.s3BucketUrl)
 
@@ -2157,6 +2339,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2172,6 +2355,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2202,6 +2386,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2217,6 +2402,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2247,6 +2433,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2262,6 +2449,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2292,6 +2480,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2307,6 +2496,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2337,6 +2527,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2352,6 +2543,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2382,6 +2574,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2397,6 +2590,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2427,6 +2621,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2442,6 +2637,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2472,6 +2668,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2487,6 +2684,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2517,6 +2715,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2532,6 +2731,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2562,6 +2762,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2577,6 +2778,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2607,6 +2809,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = False
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2622,6 +2825,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2652,6 +2856,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = False
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2667,6 +2872,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2697,6 +2903,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = False
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = "bucket"
 
@@ -2712,6 +2919,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2742,6 +2950,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = None
       options1.s3BucketUrl = "bucket"
 
@@ -2757,6 +2966,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2787,6 +2997,7 @@ class TestOptions(unittest.TestCase):
       options1.stacktrace = True
       options1.diagnostics = True
       options1.verifyOnly = True
+      options1.ignoreWarnings = True
       options1.sourceDir = "source"
       options1.s3BucketUrl = None
 
@@ -2802,6 +3013,7 @@ class TestOptions(unittest.TestCase):
       options2.stacktrace = True
       options2.diagnostics = True
       options2.verifyOnly = True
+      options2.ignoreWarnings = True
       options2.sourceDir = "source"
       options2.s3BucketUrl = "bucket"
 
@@ -2909,6 +3121,13 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual(["--verifyOnly", ], argumentList)
 
    def testBuildArgumentList_014(self):
+      """Test with ignoreWarnings set, validate=False."""
+      options = Options()
+      options.ignoreWarnings = True
+      argumentList = options.buildArgumentList(validate=False)
+      self.failUnlessEqual(["--ignoreWarnings", ], argumentList)
+
+   def testBuildArgumentList_015(self):
       """Test with valid source and target, validate=False."""
       options = Options()
       options.sourceDir = "source"
@@ -2916,7 +3135,7 @@ class TestOptions(unittest.TestCase):
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["source", "bucket", ], argumentList)
 
-   def testBuildArgumentList_015(self):
+   def testBuildArgumentList_016(self):
       """Test with all values set, actions containing one item, validate=False."""
       options = Options()
       options.help = True
@@ -2931,95 +3150,102 @@ class TestOptions(unittest.TestCase):
       options.stacktrace = True
       options.diagnostics = True
       options.verifyOnly = True
+      options.ignoreWarnings = True
       options.sourceDir = "source"
       options.s3BucketUrl = "bucket"
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", 
                              "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
                              "--output", "--debug", "--stack", "--diagnostics", 
-                             "--verifyOnly", "source", "bucket", ], argumentList)
+                             "--verifyOnly", "--ignoreWarnings", "source", "bucket", ], argumentList)
 
-   def testBuildArgumentList_016(self):
+   def testBuildArgumentList_017(self):
       """Test with no values set, validate=True."""
       options = Options()
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_017(self):
+   def testBuildArgumentList_018(self):
       """Test with help set, validate=True."""
       options = Options()
       options.help = True
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--help", ], argumentList)
 
-   def testBuildArgumentList_018(self):
+   def testBuildArgumentList_019(self):
       """Test with version set, validate=True."""
       options = Options()
       options.version = True
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--version", ], argumentList)
 
-   def testBuildArgumentList_019(self):
+   def testBuildArgumentList_020(self):
       """Test with verbose set, validate=True."""
       options = Options()
       options.verbose = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_020(self):
+   def testBuildArgumentList_021(self):
       """Test with quiet set, validate=True."""
       options = Options()
       options.quiet = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_021(self):
+   def testBuildArgumentList_022(self):
       """Test with logfile set, validate=True."""
       options = Options()
       options.logfile = "bogus"
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_022(self):
+   def testBuildArgumentList_023(self):
       """Test with owner set, validate=True."""
       options = Options()
       options.owner = ("ken", "group")
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_023(self):
+   def testBuildArgumentList_024(self):
       """Test with mode set, validate=True."""
       options = Options()
       options.mode = 0644
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_024(self):
+   def testBuildArgumentList_025(self):
       """Test with output set, validate=True."""
       options = Options()
       options.output = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_025(self):
+   def testBuildArgumentList_026(self):
       """Test with debug set, validate=True."""
       options = Options()
       options.debug = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_026(self):
+   def testBuildArgumentList_027(self):
       """Test with stacktrace set, validate=True."""
       options = Options()
       options.stacktrace = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_027(self):
+   def testBuildArgumentList_028(self):
       """Test with diagnostics set, validate=True."""
       options = Options()
       options.diagnostics = True
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--diagnostics", ], argumentList)
 
-   def testBuildArgumentList_028(self):
+   def testBuildArgumentList_029(self):
       """Test with verifyOnly set, validate=True."""
       options = Options()
       options.verifyOnly = True
       self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
 
-   def testBuildArgumentList_029(self):
+   def testBuildArgumentList_030(self):
+      """Test with ignoreWarnings set, validate=True."""
+      options = Options()
+      options.ignoreWarnings = True
+      self.failUnlessRaises(ValueError, options.buildArgumentList, validate=True)
+
+   def testBuildArgumentList_031(self):
       """Test with valid source and target, validate=True."""
       options = Options()
       options.sourceDir = "source"
@@ -3027,7 +3253,7 @@ class TestOptions(unittest.TestCase):
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["source", "bucket", ], argumentList)
 
-   def testBuildArgumentList_030(self):
+   def testBuildArgumentList_032(self):
       """Test with all values set (except managed ones), actions containing one item, validate=True."""
       options = Options()
       options.help = True
@@ -3042,13 +3268,14 @@ class TestOptions(unittest.TestCase):
       options.stacktrace = True
       options.diagnostics = True
       options.verifyOnly = True
+      options.ignoreWarnings = True
       options.sourceDir = "source"
       options.s3BucketUrl = "bucket"
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet", 
                              "--logfile", "logfile", "--owner", "a:b", "--mode", "631", 
                              "--output", "--debug", "--stack", "--diagnostics", 
-                             "--verifyOnly", "source", "bucket", ], argumentList)
+                             "--verifyOnly", "--ignoreWarnings", "source", "bucket", ], argumentList)
 
 
    #############################
@@ -3146,6 +3373,13 @@ class TestOptions(unittest.TestCase):
       self.failUnlessEqual("--verifyOnly ", argumentString)
 
    def testBuildArgumentString_014(self):
+      """Test with ignoreWarnings set, validate=False."""
+      options = Options()
+      options.ignoreWarnings = True
+      argumentString = options.buildArgumentString(validate=False)
+      self.failUnlessEqual("--ignoreWarnings ", argumentString)
+
+   def testBuildArgumentString_015(self):
       """Test with valid source and target, validate=False."""
       options = Options()
       options.sourceDir = "source"
@@ -3153,7 +3387,7 @@ class TestOptions(unittest.TestCase):
       argumentString = options.buildArgumentString(validate=False)
       self.failUnlessEqual('"source" "bucket" ', argumentString)
 
-   def testBuildArgumentString_015(self):
+   def testBuildArgumentString_016(self):
       """Test with all values set, actions containing one item, validate=False."""
       options = Options()
       options.help = True
@@ -3168,92 +3402,99 @@ class TestOptions(unittest.TestCase):
       options.stacktrace = True
       options.diagnostics = True
       options.verifyOnly = True
+      options.ignoreWarnings = True
       options.sourceDir = "source"
       options.s3BucketUrl = "bucket"
       argumentString = options.buildArgumentString(validate=False)
-      self.failUnlessEqual('--help --version --verbose --quiet --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack --diagnostics --verifyOnly "source" "bucket" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack --diagnostics --verifyOnly --ignoreWarnings "source" "bucket" ', argumentString)
 
-   def testBuildArgumentString_016(self):
+   def testBuildArgumentString_017(self):
       """Test with no values set, validate=True."""
       options = Options()
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_017(self):
+   def testBuildArgumentString_018(self):
       """Test with help set, validate=True."""
       options = Options()
       options.help = True
       argumentString = options.buildArgumentString(validate=True)
       self.failUnlessEqual("--help ", argumentString)
 
-   def testBuildArgumentString_018(self):
+   def testBuildArgumentString_019(self):
       """Test with version set, validate=True."""
       options = Options()
       options.version = True
       argumentString = options.buildArgumentString(validate=True)
       self.failUnlessEqual("--version ", argumentString)
 
-   def testBuildArgumentString_019(self):
+   def testBuildArgumentString_020(self):
       """Test with verbose set, validate=True."""
       options = Options()
       options.verbose = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_020(self):
+   def testBuildArgumentString_021(self):
       """Test with quiet set, validate=True."""
       options = Options()
       options.quiet = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_021(self):
+   def testBuildArgumentString_022(self):
       """Test with logfile set, validate=True."""
       options = Options()
       options.logfile = "bogus"
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_022(self):
+   def testBuildArgumentString_023(self):
       """Test with owner set, validate=True."""
       options = Options()
       options.owner = ("ken", "group")
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_023(self):
+   def testBuildArgumentString_024(self):
       """Test with mode set, validate=True."""
       options = Options()
       options.mode = 0644
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_024(self):
+   def testBuildArgumentString_025(self):
       """Test with output set, validate=True."""
       options = Options()
       options.output = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_025(self):
+   def testBuildArgumentString_026(self):
       """Test with debug set, validate=True."""
       options = Options()
       options.debug = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_026(self):
+   def testBuildArgumentString_027(self):
       """Test with stacktrace set, validate=True."""
       options = Options()
       options.stacktrace = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_027(self):
+   def testBuildArgumentString_028(self):
       """Test with diagnostics set, validate=True."""
       options = Options()
       options.diagnostics = True
       argumentString = options.buildArgumentString(validate=True)
       self.failUnlessEqual("--diagnostics ", argumentString)
 
-   def testBuildArgumentString_028(self):
+   def testBuildArgumentString_029(self):
       """Test with verifyOnly set, validate=True."""
       options = Options()
       options.verifyOnly = True
       self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
 
-   def testBuildArgumentString_029(self):
+   def testBuildArgumentString_030(self):
+      """Test with ignoreWarnings set, validate=True."""
+      options = Options()
+      options.ignoreWarnings = True
+      self.failUnlessRaises(ValueError, options.buildArgumentString, validate=True)
+
+   def testBuildArgumentString_031(self):
       """Test with valid source and target, validate=True."""
       options = Options()
       options.sourceDir = "source"
@@ -3261,7 +3502,7 @@ class TestOptions(unittest.TestCase):
       argumentString = options.buildArgumentString(validate=True)
       self.failUnlessEqual('"source" "bucket" ', argumentString)
 
-   def testBuildArgumentString_030(self):
+   def testBuildArgumentString_032(self):
       """Test with all values set (except managed ones), actions containing one item, validate=True."""
       options = Options()
       options.help = True
@@ -3276,10 +3517,11 @@ class TestOptions(unittest.TestCase):
       options.stacktrace = True
       options.diagnostics = True
       options.verifyOnly = True
+      options.ignoreWarnings = True
       options.sourceDir = "source"
       options.s3BucketUrl = "bucket"
       argumentString = options.buildArgumentString(validate=True)
-      self.failUnlessEqual('--help --version --verbose --quiet --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack --diagnostics --verifyOnly "source" "bucket" ', argumentString)
+      self.failUnlessEqual('--help --version --verbose --quiet --logfile "logfile" --owner "a:b" --mode 631 --output --debug --stack --diagnostics --verifyOnly --ignoreWarnings "source" "bucket" ', argumentString)
 
 
 #######################################################################
