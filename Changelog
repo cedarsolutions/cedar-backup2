@@ -1,5 +1,6 @@
 Version 2.23.4    unreleased
 
+	* Implement a new tool called cback-amazons3-sync.
 	* Add support for missing --diagnostics flag in cback-span script.
 
 Version 2.23.3    03 Oct 2014
