@@ -167,6 +167,7 @@ def main():
       from testcase import amazons3tests
       from testcase import splittests
       from testcase import spantests
+      from testcase import synctests
       from testcase import capacitytests
       from testcase import customizetests
    except ImportError, e:
@@ -226,6 +227,7 @@ def main():
    if args == [] or "encrypt" in args: unittests["encrypt"] = encrypttests.suite()
    if args == [] or "amazons3" in args: unittests["amazons3"] = amazons3tests.suite()
    if args == [] or "span" in args: unittests["span"] = spantests.suite()
+   if args == [] or "sync" in args: unittests["sync"] = synctests.suite()
    if args == [] or "capacity" in args: unittests["capacity"] = capacitytests.suite()
    if args == [] or "customize" in args: unittests["customize"] = customizetests.suite()
    if args != []: print "*** Executing specific tests: %s" % unittests.keys()
