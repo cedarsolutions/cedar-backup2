@@ -911,7 +911,7 @@ class BackupFileList(FilesystemList): # pylint: disable=R0904
       @return: ASCII-safe SHA digest for the file.
       @raise OSError: If the file cannot be opened.
       """
-      # pylint: disable=C0103
+      # pylint: disable=C0103,E1101
       try:
          import hashlib
          s = hashlib.sha1()
