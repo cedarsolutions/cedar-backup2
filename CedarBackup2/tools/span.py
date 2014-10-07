@@ -719,6 +719,5 @@ def _getReturn(prompt):
 ########################################################################
 
 if __name__ == "__main__":
-   result = cli()
-   sys.exit(result)
+   sys.exit(cli())
 
