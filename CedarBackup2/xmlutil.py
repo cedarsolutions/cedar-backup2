@@ -58,7 +58,7 @@ authors write code that easily looks more like the rest of Cedar Backup.
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
 """
-# pylint: disable=C0111,C0103,W0511,W0104
+# pylint: disable=C0111,C0103,W0511,W0104,W0106
 
 ########################################################################
 # Imported modules

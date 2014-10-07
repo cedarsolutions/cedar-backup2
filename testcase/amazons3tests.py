@@ -86,12 +86,9 @@ Testing XML Extraction
 
 # System modules
 import unittest
-import os
-import tempfile
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, failUnlessAssignRaises, platformSupportsLinks
+from CedarBackup2.testutil import findResources, failUnlessAssignRaises
 from CedarBackup2.xmlutil import createOutputDom, serializeDom
 from CedarBackup2.extend.amazons3 import LocalConfig, AmazonS3Config
 
@@ -230,7 +227,7 @@ class TestAmazonS3Config(unittest.TestCase):
       amazons3.encryptCommand = "encrypt"
       self.failUnlessEqual("encrypt", amazons3.encryptCommand)
 
-   def testConstructor_008(self):
+   def testConstructor_009(self):
       """
       Test assignment of encryptCommand attribute, invalid value (empty).
       """
