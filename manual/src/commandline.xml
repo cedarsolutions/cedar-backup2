@@ -406,7 +406,7 @@
             Before you use this extension, you need to set up your Amazon S3
             account and configure AWS CLI as detailed in Amazons's 
             <ulink url="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html">setup guide</ulink>.
-            The <command>aws</command> will be executed as the same user that
+            The <command>aws</command> command will be executed as the same user that
             is executing the <command>cback-amazons3-sync</command> command, so
             make sure you configure it as the proper user.  (This is different
             than the amazons3 extension, which is designed to execute as root
@@ -633,7 +633,7 @@
                   <para>
                      To avoid confusion, the <command>cback-amazons3-sync</command> 
                      tries to guess which files in the source directory will
-                     cause problems, and refuses to execute AWS CLI S3 sync if
+                     cause problems, and refuses to execute the AWS CLI S3 sync if
                      any problematic files exist.  If you'd rather proceed
                      anyway, use <option>--ignoreWarnings</option>.
                   </para>
