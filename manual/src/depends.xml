@@ -583,15 +583,6 @@
                </para>
 
                <para>
-                  The initial implementation of the amazons3 extension was written
-                  using AWS CLI 1.4.  As of this writing, not all Linux distributions
-                  include a package for this version.  On these platforms, the
-                  easiest way to install it is via PIP: <code>apt-get install python-pip</code>,
-                  and then <code>pip install awscli</code>.  The Debian package includes
-                  an appropriate dependency starting with the jesse release.
-               </para>
-               
-               <para>
                   After you install AWS CLI, you need to configure your connection
                   to AWS with an appropriate access id and access key. Amazon provides a good 
                   <ulink url="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html">setup guide</ulink>.
@@ -611,6 +602,51 @@
                         <row>
                            <entry>upstream</entry>
                            <entry><ulink url="http://aws.amazon.com/documentation/cli/"/></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </informaltable>
+
+               <para>
+                  The initial implementation of the amazons3 extension was written
+                  using AWS CLI 1.4.  As of this writing, not all Linux distributions
+                  include a package for this version.  On these platforms, the
+                  easiest way to install it is via PIP: <code>apt-get install python-pip</code>,
+                  and then <code>pip install awscli</code>.  The Debian package includes
+                  an appropriate dependency starting with the jesse release.
+               </para>
+
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><command>Chardet</command></term>
+            <listitem>
+
+               <para>
+                  The <command>cback-amazons3-sync</command> command relies on the
+                  Chardet python package to check filename encoding.  You only need
+                  this package if you are going to use the sync tool.
+               </para>
+
+               <informaltable>
+                  <tgroup cols="2">
+                     <colspec colnum="1" colwidth="1*"/>
+                     <colspec colnum="2" colwidth="3.5*"/>
+                     <thead>
+                        <row>
+                           <entry>Source</entry>
+                           <entry>URL</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>upstream</entry>
+                           <entry><ulink url="https://github.com/chardet/chardet"/></entry>
+                        </row>
+                        <row>
+                           <entry>debian</entry>
+                           <entry><ulink url="https://packages.debian.org/stable/python-chardet"/></entry>
                         </row>
                      </tbody>
                   </tgroup>
