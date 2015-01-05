@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2014 Kenneth J. Pronovici.
+# Copyright (c) 2014-2015 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -94,10 +94,10 @@ import json
 import shutil
 
 # Cedar Backup modules
-from CedarBackup2.filesystem import FilesystemList
-from CedarBackup2.util import resolveCommand, executeCommand, isRunningAsRoot, changeOwnership
-from CedarBackup2.xmlutil import createInputDom, addContainerNode, addBooleanNode, addStringNode
-from CedarBackup2.xmlutil import readFirstChild, readString, readBoolean
+from CedarBackup2.filesystem import FilesystemList, BackupFileList
+from CedarBackup2.util import resolveCommand, executeCommand, isRunningAsRoot, changeOwnership, isStartOfWeek
+from CedarBackup2.xmlutil import createInputDom, addContainerNode, addBooleanNode, addStringNode, addLongNode
+from CedarBackup2.xmlutil import readFirstChild, readString, readBoolean, readLong
 from CedarBackup2.actions.util import writeIndicatorFile
 from CedarBackup2.actions.constants import DIR_TIME_FORMAT, STAGE_INDICATOR
 
@@ -130,32 +130,42 @@ class AmazonS3Config(object):
 
       - The s3Bucket value must be a non-empty string
       - The encryptCommand value, if set, must be a non-empty string
+      - The full backup size limit, if set, must be a number of bytes >= 0
+      - The incremental backup size limit, if set, must be a number of bytes >= 0
 
    @sort: __init__, __repr__, __str__, __cmp__, warnMidnite, s3Bucket
    """
 
-   def __init__(self, warnMidnite=None, s3Bucket=None, encryptCommand=None):
+   def __init__(self, warnMidnite=None, s3Bucket=None, encryptCommand=None, 
+               fullBackupSizeLimit=None, incrementalBackupSizeLimit=None):
       """
       Constructor for the C{AmazonS3Config} class.
 
       @param warnMidnite: Whether to generate warnings for crossing midnite.
       @param s3Bucket: Name of the Amazon S3 bucket in which to store the data
       @param encryptCommand: Command used to encrypt backup data before upload to S3
+      @param fullBackupSizeLimit: Maximum size of a full backup, in bytes
+      @param incrementalBackupSizeLimit: Maximum size of an incremental backup, in bytes
 
       @raise ValueError: If one of the values is invalid.
       """
       self._warnMidnite = None
       self._s3Bucket = None
       self._encryptCommand = None
+      self._fullBackupSizeLimit = None
+      self._incrementalBackupSizeLimit = None
       self.warnMidnite = warnMidnite
       self.s3Bucket = s3Bucket
       self.encryptCommand = encryptCommand
+      self.fullBackupSizeLimit = fullBackupSizeLimit
+      self.incrementalBackupSizeLimit = incrementalBackupSizeLimit
 
    def __repr__(self):
       """
       Official string representation for class instance.
       """
-      return "AmazonS3Config(%s, %s, %s)" % (self.warnMidnite, self.s3Bucket, self.encryptCommand)
+      return "AmazonS3Config(%s, %s, %s, %s, %s)" % (self.warnMidnite, self.s3Bucket, self.encryptCommand,
+                                                     self.fullBackupSizeLimit, self.incrementalBackupSizeLimit)
 
    def __str__(self):
       """
@@ -183,6 +193,16 @@ class AmazonS3Config(object):
             return 1
       if self.encryptCommand != other.encryptCommand:
          if self.encryptCommand < other.encryptCommand:
+            return -1
+         else:
+            return 1
+      if self.fullBackupSizeLimit != other.fullBackupSizeLimit:
+         if self.fullBackupSizeLimit < other.fullBackupSizeLimit:
+            return -1
+         else:
+            return 1
+      if self.incrementalBackupSizeLimit != other.incrementalBackupSizeLimit:
+         if self.incrementalBackupSizeLimit < other.incrementalBackupSizeLimit:
             return -1
          else:
             return 1
@@ -234,9 +254,59 @@ class AmazonS3Config(object):
       """
       return self._encryptCommand
 
+   def _setFullBackupSizeLimit(self, value):
+      """
+      Property target used to set the full backup size limit.
+      The value must be an integer >= 0.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is None:
+         self._fullBackupSizeLimit = None
+      else:
+         try:
+            value = int(value)
+         except TypeError:
+            raise ValueError("Full backup size limit must be an integer >= 0.")
+         if value < 0:
+            raise ValueError("Full backup size limit must be an integer >= 0.")
+         self._fullBackupSizeLimit = value
+
+   def _getFullBackupSizeLimit(self):
+      """
+      Property target used to get the full backup size limit.
+      """
+      return self._fullBackupSizeLimit
+
+   def _setIncrementalBackupSizeLimit(self, value):
+      """
+      Property target used to set the incremental backup size limit.
+      The value must be an integer >= 0.
+      @raise ValueError: If the value is not valid.
+      """
+      if value is None:
+         self._incrementalBackupSizeLimit = None
+      else:
+         try:
+            value = int(value)
+         except TypeError:
+            raise ValueError("Incremental backup size limit must be an integer >= 0.")
+         if value < 0:
+            raise ValueError("Incremental backup size limit must be an integer >= 0.")
+         self._incrementalBackupSizeLimit = value
+
+   def _getIncrementalBackupSizeLimit(self):
+      """
+      Property target used to get the incremental backup size limit.
+      """
+      return self._incrementalBackupSizeLimit
+
    warnMidnite = property(_getWarnMidnite, _setWarnMidnite, None, "Whether to generate warnings for crossing midnite.")
    s3Bucket = property(_getS3Bucket, _setS3Bucket, None, doc="Amazon S3 Bucket in which to store data")
    encryptCommand = property(_getEncryptCommand, _setEncryptCommand, None, doc="Command used to encrypt data before upload to S3")
+   fullBackupSizeLimit = property(_getFullBackupSizeLimit, _setFullBackupSizeLimit, None, 
+                                  doc="Maximum size of a full backup, in bytes")
+   incrementalBackupSizeLimit = property(_getIncrementalBackupSizeLimit, _setIncrementalBackupSizeLimit, None, 
+                                         doc="Maximum size of an incremental backup, in bytes")
 
 
 ########################################################################
@@ -379,9 +449,11 @@ class LocalConfig(object):
 
       We add the following fields to the document::
 
-         warnMidnite     //cb_config/amazons3/warn_midnite
-         s3Bucket        //cb_config/amazons3/s3_bucket
-         encryptCommand  //cb_config/amazons3/encrypt
+         warnMidnite                 //cb_config/amazons3/warn_midnite
+         s3Bucket                    //cb_config/amazons3/s3_bucket
+         encryptCommand              //cb_config/amazons3/encrypt
+         fullBackupSizeLimit         //cb_config/amazons3/full_size_limit
+         incrementalBackupSizeLimit  //cb_config/amazons3/incr_size_limit
 
       @param xmlDom: DOM tree as from C{impl.createDocument()}.
       @param parentNode: Parent that the section should be appended to.
@@ -391,6 +463,8 @@ class LocalConfig(object):
          addBooleanNode(xmlDom, sectionNode, "warn_midnite", self.amazons3.warnMidnite)
          addStringNode(xmlDom, sectionNode, "s3_bucket", self.amazons3.s3Bucket)
          addStringNode(xmlDom, sectionNode, "encrypt", self.amazons3.encryptCommand)
+         addLongNode(xmlDom, sectionNode, "full_size_limit", self.amazons3.fullBackupSizeLimit)
+         addLongNode(xmlDom, sectionNode, "incr_size_limit", self.amazons3.incrementalBackupSizeLimit)
 
    def _parseXmlData(self, xmlData):
       """
@@ -414,9 +488,11 @@ class LocalConfig(object):
       
       We read the following individual fields::
 
-         warnMidnite     //cb_config/amazons3/warn_midnite
-         s3Bucket        //cb_config/amazons3/s3_bucket
-         encryptCommand  //cb_config/amazons3/encrypt
+         warnMidnite                 //cb_config/amazons3/warn_midnite
+         s3Bucket                    //cb_config/amazons3/s3_bucket
+         encryptCommand              //cb_config/amazons3/encrypt
+         fullBackupSizeLimit         //cb_config/amazons3/full_size_limit
+         incrementalBackupSizeLimit  //cb_config/amazons3/incr_size_limit
 
       @param parent: Parent node to search beneath.
 
@@ -430,6 +506,8 @@ class LocalConfig(object):
          amazons3.warnMidnite = readBoolean(section, "warn_midnite")
          amazons3.s3Bucket = readString(section, "s3_bucket")
          amazons3.encryptCommand = readString(section, "encrypt")
+         amazons3.fullBackupSizeLimit = readLong(section, "full_size_limit")
+         amazons3.incrementalBackupSizeLimit = readLong(section, "incr_size_limit")
       return amazons3
 
 
@@ -468,6 +546,7 @@ def executeAction(configPath, options, config):
       raise ValueError("Cedar Backup configuration is not properly filled in.")
    local = LocalConfig(xmlPath=configPath)
    stagingDirs = _findCorrectDailyDir(options, config, local)
+   _applySizeLimits(options, config, local, stagingDirs)
    _writeToAmazonS3(config, local, stagingDirs)
    _writeStoreIndicator(config, stagingDirs)
    logger.info("Executed the amazons3 extended action successfully.")
@@ -531,6 +610,47 @@ def _findCorrectDailyDir(options, config, local):
             logger.warn("Warning: Amazon S3 process crossed midnite boundary to find data.")
          return { tomorrowPath:tomorrowDate }
       raise IOError("Unable to find unused staging directory to process (tried today, yesterday, tomorrow).")
+
+
+##############################
+# _applySizeLimits() function
+##############################
+
+def _applySizeLimits(options, config, local, stagingDirs):
+   """
+   Apply size limits, throwing an exception if any limits are exceeded.
+
+   Size limits are optional.  If a limit is set to None, it does not apply.
+   The full size limit applies if the full option is set or if today is the
+   start of the week.  The incremental size limit applies otherwise.  Limits
+   are applied to the total size of all the relevant staging directories.
+
+   @param options: Options object.
+   @param config: Config object.
+   @param local: Local config object.
+   @param stagingDirs: Dictionary mapping directory path to date suffix.
+
+   @raise ValueError: Under many generic error conditions
+   @raise ValueError: If a size limit has been exceeded
+   """
+   if options.full or isStartOfWeek(config.options.startingDay):
+      logger.debug("Using Amazon S3 size limit for full backups.")
+      limit = local.amazons3.fullBackupSizeLimit
+   else:
+      logger.debug("Using Amazon S3 size limit for incremental backups.")
+      limit = local.amazons3.incrementalBackupSizeLimit
+   if limit is None:
+      logger.debug("No Amazon S3 size limit will be applied.")
+   else:
+      logger.debug("Amazon S3 size limit is: %d bytes" % limit)
+      contents = BackupFileList()
+      for stagingDir in stagingDirs:
+         contents.addDir(stagingDir)
+      total = contents.totalSize()
+      logger.debug("Amazon S3 backup size is is: %d bytes" % total)
+      if total > limit:
+         logger.debug("Amazon S3 size limit exceeded: %.0f bytes > %d bytes" % (total, limit))
+         raise ValueError("Amazon S3 size limit exceeded: %.0f bytes > %d bytes" % (total, limit))
 
 
 ##############################

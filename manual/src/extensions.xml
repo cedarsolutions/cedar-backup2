@@ -115,8 +115,25 @@
          switches over to the configured backup user to run the
          <command>aws</command> program.  So, make sure you configure the AWS
          CLI tools as the backup user and not root.  (This is different than
-         the amazons3 sync tool extension, which exceutes AWS CLI command as
+         the amazons3 sync tool extension, which executes AWS CLI command as
          the same user that is running the tool.)
+      </para>
+
+      <para>
+         When using physical media via the standard store action, there is an
+         implicit limit to the size of a backup, since a backup must fit on a
+         single disc.  Since there is no physical media, no such limit exists
+         for Amazon S3 backups.  This leaves open the possibility that Cedar
+         Backup might construct an unexpectedly-large backup that the
+         administrator is not aware of.  Over time, this might become
+         expensive, either in terms of network bandwidth or in terms of Amazon
+         S3 storage and I/O charges.  To mitigate this risk, set a reasonable
+         maximum size using the configuration elements shown below.  If the
+         backup fails, you have a chance to review what made the backup larger
+         than you expected, and you can either correct the problem (i.e. remove
+         a large temporary directory that got inadvertently included in the
+         backup) or change configuration to take into account the new "normal"
+         maximum size.
       </para>
 
       <para>
@@ -248,6 +265,38 @@ dd if=/dev/urandom count=20 bs=1 | xxd -ps
                </para>
                <para>
                   <emphasis>Restrictions:</emphasis> If provided, must be non-empty.
+               </para>
+            </listitem>
+         </varlistentry>
+         
+         <varlistentry>
+            <term><literal>full_size_limit</literal></term>
+            <listitem>
+               <para>Maximum size of a full backup, in bytes</para>
+               <para>
+                  If this field is provided, then a size limit will be applied
+                  to full backups.  If the total size of the selected staging
+                  directory is greater than the limit, then the backup will
+                  fail.  
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> If provided, must be an integer greater than zero.
+               </para>
+            </listitem>
+         </varlistentry>
+
+         <varlistentry>
+            <term><literal>incr_size_limit</literal></term>
+            <listitem>
+               <para>Maximum size of an incremental backup, in bytes</para>
+               <para>
+                  If this field is provided, then a size limit will be applied
+                  to incremental backups.  If the total size of the selected
+                  staging directory is greater than the limit, then the backup
+                  will fail.  
+               </para>
+               <para>
+                  <emphasis>Restrictions:</emphasis> If provided, must be an integer greater than zero.
                </para>
             </listitem>
          </varlistentry>
