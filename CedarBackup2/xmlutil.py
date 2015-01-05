@@ -246,6 +246,26 @@ def readInteger(parent, name):
    else:
       return int(result)
 
+def readLong(parent, name):
+   """
+   Returns long integer contents of the first child with a given name immediately
+   beneath the parent.
+
+   By "immediately beneath" the parent, we mean from among nodes that are
+   direct children of the passed-in parent node.  
+
+   @param parent: Parent node to search beneath.
+   @param name: Name of node to search for.
+
+   @return: Long integer contents of node or C{None} if no matching nodes are found.
+   @raise ValueError: If the string at the location can't be converted to an integer.
+   """
+   result = readString(parent, name)
+   if result is None:
+      return None
+   else:
+      return long(result)
+
 def readFloat(parent, name):
    """
    Returns float contents of the first child with a given name immediately
@@ -353,7 +373,29 @@ def addIntegerNode(xmlDom, parentNode, nodeName, nodeValue):
    if nodeValue is None:
       return addStringNode(xmlDom, parentNode, nodeName, None)
    else:
-      return addStringNode(xmlDom, parentNode, nodeName, "%d" % nodeValue)
+      return addStringNode(xmlDom, parentNode, nodeName, "%d" % nodeValue) # %d works for both int and long
+
+def addLongNode(xmlDom, parentNode, nodeName, nodeValue):
+   """
+   Adds a text node as the next child of a parent, to contain a long integer.
+
+   If the C{nodeValue} is None, then the node will be created, but will be
+   empty (i.e. will contain no text node child).
+
+   The integer will be converted to a string using "%d".  The result will be
+   added to the document via L{addStringNode}.
+
+   @param xmlDom: DOM tree as from C{impl.createDocument()}.
+   @param parentNode: Parent node to create child for.
+   @param nodeName: Name of the new container node.
+   @param nodeValue: The value to put into the node.
+
+   @return: Reference to the newly-created node.
+   """
+   if nodeValue is None:
+      return addStringNode(xmlDom, parentNode, nodeName, None)
+   else:
+      return addStringNode(xmlDom, parentNode, nodeName, "%d" % nodeValue) # %d works for both int and long
 
 def addBooleanNode(xmlDom, parentNode, nodeName, nodeValue):
    """
