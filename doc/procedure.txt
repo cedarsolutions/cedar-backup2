@@ -9,7 +9,7 @@ Release Procedure
 - Build the source distributions (make distrib)
 - Build the HTML documentation (make htmldocs)
 - Commit the HTML documentation changes in the BitBucketSite Mercurial repository
-- Label the cedar-backup2 Mercurial repository as CEDAR_BACKP_VX.Y.Z 
+- Label the cedar-backup2 Mercurial repository as CEDAR_BACKUP2_VX.Y.Z 
 - Push both Mercurial repositories to BitBucket
 
 - Copy the source package to hcoop and install it
