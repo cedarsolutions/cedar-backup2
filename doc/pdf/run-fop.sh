@@ -10,7 +10,6 @@
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 # Language : Bourne Shell
 # Project  : Cedar Backup, release 2
-# Revision : $Id$
 # Purpose  : Wrapper script to run the fop program for PDF and Postscript
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
