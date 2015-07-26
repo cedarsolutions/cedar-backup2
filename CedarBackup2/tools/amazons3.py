@@ -27,7 +27,6 @@
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 # Language : Python (>= 2.5)
 # Project  : Cedar Backup, release 2
-# Revision : $Id$
 # Purpose  : Cedar Backup tool to synchronize an Amazon S3 bucket.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

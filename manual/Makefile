@@ -10,7 +10,6 @@
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 # Language : Make
 # Project  : Cedar Backup, release 2
-# Revision : $Id$
 # Purpose  : Makefile used for building the Cedar Backup manual.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

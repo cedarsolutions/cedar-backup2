@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 # vim: set ft=python ts=3 sw=3 expandtab:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -28,7 +27,6 @@
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 # Language : Python (>= 2.5)
 # Project  : Cedar Backup, release 2
-# Revision : $Id$
 # Purpose  : Tests writer utility functionality.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

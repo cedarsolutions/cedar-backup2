@@ -29,7 +29,6 @@
 #            Antoine Beaupre <anarcat@koumbit.org>
 # Language : Python (>= 2.5)
 # Project  : Official Cedar Backup Extensions
-# Revision : $Id$
 # Purpose  : Provides an extension to back up PostgreSQL databases.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

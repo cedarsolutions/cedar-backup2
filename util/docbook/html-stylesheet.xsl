@@ -10,7 +10,6 @@
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 # Language : XSLT
 # Project  : Cedar Backup, release 2
-# Revision : $Id$
 # Purpose  : XSLT stylesheet for HTML Docbook output (single page).
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
