@@ -50,6 +50,7 @@ URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $
 ############
 
 DOC_DIR           = doc
+BITBUCKET_DIR     = ../gwt/CedarCommon/BitBucketSite
 DIST_DIR          = build
 MANUAL_SRC        = manual
 SDIST_DIR         = $(DIST_DIR)/sdist
@@ -149,7 +150,7 @@ $(INTERFACE_TEMPDIR):
 # Debian packages are maintained via cvs-buildpackage as usual).  This
 # keeps cedar-backup2 from being a Debian-native package.
 
-distrib: debdist docdist
+distrib: debdist 
 
 distribclean: sdistclean debdistclean
 	-@$(RM) -f MANIFEST 
@@ -179,14 +180,10 @@ debdistclean:
 # This layout matches the htdocs/docs tree for the SF website
 htmldocs: docdist
 docdist: doc
-	@$(MKDIR) -p $(DOC_DIR)/tmp/docs/cedar-backup2/
-	@$(MKDIR) -p $(DOC_DIR)/tmp/docs/cedar-backup2/
-	@$(CP) Changelog $(DOC_DIR)/tmp/docs/cedar-backup2/
-	@$(CP) -r $(MANUAL_DIR) $(DOC_DIR)/tmp/docs/cedar-backup2/
-	@$(CP) -r $(INTERFACE_DIR) $(DOC_DIR)/tmp/docs/cedar-backup2/
-	@$(CD) $(DOC_DIR)/tmp && $(TAR) -zcvf ../htmldocs.tar.gz docs/
-	@$(MV) $(DOC_DIR)/htmldocs.tar.gz ../
-	@$(RM) -rf $(DOC_DIR)/tmp
+	@$(MKDIR) -p $(BITBUCKET_DIR)/docs/cedar-backup2/
+	@$(CP) Changelog $(BITBUCKET_DIR)/docs/cedar-backup2/
+	@$(CP) -r $(MANUAL_DIR) $(BITBUCKET_DIR)/docs/cedar-backup2/
+	@$(CP) -r $(INTERFACE_DIR) $(BITBUCKET_DIR)/docs/cedar-backup2/
 
 
 ##################################
