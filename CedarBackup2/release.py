@@ -11,7 +11,6 @@
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
 # Language : Python (>= 2.5)
 # Project  : Cedar Backup, release 2
-# Revision : $Id$
 # Purpose  : Provides location to maintain release information.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -36,5 +35,5 @@ EMAIL       = "pronovic@ieee.org"
 COPYRIGHT   = "2004-2011,2013-2015"
 VERSION     = "2.24.2"
 DATE        = "05 Jan 2015"
-URL         = "http://cedar-backup.sourceforge.net/"
+URL         = "https://bitbucket.org/cedarsolutions/cedar-backup2"
 
