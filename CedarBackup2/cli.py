@@ -384,7 +384,9 @@ class _ActionItem(object):
       """
       logger.debug("Executing %s hook for action [%s]." % (type, hook.action))
       fields = splitCommandLine(hook.command)
-      executeCommand(command=fields[0:1], args=fields[1:])
+      result = executeCommand(command=fields[0:1], args=fields[1:])[0]
+      if result != 0:
+         raise IOError("Error (%d) executing %s hook for action [%s]." % (results, type, hook.action))
 
 
 ###########################
