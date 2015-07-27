@@ -1,7 +1,8 @@
 Version 2.24.4    unreleased
 
 	* Fix long-standing bugs with pre- and post-action hooks.
-	  - Return status from action hooks is ignored, so failures aren't exposed
+	  - Return status from hook scripts was ignored, so failures weren't exposed
+	  - Config supported multiple hooks per action, but only one was ever executed
 
 Version 2.24.3    28 Jul 2015
 
