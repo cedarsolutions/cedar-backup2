@@ -384,11 +384,11 @@ class _ActionItem(object):
       @param type: String describing the type of hook, for logging.
       @param hook: Hook, in terms of a C{ActionHook} object.
       """
-      logger.debug("Executing %s hook for action [%s]." % (type, hook.action))
       fields = splitCommandLine(hook.command)
+      logger.debug("Executing %s hook for action [%s]: %s" % (type, hook.action, fields[0:1]))
       result = executeCommand(command=fields[0:1], args=fields[1:])[0]
       if result != 0:
-         raise IOError("Error (%d) executing %s hook for action [%s]." % (result, type, hook.action))
+         raise IOError("Error (%d) executing %s hook for action [%s]: %s" % (result, type, hook.action, fields[0:1]))
 
 
 ###########################
