@@ -33,7 +33,7 @@ Provides location to maintain version information.
 AUTHOR      = "Kenneth J. Pronovici"
 EMAIL       = "pronovic@ieee.org"
 COPYRIGHT   = "2004-2011,2013-2015"
-VERSION     = "2.24.3"
-DATE        = "28 Jul 2015"
+VERSION     = "2.24.4"
+DATE        = "27 Jul 2015"
 URL         = "https://bitbucket.org/cedarsolutions/cedar-backup2"
 
