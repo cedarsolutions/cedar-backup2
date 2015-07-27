@@ -1,10 +1,10 @@
-Version 2.24.4    unreleased
+Version 2.24.4    27 Jul 2015
 
 	* Fix long-standing bugs with pre- and post-action hooks.
 	  - Return status from hook scripts was ignored, so failures weren't exposed
 	  - Config supported multiple hooks per action, but only one was ever executed
 
-Version 2.24.3    28 Jul 2015
+Version 2.24.3    26 Jul 2015
 
 	* Move the project from SourceForge to BitBucket.
 	  - Revision control is now in Mercurial rather than Subversion
