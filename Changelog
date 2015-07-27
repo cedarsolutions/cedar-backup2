@@ -1,3 +1,8 @@
+Version 2.24.4    unreleased
+
+	* Fix long-standing bugs with pre- and post-action hooks.
+	  - Return status from action hooks is ignored, so failures aren't exposed
+
 Version 2.24.3    28 Jul 2015
 
 	* Move the project from SourceForge to BitBucket.
