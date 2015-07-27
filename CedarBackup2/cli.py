@@ -388,7 +388,7 @@ class _ActionItem(object):
       fields = splitCommandLine(hook.command)
       result = executeCommand(command=fields[0:1], args=fields[1:])[0]
       if result != 0:
-         raise IOError("Error (%d) executing %s hook for action [%s]." % (results, type, hook.action))
+         raise IOError("Error (%d) executing %s hook for action [%s]." % (result, type, hook.action))
 
 
 ###########################
