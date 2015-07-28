@@ -62,9 +62,9 @@ The main difference between Cedar Backup version 2 and Cedar Backup version 3
 is the targeted Python interpreter.  Cedar Backup version 2 was designed for
 Python 2, while version 3 is a conversion of the original code to Python 3.
 Other than that, both versions are functionally equivalent.  The configuration
-format is unchanged, and you can mix-and-match masters and clients of different
+format is unchanged, and you can mix\-and\-match masters and clients of different
 versions in the same backup pool.  Both versions will be fully supported until
-around the time of the Python 2 end-of-life in 2020, but you should plan to
+around the time of the Python 2 end\-of\-life in 2020, but you should plan to
 migrate sooner than that if possible.
 .PP
 A major design goal for version 3 was to facilitate easy migration testing for
@@ -75,7 +75,7 @@ of the executables, configuration files, and logs changed names in version
 \fIcback3.conf\fR instead of \fIcback.conf\fR, \fIcback3.log\fR instead of
 \fIcback.log\fR, etc.
 .PP
-So, while transitioning from version 2 to version 3 is relatively
+So, while migrating from version 2 to version 3 is relatively
 straightforward, you will have to make some changes manually.  You will need to
 create a new configuration file (or soft link to the old one), modify your cron
 jobs to use the new executable name, etc.  You can migrate one server at a time
@@ -179,10 +179,10 @@ Take the purge action, removing old and outdated files as specified in the
 purge section of the configuration file.
 .TP
 \fBrebuild\fR
-Rebuild the "this week's" disc based on the current contents of the staging
-directory.  This is how you would recover a disc that has been corrupted due to
-a hardware or media error.  It also offers an easy way to make a duplicate of
-the current backup for off-site storage.
+The rebuild action attempts to rebuild "this week's" disc from any remaining
+unpurged staging directories.  Typically, it is used to make a copy of a
+backup, replace lost or damaged media, or to switch to new media mid-week for
+some other reason.
 .TP
 \fBvalidate\fR
 Ensure that configuration is valid, but take no other action.  Validation
@@ -246,7 +246,7 @@ also want to investigate the encrypt extension.
 \fI/var/log/cback.log\fR - Default log file
 .SH URLS
 .TP
-The project homepage is: \fIhttps://bitbucket.org/cedarsolutions/cedar-backup2\fR
+The project homepage is: \fIhttps://bitbucket.org/cedarsolutions/cedar\-backup2\fR
 .SH BUGS
 .PP
 There probably are bugs in this code.  However, it is in active use for my own
@@ -263,7 +263,7 @@ tracker.
 .SH AUTHOR
 Written and maintained by Kenneth J. Pronovici <pronovic@ieee.org> with contributions from others.
 .SH COPYRIGHT
-Copyright (c) 2004-2011,2013-2015 Kenneth J. Pronovici.
+Copyright (c) 2004\-2011,2013\-2015 Kenneth J. Pronovici.
 .PP
 This is free software; see the source for copying conditions.  There is
 NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR

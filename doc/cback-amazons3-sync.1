@@ -18,7 +18,7 @@
 .SH NAME
 cback\-amazons3-sync \- Synchronize a local directory with an Amazon S3 bucket
 .SH SYNOPSIS
-.B cback\-amazons3-sync
+.B cback\-amazons3\-sync
 [\fIswitches\fR]
 sourceDir s3BucketUrl
 .SH DESCRIPTION
@@ -29,7 +29,7 @@ validation step is taken.  An error is reported if the contents of the bucket
 do not match the source directory, or if the indicated size for any file
 differs.
 .PP
-Generally, one can run the cback\-amazons3-sync command with no special
+Generally, one can run the cback\-amazons3\-sync command with no special
 switches.  This will start it using the default Cedar Backup log file, etc.
 You only need to use the switches if you need to change the default behavior.
 .SH MIGRATING FROM VERSION 2 TO VERSION 3
@@ -45,7 +45,7 @@ The source directory on a local disk.
 .TP
 \fBs3BucketUrl\fR
 The URL specifying the location of the Amazon S3 cloud storage bucket
-to synchronize with, like \fIs3://example.com-backup/subdir\fR.
+to synchronize with, like \fIs3://example.com\-backup/subdir\fR.
 .SH SWITCHES
 .TP
 \fB\-h\fR, \fB\-\-help\fR
@@ -120,7 +120,7 @@ Other error during processing.
 .PP
 This tool is a wrapper over the Amazon AWS CLI interface found in the aws(1)
 command.  Specifically, cback\-amazons3\-sync invokes "aws s3 sync" followed by
-"aws s3api list-objects".
+"aws s3api list\-objects".
 .PP
 Cedar Backup itself is designed to run as root.  However, cback\-amazons3\-sync
 can be run safely as any user that is configured to use the Amazon AWS CLI
@@ -137,7 +137,7 @@ cback(1)
 \fI/var/log/cback.log\fR - Default log file
 .SH URLS
 .TP
-The project homepage is: \fIhttps://bitbucket.org/cedarsolutions/cedar-backup2\fR
+The project homepage is: \fIhttps://bitbucket.org/cedarsolutions/cedar\-backup2\fR
 .SH BUGS
 .PP
 If you find a bug, please report it.
@@ -152,7 +152,7 @@ tracker.
 .SH AUTHOR
 Written and maintained by Kenneth J. Pronovici <pronovic@ieee.org> with contributions from others.
 .SH COPYRIGHT
-Copyright (c) 2004-2011,2013-2015 Kenneth J. Pronovici.
+Copyright (c) 2004\-2011,2013\-2015 Kenneth J. Pronovici.
 .PP
 This is free software; see the source for copying conditions.  There is
 NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
