@@ -131,12 +131,12 @@ def main():
    print "Gathering this information took about %.3f seconds." % (end - start)
    print ""
 
-   # Define the list of tests 
+   # Define the list of tests
    # (These are function pointers, essentially.)
    tests = { 'FIRST FIT': firstFit,
              ' BEST FIT': bestFit,
              'WORST FIT': worstFit,
-             '  ALT FIT': alternateFit } 
+             '  ALT FIT': alternateFit }
 
    # Run each test
    totalElapsed = 0.0

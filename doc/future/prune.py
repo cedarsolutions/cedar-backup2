@@ -13,7 +13,7 @@
       of times before giving up and raising an C{IOError} exception.
 
       @note: Pruning an image has the effect of expanding any directory to its
-      list of composite files internally.  
+      list of composite files internally.
 
       @note: This process is destructive.  Once you prune an image, you can't
       get it back in its original form without rebuilding it from scratch.
@@ -77,7 +77,7 @@
       @return: Pruned entries dictionary safe to apply to self.entries
       @raise IOError: If we can't prune to fit the image into the capacity.
       """
-      expanded = self._expandEntries(self.entries) 
+      expanded = self._expandEntries(self.entries)
       (sizeMap, fileSize) = IsoImage._calculateSizes(expanded)
       estimatedSize = self._getEstimatedSize(self.entries)
       overhead = estimatedSize - fileSize
@@ -127,7 +127,7 @@
    def _buildEntries(entries, items):
       """
       Builds an entries dictionary.
-      
+
       The result is basically the intersection of the passed-in entries
       dictionary with the keys that are in the list.  The passed-in entries
       dictionary will not be modified.  The items list is assumed to be a
@@ -156,7 +156,7 @@
       this function goes through the the various entries and expands every
       directory it finds.  The result is an "equivalent" entries dictionary
       that verbosely includes every file and link that would have been included
-      originally, along with its associated graft point (if any).  
+      originally, along with its associated graft point (if any).
 
       There is one trick: we can't associate the same graft point with a file
       as with its parent directory, since this would lose information (such as
@@ -171,7 +171,7 @@
       works in the simple case.  However, once you work your way into nested
       directories, it breaks down.  In order to get C{/base/dir1/dir2/file1},
       we need to recognize that the prefix is really C{dir2} and tack that onto
-      the graft point.  
+      the graft point.
 
       Besides this, there are a few other hoops we have to jump through.  In
       particular, we need to include soft links in the image, but

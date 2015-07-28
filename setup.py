@@ -56,14 +56,14 @@ setup (
    version          = VERSION,
    description      = 'Implements local and remote backups to CD/DVD media.',
    long_description = LONG_DESCRIPTION,
-   keywords         = ('local', 'remote', 'backup', 'scp', 'CD-R', 'CD-RW', 'DVD+R', 'DVD+RW',), 
+   keywords         = ('local', 'remote', 'backup', 'scp', 'CD-R', 'CD-RW', 'DVD+R', 'DVD+RW',),
    author           = AUTHOR,
    author_email     = EMAIL,
    url              = URL,
    license          = "Copyright (c) %s %s.  Licensed under the GNU GPL." % (COPYRIGHT, AUTHOR),
    platforms        = ('Any',),
-   packages         = ['CedarBackup2', 'CedarBackup2.actions', 'CedarBackup2.extend', 
+   packages         = ['CedarBackup2', 'CedarBackup2.actions', 'CedarBackup2.extend',
                        'CedarBackup2.tools', 'CedarBackup2.writers', ],
-   scripts          = ['cback', 'util/cback-span', 'util/cback-amazons3-sync', ], 
+   scripts          = ['cback', 'util/cback-span', 'util/cback-amazons3-sync', ],
 )
 

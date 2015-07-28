@@ -68,7 +68,7 @@ Backwards Compatibility
 @var COMBINE_ACTIONS: List of actions which can be combined with other actions.
 @var NONCOMBINE_ACTIONS: List of actions which cannot be combined with other actions.
 
-@sort: cli, Options, DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP, 
+@sort: cli, Options, DEFAULT_CONFIG, DEFAULT_LOGFILE, DEFAULT_OWNERSHIP,
        DEFAULT_MODE, VALID_ACTIONS, COMBINE_ACTIONS, NONCOMBINE_ACTIONS
 
 @author: Kenneth J. Pronovici <pronovic@ieee.org>
@@ -131,9 +131,9 @@ COMBINE_ACTIONS    = [ "collect", "stage", "store", "purge", ]
 NONCOMBINE_ACTIONS = [ "rebuild", "validate", "initialize", "all", ]
 
 SHORT_SWITCHES     = "hVbqc:fMNl:o:m:OdsD"
-LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet', 
+LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet',
                        'config=', 'full', 'managed', 'managed-only',
-                       'logfile=', 'owner=', 'mode=', 
+                       'logfile=', 'owner=', 'mode=',
                        'output', 'debug', 'stack', 'diagnostics', ]
 
 
@@ -178,7 +178,7 @@ def cli():
    @note: This function contains a good amount of logging at the INFO level,
    because this is the right place to document high-level flow of control (i.e.
    what the command-line options were, what config file was being used, etc.)
-   
+
    @note: We assume that anything that I{must} be seen on the screen is logged
    at the ERROR level.  Errors that occur before logging can be configured are
    written to C{sys.stderr}.
@@ -245,7 +245,7 @@ def cli():
       config = Config(xmlPath=configPath)
       customizeOverrides(config)
       setupPathResolver(config)
-      actionSet = _ActionSet(options.actions, config.extensions, config.options, 
+      actionSet = _ActionSet(options.actions, config.extensions, config.options,
                              config.peers, executeManaged, executeLocal)
    except Exception, e:
       logger.error("Error reading or handling configuration: %s" % e)
@@ -284,7 +284,7 @@ class _ActionItem(object):
    Class representing a single action to be executed.
 
    This class represents a single named action to be executed, and understands
-   how to execute that action.   
+   how to execute that action.
 
    The built-in actions will use only the options and config values.  We also
    pass in the config path so that extension modules can re-parse configuration
@@ -302,7 +302,7 @@ class _ActionItem(object):
 
    @cvar SORT_ORDER: Defines a sort order to order properly between types.
    """
-   
+
    SORT_ORDER = 0
 
    def __init__(self, index, name, preHooks, postHooks, function):
@@ -327,7 +327,7 @@ class _ActionItem(object):
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
-      The only thing we compare is the item's index.  
+      The only thing we compare is the item's index.
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
@@ -337,13 +337,13 @@ class _ActionItem(object):
          if self.index < other.index:
             return -1
          else:
-            return 1 
+            return 1
       else:
          if self.SORT_ORDER != other.SORT_ORDER:
             if self.SORT_ORDER < other.SORT_ORDER:
                return -1
             else:
-               return 1 
+               return 1
       return 0
 
    def executeAction(self, configPath, options, config):
@@ -366,7 +366,7 @@ class _ActionItem(object):
       if self.postHooks is not None:
          for hook in self.postHooks:
             self._executeHook("post-action", hook)
-      
+
    def _executeAction(self, configPath, options, config):
       """
       Executes the action, specifically the function associated with the action.
@@ -401,7 +401,7 @@ class _ManagedActionItem(object):
    Class representing a single action to be executed on a managed peer.
 
    This class represents a single named action to be executed, and understands
-   how to execute that action.   
+   how to execute that action.
 
    Actions to be executed on a managed peer rely on peer configuration and
    on the full-backup flag.  All other configuration takes place on the remote
@@ -432,7 +432,7 @@ class _ManagedActionItem(object):
    def __cmp__(self, other):
       """
       Definition of equals operator for this class.
-      The only thing we compare is the item's index.  
+      The only thing we compare is the item's index.
       @param other: Other object to compare to.
       @return: -1/0/1 depending on whether self is C{<}, C{=} or C{>} other.
       """
@@ -442,13 +442,13 @@ class _ManagedActionItem(object):
          if self.index < other.index:
             return -1
          else:
-            return 1 
+            return 1
       else:
          if self.SORT_ORDER != other.SORT_ORDER:
             if self.SORT_ORDER < other.SORT_ORDER:
                return -1
             else:
-               return 1 
+               return 1
       return 0
 
    def executeAction(self, configPath, options, config):
@@ -490,7 +490,7 @@ class _ActionSet(object):
    specified on the command-line are sensible.  The command-line can only list
    either built-in actions or extended actions specified in configuration.
    Also, certain actions (in L{NONCOMBINE_ACTIONS}) cannot be combined with
-   other actions.  
+   other actions.
 
    Second, the class enforces an execution order on the specified actions.  Any
    time actions are combined on the command line (either built-in actions or
@@ -515,7 +515,7 @@ class _ActionSet(object):
       This is kind of ugly, because the constructor has to set up a lot of data
       before being able to do anything useful.  The following data structures
       are initialized based on the input:
-   
+
          - C{extensionNames}: List of extensions available in configuration
          - C{preHookMap}: Mapping from action name to list of C{PreActionHook}
          - C{postHookMap}: Mapping from action name to list of C{PostActionHook}
@@ -544,7 +544,7 @@ class _ActionSet(object):
       functionMap = _ActionSet._buildFunctionMap(extensions)
       indexMap = _ActionSet._buildIndexMap(extensions)
       peerMap = _ActionSet._buildPeerMap(options, peers)
-      actionMap = _ActionSet._buildActionMap(managed, local, extensionNames, functionMap, 
+      actionMap = _ActionSet._buildActionMap(managed, local, extensionNames, functionMap,
                                              indexMap, preHookMap, postHookMap, peerMap)
       _ActionSet._validateActions(actions, extensionNames)
       self.actionSet = _ActionSet._buildActionSet(actions, actionMap)
@@ -668,14 +668,14 @@ class _ActionSet(object):
             for action in extensions.actions:
                if action.dependencies.beforeList is not None:
                   for vertex in action.dependencies.beforeList:
-                     try: 
+                     try:
                         graph.createEdge(action.name, vertex)   # actions that this action must be run before
                      except ValueError:
                         logger.error("Dependency [%s] on extension [%s] is unknown." % (vertex, action.name))
                         raise ValueError("Unable to determine proper action order due to invalid dependency.")
                if action.dependencies.afterList is not None:
                   for vertex in action.dependencies.afterList:
-                     try: 
+                     try:
                         graph.createEdge(vertex, action.name)   # actions that this action must be run after
                      except ValueError:
                         logger.error("Dependency [%s] on extension [%s] is unknown." % (vertex, action.name))
@@ -695,7 +695,7 @@ class _ActionSet(object):
       """
       Builds a mapping from action name to list of action items.
 
-      We build either C{_ActionItem} or C{_ManagedActionItem} objects here.  
+      We build either C{_ActionItem} or C{_ManagedActionItem} objects here.
 
       In most cases, the mapping from action name to C{_ActionItem} is 1:1.
       The exception is the "all" action, which is a special case.  However, a
@@ -709,7 +709,7 @@ class _ActionSet(object):
 
       @param managed: Whether to include managed actions in the set
       @param local: Whether to include local actions in the set
-      @param extensionNames: List of valid extended action names 
+      @param extensionNames: List of valid extended action names
       @param functionMap: Dictionary mapping action name to Python function
       @param indexMap: Dictionary mapping action name to integer execution index
       @param preHookMap: Dictionary mapping action name to pre hooks (if any) for the action
@@ -1064,7 +1064,7 @@ def _setupLogfile(options):
    else:
       logfile = options.logfile
    if not os.path.exists(logfile):
-      if options.mode is None: 
+      if options.mode is None:
          os.fdopen(os.open(logfile, os.O_RDWR|os.O_CREAT|os.O_APPEND, DEFAULT_MODE), "a+").write("")
       else:
          os.fdopen(os.open(logfile, os.O_RDWR|os.O_CREAT|os.O_APPEND, options.mode), "a+").write("")
@@ -1190,7 +1190,7 @@ class Options(object):
    Class representing command-line options for the cback script.
 
    The C{Options} class is a Python object representation of the command-line
-   options of the cback script.  
+   options of the cback script.
 
    The object representation is two-way: a command line string or a list of
    command line arguments can be used to create an C{Options} object, and then
@@ -1492,7 +1492,7 @@ class Options(object):
       """
       if value is not None:
          if len(value) < 1:
-            raise ValueError("The config parameter must be a non-empty string.") 
+            raise ValueError("The config parameter must be a non-empty string.")
       self._config = value
 
    def _getConfig(self):
@@ -1556,7 +1556,7 @@ class Options(object):
       """
       if value is not None:
          if len(value) < 1:
-            raise ValueError("The logfile parameter must be a non-empty string.") 
+            raise ValueError("The logfile parameter must be a non-empty string.")
       self._logfile = encodePath(value)
 
    def _getLogfile(self):
@@ -1754,7 +1754,7 @@ class Options(object):
       long option names (i.e. --version rather than -V).  The resulting list
       will be suitable for passing back to the constructor in the
       C{argumentList} parameter.  Unlike L{buildArgumentString}, string
-      arguments are not quoted here, because there is no need for it.  
+      arguments are not quoted here, because there is no need for it.
 
       Unless the C{validate} parameter is C{False}, the L{Options.validate}
       method will be called (with its default arguments) against the
@@ -1887,7 +1887,7 @@ class Options(object):
       any validation as to whether required elements exist or whether elements
       exist in the proper combination (instead, that's the job of the
       L{validate} method).
-   
+
       For any of the options which supply parameters, if the option is
       duplicated with long and short switches (i.e. C{-l} and a C{--logfile})
       then the long switch is used.  If the same option is duplicated with the
