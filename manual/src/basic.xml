@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2008,2010 Kenneth J. Pronovici.
+# Copyright (c) 2005-2008,2010,2015 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it 
@@ -237,7 +237,7 @@
 
          <para>
             The collect action is the first action in a standard backup run.
-            It executes both master and client nodes.  Based on configuration,
+            It executes on both master and client nodes.  Based on configuration,
             this action traverses the peer's filesystem and gathers files to be
             backed up.  Each configured high-level directory is collected up
             into its own <command>tar</command> file in the <firstterm>collect
@@ -553,7 +553,7 @@
 
          <para>
             To decide what data to write to disc again, the rebuild action
-            looks back and finds first day of the current week.  Then, it finds
+            looks back and finds the first day of the current week.  Then, it finds
             any remaining staging directories between that date and the current
             date.  If any staging directories are found, they are all written
             to disc in one big ISO session.
@@ -818,7 +818,7 @@
       </para>
 
       <para>
-         Prior to Cedar Backup 2.0, any such integration would have been
+         Prior to Cedar Backup version 2, any such integration would have been
          completely independent of Cedar Backup itself.  The
          <quote>external</quote> backup functionality would have had to
          maintain its own configuration and would not have had access to any
@@ -826,10 +826,10 @@
       </para>
 
       <para>
-         Starting with version 2.0, Cedar Backup allows
+         Starting with version 2, Cedar Backup allows
          <firstterm>extensions</firstterm> to the backup process.   An
-         extension is an action that isn't part of the standard backup process,
-         (i.e. not collect, stage, store or purge) but can be executed by Cedar
+         extension is an action that isn't part of the standard backup process
+         (i.e. not collect, stage, store or purge), but can be executed by Cedar
          Backup when properly configured.
       </para>
 
@@ -843,7 +843,7 @@
       </para>
 
       <para>
-         Hopefully, as the Cedar Backup 2.0 user community grows, users will
+         Hopefully, as the Cedar Backup user community grows, users will
          contribute their own extensions back to the community.  Well-written
          general-purpose extensions will be accepted into the official
          codebase.
