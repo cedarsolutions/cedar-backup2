@@ -24,30 +24,37 @@
 # CedarBackup2.
 
 
-########################
-# Programs and commands
-########################
+############################
+# Locations and definitions
+############################
 
+AWK               = awk
 CD                = cd
 CP                = cp
-MV                = mv
-EPYDOC            = epydoc
+ECHO              = echo
 FIND              = find
 MKDIR             = mkdir
-PYLINT            = pylint
-PYTHON            = python
+MV                = mv
 RM                = rm
-SETUP             = $(PYTHON) ./setup.py
+SED               = sed
 SUDO              = sudo
 TAR               = tar
 VALIDATE          = util/validate
-VERSION           = `cat CedarBackup2/release.py | grep '^VERSION' | awk -F\" '{print $$2}'`
-URL               = `cat CedarBackup2/release.py | grep URL | awk -F\" '{print $$2}'`
 
+VIRTUALENV        = util/virtualenv
+PYTHON_INSTALL    = .python
+PYTHON_VERSION    = 2.7
+PYTHON            = $(PYTHON_INSTALL)/bin/python
+PIP               = $(PYTHON_INSTALL)/bin/pip
+PYLINT            = $(PYTHON_INSTALL)/bin/pylint
+COVERAGE          = $(PYTHON_INSTALL)/bin/coverage
+SETUP             = $(PYTHON) setup.py
+EPYDOC            = epydoc  # use it from system
 
-############
-# Locations
-############
+PACKAGE           = CedarBackup2
+PACKAGE_LC        = cedar-backup2
+VERSION           = `cat $(PACKAGE)/release.py | grep '^VERSION' | awk -F\" '{print $$2}'`
+URL               = `cat $(PACKAGE)/release.py | grep URL | awk -F\" '{print $$2}'`
 
 DOC_DIR           = doc
 BITBUCKET_DIR     = ../gwt/CedarCommon/BitBucketSite
@@ -57,6 +64,9 @@ SDIST_DIR         = $(DIST_DIR)/sdist
 INTERFACE_DIR     = $(DOC_DIR)/interface
 INTERFACE_TEMPDIR = $(DOC_DIR)/interface/tmp
 MANUAL_DIR        = $(DOC_DIR)/manual
+CHANGELOG_FILE    = Changelog
+COVERAGE_FILE     = .coverage
+COVERAGE_DIR      = htmlcov
 
 
 ###################
@@ -65,37 +75,62 @@ MANUAL_DIR        = $(DOC_DIR)/manual
 
 all: 
 
-clean: docclean distribclean 
-	-@$(FIND) . -name "*.pyc" | xargs rm -f
-	-@rm -f PKG-INFO tags
-
 tags:
 	ctags `find . -name "*.py"`
 
+clean: docclean distribclean coverageclean
+	-@$(FIND) . -name "*.pyc" | xargs rm -f
+	-@rm -f PKG-INFO tags 
+
+distclean: clean virtualenvclean
+
+virtualenv: 
+	@$(VIRTUALENV) $(PYTHON_VERSION) $(PYTHON_INSTALL)
+
+virtualenvclean:
+	@rm -rf $(PYTHON_INSTALL)
+
 # This uses the "full" argument to get all tests
-test:
+test: virtualenv
 	@$(SUDO) -v
 	@$(PYTHON) util/test.py full
 
 # This leaves off "full" and gets on the tests most end-users would run
-usertest:
+usertest: virtualenv
 	@$(PYTHON) util/test.py
+
+# This gets coverage for the full tests
+coverage: virtualenv
+	@$(SUDO) -v
+	@$(COVERAGE) run --source=$(PACKAGE) util/test.py full
+	@$(COVERAGE) html
+	@echo "Coverage at: file://$(PWD)/$(COVERAGE_DIR)/index.html"
+
+# This gets coverage for the user tests
+usercoverage: virtualenv
+	@$(COVERAGE) run --source=$(PACKAGE) util/test.py
+	@$(COVERAGE) html
+	@echo "Coverage at: file://$(PWD)/$(COVERAGE_DIR)/index.html"
+
+coverageclean:
+	@rm -f $(COVERAGE_FILE)
+	@rm -rf $(COVERAGE_DIR)
 
 
 ##################################
 # Stylistic and function checking
 ##################################
-# Previously, I used pychecker.  However, it's getting a little long in the
-# tooth, and it doesn't work as well with newer versions of Python.  I've
-# switched to pylint, which seems a bit more reliable and can be configured at
-# a finer-grained level.
 
-check:
-	-@$(PYLINT) --rcfile=pylint-code.rc CedarBackup2
+check: virtualenv
+	-@$(PYLINT) --rcfile=pylint-code.rc $(PACKAGE)
 
-allcheck:
-	-@$(PYLINT) --rcfile=pylint-code.rc CedarBackup2 util setup.py
+allcheck: virtualenv
+	-@$(PYLINT) --rcfile=pylint-code.rc $(PACKAGE) util setup.py
 	-@$(PYLINT) --rcfile=pylint-test.rc testcase
+
+# Trim trailing whitespace from lines in source files
+trim:
+	-@$(FIND) . -name "*.py" -exec $(SED) -i 's/\s*$$//g' \{} \;
 
 
 ################
@@ -113,8 +148,8 @@ doc: interface-doc manual-doc
 
 interface-doc: interface-html 
 
-interface-html: $(INTERFACE_DIR)
-	@$(EPYDOC) -v --html --name "CedarBackup2" --output $(INTERFACE_DIR) --url $(URL) CedarBackup2/
+interface-html: virtualenv $(INTERFACE_DIR)
+	@$(EPYDOC) -v --html --name "$(PACKAGE)" --output $(INTERFACE_DIR) --url $(URL) $(PACKAGE)/
 
 manual-doc: $(MANUAL_DIR)
 	@$(CD) $(MANUAL_SRC) && $(MAKE) install
@@ -147,48 +182,49 @@ $(INTERFACE_TEMPDIR):
 ################
 # The rules in this section build a Python source distribution, and then
 # also that same source distribution named appropriately for Debian (the
-# Debian packages are maintained via cvs-buildpackage as usual).  This
+# Debian packages are maintained via svn-buildpackage as usual).  This
 # keeps cedar-backup2 from being a Debian-native package.
 
-distrib: debdist 
+distrib: debdist
 
 distribclean: sdistclean debdistclean
 	-@$(RM) -f MANIFEST 
 	-@$(RM) -rf $(DIST_DIR)
 
-sdist: $(SDIST_DIR) doc
+sdist: virtualenv $(SDIST_DIR) doc
 	@$(SETUP) sdist --dist-dir $(SDIST_DIR)
-	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz ../
+	@$(CP) $(SDIST_DIR)/$(PACKAGE)-$(VERSION).tar.gz ../
 
-source: $(SDIST_DIR) 
+source: virtualenv $(SDIST_DIR) 
 	@$(SETUP) sdist --dist-dir $(SDIST_DIR)
-	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz ../
+	@$(CP) $(SDIST_DIR)/$(PACKAGE)-$(VERSION).tar.gz ../
 
 $(SDIST_DIR):
 	@$(MKDIR) -p $(SDIST_DIR)
 
 sdistclean: 
-	@$(RM) -f $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz
+	@$(RM) -f $(SDIST_DIR)/$(PACKAGE)-$(VERSION).tar.gz
 
 debdist: sdist
-	@$(CP) $(SDIST_DIR)/CedarBackup2-$(VERSION).tar.gz $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz
-	@$(CP) $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz ../
+	@$(CP) $(SDIST_DIR)/$(PACKAGE)-$(VERSION).tar.gz $(SDIST_DIR)/$(PACKAGE_LC)_$(VERSION).orig.tar.gz
+	@$(CP) $(SDIST_DIR)/$(PACKAGE_LC)_$(VERSION).orig.tar.gz ../
 
 debdistclean: 
-	@$(RM) -f $(SDIST_DIR)/cedar-backup2_$(VERSION).orig.tar.gz 
+	@$(RM) -f $(SDIST_DIR)/$(PACKAGE_LC)_$(VERSION).orig.tar.gz 
 
-# This layout matches the htdocs/docs tree for the SF website
+# This layout matches the htdocs/docs tree for the website
+htmldoc: htmldocs
 htmldocs: docdist
 docdist: doc
-	@$(MKDIR) -p $(BITBUCKET_DIR)/docs/cedar-backup2/
-	@$(CP) Changelog $(BITBUCKET_DIR)/docs/cedar-backup2/
-	@$(CP) -r $(MANUAL_DIR) $(BITBUCKET_DIR)/docs/cedar-backup2/
-	@$(CP) -r $(INTERFACE_DIR) $(BITBUCKET_DIR)/docs/cedar-backup2/
+	@$(MKDIR) -p $(BITBUCKET_DIR)/docs/$(PACKAGE_LC)/
+	@$(CP) $(CHANGELOG_FILE) $(BITBUCKET_DIR)/docs/$(PACKAGE_LC)/
+	@$(CP) -r $(MANUAL_DIR) $(BITBUCKET_DIR)/docs/$(PACKAGE_LC)/
+	@$(CP) -r $(INTERFACE_DIR) $(BITBUCKET_DIR)/docs/$(PACKAGE_LC)/
 
 
 ##################################
 # Phony rules for use by GNU make
 ##################################
 
-.PHONY: all clean tags test usertest check allcheck doc docs docclean docsclean epydoc interface interface-doc interface-html book validate manual manual-doc distrib distribclean sdist sdistclean debdist debdistclean docdist
+.PHONY: all clean tags test usertest check allcheck doc docs docclean docsclean epydoc interface interface-doc interface-html book validate manual manual-doc distrib distribclean sdist sdistclean debdist debdistclean docdist virtualenv virtualenvclean coverage coverageclean
 
