@@ -7,7 +7,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2008,2010 Kenneth J. Pronovici.
+# Copyright (c) 2005-2008,2010,2015 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -160,9 +160,8 @@
 
          <para>
             Both the Python source distribution and the Debian package come with a
-            sample configuration file.  The Debian package includes a stripped
-            config file in <filename>/etc/cback.conf</filename> and a larger
-            sample in <filename>/usr/share/doc/cedar-backup2/examples/cback.conf.sample</filename>.
+            sample configuration file.  The Debian package includes its sample in
+            <filename>/usr/share/doc/cedar-backup2/examples/cback.conf.sample</filename>.
          </para>
 
          <para>
@@ -3000,7 +2999,7 @@
          <warning>
             <para>
                Because of the way Cedar Backup works, you must ensure that your
-               backup <emphasis>always</emphasis> runs son the first day of your
+               backup <emphasis>always</emphasis> runs on the first day of your
                configured week.  This is because Cedar Backup will only clear
                incremental backup information and re-initialize your media when
                running on the first day of the week.  If you skip running Cedar
@@ -3199,7 +3198,7 @@
             </para>
 
             <para>
-               If you intend to place confidental information into the Cedar
+               If you intend to place confidential information into the Cedar
                Backup configuration file, make sure that you set the filesystem
                permissions on the file appropriately.  For instance, if you
                configure any extensions that require passwords or other similar
