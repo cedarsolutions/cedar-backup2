@@ -687,7 +687,7 @@ def _encodeText(text, encoding):
    Löwis and was Copyright (c) 2000 Fourthought Inc, USA; All Rights Reserved.
    """
    encoder = codecs.lookup(encoding)[0] # encode,decode,reader,writer
-   if type(text) is not UnicodeType:
+   if not isinstance(text, UnicodeType):
       text = unicode(text, "utf-8")
    return encoder(text)[0] # result,size
 
