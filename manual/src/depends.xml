@@ -40,13 +40,15 @@
       <variablelist>
 
          <varlistentry>
-            <term>Python 2.5 (or later)</term>
+            <term>Python 2.7</term>
             <listitem>
 
                <para>
-                  Version 2.5 of the Python interpreter was released on 19 Sep
-                  2006, so virtually any current Linux and BSD distributions should
-                  include it or a later version.
+                  Cedar Backup is written in Python 2 and requires version 2.7 or
+                  greater of the language.  Python 2.7 was originally released on
+                  4 Jul 2010, and is the last supported release of Python 2. As
+                  of this writing, all current Linux and BSD distributions
+                  include it.
                </para>
 
                <informaltable>
