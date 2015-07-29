@@ -3154,9 +3154,9 @@ class TestOptions(unittest.TestCase):
       options.s3BucketUrl = "bucket"
       argumentList = options.buildArgumentList(validate=False)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet",
-                             "--logfile", "logfile", "--owner", "a:b", "--mode", "631",
-                             "--output", "--debug", "--stack", "--diagnostics",
-                             "--verifyOnly", "--ignoreWarnings", "source", "bucket", ], argumentList)
+                            "--logfile", "logfile", "--owner", "a:b", "--mode", "631",
+                            "--output", "--debug", "--stack", "--diagnostics",
+                            "--verifyOnly", "--ignoreWarnings", "source", "bucket", ], argumentList)
 
    def testBuildArgumentList_017(self):
       """Test with no values set, validate=True."""
@@ -3272,9 +3272,9 @@ class TestOptions(unittest.TestCase):
       options.s3BucketUrl = "bucket"
       argumentList = options.buildArgumentList(validate=True)
       self.failUnlessEqual(["--help", "--version", "--verbose", "--quiet",
-                             "--logfile", "logfile", "--owner", "a:b", "--mode", "631",
-                             "--output", "--debug", "--stack", "--diagnostics",
-                             "--verifyOnly", "--ignoreWarnings", "source", "bucket", ], argumentList)
+                            "--logfile", "logfile", "--owner", "a:b", "--mode", "631",
+                            "--output", "--debug", "--stack", "--diagnostics",
+                            "--verifyOnly", "--ignoreWarnings", "source", "bucket", ], argumentList)
 
 
    #############################
@@ -3527,6 +3527,7 @@ class TestOptions(unittest.TestCase):
 # Suite definition
 #######################################################################
 
+# pylint: disable=C0330
 def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((
