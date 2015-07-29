@@ -40,6 +40,7 @@ ${PYTHON}/bin/coverage xml
 # Note that we ignore the return status so an error does not fail the build
 echo "Running pylint checks..."
 ${PYTHON}/bin/pylint --rcfile=pylint-code.rc CedarBackup2 util setup.py > pylint-code.out
+${PYTHON}/bin/pylint --rcfile=pylint-test.rc testcase > pylint-test.out
 
 # Return successfully
 echo "Build is complete."
