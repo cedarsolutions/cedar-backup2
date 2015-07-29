@@ -26,7 +26,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-# Language : Python (>= 2.5)
+# Language : Python 2 (>= 2.7)
 # Project  : Cedar Backup, release 2
 # Purpose  : Run all of the unit tests for the project.
 #
@@ -105,14 +105,14 @@ def main():
    @return: Integer 0 upon success, integer 1 upon failure.
    """
 
-   # Check the Python version.  We require 2.5 or greater.
+   # Check the Python version.  We require 2.7 or greater.
    try:
-      if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 5]:
-         print "Python version 2.5 or greater required, sorry."
+      if map(int, [sys.version_info[0], sys.version_info[1]]) < [2, 7]:
+         print "Python 2 version 2.7 or greater required, sorry."
          return 1
    except:
       # sys.version_info isn't available before 2.0
-      print "Python version 2.5 or greater required, sorry."
+      print "Python 2 version 2.7 or greater required, sorry."
       return 1
 
    # Check for the correct CedarBackup2 location and import utilities

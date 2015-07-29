@@ -188,11 +188,12 @@ $ apt-get install cedar-backup2 cedar-backup2-doc
          </para>
 
          <para>
-            Cedar Backup is written in Python 2 and requires version 2.5 or
-            greater of the language.  Python 2.5 was released on 19 Sep 2006,
-            so by now most current Linux and BSD distributions should include
-            it. You must install Python 2 on every peer node in a pool (master or
-            client). 
+            Cedar Backup is written in Python 2 and requires version 2.7 or
+            greater of the language.  Python 2.7 was originally released on
+            4 Jul 2010, and is the last supported release of Python 2. As
+            of this writing, all current Linux and BSD distributions
+            include it.  You must install Python 2 on every peer node in a
+            pool (master or client). 
          </para>
 
          <para>
@@ -283,7 +284,7 @@ $ python setup.py install
          </screen>
 
          <para>
-            Make sure that you are using Python 2.5 or better to execute
+            Make sure that you are using Python 2.7 or better to execute
             <filename>setup.py</filename>.
          </para>
 

@@ -26,7 +26,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-# Language : Python (>= 2.5)
+# Language : Python 2 (>= 2.7)
 # Project  : Cedar Backup, release 2
 # Purpose  : Tests span tool functionality.
 #

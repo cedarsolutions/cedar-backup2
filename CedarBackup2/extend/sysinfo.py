@@ -25,7 +25,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Author   : Kenneth J. Pronovici <pronovic@ieee.org>
-# Language : Python (>= 2.5)
+# Language : Python 2 (>= 2.7)
 # Project  : Official Cedar Backup Extensions
 # Purpose  : Provides an extension to save off important system recovery information.
 #
