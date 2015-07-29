@@ -3783,7 +3783,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\\"
       """
-      path = r"\\"
+      path = "\\"
       expected = "-"
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
@@ -3819,7 +3819,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\."
       """
-      path = "\\."
+      path = r"\."
       expected = "_"
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
@@ -3828,7 +3828,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\.."
       """
-      path = "\\.."
+      path = r"\.."
       expected = "_."
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
@@ -3837,7 +3837,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\..."
       """
-      path = "\\..."
+      path = r"\..."
       expected = "_.."
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
@@ -3864,7 +3864,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\\var/log/apache\\httpd.log.1"
       """
-      path = r"\\var/log/apache\\httpd.log.1"
+      path = "\\var/log/apache\\httpd.log.1"
       expected = "var-log-apache-httpd.log.1"
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
