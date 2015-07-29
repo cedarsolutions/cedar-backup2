@@ -1,4 +1,4 @@
-Version 2.25.0    unreleased
+Version 2.25.0    29 Jul 2015
 
 	* Fix a variety of minor warnings and suggestions from pylint.
 	* Clean up manpages and add notes about migrating to version 3.
