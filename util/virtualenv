@@ -35,14 +35,17 @@ fi
 
 # Rebuild the virtualenv if it doesn't exist
 if [ ! -d ${DIR} ]; then
+   
+   # Create the Python virtualenv
    echo "Creating virtual environment for Python ${VERSION}..."
-
    ${VIRTUALENV} --quiet --python=python${VERSION} ${DIR}
    if [ $? != 0 ]; then
       echo "Failed to create virtual environment for Python ${VERSION}"
       exit 1
    fi
 
+   # Install all of the required packages, from DEPENDENCIES
+   echo ""
    for PACKAGE in ${DEPENDENCIES}; do
       echo -n "Installing ${PACKAGE}..." 
       ${PIP} install --quiet "${PACKAGE}" >/dev/null 2>&1 
@@ -53,6 +56,13 @@ if [ ! -d ${DIR} ]; then
          echo "done."
       fi
    done
+
+   # List the packages that are actually installed, for debug purposes
+   echo ""
+   echo "Installed packages:"
+   echo ""
+   ${PIP} list
+   echo ""
 fi
 
 # Log a message indicating which environment is in use
