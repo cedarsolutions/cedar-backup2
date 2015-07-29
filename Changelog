@@ -1,5 +1,6 @@
 Version 2.25.0    unreleased
 
+	* Fix a variety of minor warnings and suggestions from pylint.
 	* Clean up manpages and add notes about migrating to version 3.
 	* Review user guide, fix broken links, make minor tweaks to wording, etc.
 	* Convert testcase/utiltests.py to use sys.executable rather than relying on "python".
