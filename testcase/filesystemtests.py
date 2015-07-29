@@ -23734,7 +23734,7 @@ class TestPurgeItemList(unittest.TestCase):
       changeFileAge(self.buildPath([ "tree1", "file004", ]), AGE_24_HOURS)
       count = purgeList.removeYoungFiles(daysOld)
       self.failUnlessEqual(2, count)
-      self.failUnless(2, len(purgeList))
+      self.failUnlessEqual(2, len(purgeList))
       self.failUnless(self.buildPath([ "tree1", "file001", ]) in purgeList)
       self.failUnless(self.buildPath([ "tree1", "file004", ]) in purgeList)
 
