@@ -289,29 +289,29 @@ class FilesystemList(list):
       """
       path = encodePath(path)
       if not os.path.exists(path) or not os.path.isfile(path):
-         logger.debug("Path [%s] is not a file or does not exist on disk." % path)
+         logger.debug("Path [%s] is not a file or does not exist on disk.", path)
          raise ValueError("Path is not a file or does not exist on disk.")
       if self.excludeLinks and os.path.islink(path):
-         logger.debug("Path [%s] is excluded based on excludeLinks." % path)
+         logger.debug("Path [%s] is excluded based on excludeLinks.", path)
          return 0
       if self.excludeFiles:
-         logger.debug("Path [%s] is excluded based on excludeFiles." % path)
+         logger.debug("Path [%s] is excluded based on excludeFiles.", path)
          return 0
       if path in self.excludePaths:
-         logger.debug("Path [%s] is excluded based on excludePaths." % path)
+         logger.debug("Path [%s] is excluded based on excludePaths.", path)
          return 0
       for pattern in self.excludePatterns:
          pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(path): # safe to assume all are valid due to RegexList
-            logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
+            logger.debug("Path [%s] is excluded based on pattern [%s].", path, pattern)
             return 0
       for pattern in self.excludeBasenamePatterns: # safe to assume all are valid due to RegexList
          pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
-            logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
+            logger.debug("Path [%s] is excluded based on basename pattern [%s].", path, pattern)
             return 0
       self.append(path)
-      logger.debug("Added file to list: [%s]" % path)
+      logger.debug("Added file to list: [%s]", path)
       return 1
 
    def addDir(self, path):
@@ -334,29 +334,29 @@ class FilesystemList(list):
       path = encodePath(path)
       path = normalizeDir(path)
       if not os.path.exists(path) or not os.path.isdir(path):
-         logger.debug("Path [%s] is not a directory or does not exist on disk." % path)
+         logger.debug("Path [%s] is not a directory or does not exist on disk.", path)
          raise ValueError("Path is not a directory or does not exist on disk.")
       if self.excludeLinks and os.path.islink(path):
-         logger.debug("Path [%s] is excluded based on excludeLinks." % path)
+         logger.debug("Path [%s] is excluded based on excludeLinks.", path)
          return 0
       if self.excludeDirs:
-         logger.debug("Path [%s] is excluded based on excludeDirs." % path)
+         logger.debug("Path [%s] is excluded based on excludeDirs.", path)
          return 0
       if path in self.excludePaths:
-         logger.debug("Path [%s] is excluded based on excludePaths." % path)
+         logger.debug("Path [%s] is excluded based on excludePaths.", path)
          return 0
       for pattern in self.excludePatterns: # safe to assume all are valid due to RegexList
          pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(path):
-            logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
+            logger.debug("Path [%s] is excluded based on pattern [%s].", path, pattern)
             return 0
       for pattern in self.excludeBasenamePatterns: # safe to assume all are valid due to RegexList
          pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
-            logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
+            logger.debug("Path [%s] is excluded based on basename pattern [%s].", path, pattern)
             return 0
       self.append(path)
-      logger.debug("Added directory to list: [%s]" % path)
+      logger.debug("Added directory to list: [%s]", path)
       return 1
 
    def addDirContents(self, path, recursive=True, addSelf=True, linkDepth=0, dereference=False):
@@ -455,23 +455,23 @@ class FilesystemList(list):
       """
       added = 0
       if not os.path.exists(path) or not os.path.isdir(path):
-         logger.debug("Path [%s] is not a directory or does not exist on disk." % path)
+         logger.debug("Path [%s] is not a directory or does not exist on disk.", path)
          raise ValueError("Path is not a directory or does not exist on disk.")
       if path in self.excludePaths:
-         logger.debug("Path [%s] is excluded based on excludePaths." % path)
+         logger.debug("Path [%s] is excluded based on excludePaths.", path)
          return added
       for pattern in self.excludePatterns: # safe to assume all are valid due to RegexList
          pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(path):
-            logger.debug("Path [%s] is excluded based on pattern [%s]." % (path, pattern))
+            logger.debug("Path [%s] is excluded based on pattern [%s].", path, pattern)
             return added
       for pattern in self.excludeBasenamePatterns: # safe to assume all are valid due to RegexList
          pattern = encodePath(pattern)  # use same encoding as filenames
          if re.compile(r"^%s$" % pattern).match(os.path.basename(path)):
-            logger.debug("Path [%s] is excluded based on basename pattern [%s]." % (path, pattern))
+            logger.debug("Path [%s] is excluded based on basename pattern [%s].", path, pattern)
             return added
       if self.ignoreFile is not None and os.path.exists(os.path.join(path, self.ignoreFile)):
-         logger.debug("Path [%s] is excluded based on ignore file." % path)
+         logger.debug("Path [%s] is excluded based on ignore file.", path)
          return added
       if includePath:
          added += self.addDir(path)    # could actually be excluded by addDir, yet
@@ -536,7 +536,7 @@ class FilesystemList(list):
          for entry in self[:]:
             if os.path.exists(entry) and os.path.isfile(entry):
                self.remove(entry)
-               logger.debug("Removed path [%s] from list." % entry)
+               logger.debug("Removed path [%s] from list.", entry)
                removed += 1
       else:
          try:
@@ -548,9 +548,9 @@ class FilesystemList(list):
             if os.path.exists(entry) and os.path.isfile(entry):
                if compiled.match(entry):
                   self.remove(entry)
-                  logger.debug("Removed path [%s] from list." % entry)
+                  logger.debug("Removed path [%s] from list.", entry)
                   removed += 1
-      logger.debug("Removed a total of %d entries." % removed)
+      logger.debug("Removed a total of %d entries.", removed)
       return removed
 
    def removeDirs(self, pattern=None):
@@ -579,7 +579,7 @@ class FilesystemList(list):
          for entry in self[:]:
             if os.path.exists(entry) and os.path.isdir(entry):
                self.remove(entry)
-               logger.debug("Removed path [%s] from list." % entry)
+               logger.debug("Removed path [%s] from list.", entry)
                removed += 1
       else:
          try:
@@ -591,9 +591,9 @@ class FilesystemList(list):
             if os.path.exists(entry) and os.path.isdir(entry):
                if compiled.match(entry):
                   self.remove(entry)
-                  logger.debug("Removed path [%s] from list based on pattern [%s]." % (entry, pattern))
+                  logger.debug("Removed path [%s] from list based on pattern [%s].", entry, pattern)
                   removed += 1
-      logger.debug("Removed a total of %d entries." % removed)
+      logger.debug("Removed a total of %d entries.", removed)
       return removed
 
    def removeLinks(self, pattern=None):
@@ -620,7 +620,7 @@ class FilesystemList(list):
          for entry in self[:]:
             if os.path.exists(entry) and os.path.islink(entry):
                self.remove(entry)
-               logger.debug("Removed path [%s] from list." % entry)
+               logger.debug("Removed path [%s] from list.", entry)
                removed += 1
       else:
          try:
@@ -632,9 +632,9 @@ class FilesystemList(list):
             if os.path.exists(entry) and os.path.islink(entry):
                if compiled.match(entry):
                   self.remove(entry)
-                  logger.debug("Removed path [%s] from list based on pattern [%s]." % (entry, pattern))
+                  logger.debug("Removed path [%s] from list based on pattern [%s].", entry, pattern)
                   removed += 1
-      logger.debug("Removed a total of %d entries." % removed)
+      logger.debug("Removed a total of %d entries.", removed)
       return removed
 
    def removeMatch(self, pattern):
@@ -667,9 +667,9 @@ class FilesystemList(list):
       for entry in self[:]:
          if compiled.match(entry):
             self.remove(entry)
-            logger.debug("Removed path [%s] from list based on pattern [%s]." % (entry, pattern))
+            logger.debug("Removed path [%s] from list based on pattern [%s].", entry, pattern)
             removed += 1
-      logger.debug("Removed a total of %d entries." % removed)
+      logger.debug("Removed a total of %d entries.", removed)
       return removed
 
    def removeInvalid(self):
@@ -686,9 +686,9 @@ class FilesystemList(list):
       for entry in self[:]:
          if not os.path.exists(entry):
             self.remove(entry)
-            logger.debug("Removed path [%s] from list." % entry)
+            logger.debug("Removed path [%s] from list.", entry)
             removed += 1
-      logger.debug("Removed a total of %d entries." % removed)
+      logger.debug("Removed a total of %d entries.", removed)
       return removed
 
 
@@ -704,7 +704,7 @@ class FilesystemList(list):
       items = map(lambda x, self=self: self[x], dups)
       map(self.remove, items)
       new = len(self)
-      logger.debug("Completed normalizing list; removed %d items (%d originally, %d now)." % (new-orig, orig, new))
+      logger.debug("Completed normalizing list; removed %d items (%d originally, %d now).", new-orig, orig, new)
 
    def verify(self):
       """
@@ -713,7 +713,7 @@ class FilesystemList(list):
       """
       for entry in self:
          if not os.path.exists(entry):
-            logger.debug("Path [%s] is invalid; list is not valid." % entry)
+            logger.debug("Path [%s] is invalid; list is not valid.", entry)
             return False
       logger.debug("All entries in list are valid.")
       return True
@@ -919,13 +919,13 @@ class BackupFileList(FilesystemList): # pylint: disable=R0904
          s = sha.new()
       f = open(path, mode="rb")  # in case platform cares about binary reads
       readBytes = 4096  # see notes above
-      while(readBytes > 0):
+      while readBytes > 0:
          readString = f.read(readBytes)
          s.update(readString)
          readBytes = len(readString)
       f.close()
       digest = s.hexdigest()
-      logger.debug("Generated digest [%s] for file [%s]." % (digest, path))
+      logger.debug("Generated digest [%s] for file [%s].", digest, path)
       return digest
 
    def generateFitted(self, capacity, algorithm="worst_fit"):
@@ -1099,9 +1099,9 @@ class BackupFileList(FilesystemList): # pylint: disable=R0904
       # pylint: disable=E1101
       path = encodePath(path)
       if len(self) == 0: raise ValueError("Empty list cannot be used to generate tarfile.")
-      if(mode == 'tar'): tarmode = "w:"
-      elif(mode == 'targz'): tarmode = "w:gz"
-      elif(mode == 'tarbz2'): tarmode = "w:bz2"
+      if mode == 'tar': tarmode = "w:"
+      elif mode == 'targz': tarmode = "w:gz"
+      elif mode == 'tarbz2': tarmode = "w:bz2"
       else: raise ValueError("Mode [%s] is not valid." % mode)
       try:
          tar = tarfile.open(path, tarmode)
@@ -1118,11 +1118,11 @@ class BackupFileList(FilesystemList): # pylint: disable=R0904
             except tarfile.TarError, e:
                if not ignore:
                   raise e
-               logger.info("Unable to add file [%s]; going on anyway." % entry)
+               logger.info("Unable to add file [%s]; going on anyway.", entry)
             except OSError, e:
                if not ignore:
                   raise tarfile.TarError(e)
-               logger.info("Unable to add file [%s]; going on anyway." % entry)
+               logger.info("Unable to add file [%s]; going on anyway.", entry)
          tar.close()
       except tarfile.ReadError, e:
          try: tar.close()
@@ -1203,7 +1203,7 @@ class BackupFileList(FilesystemList): # pylint: disable=R0904
                   if digest == digestMap[entry]:
                      removed += 1
                      del table[entry]
-                     logger.debug("Discarded unchanged file [%s]." % entry)
+                     logger.debug("Discarded unchanged file [%s].", entry)
          self[:] = table.keys()
          return (removed, captured)
       else:
@@ -1218,7 +1218,7 @@ class BackupFileList(FilesystemList): # pylint: disable=R0904
                   if digest == digestMap[entry]:
                      removed += 1
                      del table[entry]
-                     logger.debug("Discarded unchanged file [%s]." % entry)
+                     logger.debug("Discarded unchanged file [%s].", entry)
          self[:] = table.keys()
          return removed
 
@@ -1389,7 +1389,7 @@ class PurgeItemList(FilesystemList): # pylint: disable=R0904
             try:
                os.remove(entry)
                files += 1
-               logger.debug("Purged file [%s]." % entry)
+               logger.debug("Purged file [%s].", entry)
             except OSError:
                pass
       for entry in self:
@@ -1397,7 +1397,7 @@ class PurgeItemList(FilesystemList): # pylint: disable=R0904
             try:
                os.rmdir(entry)
                dirs += 1
-               logger.debug("Purged empty directory [%s]." % entry)
+               logger.debug("Purged empty directory [%s].", entry)
             except OSError:
                pass
       return (files, dirs)

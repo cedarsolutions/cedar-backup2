@@ -156,10 +156,10 @@ def main():
 
       # Display the results
       print "%s: %5d files (%6.2f%%), %6.2f MB (%6.2f%%), elapsed: %8.5f sec" % (
-            key,
-            count, countPercent,
-            used/BYTES_PER_MBYTE, usedPercent,
-            elapsed)
+          key,
+          count, countPercent,
+          used/BYTES_PER_MBYTE, usedPercent,
+          elapsed)
 
    # And, print the total elapsed time
    print "\nTotal elapsed processing time was about %.3f seconds." % totalElapsed

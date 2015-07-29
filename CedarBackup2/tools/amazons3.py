@@ -873,8 +873,8 @@ def cli():
       return 3
 
    logger.info("Cedar Backup Amazon S3 sync run started.")
-   logger.info("Options were [%s]" % options)
-   logger.info("Logfile is [%s]" % logfile)
+   logger.info("Options were [%s]", options)
+   logger.info("Logfile is [%s]", logfile)
    Diagnostics().logDiagnostics(method=logger.info)
 
    if options.stacktrace:
@@ -887,7 +887,7 @@ def cli():
          logger.info("Cedar Backup Amazon S3 sync run completed with status 5.")
          return 5
       except Exception, e:
-         logger.error("Error executing backup: %s" % e)
+         logger.error("Error executing backup: %s", e)
          logger.info("Cedar Backup Amazon S3 sync run completed with status 6.")
          return 6
 
@@ -1053,10 +1053,10 @@ def _checkSourceFiles(sourceDir, sourceFiles):
          try:
             target = source.encode(encoding)
             if source != target:
-               logger.error("Inconsistent encoding for [%s]: got %s, but need %s" % (entry, result["encoding"], encoding))
+               logger.error("Inconsistent encoding for [%s]: got %s, but need %s", entry, result["encoding"], encoding)
                failed = True
          except UnicodeEncodeError:
-            logger.error("Inconsistent encoding for [%s]: got %s, but need %s" % (entry, result["encoding"], encoding))
+            logger.error("Inconsistent encoding for [%s]: got %s, but need %s", entry, result["encoding"], encoding)
             failed = True
 
       if not failed:
@@ -1139,11 +1139,11 @@ def _verifyBucketContents(sourceDir, sourceFiles, s3BucketUrl):
          key = entry.replace(sourceDir, "")
          size = long(os.stat(entry).st_size)
          if not key in contents:
-            logger.error("File was apparently not uploaded: [%s]" % entry)
+            logger.error("File was apparently not uploaded: [%s]", entry)
             failed = True
          else:
             if size != contents[key]:
-               logger.error("File size differs [%s]: expected %s bytes but got %s bytes" % (entry, size, contents[key]))
+               logger.error("File size differs [%s]: expected %s bytes but got %s bytes", entry, size, contents[key])
                failed = True
 
    if not failed:
