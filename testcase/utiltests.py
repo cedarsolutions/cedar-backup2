@@ -3816,7 +3816,7 @@ class TestFunctions(unittest.TestCase):
       self.failUnlessEqual(expected, actual)
 
    def testBuildNormalizedPath011(self):
-      """
+      r"""
       Test for "\."
       """
       path = r"\."
@@ -3825,7 +3825,7 @@ class TestFunctions(unittest.TestCase):
       self.failUnlessEqual(expected, actual)
 
    def testBuildNormalizedPath012(self):
-      """
+      r"""
       Test for "\.."
       """
       path = r"\.."
@@ -3834,7 +3834,7 @@ class TestFunctions(unittest.TestCase):
       self.failUnlessEqual(expected, actual)
 
    def testBuildNormalizedPath013(self):
-      """
+      r"""
       Test for "\..."
       """
       path = r"\..."
