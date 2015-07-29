@@ -797,7 +797,7 @@ class PathResolverSingleton(object):
 
    _instance = None     # Holds a reference to singleton instance
 
-   class _Helper:
+   class _Helper(object):
       """Helper class to provide a singleton factory method."""
       def __init__(self):
          pass
@@ -827,7 +827,7 @@ class PathResolverSingleton(object):
       value = default
       if name in self._mapping.keys():
          value = self._mapping[name]
-      logger.debug("Resolved command [%s] to [%s]." % (name, value))
+      logger.debug("Resolved command [%s] to [%s].", name, value)
       return value
 
    def fill(self, mapping):
@@ -1162,7 +1162,7 @@ def displayBytes(bytes, digits=2): # pylint: disable=W0622
 
    @return: String, formatted for sensible display.
    """
-   if(bytes is None):
+   if bytes is None:
       raise ValueError("Cannot display byte value of None.")
    bytes = float(bytes)
    if math.fabs(bytes) < BYTES_PER_KBYTE:
@@ -1265,7 +1265,7 @@ def getUidGid(user, group):
          gid = grp.getgrnam(group)[2]
          return (uid, gid)
       except Exception, e:
-         logger.debug("Error looking up uid and gid for [%s:%s]: %s" % (user, group, e))
+         logger.debug("Error looking up uid and gid for [%s:%s]: %s", user, group, e)
          raise ValueError("Unable to lookup up uid and gid for passed in user/group.")
    else:
       return (0, 0)
@@ -1289,15 +1289,15 @@ def changeOwnership(path, user, group):
    """
    if _UID_GID_AVAILABLE:
       if user is None or group is None:
-         logger.debug("User or group is None, so not attempting to change owner on [%s]." % path)
+         logger.debug("User or group is None, so not attempting to change owner on [%s].", path)
       elif not isRunningAsRoot():
-         logger.debug("Not root, so not attempting to change owner on [%s]." % path)
+         logger.debug("Not root, so not attempting to change owner on [%s].", path)
       else:
          try:
             (uid, gid) = getUidGid(user, group)
             os.chown(path, uid, gid)
          except Exception, e:
-            logger.error("Error changing ownership of [%s]: %s" % (path, e))
+            logger.error("Error changing ownership of [%s]: %s", path, e)
 
 
 #############################
@@ -1463,8 +1463,8 @@ def executeCommand(command, args, returnOutput=False, ignoreStderr=False, doNotL
 
    @return: Tuple of C{(result, output)} as described above.
    """
-   logger.debug("Executing command %s with args %s." % (command, args))
-   outputLogger.info("Executing command %s with args %s." % (command, args))
+   logger.debug("Executing command %s with args %s.", command, args)
+   outputLogger.info("Executing command %s with args %s.", command, args)
    if doNotLog:
       logger.debug("Note: output will not be logged, per the doNotLog flag.")
       outputLogger.info("Note: output will not be logged, per the doNotLog flag.")
@@ -1608,26 +1608,26 @@ def unmount(mountPoint, removeAfter=False, attempts=1, waitSeconds=0):
    """
    if os.path.ismount(mountPoint):
       for attempt in range(0, attempts):
-         logger.debug("Making attempt %d to unmount [%s]." % (attempt, mountPoint))
+         logger.debug("Making attempt %d to unmount [%s].", attempt, mountPoint)
          command = resolveCommand(UMOUNT_COMMAND)
          result = executeCommand(command, [ mountPoint, ], returnOutput=False, ignoreStderr=True)[0]
          if result != 0:
-            logger.error("Error [%d] unmounting [%s] on attempt %d." % (result, mountPoint, attempt))
+            logger.error("Error [%d] unmounting [%s] on attempt %d.", result, mountPoint, attempt)
          elif os.path.ismount(mountPoint):
-            logger.error("After attempt %d, [%s] is still mounted." % (attempt, mountPoint))
+            logger.error("After attempt %d, [%s] is still mounted.", attempt, mountPoint)
          else:
-            logger.debug("Successfully unmounted [%s] on attempt %d." % (mountPoint, attempt))
+            logger.debug("Successfully unmounted [%s] on attempt %d.", mountPoint, attempt)
             break  # this will cause us to skip the loop else: clause
          if attempt+1 < attempts:  # i.e. this isn't the last attempt
             if waitSeconds > 0:
-               logger.info("Sleeping %d second(s) before next unmount attempt." % waitSeconds)
+               logger.info("Sleeping %d second(s) before next unmount attempt.", waitSeconds)
                time.sleep(waitSeconds)
       else:
          if os.path.ismount(mountPoint):
             raise IOError("Unable to unmount [%s] after %d attempts." % (mountPoint, attempts))
-         logger.info("Mount point [%s] seems to have finally gone away." % mountPoint)
+         logger.info("Mount point [%s] seems to have finally gone away.", mountPoint)
       if os.path.isdir(mountPoint) and removeAfter:
-         logger.debug("Removing mount point [%s]." % mountPoint)
+         logger.debug("Removing mount point [%s].", mountPoint)
          os.rmdir(mountPoint)
 
 
@@ -1657,7 +1657,7 @@ def deviceMounted(devicePath):
       for line in lines:
          (mountDevice, mountPoint, remainder) = line.split(None, 2)
          if mountDevice in [ devicePath, realPath, ]:
-            logger.debug("Device [%s] is mounted at [%s]." % (devicePath, mountPoint))
+            logger.debug("Device [%s] is mounted at [%s].", devicePath, mountPoint)
             return True
    return False
 
