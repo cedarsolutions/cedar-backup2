@@ -18694,7 +18694,7 @@ class TestBackupFileList(unittest.TestCase):
       digestMap = {}
       backupList = BackupFileList()
       self.failUnlessEqual(0, len(backupList))
-      (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+      (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
       self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(0, len(backupList))
@@ -18712,7 +18712,7 @@ class TestBackupFileList(unittest.TestCase):
                     self.buildPath([ "tree9", "file002", ])          :"fae89085ee97b57ccefa7e30346c573bb0a769db", }
       backupList = BackupFileList()
       self.failUnlessEqual(0, len(backupList))
-      (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+      (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
       self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
       self.failUnlessEqual(0, count)
       self.failUnlessEqual(0, len(backupList))
@@ -18740,7 +18740,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(0, count)
          self.failUnlessEqual(10, len(backupList))
@@ -18783,7 +18783,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(0, count)
          self.failUnlessEqual(15, len(backupList))
@@ -18837,7 +18837,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(0, count)
          self.failUnlessEqual(10, len(backupList))
@@ -18880,7 +18880,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(0, count)
          self.failUnlessEqual(15, len(backupList))
@@ -18935,7 +18935,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(0, count)
          self.failUnlessEqual(10, len(backupList))
@@ -18978,7 +18978,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(0, count)
          self.failUnlessEqual(15, len(backupList))
@@ -19033,7 +19033,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(6, count)
          self.failUnlessEqual(4, len(backupList))
@@ -19070,7 +19070,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(6, count)
          self.failUnlessEqual(9, len(backupList))
@@ -19119,7 +19119,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(0, count)
          self.failUnlessEqual(10, len(backupList))
@@ -19162,7 +19162,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(0, count)
          self.failUnlessEqual(15, len(backupList))
@@ -19217,7 +19217,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(3, count)
          self.failUnlessEqual(7, len(backupList))
@@ -19257,7 +19257,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(3, count)
          self.failUnlessEqual(12, len(backupList))
@@ -19309,7 +19309,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "dir002", "link004", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(2, count)
          self.failUnlessEqual(8, len(backupList))
@@ -19350,7 +19350,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True)
+         (count, newDigest) = backupList.removeUnchanged(digestMap, captureDigest=True) # pylint: disable=W0633
          self.failUnless(isinstance(backupList, BackupFileList))  # make sure we just replaced it
          self.failUnlessEqual(2, count)
          self.failUnlessEqual(13, len(backupList))
