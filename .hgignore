@@ -12,3 +12,5 @@ manual/src/chunk
 .coverage
 .python
 htmlcov
+pylint-code.out
+coverage.xml
