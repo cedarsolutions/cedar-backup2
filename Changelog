@@ -2,6 +2,7 @@ Version 2.25.0    unreleased
 
 	* Clean up manpages and add notes about migrating to version 3.
 	* Review user guide, fix broken links, make minor tweaks to wording, etc.
+	* Convert testcase/utiltests.py to use sys.executable rather than relying on "python".
 	* Switch to minimum Python version of 2.7, since it's the last supported Python 2.
 	  - Change file headers to indicate minimim version Python 2 (>= 2.7)
 	  - Change interpreter checks in test.py, cli.py, span.py and amazons3.py
