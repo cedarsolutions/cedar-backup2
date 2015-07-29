@@ -948,12 +948,12 @@ class TestRegexList(unittest.TestCase):
       Test append() for a valid regular expresson.
       """
       list1 = RegexList()
-      list1.append(".*\.jpg")
-      self.failUnlessEqual(list1, [ ".*\.jpg", ])
-      self.failUnlessEqual(list1[0], ".*\.jpg")
+      list1.append(r".*\.jpg")
+      self.failUnlessEqual(list1, [ r".*\.jpg", ])
+      self.failUnlessEqual(list1[0], r".*\.jpg")
       list1.append("[a-zA-Z0-9]*")
-      self.failUnlessEqual(list1, [ ".*\.jpg", "[a-zA-Z0-9]*", ])
-      self.failUnlessEqual(list1[0], ".*\.jpg")
+      self.failUnlessEqual(list1, [ r".*\.jpg", "[a-zA-Z0-9]*", ])
+      self.failUnlessEqual(list1[0], r".*\.jpg")
       self.failUnlessEqual(list1[1], "[a-zA-Z0-9]*")
 
    def testListOperations_002(self):
@@ -970,13 +970,13 @@ class TestRegexList(unittest.TestCase):
       Test insert() for a valid regular expression.
       """
       list1 = RegexList()
-      list1.insert(0, ".*\.jpg")
-      self.failUnlessEqual(list1, [ ".*\.jpg", ])
-      self.failUnlessEqual(list1[0], ".*\.jpg")
+      list1.insert(0, r".*\.jpg")
+      self.failUnlessEqual(list1, [ r".*\.jpg", ])
+      self.failUnlessEqual(list1[0], r".*\.jpg")
       list1.insert(0, "[a-zA-Z0-9]*")
-      self.failUnlessEqual(list1, [ "[a-zA-Z0-9]*", ".*\.jpg", ])
+      self.failUnlessEqual(list1, [ "[a-zA-Z0-9]*", r".*\.jpg", ])
       self.failUnlessEqual(list1[0], "[a-zA-Z0-9]*")
-      self.failUnlessEqual(list1[1], ".*\.jpg")
+      self.failUnlessEqual(list1[1], r".*\.jpg")
 
    def testListOperations_004(self):
       """
@@ -990,12 +990,12 @@ class TestRegexList(unittest.TestCase):
       Test extend() for a valid regular expression.
       """
       list1 = RegexList()
-      list1.extend([".*\.jpg", ])
-      self.failUnlessEqual(list1, [ ".*\.jpg", ])
-      self.failUnlessEqual(list1[0], ".*\.jpg")
+      list1.extend([r".*\.jpg", ])
+      self.failUnlessEqual(list1, [ r".*\.jpg", ])
+      self.failUnlessEqual(list1[0], r".*\.jpg")
       list1.extend(["[a-zA-Z0-9]*", ])
-      self.failUnlessEqual(list1, [ ".*\.jpg", "[a-zA-Z0-9]*", ])
-      self.failUnlessEqual(list1[0], ".*\.jpg")
+      self.failUnlessEqual(list1, [ r".*\.jpg", "[a-zA-Z0-9]*", ])
+      self.failUnlessEqual(list1[0], r".*\.jpg")
       self.failUnlessEqual(list1[1], "[a-zA-Z0-9]*")
 
    def testListOperations_006(self):
@@ -3783,7 +3783,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\\"
       """
-      path = "\\"
+      path = r"\\"
       expected = "-"
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
@@ -3819,7 +3819,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\."
       """
-      path = r"\."
+      path = "\\."
       expected = "_"
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
@@ -3828,7 +3828,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\.."
       """
-      path = r"\.."
+      path = "\\.."
       expected = "_."
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
@@ -3837,7 +3837,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\..."
       """
-      path = r"\..."
+      path = "\\..."
       expected = "_.."
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
@@ -3864,7 +3864,7 @@ class TestFunctions(unittest.TestCase):
       """
       Test for "\\var/log/apache\\httpd.log.1"
       """
-      path = "\\var/log/apache\\httpd.log.1"
+      path = r"\\var/log/apache\\httpd.log.1"
       expected = "var-log-apache-httpd.log.1"
       actual = buildNormalizedPath(path)
       self.failUnlessEqual(expected, actual)
@@ -4076,6 +4076,7 @@ class TestFunctions(unittest.TestCase):
 # Suite definition
 #######################################################################
 
+# pylint: disable=C0330
 def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((

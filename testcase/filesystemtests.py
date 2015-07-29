@@ -314,27 +314,27 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual([], fsList.excludePatterns)
       fsList.excludePatterns = None
       self.failUnlessEqual([], fsList.excludePatterns)
-      fsList.excludePatterns = [ ".*\.jpg", ]
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
-      fsList.excludePatterns = [ ".*\.jpg", "[a-zA-Z0-9]*", ]
-      self.failUnlessEqual([ ".*\.jpg", "[a-zA-Z0-9]*", ], fsList.excludePatterns)
+      fsList.excludePatterns = [ r".*\.jpg", ]
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludePatterns)
+      fsList.excludePatterns = [ r".*\.jpg", "[a-zA-Z0-9]*", ]
+      self.failUnlessEqual([ r".*\.jpg", "[a-zA-Z0-9]*", ], fsList.excludePatterns)
       self.failUnlessAssignRaises(ValueError, fsList, "excludePatterns", [ "*.jpg", ])
       self.failUnlessAssignRaises(ValueError, fsList, "excludePatterns", [ "*.jpg", "[a-zA-Z0-9]*", ])
-      fsList.excludePatterns = [ ".*\.jpg", ]
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
+      fsList.excludePatterns = [ r".*\.jpg", ]
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludePatterns)
       fsList.excludePatterns.insert(0, "ken")
-      self.failUnlessEqual([ "ken", ".*\.jpg", ], fsList.excludePatterns)
+      self.failUnlessEqual([ "ken", r".*\.jpg", ], fsList.excludePatterns)
       fsList.excludePatterns.append("pattern")
-      self.failUnlessEqual([ "ken", ".*\.jpg", "pattern", ], fsList.excludePatterns)
+      self.failUnlessEqual([ "ken", r".*\.jpg", "pattern", ], fsList.excludePatterns)
       fsList.excludePatterns.extend(["one", "two", ])
-      self.failUnlessEqual([ "ken", ".*\.jpg", "pattern", "one", "two", ], fsList.excludePatterns)
-      fsList.excludePatterns = [ ".*\.jpg", ]
+      self.failUnlessEqual([ "ken", r".*\.jpg", "pattern", "one", "two", ], fsList.excludePatterns)
+      fsList.excludePatterns = [ r".*\.jpg", ]
       self.failUnlessRaises(ValueError, fsList.excludePatterns.insert, 0, "*.jpg")
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludePatterns)
       self.failUnlessRaises(ValueError, fsList.excludePatterns.append, "*.jpg")
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludePatterns)
       self.failUnlessRaises(ValueError, fsList.excludePatterns.extend, ["*.jpg", ])
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludePatterns)
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludePatterns)
 
    def testAssignment_010(self):
       """
@@ -344,27 +344,27 @@ class TestFilesystemList(unittest.TestCase):
       self.failUnlessEqual([], fsList.excludeBasenamePatterns)
       fsList.excludeBasenamePatterns = None
       self.failUnlessEqual([], fsList.excludeBasenamePatterns)
-      fsList.excludeBasenamePatterns = [ ".*\.jpg", ]
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
-      fsList.excludeBasenamePatterns = [ ".*\.jpg", "[a-zA-Z0-9]*", ]
-      self.failUnlessEqual([ ".*\.jpg", "[a-zA-Z0-9]*", ], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns = [ r".*\.jpg", ]
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns = [ r".*\.jpg", "[a-zA-Z0-9]*", ]
+      self.failUnlessEqual([ r".*\.jpg", "[a-zA-Z0-9]*", ], fsList.excludeBasenamePatterns)
       self.failUnlessAssignRaises(ValueError, fsList, "excludeBasenamePatterns", [ "*.jpg", ])
       self.failUnlessAssignRaises(ValueError, fsList, "excludeBasenamePatterns", [ "*.jpg", "[a-zA-Z0-9]*", ])
-      fsList.excludeBasenamePatterns = [ ".*\.jpg", ]
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns = [ r".*\.jpg", ]
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludeBasenamePatterns)
       fsList.excludeBasenamePatterns.insert(0, "ken")
-      self.failUnlessEqual([ "ken", ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      self.failUnlessEqual([ "ken", r".*\.jpg", ], fsList.excludeBasenamePatterns)
       fsList.excludeBasenamePatterns.append("pattern")
-      self.failUnlessEqual([ "ken", ".*\.jpg", "pattern", ], fsList.excludeBasenamePatterns)
+      self.failUnlessEqual([ "ken", r".*\.jpg", "pattern", ], fsList.excludeBasenamePatterns)
       fsList.excludeBasenamePatterns.extend(["one", "two", ])
-      self.failUnlessEqual([ "ken", ".*\.jpg", "pattern", "one", "two", ], fsList.excludeBasenamePatterns)
-      fsList.excludeBasenamePatterns = [ ".*\.jpg", ]
+      self.failUnlessEqual([ "ken", r".*\.jpg", "pattern", "one", "two", ], fsList.excludeBasenamePatterns)
+      fsList.excludeBasenamePatterns = [ r".*\.jpg", ]
       self.failUnlessRaises(ValueError, fsList.excludeBasenamePatterns.insert, 0, "*.jpg")
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludeBasenamePatterns)
       self.failUnlessRaises(ValueError, fsList.excludeBasenamePatterns.append, "*.jpg")
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludeBasenamePatterns)
       self.failUnlessRaises(ValueError, fsList.excludeBasenamePatterns.extend, ["*.jpg", ])
-      self.failUnlessEqual([ ".*\.jpg", ], fsList.excludeBasenamePatterns)
+      self.failUnlessEqual([ r".*\.jpg", ], fsList.excludeBasenamePatterns)
 
 
    ################################
@@ -3303,7 +3303,7 @@ class TestFilesystemList(unittest.TestCase):
       if platformWindows():
          fsList.excludePatterns = [ ".*file001.*", r".*tree6\\dir002\\dir001.*" ]
       else:
-         fsList.excludePatterns = [ ".*file001.*", ".*tree6\/dir002\/dir001.*" ]
+         fsList.excludePatterns = [ ".*file001.*", r".*tree6\/dir002\/dir001.*" ]
       count = fsList.addDirContents(path)
       if not platformSupportsLinks():
          self.failUnlessEqual(95, count)
@@ -20786,9 +20786,9 @@ class TestPurgeItemList(unittest.TestCase):
       path = self.buildPath(["tree6"])
       purgeList = PurgeItemList()
       purgeList.excludePaths = [ self.buildPath([ "tree6", "dir001", "dir002", ]),
-                              self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]),
-                              self.buildPath([ "tree6", "dir003", "dir002", "file001", ]),
-                              self.buildPath([ "tree6", "dir003", "dir002", "file002", ]), ]
+                                 self.buildPath([ "tree6", "dir002", "dir001", "dir001", ]),
+                                 self.buildPath([ "tree6", "dir003", "dir002", "file001", ]),
+                                 self.buildPath([ "tree6", "dir003", "dir002", "file002", ]), ]
       count = purgeList.addDirContents(path)
       if not platformSupportsLinks():
          self.failUnlessEqual(111, count)
@@ -21042,7 +21042,7 @@ class TestPurgeItemList(unittest.TestCase):
       if platformWindows():
          purgeList.excludePatterns = [ ".*file001.*", r".*tree6\\dir002\\dir001.*" ]
       else:
-         purgeList.excludePatterns = [ ".*file001.*", ".*tree6\/dir002\/dir001.*" ]
+         purgeList.excludePatterns = [ ".*file001.*", r".*tree6\/dir002\/dir001.*" ]
       count = purgeList.addDirContents(path)
       if not platformSupportsLinks():
          self.failUnlessEqual(94, count)
@@ -24971,6 +24971,7 @@ class TestFunctions(unittest.TestCase):
 # Suite definition
 #######################################################################
 
+# pylint: disable=C0330
 def suite():
    """Returns a suite containing all the test cases in this module."""
    return unittest.TestSuite((

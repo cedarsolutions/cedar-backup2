@@ -1661,6 +1661,7 @@ class TestIsoImage(unittest.TestCase):
 # Suite definition
 #######################################################################
 
+# pylint: disable=C0330
 def suite():
    """Returns a suite containing all the test cases in this module."""
    if runAllTests():
