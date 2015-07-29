@@ -700,8 +700,8 @@ class FilesystemList(list):
       """Normalizes the list, ensuring that each entry is unique."""
       orig = len(self)
       self.sort()
-      dups = filter(lambda x, self=self: self[x] == self[x+1], range(0, len(self) - 1))
-      items = map(lambda x, self=self: self[x], dups)
+      dups = filter(lambda x, self=self: self[x] == self[x+1], range(0, len(self) - 1)) # pylint: disable=W0110
+      items = map(lambda x, self=self: self[x], dups)                                   # pylint: disable=W0110
       map(self.remove, items)
       new = len(self)
       logger.debug("Completed normalizing list; removed %d items (%d originally, %d now).", new-orig, orig, new)

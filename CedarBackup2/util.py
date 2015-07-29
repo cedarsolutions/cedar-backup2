@@ -1339,7 +1339,7 @@ def splitCommandLine(commandLine):
    if commandLine is None:
       raise ValueError("Cannot split command line of None.")
    fields = re.findall('[^ "]+|"[^"]+"', commandLine)
-   fields = map(lambda field: field.replace('"', ''), fields)
+   fields = [field.replace('"', '') for field in fields]
    return fields
 
 
