@@ -16,13 +16,12 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# pylint: disable=C0111
+# pylint: disable=C0111,E0611,F0401
 
 ########################################################################
 # Imported modules
 ########################################################################
 
-# pylint: disable=E0611,F0401
 from distutils.core import setup
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, COPYRIGHT, URL
 
