@@ -1,5 +1,6 @@
-Version 2.26.1    unreleased
+Version 2.26.1    04 Aug 2015
 
+	* Fix incorrect exception raise without % in util.py, found by accident.
 	* Fix bugs in the ByteQuantity changes from v2.26.0, so comparisons work properly.
 	* Adjust amazons3, capacity and split to use ByteQuantity directly, not bytes field.
 
