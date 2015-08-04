@@ -1,3 +1,7 @@
+Version 2.26.1    unreleased
+
+	* Fix bugs in the ByteQuantity changes from v2.26.0, so comparisons work properly.
+
 Version 2.26.0    03 Aug 2015
 
 	* Enhance ByteQuantity so it can be built from and compared to simple numeric values.
