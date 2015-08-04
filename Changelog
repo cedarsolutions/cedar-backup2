@@ -1,6 +1,7 @@
 Version 2.26.1    unreleased
 
 	* Fix bugs in the ByteQuantity changes from v2.26.0, so comparisons work properly.
+	* Adjust amazons3, capacity and split to use ByteQuantity directly, not bytes field.
 
 Version 2.26.0    03 Aug 2015
 
