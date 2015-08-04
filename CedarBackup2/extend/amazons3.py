@@ -642,10 +642,10 @@ def _applySizeLimits(options, config, local, stagingDirs):
       for stagingDir in stagingDirs:
          contents.addDirContents(stagingDir)
       total = contents.totalSize()
-      logger.debug("Amazon S3 backup size is is: %s", displayBytes(total))
-      if total > limit:
+      logger.debug("Amazon S3 backup size is: %s", displayBytes(total))
+      if total > limit.bytes:
          logger.error("Amazon S3 size limit exceeded: %s > %s", displayBytes(total), displayBytes(limit.bytes))
-         raise ValueError("Amazon S3 size limit exceeded: %s > %s", displayBytes(total), displayBytes(limit.bytes))
+         raise ValueError("Amazon S3 size limit exceeded: %s > %s" % (displayBytes(total), displayBytes(limit.bytes)))
       else:
          logger.info("Total size does not exceed Amazon S3 size limit, so backup can continue.")
 
