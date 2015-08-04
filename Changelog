@@ -1,6 +1,9 @@
 Version 2.26.0    unreleased
 
 	* Enhance ByteQuantity so it can be built from and compared to simple numeric values.
+	* Improve the way the amazons3 extension deals with byte quantities.
+	   - Fix configuration to support quantities like "2.5 GB", as in other extensions
+	   - Improve logging using displayBytes(), so displayed quantities are more legible
 
 Version 2.25.0    29 Jul 2015
 
