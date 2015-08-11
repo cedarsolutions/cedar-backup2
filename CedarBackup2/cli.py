@@ -212,11 +212,14 @@ def cli():
       _diagnostics()
       return 0
 
-   try:
+   if options.stacktrace:
       logfile = setupLogging(options)
-   except Exception, e:
-      sys.stderr.write("Error setting up logging: %s\n" % e)
-      return 3
+   else:
+      try:
+         logfile = setupLogging(options)
+      except Exception as e:
+         sys.stderr.write("Error setting up logging: %s\n" % e)
+         return 3
 
    logger.info("Cedar Backup run started.")
    logger.info("Options were [%s]", options)
