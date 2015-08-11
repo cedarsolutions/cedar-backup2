@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 # vim: set ft=python ts=3 sw=3 expandtab:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -9,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2004-2008,2010 Kenneth J. Pronovici.
+# Copyright (c) 2004-2008,2010,2015 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -17901,10 +17900,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         if platformCygwin():
-            tarPath = self.buildRandomPath(255, ".tar")  # Cygwin inherits the Windows 255-char limit
-         else:
-            tarPath = self.buildRandomPath(260, ".tar")
+         tarPath = self.buildRandomPath(255, ".tar")
          backupList.generateTarfile(tarPath, mode="tar")
          self.failUnless(tarfile.is_tarfile(tarPath))
          tarFile = tarfile.open(tarPath)
@@ -17983,10 +17979,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         if platformCygwin():
-            tarPath = self.buildRandomPath(255, ".tar")  # Cygwin inherits the Windows 255-char limit
-         else:
-            tarPath = self.buildRandomPath(260, ".tar")
+         tarPath = self.buildRandomPath(255, ".tar")
          backupList.generateTarfile(tarPath, mode="targz")
          self.failUnless(tarfile.is_tarfile(tarPath))
          tarFile = tarfile.open(tarPath)
@@ -18065,10 +18058,7 @@ class TestBackupFileList(unittest.TestCase):
          self.failUnless(self.buildPath([ "tree9", "file002", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link001", ]) in backupList)
          self.failUnless(self.buildPath([ "tree9", "link002", ]) in backupList)
-         if platformCygwin():
-            tarPath = self.buildRandomPath(255, ".tar")  # Cygwin inherits the Windows 255-char limit
-         else:
-            tarPath = self.buildRandomPath(260, ".tar")
+         tarPath = self.buildRandomPath(255, ".tar")
          backupList.generateTarfile(tarPath, mode="tarbz2")
          self.failUnless(tarfile.is_tarfile(tarPath))
          tarFile = tarfile.open(tarPath)

@@ -1,6 +1,7 @@
 Version 2.26.2    11 Aug 2015
 
 	* Fix PurgeItemList.removeYoungFiles() so ageInWholeDays can never be negative.
+	* Make filesystemtests more portable, with maximum file path always <= 255 bytes.
 
 Version 2.26.1    04 Aug 2015
 
