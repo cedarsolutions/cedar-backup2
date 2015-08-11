@@ -115,7 +115,7 @@ import tempfile
 import tarfile
 
 from CedarBackup2.testutil import findResources, buildPath, removedir, extractTar, changeFileAge, randomFilename
-from CedarBackup2.testutil import platformMacOsX, platformWindows, platformCygwin
+from CedarBackup2.testutil import platformMacOsX, platformWindows
 from CedarBackup2.testutil import platformSupportsLinks, platformRequiresBinaryRead
 from CedarBackup2.testutil import failUnlessAssignRaises
 from CedarBackup2.filesystem import FilesystemList, BackupFileList, PurgeItemList, normalizeDir, compareContents
