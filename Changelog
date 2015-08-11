@@ -1,7 +1,8 @@
-Version 2.26.3    11 Aug 2015
+Version 2.26.4    11 Aug 2015
 
-	* Fix PurgeItemList.removeYoungFiles() so ageInWholeDays can never be negative.
-	* Make filesystemtests more portable, with maximum file path always <= 255 bytes.
+	* Improvements based on testing in the Debian continuous integration environment.
+	  - Fix PurgeItemList.removeYoungFiles() so ageInWholeDays can never be negative
+	  - Make filesystemtests more portable, with maximum file path always <= 255 bytes
 
 Version 2.26.1    04 Aug 2015
 
