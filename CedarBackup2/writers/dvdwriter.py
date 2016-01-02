@@ -520,7 +520,7 @@ class DvdWriter(object):
       @raise ValueError: If there is a problem parsing the C{growisofs} output
       @raise IOError: If the media could not be read for some reason.
       """
-      sectorsUsed = 0
+      sectorsUsed = 0.0
       if not entireDisc:
          sectorsUsed = self._retrieveSectorsUsed()
       sectorsAvailable = self._media.capacity - sectorsUsed  # both are in sectors

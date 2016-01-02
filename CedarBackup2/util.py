@@ -85,14 +85,14 @@ import logging
 import string  # pylint: disable=W0402
 from subprocess import Popen, STDOUT, PIPE
 
-from CedarBackup2.release import VERSION, DATE
-
 try:
    import pwd
    import grp
    _UID_GID_AVAILABLE = True
 except ImportError:
    _UID_GID_AVAILABLE = False
+
+from CedarBackup2.release import VERSION, DATE
 
 
 ########################################################################

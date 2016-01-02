@@ -713,13 +713,13 @@ class CdWriter(object):
       if boundaries is None or boundaries[1] == 0:
          logger.debug("Capacity calculations are based on a complete disc rewrite.")
          sectorsAvailable = media.capacity - media.initialLeadIn
-         if sectorsAvailable < 0: sectorsAvailable = 0
-         bytesUsed = 0
+         if sectorsAvailable < 0: sectorsAvailable = 0.0
+         bytesUsed = 0.0
          bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
       else:
          logger.debug("Capacity calculations are based on a new ISO session.")
          sectorsAvailable = media.capacity - boundaries[1] - media.leadIn
-         if sectorsAvailable < 0: sectorsAvailable = 0
+         if sectorsAvailable < 0: sectorsAvailable = 0.0
          bytesUsed = convertSize(boundaries[1], UNIT_SECTORS, UNIT_BYTES)
          bytesAvailable = convertSize(sectorsAvailable, UNIT_SECTORS, UNIT_BYTES)
       logger.debug("Used [%s], available [%s].", displayBytes(bytesUsed), displayBytes(bytesAvailable))

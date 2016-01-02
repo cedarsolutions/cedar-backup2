@@ -201,6 +201,7 @@ class TestFilesystemList(unittest.TestCase):
    # Test attribute assignment
    ############################
 
+   #pylint: disable=R0204
    def testAssignment_001(self):
       """
       Test assignment of excludeFiles attribute, true values.
@@ -212,6 +213,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList.excludeFiles = [ 1, ]
       self.failUnlessEqual(True, fsList.excludeFiles)
 
+   #pylint: disable=R0204
    def testAssignment_002(self):
       """
       Test assignment of excludeFiles attribute, false values.
@@ -223,6 +225,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList.excludeFiles = [ ]
       self.failUnlessEqual(False, fsList.excludeFiles)
 
+   #pylint: disable=R0204
    def testAssignment_003(self):
       """
       Test assignment of excludeLinks attribute, true values.
@@ -234,6 +237,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList.excludeLinks = [ 1, ]
       self.failUnlessEqual(True, fsList.excludeLinks)
 
+   #pylint: disable=R0204
    def testAssignment_004(self):
       """
       Test assignment of excludeLinks attribute, false values.
@@ -245,6 +249,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList.excludeLinks = [ ]
       self.failUnlessEqual(False, fsList.excludeLinks)
 
+   #pylint: disable=R0204
    def testAssignment_005(self):
       """
       Test assignment of excludeDirs attribute, true values.
@@ -256,6 +261,7 @@ class TestFilesystemList(unittest.TestCase):
       fsList.excludeDirs = [ 1, ]
       self.failUnlessEqual(True, fsList.excludeDirs)
 
+   #pylint: disable=R0204
    def testAssignment_006(self):
       """
       Test assignment of excludeDirs attribute, false values.
