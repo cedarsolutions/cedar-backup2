@@ -56,8 +56,8 @@ import os
 import logging
 import getopt
 import json
-import chardet
 import warnings
+import chardet
 
 # Cedar Backup modules
 from CedarBackup2.release import AUTHOR, EMAIL, VERSION, DATE, COPYRIGHT

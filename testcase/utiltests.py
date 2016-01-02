@@ -75,11 +75,11 @@ Full vs. Reduced Tests
 ########################################################################
 
 import sys
-import os
 import unittest
 import tempfile
 import time
 import logging
+import os
 from os.path import isdir
 
 from CedarBackup2.testutil import findResources, removedir, extractTar, buildPath, captureOutput
