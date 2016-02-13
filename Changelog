@@ -1,3 +1,7 @@
+Version 2.26.6    unreleased
+
+	* Add unit tests for encoding checks in amazons3sync tool.
+
 Version 2.26.5    02 Jan 2016
 
 	* Fix or disable a variety of new warnings and suggestions from pylint.
