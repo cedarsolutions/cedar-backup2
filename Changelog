@@ -2,6 +2,7 @@ Version 2.26.6    unreleased
 
 	* Add unit tests for encoding checks in amazons3sync tool.
 	* Fix typo in cback.1, noticed by Debian's Lintian checks.
+	* Add options in util/test.py to get better output from unit tests.
 
 Version 2.26.5    02 Jan 2016
 
