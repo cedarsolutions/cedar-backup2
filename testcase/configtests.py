@@ -314,7 +314,6 @@ class TestByteQuantity(unittest.TestCase):
       self.failUnlessEqual("181281", quantity.quantity)
       self.failUnlessEqual(181281.0, quantity.bytes)
 
-   #pylint: disable=R0204
    def testConstructor_004c(self):
       """
       Test assignment of quantity attribute, valid float values.
@@ -3186,7 +3185,6 @@ class TestCollectDir(unittest.TestCase):
       collectDir.dereference = False
       self.failUnlessEqual(False, collectDir.dereference)
 
-   #pylint: disable=R0204
    def testConstructor_041(self):
       """
       Test assignment of dereference attribute, valid value (expression).
@@ -4385,7 +4383,6 @@ class TestRemotePeer(unittest.TestCase):
       remotePeer.managed = False
       self.failUnlessEqual(False, remotePeer.managed)
 
-   #pylint: disable=R0204
    def testConstructor_023(self):
       """
       Test assignment of managed attribute, valid value (expression).
@@ -8438,7 +8435,6 @@ class TestStoreConfig(unittest.TestCase):
       store.driveSpeed = None
       self.failUnlessEqual(None, store.driveSpeed)
 
-   #pylint: disable=R0204
    def testConstructor_024(self):
       """
       Test assignment of driveSpeed attribute, valid value.
@@ -8481,7 +8477,6 @@ class TestStoreConfig(unittest.TestCase):
       store.checkData = False
       self.failUnlessEqual(False, store.checkData)
 
-   #pylint: disable=R0204
    def testConstructor_028(self):
       """
       Test assignment of checkData attribute, valid value (expression).
@@ -8519,7 +8514,6 @@ class TestStoreConfig(unittest.TestCase):
       store.warnMidnite = False
       self.failUnlessEqual(False, store.warnMidnite)
 
-   #pylint: disable=R0204
    def testConstructor_031(self):
       """
       Test assignment of warnMidnite attribute, valid value (expression).
@@ -8557,7 +8551,6 @@ class TestStoreConfig(unittest.TestCase):
       store.noEject = False
       self.failUnlessEqual(False, store.noEject)
 
-   #pylint: disable=R0204
    def testConstructor_034(self):
       """
       Test assignment of noEject attribute, valid value (expression).
@@ -8595,7 +8588,6 @@ class TestStoreConfig(unittest.TestCase):
       store.checkMedia = False
       self.failUnlessEqual(False, store.checkMedia)
 
-   #pylint: disable=R0204
    def testConstructor_037(self):
       """
       Test assignment of checkMedia attribute, valid value (expression).
@@ -8645,7 +8637,6 @@ class TestStoreConfig(unittest.TestCase):
       store.refreshMediaDelay = None
       self.failUnlessEqual(None, store.refreshMediaDelay)
 
-   #pylint: disable=R0204
    def testConstructor_042(self):
       """
       Test assignment of refreshMediaDelay attribute, valid value.
@@ -8681,7 +8672,6 @@ class TestStoreConfig(unittest.TestCase):
       store.ejectDelay = None
       self.failUnlessEqual(None, store.ejectDelay)
 
-   #pylint: disable=R0204
    def testConstructor_045(self):
       """
       Test assignment of ejectDelay attribute, valid value.

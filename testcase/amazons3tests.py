@@ -178,7 +178,6 @@ class TestAmazonS3Config(unittest.TestCase):
       amazons3.warnMidnite = False
       self.failUnlessEqual(False, amazons3.warnMidnite)
 
-   #pylint: disable=R0204
    def testConstructor_004(self):
       """
       Test assignment of warnMidnite attribute, valid value (expression).
