@@ -115,6 +115,9 @@ NONEXISTENT_HOST = "hostname.invalid"                 # RFC 2606 reserves the ".
 NONEXISTENT_USER = "unittestuser"                     # This user name should never exist on localhost
 NONEXISTENT_CMD  = "/bogus/~~~ZZZZ/bad/not/there"     # This command should never exist in the filesystem
 
+SAFE_RCP_COMMAND = "/usr/bin/scp -B -q -C -o ConnectTimeout=1"  # set a connection timeout so invalid hosts don't hang
+SAFE_RSH_COMMAND = "/usr/bin/ssh -o ConnectTimeout=1"           # set a connection timeout so invalid hosts don't hang
+
 
 #######################################################################
 # Utility functions
@@ -683,6 +686,20 @@ class TestRemotePeer(unittest.TestCase):
    # Setup methods
    ################
 
+   @classmethod
+   def setUpClass(cls):
+      # Full tests require configured SSH connectivity, so I want to use my own
+      # scp/ssh scripts that are set up to use an SSH agent.  This means other
+      # people won't be able to run the full tests... but that's always been
+      # true, since I don't document the system setup needed to make them work.
+      if runAllTests():
+         from CedarBackup2.util import PathResolverSingleton
+         mapping = {}
+         mapping["/usr/bin/ssh"] = os.path.join(os.environ["HOME"], "util", "ssh")
+         mapping["/usr/bin/scp"] = os.path.join(os.environ["HOME"], "util", "scp")
+         singleton = PathResolverSingleton.getInstance()
+         singleton.fill(mapping)
+
    def setUp(self):
       try:
          self.tmpdir = tempfile.mkdtemp()
@@ -886,7 +903,7 @@ class TestRemotePeer(unittest.TestCase):
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       remoteUser = getLogin()
-      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand=SAFE_RCP_COMMAND, rshCommand=SAFE_RSH_COMMAND)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -900,7 +917,7 @@ class TestRemotePeer(unittest.TestCase):
       remoteUser = NONEXISTENT_USER
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
-      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand=SAFE_RCP_COMMAND, rshCommand=SAFE_RSH_COMMAND)
       result = peer.checkCollectIndicator()
       self.failUnlessEqual(False, result)
 
@@ -1100,7 +1117,7 @@ class TestRemotePeer(unittest.TestCase):
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
       remoteUser = getLogin()
-      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand=SAFE_RCP_COMMAND, rshCommand=SAFE_RSH_COMMAND)
       self.failUnlessRaises((IOError, OSError), peer.writeStageIndicator)
 
    def testWriteStageIndicator_002(self):
@@ -1113,7 +1130,7 @@ class TestRemotePeer(unittest.TestCase):
       remoteUser = NONEXISTENT_USER
       os.mkdir(collectDir)
       self.failUnless(os.path.exists(collectDir))
-      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand=SAFE_RCP_COMMAND, rshCommand=SAFE_RSH_COMMAND)
       self.failUnlessRaises((IOError, OSError), peer.writeStageIndicator)
 
    def testWriteStageIndicator_003(self):
@@ -1244,7 +1261,7 @@ class TestRemotePeer(unittest.TestCase):
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
-      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand=SAFE_RCP_COMMAND, rshCommand=SAFE_RSH_COMMAND)
       self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_002(self):
@@ -1260,7 +1277,7 @@ class TestRemotePeer(unittest.TestCase):
       os.mkdir(targetDir)
       self.failUnless(os.path.exists(collectDir))
       self.failUnless(os.path.exists(targetDir))
-      peer = RemotePeer(name, collectDir, workingDir, remoteUser)
+      peer = RemotePeer(name, collectDir, workingDir, remoteUser, rcpCommand=SAFE_RCP_COMMAND, rshCommand=SAFE_RSH_COMMAND)
       self.failUnlessRaises((IOError, OSError), peer.stagePeer, targetDir=targetDir)
 
    def testStagePeer_003(self):
