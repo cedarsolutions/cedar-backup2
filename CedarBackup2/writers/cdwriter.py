@@ -787,6 +787,7 @@ class CdWriter(object):
          raise ValueError("Must call initializeImage() before using this method.")
       self._image.newDisc = newDisc
 
+   # pylint: disable=C0201
    def getEstimatedImageSize(self):
       """
       Gets the estimated size of the image associated with the writer.
@@ -960,6 +961,7 @@ class CdWriter(object):
             raise ValueError("Image path must be absolute.")
          self._writeImage(imagePath, writeMulti, newDisc)
 
+   # pylint: disable=C0201
    def _createImage(self):
       """
       Creates an ISO image based on configuration in self._image.

@@ -140,7 +140,7 @@ def main():
 
    # Run each test
    totalElapsed = 0.0
-   for key in tests.keys():
+   for key in tests.keys():  # pylint: disable=C0201
 
       # Run and time the test
       start = time.time()
