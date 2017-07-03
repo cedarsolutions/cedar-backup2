@@ -5,6 +5,7 @@ Version 2.26.6    unreleased
 	* Add options in util/test.py to get better output from unit tests.
 	* Update Python virtualenv setup to work with recent pip.
 	* Make various adjustments to remote peer tests, to make them safer and more robust.
+	* Fix problems discovered with the awscli version in Debian stretch.
 
 Version 2.26.5    02 Jan 2016
 
