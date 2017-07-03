@@ -326,7 +326,6 @@ class TestMysqlConfig(unittest.TestCase):
       mysql.all = False
       self.failUnlessEqual(False, mysql.all)
 
-   #pylint: disable=R0204
    def testConstructor_018(self):
       """
       Test assignment of all attribute, valid value (expression).
