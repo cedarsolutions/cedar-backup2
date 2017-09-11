@@ -1,6 +1,7 @@
 Version 2.26.7    unreleased
 
 	* Fix maintainer script util/validate to use onsgmls from the opensp package.
+	* Add information to the user manual about how to lock down the Amazon S3 user.
 
 Version 2.26.6    03 Jul 2017
 
