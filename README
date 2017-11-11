@@ -1,3 +1,19 @@
+----------------------------------------------------------------------------
+
+There are two releases of Cedar Backup: version 2 and version 3.
+
+This version uses the Python 2 interpreter, and Cedar Backup v3 uses
+the Python 3 interpreter. Because Python 2 is approaching its end of
+life, and Cedar Backup v3 has been available since July of 2015, Cedar
+Backup v2 is unsupported as of 11 Nov 2017. There will be no additional
+releases, and users who report problems will be referred to the new
+version. Please move to Cedar Backup v3.
+
+For migration instructions, see the user manual or the notes in the
+BitBucket wiki: https://bitbucket.org/cedarsolutions/cedar-backup2/wiki/Home
+
+----------------------------------------------------------------------------
+
 Cedar Backup is a software package designed to manage system backups for a
 pool of local and remote machines.  Cedar Backup understands how to back up
 filesystem data as well as MySQL and PostgreSQL databases and Subversion
