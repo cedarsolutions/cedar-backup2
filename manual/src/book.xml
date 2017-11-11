@@ -8,7 +8,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Copyright (c) 2005-2008,2010,2015 Kenneth J. Pronovici.
+# Copyright (c) 2005-2008,2010,2015,2017 Kenneth J. Pronovici.
 # All rights reserved.
 #
 # This work is free; you can redistribute it and/or modify it
@@ -68,7 +68,7 @@
       </editor>
 
       <copyright>
-         <year>2005-2008,2013-2015</year>
+         <year>2005-2008,2013-2017</year>
          <holder>Kenneth J. Pronovici</holder>
       </copyright>
 

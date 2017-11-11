@@ -3,6 +3,7 @@ Version 2.27.0    unreleased
 	* Cedar Backup v2 is unsupported as of 11 Nov 2017.
 		- Add a big warning banner that can be cleared with -u/-unsupported
 	   - Add warnings in the README, --diagnostics output and the log file
+	   - Update user manual so that the support state of the software is clear
 
 Version 2.26.7    11 Sep 2017
 
