@@ -134,7 +134,7 @@ SHORT_SWITCHES     = "hVbqc:fMNl:o:m:OdsDu"
 LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet',
                        'config=', 'full', 'managed', 'managed-only',
                        'logfile=', 'owner=', 'mode=',
-                       'output', 'debug', 'stack', 'diagnostics', 
+                       'output', 'debug', 'stack', 'diagnostics',
                        'unsupported', ]
 
 
