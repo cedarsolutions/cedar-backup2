@@ -908,6 +908,7 @@ class Diagnostics(object):
       values['encoding'] = self.encoding
       values['locale'] = self.locale
       values['timestamp'] = self.timestamp
+      values['supported'] = self.supported
       return values
 
    def printDiagnostics(self, fd=sys.stdout, prefix=""):
@@ -1021,12 +1022,19 @@ class Diagnostics(object):
       except:
          return "(unknown)"
 
+   def _getSupported(self):
+      """
+      Property target to get the supported value.
+      """
+      return "Unsupported as of 11 Nov 2017"
+
    version = property(_getVersion, None, None, "Cedar Backup version.")
    interpreter = property(_getInterpreter, None, None, "Python interpreter version.")
    platform = property(_getPlatform, None, None, "Platform identifying information.")
    encoding = property(_getEncoding, None, None, "Filesystem encoding that is in effect.")
    locale = property(_getLocale, None, None, "Locale that is in effect.")
    timestamp = property(_getTimestamp, None, None, "Current timestamp.")
+   supported = property(_getSupported, None, None, "Whether the version is supported.")
 
 
 ########################################################################

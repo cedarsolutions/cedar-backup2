@@ -130,11 +130,12 @@ VALID_ACTIONS      = [ "collect", "stage", "store", "purge", "rebuild", "validat
 COMBINE_ACTIONS    = [ "collect", "stage", "store", "purge", ]
 NONCOMBINE_ACTIONS = [ "rebuild", "validate", "initialize", "all", ]
 
-SHORT_SWITCHES     = "hVbqc:fMNl:o:m:OdsD"
+SHORT_SWITCHES     = "hVbqc:fMNl:o:m:OdsDu"
 LONG_SWITCHES      = [ 'help', 'version', 'verbose', 'quiet',
                        'config=', 'full', 'managed', 'managed-only',
                        'logfile=', 'owner=', 'mode=',
-                       'output', 'debug', 'stack', 'diagnostics', ]
+                       'output', 'debug', 'stack', 'diagnostics', 
+                       'unsupported', ]
 
 
 #######################################################################
@@ -212,6 +213,9 @@ def cli():
       _diagnostics()
       return 0
 
+   if not options.unsupported:
+      _unsupported()
+
    if options.stacktrace:
       logfile = setupLogging(options)
    else:
@@ -222,6 +226,7 @@ def cli():
          return 3
 
    logger.info("Cedar Backup run started.")
+   logger.warn("Note: Cedar Backup v2 is unsupported as of 11 Nov 2017!  Please move to Cedar Backup v3.")
    logger.info("Options were [%s]", options)
    logger.info("Logfile is [%s]", logfile)
    Diagnostics().logDiagnostics(method=logger.info)
@@ -937,6 +942,7 @@ def _usage(fd=sys.stderr):
    fd.write("   -d, --debug        Write debugging information to the log (implies --output)\n")
    fd.write("   -s, --stack        Dump a Python stack trace instead of swallowing exceptions\n") # exactly 80 characters in width!
    fd.write("   -D, --diagnostics  Print runtime diagnostics to the screen and exit\n")
+   fd.write("   -u, --unsupported  Acknowledge that you understand Cedar Backup 2 is unsupported\n")
    fd.write("\n")
    fd.write(" The following actions may be specified:\n")
    fd.write("\n")
@@ -997,6 +1003,38 @@ def _diagnostics(fd=sys.stdout):
    fd.write("Diagnostics:\n")
    fd.write("\n")
    Diagnostics().printDiagnostics(fd=fd, prefix="   ")
+   fd.write("\n")
+
+
+##########################
+# _unsupported() function
+##########################
+
+def _unsupported(fd=sys.stdout):
+   """
+   Prints a message explaining that Cedar Backup2 is unsupported.
+   @param fd: File descriptor used to print information.
+   @note: The C{fd} is used rather than C{print} to facilitate unit testing.
+   """
+   fd.write("\n")
+   fd.write("*************************** WARNING **************************************\n")
+   fd.write("\n")
+   fd.write("Warning: Cedar Backup v2 is unsupported!\n")
+   fd.write("\n")
+   fd.write("There are two releases of Cedar Backup: version 2 and version 3.\n")
+   fd.write("This version uses the Python 2 interpreter, and Cedar Backup v3 uses\n")
+   fd.write("the Python 3 interpreter. Because Python 2 is approaching its end of\n")
+   fd.write("life, and Cedar Backup v3 has been available since July of 2015, Cedar\n")
+   fd.write("Backup v2 is unsupported as of 11 Nov 2017. There will be no additional\n")
+   fd.write("releases, and users who report problems will be referred to the new\n")
+   fd.write("version. Please move to Cedar Backup v3.\n")
+   fd.write("\n")
+   fd.write("For migration instructions, see the user manual or the notes in the\n")
+   fd.write("BitBucket wiki: https://bitbucket.org/cedarsolutions/cedar-backup2/wiki/Home\n")
+   fd.write("\n")
+   fd.write("To hide this warning, use the -u/--unsupported command-line option.\n")
+   fd.write("\n")
+   fd.write("*************************** WARNING **************************************\n")
    fd.write("\n")
 
 
@@ -1301,6 +1339,7 @@ class Options(object):
       self._debug = False
       self._stacktrace = False
       self._diagnostics = False
+      self._unsupported = False
       self._actions = None
       self.actions = []    # initialize to an empty list; remainder are OK
       if argumentList is not None and argumentString is not None:
@@ -1415,6 +1454,11 @@ class Options(object):
             return 1
       if self.diagnostics != other.diagnostics:
          if self.diagnostics < other.diagnostics:
+            return -1
+         else:
+            return 1
+      if self.unsupported != other.unsupported:
+         if self.unsupported < other.unsupported:
             return -1
          else:
             return 1
@@ -1687,6 +1731,22 @@ class Options(object):
       """
       return self._diagnostics
 
+   def _setUnsupported(self, value):
+      """
+      Property target used to set the unsupported flag.
+      No validations, but we normalize the value to C{True} or C{False}.
+      """
+      if value:
+         self._unsupported = True
+      else:
+         self._unsupported = False
+
+   def _getUnsupported(self):
+      """
+      Property target used to get the unsupported flag.
+      """
+      return self._unsupported
+
    def _setActions(self, value):
       """
       Property target used to set the actions list.
@@ -1725,6 +1785,7 @@ class Options(object):
    debug = property(_getDebug, _setDebug, None, "Command-line debug (C{-d,--debug}) flag.")
    stacktrace = property(_getStacktrace, _setStacktrace, None, "Command-line stacktrace (C{-s,--stack}) flag.")
    diagnostics = property(_getDiagnostics, _setDiagnostics, None, "Command-line diagnostics (C{-D,--diagnostics}) flag.")
+   unsupported = property(_getUnsupported, _setUnsupported, None, "Command-line unsupported (C{-u,--unsupported}) flag.")
    actions = property(_getActions, _setActions, None, "Command-line actions list.")
 
 
@@ -1816,6 +1877,8 @@ class Options(object):
          argumentList.append("--stack")
       if self.diagnostics:
          argumentList.append("--diagnostics")
+      if self.unsupported:
+         argumentList.append("--unsupported")
       if self.actions is not None:
          for action in self.actions:
             argumentList.append(action)
@@ -1881,6 +1944,8 @@ class Options(object):
          argumentString += "--stack "
       if self.diagnostics:
          argumentString += "--diagnostics "
+      if self.unsupported:
+         argumentString += "--unsupported "
       if self.actions is not None:
          for action in self.actions:
             argumentString +=  "\"%s\" " % action
@@ -1949,6 +2014,8 @@ class Options(object):
          self.stacktrace = True
       if switches.has_key("-D") or switches.has_key("--diagnostics"):
          self.diagnostics = True
+      if switches.has_key("-u") or switches.has_key("--unsupported"):
+         self.unsupported = True
 
 
 #########################################################################
