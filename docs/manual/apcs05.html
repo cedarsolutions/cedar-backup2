@@ -1,0 +1,57 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Recovering Mailbox Data</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="apc.html" title="Appendix C. Data Recovery"><link rel="prev" href="apcs04.html" title="Recovering Subversion Data"><link rel="next" href="apcs06.html" title="Recovering Data split by the Split Extension"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Recovering Mailbox Data</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apcs04.html">Prev</a> </td><th width="60%" align="center">Appendix C. Data Recovery</th><td width="20%" align="right"> <a accesskey="n" href="apcs06.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-recovering-mbox"></a>Recovering Mailbox Data</h2></div></div></div><p>
+         Mailbox data is gathered by the Cedar Backup mbox extension.
+         Cedar Backup will create either full or incremental backups, but
+         both kinds of backups are treated identically when restoring. 
+      </p><p>
+         Individual mbox files and mbox directories are treated a little
+         differently, since individual files are just compressed, but
+         directories are collected into a tar archive.
+      </p><p>
+         First, find the backup or backups you are interested in.  Typically,
+         you will need the full backup from the first day of the week and each
+         incremental backup from the other days of the week.  
+      </p><p>
+         The mbox extension creates files of the form
+         <code class="filename">mbox-*</code>.  Backup files for individual mbox files might have a
+         <code class="filename">.gz</code> or <code class="filename">.bz2</code> extension
+         depending on what kind of compression you specified in configuration.
+         Backup files for mbox directories will have a <code class="filename">.tar</code>,
+         <code class="filename">.tar.gz</code> or <code class="filename">.tar.bz2</code> extension,
+         again depending on what kind of compression you specified in configuration.
+      </p><p>
+         There is one backup file for each configured mbox file or directory.
+         The backup file name represents the name of the file or directory and
+         the date it was backed up.  So, the file
+         <code class="filename">mbox-20060624-home-user-mail-greylist</code> represents
+         the backup for <code class="filename">/home/user/mail/greylist</code> run on 24
+         Jun 2006.  Likewise,
+         <code class="filename">mbox-20060624-home-user-mail.tar</code> represents the
+         backup for the <code class="filename">/home/user/mail</code> directory run on
+         that same date.
+      </p><p>
+         Once you have found the files you are looking for, the restoration
+         procedure is fairly simple.  First, concatenate all of the backup
+         files together.  Then, use grepmail to eliminate duplicate messages
+         (if any).  
+      </p><p>
+         Here is an example for a single backed-up file:
+      </p><pre class="screen">
+root:/tmp# rm restore.mbox # make sure it's not left over
+root:/tmp# cat mbox-20060624-home-user-mail-greylist &gt;&gt; restore.mbox
+root:/tmp# cat mbox-20060625-home-user-mail-greylist &gt;&gt; restore.mbox
+root:/tmp# cat mbox-20060626-home-user-mail-greylist &gt;&gt; restore.mbox
+root:/tmp# grepmail -a -u restore.mbox &gt; nodups.mbox
+      </pre><p>
+         At this point, <code class="filename">nodups.mbox</code> contains all of the
+         backed-up messages from <code class="filename">/home/user/mail/greylist</code>.
+      </p><p>
+         Of course, if your backups are compressed, you'll have to use
+         <span class="command"><strong>zcat</strong></span> or <span class="command"><strong>bzcat</strong></span> rather than just
+         <span class="command"><strong>cat</strong></span>.
+      </p><p>
+         If you are backing up mbox directories rather than individual files,
+         see the filesystem instructions for notes on now to extract the
+         individual files from inside tar archives.  Extract the files you are
+         interested in, and then concatenate them together just like shown
+         above for the individual case.
+      </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apcs04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apc.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apcs06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Recovering Subversion Data </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Recovering Data split by the Split Extension</td></tr></table></div></body></html>

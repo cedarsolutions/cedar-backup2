@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.actions.util</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.actions-module.html">Package&nbsp;actions</a> ::
+        Module&nbsp;util
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.actions.util-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module util</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html">source&nbsp;code</a></span></p>
+<p>Implements action-related utilities</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.actions.util-module.html#findDailyDirs" class="summary-sig-name">findDailyDirs</a>(<span class="summary-sig-arg">stagingDir</span>,
+        <span class="summary-sig-arg">indicatorFile</span>)</span><br />
+      Returns a list of all daily staging directories that do not contain 
+      the indicated indicator file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#findDailyDirs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.actions.util-module.html#createWriter" class="summary-sig-name">createWriter</a>(<span class="summary-sig-arg">config</span>)</span><br />
+      Creates a writer object based on current configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#createWriter">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.actions.util-module.html#writeIndicatorFile" class="summary-sig-name">writeIndicatorFile</a>(<span class="summary-sig-arg">targetDir</span>,
+        <span class="summary-sig-arg">indicatorFile</span>,
+        <span class="summary-sig-arg">backupUser</span>,
+        <span class="summary-sig-arg">backupGroup</span>)</span><br />
+      Writes an indicator file into a target directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#writeIndicatorFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.actions.util-module.html#getBackupFiles" class="summary-sig-name">getBackupFiles</a>(<span class="summary-sig-arg">targetDir</span>)</span><br />
+      Gets a list of backup files in a target directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#getBackupFiles">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.actions.util-module.html#checkMediaState" class="summary-sig-name">checkMediaState</a>(<span class="summary-sig-arg">storeConfig</span>)</span><br />
+      Checks state of the media in the backup device to confirm whether it 
+      has been initialized for use with Cedar Backup.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#checkMediaState">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.actions.util-module.html#initializeMediaState" class="summary-sig-name">initializeMediaState</a>(<span class="summary-sig-arg">config</span>)</span><br />
+      Initializes state of the media in the backup device so Cedar Backup 
+      can recognize it.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#initializeMediaState">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.actions.util-module.html#buildMediaLabel" class="summary-sig-name">buildMediaLabel</a>()</span><br />
+      Builds a media label to be used on Cedar Backup media.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#buildMediaLabel">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.actions.util-module.html#_getDeviceType" class="summary-sig-name" onclick="show_private();">_getDeviceType</a>(<span class="summary-sig-arg">config</span>)</span><br />
+      Gets the device type that should be used for storing.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#_getDeviceType">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.actions.util-module.html#_getMediaType" class="summary-sig-name" onclick="show_private();">_getMediaType</a>(<span class="summary-sig-arg">config</span>)</span><br />
+      Gets the media type that should be used for storing.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#_getMediaType">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="MEDIA_LABEL_PREFIX"></a><span class="summary-name">MEDIA_LABEL_PREFIX</span> = <code title="'CEDAR BACKUP'"><code class="variable-quote">'</code><code class="variable-string">CEDAR BACKUP</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2.actions'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2.actions</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="findDailyDirs"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">findDailyDirs</span>(<span class="sig-arg">stagingDir</span>,
+        <span class="sig-arg">indicatorFile</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#findDailyDirs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns a list of all daily staging directories that do not contain 
+  the indicated indicator file.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>stagingDir</code></strong> - Configured staging directory (config.targetDir)</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of absolute paths to daily staging directories.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="createWriter"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">createWriter</span>(<span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#createWriter">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Creates a writer object based on current configuration.</p>
+  <p>This function creates and returns a writer based on configuration.  
+  This is done to abstract action functionality from knowing what kind of 
+  writer is in use.  Since all writers implement the same interface, 
+  there's no need for actions to care which one they're working with.</p>
+  <p>Currently, the <code>cdwriter</code> and <code>dvdwriter</code> device
+  types are allowed.  An exception will be raised if any other device type 
+  is used.</p>
+  <p>This function also checks to make sure that the device isn't mounted 
+  before creating a writer object for it.  Experience shows that sometimes 
+  if the device is mounted, we have problems with the backup.  We may as 
+  well do the check here first, before instantiating the writer.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Config object.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Writer that can be used to write a directory to some media.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If there is a problem getting the writer.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem creating the writer object.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="writeIndicatorFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">writeIndicatorFile</span>(<span class="sig-arg">targetDir</span>,
+        <span class="sig-arg">indicatorFile</span>,
+        <span class="sig-arg">backupUser</span>,
+        <span class="sig-arg">backupGroup</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#writeIndicatorFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes an indicator file into a target directory.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>targetDir</code></strong> - Target directory in which to write indicator</li>
+        <li><strong class="pname"><code>indicatorFile</code></strong> - Name of the indicator file</li>
+        <li><strong class="pname"><code>backupUser</code></strong> - User that indicator file should be owned by</li>
+        <li><strong class="pname"><code>backupGroup</code></strong> - Group that indicator file should be owned by</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOException</strong></code> - If there is a problem writing the indicator file</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getBackupFiles"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getBackupFiles</span>(<span class="sig-arg">targetDir</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#getBackupFiles">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets a list of backup files in a target directory.</p>
+  <p>Files that match INDICATOR_PATTERN (i.e. 
+  <code>&quot;cback.store&quot;</code>, 
+  <code>&quot;cback.stage&quot;</code>, etc.) are assumed to be indicator 
+  files and are ignored.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>targetDir</code></strong> - Directory to look in</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of backup files in the directory</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the target directory does not exist</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="checkMediaState"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">checkMediaState</span>(<span class="sig-arg">storeConfig</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#checkMediaState">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Checks state of the media in the backup device to confirm whether it 
+  has been initialized for use with Cedar Backup.</p>
+  <p>We can tell whether the media has been initialized by looking at its 
+  media label.  If the media label starts with MEDIA_LABEL_PREFIX, then it 
+  has been initialized.</p>
+  <p>The check varies depending on whether the media is rewritable or not.
+  For non-rewritable media, we also accept a <code>None</code> media label,
+  since this kind of media cannot safely be initialized.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>storeConfig</code></strong> - Store configuration</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If media is not initialized.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="initializeMediaState"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">initializeMediaState</span>(<span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#initializeMediaState">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes state of the media in the backup device so Cedar Backup 
+  can recognize it.</p>
+  <p>This is done by writing an mostly-empty image (it contains a 
+  &quot;Cedar Backup&quot; directory) to the media with a known media 
+  label.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If media could not be initialized.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the configured media type is not rewritable</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        Only rewritable media (CD-RW, DVD+RW) can be initialized.  It 
+        doesn't make any sense to initialize media that cannot be rewritten
+        (CD-R, DVD+R), since Cedar Backup would then not be able to use 
+        that media for a backup.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="buildMediaLabel"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">buildMediaLabel</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#buildMediaLabel">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a media label to be used on Cedar Backup media.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Media label as a string.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getDeviceType"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getDeviceType</span>(<span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#_getDeviceType">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the device type that should be used for storing.</p>
+  <p>Use the configured device type if not <code>None</code>, otherwise use
+  <a href="CedarBackup2.config-module.html#DEFAULT_DEVICE_TYPE" 
+  class="link">config.DEFAULT_DEVICE_TYPE</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Config object.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Device type to be used.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getMediaType"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getMediaType</span>(<span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.actions.util-pysrc.html#_getMediaType">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the media type that should be used for storing.</p>
+  <p>Use the configured media type if not <code>None</code>, otherwise use 
+  <code>DEFAULT_MEDIA_TYPE</code>.</p>
+  <p>Once we figure out what configuration value to use, we return a media 
+  type value that is valid in one of the supported writers:</p>
+<pre class="literalblock">
+  MEDIA_CDR_74
+  MEDIA_CDRW_74
+  MEDIA_CDR_80
+  MEDIA_CDRW_80
+  MEDIA_DVDPLUSR
+  MEDIA_DVDPLUSRW
+</pre>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Config object.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Media type to be used as a writer media type value.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the media type is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

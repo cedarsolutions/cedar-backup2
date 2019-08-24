@@ -1,0 +1,91 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Installing from Source</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch03.html" title="Chapter 3. Installation"><link rel="prev" href="ch03s02.html" title="Installing on a Debian System"><link rel="next" href="ch04.html" title="Chapter 4. Command Line Tools"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Installing from Source</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch03s02.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Installation</th><td width="20%" align="right"> <a accesskey="n" href="ch04.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-install-source"></a>Installing from Source</h2></div></div></div><p>
+         On platforms other than Debian, Cedar Backup is installed from a
+         Python source distribution. <a href="#ftn.idm461" class="footnote" name="idm461"><sup class="footnote">[14]</sup></a> You will have to manage dependencies on your own.
+      </p><div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Tip</h3><p>
+            Many UNIX-like distributions provide an automatic or semi-automatic
+            way to install packages like the ones Cedar Backup requires (think
+            RPMs for Mandrake or RedHat, Gentoo's Portage system, the Fink
+            project for Mac OS X, or the BSD ports system).  If you are not
+            sure how to install these packages on your system, you might want
+            to check out <a class="xref" href="apb.html" title="Appendix B. Dependencies">Appendix B, <i>Dependencies</i></a>.  This appendix
+            provides links to <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> source packages, plus as
+            much information as I have been able to gather about packages for
+            non-Debian platforms.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-install-source-deps"></a>Installing Dependencies</h3></div></div></div><p>
+            Cedar Backup requires a number of external packages in order to
+            function properly.  Before installing Cedar Backup, you must make
+            sure that these dependencies are met.  
+         </p><p>
+            Cedar Backup is written in Python 2 and requires version 2.7 or
+            greater of the language.  Python 2.7 was originally released on
+            4 Jul 2010, and is the last supported release of Python 2. As
+            of this writing, all current Linux and BSD distributions
+            include it.  You must install Python 2 on every peer node in a
+            pool (master or client). 
+         </p><p>
+            Additionally, remote client peer nodes must be running an
+            <em class="firstterm">RSH-compatible</em> server, such as the
+            <span class="command"><strong>ssh</strong></span> server, and master nodes must have an
+            RSH-compatible client installed if they need to connect to remote
+            peer machines.
+         </p><p>
+            Master machines also require several other system utilities, most
+            having to do with writing and validating CD/DVD media.  On master
+            machines, you must make sure that these utilities are available if
+            you want to to run the store action:
+         </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="command"><strong>mkisofs</strong></span></p></li><li class="listitem"><p><span class="command"><strong>eject</strong></span></p></li><li class="listitem"><p><span class="command"><strong>mount</strong></span></p></li><li class="listitem"><p><span class="command"><strong>unmount</strong></span></p></li><li class="listitem"><p><span class="command"><strong>volname</strong></span></p></li></ul></div><p>
+            Then, you need this utility if you are writing CD media:
+         </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="command"><strong>cdrecord</strong></span></p></li></ul></div><p>
+            <span class="emphasis"><em>or</em></span> these utilities if you are writing DVD
+            media:
+         </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="command"><strong>growisofs</strong></span></p></li></ul></div><p>
+            All of these utilities are common and are easy to find for almost
+            any UNIX-like operating system.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-install-source-package"></a>Installing the Source Package</h3></div></div></div><p>
+            Python source packages are fairly easy to install.  They are
+            distributed as <code class="filename">.tar.gz</code> files which contain
+            Python source code, a manifest and an installation script called
+            <code class="filename">setup.py</code>.  
+         </p><p>
+            Once you have downloaded the source package from the Cedar
+            Solutions website, <a href="ch03s02.html#ftn.cedar-install-foot-software" class="footnoteref"><sup class="footnoteref">[13]</sup></a> untar it:
+         </p><pre class="screen">
+$ zcat CedarBackup2-2.0.0.tar.gz | tar xvf -
+         </pre><p>
+            This will create a directory called (in this case)
+            <code class="filename">CedarBackup2-2.0.0</code>.  The version number in the
+            directory will always match the version number in the filename.
+         </p><p>
+            If you have root access and want to install the package to the
+            <span class="quote">&#8220;<span class="quote">standard</span>&#8221;</span> Python location on your system, then you
+            can install the package in two simple steps:
+         </p><pre class="screen">
+$ cd CedarBackup2-2.0.0
+$ python setup.py install
+         </pre><p>
+            Make sure that you are using Python 2.7 or better to execute
+            <code class="filename">setup.py</code>.
+         </p><p>
+            You may also wish to run the unit tests before actually installing
+            anything.  Run them like so:
+         </p><pre class="screen">
+python util/test.py
+         </pre><p>
+            If any unit test reports a failure on your system, please email me the
+            output from the unit test, so I can fix the problem.
+            <a href="#ftn.idm522" class="footnote" name="idm522"><sup class="footnote">[15]</sup></a>
+            This is particularly important for non-Linux platforms where I do
+            not have a test system available to me.
+         </p><p>
+            Some users might want to choose a different install location or
+            change other install parameters.  To get more information about how
+            <code class="filename">setup.py</code> works, use the
+            <code class="option">--help</code> option:
+         </p><pre class="screen">
+$ python setup.py --help
+$ python setup.py install --help
+         </pre><p>
+            In any case, once the package has been installed, you can proceed
+            to configuration as described in <a class="xref" href="ch05.html" title="Chapter 5. Configuration">Chapter 5, <i>Configuration</i></a>.
+         </p></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idm461" class="footnote"><p><a href="#idm461" class="para"><sup class="para">[14] </sup></a>See <a class="ulink" href="http://docs.python.org/lib/module-distutils.html" target="_top">http://docs.python.org/lib/module-distutils.html</a>
+         .</p></div><div id="ftn.idm522" class="footnote"><p><a href="#idm522" class="para"><sup class="para">[15] </sup></a><code class="email">&lt;<a class="email" href="mailto:support@cedar-solutions.com">support@cedar-solutions.com</a>&gt;</code></p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch03s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch03.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Installing on a Debian System </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 4. Command Line Tools</td></tr></table></div></body></html>

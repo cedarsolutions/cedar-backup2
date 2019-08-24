@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.writers.cdwriter.MediaCapacity</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.writers-module.html">Package&nbsp;writers</a> ::
+        <a href="CedarBackup2.writers.cdwriter-module.html">Module&nbsp;cdwriter</a> ::
+        Class&nbsp;MediaCapacity
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class MediaCapacity</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">MediaCapacity</strong>
+</pre>
+
+<hr />
+<p>Class encapsulating information about CD media capacity.</p>
+  <p>Space used includes the required media lead-in (unless the disk is 
+  unused). Space available attempts to provide a picture of how many bytes 
+  are available for data storage, including any required lead-in.</p>
+  <p>The boundaries value is either <code>None</code> (if multisession 
+  discs are not supported or if the disc has no boundaries) or in exactly 
+  the form provided by <code>cdrecord -msinfo</code>.  It can be passed 
+  as-is to the <code>IsoImage</code> class.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">bytesUsed</span>,
+        <span class="summary-sig-arg">bytesAvailable</span>,
+        <span class="summary-sig-arg">boundaries</span>)</span><br />
+      Initializes a capacity object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#__str__" class="summary-sig-name">__str__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Informal string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity.__str__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getBytesUsed"></a><span class="summary-sig-name">_getBytesUsed</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target to get the bytes-used value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity._getBytesUsed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getBytesAvailable"></a><span class="summary-sig-name">_getBytesAvailable</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target to get the bytes-available value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity._getBytesAvailable">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getBoundaries"></a><span class="summary-sig-name">_getBoundaries</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target to get the boundaries tuple.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity._getBoundaries">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getTotalCapacity"></a><span class="summary-sig-name">_getTotalCapacity</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target to get the total capacity (used + available).</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity._getTotalCapacity">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getUtilized"></a><span class="summary-sig-name">_getUtilized</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target to get the percent of capacity which is utilized.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity._getUtilized">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#bytesUsed" class="summary-name">bytesUsed</a><br />
+      Space used on disc, in bytes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#bytesAvailable" class="summary-name">bytesAvailable</a><br />
+      Space available on disc, in bytes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#boundaries" class="summary-name">boundaries</a><br />
+      Session disc boundaries, in terms of ISO sectors.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#totalCapacity" class="summary-name">totalCapacity</a><br />
+      Total capacity of the disc, in bytes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#utilized" class="summary-name">utilized</a><br />
+      Percentage of the total capacity which is utilized.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">bytesUsed</span>,
+        <span class="sig-arg">bytesAvailable</span>,
+        <span class="sig-arg">boundaries</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes a capacity object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IndexError</strong></code> - If the boundaries tuple does not have enough elements.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the boundaries values are not integers.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the bytes used and available values are not floats.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__str__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__str__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Informal representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#MediaCapacity.__str__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Informal string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__str__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="bytesUsed"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">bytesUsed</h3>
+  <p>Space used on disc, in bytes.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#_getBytesUsed" class="summary-sig-name" onclick="show_private();">_getBytesUsed</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target to get the bytes-used value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="bytesAvailable"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">bytesAvailable</h3>
+  <p>Space available on disc, in bytes.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#_getBytesAvailable" class="summary-sig-name" onclick="show_private();">_getBytesAvailable</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target to get the bytes-available value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="boundaries"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">boundaries</h3>
+  <p>Session disc boundaries, in terms of ISO sectors.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#_getBoundaries" class="summary-sig-name" onclick="show_private();">_getBoundaries</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target to get the boundaries tuple.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="totalCapacity"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">totalCapacity</h3>
+  <p>Total capacity of the disc, in bytes.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#_getTotalCapacity" class="summary-sig-name" onclick="show_private();">_getTotalCapacity</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target to get the total capacity (used + available).
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="utilized"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">utilized</h3>
+  <p>Percentage of the total capacity which is utilized.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html#_getUtilized" class="summary-sig-name" onclick="show_private();">_getUtilized</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target to get the percent of capacity which is utilized.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

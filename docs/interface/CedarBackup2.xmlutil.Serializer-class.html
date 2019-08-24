@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.xmlutil.Serializer</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.xmlutil-module.html">Module&nbsp;xmlutil</a> ::
+        Class&nbsp;Serializer
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.xmlutil.Serializer-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Serializer</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">Serializer</strong>
+</pre>
+
+<hr />
+<p>XML serializer class.</p>
+  <p>This is a customized serializer that I hacked together based on what I
+  found in the PyXML distribution.  Basically, around release 2.7.0, the 
+  only reason I still had around a dependency on PyXML was for the 
+  PrettyPrint functionality, and that seemed pointless.  So, I stripped the
+  PrettyPrint code out of PyXML and hacked bits of it off until it did just
+  what I needed and no more.</p>
+  <p>This code started out being called PrintVisitor, but I decided it 
+  makes more sense just calling it a serializer.  I've made nearly all of 
+  the methods private, and I've added a new high-level serialize() method 
+  rather than having clients call <code>visit()</code>.</p>
+  <p>Anyway, as a consequence of my hacking with it, this can't quite be 
+  called a complete XML serializer any more.  I ripped out support for HTML
+  and XHTML, and there is also no longer any support for namespaces (which 
+  I took out because this dragged along a lot of extra code, and Cedar 
+  Backup doesn't use namespaces).  However, everything else should pretty 
+  much work as expected.</p>
+
+<hr />
+<div class="fields">      <p><strong>Copyright:</strong>
+        This code, prior to customization, was part of the PyXML codebase, 
+        and before that was part of the 4DOM suite developed by 
+        Fourthought, Inc.  It its original form, it was Copyright (c) 2000 
+        Fourthought Inc, USA; All Rights Reserved.
+      </p>
+</div><!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.xmlutil.Serializer-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">stream</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>,
+        <span class="summary-sig-arg">encoding</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">UTF-8</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">indent</span>=<span class="summary-sig-default">3</span>)</span><br />
+      Initialize a serializer.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.xmlutil.Serializer-class.html#serialize" class="summary-sig-name">serialize</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">xmlDom</span>)</span><br />
+      Serialize the passed-in XML document.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer.serialize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_write"></a><span class="summary-sig-name">_write</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">text</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._write">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_tryIndent"></a><span class="summary-sig-name">_tryIndent</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._tryIndent">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.xmlutil.Serializer-class.html#_visit" class="summary-sig-name" onclick="show_private();">_visit</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitNodeList"></a><span class="summary-sig-name">_visitNodeList</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>,
+        <span class="summary-sig-arg">exclude</span>=<span class="summary-sig-default">None</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitNodeList">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitNamedNodeMap"></a><span class="summary-sig-name">_visitNamedNodeMap</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitNamedNodeMap">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitAttr"></a><span class="summary-sig-name">_visitAttr</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitAttr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitProlog"></a><span class="summary-sig-name">_visitProlog</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitProlog">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitDocument"></a><span class="summary-sig-name">_visitDocument</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitDocument">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitDocumentFragment"></a><span class="summary-sig-name">_visitDocumentFragment</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitDocumentFragment">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitElement"></a><span class="summary-sig-name">_visitElement</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitElement">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitText"></a><span class="summary-sig-name">_visitText</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitText">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitDocumentType"></a><span class="summary-sig-name">_visitDocumentType</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">doctype</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitDocumentType">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitEntity"></a><span class="summary-sig-name">_visitEntity</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span><br />
+      Visited from a NamedNodeMap in DocumentType</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitEntity">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitNotation"></a><span class="summary-sig-name">_visitNotation</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span><br />
+      Visited from a NamedNodeMap in DocumentType</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitNotation">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitCDATASection"></a><span class="summary-sig-name">_visitCDATASection</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitCDATASection">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitComment"></a><span class="summary-sig-name">_visitComment</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitComment">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitEntityReference"></a><span class="summary-sig-name">_visitEntityReference</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitEntityReference">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_visitProcessingInstruction"></a><span class="summary-sig-name">_visitProcessingInstruction</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">node</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visitProcessingInstruction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">stream</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>,
+        <span class="sig-arg">encoding</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">UTF-8</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">indent</span>=<span class="sig-default">3</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize a serializer.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>stream</code></strong> - Stream to write output to.</li>
+        <li><strong class="pname"><code>encoding</code></strong> - Output encoding.</li>
+        <li><strong class="pname"><code>indent</code></strong> - Number of spaces to indent, as an integer</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="serialize"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">serialize</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">xmlDom</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer.serialize">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Serialize the passed-in XML document.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - XML DOM tree to serialize</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If there's an unknown node type in the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_visit"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_visit</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">node</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.xmlutil-pysrc.html#Serializer._visit">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If there's an unknown node type in the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

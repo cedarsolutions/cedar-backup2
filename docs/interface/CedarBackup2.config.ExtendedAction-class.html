@@ -1,0 +1,880 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.config.ExtendedAction</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.config-module.html">Module&nbsp;config</a> ::
+        Class&nbsp;ExtendedAction
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.config.ExtendedAction-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class ExtendedAction</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">ExtendedAction</strong>
+</pre>
+
+<hr />
+<p>Class representing an extended action.</p>
+  <p>Essentially, an extended action needs to allow the following to 
+  happen:</p>
+<pre class="literalblock">
+  exec(&quot;from %s import %s&quot; % (module, function))
+  exec(&quot;%s(action, configPath&quot;)&quot; % function)
+</pre>
+  <p>The following restrictions exist on data in this class:</p>
+  <ul>
+    <li>
+      The action name must be a non-empty string consisting of lower-case 
+      letters and digits.
+    </li>
+    <li>
+      The module must be a non-empty string and a valid Python identifier.
+    </li>
+    <li>
+      The function must be an on-empty string and a valid Python 
+      identifier.
+    </li>
+    <li>
+      If set, the index must be a positive integer.
+    </li>
+    <li>
+      If set, the dependencies attribute must be an 
+      <code>ActionDependencies</code> object.
+    </li>
+  </ul>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">module</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">function</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">index</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">dependencies</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Constructor for the <code>ExtendedAction</code> class.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Official string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction.__repr__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#__str__" class="summary-sig-name">__str__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Informal string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction.__str__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#__cmp__" class="summary-sig-name">__cmp__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">other</span>)</span><br />
+      Definition of equals operator for this class.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction.__cmp__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setName" class="summary-sig-name" onclick="show_private();">_setName</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the action name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getName"></a><span class="summary-sig-name">_getName</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the action name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._getName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setModule" class="summary-sig-name" onclick="show_private();">_setModule</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the module name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setModule">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getModule"></a><span class="summary-sig-name">_getModule</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the module name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._getModule">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setFunction" class="summary-sig-name" onclick="show_private();">_setFunction</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the function name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setFunction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getFunction"></a><span class="summary-sig-name">_getFunction</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the function name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._getFunction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setIndex" class="summary-sig-name" onclick="show_private();">_setIndex</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the action index.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setIndex">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getIndex"></a><span class="summary-sig-name">_getIndex</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the action index.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._getIndex">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setDependencies" class="summary-sig-name" onclick="show_private();">_setDependencies</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the action dependencies information.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setDependencies">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDependencies"></a><span class="summary-sig-name">_getDependencies</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get action dependencies information.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._getDependencies">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ExtendedAction-class.html#name" class="summary-name">name</a><br />
+      Name of the extended action.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ExtendedAction-class.html#module" class="summary-name">module</a><br />
+      Name of the module containing the extended action function.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ExtendedAction-class.html#function" class="summary-name">function</a><br />
+      Name of the extended action function.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ExtendedAction-class.html#index" class="summary-name">index</a><br />
+      Index of action, used for execution ordering.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ExtendedAction-class.html#dependencies" class="summary-name">dependencies</a><br />
+      Dependencies for action, used for execution ordering.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">name</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">module</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">function</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">index</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">dependencies</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Constructor for the <code>ExtendedAction</code> class.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>name</code></strong> - Name of the extended action</li>
+        <li><strong class="pname"><code>module</code></strong> - Name of the module containing the extended action function</li>
+        <li><strong class="pname"><code>function</code></strong> - Name of the extended action function</li>
+        <li><strong class="pname"><code>index</code></strong> - Index of action, used for execution ordering</li>
+        <li><strong class="pname"><code>dependencies</code></strong> - Dependencies for action, used for execution ordering</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If one of the values is invalid.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Official string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__str__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__str__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Informal representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction.__str__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Informal string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__str__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__cmp__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__cmp__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">other</span>)</span>
+    <br /><em class="fname">(Comparison operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction.__cmp__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Definition of equals operator for this class.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>other</code></strong> - Other object to compare to.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>-1/0/1 depending on whether self is <code>&lt;</code>, 
+          <code>=</code> or <code>&gt;</code> other.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setName"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setName</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setName">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the action name. The value must be a 
+  non-empty string if it is not <code>None</code>. It must also consist 
+  only of lower-case letters and digits.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setModule"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setModule</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setModule">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the module name. The value must be a 
+  non-empty string if it is not <code>None</code>. It must also be a valid 
+  Python identifier.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setFunction"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setFunction</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setFunction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the function name. The value must be a 
+  non-empty string if it is not <code>None</code>. It must also be a valid 
+  Python identifier.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setIndex"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setIndex</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setIndex">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the action index. The value must be an 
+  integer &gt;= 0.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setDependencies"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setDependencies</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#ExtendedAction._setDependencies">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the action dependencies information. If 
+  not <code>None</code>, the value must be a <code>ActionDependecies</code>
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>ActionDependencies</code> object.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="name"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">name</h3>
+  <p>Name of the extended action.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_getName" class="summary-sig-name" onclick="show_private();">_getName</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the action name.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setName" class="summary-sig-name" onclick="show_private();">_setName</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the action name.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="module"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">module</h3>
+  <p>Name of the module containing the extended action function.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_getModule" class="summary-sig-name" onclick="show_private();">_getModule</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the module name.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setModule" class="summary-sig-name" onclick="show_private();">_setModule</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the module name.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="function"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">function</h3>
+  <p>Name of the extended action function.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_getFunction" class="summary-sig-name" onclick="show_private();">_getFunction</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the function name.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setFunction" class="summary-sig-name" onclick="show_private();">_setFunction</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the function name.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="index"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">index</h3>
+  <p>Index of action, used for execution ordering.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_getIndex" class="summary-sig-name" onclick="show_private();">_getIndex</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the action index.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setIndex" class="summary-sig-name" onclick="show_private();">_setIndex</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the action index.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="dependencies"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">dependencies</h3>
+  <p>Dependencies for action, used for execution ordering.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_getDependencies" class="summary-sig-name" onclick="show_private();">_getDependencies</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get action dependencies information.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.ExtendedAction-class.html#_setDependencies" class="summary-sig-name" onclick="show_private();">_setDependencies</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the action dependencies information.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

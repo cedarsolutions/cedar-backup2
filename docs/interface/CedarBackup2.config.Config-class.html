@@ -1,0 +1,4216 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.config.Config</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.config-module.html">Module&nbsp;config</a> ::
+        Class&nbsp;Config
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.config.Config-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Config</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">Config</strong>
+</pre>
+
+<hr />
+<p>Class representing a Cedar Backup XML configuration document.</p>
+  <p>The <code>Config</code> class is a Python object representation of a 
+  Cedar Backup XML configuration file.  It is intended to be the only 
+  Python-language interface to Cedar Backup configuration on disk for both 
+  Cedar Backup itself and for external applications.</p>
+  <p>The object representation is two-way: XML data can be used to create a
+  <code>Config</code> object, and then changes to the object can be 
+  propogated back to disk.  A <code>Config</code> object can even be used 
+  to create a configuration file from scratch programmatically.</p>
+  <p>This class and the classes it is composed from often use Python's 
+  <code>property</code> construct to validate input and limit access to 
+  values.  Some validations can only be done once a document is considered 
+  &quot;complete&quot; (see module notes for more details).</p>
+  <p>Assignments to the various instance variables must match the expected 
+  type, i.e. <code>reference</code> must be a <code>ReferenceConfig</code>.
+  The internal check uses the built-in <code>isinstance</code> function, so
+  it should be OK to use subclasses if you want to.</p>
+  <p>If an instance variable is not set, its value will be 
+  <code>None</code>.  When an object is initialized without using an XML 
+  document, all of the values will be <code>None</code>.  Even when an 
+  object is initialized using XML, some of the values might be 
+  <code>None</code> because not every section is required.</p>
+
+<hr />
+<div class="fields">      <p><strong>Note:</strong>
+        Lists within this class are &quot;unordered&quot; for equality 
+        comparisons.
+      </p>
+</div><!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">xmlData</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">xmlPath</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">validate</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Initializes a configuration object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Official string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.__repr__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#__str__" class="summary-sig-name">__str__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Informal string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.__str__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#__cmp__" class="summary-sig-name">__cmp__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">other</span>)</span><br />
+      Definition of equals operator for this class.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.__cmp__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#extractXml" class="summary-sig-name">extractXml</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">xmlPath</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">validate</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Extracts configuration into an XML document.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.extractXml">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#validate" class="summary-sig-name">validate</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">requireOneAction</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">requireReference</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">requireExtensions</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">requireOptions</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">requireCollect</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">requireStage</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">requireStore</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">requirePurge</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">requirePeers</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Validates configuration represented by the object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.validate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getReference"></a><span class="summary-sig-name">_getReference</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the reference configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._getReference">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setReference" class="summary-sig-name" onclick="show_private();">_setReference</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the reference configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setReference">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getExtensions"></a><span class="summary-sig-name">_getExtensions</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the extensions configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._getExtensions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setExtensions" class="summary-sig-name" onclick="show_private();">_setExtensions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the extensions configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setExtensions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getOptions"></a><span class="summary-sig-name">_getOptions</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the options configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._getOptions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setOptions" class="summary-sig-name" onclick="show_private();">_setOptions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the options configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setOptions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getPeers"></a><span class="summary-sig-name">_getPeers</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the peers configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._getPeers">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setPeers" class="summary-sig-name" onclick="show_private();">_setPeers</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the peers configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setPeers">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getCollect"></a><span class="summary-sig-name">_getCollect</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the collect configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._getCollect">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setCollect" class="summary-sig-name" onclick="show_private();">_setCollect</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the collect configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setCollect">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getStage"></a><span class="summary-sig-name">_getStage</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the stage configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._getStage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setStage" class="summary-sig-name" onclick="show_private();">_setStage</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the stage configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setStage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getStore"></a><span class="summary-sig-name">_getStore</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the store configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._getStore">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setStore" class="summary-sig-name" onclick="show_private();">_setStore</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the store configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setStore">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getPurge"></a><span class="summary-sig-name">_getPurge</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the purge configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._getPurge">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setPurge" class="summary-sig-name" onclick="show_private();">_setPurge</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the purge configuration value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setPurge">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseXmlData" class="summary-sig-name" onclick="show_private();">_parseXmlData</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">xmlData</span>)</span><br />
+      Internal method to parse an XML string into the object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseXmlData">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_extractXml" class="summary-sig-name" onclick="show_private();">_extractXml</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Internal method to extract configuration into an XML string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._extractXml">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validateContents" class="summary-sig-name" onclick="show_private();">_validateContents</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates configuration contents per rules discussed in module 
+      documentation.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateContents">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validateReference" class="summary-sig-name" onclick="show_private();">_validateReference</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates reference configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateReference">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validateExtensions" class="summary-sig-name" onclick="show_private();">_validateExtensions</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates extensions configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateExtensions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validateOptions" class="summary-sig-name" onclick="show_private();">_validateOptions</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates options configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateOptions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validatePeers" class="summary-sig-name" onclick="show_private();">_validatePeers</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates peers configuration per rules in <a 
+      href="CedarBackup2.config.Config-class.html#_validatePeerList" 
+      class="link" onclick="show_private();">_validatePeerList</a>.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validatePeers">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validateCollect" class="summary-sig-name" onclick="show_private();">_validateCollect</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates collect configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateCollect">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validateStage" class="summary-sig-name" onclick="show_private();">_validateStage</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates stage configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateStage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validateStore" class="summary-sig-name" onclick="show_private();">_validateStore</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates store configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateStore">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validatePurge" class="summary-sig-name" onclick="show_private();">_validatePurge</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates purge configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validatePurge">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_validatePeerList" class="summary-sig-name" onclick="show_private();">_validatePeerList</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">localPeers</span>,
+        <span class="summary-sig-arg">remotePeers</span>)</span><br />
+      Validates the set of local and remote peers.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validatePeerList">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseReference" class="summary-sig-name" onclick="show_private();">_parseReference</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Parses a reference configuration section.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseReference">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseExtensions" class="summary-sig-name" onclick="show_private();">_parseExtensions</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Parses an extensions configuration section.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseExtensions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseOptions" class="summary-sig-name" onclick="show_private();">_parseOptions</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Parses a options configuration section.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseOptions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parsePeers" class="summary-sig-name" onclick="show_private();">_parsePeers</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Parses a peers configuration section.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parsePeers">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseCollect" class="summary-sig-name" onclick="show_private();">_parseCollect</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Parses a collect configuration section.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseCollect">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseStage" class="summary-sig-name" onclick="show_private();">_parseStage</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Parses a stage configuration section.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseStage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseStore" class="summary-sig-name" onclick="show_private();">_parseStore</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Parses a store configuration section.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseStore">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parsePurge" class="summary-sig-name" onclick="show_private();">_parsePurge</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Parses a purge configuration section.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parsePurge">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseExtendedActions" class="summary-sig-name" onclick="show_private();">_parseExtendedActions</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads extended actions data from immediately beneath the parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseExtendedActions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseExclusions" class="summary-sig-name" onclick="show_private();">_parseExclusions</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads exclusions data from immediately beneath the parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseExclusions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseOverrides" class="summary-sig-name" onclick="show_private();">_parseOverrides</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads a list of <code>CommandOverride</code> objects from immediately
+      beneath the parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseOverrides">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseHooks" class="summary-sig-name" onclick="show_private();">_parseHooks</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads a list of <code>ActionHook</code> objects from immediately 
+      beneath the parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseHooks">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseCollectFiles" class="summary-sig-name" onclick="show_private();">_parseCollectFiles</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads a list of <code>CollectFile</code> objects from immediately 
+      beneath the parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseCollectFiles">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseCollectDirs" class="summary-sig-name" onclick="show_private();">_parseCollectDirs</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads a list of <code>CollectDir</code> objects from immediately 
+      beneath the parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseCollectDirs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parsePurgeDirs" class="summary-sig-name" onclick="show_private();">_parsePurgeDirs</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads a list of <code>PurgeDir</code> objects from immediately 
+      beneath the parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parsePurgeDirs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parsePeerList" class="summary-sig-name" onclick="show_private();">_parsePeerList</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads remote and local peer data from immediately beneath the parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parsePeerList">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseDependencies" class="summary-sig-name" onclick="show_private();">_parseDependencies</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads extended action dependency information from a parent node.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseDependencies">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_parseBlankBehavior" class="summary-sig-name" onclick="show_private();">_parseBlankBehavior</a>(<span class="summary-sig-arg">parentNode</span>)</span><br />
+      Reads a single <code>BlankBehavior</code> object from immediately 
+      beneath the parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseBlankBehavior">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addReference" class="summary-sig-name" onclick="show_private();">_addReference</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">referenceConfig</span>)</span><br />
+      Adds a &lt;reference&gt; configuration section as the next child of a
+      parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addReference">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addExtensions" class="summary-sig-name" onclick="show_private();">_addExtensions</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">extensionsConfig</span>)</span><br />
+      Adds an &lt;extensions&gt; configuration section as the next child of
+      a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addExtensions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addOptions" class="summary-sig-name" onclick="show_private();">_addOptions</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">optionsConfig</span>)</span><br />
+      Adds a &lt;options&gt; configuration section as the next child of a 
+      parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addOptions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addPeers" class="summary-sig-name" onclick="show_private();">_addPeers</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">peersConfig</span>)</span><br />
+      Adds a &lt;peers&gt; configuration section as the next child of a 
+      parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addPeers">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addCollect" class="summary-sig-name" onclick="show_private();">_addCollect</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">collectConfig</span>)</span><br />
+      Adds a &lt;collect&gt; configuration section as the next child of a 
+      parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addCollect">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addStage" class="summary-sig-name" onclick="show_private();">_addStage</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">stageConfig</span>)</span><br />
+      Adds a &lt;stage&gt; configuration section as the next child of a 
+      parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addStage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addStore" class="summary-sig-name" onclick="show_private();">_addStore</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">storeConfig</span>)</span><br />
+      Adds a &lt;store&gt; configuration section as the next child of a 
+      parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addStore">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addPurge" class="summary-sig-name" onclick="show_private();">_addPurge</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">purgeConfig</span>)</span><br />
+      Adds a &lt;purge&gt; configuration section as the next child of a 
+      parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addPurge">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addExtendedAction" class="summary-sig-name" onclick="show_private();">_addExtendedAction</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">action</span>)</span><br />
+      Adds an extended action container as the next child of a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addExtendedAction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addOverride" class="summary-sig-name" onclick="show_private();">_addOverride</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">override</span>)</span><br />
+      Adds a command override container as the next child of a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addOverride">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addHook" class="summary-sig-name" onclick="show_private();">_addHook</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">hook</span>)</span><br />
+      Adds an action hook container as the next child of a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addHook">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addCollectFile" class="summary-sig-name" onclick="show_private();">_addCollectFile</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">collectFile</span>)</span><br />
+      Adds a collect file container as the next child of a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addCollectFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addCollectDir" class="summary-sig-name" onclick="show_private();">_addCollectDir</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">collectDir</span>)</span><br />
+      Adds a collect directory container as the next child of a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addCollectDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addLocalPeer" class="summary-sig-name" onclick="show_private();">_addLocalPeer</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">localPeer</span>)</span><br />
+      Adds a local peer container as the next child of a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addLocalPeer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addRemotePeer" class="summary-sig-name" onclick="show_private();">_addRemotePeer</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">remotePeer</span>)</span><br />
+      Adds a remote peer container as the next child of a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addRemotePeer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addPurgeDir" class="summary-sig-name" onclick="show_private();">_addPurgeDir</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">purgeDir</span>)</span><br />
+      Adds a purge directory container as the next child of a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addPurgeDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addDependencies" class="summary-sig-name" onclick="show_private();">_addDependencies</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">dependencies</span>)</span><br />
+      Adds a extended action dependencies to parent node.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addDependencies">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_buildCommaSeparatedString" class="summary-sig-name" onclick="show_private();">_buildCommaSeparatedString</a>(<span class="summary-sig-arg">valueList</span>)</span><br />
+      Creates a comma-separated string from a list of values.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._buildCommaSeparatedString">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_addBlankBehavior" class="summary-sig-name" onclick="show_private();">_addBlankBehavior</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">blankBehavior</span>)</span><br />
+      Adds a blanking behavior container as the next child of a parent.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addBlankBehavior">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.Config-class.html#reference" class="summary-name">reference</a><br />
+      Reference configuration in terms of a <code>ReferenceConfig</code> 
+      object.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.Config-class.html#extensions" class="summary-name">extensions</a><br />
+      Extensions configuration in terms of a <code>ExtensionsConfig</code> 
+      object.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.Config-class.html#options" class="summary-name">options</a><br />
+      Options configuration in terms of a <code>OptionsConfig</code> 
+      object.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.Config-class.html#collect" class="summary-name">collect</a><br />
+      Collect configuration in terms of a <code>CollectConfig</code> 
+      object.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.Config-class.html#stage" class="summary-name">stage</a><br />
+      Stage configuration in terms of a <code>StageConfig</code> object.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.Config-class.html#store" class="summary-name">store</a><br />
+      Store configuration in terms of a <code>StoreConfig</code> object.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.Config-class.html#purge" class="summary-name">purge</a><br />
+      Purge configuration in terms of a <code>PurgeConfig</code> object.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.Config-class.html#peers" class="summary-name">peers</a><br />
+      Peers configuration in terms of a <code>PeersConfig</code> object.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">xmlData</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">xmlPath</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">validate</span>=<span class="sig-default">True</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes a configuration object.</p>
+  <p>If you initialize the object without passing either 
+  <code>xmlData</code> or <code>xmlPath</code>, then configuration will be 
+  empty and will be invalid until it is filled in properly.</p>
+  <p>No reference to the original XML data or original path is saved off by
+  this class.  Once the data has been parsed (successfully or not) this 
+  original information is discarded.</p>
+  <p>Unless the <code>validate</code> argument is <code>False</code>, the 
+  <a href="CedarBackup2.config.Config-class.html#validate" 
+  class="link">Config.validate</a> method will be called (with its default 
+  arguments) against configuration after successfully parsing any passed-in
+  XML.  Keep in mind that even if <code>validate</code> is 
+  <code>False</code>, it might not be possible to parse the passed-in XML 
+  document if lower-level validations fail.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlData</code></strong> (String data.) - XML data representing configuration.</li>
+        <li><strong class="pname"><code>xmlPath</code></strong> (Absolute path to a file on disk.) - Path to an XML file on disk.</li>
+        <li><strong class="pname"><code>validate</code></strong> (Boolean true/false.) - Validate the document after parsing it.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If both <code>xmlData</code> and <code>xmlPath</code> are 
+        passed-in.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the XML data in <code>xmlData</code> or <code>xmlPath</code> 
+        cannot be parsed.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the parsed configuration document is not valid.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        It is strongly suggested that the <code>validate</code> option 
+        always be set to <code>True</code> (the default) unless there is a 
+        specific need to read in invalid configuration from disk.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Official string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__str__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__str__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Informal representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.__str__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Informal string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__str__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__cmp__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__cmp__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">other</span>)</span>
+    <br /><em class="fname">(Comparison operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.__cmp__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Definition of equals operator for this class. Lists within this class 
+  are &quot;unordered&quot; for equality comparisons.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>other</code></strong> - Other object to compare to.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>-1/0/1 depending on whether self is <code>&lt;</code>, 
+          <code>=</code> or <code>&gt;</code> other.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="extractXml"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">extractXml</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">xmlPath</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">validate</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.extractXml">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Extracts configuration into an XML document.</p>
+  <p>If <code>xmlPath</code> is not provided, then the XML document will be
+  returned as a string.  If <code>xmlPath</code> is provided, then the XML 
+  document will be written to the file and <code>None</code> will be 
+  returned.</p>
+  <p>Unless the <code>validate</code> parameter is <code>False</code>, the 
+  <a href="CedarBackup2.config.Config-class.html#validate" 
+  class="link">Config.validate</a> method will be called (with its default 
+  arguments) against the configuration before extracting the XML.  If 
+  configuration is not valid, then an XML document will not be 
+  extracted.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlPath</code></strong> (Absolute path to a file.) - Path to an XML file to create on disk.</li>
+        <li><strong class="pname"><code>validate</code></strong> (Boolean true/false.) - Validate the document before extracting it.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>XML string data or <code>None</code> as described above.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If configuration within the object is not valid.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error writing to the file.</li>
+        <li><code><strong class='fraise'>OSError</strong></code> - If there is an error writing to the file.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        It is strongly suggested that the <code>validate</code> option 
+        always be set to <code>True</code> (the default) unless there is a 
+        specific need to write an invalid configuration file to disk.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="validate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">validate</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">requireOneAction</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">requireReference</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">requireExtensions</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">requireOptions</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">requireCollect</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">requireStage</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">requireStore</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">requirePurge</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">requirePeers</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config.validate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates configuration represented by the object.</p>
+  <p>This method encapsulates all of the validations that should apply to a
+  fully &quot;complete&quot; document but are not already taken care of by 
+  earlier validations.  It also provides some extra convenience 
+  functionality which might be useful to some people.  The process of 
+  validation is laid out in the <i>Validation</i> section in the class 
+  notes (above).</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>requireOneAction</code></strong> - Require at least one of the collect, stage, store or purge 
+          sections.</li>
+        <li><strong class="pname"><code>requireReference</code></strong> - Require the reference section.</li>
+        <li><strong class="pname"><code>requireExtensions</code></strong> - Require the extensions section.</li>
+        <li><strong class="pname"><code>requireOptions</code></strong> - Require the options section.</li>
+        <li><strong class="pname"><code>requirePeers</code></strong> - Require the peers section.</li>
+        <li><strong class="pname"><code>requireCollect</code></strong> - Require the collect section.</li>
+        <li><strong class="pname"><code>requireStage</code></strong> - Require the stage section.</li>
+        <li><strong class="pname"><code>requireStore</code></strong> - Require the store section.</li>
+        <li><strong class="pname"><code>requirePurge</code></strong> - Require the purge section.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If one of the validations fails.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setReference"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setReference</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setReference">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the reference configuration value. If not 
+  <code>None</code>, the value must be a <code>ReferenceConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>ReferenceConfig</code></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setExtensions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setExtensions</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setExtensions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the extensions configuration value. If not
+  <code>None</code>, the value must be a <code>ExtensionsConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>ExtensionsConfig</code></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setOptions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setOptions</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setOptions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the options configuration value. If not 
+  <code>None</code>, the value must be an <code>OptionsConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>OptionsConfig</code></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setPeers"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setPeers</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setPeers">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the peers configuration value. If not 
+  <code>None</code>, the value must be an <code>PeersConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>PeersConfig</code></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setCollect"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setCollect</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setCollect">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the collect configuration value. If not 
+  <code>None</code>, the value must be a <code>CollectConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>CollectConfig</code></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setStage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setStage</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setStage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the stage configuration value. If not 
+  <code>None</code>, the value must be a <code>StageConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>StageConfig</code></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setStore"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setStore</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setStore">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the store configuration value. If not 
+  <code>None</code>, the value must be a <code>StoreConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>StoreConfig</code></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setPurge"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setPurge</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._setPurge">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the purge configuration value. If not 
+  <code>None</code>, the value must be a <code>PurgeConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>PurgeConfig</code></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseXmlData"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseXmlData</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">xmlData</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseXmlData">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Internal method to parse an XML string into the object.</p>
+  <p>This method parses the XML document into a DOM tree 
+  (<code>xmlDom</code>) and then calls individual static methods to parse 
+  each of the individual configuration sections.</p>
+  <p>Most of the validation we do here has to do with whether the document 
+  can be parsed and whether any values which exist are valid.  We don't do 
+  much validation as to whether required elements actually exist unless we 
+  have to to make sense of the document (instead, that's the job of the <a 
+  href="CedarBackup2.config.Config-class.html#validate" 
+  class="link">validate</a> method).</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlData</code></strong> (String data) - XML data to be parsed</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the XML cannot be successfully parsed.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseReference"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseReference</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseReference">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses a reference configuration section.</p>
+  <p>We read the following fields:</p>
+<pre class="literalblock">
+  author         //cb_config/reference/author
+  revision       //cb_config/reference/revision
+  description    //cb_config/reference/description
+  generator      //cb_config/reference/generator
+</pre>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>ReferenceConfig</code> object or <code>None</code> if the 
+          section does not exist.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseExtensions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseExtensions</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseExtensions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses an extensions configuration section.</p>
+  <p>We read the following fields:</p>
+<pre class="literalblock">
+  orderMode            //cb_config/extensions/order_mode
+</pre>
+  <p>We also read groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  name                 //cb_config/extensions/action/name
+  module               //cb_config/extensions/action/module
+  function             //cb_config/extensions/action/function
+  index                //cb_config/extensions/action/index
+  dependencies         //cb_config/extensions/action/depends
+</pre>
+  <p>The extended actions are parsed by <a 
+  href="CedarBackup2.config.Config-class.html#_parseExtendedActions" 
+  class="link" onclick="show_private();">_parseExtendedActions</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>ExtensionsConfig</code> object or <code>None</code> if the 
+          section does not exist.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseOptions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseOptions</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseOptions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses a options configuration section.</p>
+  <p>We read the following fields:</p>
+<pre class="literalblock">
+  startingDay    //cb_config/options/starting_day
+  workingDir     //cb_config/options/working_dir
+  backupUser     //cb_config/options/backup_user
+  backupGroup    //cb_config/options/backup_group
+  rcpCommand     //cb_config/options/rcp_command
+  rshCommand     //cb_config/options/rsh_command
+  cbackCommand   //cb_config/options/cback_command
+  managedActions //cb_config/options/managed_actions
+</pre>
+  <p>The list of managed actions is a comma-separated list of action 
+  names.</p>
+  <p>We also read groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  overrides      //cb_config/options/override
+  hooks          //cb_config/options/hook
+</pre>
+  <p>The overrides are parsed by <a 
+  href="CedarBackup2.config.Config-class.html#_parseOverrides" class="link"
+  onclick="show_private();">_parseOverrides</a> and the hooks are parsed by
+  <a href="CedarBackup2.config.Config-class.html#_parseHooks" class="link" 
+  onclick="show_private();">_parseHooks</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>OptionsConfig</code> object or <code>None</code> if the 
+          section does not exist.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parsePeers"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parsePeers</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parsePeers">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses a peers configuration section.</p>
+  <p>We read groups of the following items, one list element per item:</p>
+<pre class="literalblock">
+  localPeers     //cb_config/stage/peer
+  remotePeers    //cb_config/stage/peer
+</pre>
+  <p>The individual peer entries are parsed by <a 
+  href="CedarBackup2.config.Config-class.html#_parsePeerList" class="link" 
+  onclick="show_private();">_parsePeerList</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>StageConfig</code> object or <code>None</code> if the 
+          section does not exist.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseCollect"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseCollect</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseCollect">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses a collect configuration section.</p>
+  <p>We read the following individual fields:</p>
+<pre class="literalblock">
+  targetDir            //cb_config/collect/collect_dir
+  collectMode          //cb_config/collect/collect_mode
+  archiveMode          //cb_config/collect/archive_mode
+  ignoreFile           //cb_config/collect/ignore_file
+</pre>
+  <p>We also read groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  absoluteExcludePaths //cb_config/collect/exclude/abs_path
+  excludePatterns      //cb_config/collect/exclude/pattern
+  collectFiles         //cb_config/collect/file
+  collectDirs          //cb_config/collect/dir
+</pre>
+  <p>The exclusions are parsed by <a 
+  href="CedarBackup2.config.Config-class.html#_parseExclusions" 
+  class="link" onclick="show_private();">_parseExclusions</a>, the collect 
+  files are parsed by <a 
+  href="CedarBackup2.config.Config-class.html#_parseCollectFiles" 
+  class="link" onclick="show_private();">_parseCollectFiles</a>, and the 
+  directories are parsed by <a 
+  href="CedarBackup2.config.Config-class.html#_parseCollectDirs" 
+  class="link" onclick="show_private();">_parseCollectDirs</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>CollectConfig</code> object or <code>None</code> if the 
+          section does not exist.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseStage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseStage</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseStage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses a stage configuration section.</p>
+  <p>We read the following individual fields:</p>
+<pre class="literalblock">
+  targetDir      //cb_config/stage/staging_dir
+</pre>
+  <p>We also read groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  localPeers     //cb_config/stage/peer
+  remotePeers    //cb_config/stage/peer
+</pre>
+  <p>The individual peer entries are parsed by <a 
+  href="CedarBackup2.config.Config-class.html#_parsePeerList" class="link" 
+  onclick="show_private();">_parsePeerList</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>StageConfig</code> object or <code>None</code> if the 
+          section does not exist.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseStore"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseStore</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseStore">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses a store configuration section.</p>
+  <p>We read the following fields:</p>
+<pre class="literalblock">
+  sourceDir         //cb_config/store/source_dir
+  mediaType         //cb_config/store/media_type
+  deviceType        //cb_config/store/device_type
+  devicePath        //cb_config/store/target_device
+  deviceScsiId      //cb_config/store/target_scsi_id
+  driveSpeed        //cb_config/store/drive_speed
+  checkData         //cb_config/store/check_data
+  checkMedia        //cb_config/store/check_media
+  warnMidnite       //cb_config/store/warn_midnite
+  noEject           //cb_config/store/no_eject
+</pre>
+  <p>Blanking behavior configuration is parsed by the 
+  <code>_parseBlankBehavior</code> method.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>StoreConfig</code> object or <code>None</code> if the 
+          section does not exist.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parsePurge"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parsePurge</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parsePurge">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses a purge configuration section.</p>
+  <p>We read groups of the following items, one list element per item:</p>
+<pre class="literalblock">
+  purgeDirs     //cb_config/purge/dir
+</pre>
+  <p>The individual directory entries are parsed by <a 
+  href="CedarBackup2.config.Config-class.html#_parsePurgeDirs" class="link"
+  onclick="show_private();">_parsePurgeDirs</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>PurgeConfig</code> object or <code>None</code> if the 
+          section does not exist.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseExtendedActions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseExtendedActions</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseExtendedActions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads extended actions data from immediately beneath the parent.</p>
+  <p>We read the following individual fields from each extended action:</p>
+<pre class="literalblock">
+  name           name
+  module         module
+  function       function
+  index          index
+  dependencies   depends
+</pre>
+  <p>Dependency information is parsed by the 
+  <code>_parseDependencies</code> method.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of extended actions.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the data at the location can't be read</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseExclusions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseExclusions</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseExclusions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads exclusions data from immediately beneath the parent.</p>
+  <p>We read groups of the following items, one list element per item:</p>
+<pre class="literalblock">
+  absolute    exclude/abs_path
+  relative    exclude/rel_path
+  patterns    exclude/pattern
+</pre>
+  <p>If there are none of some pattern (i.e. no relative path items) then 
+  <code>None</code> will be returned for that item in the tuple.</p>
+  <p>This method can be used to parse exclusions on both the collect 
+  configuration level and on the collect directory level within collect 
+  configuration.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple of (absolute, relative, patterns) exclusions.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseOverrides"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseOverrides</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseOverrides">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads a list of <code>CommandOverride</code> objects from immediately 
+  beneath the parent.</p>
+  <p>We read the following individual fields:</p>
+<pre class="literalblock">
+  command                 command
+  absolutePath            abs_path
+</pre>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of <code>CommandOverride</code> objects or <code>None</code>
+          if none are found.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseHooks"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseHooks</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseHooks">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads a list of <code>ActionHook</code> objects from immediately 
+  beneath the parent.</p>
+  <p>We read the following individual fields:</p>
+<pre class="literalblock">
+  action                  action
+  command                 command
+</pre>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of <code>ActionHook</code> objects or <code>None</code> if 
+          none are found.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseCollectFiles"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseCollectFiles</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseCollectFiles">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads a list of <code>CollectFile</code> objects from immediately 
+  beneath the parent.</p>
+  <p>We read the following individual fields:</p>
+<pre class="literalblock">
+  absolutePath            abs_path
+  collectMode             mode I{or} collect_mode
+  archiveMode             archive_mode
+</pre>
+  <p>The collect mode is a special case.  Just a <code>mode</code> tag is 
+  accepted, but we prefer <code>collect_mode</code> for consistency with 
+  the rest of the config file and to avoid confusion with the archive mode.
+  If both are provided, only <code>mode</code> will be used.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of <code>CollectFile</code> objects or <code>None</code> if 
+          none are found.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseCollectDirs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseCollectDirs</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseCollectDirs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads a list of <code>CollectDir</code> objects from immediately 
+  beneath the parent.</p>
+  <p>We read the following individual fields:</p>
+<pre class="literalblock">
+  absolutePath            abs_path
+  collectMode             mode I{or} collect_mode
+  archiveMode             archive_mode
+  ignoreFile              ignore_file
+  linkDepth               link_depth
+  dereference             dereference
+  recursionLevel          recursion_level
+</pre>
+  <p>The collect mode is a special case.  Just a <code>mode</code> tag is 
+  accepted for backwards compatibility, but we prefer 
+  <code>collect_mode</code> for consistency with the rest of the config 
+  file and to avoid confusion with the archive mode.  If both are provided,
+  only <code>mode</code> will be used.</p>
+  <p>We also read groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  absoluteExcludePaths    exclude/abs_path
+  relativeExcludePaths    exclude/rel_path
+  excludePatterns         exclude/pattern
+</pre>
+  <p>The exclusions are parsed by <a 
+  href="CedarBackup2.config.Config-class.html#_parseExclusions" 
+  class="link" onclick="show_private();">_parseExclusions</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of <code>CollectDir</code> objects or <code>None</code> if 
+          none are found.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parsePurgeDirs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parsePurgeDirs</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parsePurgeDirs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads a list of <code>PurgeDir</code> objects from immediately beneath
+  the parent.</p>
+  <p>We read the following individual fields:</p>
+<pre class="literalblock">
+  absolutePath            &lt;baseExpr&gt;/abs_path
+  retainDays              &lt;baseExpr&gt;/retain_days
+</pre>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of <code>PurgeDir</code> objects or <code>None</code> if 
+          none are found.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the data at the location can't be read</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parsePeerList"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parsePeerList</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parsePeerList">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads remote and local peer data from immediately beneath the 
+  parent.</p>
+  <p>We read the following individual fields for both remote and local 
+  peers:</p>
+<pre class="literalblock">
+  name        name
+  collectDir  collect_dir
+</pre>
+  <p>We also read the following individual fields for remote peers 
+  only:</p>
+<pre class="literalblock">
+  remoteUser     backup_user
+  rcpCommand     rcp_command
+  rshCommand     rsh_command
+  cbackCommand   cback_command
+  managed        managed
+  managedActions managed_actions
+</pre>
+  <p>Additionally, the value in the <code>type</code> field is used to 
+  determine whether this entry is a remote peer.  If the type is 
+  <code>&quot;remote&quot;</code>, it's a remote peer, and if the type is 
+  <code>&quot;local&quot;</code>, it's a remote peer.</p>
+  <p>If there are none of one type of peer (i.e. no local peers) then 
+  <code>None</code> will be returned for that item in the tuple.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple of (local, remote) peer lists.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the data at the location can't be read</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseDependencies"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseDependencies</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseDependencies">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads extended action dependency information from a parent node.</p>
+  <p>We read the following individual fields:</p>
+<pre class="literalblock">
+  runBefore   depends/run_before
+  runAfter    depends/run_after
+</pre>
+  <p>Each of these fields is a comma-separated list of action names.</p>
+  <p>The result is placed into an <code>ActionDependencies</code> 
+  object.</p>
+  <p>If the dependencies parent node does not exist, <code>None</code> will
+  be returned. Otherwise, an <code>ActionDependencies</code> object will 
+  always be created, even if it does not contain any actual dependencies in
+  it.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>ActionDependencies</code> object or <code>None</code>.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the data at the location can't be read</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseBlankBehavior"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseBlankBehavior</span>(<span class="sig-arg">parentNode</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._parseBlankBehavior">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Reads a single <code>BlankBehavior</code> object from immediately 
+  beneath the parent.</p>
+  <p>We read the following individual fields:</p>
+<pre class="literalblock">
+  blankMode     blank_behavior/mode
+  blankFactor   blank_behavior/factor
+</pre>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to search beneath.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>BlankBehavior</code> object or <code>None</code> if none if
+          the section is not found</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some filled-in value is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_extractXml"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_extractXml</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._extractXml">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Internal method to extract configuration into an XML string.</p>
+  <p>This method assumes that the internal <a 
+  href="CedarBackup2.config.Config-class.html#validate" 
+  class="link">validate</a> method has been called prior to extracting the 
+  XML, if the caller cares.  No validation will be done internally.</p>
+  <p>As a general rule, fields that are set to <code>None</code> will be 
+  extracted into the document as empty tags.  The same goes for container 
+  tags that are filled based on lists - if the list is empty or 
+  <code>None</code>, the container tag will be empty.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addReference"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addReference</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">referenceConfig</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addReference">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a &lt;reference&gt; configuration section as the next child of a 
+  parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  author         //cb_config/reference/author
+  revision       //cb_config/reference/revision
+  description    //cb_config/reference/description
+  generator      //cb_config/reference/generator
+</pre>
+  <p>If <code>referenceConfig</code> is <code>None</code>, then no 
+  container will be added.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>referenceConfig</code></strong> - Reference configuration section to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addExtensions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addExtensions</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">extensionsConfig</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addExtensions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds an &lt;extensions&gt; configuration section as the next child of 
+  a parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  order_mode     //cb_config/extensions/order_mode
+</pre>
+  <p>We also add groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  actions        //cb_config/extensions/action
+</pre>
+  <p>The extended action entries are added by <a 
+  href="CedarBackup2.config.Config-class.html#_addExtendedAction" 
+  class="link" onclick="show_private();">_addExtendedAction</a>.</p>
+  <p>If <code>extensionsConfig</code> is <code>None</code>, then no 
+  container will be added.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>extensionsConfig</code></strong> - Extensions configuration section to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addOptions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addOptions</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">optionsConfig</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addOptions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a &lt;options&gt; configuration section as the next child of a 
+  parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  startingDay    //cb_config/options/starting_day
+  workingDir     //cb_config/options/working_dir
+  backupUser     //cb_config/options/backup_user
+  backupGroup    //cb_config/options/backup_group
+  rcpCommand     //cb_config/options/rcp_command
+  rshCommand     //cb_config/options/rsh_command
+  cbackCommand   //cb_config/options/cback_command
+  managedActions //cb_config/options/managed_actions
+</pre>
+  <p>We also add groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  overrides      //cb_config/options/override
+  hooks          //cb_config/options/pre_action_hook
+  hooks          //cb_config/options/post_action_hook
+</pre>
+  <p>The individual override items are added by <a 
+  href="CedarBackup2.config.Config-class.html#_addOverride" class="link" 
+  onclick="show_private();">_addOverride</a>.  The individual hook items 
+  are added by <a href="CedarBackup2.config.Config-class.html#_addHook" 
+  class="link" onclick="show_private();">_addHook</a>.</p>
+  <p>If <code>optionsConfig</code> is <code>None</code>, then no container 
+  will be added.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>optionsConfig</code></strong> - Options configuration section to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addPeers"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addPeers</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">peersConfig</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addPeers">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a &lt;peers&gt; configuration section as the next child of a 
+  parent.</p>
+  <p>We add groups of the following items, one list element per item:</p>
+<pre class="literalblock">
+  localPeers     //cb_config/peers/peer
+  remotePeers    //cb_config/peers/peer
+</pre>
+  <p>The individual local and remote peer entries are added by <a 
+  href="CedarBackup2.config.Config-class.html#_addLocalPeer" class="link" 
+  onclick="show_private();">_addLocalPeer</a> and <a 
+  href="CedarBackup2.config.Config-class.html#_addRemotePeer" class="link" 
+  onclick="show_private();">_addRemotePeer</a>, respectively.</p>
+  <p>If <code>peersConfig</code> is <code>None</code>, then no container 
+  will be added.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>peersConfig</code></strong> - Peers configuration section to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addCollect"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addCollect</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">collectConfig</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addCollect">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a &lt;collect&gt; configuration section as the next child of a 
+  parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  targetDir            //cb_config/collect/collect_dir
+  collectMode          //cb_config/collect/collect_mode
+  archiveMode          //cb_config/collect/archive_mode
+  ignoreFile           //cb_config/collect/ignore_file
+</pre>
+  <p>We also add groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  absoluteExcludePaths //cb_config/collect/exclude/abs_path
+  excludePatterns      //cb_config/collect/exclude/pattern
+  collectFiles         //cb_config/collect/file
+  collectDirs          //cb_config/collect/dir
+</pre>
+  <p>The individual collect files are added by <a 
+  href="CedarBackup2.config.Config-class.html#_addCollectFile" class="link"
+  onclick="show_private();">_addCollectFile</a> and individual collect 
+  directories are added by <a 
+  href="CedarBackup2.config.Config-class.html#_addCollectDir" class="link" 
+  onclick="show_private();">_addCollectDir</a>.</p>
+  <p>If <code>collectConfig</code> is <code>None</code>, then no container 
+  will be added.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>collectConfig</code></strong> - Collect configuration section to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addStage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addStage</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">stageConfig</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addStage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a &lt;stage&gt; configuration section as the next child of a 
+  parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  targetDir      //cb_config/stage/staging_dir
+</pre>
+  <p>We also add groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  localPeers     //cb_config/stage/peer
+  remotePeers    //cb_config/stage/peer
+</pre>
+  <p>The individual local and remote peer entries are added by <a 
+  href="CedarBackup2.config.Config-class.html#_addLocalPeer" class="link" 
+  onclick="show_private();">_addLocalPeer</a> and <a 
+  href="CedarBackup2.config.Config-class.html#_addRemotePeer" class="link" 
+  onclick="show_private();">_addRemotePeer</a>, respectively.</p>
+  <p>If <code>stageConfig</code> is <code>None</code>, then no container 
+  will be added.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>stageConfig</code></strong> - Stage configuration section to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addStore"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addStore</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">storeConfig</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addStore">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a &lt;store&gt; configuration section as the next child of a 
+  parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  sourceDir         //cb_config/store/source_dir
+  mediaType         //cb_config/store/media_type
+  deviceType        //cb_config/store/device_type
+  devicePath        //cb_config/store/target_device
+  deviceScsiId      //cb_config/store/target_scsi_id
+  driveSpeed        //cb_config/store/drive_speed
+  checkData         //cb_config/store/check_data
+  checkMedia        //cb_config/store/check_media
+  warnMidnite       //cb_config/store/warn_midnite
+  noEject           //cb_config/store/no_eject
+  refreshMediaDelay //cb_config/store/refresh_media_delay
+  ejectDelay        //cb_config/store/eject_delay
+</pre>
+  <p>Blanking behavior configuration is added by the <a 
+  href="CedarBackup2.config.Config-class.html#_addBlankBehavior" 
+  class="link" onclick="show_private();">_addBlankBehavior</a> method.</p>
+  <p>If <code>storeConfig</code> is <code>None</code>, then no container 
+  will be added.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>storeConfig</code></strong> - Store configuration section to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addPurge"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addPurge</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">purgeConfig</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addPurge">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a &lt;purge&gt; configuration section as the next child of a 
+  parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  purgeDirs     //cb_config/purge/dir
+</pre>
+  <p>The individual directory entries are added by <a 
+  href="CedarBackup2.config.Config-class.html#_addPurgeDir" class="link" 
+  onclick="show_private();">_addPurgeDir</a>.</p>
+  <p>If <code>purgeConfig</code> is <code>None</code>, then no container 
+  will be added.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>purgeConfig</code></strong> - Purge configuration section to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addExtendedAction"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addExtendedAction</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">action</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addExtendedAction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds an extended action container as the next child of a parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  name           action/name
+  module         action/module
+  function       action/function
+  index          action/index
+  dependencies   action/depends
+</pre>
+  <p>Dependencies are added by the <a 
+  href="CedarBackup2.config.Config-class.html#_addDependencies" 
+  class="link" onclick="show_private();">_addDependencies</a> method.</p>
+  <p>The &lt;action&gt; node itself is created as the next child of the 
+  parent node. This method only adds one action node.  The parent must loop
+  for each action in the <code>ExtensionsConfig</code> object.</p>
+  <p>If <code>action</code> is <code>None</code>, this method call will be 
+  a no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>action</code></strong> - Purge directory to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addOverride"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addOverride</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">override</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addOverride">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a command override container as the next child of a parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  command                 override/command
+  absolutePath            override/abs_path
+</pre>
+  <p>The &lt;override&gt; node itself is created as the next child of the 
+  parent node.  This method only adds one override node.  The parent must 
+  loop for each override in the <code>OptionsConfig</code> object.</p>
+  <p>If <code>override</code> is <code>None</code>, this method call will 
+  be a no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>override</code></strong> - Command override to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addHook"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addHook</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">hook</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addHook">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds an action hook container as the next child of a parent.</p>
+  <p>The behavior varies depending on the value of the <code>before</code> 
+  and <code>after</code> flags on the hook.  If the <code>before</code> 
+  flag is set, it's a pre-action hook, and we'll add the following 
+  fields:</p>
+<pre class="literalblock">
+  action                  pre_action_hook/action
+  command                 pre_action_hook/command
+</pre>
+  <p>If the <code>after</code> flag is set, it's a post-action hook, and 
+  we'll add the following fields:</p>
+<pre class="literalblock">
+  action                  post_action_hook/action
+  command                 post_action_hook/command
+</pre>
+  <p>The &lt;pre_action_hook&gt; or &lt;post_action_hook&gt; node itself is
+  created as the next child of the parent node.  This method only adds one 
+  hook node.  The parent must loop for each hook in the 
+  <code>OptionsConfig</code> object.</p>
+  <p>If <code>hook</code> is <code>None</code>, this method call will be a 
+  no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>hook</code></strong> - Command hook to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addCollectFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addCollectFile</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">collectFile</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addCollectFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a collect file container as the next child of a parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  absolutePath            dir/abs_path
+  collectMode             dir/collect_mode
+  archiveMode             dir/archive_mode
+</pre>
+  <p>Note that for consistency with collect directory handling we'll only 
+  emit the preferred <code>collect_mode</code> tag.</p>
+  <p>The &lt;file&gt; node itself is created as the next child of the 
+  parent node. This method only adds one collect file node.  The parent 
+  must loop for each collect file in the <code>CollectConfig</code> 
+  object.</p>
+  <p>If <code>collectFile</code> is <code>None</code>, this method call 
+  will be a no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>collectFile</code></strong> - Collect file to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addCollectDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addCollectDir</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">collectDir</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addCollectDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a collect directory container as the next child of a parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  absolutePath            dir/abs_path
+  collectMode             dir/collect_mode
+  archiveMode             dir/archive_mode
+  ignoreFile              dir/ignore_file
+  linkDepth               dir/link_depth
+  dereference             dir/dereference
+  recursionLevel          dir/recursion_level
+</pre>
+  <p>Note that an original XML document might have listed the collect mode 
+  using the <code>mode</code> tag, since we accept both 
+  <code>collect_mode</code> and <code>mode</code>. However, here we'll only
+  emit the preferred <code>collect_mode</code> tag.</p>
+  <p>We also add groups of the following items, one list element per 
+  item:</p>
+<pre class="literalblock">
+  absoluteExcludePaths    dir/exclude/abs_path
+  relativeExcludePaths    dir/exclude/rel_path
+  excludePatterns         dir/exclude/pattern
+</pre>
+  <p>The &lt;dir&gt; node itself is created as the next child of the parent
+  node. This method only adds one collect directory node.  The parent must 
+  loop for each collect directory in the <code>CollectConfig</code> 
+  object.</p>
+  <p>If <code>collectDir</code> is <code>None</code>, this method call will
+  be a no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>collectDir</code></strong> - Collect directory to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addLocalPeer"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addLocalPeer</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">localPeer</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addLocalPeer">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a local peer container as the next child of a parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  name                peer/name
+  collectDir          peer/collect_dir
+  ignoreFailureMode   peer/ignore_failures
+</pre>
+  <p>Additionally, <code>peer/type</code> is filled in with 
+  <code>&quot;local&quot;</code>, since this is a local peer.</p>
+  <p>The &lt;peer&gt; node itself is created as the next child of the 
+  parent node. This method only adds one peer node.  The parent must loop 
+  for each peer in the <code>StageConfig</code> object.</p>
+  <p>If <code>localPeer</code> is <code>None</code>, this method call will 
+  be a no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>localPeer</code></strong> - Purge directory to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addRemotePeer"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addRemotePeer</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">remotePeer</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addRemotePeer">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a remote peer container as the next child of a parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  name                peer/name
+  collectDir          peer/collect_dir
+  remoteUser          peer/backup_user
+  rcpCommand          peer/rcp_command
+  rcpCommand          peer/rcp_command
+  rshCommand          peer/rsh_command
+  cbackCommand        peer/cback_command
+  ignoreFailureMode   peer/ignore_failures
+  managed             peer/managed
+  managedActions      peer/managed_actions
+</pre>
+  <p>Additionally, <code>peer/type</code> is filled in with 
+  <code>&quot;remote&quot;</code>, since this is a remote peer.</p>
+  <p>The &lt;peer&gt; node itself is created as the next child of the 
+  parent node. This method only adds one peer node.  The parent must loop 
+  for each peer in the <code>StageConfig</code> object.</p>
+  <p>If <code>remotePeer</code> is <code>None</code>, this method call will
+  be a no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>remotePeer</code></strong> - Purge directory to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addPurgeDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addPurgeDir</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">purgeDir</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addPurgeDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a purge directory container as the next child of a parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  absolutePath            dir/abs_path
+  retainDays              dir/retain_days
+</pre>
+  <p>The &lt;dir&gt; node itself is created as the next child of the parent
+  node. This method only adds one purge directory node.  The parent must 
+  loop for each purge directory in the <code>PurgeConfig</code> object.</p>
+  <p>If <code>purgeDir</code> is <code>None</code>, this method call will 
+  be a no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>purgeDir</code></strong> - Purge directory to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addDependencies"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addDependencies</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">dependencies</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addDependencies">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a extended action dependencies to parent node.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  runBefore      depends/run_before
+  runAfter       depends/run_after
+</pre>
+  <p>If <code>dependencies</code> is <code>None</code>, this method call 
+  will be a no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>dependencies</code></strong> - <code>ActionDependencies</code> object to be added to the 
+          document</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildCommaSeparatedString"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildCommaSeparatedString</span>(<span class="sig-arg">valueList</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._buildCommaSeparatedString">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Creates a comma-separated string from a list of values.</p>
+  <p>As a special case, if <code>valueList</code> is <code>None</code>, 
+  then <code>None</code> will be returned.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>valueList</code></strong> - List of values to be placed into a string</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Values from valueList as a comma-separated string.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addBlankBehavior"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addBlankBehavior</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">blankBehavior</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._addBlankBehavior">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a blanking behavior container as the next child of a parent.</p>
+  <p>We add the following fields to the document:</p>
+<pre class="literalblock">
+  blankMode    blank_behavior/mode
+  blankFactor  blank_behavior/factor
+</pre>
+  <p>The &lt;blank_behavior&gt; node itself is created as the next child of
+  the parent node.</p>
+  <p>If <code>blankBehavior</code> is <code>None</code>, this method call 
+  will be a no-op.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <a 
+          href="CedarBackup2.xmlutil-module.html#createOutputDom" 
+          class="link">createOutputDom</a>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent that the section should be appended to.</li>
+        <li><strong class="pname"><code>blankBehavior</code></strong> - Blanking behavior to be added to the document.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validateContents"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validateContents</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateContents">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates configuration contents per rules discussed in module 
+  documentation.</p>
+  <p>This is the second pass at validation.  It ensures that any filled-in 
+  section contains valid data.  Any sections which is not set to 
+  <code>None</code> is validated per the rules for that section, laid out 
+  in the module documentation (above).</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validateReference"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validateReference</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateReference">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates reference configuration. There are currently no 
+  reference-related validations.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If reference configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validateExtensions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validateExtensions</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateExtensions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates extensions configuration.</p>
+  <p>The list of actions may be either <code>None</code> or an empty list 
+  <code>[]</code> if desired.  Each extended action must include a name, a 
+  module, and a function.</p>
+  <p>Then, if the order mode is None or &quot;index&quot;, an index is 
+  required; and if the order mode is &quot;dependency&quot;, dependency 
+  information is required.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If reference configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validateOptions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validateOptions</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateOptions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates options configuration.</p>
+  <p>All fields must be filled in except the rsh command.  The rcp and rsh 
+  commands are used as default values for all remote peers.  Remote peers 
+  can also rely on the backup user as the default remote user name if they 
+  choose.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If reference configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validatePeers"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validatePeers</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validatePeers">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates peers configuration per rules in <a 
+  href="CedarBackup2.config.Config-class.html#_validatePeerList" 
+  class="link" onclick="show_private();">_validatePeerList</a>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If peers configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validateCollect"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validateCollect</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateCollect">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates collect configuration.</p>
+  <p>The target directory must be filled in.  The collect mode, archive 
+  mode, ignore file, and recursion level are all optional.  The list of 
+  absolute paths to exclude and patterns to exclude may be either 
+  <code>None</code> or an empty list <code>[]</code> if desired.</p>
+  <p>Each collect directory entry must contain an absolute path to collect,
+  and then must either be able to take collect mode, archive mode and 
+  ignore file configuration from the parent <code>CollectConfig</code> 
+  object, or must set each value on its own.  The list of absolute paths to
+  exclude, relative paths to exclude and patterns to exclude may be either 
+  <code>None</code> or an empty list <code>[]</code> if desired.  Any list 
+  of absolute paths to exclude or patterns to exclude will be combined with
+  the same list in the <code>CollectConfig</code> object to make the 
+  complete list for a given directory.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If collect configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validateStage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validateStage</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateStage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates stage configuration.</p>
+  <p>The target directory must be filled in, and the peers are also 
+  validated.</p>
+  <p>Peers are only required in this section if the peers configuration 
+  section is not filled in.  However, if any peers are filled in here, they
+  override the peers configuration and must meet the validation criteria in
+  <a href="CedarBackup2.config.Config-class.html#_validatePeerList" 
+  class="link" onclick="show_private();">_validatePeerList</a>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If stage configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validateStore"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validateStore</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validateStore">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates store configuration.</p>
+  <p>The device type, drive speed, and blanking behavior are optional.  All
+  other values are required. Missing booleans will be set to defaults.</p>
+  <p>If blanking behavior is provided, then both a blanking mode and a 
+  blanking factor are required.</p>
+  <p>The image writer functionality in the <code>writer</code> module is 
+  supposed to be able to handle a device speed of <code>None</code>.</p>
+  <p>Any caller which needs a &quot;real&quot; (non-<code>None</code>) 
+  value for the device type can use <code>DEFAULT_DEVICE_TYPE</code>, which
+  is guaranteed to be sensible.</p>
+  <p>This is also where we make sure that the media type -- which is 
+  already a valid type -- matches up properly with the device type.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If store configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validatePurge"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validatePurge</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validatePurge">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates purge configuration.</p>
+  <p>The list of purge directories may be either <code>None</code> or an 
+  empty list <code>[]</code> if desired.  All purge directories must 
+  contain a path and a retain days value.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If purge configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_validatePeerList"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_validatePeerList</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">localPeers</span>,
+        <span class="sig-arg">remotePeers</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#Config._validatePeerList">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates the set of local and remote peers.</p>
+  <p>Local peers must be completely filled in, including both name and 
+  collect directory.  Remote peers must also fill in the name and collect 
+  directory, but can leave the remote user and rcp command unset.  In this 
+  case, the remote user is assumed to match the backup user from the 
+  options section and rcp command is taken directly from the options 
+  section.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>localPeers</code></strong> - List of local peers</li>
+        <li><strong class="pname"><code>remotePeers</code></strong> - List of remote peers</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If stage configuration is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="reference"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">reference</h3>
+  <p>Reference configuration in terms of a <code>ReferenceConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_getReference" class="summary-sig-name" onclick="show_private();">_getReference</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the reference configuration value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setReference" class="summary-sig-name" onclick="show_private();">_setReference</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the reference configuration value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="extensions"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">extensions</h3>
+  <p>Extensions configuration in terms of a <code>ExtensionsConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_getExtensions" class="summary-sig-name" onclick="show_private();">_getExtensions</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the extensions configuration value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setExtensions" class="summary-sig-name" onclick="show_private();">_setExtensions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the extensions configuration value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="options"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">options</h3>
+  <p>Options configuration in terms of a <code>OptionsConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_getOptions" class="summary-sig-name" onclick="show_private();">_getOptions</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the options configuration value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setOptions" class="summary-sig-name" onclick="show_private();">_setOptions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the options configuration value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="collect"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">collect</h3>
+  <p>Collect configuration in terms of a <code>CollectConfig</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_getCollect" class="summary-sig-name" onclick="show_private();">_getCollect</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the collect configuration value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setCollect" class="summary-sig-name" onclick="show_private();">_setCollect</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the collect configuration value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="stage"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">stage</h3>
+  <p>Stage configuration in terms of a <code>StageConfig</code> object.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_getStage" class="summary-sig-name" onclick="show_private();">_getStage</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the stage configuration value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setStage" class="summary-sig-name" onclick="show_private();">_setStage</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the stage configuration value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="store"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">store</h3>
+  <p>Store configuration in terms of a <code>StoreConfig</code> object.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_getStore" class="summary-sig-name" onclick="show_private();">_getStore</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the store configuration value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setStore" class="summary-sig-name" onclick="show_private();">_setStore</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the store configuration value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="purge"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">purge</h3>
+  <p>Purge configuration in terms of a <code>PurgeConfig</code> object.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_getPurge" class="summary-sig-name" onclick="show_private();">_getPurge</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the purge configuration value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setPurge" class="summary-sig-name" onclick="show_private();">_setPurge</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the purge configuration value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="peers"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">peers</h3>
+  <p>Peers configuration in terms of a <code>PeersConfig</code> object.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_getPeers" class="summary-sig-name" onclick="show_private();">_getPeers</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the peers configuration value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.Config-class.html#_setPeers" class="summary-sig-name" onclick="show_private();">_setPeers</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the peers configuration value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

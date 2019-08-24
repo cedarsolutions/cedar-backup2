@@ -1,0 +1,60 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Recovering MySQL Data</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="apc.html" title="Appendix C. Data Recovery"><link rel="prev" href="apcs02.html" title="Recovering Filesystem Data"><link rel="next" href="apcs04.html" title="Recovering Subversion Data"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Recovering MySQL Data</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apcs02.html">Prev</a> </td><th width="60%" align="center">Appendix C. Data Recovery</th><td width="20%" align="right"> <a accesskey="n" href="apcs04.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-recovering-mysql"></a>Recovering MySQL Data</h2></div></div></div><p>
+         MySQL data is gathered by the Cedar Backup mysql extension.  This
+         extension always creates a full backup each time it runs.  This wastes
+         some space, but makes it easy to restore database data.  The following
+         procedure describes how to restore your MySQL database from the
+         backup.
+      </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3><p>
+            I am not a MySQL expert.  I am providing this information for
+            reference.  I have tested these procedures on my own MySQL
+            installation; however, I only have a single database for use by
+            Bugzilla, and I may have misunderstood something with regard to
+            restoring individual databases as a user other than root.  If you
+            have any doubts, test the procedure below before relying on it!
+         </p><p>
+            MySQL experts and/or knowledgable Cedar Backup users: feel free to
+            write me and correct any part of this procedure.
+         </p></div><p>
+         First, find the backup you are interested in.  If you have specified
+         <span class="quote">&#8220;<span class="quote">all databases</span>&#8221;</span> in configuration, you will have a single
+         backup file, called <code class="filename">mysqldump.txt</code>.  If you have
+         specified individual databases in configuration, then you will have
+         files with names like <code class="filename">mysqldump-database.txt</code>
+         instead.  In either case, your file might have a
+         <code class="filename">.gz</code> or <code class="filename">.bz2</code> extension
+         depending on what kind of compression you specified in configuration.
+      </p><p>
+         If you are restoring an <span class="quote">&#8220;<span class="quote">all databases</span>&#8221;</span> backup, make sure
+         that you have correctly created the root user and know its password.
+         Then, execute:
+      </p><pre class="screen">
+daystrom:/# bzcat mysqldump.txt.bz2 | mysql -p -u root
+      </pre><p>
+         Of course, use <span class="command"><strong>zcat</strong></span> or just <span class="command"><strong>cat</strong></span>,
+         depending on what kind of compression is in use.
+      </p><p>
+         Because the database backup includes <code class="literal">CREATE
+         DATABASE</code> SQL statements, this command should take care of
+         creating all of the databases within the backup, as well as populating
+         them.  
+      </p><p>
+         If you are restoring a backup for a specific database, you have two
+         choices.  If you have a root login, you can use the same command
+         as above:
+      </p><pre class="screen">
+daystrom:/# bzcat mysqldump-database.txt.bz2 | mysql -p -u root
+      </pre><p>
+         Otherwise, you can create the database and its login first (or have
+         someone create it) and then use a database-specific login to execute
+         the restore:
+      </p><pre class="screen">
+daystrom:/# bzcat mysqldump-database.txt.bz2 | mysql -p -u user database
+      </pre><p>
+         Again, use <span class="command"><strong>zcat</strong></span> or just <span class="command"><strong>cat</strong></span> as
+         appropriate.
+      </p><p>
+         For more information on using MySQL, see the documentation on the
+         MySQL web site, <a class="ulink" href="http://mysql.org/" target="_top">http://mysql.org/</a>, or the manpages
+         for the <span class="command"><strong>mysql</strong></span> and <span class="command"><strong>mysqldump</strong></span>
+         commands.
+      </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apcs02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apc.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apcs04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Recovering Filesystem Data </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Recovering Subversion Data</td></tr></table></div></body></html>

@@ -1,0 +1,61 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Chapter 1. Introduction</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="prev" href="pr01s05.html" title="Acknowledgments"><link rel="next" href="ch01s02.html" title="Migrating from Version 2 to Version 3"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 1. Introduction</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="pr01s05.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch01s02.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="cedar-intro"></a>Chapter 1. Introduction</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="ch01.html#cedar-intro-whatis">What is Cedar Backup?</a></span></dt><dt><span class="sect1"><a href="ch01s02.html">Migrating from Version 2 to Version 3</a></span></dt><dt><span class="sect1"><a href="ch01s03.html">How to Get Support</a></span></dt><dt><span class="sect1"><a href="ch01s04.html">History</a></span></dt></dl></div><div class="simplesect"><div class="titlepage"></div><div class="blockquote"><blockquote class="blockquote"><p>
+            <span class="quote">&#8220;<span class="quote">Only wimps use tape backup: real men just upload their
+            important stuff on ftp, and let the rest of the world mirror
+            it.</span>&#8221;</span>&#8212; Linus Torvalds, at the release of Linux 
+            2.0.8 in July of 1996.
+          </p></blockquote></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-intro-whatis"></a>What is Cedar Backup?</h2></div></div></div><p>
+         Cedar Backup is a software package designed to manage system
+         backups for a pool of local and remote machines.  Cedar Backup
+         understands how to back up filesystem data as well as MySQL and
+         PostgreSQL databases and Subversion repositories.  It can also be
+         easily extended to support other kinds of data sources.
+      </p><p>
+         Cedar Backup is focused around weekly backups to a single CD or DVD
+         disc, with the expectation that the disc will be changed or
+         overwritten at the beginning of each week.  If your hardware is new
+         enough (and almost all hardware is today), Cedar Backup can write
+         multisession discs, allowing you to add incremental data to a disc on
+         a daily basis.
+      </p><p>
+         Alternately, Cedar Backup can write your backups to the Amazon S3 cloud
+         rather than relying on physical media.
+      </p><p>
+         Besides offering command-line utilities to manage the backup process,
+         Cedar Backup provides a well-organized library of backup-related
+         functionality, written in the Python 2 programming language.
+      </p><p>
+         There are many different backup software implementations out there in
+         the open source world. Cedar Backup aims to fill a niche: it aims to
+         be a good fit for people who need to back up a limited amount of
+         important data on a regular basis. Cedar Backup isn't for you if you
+         want to back up your huge MP3 collection every night, or if you want
+         to back up a few hundred machines. However, if you administer a small
+         set of machines and you want to run daily incremental backups for
+         things like system configuration, current email, small web sites,
+         Subversion or Mercurial repositories, or small MySQL databases, then
+         Cedar Backup is probably worth your time.
+      </p><p>
+         Cedar Backup has been developed on a Debian GNU/Linux system and is
+         primarily supported on Debian and other Linux systems.  However, since
+         it is written in portable Python 2, it should run without problems on
+         just about any UNIX-like operating system.  In particular, full Cedar
+         Backup functionality is known to work on Debian and SuSE Linux
+         systems, and client functionality is also known to work on FreeBSD and
+         Mac OS X systems.
+      </p><p>
+         To run a Cedar Backup client, you really just need a working Python 2
+         installation.  To run a Cedar Backup master, you will also need a set
+         of other executables, most of which are related to building and
+         writing CD/DVD images or talking to the Amazon S3 infrastructure.  A
+         full list of dependencies is provided in 
+         <a class="xref" href="ch03s03.html#cedar-install-source-deps" title="Installing Dependencies">the section called &#8220;Installing Dependencies&#8221;</a>.
+      </p><p>
+         There are two releases of Cedar Backup: version 2 and version 3. This
+         project (Cedar Backup v2) uses the Python 2 interpreter, and 
+         <a class="ulink" href="https://bitbucket.org/cedarsolutions/cedar-backup3" target="_top">Cedar Backup v3</a> 
+         uses the Python 3 interpreter. Because Python 2 is approaching its end
+         of life, and Cedar Backup v3 has been available since July of 2015,
+         Cedar Backup v2 is unsupported as of 11 Nov 2017.  There will be no
+         additional releases, and users who report problems will be referred to
+         the new version. Please move to Cedar Backup v3.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="pr01s05.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch01s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Acknowledgments </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Migrating from Version 2 to Version 3</td></tr></table></div></body></html>

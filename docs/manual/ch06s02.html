@@ -1,0 +1,181 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Amazon S3 Extension</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch06.html" title="Chapter 6. Official Extensions"><link rel="prev" href="ch06.html" title="Chapter 6. Official Extensions"><link rel="next" href="ch06s03.html" title="Subversion Extension"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Amazon S3 Extension</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Official Extensions</th><td width="20%" align="right"> <a accesskey="n" href="ch06s03.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-extensions-amazons3"></a>Amazon S3 Extension</h2></div></div></div><p>
+         The Amazon S3 extension writes data to Amazon S3 cloud storage rather
+         than to physical media.  It is intended to replace the store action,
+         but you can also use it alongside the store action if you'd prefer to
+         backup your data in more than one place.  This extension must be run
+         after the stage action.
+      </p><p>
+         The underlying functionality relies on the 
+         <a class="ulink" href="http://aws.amazon.com/documentation/cli/" target="_top">AWS CLI</a> toolset.
+         Before you use this extension, you need to set up your Amazon S3
+         account and configure AWS CLI as detailed in Amazons's 
+         <a class="ulink" href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html" target="_top">setup guide</a>.
+         The extension assumes that the backup is being executed as root, and
+         switches over to the configured backup user to run the
+         <span class="command"><strong>aws</strong></span> program.  So, make sure you configure the AWS
+         CLI tools as the backup user and not root.  (This is different than
+         the amazons3 sync tool extension, which executes AWS CLI command as
+         the same user that is running the tool.)
+      </p><p>
+         You can use whichever Amazon-supported authentication mechanism you
+         would like when setting up connectivity for the AWS CLI.  It's best
+         to set up a separate user in the 
+         <a class="ulink" href="https://console.aws.amazon.com/iam/home" target="_top">IAM Console</a>
+         rather than using your main administrative user.
+      </p><p>
+         You probably want to lock down this user so that it can only take
+         backup related actions in the AWS infrastructure.  One option is to
+         apply the <span class="command"><strong>AmazonS3FullAccess</strong></span> policy, which grants
+         full access to the S3 infrastructure.  If you would like to lock down
+         the user even further, this appears to be the minimum set of
+         permissions required for Cedar Backup, written as a JSON policy
+         statement:
+      </p><pre class="programlisting">
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:ListObjects",
+                "s3:PutObject",
+                "s3:PutObjectAcl",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::my-bucket",
+                "arn:aws:s3:::my-bucket/*"
+            ]
+        }
+    ]
+}
+      </pre><p>
+         In the <code class="literal">Resource</code> section, be sure to list the name
+         of your S3 bucket instead of <code class="literal">my-bucket</code>.
+      </p><p>
+         When using physical media via the standard store action, there is an
+         implicit limit to the size of a backup, since a backup must fit on a
+         single disc.  Since there is no physical media, no such limit exists
+         for Amazon S3 backups.  This leaves open the possibility that Cedar
+         Backup might construct an unexpectedly-large backup that the
+         administrator is not aware of.  Over time, this might become
+         expensive, either in terms of network bandwidth or in terms of Amazon
+         S3 storage and I/O charges.  To mitigate this risk, set a reasonable
+         maximum size using the configuration elements shown below.  If the
+         backup fails, you have a chance to review what made the backup larger
+         than you expected, and you can either correct the problem (i.e. remove
+         a large temporary directory that got inadvertently included in the
+         backup) or change configuration to take into account the new "normal"
+         maximum size.
+      </p><p>
+         You can optionally configure Cedar Backup to encrypt data before
+         sending it to S3.  To do that, provide a complete command line using
+         the <code class="literal">${input}</code> and <code class="literal">${output}</code>
+         variables to represent the original input file and the encrypted
+         output file.  This command will be executed as the backup user.
+      </p><p>
+         For instance, you can use something like this with GPG:
+      </p><pre class="programlisting">
+/usr/bin/gpg -c --no-use-agent --batch --yes --passphrase-file /home/backup/.passphrase -o ${output} ${input}
+      </pre><p>
+         The GPG mechanism depends on a strong passphrase for security.  One way to
+         generate a strong passphrase is using your system random number generator, i.e.:
+      </p><pre class="programlisting">
+dd if=/dev/urandom count=20 bs=1 | xxd -ps
+      </pre><p>
+         (See <a class="ulink" href="http://security.stackexchange.com/questions/14867/gpg-encryption-security" target="_top">StackExchange</a>
+         for more details about that advice.) If you decide to use encryption, make sure you
+         save off the passphrase in a safe place, so you can get at your backup data
+         later if you need to.  And obviously, make sure to set permissions on the
+         passphrase file so it can only be read by the backup user.
+      </p><p>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </p><pre class="programlisting">
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;amazons3&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.amazons3&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;201&lt;/index&gt; &lt;!-- just after stage --&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </pre><p>
+         This extension relies on the options and staging configuration sections
+         in the standard Cedar Backup configuration file, and then also
+         requires its own <code class="literal">amazons3</code> configuration section.
+         This is an example configuration section with encryption disabled:
+      </p><pre class="programlisting">
+&lt;amazons3&gt;
+      &lt;s3_bucket&gt;example.com-backup/staging&lt;/s3_bucket&gt;
+&lt;/amazons3&gt;
+      </pre><p>
+         The following elements are part of the Amazon S3 configuration section:
+      </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">warn_midnite</code></span></dt><dd><p>Whether to generate warnings for crossing midnite.</p><p>
+                  This field indicates whether warnings should be generated
+                  if the Amazon S3 operation has to cross a midnite boundary in
+                  order to find data to write to the cloud.  For instance, a
+                  warning would be generated if valid data was only
+                  found in the day before or day after the current day.
+               </p><p>
+                  Configuration for some users is such that the amazons3
+                  operation will always cross a midnite boundary, so they
+                  will not care about this warning.  Other users will expect
+                  to never cross a boundary, and want to be notified that
+                  something <span class="quote">&#8220;<span class="quote">strange</span>&#8221;</span> might have happened.
+               </p><p>
+                  This field is optional.  If it doesn't exist, then
+                  <code class="literal">N</code> will be assumed.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be a boolean (<code class="literal">Y</code> or <code class="literal">N</code>).
+               </p></dd><dt><span class="term"><code class="literal">s3_bucket</code></span></dt><dd><p>The name of the Amazon S3 bucket that data will be written to.</p><p>
+                  This field configures the S3 bucket that your data will be
+                  written to.  In S3, buckets are named globally.  For
+                  uniqueness, you would typically use the name of your domain
+                  followed by some suffix, such as <code class="literal">example.com-backup</code>.  
+                  If you want, you can specify a subdirectory within the bucket,
+                  such as <code class="literal">example.com-backup/staging</code>.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be non-empty.
+               </p></dd><dt><span class="term"><code class="literal">encrypt</code></span></dt><dd><p>Command used to encrypt backup data before upload to S3</p><p>
+                  If this field is provided, then data will be encrypted before
+                  it is uploaded to Amazon S3.  You must provide the entire
+                  command used to encrypt a file, including the
+                  <code class="literal">${input}</code> and <code class="literal">${output}</code>
+                  variables.  An example GPG command is shown above, but you
+                  can use any mechanism you choose.  The command will be run as
+                  the configured backup user.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> If provided, must be non-empty.
+               </p></dd><dt><span class="term"><code class="literal">full_size_limit</code></span></dt><dd><p>Maximum size of a full backup</p><p>
+                  If this field is provided, then a size limit will be applied
+                  to full backups.  If the total size of the selected staging
+                  directory is greater than the limit, then the backup will
+                  fail.  
+               </p><p>
+                  You can enter this value in two different forms.  It can
+                  either be a simple number, in which case the value is assumed
+                  to be in bytes; or it can be a number followed by a unit
+                  (KB, MB, GB).  
+               </p><p>
+                  Valid examples are <span class="quote">&#8220;<span class="quote">10240</span>&#8221;</span>, <span class="quote">&#8220;<span class="quote">250
+                  MB</span>&#8221;</span> or <span class="quote">&#8220;<span class="quote">1.1 GB</span>&#8221;</span>.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be a value as described above, greater than zero.
+               </p></dd><dt><span class="term"><code class="literal">incr_size_limit</code></span></dt><dd><p>Maximum size of an incremental backup</p><p>
+                  If this field is provided, then a size limit will be applied
+                  to incremental backups.  If the total size of the selected
+                  staging directory is greater than the limit, then the backup
+                  will fail.  
+               </p><p>
+                  You can enter this value in two different forms.  It can
+                  either be a simple number, in which case the value is assumed
+                  to be in bytes; or it can be a number followed by a unit
+                  (KB, MB, GB).  
+               </p><p>
+                  Valid examples are <span class="quote">&#8220;<span class="quote">10240</span>&#8221;</span>, <span class="quote">&#8220;<span class="quote">250
+                  MB</span>&#8221;</span> or <span class="quote">&#8220;<span class="quote">1.1 GB</span>&#8221;</span>.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be a value as described above, greater than zero.
+               </p></dd></dl></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 6. Official Extensions </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Subversion Extension</td></tr></table></div></body></html>

@@ -1,0 +1,72 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Recovering Subversion Data</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="apc.html" title="Appendix C. Data Recovery"><link rel="prev" href="apcs03.html" title="Recovering MySQL Data"><link rel="next" href="apcs05.html" title="Recovering Mailbox Data"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Recovering Subversion Data</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apcs03.html">Prev</a> </td><th width="60%" align="center">Appendix C. Data Recovery</th><td width="20%" align="right"> <a accesskey="n" href="apcs05.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-recovering-subversion"></a>Recovering Subversion Data</h2></div></div></div><p>
+         Subversion data is gathered by the Cedar Backup subversion extension.
+         Cedar Backup will create either full or incremental backups, but the
+         procedure for restoring is the same for both.  Subversion backups
+         are always taken on a per-repository basis.  If you need to restore
+         more than one repository, follow the procedures below for each repository
+         you are interested in.
+      </p><p>
+         First, find the backup or backups you are interested in.  Typically,
+         you will need the full backup from the first day of the week and each
+         incremental backup from the other days of the week.  
+      </p><p>
+         The subversion extension creates files of the form
+         <code class="filename">svndump-*.txt</code>.  These files might have a
+         <code class="filename">.gz</code> or <code class="filename">.bz2</code> extension
+         depending on what kind of compression you specified in configuration.
+         There is one dump file for each configured repository, and the dump
+         file name represents the name of the repository and the revisions in
+         that dump.  So, the file
+         <code class="filename">svndump-0:782-opt-svn-repo1.txt.bz2</code>
+         represents revisions 0-782 of the repository at
+         <code class="filename">/opt/svn/repo1</code>.  You can tell that this
+         file contains a full backup of the repository to this point, because
+         the starting revision is zero.  Later incremental backups would have a
+         non-zero starting revision, i.e. perhaps 783-785, followed by 786-800,
+         etc.
+      </p><p>
+         Next, if you still have the old Subversion repository around, you
+         might want to just move it off (rename the top-level directory) before
+         executing the restore.  Or, you can restore into a temporary directory
+         and rename it later to its real name once you've checked it out.  That
+         is what my example below will show.
+      </p><p>
+         Next, you need to create a new Subversion repository to hold the
+         restored data.  This example shows an FSFS repository, but that is an
+         arbitrary choice. You can restore from an FSFS backup into a FSFS
+         repository or a BDB repository.  The Subversion dump format is
+         <span class="quote">&#8220;<span class="quote">backend-agnostic</span>&#8221;</span>.
+      </p><pre class="screen">
+root:/tmp# svnadmin create --fs-type=fsfs testrepo
+      </pre><p>
+         Next, load the full backup into the repository:
+      </p><pre class="screen">
+root:/tmp# bzcat svndump-0:782-opt-svn-repo1.txt.bz2 | svnadmin load testrepo
+      </pre><p>
+         Of course, use <span class="command"><strong>zcat</strong></span> or just <span class="command"><strong>cat</strong></span>,
+         depending on what kind of compression is in use.
+      </p><p>
+         Follow that with loads for each of the incremental backups:
+      </p><pre class="screen">
+root:/tmp# bzcat svndump-783:785-opt-svn-repo1.txt.bz2 | svnadmin load testrepo
+root:/tmp# bzcat svndump-786:800-opt-svn-repo1.txt.bz2 | svnadmin load testrepo
+      </pre><p>
+         Again, use <span class="command"><strong>zcat</strong></span> or just <span class="command"><strong>cat</strong></span> as
+         appropriate.
+      </p><p>
+         When this is done, your repository will be restored to the point of
+         the last commit indicated in the svndump file (in this case, to
+         revision 800). 
+      </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+            Note: don't be surprised if, when you test this, the restored directory
+            doesn't have exactly the same contents as the original directory.  I can't
+            explain why this happens, but if you execute <span class="command"><strong>svnadmin dump</strong></span>
+            on both old and new repositories, the results are identical.  This means that
+            the repositories do contain the same content.
+         </p></div><p>
+         For more information on using Subversion, see the book
+         <em class="citetitle">Version Control with Subversion</em> 
+         (<a class="ulink" href="http://svnbook.red-bean.com/" target="_top">http://svnbook.red-bean.com/</a>) or the 
+         <em class="citetitle">Subversion FAQ</em> 
+         (<a class="ulink" href="http://subversion.tigris.org/faq.html" target="_top">http://subversion.tigris.org/faq.html</a>).
+      </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apcs03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apc.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apcs05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Recovering MySQL Data </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Recovering Mailbox Data</td></tr></table></div></body></html>

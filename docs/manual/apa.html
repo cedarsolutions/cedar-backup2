@@ -1,0 +1,123 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Appendix A. Extension Architecture Interface</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="prev" href="ch06s09.html" title="Capacity Extension"><link rel="next" href="apb.html" title="Appendix B. Dependencies"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Appendix A. Extension Architecture Interface</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s09.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apb.html">Next</a></td></tr></table><hr></div><div class="appendix"><div class="titlepage"><div><div><h1 class="title"><a name="cedar-extenspec"></a>Appendix A. Extension Architecture Interface</h1></div></div></div><div class="simplesect"><div class="titlepage"></div><p>
+         The Cedar Backup <em class="firstterm">Extension Architecture
+         Interface</em> is the application programming interface used by
+         third-party developers to write Cedar Backup extensions.  This
+         appendix briefly specifies the interface in enough detail for
+         someone to succesfully implement an extension.
+      </p><p>
+         You will recall that Cedar Backup extensions are third-party pieces of
+         code which extend Cedar Backup's functionality.  Extensions can be
+         invoked from the Cedar Backup command line and are allowed to place
+         their configuration in Cedar Backup's configuration file.
+      </p><p>
+         There is a one-to-one mapping between a command-line extended action
+         and an extension function.  The mapping is configured in the Cedar
+         Backup configuration file using a section something like this:
+      </p><pre class="programlisting">
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;database&lt;/name&gt;
+      &lt;module&gt;foo&lt;/module&gt;
+      &lt;function&gt;bar&lt;/function&gt;
+      &lt;index&gt;101&lt;/index&gt;
+   &lt;/action&gt; 
+&lt;/extensions&gt;
+      </pre><p>
+         In this case, the action <span class="quote">&#8220;<span class="quote">database</span>&#8221;</span> has been mapped to
+         the extension function <code class="literal">foo.bar()</code>.  
+      </p><p>
+         Extension functions can take any actions they would like to once they
+         have been invoked, but must abide by these rules:
+      </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+               Extensions may not write to <code class="filename">stdout</code> or
+               <code class="filename">stderr</code> using functions such as
+               <code class="literal">print</code> or <code class="literal">sys.write</code>.
+            </p></li><li class="listitem"><p>
+               All logging must take place using the Python logging
+               facility.  Flow-of-control logging should happen on the
+               <code class="literal">CedarBackup2.log</code> topic.  Authors can assume
+               that ERROR will always go to the terminal, that INFO and WARN
+               will always be logged, and that DEBUG will be ignored unless
+               debugging is enabled.
+            </p></li><li class="listitem"><p>
+               Any time an extension invokes a command-line utility, it must be
+               done through the <code class="literal">CedarBackup2.util.executeCommand</code>
+               function.  This will help keep Cedar Backup safer from
+               format-string attacks, and will make it easier to consistently
+               log command-line process output.
+            </p></li><li class="listitem"><p>
+               Extensions may not return any value.  
+            </p></li><li class="listitem"><p>
+               Extensions must throw a Python exception containing a
+               descriptive message if processing fails.  Extension authors can
+               use their judgement as to what constitutes failure; however, any
+               problems during execution should result in either a thrown
+               exception or a logged message.
+            </p></li><li class="listitem"><p>
+               Extensions may rely only on Cedar Backup functionality that is
+               advertised as being part of the public interface.  This means
+               that extensions cannot directly make use of methods, functions
+               or values starting with with the <code class="literal">_</code> character.
+               Furthermore, extensions should only rely on parts of the public
+               interface that are documented in the online Epydoc
+               documentation.
+            </p></li><li class="listitem"><p>
+               Extension authors are encouraged to extend the Cedar Backup
+               public interface through normal methods of inheritence.
+               However, no extension is allowed to directly change Cedar Backup
+               code in a way that would affect how Cedar Backup itself executes
+               when the extension has not been invoked.  For instance,
+               extensions would not be allowed to add new command-line options
+               or new writer types.
+            </p></li><li class="listitem"><p>
+               Extensions must be written to assume an empty locale set (no
+               <code class="literal">$LC_*</code> settings) and
+               <code class="literal">$LANG=C</code>.  For the typical open-source
+               software project, this would imply writing output-parsing code
+               against the English localization (if any).  The
+               <code class="literal">executeCommand</code> function does sanitize the
+               environment to enforce this configuration.
+            </p></li></ol></div><p>
+         Extension functions take three arguments: the path to configuration on
+         disk, a <code class="literal">CedarBackup2.cli.Options</code> object
+         representing the command-line options in effect, and a
+         <code class="literal">CedarBackup2.config.Config</code> object representing
+         parsed standard configuration.   
+      </p><pre class="programlisting">
+def function(configPath, options, config):
+   """Sample extension function."""
+   pass
+      </pre><p>
+         This interface is structured so that simple extensions can use
+         standard configuration without having to parse it for themselves, but
+         more complicated extensions can get at the configuration file on disk
+         and parse it again as needed.
+      </p><p>
+         The interface to the <code class="literal">CedarBackup2.cli.Options</code> and
+         <code class="literal">CedarBackup2.config.Config</code> classes has been
+         thoroughly documented using Epydoc, and the documentation is available
+         on the Cedar Backup website.  The interface is guaranteed to change
+         only in backwards-compatible ways unless the Cedar Backup major
+         version number is bumped (i.e. from 2 to 3).
+      </p><p>
+         If an extension needs to add its own configuration information to the
+         Cedar Backup configuration file, this extra configuration must be
+         added in a new configuration section using a name that does not
+         conflict with standard configuration or other known extensions.
+      </p><p>
+         For instance, our hypothetical database extension might require
+         configuration indicating the path to some repositories to back up.
+         This information might go into a section something like this:
+      </p><pre class="programlisting">
+&lt;database&gt;
+   &lt;repository&gt;/path/to/repo1&lt;/repository&gt;
+   &lt;repository&gt;/path/to/repo2&lt;/repository&gt;
+&lt;/database&gt;
+      </pre><p>
+         In order to read this new configuration, the extension code can either
+         inherit from the <code class="literal">Config</code> object and create a
+         subclass that knows how to parse the new <code class="literal">database</code>
+         config section, or can write its own code to parse whatever it needs
+         out of the file.  Either way, the resulting code is completely
+         independent of the standard Cedar Backup functionality.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s09.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apb.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Capacity Extension </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Appendix B. Dependencies</td></tr></table></div></body></html>

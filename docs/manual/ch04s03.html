@@ -1,0 +1,176 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>The cback-amazons3-sync command</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch04.html" title="Chapter 4. Command Line Tools"><link rel="prev" href="ch04s02.html" title="The cback command"><link rel="next" href="ch04s04.html" title="The cback-span command"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The <span class="command"><strong>cback-amazons3-sync</strong></span> command</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04s02.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Command Line Tools</th><td width="20%" align="right"> <a accesskey="n" href="ch04s04.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-commandline-sync"></a>The <span class="command"><strong>cback-amazons3-sync</strong></span> command</h2></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-sync-intro"></a>Introduction</h3></div></div></div><p>
+            The <span class="command"><strong>cback-amazons3-sync</strong></span> tool is used for
+            synchronizing entire directories of files up to an Amazon S3 cloud
+            storage bucket, outside of the normal Cedar Backup process.  
+         </p><p>
+            This might be a good option for some types of data, as long as you
+            understand the limitations around retrieving previous versions of
+            objects that get modified or deleted as part of a sync.  S3 does
+            support versioning, but it won't be quite as easy to get at those
+            previous versions as with an explicit incremental backup like
+            <span class="command"><strong>cback</strong></span> provides.  Cedar Backup does not provide
+            any tooling that would help you retrieve previous versions.
+         </p><p>
+            The underlying functionality relies on the 
+            <a class="ulink" href="http://aws.amazon.com/documentation/cli/" target="_top">AWS CLI</a> toolset.
+            Before you use this extension, you need to set up your Amazon S3
+            account and configure AWS CLI as detailed in Amazons's 
+            <a class="ulink" href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html" target="_top">setup guide</a>.
+            The <span class="command"><strong>aws</strong></span> command will be executed as the same user that
+            is executing the <span class="command"><strong>cback-amazons3-sync</strong></span> command, so
+            make sure you configure it as the proper user.  (This is different
+            than the amazons3 extension, which is designed to execute as root
+            and switches over to the configured backup user to execute AWS CLI
+            commands.)
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-sync-permissions"></a>Permissons</h3></div></div></div><p>
+            You can use whichever Amazon-supported authentication mechanism you
+            would like when setting up connectivity for the AWS CLI.  It's best
+            to set up a separate user in the 
+            <a class="ulink" href="https://console.aws.amazon.com/iam/home" target="_top">IAM Console</a>
+            rather than using your main administrative user.
+         </p><p>
+            You probably want to lock down this user so that it can only take
+            backup related actions in the AWS infrastructure.  One option is to
+            apply the <span class="command"><strong>AmazonS3FullAccess</strong></span> policy, which grants
+				full access to the S3 infrastructure.  If you would like to lock
+				down the user even further, this appears to be the minimum set of
+				permissions required for the <span class="command"><strong>aws s3 sync</strong></span> action,
+				written as a JSON policy statement:
+         </p><pre class="screen">
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:PutObject",
+                "s3:PutObjectAcl",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::your-bucket",
+                "arn:aws:s3:::your-bucket/*"
+            ]
+        }
+    ]
+} 
+			</pre><p>
+				In the <code class="literal">Resource</code> section, be sure to list the name
+				of your S3 bucket instead of <code class="literal">my-bucket</code>.
+			</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-sync-syntax"></a>Syntax</h3></div></div></div><p>
+            The <span class="command"><strong>cback-amazons3-sync</strong></span> command has the following syntax:
+         </p><pre class="screen">
+ Usage: cback-amazons3-sync [switches] sourceDir s3bucketUrl
+
+ Cedar Backup Amazon S3 sync tool.
+
+ This Cedar Backup utility synchronizes a local directory to an Amazon S3
+ bucket.  After the sync is complete, a validation step is taken.  An
+ error is reported if the contents of the bucket do not match the
+ source directory, or if the indicated size for any file differs.
+ This tool is a wrapper over the AWS CLI command-line tool.
+
+ The following arguments are required:
+
+   sourceDir            The local source directory on disk (must exist)
+   s3BucketUrl          The URL to the target Amazon S3 bucket
+
+ The following switches are accepted:
+
+   -h, --help           Display this usage/help listing
+   -V, --version        Display version information
+   -b, --verbose        Print verbose output as well as logging to disk
+   -q, --quiet          Run quietly (display no output to the screen)
+   -l, --logfile        Path to logfile (default: /var/log/cback.log)
+   -o, --owner          Logfile ownership, user:group (default: root:adm)
+   -m, --mode           Octal logfile permissions mode (default: 640)
+   -O, --output         Record some sub-command (i.e. aws) output to the log
+   -d, --debug          Write debugging information to the log (implies --output)
+   -s, --stack          Dump Python stack trace instead of swallowing exceptions
+   -D, --diagnostics    Print runtime diagnostics to the screen and exit
+   -v, --verifyOnly     Only verify the S3 bucket contents, do not make changes
+   -w, --ignoreWarnings Ignore warnings about problematic filename encodings
+
+ Typical usage would be something like:
+
+   cback-amazons3-sync /home/myuser s3://example.com-backup/myuser
+
+ This will sync the contents of /home/myuser into the indicated bucket.
+         </pre></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-sync-options"></a>Switches</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">-h</code>, <code class="option">--help</code></span></dt><dd><p>Display usage/help listing.</p></dd><dt><span class="term"><code class="option">-V</code>, <code class="option">--version</code></span></dt><dd><p>Display version information.</p></dd><dt><span class="term"><code class="option">-b</code>, <code class="option">--verbose</code></span></dt><dd><p>
+                     Print verbose output to the screen as well writing to the
+                     logfile.  When this option is enabled, most information
+                     that would normally be written to the logfile will also be
+                     written to the screen.
+                  </p></dd><dt><span class="term"><code class="option">-q</code>, <code class="option">--quiet</code></span></dt><dd><p>Run quietly (display no output to the screen).</p></dd><dt><span class="term"><code class="option">-l</code>, <code class="option">--logfile</code></span></dt><dd><p>
+                     Specify the path to an alternate logfile.  The default
+                     logfile file is <code class="filename">/var/log/cback.log</code>.
+                  </p></dd><dt><span class="term"><code class="option">-o</code>, <code class="option">--owner</code></span></dt><dd><p>
+                    Specify the ownership of the logfile, in the form
+                    <code class="literal">user:group</code>.  The default ownership is
+                    <code class="literal">root:adm</code>, to match the Debian standard
+                    for most logfiles. This value will only be used when
+                    creating a new logfile.  If the logfile already exists when
+                    the <span class="command"><strong>cback-amazons3-sync</strong></span> command is
+                    executed, it will retain its existing ownership and mode.
+                    Only user and group names may be used, not numeric uid and
+                    gid values.
+                  </p></dd><dt><span class="term"><code class="option">-m</code>, <code class="option">--mode</code></span></dt><dd><p>
+                    Specify  the  permissions  for  the logfile, using the
+                    numeric mode as in chmod(1).  The default mode is
+                    <code class="literal">0640</code> (<code class="literal">-rw-r-----</code>).
+                    This value will only be used when creating a new logfile.
+                    If the logfile already exists when the
+                    <span class="command"><strong>cback-amazons3-sync</strong></span> command is executed,
+                    it will retain its existing ownership and mode.
+                  </p></dd><dt><span class="term"><code class="option">-O</code>, <code class="option">--output</code></span></dt><dd><p>
+                     Record some sub-command output to the logfile.  When this
+                     option is enabled, all output from system commands will be
+                     logged.  This might be useful for debugging or just for
+                     reference.  
+                  </p></dd><dt><span class="term"><code class="option">-d</code>, <code class="option">--debug</code></span></dt><dd><p>
+                     Write debugging information to the logfile.  This option
+                     produces a high volume of output, and would generally only
+                     be needed when debugging a problem.  This option implies
+                     the <code class="option">--output</code> option, as well.
+                  </p></dd><dt><span class="term"><code class="option">-s</code>, <code class="option">--stack</code></span></dt><dd><p>
+                     Dump a Python stack trace instead of swallowing
+                     exceptions.  This forces Cedar Backup to dump the entire
+                     Python stack trace associated with an error, rather than
+                     just propagating last message it received back up to the
+                     user interface.  Under some circumstances, this is useful
+                     information to include along with a bug report.
+                  </p></dd><dt><span class="term"><code class="option">-D</code>, <code class="option">--diagnostics</code></span></dt><dd><p>
+                     Display runtime diagnostic information and then exit.
+                     This diagnostic information is often useful when filing a
+                     bug report.
+                  </p></dd><dt><span class="term"><code class="option">-v</code>, <code class="option">--verifyOnly</code></span></dt><dd><p>
+                     Only verify the S3 bucket contents against the directory
+                     on disk.  Do not make any changes to the S3 bucket or
+                     transfer any files.  This is intended as a quick check
+                     to see whether the sync is up-to-date.
+                  </p><p>
+                     Although no files are transferred, the tool will still
+                     execute the source filename encoding check, discussed
+                     below along with <code class="option">--ignoreWarnings</code>.
+                  </p></dd><dt><span class="term"><code class="option">-w</code>, <code class="option">--ignoreWarnings</code></span></dt><dd><p>
+                     The AWS CLI S3 sync process is very picky about filename
+                     encoding.  Files that the Linux filesystem handles with no
+                     problems can cause problems in S3 if the filename cannot be
+                     encoded properly in your configured locale.  As of this
+                     writing, filenames like this will cause the sync process
+                     to abort without transferring all files as expected.  
+                  </p><p>
+                     To avoid confusion, the <span class="command"><strong>cback-amazons3-sync</strong></span> 
+                     tries to guess which files in the source directory will
+                     cause problems, and refuses to execute the AWS CLI S3 sync if
+                     any problematic files exist.  If you'd rather proceed
+                     anyway, use <code class="option">--ignoreWarnings</code>.
+                  </p><p>
+                     If problematic files are found, then you have basically
+                     two options: either correct your locale (i.e. if you have
+                     set <code class="literal">LANG=C</code>) or rename the file so it
+                     can be encoded properly in your locale. The error messages
+                     will tell you the expected encoding (from your locale) and
+                     the actual detected encoding for the filename.
+                  </p></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch04s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The <span class="command"><strong>cback</strong></span> command </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> The <span class="command"><strong>cback-span</strong></span> command</td></tr></table></div></body></html>

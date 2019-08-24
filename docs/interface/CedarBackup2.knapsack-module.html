@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.knapsack</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        Module&nbsp;knapsack
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.knapsack-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module knapsack</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.knapsack-pysrc.html">source&nbsp;code</a></span></p>
+<p>Provides the implementation for various knapsack algorithms.</p>
+  <p>Knapsack algorithms are &quot;fit&quot; algorithms, used to take a set
+  of &quot;things&quot; and decide on the optimal way to fit them into some
+  container.  The focus of this code is to fit files onto a disc, although 
+  the interface (in terms of item, item size and capacity size, with no 
+  units) is generic enough that it can be applied to items other than 
+  files.</p>
+  <p>All of the algorithms implemented below assume that 
+  &quot;optimal&quot; means &quot;use up as much of the disc's capacity as 
+  possible&quot;, but each produces slightly different results.  For 
+  instance, the best fit and first fit algorithms tend to include fewer 
+  files than the worst fit and alternate fit algorithms, even if they use 
+  the disc space more efficiently.</p>
+  <p>Usually, for a given set of circumstances, it will be obvious to a 
+  human which algorithm is the right one to use, based on trade-offs 
+  between number of files included and ideal space utilization.  It's a 
+  little more difficult to do this programmatically.  For Cedar Backup's 
+  purposes (i.e. trying to fit a small number of collect-directory tarfiles
+  onto a disc), worst-fit is probably the best choice if the goal is to 
+  include as many of the collect directories as possible.</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.knapsack-module.html#firstFit" class="summary-sig-name">firstFit</a>(<span class="summary-sig-arg">items</span>,
+        <span class="summary-sig-arg">capacity</span>)</span><br />
+      Implements the first-fit knapsack algorithm.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.knapsack-pysrc.html#firstFit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.knapsack-module.html#bestFit" class="summary-sig-name">bestFit</a>(<span class="summary-sig-arg">items</span>,
+        <span class="summary-sig-arg">capacity</span>)</span><br />
+      Implements the best-fit knapsack algorithm.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.knapsack-pysrc.html#bestFit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.knapsack-module.html#worstFit" class="summary-sig-name">worstFit</a>(<span class="summary-sig-arg">items</span>,
+        <span class="summary-sig-arg">capacity</span>)</span><br />
+      Implements the worst-fit knapsack algorithm.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.knapsack-pysrc.html#worstFit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.knapsack-module.html#alternateFit" class="summary-sig-name">alternateFit</a>(<span class="summary-sig-arg">items</span>,
+        <span class="summary-sig-arg">capacity</span>)</span><br />
+      Implements the alternate-fit knapsack algorithm.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.knapsack-pysrc.html#alternateFit">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="None">None</code><br />
+      hash(x)
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="firstFit"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">firstFit</span>(<span class="sig-arg">items</span>,
+        <span class="sig-arg">capacity</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.knapsack-pysrc.html#firstFit">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Implements the first-fit knapsack algorithm.</p>
+  <p>The first-fit algorithm proceeds through an unsorted list of items 
+  until running out of items or meeting capacity exactly.  If capacity is 
+  exceeded, the item that caused capacity to be exceeded is thrown away and
+  the next one is tried.  This algorithm generally performs more poorly 
+  than the other algorithms both in terms of capacity utilization and item 
+  utilization, but can be as much as an order of magnitude faster on large 
+  lists of items because it doesn't require any sorting.</p>
+  <p>The &quot;size&quot; values in the items and capacity arguments must 
+  be comparable, but they are unitless from the perspective of this 
+  function.  Zero-sized items and capacity are considered degenerate cases.
+  If capacity is zero, no items fit, period, even if the items list 
+  contains zero-sized items.</p>
+  <p>The dictionary is indexed by its key, and then includes its key.  This
+  seems kind of strange on first glance.  It works this way to facilitate 
+  easy sorting of the list on key if needed.</p>
+  <p>The function assumes that the list of items may be used destructively,
+  if needed.  This avoids the overhead of having the function make a copy 
+  of the list, if this is not required.  Callers should pass 
+  <code>items.copy()</code> if they do not want their version of the list 
+  modified.</p>
+  <p>The function returns a list of chosen items and the unitless amount of
+  capacity used by the items.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>items</code></strong> (dictionary, keyed on item, of <code>(item, size)</code> tuples, 
+          item as string and size as integer) - Items to operate on</li>
+        <li><strong class="pname"><code>capacity</code></strong> (integer) - Capacity of container to fit to</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple <code>(items, used)</code> as described above</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="bestFit"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">bestFit</span>(<span class="sig-arg">items</span>,
+        <span class="sig-arg">capacity</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.knapsack-pysrc.html#bestFit">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Implements the best-fit knapsack algorithm.</p>
+  <p>The best-fit algorithm proceeds through a sorted list of items (sorted
+  from largest to smallest) until running out of items or meeting capacity 
+  exactly. If capacity is exceeded, the item that caused capacity to be 
+  exceeded is thrown away and the next one is tried.  The algorithm 
+  effectively includes the minimum number of items possible in its search 
+  for optimal capacity utilization.  For large lists of mixed-size items, 
+  it's not ususual to see the algorithm achieve 100% capacity utilization 
+  by including fewer than 1% of the items.  Probably because it often has 
+  to look at fewer of the items before completing, it tends to be a little 
+  faster than the worst-fit or alternate-fit algorithms.</p>
+  <p>The &quot;size&quot; values in the items and capacity arguments must 
+  be comparable, but they are unitless from the perspective of this 
+  function.  Zero-sized items and capacity are considered degenerate cases.
+  If capacity is zero, no items fit, period, even if the items list 
+  contains zero-sized items.</p>
+  <p>The dictionary is indexed by its key, and then includes its key.  This
+  seems kind of strange on first glance.  It works this way to facilitate 
+  easy sorting of the list on key if needed.</p>
+  <p>The function assumes that the list of items may be used destructively,
+  if needed.  This avoids the overhead of having the function make a copy 
+  of the list, if this is not required.  Callers should pass 
+  <code>items.copy()</code> if they do not want their version of the list 
+  modified.</p>
+  <p>The function returns a list of chosen items and the unitless amount of
+  capacity used by the items.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>items</code></strong> (dictionary, keyed on item, of <code>(item, size)</code> tuples, 
+          item as string and size as integer) - Items to operate on</li>
+        <li><strong class="pname"><code>capacity</code></strong> (integer) - Capacity of container to fit to</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple <code>(items, used)</code> as described above</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="worstFit"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">worstFit</span>(<span class="sig-arg">items</span>,
+        <span class="sig-arg">capacity</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.knapsack-pysrc.html#worstFit">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Implements the worst-fit knapsack algorithm.</p>
+  <p>The worst-fit algorithm proceeds through an a sorted list of items 
+  (sorted from smallest to largest) until running out of items or meeting 
+  capacity exactly.  If capacity is exceeded, the item that caused capacity
+  to be exceeded is thrown away and the next one is tried.  The algorithm 
+  effectively includes the maximum number of items possible in its search 
+  for optimal capacity utilization.  It tends to be somewhat slower than 
+  either the best-fit or alternate-fit algorithm, probably because on 
+  average it has to look at more items before completing.</p>
+  <p>The &quot;size&quot; values in the items and capacity arguments must 
+  be comparable, but they are unitless from the perspective of this 
+  function.  Zero-sized items and capacity are considered degenerate cases.
+  If capacity is zero, no items fit, period, even if the items list 
+  contains zero-sized items.</p>
+  <p>The dictionary is indexed by its key, and then includes its key.  This
+  seems kind of strange on first glance.  It works this way to facilitate 
+  easy sorting of the list on key if needed.</p>
+  <p>The function assumes that the list of items may be used destructively,
+  if needed.  This avoids the overhead of having the function make a copy 
+  of the list, if this is not required.  Callers should pass 
+  <code>items.copy()</code> if they do not want their version of the list 
+  modified.</p>
+  <p>The function returns a list of chosen items and the unitless amount of
+  capacity used by the items.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>items</code></strong> (dictionary, keyed on item, of <code>(item, size)</code> tuples, 
+          item as string and size as integer) - Items to operate on</li>
+        <li><strong class="pname"><code>capacity</code></strong> (integer) - Capacity of container to fit to</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple <code>(items, used)</code> as described above</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="alternateFit"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">alternateFit</span>(<span class="sig-arg">items</span>,
+        <span class="sig-arg">capacity</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.knapsack-pysrc.html#alternateFit">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Implements the alternate-fit knapsack algorithm.</p>
+  <p>This algorithm (which I'm calling &quot;alternate-fit&quot; as in 
+  &quot;alternate from one to the other&quot;) tries to balance small and 
+  large items to achieve better end-of-disk performance.  Instead of just 
+  working one direction through a list, it alternately works from the start
+  and end of a sorted list (sorted from smallest to largest), throwing away
+  any item which causes capacity to be exceeded.  The algorithm tends to be
+  slower than the best-fit and first-fit algorithms, and slightly faster 
+  than the worst-fit algorithm, probably because of the number of items it 
+  considers on average before completing.  It often achieves slightly 
+  better capacity utilization than the worst-fit algorithm, while including
+  slighly fewer items.</p>
+  <p>The &quot;size&quot; values in the items and capacity arguments must 
+  be comparable, but they are unitless from the perspective of this 
+  function.  Zero-sized items and capacity are considered degenerate cases.
+  If capacity is zero, no items fit, period, even if the items list 
+  contains zero-sized items.</p>
+  <p>The dictionary is indexed by its key, and then includes its key.  This
+  seems kind of strange on first glance.  It works this way to facilitate 
+  easy sorting of the list on key if needed.</p>
+  <p>The function assumes that the list of items may be used destructively,
+  if needed.  This avoids the overhead of having the function make a copy 
+  of the list, if this is not required.  Callers should pass 
+  <code>items.copy()</code> if they do not want their version of the list 
+  modified.</p>
+  <p>The function returns a list of chosen items and the unitless amount of
+  capacity used by the items.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>items</code></strong> (dictionary, keyed on item, of <code>(item, size)</code> tuples, 
+          item as string and size as integer) - Items to operate on</li>
+        <li><strong class="pname"><code>capacity</code></strong> (integer) - Capacity of container to fit to</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple <code>(items, used)</code> as described above</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

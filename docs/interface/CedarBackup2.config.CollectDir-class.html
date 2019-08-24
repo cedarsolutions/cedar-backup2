@@ -1,0 +1,1309 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.config.CollectDir</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.config-module.html">Module&nbsp;config</a> ::
+        Class&nbsp;CollectDir
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.config.CollectDir-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class CollectDir</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">CollectDir</strong>
+</pre>
+
+<hr />
+<p>Class representing a Cedar Backup collect directory.</p>
+  <p>The following restrictions exist on data in this class:</p>
+  <ul>
+    <li>
+      Absolute paths must be absolute
+    </li>
+    <li>
+      The collect mode must be one of the values in <a 
+      href="CedarBackup2.config-module.html#VALID_COLLECT_MODES" 
+      class="link">VALID_COLLECT_MODES</a>.
+    </li>
+    <li>
+      The archive mode must be one of the values in <a 
+      href="CedarBackup2.config-module.html#VALID_ARCHIVE_MODES" 
+      class="link">VALID_ARCHIVE_MODES</a>.
+    </li>
+    <li>
+      The ignore file must be a non-empty string.
+    </li>
+  </ul>
+  <p>For the <code>absoluteExcludePaths</code> list, validation is 
+  accomplished through the <a 
+  href="CedarBackup2.util.AbsolutePathList-class.html" 
+  class="link">util.AbsolutePathList</a> list implementation that overrides
+  common list methods and transparently does the absolute path validation 
+  for us.</p>
+
+<hr />
+<div class="fields">      <p><strong>Note:</strong>
+        Lists within this class are &quot;unordered&quot; for equality 
+        comparisons.
+      </p>
+</div><!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">absolutePath</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">collectMode</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">archiveMode</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">ignoreFile</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">absoluteExcludePaths</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">relativeExcludePaths</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">excludePatterns</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">linkDepth</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">dereference</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">recursionLevel</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Constructor for the <code>CollectDir</code> class.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Official string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir.__repr__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#__str__" class="summary-sig-name">__str__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Informal string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir.__str__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#__cmp__" class="summary-sig-name">__cmp__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">other</span>)</span><br />
+      Definition of equals operator for this class.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir.__cmp__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setAbsolutePath" class="summary-sig-name" onclick="show_private();">_setAbsolutePath</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the absolute path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setAbsolutePath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getAbsolutePath"></a><span class="summary-sig-name">_getAbsolutePath</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the absolute path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getAbsolutePath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setCollectMode" class="summary-sig-name" onclick="show_private();">_setCollectMode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the collect mode.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setCollectMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getCollectMode"></a><span class="summary-sig-name">_getCollectMode</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the collect mode.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getCollectMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setArchiveMode" class="summary-sig-name" onclick="show_private();">_setArchiveMode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the archive mode.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setArchiveMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getArchiveMode"></a><span class="summary-sig-name">_getArchiveMode</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the archive mode.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getArchiveMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setIgnoreFile" class="summary-sig-name" onclick="show_private();">_setIgnoreFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the ignore file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setIgnoreFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getIgnoreFile"></a><span class="summary-sig-name">_getIgnoreFile</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the ignore file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getIgnoreFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setLinkDepth" class="summary-sig-name" onclick="show_private();">_setLinkDepth</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the link depth.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setLinkDepth">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getLinkDepth"></a><span class="summary-sig-name">_getLinkDepth</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the action linkDepth.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getLinkDepth">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setDereference" class="summary-sig-name" onclick="show_private();">_setDereference</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the dereference flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setDereference">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDereference"></a><span class="summary-sig-name">_getDereference</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the dereference flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getDereference">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setRecursionLevel" class="summary-sig-name" onclick="show_private();">_setRecursionLevel</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the recursionLevel.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setRecursionLevel">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getRecursionLevel"></a><span class="summary-sig-name">_getRecursionLevel</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the action recursionLevel.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getRecursionLevel">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setAbsoluteExcludePaths" class="summary-sig-name" onclick="show_private();">_setAbsoluteExcludePaths</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the absolute exclude paths list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setAbsoluteExcludePaths">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getAbsoluteExcludePaths"></a><span class="summary-sig-name">_getAbsoluteExcludePaths</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the absolute exclude paths list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getAbsoluteExcludePaths">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setRelativeExcludePaths" class="summary-sig-name" onclick="show_private();">_setRelativeExcludePaths</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the relative exclude paths list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setRelativeExcludePaths">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getRelativeExcludePaths"></a><span class="summary-sig-name">_getRelativeExcludePaths</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the relative exclude paths list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getRelativeExcludePaths">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_setExcludePatterns"></a><span class="summary-sig-name">_setExcludePatterns</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the exclude patterns list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setExcludePatterns">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getExcludePatterns"></a><span class="summary-sig-name">_getExcludePatterns</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the exclude patterns list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._getExcludePatterns">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#absolutePath" class="summary-name">absolutePath</a><br />
+      Absolute path of the directory to collect.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#collectMode" class="summary-name">collectMode</a><br />
+      Overridden collect mode for this directory.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#archiveMode" class="summary-name">archiveMode</a><br />
+      Overridden archive mode for this directory.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#ignoreFile" class="summary-name">ignoreFile</a><br />
+      Overridden ignore file name for this directory.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#linkDepth" class="summary-name">linkDepth</a><br />
+      Maximum at which soft links should be followed.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#dereference" class="summary-name">dereference</a><br />
+      Whether to dereference links that are followed.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#absoluteExcludePaths" class="summary-name">absoluteExcludePaths</a><br />
+      List of absolute paths to exclude.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#relativeExcludePaths" class="summary-name">relativeExcludePaths</a><br />
+      List of relative paths to exclude.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#excludePatterns" class="summary-name">excludePatterns</a><br />
+      List of regular expression patterns to exclude.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html#recursionLevel" class="summary-name">recursionLevel</a><br />
+      Recursion level to use for recursive directory collection
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">absolutePath</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">collectMode</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">archiveMode</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">ignoreFile</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">absoluteExcludePaths</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">relativeExcludePaths</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">excludePatterns</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">linkDepth</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">dereference</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">recursionLevel</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Constructor for the <code>CollectDir</code> class.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>absolutePath</code></strong> - Absolute path of the directory to collect.</li>
+        <li><strong class="pname"><code>collectMode</code></strong> - Overridden collect mode for this directory.</li>
+        <li><strong class="pname"><code>archiveMode</code></strong> - Overridden archive mode for this directory.</li>
+        <li><strong class="pname"><code>ignoreFile</code></strong> - Overidden ignore file name for this directory.</li>
+        <li><strong class="pname"><code>linkDepth</code></strong> - Maximum at which soft links should be followed.</li>
+        <li><strong class="pname"><code>dereference</code></strong> - Whether to dereference links that are followed.</li>
+        <li><strong class="pname"><code>absoluteExcludePaths</code></strong> - List of absolute paths to exclude.</li>
+        <li><strong class="pname"><code>relativeExcludePaths</code></strong> - List of relative paths to exclude.</li>
+        <li><strong class="pname"><code>excludePatterns</code></strong> - List of regular expression patterns to exclude.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If one of the values is invalid.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Official string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__str__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__str__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Informal representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir.__str__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Informal string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__str__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__cmp__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__cmp__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">other</span>)</span>
+    <br /><em class="fname">(Comparison operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir.__cmp__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Definition of equals operator for this class. Lists within this class 
+  are &quot;unordered&quot; for equality comparisons.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>other</code></strong> - Other object to compare to.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>-1/0/1 depending on whether self is <code>&lt;</code>, 
+          <code>=</code> or <code>&gt;</code> other.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setAbsolutePath"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setAbsolutePath</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setAbsolutePath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the absolute path. The value must be an 
+  absolute path if it is not <code>None</code>. It does not have to exist 
+  on disk at the time of assignment.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not an absolute path.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setCollectMode"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setCollectMode</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setCollectMode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the collect mode. If not 
+  <code>None</code>, the mode must be one of the values in <a 
+  href="CedarBackup2.config-module.html#VALID_COLLECT_MODES" 
+  class="link">VALID_COLLECT_MODES</a>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setArchiveMode"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setArchiveMode</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setArchiveMode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the archive mode. If not 
+  <code>None</code>, the mode must be one of the values in <a 
+  href="CedarBackup2.config-module.html#VALID_ARCHIVE_MODES" 
+  class="link">VALID_ARCHIVE_MODES</a>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setIgnoreFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setIgnoreFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setIgnoreFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the ignore file. The value must be a 
+  non-empty string if it is not <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setLinkDepth"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setLinkDepth</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setLinkDepth">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the link depth. The value must be an 
+  integer &gt;= 0.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setDereference"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setDereference</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setDereference">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the dereference flag. No validations, but 
+  we normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setRecursionLevel"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setRecursionLevel</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setRecursionLevel">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the recursionLevel. The value must be an 
+  integer.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setAbsoluteExcludePaths"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setAbsoluteExcludePaths</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setAbsoluteExcludePaths">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the absolute exclude paths list. Either 
+  the value must be <code>None</code> or each element must be an absolute 
+  path. Elements do not have to exist on disk at the time of 
+  assignment.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not an absolute path.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setRelativeExcludePaths"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setRelativeExcludePaths</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#CollectDir._setRelativeExcludePaths">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the relative exclude paths list. Elements 
+  do not have to exist on disk at the time of assignment.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="absolutePath"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">absolutePath</h3>
+  <p>Absolute path of the directory to collect.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getAbsolutePath" class="summary-sig-name" onclick="show_private();">_getAbsolutePath</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the absolute path.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setAbsolutePath" class="summary-sig-name" onclick="show_private();">_setAbsolutePath</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the absolute path.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="collectMode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">collectMode</h3>
+  <p>Overridden collect mode for this directory.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getCollectMode" class="summary-sig-name" onclick="show_private();">_getCollectMode</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the collect mode.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setCollectMode" class="summary-sig-name" onclick="show_private();">_setCollectMode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the collect mode.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="archiveMode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">archiveMode</h3>
+  <p>Overridden archive mode for this directory.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getArchiveMode" class="summary-sig-name" onclick="show_private();">_getArchiveMode</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the archive mode.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setArchiveMode" class="summary-sig-name" onclick="show_private();">_setArchiveMode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the archive mode.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ignoreFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ignoreFile</h3>
+  <p>Overridden ignore file name for this directory.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getIgnoreFile" class="summary-sig-name" onclick="show_private();">_getIgnoreFile</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the ignore file.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setIgnoreFile" class="summary-sig-name" onclick="show_private();">_setIgnoreFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the ignore file.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="linkDepth"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">linkDepth</h3>
+  <p>Maximum at which soft links should be followed.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getLinkDepth" class="summary-sig-name" onclick="show_private();">_getLinkDepth</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the action linkDepth.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setLinkDepth" class="summary-sig-name" onclick="show_private();">_setLinkDepth</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the link depth.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="dereference"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">dereference</h3>
+  <p>Whether to dereference links that are followed.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getDereference" class="summary-sig-name" onclick="show_private();">_getDereference</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the dereference flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setDereference" class="summary-sig-name" onclick="show_private();">_setDereference</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the dereference flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="absoluteExcludePaths"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">absoluteExcludePaths</h3>
+  <p>List of absolute paths to exclude.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getAbsoluteExcludePaths" class="summary-sig-name" onclick="show_private();">_getAbsoluteExcludePaths</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the absolute exclude paths list.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setAbsoluteExcludePaths" class="summary-sig-name" onclick="show_private();">_setAbsoluteExcludePaths</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the absolute exclude paths list.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="relativeExcludePaths"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">relativeExcludePaths</h3>
+  <p>List of relative paths to exclude.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getRelativeExcludePaths" class="summary-sig-name" onclick="show_private();">_getRelativeExcludePaths</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the relative exclude paths list.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setRelativeExcludePaths" class="summary-sig-name" onclick="show_private();">_setRelativeExcludePaths</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the relative exclude paths list.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="excludePatterns"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">excludePatterns</h3>
+  <p>List of regular expression patterns to exclude.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getExcludePatterns" class="summary-sig-name" onclick="show_private();">_getExcludePatterns</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the exclude patterns list.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setExcludePatterns" class="summary-sig-name" onclick="show_private();">_setExcludePatterns</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the exclude patterns list.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="recursionLevel"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">recursionLevel</h3>
+  <p>Recursion level to use for recursive directory collection</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_getRecursionLevel" class="summary-sig-name" onclick="show_private();">_getRecursionLevel</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the action recursionLevel.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.CollectDir-class.html#_setRecursionLevel" class="summary-sig-name" onclick="show_private();">_setRecursionLevel</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the recursionLevel.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

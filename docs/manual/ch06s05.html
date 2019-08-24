@@ -1,0 +1,122 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>PostgreSQL Extension</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch06.html" title="Chapter 6. Official Extensions"><link rel="prev" href="ch06s04.html" title="MySQL Extension"><link rel="next" href="ch06s06.html" title="Mbox Extension"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">PostgreSQL Extension</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s04.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Official Extensions</th><td width="20%" align="right"> <a accesskey="n" href="ch06s06.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-extensions-postgresql"></a>PostgreSQL Extension</h2></div></div></div><div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Community-contributed Extension</b></p></div></div></div><p>
+            This is a community-contributed extension provided by Antoine
+            Beaupre ("The Anarcat").  I have added regression tests around
+            the configuration parsing code and I will maintain this section
+            in the user manual based on his source code documentation.
+         </p><p>
+            Unfortunately, I don't have any PostgreSQL databases with which to
+            test the functional code.  While I have code-reviewed the code and
+            it looks both sensible and safe, I have to rely on the author to
+            ensure that it works properly.
+         </p></div><p>
+         The PostgreSQL Extension is a Cedar Backup extension used to back up
+         PostgreSQL <a href="#ftn.idm2948" class="footnote" name="idm2948"><sup class="footnote">[25]</sup></a> databases via the
+         Cedar Backup command line.  It is intended to be run either
+         immediately before or immediately after the standard collect action. 
+      </p><p>
+         The backup is done via the <span class="command"><strong>pg_dump</strong></span> or
+         <span class="command"><strong>pg_dumpall</strong></span> commands included with the PostgreSQL
+         product.  Output can be compressed using <span class="command"><strong>gzip</strong></span> or
+         <span class="command"><strong>bzip2</strong></span>.  Administrators can configure the extension
+         either to back up all databases or to back up only specific databases.  
+      </p><p>
+         The extension assumes that the current user has passwordless access to
+         the database since there is no easy way to pass a password to the
+         <span class="command"><strong>pg_dump</strong></span> client. This can be accomplished using
+         appropriate configuration in the <span class="command"><strong>pg_hda.conf</strong></span> file.
+      </p><p>
+         This extension always produces a full backup.  There is currently
+         no facility for making incremental backups.
+      </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3><p>
+            Once you place PostgreSQL configuration into the Cedar Backup
+            configuration file, you should be careful about who is allowed to
+            see that information.  This is because PostgreSQL configuration
+            will contain information about available PostgreSQL databases and
+            usernames.  Typically, you might want to lock down permissions so
+            that only the file owner can read the file contents (i.e. use mode
+            <code class="literal">0600</code>).
+         </p></div><p>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </p><pre class="programlisting">
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;postgresql&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.postgresql&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;99&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </pre><p>
+         This extension relies on the options and collect configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <code class="literal">postgresql</code> configuration
+         section.  This is an example PostgreSQL configuration section:
+      </p><pre class="programlisting">
+&lt;postgresql&gt;
+   &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
+   &lt;user&gt;username&lt;/user&gt;
+   &lt;all&gt;Y&lt;/all&gt;
+&lt;/postgresql&gt;
+      </pre><p>
+         If you decide to back up specific databases, then you would list them
+         individually, like this:
+      </p><pre class="programlisting">
+&lt;postgresql&gt;
+   &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
+   &lt;user&gt;username&lt;/user&gt;
+   &lt;all&gt;N&lt;/all&gt;
+   &lt;database&gt;db1&lt;/database&gt;
+   &lt;database&gt;db2&lt;/database&gt;
+&lt;/postgresql&gt;
+      </pre><p>
+         The following elements are part of the PostgreSQL configuration section:
+      </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">user</code></span></dt><dd><p>Database user.</p><p>
+                  The database user that the backup should be executed as.
+                  Even if you list more than one database (below) all backups
+                  must be done as the same user.
+               </p><p>
+                  This value is optional.
+               </p><p>
+                  Consult your PostgreSQL documentation for information on how
+                  to configure a default database user outside of Cedar Backup,
+                  and for information on how to specify a database password
+                  when you configure a user within Cedar Backup.  You will
+                  probably want to modify <span class="command"><strong>pg_hda.conf</strong></span>.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> If provided, must be
+                  non-empty.
+               </p></dd><dt><span class="term"><code class="literal">compress_mode</code></span></dt><dd><p>Compress mode.</p><p>
+                  PostgreSQL databases dumps are just
+                  specially-formatted text files, and often compress quite
+                  well using <span class="command"><strong>gzip</strong></span> or
+                  <span class="command"><strong>bzip2</strong></span>.  The compress mode describes how
+                  the backed-up data will be compressed, if at all.  
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                  <code class="literal">none</code>, <code class="literal">gzip</code> or
+                  <code class="literal">bzip2</code>.
+               </p></dd><dt><span class="term"><code class="literal">all</code></span></dt><dd><p>Indicates whether to back up all databases.</p><p>
+                  If this value is <code class="literal">Y</code>, then all PostgreSQL
+                  databases will be backed up.  If this value is
+                  <code class="literal">N</code>, then one or more specific databases
+                  must be specified (see below).
+               </p><p>
+                  If you choose this option, the entire database backup will go
+                  into one big dump file.  
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be a boolean
+                  (<code class="literal">Y</code> or <code class="literal">N</code>).
+               </p></dd><dt><span class="term"><code class="literal">database</code></span></dt><dd><p>Named database to be backed up.</p><p>
+                  If you choose to specify individual databases rather than all
+                  databases, then each database will be backed up into its own
+                  dump file.
+               </p><p>
+                  This field can be repeated as many times as is necessary.  At
+                  least one database must be configured if the all option
+                  (above) is set to <code class="literal">N</code>.  You may not
+                  configure any individual databases if the all option is set
+                  to <code class="literal">Y</code>.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be non-empty.
+               </p></dd></dl></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idm2948" class="footnote"><p><a href="#idm2948" class="para"><sup class="para">[25] </sup></a>See <a class="ulink" href="http://www.postgresql.org/" target="_top">http://www.postgresql.org/</a></p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">MySQL Extension </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Mbox Extension</td></tr></table></div></body></html>

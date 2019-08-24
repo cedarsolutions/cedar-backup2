@@ -1,0 +1,150 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Configuring your Writer Device</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch05.html" title="Chapter 5. Configuration"><link rel="prev" href="ch05s05.html" title="Setting up a Master Peer Node"><link rel="next" href="ch05s07.html" title="Optimized Blanking Stategy"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Configuring your Writer Device</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch05s05.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Configuration</th><td width="20%" align="right"> <a accesskey="n" href="ch05s07.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-config-writer"></a>Configuring your Writer Device</h2></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2487"></a>Device Types</h3></div></div></div><p>
+            In order to execute the store action, you need to know how to
+            identify your writer device.  Cedar Backup supports two kinds of
+            device types: CD writers and DVD writers.  DVD writers are always
+            referenced through a filesystem device name (i.e.
+            <code class="filename">/dev/dvd</code>).  CD writers can be referenced
+            either through a SCSI id, or through a filesystem device name.
+            Which you use depends on your operating system and hardware.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2491"></a>Devices identified by by device name</h3></div></div></div><p>
+            For all DVD writers, and for CD writers on certain platforms, you
+            will configure your writer device using only a device name.  If
+            your writer device works this way, you should just specify
+            &lt;target_device&gt; in configuration.  You can either leave
+            &lt;target_scsi_id&gt; blank or remove it completely.  The writer
+            device will be used both to write to the device and for filesystem
+            operations &#8212; for instance, when the media needs to be mounted
+            to run the consistency check.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2494"></a>Devices identified by SCSI id</h3></div></div></div><p>
+            Cedar Backup can use devices identified by SCSI id only when
+            configured to use the <code class="literal">cdwriter</code> device type.
+         </p><p>
+            In order to use a SCSI device with Cedar Backup, you must know both the
+            SCSI id &lt;target_scsi_id&gt; and the device name
+            &lt;target_device&gt;.  The SCSI id will be used to write to media
+            using <span class="command"><strong>cdrecord</strong></span>; and the device name will be used
+            for other filesystem operations.
+         </p><p>
+            A true SCSI device will always have an address
+            <code class="literal">scsibus,target,lun</code> (i.e.
+            <code class="literal">1,6,2</code>).  This should hold true on most UNIX-like
+            systems including Linux and the various BSDs (although I do not
+            have a BSD system to test with currently).  The SCSI address
+            represents the location of your writer device on the one or more
+            SCSI buses that you have available on your system.  
+         </p><p>
+            On some platforms, it is possible to reference non-SCSI writer
+            devices (i.e. an IDE CD writer) using an emulated SCSI id.  If you
+            have configured your non-SCSI writer device to have an emulated
+            SCSI id, provide the filesystem device path in
+            &lt;target_device&gt; and the SCSI id in &lt;target_scsi_id&gt;,
+            just like for a real SCSI device.
+         </p><p>
+            You should note that in some cases, an emulated SCSI id takes the
+            same form as a normal SCSI id, while in other cases you might see a
+            method name prepended to the normal SCSI id (i.e.
+            <span class="quote">&#8220;<span class="quote">ATA:1,1,1</span>&#8221;</span>).
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2506"></a>Linux Notes</h3></div></div></div><p>
+            On a Linux system, IDE writer devices often have a emulated SCSI
+            address, which allows SCSI-based software to access the device through
+            an IDE-to-SCSI interface.  Under these circumstances, the first IDE
+            writer device typically has an address <code class="literal">0,0,0</code>.  However,
+            support for the IDE-to-SCSI interface has been deprecated and is not
+            well-supported in newer kernels (kernel 2.6.x and later).
+         </p><p>
+            Newer Linux kernels can address <em class="firstterm">ATA</em> or
+            <em class="firstterm">ATAPI</em> drives without SCSI emulation by
+            prepending a <span class="quote">&#8220;<span class="quote">method</span>&#8221;</span> indicator to the emulated
+            device address.  For instance, <code class="literal">ATA:0,0,0</code> or
+            <code class="literal">ATAPI:0,0,0</code> are typical values.
+         </p><p>
+            However, even this interface is deprecated as of late 2006, so with
+            relatively new kernels you may be better off using the filesystem
+            device path directly rather than relying on any SCSI emulation.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2517"></a>Finding your Linux CD Writer</h3></div></div></div><p>
+            Here are some hints about how to find your Linux CD writer
+            hardware.  First, try to reference your device using the filesystem
+            device path:
+         </p><pre class="screen">
+cdrecord -prcap dev=/dev/cdrom
+         </pre><p>
+            Running this command on my hardware gives output that looks like
+            this (just the top few lines):
+         </p><pre class="screen">
+Device type    : Removable CD-ROM
+Version        : 0
+Response Format: 2
+Capabilities   : 
+Vendor_info    : 'LITE-ON '
+Identification : 'DVDRW SOHW-1673S'
+Revision       : 'JS02'
+Device seems to be: Generic mmc2 DVD-R/DVD-RW.
+
+Drive capabilities, per MMC-3 page 2A:
+         </pre><p>
+            If this works, and the identifying information at the top of the
+            output looks like your CD writer device, you've probably found a
+            working configuration.  Place the device path into
+            &lt;target_device&gt; and leave &lt;target_scsi_id&gt; blank.
+         </p><p>
+            If this doesn't work, you should try to find an ATA or ATAPI
+            device:
+         </p><pre class="screen">
+cdrecord -scanbus dev=ATA
+cdrecord -scanbus dev=ATAPI
+         </pre><p>
+            On my development system, I get a result that looks something like
+            this for ATA:
+         </p><pre class="screen">
+scsibus1:
+        1,0,0   100) 'LITE-ON ' 'DVDRW SOHW-1673S' 'JS02' Removable CD-ROM
+        1,1,0   101) *
+        1,2,0   102) *
+        1,3,0   103) *
+        1,4,0   104) *
+        1,5,0   105) *
+        1,6,0   106) *
+        1,7,0   107) *
+         </pre><p>
+            Again, if you get a result that you recognize, you have again
+            probably found a working configuraton.  Place the associated device
+            path (in my case, <code class="literal">/dev/cdrom</code>) into
+            &lt;target_device&gt; and put the emulated SCSI id
+            (in this case, <code class="literal">ATA:1,0,0</code>) into &lt;target_scsi_id&gt;.
+         </p><p>
+            Any further discussion of how to configure your CD writer hardware
+            is outside the scope of this document.  If you have tried the hints
+            above and still can't get things working, you may want to reference
+            the <em class="citetitle">Linux CDROM HOWTO</em> 
+            (<a class="ulink" href="http://www.tldp.org/HOWTO/CDROM-HOWTO" target="_top">http://www.tldp.org/HOWTO/CDROM-HOWTO</a>) 
+            or the <em class="citetitle">ATA RAID HOWTO</em> 
+            (<a class="ulink" href="http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html" target="_top">http://www.tldp.org/HOWTO/ATA-RAID-HOWTO/index.html</a>) 
+            for more information.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2536"></a>Mac OS X Notes</h3></div></div></div><p>
+            On a Mac OS X (darwin) system, things get strange.  Apple has
+            abandoned traditional SCSI device identifiers in favor of a
+            system-wide resource id.  So, on a Mac, your writer device will
+            have a name something like <code class="literal">IOCompactDiscServices</code>
+            (for a CD writer) or <code class="literal">IODVDServices</code> (for a DVD
+            writer).  If you have multiple drives, the second drive probably
+            has a number appended, i.e. <code class="literal">IODVDServices/2</code> for
+            the second DVD writer.  You can try to figure out what the name of
+            your device is by grepping through the output of the command
+            <span class="command"><strong>ioreg -l</strong></span>.<a href="#ftn.idm2543" class="footnote" name="idm2543"><sup class="footnote">[22]</sup></a>
+         </p><p>
+            Unfortunately, even if you can figure out what device to use, I
+            can't really support the store action on this platform.  In OS X,
+            the <span class="quote">&#8220;<span class="quote">automount</span>&#8221;</span> function of the Finder interferes
+            significantly with Cedar Backup's ability to mount and unmount
+            media and write to the CD or DVD hardware.  The Cedar Backup writer
+            and image functionality does work on this platform, but the effort
+            required to fight the operating system about who owns the media and
+            the device makes it nearly impossible to execute the store action
+            successfully.
+         </p><p>
+            If you are interested in some of my notes about what works and what
+            doesn't on this platform, check out the documentation in the
+            <code class="filename">doc/osx</code> directory in the source distribution.
+         </p></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idm2543" class="footnote"><p><a href="#idm2543" class="para"><sup class="para">[22] </sup></a>Thanks to the
+            file README.macosX in the cdrtools-2.01+01a01 source tree
+            for this information</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch05s05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch05.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch05s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Setting up a Master Peer Node </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Optimized Blanking Stategy</td></tr></table></div></body></html>

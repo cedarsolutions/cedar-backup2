@@ -1,0 +1,1621 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.config.StoreConfig</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.config-module.html">Module&nbsp;config</a> ::
+        Class&nbsp;StoreConfig
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.config.StoreConfig-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class StoreConfig</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">StoreConfig</strong>
+</pre>
+
+<hr />
+<p>Class representing a Cedar Backup store configuration.</p>
+  <p>The following restrictions exist on data in this class:</p>
+  <ul>
+    <li>
+      The source directory must be an absolute path.
+    </li>
+    <li>
+      The media type must be one of the values in <a 
+      href="CedarBackup2.config-module.html#VALID_MEDIA_TYPES" 
+      class="link">VALID_MEDIA_TYPES</a>.
+    </li>
+    <li>
+      The device type must be one of the values in <a 
+      href="CedarBackup2.config-module.html#VALID_DEVICE_TYPES" 
+      class="link">VALID_DEVICE_TYPES</a>.
+    </li>
+    <li>
+      The device path must be an absolute path.
+    </li>
+    <li>
+      The SCSI id, if provided, must be in the form specified by <a 
+      href="CedarBackup2.writers.util-module.html#validateScsiId" 
+      class="link">validateScsiId</a>.
+    </li>
+    <li>
+      The drive speed must be an integer &gt;= 1
+    </li>
+    <li>
+      The blanking behavior must be a <code>BlankBehavior</code> object
+    </li>
+    <li>
+      The refresh media delay must be an integer &gt;= 0
+    </li>
+    <li>
+      The eject delay must be an integer &gt;= 0
+    </li>
+  </ul>
+  <p>Note that although the blanking factor must be a positive floating 
+  point number, it is stored as a string. This is done so that we can 
+  losslessly go back and forth between XML and object representations of 
+  configuration.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">sourceDir</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">mediaType</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">deviceType</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">devicePath</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">deviceScsiId</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">driveSpeed</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">checkData</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">warnMidnite</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">noEject</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">checkMedia</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">blankBehavior</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">refreshMediaDelay</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">ejectDelay</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Constructor for the <code>StoreConfig</code> class.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Official string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig.__repr__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#__str__" class="summary-sig-name">__str__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Informal string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig.__str__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#__cmp__" class="summary-sig-name">__cmp__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">other</span>)</span><br />
+      Definition of equals operator for this class.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig.__cmp__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setSourceDir" class="summary-sig-name" onclick="show_private();">_setSourceDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the source directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setSourceDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getSourceDir"></a><span class="summary-sig-name">_getSourceDir</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the source directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getSourceDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setMediaType" class="summary-sig-name" onclick="show_private();">_setMediaType</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the media type.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setMediaType">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getMediaType"></a><span class="summary-sig-name">_getMediaType</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the media type.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getMediaType">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setDeviceType" class="summary-sig-name" onclick="show_private();">_setDeviceType</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the device type.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setDeviceType">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDeviceType"></a><span class="summary-sig-name">_getDeviceType</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device type.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getDeviceType">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setDevicePath" class="summary-sig-name" onclick="show_private();">_setDevicePath</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the device path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setDevicePath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDevicePath"></a><span class="summary-sig-name">_getDevicePath</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getDevicePath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setDeviceScsiId" class="summary-sig-name" onclick="show_private();">_setDeviceScsiId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the SCSI id The SCSI id must be valid per
+      <a href="CedarBackup2.writers.util-module.html#validateScsiId" 
+      class="link">validateScsiId</a>.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setDeviceScsiId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDeviceScsiId"></a><span class="summary-sig-name">_getDeviceScsiId</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the SCSI id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getDeviceScsiId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setDriveSpeed" class="summary-sig-name" onclick="show_private();">_setDriveSpeed</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the drive speed.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setDriveSpeed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDriveSpeed"></a><span class="summary-sig-name">_getDriveSpeed</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the drive speed.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getDriveSpeed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setCheckData" class="summary-sig-name" onclick="show_private();">_setCheckData</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the check data flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setCheckData">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getCheckData"></a><span class="summary-sig-name">_getCheckData</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the check data flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getCheckData">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setCheckMedia" class="summary-sig-name" onclick="show_private();">_setCheckMedia</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the check media flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setCheckMedia">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getCheckMedia"></a><span class="summary-sig-name">_getCheckMedia</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the check media flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getCheckMedia">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setWarnMidnite" class="summary-sig-name" onclick="show_private();">_setWarnMidnite</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the midnite warning flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setWarnMidnite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getWarnMidnite"></a><span class="summary-sig-name">_getWarnMidnite</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the midnite warning flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getWarnMidnite">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setNoEject" class="summary-sig-name" onclick="show_private();">_setNoEject</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the no-eject flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setNoEject">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getNoEject"></a><span class="summary-sig-name">_getNoEject</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the no-eject flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getNoEject">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setBlankBehavior" class="summary-sig-name" onclick="show_private();">_setBlankBehavior</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set blanking behavior configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setBlankBehavior">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getBlankBehavior"></a><span class="summary-sig-name">_getBlankBehavior</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the blanking behavior configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getBlankBehavior">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setRefreshMediaDelay" class="summary-sig-name" onclick="show_private();">_setRefreshMediaDelay</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the refreshMediaDelay.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setRefreshMediaDelay">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getRefreshMediaDelay"></a><span class="summary-sig-name">_getRefreshMediaDelay</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the action refreshMediaDelay.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getRefreshMediaDelay">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setEjectDelay" class="summary-sig-name" onclick="show_private();">_setEjectDelay</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the ejectDelay.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setEjectDelay">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getEjectDelay"></a><span class="summary-sig-name">_getEjectDelay</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the action ejectDelay.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._getEjectDelay">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#sourceDir" class="summary-name">sourceDir</a><br />
+      Directory whose contents should be written to media.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#mediaType" class="summary-name">mediaType</a><br />
+      Type of the media (see notes above).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#deviceType" class="summary-name">deviceType</a><br />
+      Type of the device (optional, see notes above).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#devicePath" class="summary-name">devicePath</a><br />
+      Filesystem device name for writer device.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#deviceScsiId" class="summary-name">deviceScsiId</a><br />
+      SCSI id for writer device (optional, see notes above).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#driveSpeed" class="summary-name">driveSpeed</a><br />
+      Speed of the drive.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#checkData" class="summary-name">checkData</a><br />
+      Whether resulting image should be validated.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#checkMedia" class="summary-name">checkMedia</a><br />
+      Whether media should be checked before being written to.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#warnMidnite" class="summary-name">warnMidnite</a><br />
+      Whether to generate warnings for crossing midnite.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#noEject" class="summary-name">noEject</a><br />
+      Indicates that the writer device should not be ejected.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#blankBehavior" class="summary-name">blankBehavior</a><br />
+      Controls optimized blanking behavior.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#refreshMediaDelay" class="summary-name">refreshMediaDelay</a><br />
+      Delay, in seconds, to add after refreshing media.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html#ejectDelay" class="summary-name">ejectDelay</a><br />
+      Delay, in seconds, to add after ejecting media before closing the 
+      tray
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">sourceDir</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">mediaType</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">deviceType</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">devicePath</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">deviceScsiId</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">driveSpeed</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">checkData</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">warnMidnite</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">noEject</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">checkMedia</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">blankBehavior</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">refreshMediaDelay</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">ejectDelay</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Constructor for the <code>StoreConfig</code> class.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sourceDir</code></strong> - Directory whose contents should be written to media.</li>
+        <li><strong class="pname"><code>mediaType</code></strong> - Type of the media (see notes above).</li>
+        <li><strong class="pname"><code>deviceType</code></strong> - Type of the device (optional, see notes above).</li>
+        <li><strong class="pname"><code>devicePath</code></strong> - Filesystem device name for writer device, i.e. 
+          <code>/dev/cdrw</code>.</li>
+        <li><strong class="pname"><code>deviceScsiId</code></strong> - SCSI id for writer device, i.e. 
+          <code>[&lt;method&gt;:]scsibus,target,lun</code>.</li>
+        <li><strong class="pname"><code>driveSpeed</code></strong> - Speed of the drive, i.e. <code>2</code> for 2x drive, etc.</li>
+        <li><strong class="pname"><code>checkData</code></strong> - Whether resulting image should be validated.</li>
+        <li><strong class="pname"><code>checkMedia</code></strong> - Whether media should be checked before being written to.</li>
+        <li><strong class="pname"><code>warnMidnite</code></strong> - Whether to generate warnings for crossing midnite.</li>
+        <li><strong class="pname"><code>noEject</code></strong> - Indicates that the writer device should not be ejected.</li>
+        <li><strong class="pname"><code>blankBehavior</code></strong> - Controls optimized blanking behavior.</li>
+        <li><strong class="pname"><code>refreshMediaDelay</code></strong> - Delay, in seconds, to add after refreshing media</li>
+        <li><strong class="pname"><code>ejectDelay</code></strong> - Delay, in seconds, to add after ejecting media before closing the
+          tray</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If one of the values is invalid.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Official string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__str__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__str__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Informal representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig.__str__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Informal string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__str__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__cmp__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__cmp__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">other</span>)</span>
+    <br /><em class="fname">(Comparison operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig.__cmp__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Definition of equals operator for this class.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>other</code></strong> - Other object to compare to.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>-1/0/1 depending on whether self is <code>&lt;</code>, 
+          <code>=</code> or <code>&gt;</code> other.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setSourceDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setSourceDir</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setSourceDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the source directory. The value must be an
+  absolute path if it is not <code>None</code>. It does not have to exist 
+  on disk at the time of assignment.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not an absolute path.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setMediaType"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setMediaType</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setMediaType">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the media type. The value must be one of 
+  <a href="CedarBackup2.config-module.html#VALID_MEDIA_TYPES" 
+  class="link">VALID_MEDIA_TYPES</a>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setDeviceType"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setDeviceType</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setDeviceType">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the device type. The value must be one of 
+  <a href="CedarBackup2.config-module.html#VALID_DEVICE_TYPES" 
+  class="link">VALID_DEVICE_TYPES</a>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setDevicePath"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setDevicePath</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setDevicePath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the device path. The value must be an 
+  absolute path if it is not <code>None</code>. It does not have to exist 
+  on disk at the time of assignment.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not an absolute path.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setDeviceScsiId"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setDeviceScsiId</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setDeviceScsiId">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the SCSI id The SCSI id must be valid per 
+  <a href="CedarBackup2.writers.util-module.html#validateScsiId" 
+  class="link">validateScsiId</a>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setDriveSpeed"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setDriveSpeed</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setDriveSpeed">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the drive speed. The drive speed must be 
+  valid per <a 
+  href="CedarBackup2.writers.util-module.html#validateDriveSpeed" 
+  class="link">validateDriveSpeed</a>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setCheckData"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setCheckData</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setCheckData">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the check data flag. No validations, but 
+  we normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setCheckMedia"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setCheckMedia</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setCheckMedia">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the check media flag. No validations, but 
+  we normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setWarnMidnite"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setWarnMidnite</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setWarnMidnite">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the midnite warning flag. No validations, 
+  but we normalize the value to <code>True</code> or 
+  <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setNoEject"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setNoEject</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setNoEject">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the no-eject flag. No validations, but we 
+  normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setBlankBehavior"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setBlankBehavior</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setBlankBehavior">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set blanking behavior configuration. If not 
+  <code>None</code>, the value must be a <code>BlankBehavior</code> 
+  object.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not a <code>BlankBehavior</code></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setRefreshMediaDelay"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setRefreshMediaDelay</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setRefreshMediaDelay">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the refreshMediaDelay. The value must be 
+  an integer &gt;= 0.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setEjectDelay"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setEjectDelay</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#StoreConfig._setEjectDelay">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the ejectDelay. The value must be an 
+  integer &gt;= 0.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="sourceDir"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">sourceDir</h3>
+  <p>Directory whose contents should be written to media.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getSourceDir" class="summary-sig-name" onclick="show_private();">_getSourceDir</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the source directory.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setSourceDir" class="summary-sig-name" onclick="show_private();">_setSourceDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the source directory.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="mediaType"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">mediaType</h3>
+  <p>Type of the media (see notes above).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getMediaType" class="summary-sig-name" onclick="show_private();">_getMediaType</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the media type.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setMediaType" class="summary-sig-name" onclick="show_private();">_setMediaType</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the media type.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deviceType"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">deviceType</h3>
+  <p>Type of the device (optional, see notes above).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getDeviceType" class="summary-sig-name" onclick="show_private();">_getDeviceType</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device type.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setDeviceType" class="summary-sig-name" onclick="show_private();">_setDeviceType</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the device type.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="devicePath"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">devicePath</h3>
+  <p>Filesystem device name for writer device.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getDevicePath" class="summary-sig-name" onclick="show_private();">_getDevicePath</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device path.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setDevicePath" class="summary-sig-name" onclick="show_private();">_setDevicePath</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the device path.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deviceScsiId"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">deviceScsiId</h3>
+  <p>SCSI id for writer device (optional, see notes above).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getDeviceScsiId" class="summary-sig-name" onclick="show_private();">_getDeviceScsiId</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the SCSI id.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setDeviceScsiId" class="summary-sig-name" onclick="show_private();">_setDeviceScsiId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the SCSI id The SCSI id must be valid per
+      <a href="CedarBackup2.writers.util-module.html#validateScsiId" 
+      class="link">validateScsiId</a>.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="driveSpeed"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">driveSpeed</h3>
+  <p>Speed of the drive.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getDriveSpeed" class="summary-sig-name" onclick="show_private();">_getDriveSpeed</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the drive speed.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setDriveSpeed" class="summary-sig-name" onclick="show_private();">_setDriveSpeed</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the drive speed.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="checkData"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">checkData</h3>
+  <p>Whether resulting image should be validated.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getCheckData" class="summary-sig-name" onclick="show_private();">_getCheckData</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the check data flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setCheckData" class="summary-sig-name" onclick="show_private();">_setCheckData</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the check data flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="checkMedia"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">checkMedia</h3>
+  <p>Whether media should be checked before being written to.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getCheckMedia" class="summary-sig-name" onclick="show_private();">_getCheckMedia</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the check media flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setCheckMedia" class="summary-sig-name" onclick="show_private();">_setCheckMedia</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the check media flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="warnMidnite"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">warnMidnite</h3>
+  <p>Whether to generate warnings for crossing midnite.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getWarnMidnite" class="summary-sig-name" onclick="show_private();">_getWarnMidnite</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the midnite warning flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setWarnMidnite" class="summary-sig-name" onclick="show_private();">_setWarnMidnite</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the midnite warning flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="noEject"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">noEject</h3>
+  <p>Indicates that the writer device should not be ejected.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getNoEject" class="summary-sig-name" onclick="show_private();">_getNoEject</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the no-eject flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setNoEject" class="summary-sig-name" onclick="show_private();">_setNoEject</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the no-eject flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="blankBehavior"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">blankBehavior</h3>
+  <p>Controls optimized blanking behavior.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getBlankBehavior" class="summary-sig-name" onclick="show_private();">_getBlankBehavior</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the blanking behavior configuration.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setBlankBehavior" class="summary-sig-name" onclick="show_private();">_setBlankBehavior</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set blanking behavior configuration.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="refreshMediaDelay"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">refreshMediaDelay</h3>
+  <p>Delay, in seconds, to add after refreshing media.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getRefreshMediaDelay" class="summary-sig-name" onclick="show_private();">_getRefreshMediaDelay</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the action refreshMediaDelay.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setRefreshMediaDelay" class="summary-sig-name" onclick="show_private();">_setRefreshMediaDelay</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the refreshMediaDelay.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ejectDelay"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ejectDelay</h3>
+  <p>Delay, in seconds, to add after ejecting media before closing the 
+  tray</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_getEjectDelay" class="summary-sig-name" onclick="show_private();">_getEjectDelay</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the action ejectDelay.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.config.StoreConfig-class.html#_setEjectDelay" class="summary-sig-name" onclick="show_private();">_setEjectDelay</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the ejectDelay.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,1047 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.filesystem.BackupFileList</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.filesystem-module.html">Module&nbsp;filesystem</a> ::
+        Class&nbsp;BackupFileList
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.filesystem.BackupFileList-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class BackupFileList</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+        
+         |        
+      list --+    
+             |    
+<a href="CedarBackup2.filesystem.FilesystemList-class.html">FilesystemList</a> --+
+                 |
+                <strong class="uidshort">BackupFileList</strong>
+</pre>
+
+<hr />
+<p>List of files to be backed up.</p>
+  <p>A BackupFileList is a <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html" 
+  class="link">FilesystemList</a> containing a list of files to be backed 
+  up.  It only contains files, not directories (soft links are treated like
+  files).  On top of the generic functionality provided by <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html" 
+  class="link">FilesystemList</a>, this class adds functionality to keep a 
+  hash (checksum) for each file in the list, and it also provides a method 
+  to calculate the total size of the files in the list and a way to export 
+  the list into tar form.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">new empty list</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Initializes a list with no configured exclusions.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#addDir" class="summary-sig-name">addDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>)</span><br />
+      Adds a directory to the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.addDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#totalSize" class="summary-sig-name">totalSize</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns the total size among all files in the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.totalSize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#generateSizeMap" class="summary-sig-name">generateSizeMap</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Generates a mapping from file to file size in bytes.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateSizeMap">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#generateDigestMap" class="summary-sig-name">generateDigestMap</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">stripPrefix</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Generates a mapping from file to file digest.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateDigestMap">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#generateFitted" class="summary-sig-name">generateFitted</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">capacity</span>,
+        <span class="summary-sig-arg">algorithm</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">worst_fit</code><code class="variable-quote">'</code></span>)</span><br />
+      Generates a list of items that fit in the indicated capacity.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateFitted">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#generateTarfile" class="summary-sig-name">generateTarfile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">mode</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">tar</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">ignore</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">flat</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Creates a tar file containing the files in the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateTarfile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#removeUnchanged" class="summary-sig-name">removeUnchanged</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">digestMap</span>,
+        <span class="summary-sig-arg">captureDigest</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Removes unchanged entries from the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.removeUnchanged">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#generateSpan" class="summary-sig-name">generateSpan</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">capacity</span>,
+        <span class="summary-sig-arg">algorithm</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">worst_fit</code><code class="variable-quote">'</code></span>)</span><br />
+      Splits the list of items into sub-lists that fit in a given capacity.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateSpan">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#_getKnapsackTable" class="summary-sig-name" onclick="show_private();">_getKnapsackTable</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">capacity</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Converts the list into the form needed by the knapsack algorithms.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList._getKnapsackTable">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="CedarBackup2.filesystem.FilesystemList-class.html">FilesystemList</a></code></b>:
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#addDirContents">addDirContents</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#addFile">addFile</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#normalize">normalize</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeDirs">removeDirs</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeFiles">removeFiles</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeInvalid">removeInvalid</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeLinks">removeLinks</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeMatch">removeMatch</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#verify">verify</a></code>
+      </p>
+    <div class="private">    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="CedarBackup2.filesystem.FilesystemList-class.html">FilesystemList</a></code></b> (private):
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_addDirContentsInternal" onclick="show_private();">_addDirContentsInternal</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludeBasenamePatterns" onclick="show_private();">_getExcludeBasenamePatterns</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludeDirs" onclick="show_private();">_getExcludeDirs</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludeFiles" onclick="show_private();">_getExcludeFiles</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludeLinks" onclick="show_private();">_getExcludeLinks</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludePaths" onclick="show_private();">_getExcludePaths</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludePatterns" onclick="show_private();">_getExcludePatterns</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getIgnoreFile" onclick="show_private();">_getIgnoreFile</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeBasenamePatterns" onclick="show_private();">_setExcludeBasenamePatterns</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeDirs" onclick="show_private();">_setExcludeDirs</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeFiles" onclick="show_private();">_setExcludeFiles</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeLinks" onclick="show_private();">_setExcludeLinks</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludePaths" onclick="show_private();">_setExcludePaths</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludePatterns" onclick="show_private();">_setExcludePatterns</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setIgnoreFile" onclick="show_private();">_setIgnoreFile</a></code>
+      </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>list</code></b>:
+      <code>__add__</code>,
+      <code>__contains__</code>,
+      <code>__delitem__</code>,
+      <code>__delslice__</code>,
+      <code>__eq__</code>,
+      <code>__ge__</code>,
+      <code>__getattribute__</code>,
+      <code>__getitem__</code>,
+      <code>__getslice__</code>,
+      <code>__gt__</code>,
+      <code>__iadd__</code>,
+      <code>__imul__</code>,
+      <code>__iter__</code>,
+      <code>__le__</code>,
+      <code>__len__</code>,
+      <code>__lt__</code>,
+      <code>__mul__</code>,
+      <code>__ne__</code>,
+      <code>__new__</code>,
+      <code>__repr__</code>,
+      <code>__reversed__</code>,
+      <code>__rmul__</code>,
+      <code>__setitem__</code>,
+      <code>__setslice__</code>,
+      <code>__sizeof__</code>,
+      <code>append</code>,
+      <code>count</code>,
+      <code>extend</code>,
+      <code>index</code>,
+      <code>insert</code>,
+      <code>pop</code>,
+      <code>remove</code>,
+      <code>reverse</code>,
+      <code>sort</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#_generateDigest" class="summary-sig-name" onclick="show_private();">_generateDigest</a>(<span class="summary-sig-arg">path</span>)</span><br />
+      Generates an SHA digest for a given file on disk.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList._generateDigest">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.BackupFileList-class.html#_getKnapsackFunction" class="summary-sig-name" onclick="show_private();">_getKnapsackFunction</a>(<span class="summary-sig-arg">algorithm</span>)</span><br />
+      Returns a reference to the function associated with an algorithm 
+      name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList._getKnapsackFunction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>list</code></b>:
+      <code>__hash__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="CedarBackup2.filesystem.FilesystemList-class.html">FilesystemList</a></code></b>:
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#excludeBasenamePatterns">excludeBasenamePatterns</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#excludeDirs">excludeDirs</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#excludeFiles">excludeFiles</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#excludeLinks">excludeLinks</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#excludePaths">excludePaths</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#excludePatterns">excludePatterns</a></code>,
+      <code><a href="CedarBackup2.filesystem.FilesystemList-class.html#ignoreFile">ignoreFile</a></code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes a list with no configured exclusions.</p>
+  <dl class="fields">
+    <dt>Returns: new empty list</dt>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addDir"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addDir</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.addDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a directory to the list.</p>
+  <p>Note that this class does not allow directories to be added by 
+  themselves (a backup list contains only files).  However, since links to 
+  directories are technically files, we allow them to be added.</p>
+  <p>This method is implemented in terms of the superclass method, with one
+  additional validation: the superclass method is only called if the 
+  passed-in path is both a directory and a link.  All of the superclass's 
+  existing validations and restrictions apply.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> (String representing a path on disk) - Directory path to be added to the list</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of items added to the list.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If path is not a directory or does not exist.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the path could not be encoded properly.</li>
+    </ul></dd>
+    <dt>Overrides:
+        <a href="CedarBackup2.filesystem.FilesystemList-class.html#addDir">FilesystemList.addDir</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="totalSize"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">totalSize</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.totalSize">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the total size among all files in the list. Only files are 
+  counted. Soft links that point at files are ignored. Entries which do not
+  exist on disk are ignored.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Total size, in bytes</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="generateSizeMap"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generateSizeMap</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateSizeMap">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generates a mapping from file to file size in bytes. The mapping does 
+  include soft links, which are listed with size zero. Entries which do not
+  exist on disk are ignored.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Dictionary mapping file to file size</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="generateDigestMap"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generateDigestMap</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">stripPrefix</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateDigestMap">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generates a mapping from file to file digest.</p>
+  <p>Currently, the digest is an SHA hash, which should be pretty secure.  
+  In the future, this might be a different kind of hash, but we guarantee 
+  that the type of the hash will not change unless the library major 
+  version number is bumped.</p>
+  <p>Entries which do not exist on disk are ignored.</p>
+  <p>Soft links are ignored.  We would end up generating a digest for the 
+  file that the soft link points at, which doesn't make any sense.</p>
+  <p>If <code>stripPrefix</code> is passed in, then that prefix will be 
+  stripped from each key when the map is generated.  This can be useful in 
+  generating two &quot;relative&quot; digest maps to be compared to one 
+  another.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>stripPrefix</code></strong> (String with any contents) - Common prefix to be stripped from paths</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Dictionary mapping file to digest value</dd>
+  </dl>
+<div class="fields">      <p><strong>See Also:</strong>
+        <a 
+        href="CedarBackup2.filesystem.BackupFileList-class.html#removeUnchanged"
+        class="link">removeUnchanged</a>
+      </p>
+</div></td></tr></table>
+</div>
+<a name="generateFitted"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generateFitted</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">capacity</span>,
+        <span class="sig-arg">algorithm</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">worst_fit</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateFitted">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generates a list of items that fit in the indicated capacity.</p>
+  <p>Sometimes, callers would like to include every item in a list, but are
+  unable to because not all of the items fit in the space available.  This 
+  method returns a copy of the list, containing only the items that fit in 
+  a given capacity.  A copy is returned so that we don't lose any 
+  information if for some reason the fitted list is unsatisfactory.</p>
+  <p>The fitting is done using the functions in the knapsack module.  By 
+  default, the first fit algorithm is used, but you can also choose from 
+  best fit, worst fit and alternate fit.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>capacity</code></strong> (Integer, in bytes) - Maximum capacity among the files in the new list</li>
+        <li><strong class="pname"><code>algorithm</code></strong> (One of &quot;first_fit&quot;, &quot;best_fit&quot;, 
+          &quot;worst_fit&quot;, &quot;alternate_fit&quot;) - Knapsack (fit) algorithm to use</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Copy of list with total size no larger than indicated capacity</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the algorithm is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="generateTarfile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generateTarfile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">mode</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">tar</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">ignore</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">flat</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateTarfile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Creates a tar file containing the files in the list.</p>
+  <p>By default, this method will create uncompressed tar files.  If you 
+  pass in mode <code>'targz'</code>, then it will create gzipped tar files,
+  and if you pass in mode <code>'tarbz2'</code>, then it will create 
+  bzipped tar files.</p>
+  <p>The tar file will be created as a GNU tar archive, which enables 
+  extended file name lengths, etc.  Since GNU tar is so prevalent, I've 
+  decided that the extra functionality out-weighs the disadvantage of not 
+  being &quot;standard&quot;.</p>
+  <p>If you pass in <code>flat=True</code>, then a &quot;flat&quot; archive
+  will be created, and all of the files will be added to the root of the 
+  archive.  So, the file <code>/tmp/something/whatever.txt</code> would be 
+  added as just <code>whatever.txt</code>.</p>
+  <p>By default, the whole method call fails if there are problems adding 
+  any of the files to the archive, resulting in an exception.  Under these 
+  circumstances, callers are advised that they might want to call <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#removeInvalid" 
+  class="link">removeInvalid()</a> and then attempt to extract the tar file
+  a second time, since the most common cause of failures is a missing file 
+  (a file that existed when the list was built, but is gone again by the 
+  time the tar file is built).</p>
+  <p>If you want to, you can pass in <code>ignore=True</code>, and the 
+  method will ignore errors encountered when adding individual files to the
+  archive (but not errors opening and closing the archive itself).</p>
+  <p>We'll always attempt to remove the tarfile from disk if an exception 
+  will be thrown.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> (String representing a path on disk) - Path of tar file to create on disk</li>
+        <li><strong class="pname"><code>mode</code></strong> (One of either <code>'tar'</code>, <code>'targz'</code> or 
+          <code>'tarbz2'</code>) - Tar creation mode</li>
+        <li><strong class="pname"><code>ignore</code></strong> (Boolean) - Indicates whether to ignore certain errors.</li>
+        <li><strong class="pname"><code>flat</code></strong> (Boolean) - Creates &quot;flat&quot; archive by putting all items in root</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If mode is not valid</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If list is empty</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the path could not be encoded properly.</li>
+        <li><code><strong class='fraise'>TarError</strong></code> - If there is a problem creating the tar file</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        No validation is done as to whether the entries in the list are 
+        files, since only files or soft links should be in an object like 
+        this. However, to be safe, everything is explicitly added to the 
+        tar archive non-recursively so it's safe to include soft links to 
+        directories.
+        </li>
+        <li>
+        The Python <code>tarfile</code> module, which is used internally 
+        here, is supposed to deal properly with long filenames and links.  
+        In my testing, I have found that it appears to be able to add long 
+        really long filenames to archives, but doesn't do a good job 
+        reading them back out, even out of an archive it created.  
+        Fortunately, all Cedar Backup does is add files to archives.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="removeUnchanged"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">removeUnchanged</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">digestMap</span>,
+        <span class="sig-arg">captureDigest</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.removeUnchanged">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Removes unchanged entries from the list.</p>
+  <p>This method relies on a digest map as returned from <a 
+  href="CedarBackup2.filesystem.BackupFileList-class.html#generateDigestMap"
+  class="link">generateDigestMap</a>. For each entry in 
+  <code>digestMap</code>, if the entry also exists in the current list 
+  <i>and</i> the entry in the current list has the same digest value as in 
+  the map, the entry in the current list will be removed.</p>
+  <p>This method offers a convenient way for callers to filter unneeded 
+  entries from a list.  The idea is that a caller will capture a digest map
+  from <code>generateDigestMap</code> at some point in time (perhaps the 
+  beginning of the week), and will save off that map using 
+  <code>pickle</code> or some other method.  Then, the caller could use 
+  this method sometime in the future to filter out any unchanged files 
+  based on the saved-off map.</p>
+  <p>If <code>captureDigest</code> is passed-in as <code>True</code>, then 
+  digest information will be captured for the entire list before the 
+  removal step occurs using the same rules as in <a 
+  href="CedarBackup2.filesystem.BackupFileList-class.html#generateDigestMap"
+  class="link">generateDigestMap</a>.  The check will involve a lookup into
+  the complete digest map.</p>
+  <p>If <code>captureDigest</code> is passed in as <code>False</code>, we 
+  will only generate a digest value for files we actually need to check, 
+  and we'll ignore any entry in the list which isn't a file that currently 
+  exists on disk.</p>
+  <p>The return value varies depending on <code>captureDigest</code>, as 
+  well.  To preserve backwards compatibility, if <code>captureDigest</code>
+  is <code>False</code>, then we'll just return a single value representing
+  the number of entries removed.  Otherwise, we'll return a tuple of 
+  <code>(entries removed, digest map)</code>.  The returned digest map will
+  be in exactly the form returned by <a 
+  href="CedarBackup2.filesystem.BackupFileList-class.html#generateDigestMap"
+  class="link">generateDigestMap</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>digestMap</code></strong> (Map as returned from <a 
+          href="CedarBackup2.filesystem.BackupFileList-class.html#generateDigestMap"
+          class="link">generateDigestMap</a>.) - Dictionary mapping file name to digest value.</li>
+        <li><strong class="pname"><code>captureDigest</code></strong> (Boolean) - Indicates that digest information should be captured.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Results as discussed above (format varies based on arguments)</dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        For performance reasons, this method actually ends up rebuilding 
+        the list from scratch.  First, we build a temporary dictionary 
+        containing all of the items from the original list.  Then, we 
+        remove items as needed from the dictionary (which is faster than 
+        the equivalent operation on a list).  Finally, we replace the 
+        contents of the current list based on the keys left in the 
+        dictionary.  This should be transparent to the caller.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_generateDigest"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_generateDigest</span>(<span class="sig-arg">path</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList._generateDigest">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Generates an SHA digest for a given file on disk.</p>
+  <p>The original code for this function used this simplistic 
+  implementation, which requires reading the entire file into memory at 
+  once in order to generate a digest value:</p>
+<pre class="literalblock">
+  sha.new(open(path).read()).hexdigest()
+</pre>
+  <p>Not surprisingly, this isn't an optimal solution.  The <a 
+  href="http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/259109" 
+  target="_top">Simple file hashing</a> Python Cookbook recipe describes 
+  how to incrementally generate a hash value by reading in chunks of data 
+  rather than reading the file all at once.  The recipe relies on the the 
+  <code>update()</code> method of the various Python hashing 
+  algorithms.</p>
+  <p>In my tests using a 110 MB file on CD, the original implementation 
+  requires 111 seconds.  This implementation requires only 40-45 seconds, 
+  which is a pretty substantial speed-up.</p>
+  <p>Experience shows that reading in around 4kB (4096 bytes) at a time 
+  yields the best performance.  Smaller reads are quite a bit slower, and 
+  larger reads don't make much of a difference.  The 4kB number makes me a 
+  little suspicious, and I think it might be related to the size of a 
+  filesystem read at the hardware level.  However, I've decided to just 
+  hardcode 4096 until I have evidence that shows it's worthwhile making the
+  read size configurable.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> - Path to generate digest for.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>ASCII-safe SHA digest for the file.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>OSError</strong></code> - If the file cannot be opened.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="generateSpan"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generateSpan</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">capacity</span>,
+        <span class="sig-arg">algorithm</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">worst_fit</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList.generateSpan">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Splits the list of items into sub-lists that fit in a given 
+  capacity.</p>
+  <p>Sometimes, callers need split to a backup file list into a set of 
+  smaller lists.  For instance, you could use this to &quot;span&quot; the 
+  files across a set of discs.</p>
+  <p>The fitting is done using the functions in the knapsack module.  By 
+  default, the first fit algorithm is used, but you can also choose from 
+  best fit, worst fit and alternate fit.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>capacity</code></strong> (Integer, in bytes) - Maximum capacity among the files in the new list</li>
+        <li><strong class="pname"><code>algorithm</code></strong> (One of &quot;first_fit&quot;, &quot;best_fit&quot;, 
+          &quot;worst_fit&quot;, &quot;alternate_fit&quot;) - Knapsack (fit) algorithm to use</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of <a href="CedarBackup2.filesystem.SpanItem-class.html" 
+          class="link">SpanItem</a> objects.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the algorithm is invalid.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If it's not possible to fit some items</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        If any of your items are larger than the capacity, then it won't be
+        possible to find a solution.  In this case, a value error will be 
+        raised.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_getKnapsackTable"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getKnapsackTable</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">capacity</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList._getKnapsackTable">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Converts the list into the form needed by the knapsack algorithms.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Dictionary mapping file name to tuple of (file path, file size).</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getKnapsackFunction"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getKnapsackFunction</span>(<span class="sig-arg">algorithm</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#BackupFileList._getKnapsackFunction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns a reference to the function associated with an algorithm name.
+  Algorithm name must be one of &quot;first_fit&quot;, 
+  &quot;best_fit&quot;, &quot;worst_fit&quot;, 
+  &quot;alternate_fit&quot;</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>algorithm</code></strong> - Name of the algorithm</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Reference to knapsack function</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the algorithm name is unknown.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

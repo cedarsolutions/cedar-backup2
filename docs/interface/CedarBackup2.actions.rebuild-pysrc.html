@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.actions.rebuild</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.actions-module.html">Package&nbsp;actions</a> ::
+        Module&nbsp;rebuild
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.actions.rebuild-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="CedarBackup2.actions.rebuild-module.html">Module CedarBackup2.actions.rebuild</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: iso-8859-1 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment"># vim: set ft=python ts=3 sw=3 expandtab:</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment">#              C E D A R</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#          S O L U T I O N S       "Software done right."</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment">#           S O F T W A R E</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2004-2007,2010 Kenneth J. Pronovici.</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># All rights reserved.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment"># This program is free software; you can redistribute it and/or</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment"># modify it under the terms of the GNU General Public License,</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment"># Version 2, as published by the Free Software Foundation.</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment"># This program is distributed in the hope that it will be useful,</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-comment"># but WITHOUT ANY WARRANTY; without even the implied warranty of</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-comment"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment"># Copies of the GNU General Public License are available from</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment"># the Free Software Foundation website, http://www.gnu.org/.</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-comment"># Author   : Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-comment"># Language : Python 2 (&gt;= 2.7)</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-comment"># Project  : Cedar Backup, release 2</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-comment"># Purpose  : Implements the standard 'rebuild' action.</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-comment"># Module documentation</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-docstring">Implements the standard 'rebuild' action.</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring">@sort: executeRebuild</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring">@author: Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-comment"># Imported modules</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-comment"># System modules</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">sys</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">logging</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">datetime</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-comment"># Cedar Backup modules</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package CedarBackup2=CedarBackup2-module.html"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-0', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module CedarBackup2.actions.util=CedarBackup2.actions.util-module.html,Module CedarBackup2.util=CedarBackup2.util-module.html,Module CedarBackup2.writers.util=CedarBackup2.writers.util-module.html"><a title="CedarBackup2.actions.util
+CedarBackup2.util
+CedarBackup2.writers.util" class="py-name" href="#" onclick="return doclink('link-1', 'util', 'link-1');">util</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Function CedarBackup2.util.deriveDayOfWeek()=CedarBackup2.util-module.html#deriveDayOfWeek"><a title="CedarBackup2.util.deriveDayOfWeek" class="py-name" href="#" onclick="return doclink('link-2', 'deriveDayOfWeek', 'link-2');">deriveDayOfWeek</a></tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-3" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-3', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Package CedarBackup2.actions=CedarBackup2.actions-module.html,Variable CedarBackup2.cli.Options.actions=CedarBackup2.cli.Options-class.html#actions,Variable CedarBackup2.config.ExtensionsConfig.actions=CedarBackup2.config.ExtensionsConfig-class.html#actions"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-4', 'actions', 'link-4');">actions</a></tt><tt class="py-op">.</tt><tt id="link-5" class="py-name"><a title="CedarBackup2.actions.util
+CedarBackup2.util
+CedarBackup2.writers.util" class="py-name" href="#" onclick="return doclink('link-5', 'util', 'link-1');">util</a></tt> <tt class="py-keyword">import</tt> <tt id="link-6" class="py-name" targets="Function CedarBackup2.actions.util.checkMediaState()=CedarBackup2.actions.util-module.html#checkMediaState"><a title="CedarBackup2.actions.util.checkMediaState" class="py-name" href="#" onclick="return doclink('link-6', 'checkMediaState', 'link-6');">checkMediaState</a></tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-7" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-7', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-8" class="py-name"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-8', 'actions', 'link-4');">actions</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Module CedarBackup2.actions.constants=CedarBackup2.actions.constants-module.html"><a title="CedarBackup2.actions.constants" class="py-name" href="#" onclick="return doclink('link-9', 'constants', 'link-9');">constants</a></tt> <tt class="py-keyword">import</tt> <tt id="link-10" class="py-name" targets="Variable CedarBackup2.actions.constants.DIR_TIME_FORMAT=CedarBackup2.actions.constants-module.html#DIR_TIME_FORMAT"><a title="CedarBackup2.actions.constants.DIR_TIME_FORMAT" class="py-name" href="#" onclick="return doclink('link-10', 'DIR_TIME_FORMAT', 'link-10');">DIR_TIME_FORMAT</a></tt><tt class="py-op">,</tt> <tt id="link-11" class="py-name" targets="Variable CedarBackup2.actions.constants.STAGE_INDICATOR=CedarBackup2.actions.constants-module.html#STAGE_INDICATOR"><a title="CedarBackup2.actions.constants.STAGE_INDICATOR" class="py-name" href="#" onclick="return doclink('link-11', 'STAGE_INDICATOR', 'link-11');">STAGE_INDICATOR</a></tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-12" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-12', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-13" class="py-name"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-13', 'actions', 'link-4');">actions</a></tt><tt class="py-op">.</tt><tt id="link-14" class="py-name" targets="Module CedarBackup2.actions.store=CedarBackup2.actions.store-module.html,Variable CedarBackup2.config.Config.store=CedarBackup2.config.Config-class.html#store"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-14', 'store', 'link-14');">store</a></tt> <tt class="py-keyword">import</tt> <tt id="link-15" class="py-name" targets="Function CedarBackup2.actions.store.writeImage()=CedarBackup2.actions.store-module.html#writeImage,Method CedarBackup2.writers.cdwriter.CdWriter.writeImage()=CedarBackup2.writers.cdwriter.CdWriter-class.html#writeImage,Method CedarBackup2.writers.dvdwriter.DvdWriter.writeImage()=CedarBackup2.writers.dvdwriter.DvdWriter-class.html#writeImage,Method CedarBackup2.writers.util.IsoImage.writeImage()=CedarBackup2.writers.util.IsoImage-class.html#writeImage"><a title="CedarBackup2.actions.store.writeImage
+CedarBackup2.writers.cdwriter.CdWriter.writeImage
+CedarBackup2.writers.dvdwriter.DvdWriter.writeImage
+CedarBackup2.writers.util.IsoImage.writeImage" class="py-name" href="#" onclick="return doclink('link-15', 'writeImage', 'link-15');">writeImage</a></tt><tt class="py-op">,</tt> <tt id="link-16" class="py-name" targets="Function CedarBackup2.actions.store.writeStoreIndicator()=CedarBackup2.actions.store-module.html#writeStoreIndicator"><a title="CedarBackup2.actions.store.writeStoreIndicator" class="py-name" href="#" onclick="return doclink('link-16', 'writeStoreIndicator', 'link-16');">writeStoreIndicator</a></tt><tt class="py-op">,</tt> <tt id="link-17" class="py-name" targets="Function CedarBackup2.actions.store.consistencyCheck()=CedarBackup2.actions.store-module.html#consistencyCheck"><a title="CedarBackup2.actions.store.consistencyCheck" class="py-name" href="#" onclick="return doclink('link-17', 'consistencyCheck', 'link-17');">consistencyCheck</a></tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-comment"># Module-wide constants and variables</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt id="link-18" class="py-name" targets="Variable CedarBackup2.actions.collect.logger=CedarBackup2.actions.collect-module.html#logger,Variable CedarBackup2.actions.initialize.logger=CedarBackup2.actions.initialize-module.html#logger,Variable CedarBackup2.actions.purge.logger=CedarBackup2.actions.purge-module.html#logger,Variable CedarBackup2.actions.rebuild.logger=CedarBackup2.actions.rebuild-module.html#logger,Variable CedarBackup2.actions.stage.logger=CedarBackup2.actions.stage-module.html#logger,Variable CedarBackup2.actions.store.logger=CedarBackup2.actions.store-module.html#logger,Variable CedarBackup2.actions.util.logger=CedarBackup2.actions.util-module.html#logger,Variable CedarBackup2.actions.validate.logger=CedarBackup2.actions.validate-module.html#logger,Variable CedarBackup2.cli.logger=CedarBackup2.cli-module.html#logger,Variable CedarBackup2.config.logger=CedarBackup2.config-module.html#logger,Variable CedarBackup2.customize.logger=CedarBackup2.customize-module.html#logger,Variable CedarBackup2.extend.amazons3.logger=CedarBackup2.extend.amazons3-module.html#logger,Variable CedarBackup2.extend.capacity.logger=CedarBackup2.extend.capacity-module.html#logger,Variable CedarBackup2.extend.encrypt.logger=CedarBackup2.extend.encrypt-module.html#logger,Variable CedarBackup2.extend.mbox.logger=CedarBackup2.extend.mbox-module.html#logger,Variable CedarBackup2.extend.mysql.logger=CedarBackup2.extend.mysql-module.html#logger,Variable CedarBackup2.extend.postgresql.logger=CedarBackup2.extend.postgresql-module.html#logger,Variable CedarBackup2.extend.split.logger=CedarBackup2.extend.split-module.html#logger,Variable CedarBackup2.extend.subversion.logger=CedarBackup2.extend.subversion-module.html#logger,Variable CedarBackup2.extend.sysinfo.logger=CedarBackup2.extend.sysinfo-module.html#logger,Variable CedarBackup2.filesystem.logger=CedarBackup2.filesystem-module.html#logger,Variable CedarBackup2.peer.logger=CedarBackup2.peer-module.html#logger,Variable CedarBackup2.tools.amazons3.logger=CedarBackup2.tools.amazons3-module.html#logger,Variable CedarBackup2.tools.span.logger=CedarBackup2.tools.span-module.html#logger,Variable CedarBackup2.util.logger=CedarBackup2.util-module.html#logger,Variable CedarBackup2.writers.cdwriter.logger=CedarBackup2.writers.cdwriter-module.html#logger,Variable CedarBackup2.writers.dvdwriter.logger=CedarBackup2.writers.dvdwriter-module.html#logger,Variable CedarBackup2.writers.util.logger=CedarBackup2.writers.util-module.html#logger,Variable CedarBackup2.xmlutil.logger=CedarBackup2.xmlutil-module.html#logger"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-18', 'logger', 'link-18');">logger</a></tt> <tt class="py-op">=</tt> <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">getLogger</tt><tt class="py-op">(</tt><tt class="py-string">"CedarBackup2.log.actions.rebuild"</tt><tt class="py-op">)</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-comment"># Public functions</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-comment"># executeRebuild() function</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-comment"># pylint: disable=W0613</tt> </tt>
+<a name="executeRebuild"></a><div id="executeRebuild-def"><a name="L78"></a><tt class="py-lineno"> 78</tt> <a class="py-toggle" href="#" id="executeRebuild-toggle" onclick="return toggle('executeRebuild');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.rebuild-module.html#executeRebuild">executeRebuild</a><tt class="py-op">(</tt><tt class="py-param">configPath</tt><tt class="py-op">,</tt> <tt class="py-param">options</tt><tt class="py-op">,</tt> <tt class="py-param">config</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="executeRebuild-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="executeRebuild-expanded"><a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"><tt class="py-docstring">   Executes the rebuild backup action.</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"><tt class="py-docstring">   This function exists mainly to recreate a disc that has been "trashed" due</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"><tt class="py-docstring">   to media or hardware problems.  Note that the "stage complete" indicator</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"><tt class="py-docstring">   isn't checked for this action.</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"><tt class="py-docstring">   Note that the rebuild action and the store action are very similar.  The</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"><tt class="py-docstring">   main difference is that while store only stores a single day's staging</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"><tt class="py-docstring">   directory, the rebuild action operates on multiple staging directories.</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"><tt class="py-docstring">   @param configPath: Path to configuration file on disk.</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"><tt class="py-docstring">   @type configPath: String representing a path on disk.</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-docstring">   @param options: Program command-line options.</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"><tt class="py-docstring">   @type options: Options object.</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-docstring">   @type config: Config object.</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: Under many generic error conditions</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line"><tt class="py-docstring">   @raise IOError: If there are problems reading or writing files.</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">   <tt id="link-19" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-19', 'logger', 'link-18');">logger</a></tt><tt class="py-op">.</tt><tt id="link-20" class="py-name" targets="Variable CedarBackup2.cli.Options.debug=CedarBackup2.cli.Options-class.html#debug,Variable CedarBackup2.tools.amazons3.Options.debug=CedarBackup2.tools.amazons3.Options-class.html#debug"><a title="CedarBackup2.cli.Options.debug
+CedarBackup2.tools.amazons3.Options.debug" class="py-name" href="#" onclick="return doclink('link-20', 'debug', 'link-20');">debug</a></tt><tt class="py-op">(</tt><tt class="py-string">"Executing the 'rebuild' action."</tt><tt class="py-op">)</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name" targets="Variable CedarBackup2.util.Diagnostics.platform=CedarBackup2.util.Diagnostics-class.html#platform"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-21', 'platform', 'link-21');">platform</a></tt> <tt class="py-op">==</tt> <tt class="py-string">"darwin"</tt><tt class="py-op">:</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">      <tt id="link-22" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-22', 'logger', 'link-18');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">warn</tt><tt class="py-op">(</tt><tt class="py-string">"Warning: the rebuild action is not fully supported on Mac OS X."</tt><tt class="py-op">)</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">      <tt id="link-23" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-23', 'logger', 'link-18');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">warn</tt><tt class="py-op">(</tt><tt class="py-string">"See the Cedar Backup software manual for further information."</tt><tt class="py-op">)</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-24" class="py-name" targets="Variable CedarBackup2.cli.Options.config=CedarBackup2.cli.Options-class.html#config,Module CedarBackup2.config=CedarBackup2.config-module.html"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-24', 'config', 'link-24');">config</a></tt><tt class="py-op">.</tt><tt id="link-25" class="py-name" targets="Variable CedarBackup2.config.Config.options=CedarBackup2.config.Config-class.html#options"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-25', 'options', 'link-25');">options</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt> <tt class="py-keyword">or</tt> <tt id="link-26" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-26', 'config', 'link-24');">config</a></tt><tt class="py-op">.</tt><tt id="link-27" class="py-name"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-27', 'store', 'link-14');">store</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Rebuild configuration is not properly filled in."</tt><tt class="py-op">)</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-28" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-28', 'config', 'link-24');">config</a></tt><tt class="py-op">.</tt><tt id="link-29" class="py-name"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-29', 'store', 'link-14');">store</a></tt><tt class="py-op">.</tt><tt id="link-30" class="py-name" targets="Variable CedarBackup2.config.StoreConfig.checkMedia=CedarBackup2.config.StoreConfig-class.html#checkMedia"><a title="CedarBackup2.config.StoreConfig.checkMedia" class="py-name" href="#" onclick="return doclink('link-30', 'checkMedia', 'link-30');">checkMedia</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">      <tt id="link-31" class="py-name"><a title="CedarBackup2.actions.util.checkMediaState" class="py-name" href="#" onclick="return doclink('link-31', 'checkMediaState', 'link-6');">checkMediaState</a></tt><tt class="py-op">(</tt><tt id="link-32" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-32', 'config', 'link-24');">config</a></tt><tt class="py-op">.</tt><tt id="link-33" class="py-name"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-33', 'store', 'link-14');">store</a></tt><tt class="py-op">)</tt>  <tt class="py-comment"># raises exception if media is not initialized</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">   <tt class="py-name">stagingDirs</tt> <tt class="py-op">=</tt> <tt id="link-34" class="py-name" targets="Function CedarBackup2.actions.rebuild._findRebuildDirs()=CedarBackup2.actions.rebuild-module.html#_findRebuildDirs"><a title="CedarBackup2.actions.rebuild._findRebuildDirs" class="py-name" href="#" onclick="return doclink('link-34', '_findRebuildDirs', 'link-34');">_findRebuildDirs</a></tt><tt class="py-op">(</tt><tt id="link-35" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-35', 'config', 'link-24');">config</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">   <tt id="link-36" class="py-name"><a title="CedarBackup2.actions.store.writeImage
+CedarBackup2.writers.cdwriter.CdWriter.writeImage
+CedarBackup2.writers.dvdwriter.DvdWriter.writeImage
+CedarBackup2.writers.util.IsoImage.writeImage" class="py-name" href="#" onclick="return doclink('link-36', 'writeImage', 'link-15');">writeImage</a></tt><tt class="py-op">(</tt><tt id="link-37" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-37', 'config', 'link-24');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">stagingDirs</tt><tt class="py-op">)</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-38" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-38', 'config', 'link-24');">config</a></tt><tt class="py-op">.</tt><tt id="link-39" class="py-name"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-39', 'store', 'link-14');">store</a></tt><tt class="py-op">.</tt><tt id="link-40" class="py-name" targets="Variable CedarBackup2.config.StoreConfig.checkData=CedarBackup2.config.StoreConfig-class.html#checkData"><a title="CedarBackup2.config.StoreConfig.checkData" class="py-name" href="#" onclick="return doclink('link-40', 'checkData', 'link-40');">checkData</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt id="link-41" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-41', 'platform', 'link-21');">platform</a></tt> <tt class="py-op">==</tt> <tt class="py-string">"darwin"</tt><tt class="py-op">:</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">         <tt id="link-42" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-42', 'logger', 'link-18');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">warn</tt><tt class="py-op">(</tt><tt class="py-string">"Warning: consistency check cannot be run successfully on Mac OS X."</tt><tt class="py-op">)</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">         <tt id="link-43" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-43', 'logger', 'link-18');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">warn</tt><tt class="py-op">(</tt><tt class="py-string">"See the Cedar Backup software manual for further information."</tt><tt class="py-op">)</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">      <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">         <tt id="link-44" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-44', 'logger', 'link-18');">logger</a></tt><tt class="py-op">.</tt><tt id="link-45" class="py-name"><a title="CedarBackup2.cli.Options.debug
+CedarBackup2.tools.amazons3.Options.debug" class="py-name" href="#" onclick="return doclink('link-45', 'debug', 'link-20');">debug</a></tt><tt class="py-op">(</tt><tt class="py-string">"Running consistency check of media."</tt><tt class="py-op">)</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">         <tt id="link-46" class="py-name"><a title="CedarBackup2.actions.store.consistencyCheck" class="py-name" href="#" onclick="return doclink('link-46', 'consistencyCheck', 'link-17');">consistencyCheck</a></tt><tt class="py-op">(</tt><tt id="link-47" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-47', 'config', 'link-24');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">stagingDirs</tt><tt class="py-op">)</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">   <tt id="link-48" class="py-name"><a title="CedarBackup2.actions.store.writeStoreIndicator" class="py-name" href="#" onclick="return doclink('link-48', 'writeStoreIndicator', 'link-16');">writeStoreIndicator</a></tt><tt class="py-op">(</tt><tt id="link-49" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-49', 'config', 'link-24');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">stagingDirs</tt><tt class="py-op">)</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">   <tt id="link-50" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-50', 'logger', 'link-18');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">"Executed the 'rebuild' action successfully."</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line"> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"><tt class="py-comment"># Private utility functions</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"><tt class="py-comment"># _findRebuildDirs() function</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line"> </tt>
+<a name="_findRebuildDirs"></a><div id="_findRebuildDirs-def"><a name="L131"></a><tt class="py-lineno">131</tt> <a class="py-toggle" href="#" id="_findRebuildDirs-toggle" onclick="return toggle('_findRebuildDirs');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.rebuild-module.html#_findRebuildDirs">_findRebuildDirs</a><tt class="py-op">(</tt><tt class="py-param">config</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_findRebuildDirs-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_findRebuildDirs-expanded"><a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line"><tt class="py-docstring">   Finds the set of directories to be included in a disc rebuild.</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line"><tt class="py-docstring">   A the rebuild action is supposed to recreate the "last week's" disc.  This</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"><tt class="py-docstring">   won't always be possible if some of the staging directories are missing.</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line"><tt class="py-docstring">   However, the general procedure is to look back into the past no further than</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line"><tt class="py-docstring">   the previous "starting day of week", and then work forward from there trying</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"><tt class="py-docstring">   to find all of the staging directories between then and now that still exist</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line"><tt class="py-docstring">   and have a stage indicator.</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Config object.</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line"><tt class="py-docstring">   @return: Correct staging dir, as a dict mapping directory to date suffix.</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"><tt class="py-docstring">   @raise IOError: If we do not find at least one staging directory.</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">   <tt class="py-name">stagingDirs</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">   <tt class="py-name">start</tt> <tt class="py-op">=</tt> <tt id="link-51" class="py-name"><a title="CedarBackup2.util.deriveDayOfWeek" class="py-name" href="#" onclick="return doclink('link-51', 'deriveDayOfWeek', 'link-2');">deriveDayOfWeek</a></tt><tt class="py-op">(</tt><tt id="link-52" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-52', 'config', 'link-24');">config</a></tt><tt class="py-op">.</tt><tt id="link-53" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-53', 'options', 'link-25');">options</a></tt><tt class="py-op">.</tt><tt id="link-54" class="py-name" targets="Variable CedarBackup2.config.OptionsConfig.startingDay=CedarBackup2.config.OptionsConfig-class.html#startingDay"><a title="CedarBackup2.config.OptionsConfig.startingDay" class="py-name" href="#" onclick="return doclink('link-54', 'startingDay', 'link-54');">startingDay</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">   <tt class="py-name">today</tt> <tt class="py-op">=</tt> <tt class="py-name">datetime</tt><tt class="py-op">.</tt><tt class="py-name">date</tt><tt class="py-op">.</tt><tt class="py-name">today</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">today</tt><tt class="py-op">.</tt><tt class="py-name">weekday</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;=</tt> <tt class="py-name">start</tt><tt class="py-op">:</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">      <tt class="py-name">days</tt> <tt class="py-op">=</tt> <tt class="py-name">today</tt><tt class="py-op">.</tt><tt class="py-name">weekday</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-name">start</tt> <tt class="py-op">+</tt> <tt class="py-number">1</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">   <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">      <tt class="py-name">days</tt> <tt class="py-op">=</tt> <tt class="py-number">7</tt> <tt class="py-op">-</tt> <tt class="py-op">(</tt><tt class="py-name">start</tt> <tt class="py-op">-</tt> <tt class="py-name">today</tt><tt class="py-op">.</tt><tt class="py-name">weekday</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-number">1</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">   <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt> <tt class="py-op">(</tt><tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-name">days</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">      <tt class="py-name">currentDay</tt> <tt class="py-op">=</tt> <tt class="py-name">today</tt> <tt class="py-op">-</tt> <tt class="py-name">datetime</tt><tt class="py-op">.</tt><tt class="py-name">timedelta</tt><tt class="py-op">(</tt><tt class="py-name">days</tt><tt class="py-op">=</tt><tt class="py-name">i</tt><tt class="py-op">)</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">      <tt class="py-name">dateSuffix</tt> <tt class="py-op">=</tt> <tt class="py-name">currentDay</tt><tt class="py-op">.</tt><tt class="py-name">strftime</tt><tt class="py-op">(</tt><tt id="link-55" class="py-name"><a title="CedarBackup2.actions.constants.DIR_TIME_FORMAT" class="py-name" href="#" onclick="return doclink('link-55', 'DIR_TIME_FORMAT', 'link-10');">DIR_TIME_FORMAT</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">      <tt class="py-name">stageDir</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt id="link-56" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-56', 'config', 'link-24');">config</a></tt><tt class="py-op">.</tt><tt id="link-57" class="py-name"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-57', 'store', 'link-14');">store</a></tt><tt class="py-op">.</tt><tt id="link-58" class="py-name" targets="Variable CedarBackup2.config.StoreConfig.sourceDir=CedarBackup2.config.StoreConfig-class.html#sourceDir,Variable CedarBackup2.tools.amazons3.Options.sourceDir=CedarBackup2.tools.amazons3.Options-class.html#sourceDir"><a title="CedarBackup2.config.StoreConfig.sourceDir
+CedarBackup2.tools.amazons3.Options.sourceDir" class="py-name" href="#" onclick="return doclink('link-58', 'sourceDir', 'link-58');">sourceDir</a></tt><tt class="py-op">,</tt> <tt class="py-name">dateSuffix</tt><tt class="py-op">)</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">      <tt class="py-name">indicator</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">stageDir</tt><tt class="py-op">,</tt> <tt id="link-59" class="py-name"><a title="CedarBackup2.actions.constants.STAGE_INDICATOR" class="py-name" href="#" onclick="return doclink('link-59', 'STAGE_INDICATOR', 'link-11');">STAGE_INDICATOR</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">isdir</tt><tt class="py-op">(</tt><tt class="py-name">stageDir</tt><tt class="py-op">)</tt> <tt class="py-keyword">and</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">indicator</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">         <tt id="link-60" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-60', 'logger', 'link-18');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">"Rebuild process will include stage directory [%s]"</tt><tt class="py-op">,</tt> <tt class="py-name">stageDir</tt><tt class="py-op">)</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line">         <tt class="py-name">stagingDirs</tt><tt class="py-op">[</tt><tt class="py-name">stageDir</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">dateSuffix</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">stagingDirs</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">IOError</tt><tt class="py-op">(</tt><tt class="py-string">"Unable to find any staging directories for rebuild process."</tt><tt class="py-op">)</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">stagingDirs</tt> </tt>
+</div><a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

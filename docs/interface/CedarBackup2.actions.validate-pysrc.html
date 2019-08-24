@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.actions.validate</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.actions-module.html">Package&nbsp;actions</a> ::
+        Module&nbsp;validate
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.actions.validate-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="CedarBackup2.actions.validate-module.html">Module CedarBackup2.actions.validate</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: iso-8859-1 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment"># vim: set ft=python ts=3 sw=3 expandtab:</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment">#              C E D A R</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#          S O L U T I O N S       "Software done right."</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment">#           S O F T W A R E</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2004-2007,2010 Kenneth J. Pronovici.</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># All rights reserved.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment"># This program is free software; you can redistribute it and/or</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment"># modify it under the terms of the GNU General Public License,</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment"># Version 2, as published by the Free Software Foundation.</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment"># This program is distributed in the hope that it will be useful,</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-comment"># but WITHOUT ANY WARRANTY; without even the implied warranty of</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-comment"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment"># Copies of the GNU General Public License are available from</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment"># the Free Software Foundation website, http://www.gnu.org/.</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-comment"># Author   : Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-comment"># Language : Python 2 (&gt;= 2.7)</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-comment"># Project  : Cedar Backup, release 2</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-comment"># Purpose  : Implements the standard 'validate' action.</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-comment"># Module documentation</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-docstring">Implements the standard 'validate' action.</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring">@sort: executeValidate</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring">@author: Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-comment"># Imported modules</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-comment"># System modules</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">logging</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-comment"># Cedar Backup modules</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package CedarBackup2=CedarBackup2-module.html"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-0', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module CedarBackup2.actions.util=CedarBackup2.actions.util-module.html,Module CedarBackup2.util=CedarBackup2.util-module.html,Module CedarBackup2.writers.util=CedarBackup2.writers.util-module.html"><a title="CedarBackup2.actions.util
+CedarBackup2.util
+CedarBackup2.writers.util" class="py-name" href="#" onclick="return doclink('link-1', 'util', 'link-1');">util</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Function CedarBackup2.util.getUidGid()=CedarBackup2.util-module.html#getUidGid"><a title="CedarBackup2.util.getUidGid" class="py-name" href="#" onclick="return doclink('link-2', 'getUidGid', 'link-2');">getUidGid</a></tt><tt class="py-op">,</tt> <tt id="link-3" class="py-name" targets="Function CedarBackup2.util.getFunctionReference()=CedarBackup2.util-module.html#getFunctionReference"><a title="CedarBackup2.util.getFunctionReference" class="py-name" href="#" onclick="return doclink('link-3', 'getFunctionReference', 'link-3');">getFunctionReference</a></tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-4" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-4', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Package CedarBackup2.actions=CedarBackup2.actions-module.html,Variable CedarBackup2.cli.Options.actions=CedarBackup2.cli.Options-class.html#actions,Variable CedarBackup2.config.ExtensionsConfig.actions=CedarBackup2.config.ExtensionsConfig-class.html#actions"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-5', 'actions', 'link-5');">actions</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name"><a title="CedarBackup2.actions.util
+CedarBackup2.util
+CedarBackup2.writers.util" class="py-name" href="#" onclick="return doclink('link-6', 'util', 'link-1');">util</a></tt> <tt class="py-keyword">import</tt> <tt id="link-7" class="py-name" targets="Function CedarBackup2.actions.util.createWriter()=CedarBackup2.actions.util-module.html#createWriter"><a title="CedarBackup2.actions.util.createWriter" class="py-name" href="#" onclick="return doclink('link-7', 'createWriter', 'link-7');">createWriter</a></tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-comment"># Module-wide constants and variables</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt id="link-8" class="py-name" targets="Variable CedarBackup2.actions.collect.logger=CedarBackup2.actions.collect-module.html#logger,Variable CedarBackup2.actions.initialize.logger=CedarBackup2.actions.initialize-module.html#logger,Variable CedarBackup2.actions.purge.logger=CedarBackup2.actions.purge-module.html#logger,Variable CedarBackup2.actions.rebuild.logger=CedarBackup2.actions.rebuild-module.html#logger,Variable CedarBackup2.actions.stage.logger=CedarBackup2.actions.stage-module.html#logger,Variable CedarBackup2.actions.store.logger=CedarBackup2.actions.store-module.html#logger,Variable CedarBackup2.actions.util.logger=CedarBackup2.actions.util-module.html#logger,Variable CedarBackup2.actions.validate.logger=CedarBackup2.actions.validate-module.html#logger,Variable CedarBackup2.cli.logger=CedarBackup2.cli-module.html#logger,Variable CedarBackup2.config.logger=CedarBackup2.config-module.html#logger,Variable CedarBackup2.customize.logger=CedarBackup2.customize-module.html#logger,Variable CedarBackup2.extend.amazons3.logger=CedarBackup2.extend.amazons3-module.html#logger,Variable CedarBackup2.extend.capacity.logger=CedarBackup2.extend.capacity-module.html#logger,Variable CedarBackup2.extend.encrypt.logger=CedarBackup2.extend.encrypt-module.html#logger,Variable CedarBackup2.extend.mbox.logger=CedarBackup2.extend.mbox-module.html#logger,Variable CedarBackup2.extend.mysql.logger=CedarBackup2.extend.mysql-module.html#logger,Variable CedarBackup2.extend.postgresql.logger=CedarBackup2.extend.postgresql-module.html#logger,Variable CedarBackup2.extend.split.logger=CedarBackup2.extend.split-module.html#logger,Variable CedarBackup2.extend.subversion.logger=CedarBackup2.extend.subversion-module.html#logger,Variable CedarBackup2.extend.sysinfo.logger=CedarBackup2.extend.sysinfo-module.html#logger,Variable CedarBackup2.filesystem.logger=CedarBackup2.filesystem-module.html#logger,Variable CedarBackup2.peer.logger=CedarBackup2.peer-module.html#logger,Variable CedarBackup2.tools.amazons3.logger=CedarBackup2.tools.amazons3-module.html#logger,Variable CedarBackup2.tools.span.logger=CedarBackup2.tools.span-module.html#logger,Variable CedarBackup2.util.logger=CedarBackup2.util-module.html#logger,Variable CedarBackup2.writers.cdwriter.logger=CedarBackup2.writers.cdwriter-module.html#logger,Variable CedarBackup2.writers.dvdwriter.logger=CedarBackup2.writers.dvdwriter-module.html#logger,Variable CedarBackup2.writers.util.logger=CedarBackup2.writers.util-module.html#logger,Variable CedarBackup2.xmlutil.logger=CedarBackup2.xmlutil-module.html#logger"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-8', 'logger', 'link-8');">logger</a></tt> <tt class="py-op">=</tt> <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">getLogger</tt><tt class="py-op">(</tt><tt class="py-string">"CedarBackup2.log.actions.validate"</tt><tt class="py-op">)</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-comment"># Public functions</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-comment">#############################</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-comment"># executeValidate() function</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-comment">#############################</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-comment"># pylint: disable=W0613</tt> </tt>
+<a name="executeValidate"></a><div id="executeValidate-def"><a name="L74"></a><tt class="py-lineno"> 74</tt> <a class="py-toggle" href="#" id="executeValidate-toggle" onclick="return toggle('executeValidate');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.validate-module.html#executeValidate">executeValidate</a><tt class="py-op">(</tt><tt class="py-param">configPath</tt><tt class="py-op">,</tt> <tt class="py-param">options</tt><tt class="py-op">,</tt> <tt class="py-param">config</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="executeValidate-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="executeValidate-expanded"><a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-docstring">   Executes the validate action.</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-docstring">   This action validates each of the individual sections in the config file.</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-docstring">   This is a "runtime" validation.  The config file itself is already valid in</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"><tt class="py-docstring">   a structural sense, so what we check here that is that we can actually use</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"><tt class="py-docstring">   the configuration without any problems.</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"><tt class="py-docstring">   There's a separate validation function for each of the configuration</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"><tt class="py-docstring">   sections.  Each validation function returns a true/false indication for</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"><tt class="py-docstring">   whether configuration was valid, and then logs any configuration problems it</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"><tt class="py-docstring">   finds.  This way, one pass over configuration indicates most or all of the</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"><tt class="py-docstring">   obvious problems, rather than finding just one problem at a time.</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"><tt class="py-docstring">   Any reported problems will be logged at the ERROR level normally, or at the</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"><tt class="py-docstring">   INFO level if the quiet flag is enabled.</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"><tt class="py-docstring">   @param configPath: Path to configuration file on disk.</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-docstring">   @type configPath: String representing a path on disk.</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-docstring">   @param options: Program command-line options.</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"><tt class="py-docstring">   @type options: Options object.</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"><tt class="py-docstring">   @type config: Config object.</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: If some configuration value is invalid.</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">   <tt id="link-9" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-9', 'logger', 'link-8');">logger</a></tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Variable CedarBackup2.cli.Options.debug=CedarBackup2.cli.Options-class.html#debug,Variable CedarBackup2.tools.amazons3.Options.debug=CedarBackup2.tools.amazons3.Options-class.html#debug"><a title="CedarBackup2.cli.Options.debug
+CedarBackup2.tools.amazons3.Options.debug" class="py-name" href="#" onclick="return doclink('link-10', 'debug', 'link-10');">debug</a></tt><tt class="py-op">(</tt><tt class="py-string">"Executing the 'validate' action."</tt><tt class="py-op">)</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-11" class="py-name" targets="Variable CedarBackup2.config.Config.options=CedarBackup2.config.Config-class.html#options"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-11', 'options', 'link-11');">options</a></tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Variable CedarBackup2.cli.Options.quiet=CedarBackup2.cli.Options-class.html#quiet,Variable CedarBackup2.tools.amazons3.Options.quiet=CedarBackup2.tools.amazons3.Options-class.html#quiet"><a title="CedarBackup2.cli.Options.quiet
+CedarBackup2.tools.amazons3.Options.quiet" class="py-name" href="#" onclick="return doclink('link-12', 'quiet', 'link-12');">quiet</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt> <tt class="py-op">=</tt> <tt id="link-13" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-13', 'logger', 'link-8');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt>   <tt class="py-comment"># info so it goes to the log</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">   <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt> <tt class="py-op">=</tt> <tt id="link-14" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-14', 'logger', 'link-8');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">error</tt>  <tt class="py-comment"># error so it goes to the screen</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-15" class="py-name" targets="Function CedarBackup2.actions.validate._validateReference()=CedarBackup2.actions.validate-module.html#_validateReference,Method CedarBackup2.config.Config._validateReference()=CedarBackup2.config.Config-class.html#_validateReference"><a title="CedarBackup2.actions.validate._validateReference
+CedarBackup2.config.Config._validateReference" class="py-name" href="#" onclick="return doclink('link-15', '_validateReference', 'link-15');">_validateReference</a></tt><tt class="py-op">(</tt><tt id="link-16" class="py-name" targets="Variable CedarBackup2.cli.Options.config=CedarBackup2.cli.Options-class.html#config,Module CedarBackup2.config=CedarBackup2.config-module.html"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-16', 'config', 'link-16');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">)</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-17" class="py-name" targets="Function CedarBackup2.actions.validate._validateOptions()=CedarBackup2.actions.validate-module.html#_validateOptions,Method CedarBackup2.config.Config._validateOptions()=CedarBackup2.config.Config-class.html#_validateOptions"><a title="CedarBackup2.actions.validate._validateOptions
+CedarBackup2.config.Config._validateOptions" class="py-name" href="#" onclick="return doclink('link-17', '_validateOptions', 'link-17');">_validateOptions</a></tt><tt class="py-op">(</tt><tt id="link-18" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-18', 'config', 'link-16');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">)</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-19" class="py-name" targets="Function CedarBackup2.actions.validate._validateCollect()=CedarBackup2.actions.validate-module.html#_validateCollect,Method CedarBackup2.config.Config._validateCollect()=CedarBackup2.config.Config-class.html#_validateCollect"><a title="CedarBackup2.actions.validate._validateCollect
+CedarBackup2.config.Config._validateCollect" class="py-name" href="#" onclick="return doclink('link-19', '_validateCollect', 'link-19');">_validateCollect</a></tt><tt class="py-op">(</tt><tt id="link-20" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-20', 'config', 'link-16');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">)</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-21" class="py-name" targets="Function CedarBackup2.actions.validate._validateStage()=CedarBackup2.actions.validate-module.html#_validateStage,Method CedarBackup2.config.Config._validateStage()=CedarBackup2.config.Config-class.html#_validateStage"><a title="CedarBackup2.actions.validate._validateStage
+CedarBackup2.config.Config._validateStage" class="py-name" href="#" onclick="return doclink('link-21', '_validateStage', 'link-21');">_validateStage</a></tt><tt class="py-op">(</tt><tt id="link-22" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-22', 'config', 'link-16');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">)</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-23" class="py-name" targets="Function CedarBackup2.actions.validate._validateStore()=CedarBackup2.actions.validate-module.html#_validateStore,Method CedarBackup2.config.Config._validateStore()=CedarBackup2.config.Config-class.html#_validateStore"><a title="CedarBackup2.actions.validate._validateStore
+CedarBackup2.config.Config._validateStore" class="py-name" href="#" onclick="return doclink('link-23', '_validateStore', 'link-23');">_validateStore</a></tt><tt class="py-op">(</tt><tt id="link-24" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-24', 'config', 'link-16');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">)</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-25" class="py-name" targets="Function CedarBackup2.actions.validate._validatePurge()=CedarBackup2.actions.validate-module.html#_validatePurge,Method CedarBackup2.config.Config._validatePurge()=CedarBackup2.config.Config-class.html#_validatePurge"><a title="CedarBackup2.actions.validate._validatePurge
+CedarBackup2.config.Config._validatePurge" class="py-name" href="#" onclick="return doclink('link-25', '_validatePurge', 'link-25');">_validatePurge</a></tt><tt class="py-op">(</tt><tt id="link-26" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-26', 'config', 'link-16');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">)</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-27" class="py-name" targets="Function CedarBackup2.actions.validate._validateExtensions()=CedarBackup2.actions.validate-module.html#_validateExtensions,Method CedarBackup2.config.Config._validateExtensions()=CedarBackup2.config.Config-class.html#_validateExtensions"><a title="CedarBackup2.actions.validate._validateExtensions
+CedarBackup2.config.Config._validateExtensions" class="py-name" href="#" onclick="return doclink('link-27', '_validateExtensions', 'link-27');">_validateExtensions</a></tt><tt class="py-op">(</tt><tt id="link-28" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-28', 'config', 'link-16');">config</a></tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">)</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">valid</tt><tt class="py-op">:</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"Configuration is valid."</tt><tt class="py-op">)</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">   <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"Configuration is not valid."</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line"> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line"> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line"><tt class="py-comment"># Private utility functions</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"><tt class="py-comment">#######################</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line"><tt class="py-comment"># _checkDir() function</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"><tt class="py-comment">#######################</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line"> </tt>
+<a name="_checkDir"></a><div id="_checkDir-def"><a name="L130"></a><tt class="py-lineno">130</tt> <a class="py-toggle" href="#" id="_checkDir-toggle" onclick="return toggle('_checkDir');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.validate-module.html#_checkDir">_checkDir</a><tt class="py-op">(</tt><tt class="py-param">path</tt><tt class="py-op">,</tt> <tt class="py-param">writable</tt><tt class="py-op">,</tt> <tt class="py-param">logfunc</tt><tt class="py-op">,</tt> <tt class="py-param">prefix</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_checkDir-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_checkDir-expanded"><a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line"><tt class="py-docstring">   Checks that the indicated directory is OK.</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line"><tt class="py-docstring">   The path must exist, must be a directory, must be readable and executable,</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line"><tt class="py-docstring">   and must optionally be writable.</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line"><tt class="py-docstring">   @param path: Path to check.</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line"><tt class="py-docstring">   @param writable: Check that path is writable.</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"><tt class="py-docstring">   @param logfunc: Function to use for logging errors.</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line"><tt class="py-docstring">   @param prefix: Prefix to use on logged errors.</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line"><tt class="py-docstring">   @return: True if the directory is OK, False otherwise.</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"%s [%s] does not exist."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">prefix</tt><tt class="py-op">,</tt> <tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">isdir</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"%s [%s] is not a directory."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">prefix</tt><tt class="py-op">,</tt> <tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">access</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">R_OK</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"%s [%s] is not readable."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">prefix</tt><tt class="py-op">,</tt> <tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">access</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">X_OK</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"%s [%s] is not executable."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">prefix</tt><tt class="py-op">,</tt> <tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">writable</tt> <tt class="py-keyword">and</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">access</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">W_OK</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"%s [%s] is not writable."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">prefix</tt><tt class="py-op">,</tt> <tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">True</tt> </tt>
+</div><a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line"> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line"> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line"><tt class="py-comment">################################</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line"><tt class="py-comment"># _validateReference() function</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line"><tt class="py-comment">################################</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line"> </tt>
+<a name="_validateReference"></a><div id="_validateReference-def"><a name="L166"></a><tt class="py-lineno">166</tt> <a class="py-toggle" href="#" id="_validateReference-toggle" onclick="return toggle('_validateReference');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.validate-module.html#_validateReference">_validateReference</a><tt class="py-op">(</tt><tt class="py-param">config</tt><tt class="py-op">,</tt> <tt class="py-param">logfunc</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_validateReference-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_validateReference-expanded"><a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line"><tt class="py-docstring">   Execute runtime validations on reference configuration.</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line"><tt class="py-docstring">   We only validate that reference configuration exists at all.</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line"><tt class="py-docstring">   @param logfunc: Function to use for logging errors</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line"><tt class="py-docstring">   @return: True if configuration is valid, false otherwise.</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-29" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-29', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-30" class="py-name" targets="Variable CedarBackup2.config.Config.reference=CedarBackup2.config.Config-class.html#reference"><a title="CedarBackup2.config.Config.reference" class="py-name" href="#" onclick="return doclink('link-30', 'reference', 'link-30');">reference</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"Required reference configuration does not exist."</tt><tt class="py-op">)</tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">      <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">valid</tt> </tt>
+</div><a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line"> </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line"> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line"><tt class="py-comment"># _validateOptions() function</tt> </tt>
+<a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line"> </tt>
+<a name="_validateOptions"></a><div id="_validateOptions-def"><a name="L188"></a><tt class="py-lineno">188</tt> <a class="py-toggle" href="#" id="_validateOptions-toggle" onclick="return toggle('_validateOptions');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.validate-module.html#_validateOptions">_validateOptions</a><tt class="py-op">(</tt><tt class="py-param">config</tt><tt class="py-op">,</tt> <tt class="py-param">logfunc</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_validateOptions-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_validateOptions-expanded"><a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line"><tt class="py-docstring">   Execute runtime validations on options configuration.</tt> </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line"><tt class="py-docstring">   The following validations are enforced:</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line"><tt class="py-docstring">      - The options section must exist</tt> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line"><tt class="py-docstring">      - The working directory must exist and must be writable</tt> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line"><tt class="py-docstring">      - The backup user and backup group must exist</tt> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line"><tt class="py-docstring">   @param logfunc: Function to use for logging errors</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line"><tt class="py-docstring">   @return: True if configuration is valid, false otherwise.</tt> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-31" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-31', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-32" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-32', 'options', 'link-11');">options</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line">      <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"Required options configuration does not exist."</tt><tt class="py-op">)</tt> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line">      <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line">   <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line">      <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-33" class="py-name" targets="Function CedarBackup2.actions.validate._checkDir()=CedarBackup2.actions.validate-module.html#_checkDir"><a title="CedarBackup2.actions.validate._checkDir" class="py-name" href="#" onclick="return doclink('link-33', '_checkDir', 'link-33');">_checkDir</a></tt><tt class="py-op">(</tt><tt id="link-34" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-34', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-35" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-35', 'options', 'link-11');">options</a></tt><tt class="py-op">.</tt><tt id="link-36" class="py-name" targets="Variable CedarBackup2.config.OptionsConfig.workingDir=CedarBackup2.config.OptionsConfig-class.html#workingDir,Variable CedarBackup2.peer.RemotePeer.workingDir=CedarBackup2.peer.RemotePeer-class.html#workingDir"><a title="CedarBackup2.config.OptionsConfig.workingDir
+CedarBackup2.peer.RemotePeer.workingDir" class="py-name" href="#" onclick="return doclink('link-36', 'workingDir', 'link-36');">workingDir</a></tt><tt class="py-op">,</tt> <tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">,</tt> <tt class="py-string">"Working directory"</tt><tt class="py-op">)</tt> </tt>
+<a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">      <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">         <tt id="link-37" class="py-name"><a title="CedarBackup2.util.getUidGid" class="py-name" href="#" onclick="return doclink('link-37', 'getUidGid', 'link-2');">getUidGid</a></tt><tt class="py-op">(</tt><tt id="link-38" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-38', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-39" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-39', 'options', 'link-11');">options</a></tt><tt class="py-op">.</tt><tt id="link-40" class="py-name" targets="Variable CedarBackup2.config.OptionsConfig.backupUser=CedarBackup2.config.OptionsConfig-class.html#backupUser"><a title="CedarBackup2.config.OptionsConfig.backupUser" class="py-name" href="#" onclick="return doclink('link-40', 'backupUser', 'link-40');">backupUser</a></tt><tt class="py-op">,</tt> <tt id="link-41" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-41', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-42" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-42', 'options', 'link-11');">options</a></tt><tt class="py-op">.</tt><tt id="link-43" class="py-name" targets="Variable CedarBackup2.config.OptionsConfig.backupGroup=CedarBackup2.config.OptionsConfig-class.html#backupGroup"><a title="CedarBackup2.config.OptionsConfig.backupGroup" class="py-name" href="#" onclick="return doclink('link-43', 'backupGroup', 'link-43');">backupGroup</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line">      <tt class="py-keyword">except</tt> <tt class="py-name">ValueError</tt><tt class="py-op">:</tt> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line">         <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"Backup user:group [%s:%s] invalid."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt id="link-44" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-44', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-45" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-45', 'options', 'link-11');">options</a></tt><tt class="py-op">.</tt><tt id="link-46" class="py-name"><a title="CedarBackup2.config.OptionsConfig.backupUser" class="py-name" href="#" onclick="return doclink('link-46', 'backupUser', 'link-40');">backupUser</a></tt><tt class="py-op">,</tt> <tt id="link-47" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-47', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-48" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-48', 'options', 'link-11');">options</a></tt><tt class="py-op">.</tt><tt id="link-49" class="py-name"><a title="CedarBackup2.config.OptionsConfig.backupGroup" class="py-name" href="#" onclick="return doclink('link-49', 'backupGroup', 'link-43');">backupGroup</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line">         <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">valid</tt> </tt>
+</div><a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line"> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line"> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line"><tt class="py-comment"># _validateCollect() function</tt> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line"> </tt>
+<a name="_validateCollect"></a><div id="_validateCollect-def"><a name="L221"></a><tt class="py-lineno">221</tt> <a class="py-toggle" href="#" id="_validateCollect-toggle" onclick="return toggle('_validateCollect');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.validate-module.html#_validateCollect">_validateCollect</a><tt class="py-op">(</tt><tt class="py-param">config</tt><tt class="py-op">,</tt> <tt class="py-param">logfunc</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_validateCollect-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_validateCollect-expanded"><a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line"><tt class="py-docstring">   Execute runtime validations on collect configuration.</tt> </tt>
+<a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line"><tt class="py-docstring">   The following validations are enforced:</tt> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line"><tt class="py-docstring">      - The target directory must exist and must be writable</tt> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line"><tt class="py-docstring">      - Each of the individual collect directories must exist and must be readable</tt> </tt>
+<a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line"><tt class="py-docstring">   @param logfunc: Function to use for logging errors</tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line"><tt class="py-docstring">   @return: True if configuration is valid, false otherwise.</tt> </tt>
+<a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L236"></a><tt class="py-lineno">236</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-50" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-50', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-51" class="py-name" targets="Module CedarBackup2.actions.collect=CedarBackup2.actions.collect-module.html,Variable CedarBackup2.config.Config.collect=CedarBackup2.config.Config-class.html#collect"><a title="CedarBackup2.actions.collect
+CedarBackup2.config.Config.collect" class="py-name" href="#" onclick="return doclink('link-51', 'collect', 'link-51');">collect</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line">      <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-52" class="py-name"><a title="CedarBackup2.actions.validate._checkDir" class="py-name" href="#" onclick="return doclink('link-52', '_checkDir', 'link-33');">_checkDir</a></tt><tt class="py-op">(</tt><tt id="link-53" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-53', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-54" class="py-name"><a title="CedarBackup2.actions.collect
+CedarBackup2.config.Config.collect" class="py-name" href="#" onclick="return doclink('link-54', 'collect', 'link-51');">collect</a></tt><tt class="py-op">.</tt><tt id="link-55" class="py-name" targets="Variable CedarBackup2.config.CollectConfig.targetDir=CedarBackup2.config.CollectConfig-class.html#targetDir,Variable CedarBackup2.config.StageConfig.targetDir=CedarBackup2.config.StageConfig-class.html#targetDir"><a title="CedarBackup2.config.CollectConfig.targetDir
+CedarBackup2.config.StageConfig.targetDir" class="py-name" href="#" onclick="return doclink('link-55', 'targetDir', 'link-55');">targetDir</a></tt><tt class="py-op">,</tt> <tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">,</tt> <tt class="py-string">"Collect target directory"</tt><tt class="py-op">)</tt> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt id="link-56" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-56', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-57" class="py-name"><a title="CedarBackup2.actions.collect
+CedarBackup2.config.Config.collect" class="py-name" href="#" onclick="return doclink('link-57', 'collect', 'link-51');">collect</a></tt><tt class="py-op">.</tt><tt id="link-58" class="py-name" targets="Variable CedarBackup2.config.CollectConfig.collectDirs=CedarBackup2.config.CollectConfig-class.html#collectDirs"><a title="CedarBackup2.config.CollectConfig.collectDirs" class="py-name" href="#" onclick="return doclink('link-58', 'collectDirs', 'link-58');">collectDirs</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line">         <tt class="py-keyword">for</tt> <tt id="link-59" class="py-name" targets="Variable CedarBackup2.config.LocalPeer.collectDir=CedarBackup2.config.LocalPeer-class.html#collectDir,Variable CedarBackup2.config.RemotePeer.collectDir=CedarBackup2.config.RemotePeer-class.html#collectDir,Variable CedarBackup2.peer.LocalPeer.collectDir=CedarBackup2.peer.LocalPeer-class.html#collectDir,Variable CedarBackup2.peer.RemotePeer.collectDir=CedarBackup2.peer.RemotePeer-class.html#collectDir"><a title="CedarBackup2.config.LocalPeer.collectDir
+CedarBackup2.config.RemotePeer.collectDir
+CedarBackup2.peer.LocalPeer.collectDir
+CedarBackup2.peer.RemotePeer.collectDir" class="py-name" href="#" onclick="return doclink('link-59', 'collectDir', 'link-59');">collectDir</a></tt> <tt class="py-keyword">in</tt> <tt id="link-60" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-60', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-61" class="py-name"><a title="CedarBackup2.actions.collect
+CedarBackup2.config.Config.collect" class="py-name" href="#" onclick="return doclink('link-61', 'collect', 'link-51');">collect</a></tt><tt class="py-op">.</tt><tt id="link-62" class="py-name"><a title="CedarBackup2.config.CollectConfig.collectDirs" class="py-name" href="#" onclick="return doclink('link-62', 'collectDirs', 'link-58');">collectDirs</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line">            <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-63" class="py-name"><a title="CedarBackup2.actions.validate._checkDir" class="py-name" href="#" onclick="return doclink('link-63', '_checkDir', 'link-33');">_checkDir</a></tt><tt class="py-op">(</tt><tt id="link-64" class="py-name"><a title="CedarBackup2.config.LocalPeer.collectDir
+CedarBackup2.config.RemotePeer.collectDir
+CedarBackup2.peer.LocalPeer.collectDir
+CedarBackup2.peer.RemotePeer.collectDir" class="py-name" href="#" onclick="return doclink('link-64', 'collectDir', 'link-59');">collectDir</a></tt><tt class="py-op">.</tt><tt id="link-65" class="py-name" targets="Variable CedarBackup2.config.CollectDir.absolutePath=CedarBackup2.config.CollectDir-class.html#absolutePath,Variable CedarBackup2.config.CollectFile.absolutePath=CedarBackup2.config.CollectFile-class.html#absolutePath,Variable CedarBackup2.config.CommandOverride.absolutePath=CedarBackup2.config.CommandOverride-class.html#absolutePath,Variable CedarBackup2.config.PurgeDir.absolutePath=CedarBackup2.config.PurgeDir-class.html#absolutePath,Variable CedarBackup2.extend.mbox.MboxDir.absolutePath=CedarBackup2.extend.mbox.MboxDir-class.html#absolutePath,Variable CedarBackup2.extend.mbox.MboxFile.absolutePath=CedarBackup2.extend.mbox.MboxFile-class.html#absolutePath"><a title="CedarBackup2.config.CollectDir.absolutePath
+CedarBackup2.config.CollectFile.absolutePath
+CedarBackup2.config.CommandOverride.absolutePath
+CedarBackup2.config.PurgeDir.absolutePath
+CedarBackup2.extend.mbox.MboxDir.absolutePath
+CedarBackup2.extend.mbox.MboxFile.absolutePath" class="py-name" href="#" onclick="return doclink('link-65', 'absolutePath', 'link-65');">absolutePath</a></tt><tt class="py-op">,</tt> <tt class="py-name">False</tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">,</tt> <tt class="py-string">"Collect directory"</tt><tt class="py-op">)</tt> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">valid</tt> </tt>
+</div><a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line"> </tt>
+<a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line"> </tt>
+<a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line"><tt class="py-comment"># _validateStage() function</tt> </tt>
+<a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line"> </tt>
+<a name="_validateStage"></a><div id="_validateStage-def"><a name="L248"></a><tt class="py-lineno">248</tt> <a class="py-toggle" href="#" id="_validateStage-toggle" onclick="return toggle('_validateStage');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.validate-module.html#_validateStage">_validateStage</a><tt class="py-op">(</tt><tt class="py-param">config</tt><tt class="py-op">,</tt> <tt class="py-param">logfunc</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_validateStage-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_validateStage-expanded"><a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L250"></a><tt class="py-lineno">250</tt>  <tt class="py-line"><tt class="py-docstring">   Execute runtime validations on stage configuration.</tt> </tt>
+<a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L252"></a><tt class="py-lineno">252</tt>  <tt class="py-line"><tt class="py-docstring">   The following validations are enforced:</tt> </tt>
+<a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L254"></a><tt class="py-lineno">254</tt>  <tt class="py-line"><tt class="py-docstring">      - The target directory must exist and must be writable</tt> </tt>
+<a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line"><tt class="py-docstring">      - Each local peer's collect directory must exist and must be readable</tt> </tt>
+<a name="L256"></a><tt class="py-lineno">256</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line"><tt class="py-docstring">   @note: We currently do not validate anything having to do with remote peers,</tt> </tt>
+<a name="L258"></a><tt class="py-lineno">258</tt>  <tt class="py-line"><tt class="py-docstring">   since we don't have a straightforward way of doing it.  It would require</tt> </tt>
+<a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line"><tt class="py-docstring">   adding an rsh command rather than just an rcp command to configuration, and</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line"><tt class="py-docstring">   that just doesn't seem worth it right now.</tt> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line"><tt class="py-docstring">   @param logfunc: Function to use for logging errors</tt> </tt>
+<a name="L264"></a><tt class="py-lineno">264</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line"><tt class="py-docstring">   @return: True if configuration is valid, False otherwise.</tt> </tt>
+<a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L267"></a><tt class="py-lineno">267</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-66" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-66', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-67" class="py-name" targets="Module CedarBackup2.actions.stage=CedarBackup2.actions.stage-module.html,Variable CedarBackup2.config.Config.stage=CedarBackup2.config.Config-class.html#stage"><a title="CedarBackup2.actions.stage
+CedarBackup2.config.Config.stage" class="py-name" href="#" onclick="return doclink('link-67', 'stage', 'link-67');">stage</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L269"></a><tt class="py-lineno">269</tt>  <tt class="py-line">      <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-68" class="py-name"><a title="CedarBackup2.actions.validate._checkDir" class="py-name" href="#" onclick="return doclink('link-68', '_checkDir', 'link-33');">_checkDir</a></tt><tt class="py-op">(</tt><tt id="link-69" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-69', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-70" class="py-name"><a title="CedarBackup2.actions.stage
+CedarBackup2.config.Config.stage" class="py-name" href="#" onclick="return doclink('link-70', 'stage', 'link-67');">stage</a></tt><tt class="py-op">.</tt><tt id="link-71" class="py-name"><a title="CedarBackup2.config.CollectConfig.targetDir
+CedarBackup2.config.StageConfig.targetDir" class="py-name" href="#" onclick="return doclink('link-71', 'targetDir', 'link-55');">targetDir</a></tt><tt class="py-op">,</tt> <tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">,</tt> <tt class="py-string">"Stage target dir "</tt><tt class="py-op">)</tt> </tt>
+<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt id="link-72" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-72', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-73" class="py-name"><a title="CedarBackup2.actions.stage
+CedarBackup2.config.Config.stage" class="py-name" href="#" onclick="return doclink('link-73', 'stage', 'link-67');">stage</a></tt><tt class="py-op">.</tt><tt id="link-74" class="py-name" targets="Variable CedarBackup2.config.PeersConfig.localPeers=CedarBackup2.config.PeersConfig-class.html#localPeers,Variable CedarBackup2.config.StageConfig.localPeers=CedarBackup2.config.StageConfig-class.html#localPeers"><a title="CedarBackup2.config.PeersConfig.localPeers
+CedarBackup2.config.StageConfig.localPeers" class="py-name" href="#" onclick="return doclink('link-74', 'localPeers', 'link-74');">localPeers</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line">         <tt class="py-keyword">for</tt> <tt id="link-75" class="py-name" targets="Module CedarBackup2.peer=CedarBackup2.peer-module.html"><a title="CedarBackup2.peer" class="py-name" href="#" onclick="return doclink('link-75', 'peer', 'link-75');">peer</a></tt> <tt class="py-keyword">in</tt> <tt id="link-76" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-76', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-77" class="py-name"><a title="CedarBackup2.actions.stage
+CedarBackup2.config.Config.stage" class="py-name" href="#" onclick="return doclink('link-77', 'stage', 'link-67');">stage</a></tt><tt class="py-op">.</tt><tt id="link-78" class="py-name"><a title="CedarBackup2.config.PeersConfig.localPeers
+CedarBackup2.config.StageConfig.localPeers" class="py-name" href="#" onclick="return doclink('link-78', 'localPeers', 'link-74');">localPeers</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L272"></a><tt class="py-lineno">272</tt>  <tt class="py-line">            <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-79" class="py-name"><a title="CedarBackup2.actions.validate._checkDir" class="py-name" href="#" onclick="return doclink('link-79', '_checkDir', 'link-33');">_checkDir</a></tt><tt class="py-op">(</tt><tt id="link-80" class="py-name"><a title="CedarBackup2.peer" class="py-name" href="#" onclick="return doclink('link-80', 'peer', 'link-75');">peer</a></tt><tt class="py-op">.</tt><tt id="link-81" class="py-name"><a title="CedarBackup2.config.LocalPeer.collectDir
+CedarBackup2.config.RemotePeer.collectDir
+CedarBackup2.peer.LocalPeer.collectDir
+CedarBackup2.peer.RemotePeer.collectDir" class="py-name" href="#" onclick="return doclink('link-81', 'collectDir', 'link-59');">collectDir</a></tt><tt class="py-op">,</tt> <tt class="py-name">False</tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">,</tt> <tt class="py-string">"Local peer collect dir "</tt><tt class="py-op">)</tt> </tt>
+<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">valid</tt> </tt>
+</div><a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line"> </tt>
+<a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line"> </tt>
+<a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line"><tt class="py-comment"># _validateStore() function</tt> </tt>
+<a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line"> </tt>
+<a name="_validateStore"></a><div id="_validateStore-def"><a name="L280"></a><tt class="py-lineno">280</tt> <a class="py-toggle" href="#" id="_validateStore-toggle" onclick="return toggle('_validateStore');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.validate-module.html#_validateStore">_validateStore</a><tt class="py-op">(</tt><tt class="py-param">config</tt><tt class="py-op">,</tt> <tt class="py-param">logfunc</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_validateStore-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_validateStore-expanded"><a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line"><tt class="py-docstring">   Execute runtime validations on store configuration.</tt> </tt>
+<a name="L283"></a><tt class="py-lineno">283</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L284"></a><tt class="py-lineno">284</tt>  <tt class="py-line"><tt class="py-docstring">   The following validations are enforced:</tt> </tt>
+<a name="L285"></a><tt class="py-lineno">285</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L286"></a><tt class="py-lineno">286</tt>  <tt class="py-line"><tt class="py-docstring">      - The source directory must exist and must be readable</tt> </tt>
+<a name="L287"></a><tt class="py-lineno">287</tt>  <tt class="py-line"><tt class="py-docstring">      - The backup device (path and SCSI device) must be valid</tt> </tt>
+<a name="L288"></a><tt class="py-lineno">288</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L289"></a><tt class="py-lineno">289</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L290"></a><tt class="py-lineno">290</tt>  <tt class="py-line"><tt class="py-docstring">   @param logfunc: Function to use for logging errors</tt> </tt>
+<a name="L291"></a><tt class="py-lineno">291</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L292"></a><tt class="py-lineno">292</tt>  <tt class="py-line"><tt class="py-docstring">   @return: True if configuration is valid, False otherwise.</tt> </tt>
+<a name="L293"></a><tt class="py-lineno">293</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L294"></a><tt class="py-lineno">294</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L295"></a><tt class="py-lineno">295</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-82" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-82', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-83" class="py-name" targets="Module CedarBackup2.actions.store=CedarBackup2.actions.store-module.html,Variable CedarBackup2.config.Config.store=CedarBackup2.config.Config-class.html#store"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-83', 'store', 'link-83');">store</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L296"></a><tt class="py-lineno">296</tt>  <tt class="py-line">      <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-84" class="py-name"><a title="CedarBackup2.actions.validate._checkDir" class="py-name" href="#" onclick="return doclink('link-84', '_checkDir', 'link-33');">_checkDir</a></tt><tt class="py-op">(</tt><tt id="link-85" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-85', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-86" class="py-name"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-86', 'store', 'link-83');">store</a></tt><tt class="py-op">.</tt><tt id="link-87" class="py-name" targets="Variable CedarBackup2.config.StoreConfig.sourceDir=CedarBackup2.config.StoreConfig-class.html#sourceDir,Variable CedarBackup2.tools.amazons3.Options.sourceDir=CedarBackup2.tools.amazons3.Options-class.html#sourceDir"><a title="CedarBackup2.config.StoreConfig.sourceDir
+CedarBackup2.tools.amazons3.Options.sourceDir" class="py-name" href="#" onclick="return doclink('link-87', 'sourceDir', 'link-87');">sourceDir</a></tt><tt class="py-op">,</tt> <tt class="py-name">False</tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">,</tt> <tt class="py-string">"Store source directory"</tt><tt class="py-op">)</tt> </tt>
+<a name="L297"></a><tt class="py-lineno">297</tt>  <tt class="py-line">      <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line">         <tt id="link-88" class="py-name"><a title="CedarBackup2.actions.util.createWriter" class="py-name" href="#" onclick="return doclink('link-88', 'createWriter', 'link-7');">createWriter</a></tt><tt class="py-op">(</tt><tt id="link-89" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-89', 'config', 'link-16');">config</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line">      <tt class="py-keyword">except</tt> <tt class="py-name">ValueError</tt><tt class="py-op">:</tt> </tt>
+<a name="L300"></a><tt class="py-lineno">300</tt>  <tt class="py-line">         <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"Backup device [%s] [%s] is not valid."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt id="link-90" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-90', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-91" class="py-name"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-91', 'store', 'link-83');">store</a></tt><tt class="py-op">.</tt><tt id="link-92" class="py-name" targets="Variable CedarBackup2.config.StoreConfig.devicePath=CedarBackup2.config.StoreConfig-class.html#devicePath"><a title="CedarBackup2.config.StoreConfig.devicePath" class="py-name" href="#" onclick="return doclink('link-92', 'devicePath', 'link-92');">devicePath</a></tt><tt class="py-op">,</tt> <tt id="link-93" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-93', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-94" class="py-name"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-94', 'store', 'link-83');">store</a></tt><tt class="py-op">.</tt><tt id="link-95" class="py-name" targets="Variable CedarBackup2.config.StoreConfig.deviceScsiId=CedarBackup2.config.StoreConfig-class.html#deviceScsiId"><a title="CedarBackup2.config.StoreConfig.deviceScsiId" class="py-name" href="#" onclick="return doclink('link-95', 'deviceScsiId', 'link-95');">deviceScsiId</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L301"></a><tt class="py-lineno">301</tt>  <tt class="py-line">         <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L302"></a><tt class="py-lineno">302</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">valid</tt> </tt>
+</div><a name="L303"></a><tt class="py-lineno">303</tt>  <tt class="py-line"> </tt>
+<a name="L304"></a><tt class="py-lineno">304</tt>  <tt class="py-line"> </tt>
+<a name="L305"></a><tt class="py-lineno">305</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L306"></a><tt class="py-lineno">306</tt>  <tt class="py-line"><tt class="py-comment"># _validatePurge() function</tt> </tt>
+<a name="L307"></a><tt class="py-lineno">307</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L308"></a><tt class="py-lineno">308</tt>  <tt class="py-line"> </tt>
+<a name="_validatePurge"></a><div id="_validatePurge-def"><a name="L309"></a><tt class="py-lineno">309</tt> <a class="py-toggle" href="#" id="_validatePurge-toggle" onclick="return toggle('_validatePurge');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.validate-module.html#_validatePurge">_validatePurge</a><tt class="py-op">(</tt><tt class="py-param">config</tt><tt class="py-op">,</tt> <tt class="py-param">logfunc</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_validatePurge-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_validatePurge-expanded"><a name="L310"></a><tt class="py-lineno">310</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L311"></a><tt class="py-lineno">311</tt>  <tt class="py-line"><tt class="py-docstring">   Execute runtime validations on purge configuration.</tt> </tt>
+<a name="L312"></a><tt class="py-lineno">312</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L313"></a><tt class="py-lineno">313</tt>  <tt class="py-line"><tt class="py-docstring">   The following validations are enforced:</tt> </tt>
+<a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line"><tt class="py-docstring">      - Each purge directory must exist and must be writable</tt> </tt>
+<a name="L316"></a><tt class="py-lineno">316</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L317"></a><tt class="py-lineno">317</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L318"></a><tt class="py-lineno">318</tt>  <tt class="py-line"><tt class="py-docstring">   @param logfunc: Function to use for logging errors</tt> </tt>
+<a name="L319"></a><tt class="py-lineno">319</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L320"></a><tt class="py-lineno">320</tt>  <tt class="py-line"><tt class="py-docstring">   @return: True if configuration is valid, False otherwise.</tt> </tt>
+<a name="L321"></a><tt class="py-lineno">321</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L322"></a><tt class="py-lineno">322</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L323"></a><tt class="py-lineno">323</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-96" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-96', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-97" class="py-name" targets="Module CedarBackup2.actions.purge=CedarBackup2.actions.purge-module.html,Variable CedarBackup2.config.Config.purge=CedarBackup2.config.Config-class.html#purge"><a title="CedarBackup2.actions.purge
+CedarBackup2.config.Config.purge" class="py-name" href="#" onclick="return doclink('link-97', 'purge', 'link-97');">purge</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L324"></a><tt class="py-lineno">324</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt id="link-98" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-98', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-99" class="py-name"><a title="CedarBackup2.actions.purge
+CedarBackup2.config.Config.purge" class="py-name" href="#" onclick="return doclink('link-99', 'purge', 'link-97');">purge</a></tt><tt class="py-op">.</tt><tt id="link-100" class="py-name" targets="Variable CedarBackup2.config.PurgeConfig.purgeDirs=CedarBackup2.config.PurgeConfig-class.html#purgeDirs"><a title="CedarBackup2.config.PurgeConfig.purgeDirs" class="py-name" href="#" onclick="return doclink('link-100', 'purgeDirs', 'link-100');">purgeDirs</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L325"></a><tt class="py-lineno">325</tt>  <tt class="py-line">         <tt class="py-keyword">for</tt> <tt class="py-name">purgeDir</tt> <tt class="py-keyword">in</tt> <tt id="link-101" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-101', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-102" class="py-name"><a title="CedarBackup2.actions.purge
+CedarBackup2.config.Config.purge" class="py-name" href="#" onclick="return doclink('link-102', 'purge', 'link-97');">purge</a></tt><tt class="py-op">.</tt><tt id="link-103" class="py-name"><a title="CedarBackup2.config.PurgeConfig.purgeDirs" class="py-name" href="#" onclick="return doclink('link-103', 'purgeDirs', 'link-100');">purgeDirs</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L326"></a><tt class="py-lineno">326</tt>  <tt class="py-line">            <tt class="py-name">valid</tt> <tt class="py-op">&amp;=</tt> <tt id="link-104" class="py-name"><a title="CedarBackup2.actions.validate._checkDir" class="py-name" href="#" onclick="return doclink('link-104', '_checkDir', 'link-33');">_checkDir</a></tt><tt class="py-op">(</tt><tt class="py-name">purgeDir</tt><tt class="py-op">.</tt><tt id="link-105" class="py-name"><a title="CedarBackup2.config.CollectDir.absolutePath
+CedarBackup2.config.CollectFile.absolutePath
+CedarBackup2.config.CommandOverride.absolutePath
+CedarBackup2.config.PurgeDir.absolutePath
+CedarBackup2.extend.mbox.MboxDir.absolutePath
+CedarBackup2.extend.mbox.MboxFile.absolutePath" class="py-name" href="#" onclick="return doclink('link-105', 'absolutePath', 'link-65');">absolutePath</a></tt><tt class="py-op">,</tt> <tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">logfunc</tt><tt class="py-op">,</tt> <tt class="py-string">"Purge directory"</tt><tt class="py-op">)</tt> </tt>
+<a name="L327"></a><tt class="py-lineno">327</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">valid</tt> </tt>
+</div><a name="L328"></a><tt class="py-lineno">328</tt>  <tt class="py-line"> </tt>
+<a name="L329"></a><tt class="py-lineno">329</tt>  <tt class="py-line"> </tt>
+<a name="L330"></a><tt class="py-lineno">330</tt>  <tt class="py-line"><tt class="py-comment">#################################</tt> </tt>
+<a name="L331"></a><tt class="py-lineno">331</tt>  <tt class="py-line"><tt class="py-comment"># _validateExtensions() function</tt> </tt>
+<a name="L332"></a><tt class="py-lineno">332</tt>  <tt class="py-line"><tt class="py-comment">#################################</tt> </tt>
+<a name="L333"></a><tt class="py-lineno">333</tt>  <tt class="py-line"> </tt>
+<a name="_validateExtensions"></a><div id="_validateExtensions-def"><a name="L334"></a><tt class="py-lineno">334</tt> <a class="py-toggle" href="#" id="_validateExtensions-toggle" onclick="return toggle('_validateExtensions');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.actions.validate-module.html#_validateExtensions">_validateExtensions</a><tt class="py-op">(</tt><tt class="py-param">config</tt><tt class="py-op">,</tt> <tt class="py-param">logfunc</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_validateExtensions-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_validateExtensions-expanded"><a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L336"></a><tt class="py-lineno">336</tt>  <tt class="py-line"><tt class="py-docstring">   Execute runtime validations on extensions configuration.</tt> </tt>
+<a name="L337"></a><tt class="py-lineno">337</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L338"></a><tt class="py-lineno">338</tt>  <tt class="py-line"><tt class="py-docstring">   The following validations are enforced:</tt> </tt>
+<a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line"><tt class="py-docstring">      - Each indicated extension function must exist.</tt> </tt>
+<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L342"></a><tt class="py-lineno">342</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line"><tt class="py-docstring">   @param logfunc: Function to use for logging errors</tt> </tt>
+<a name="L344"></a><tt class="py-lineno">344</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line"><tt class="py-docstring">   @return: True if configuration is valid, False otherwise.</tt> </tt>
+<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line">   <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L348"></a><tt class="py-lineno">348</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-106" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-106', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-107" class="py-name" targets="Variable CedarBackup2.config.Config.extensions=CedarBackup2.config.Config-class.html#extensions"><a title="CedarBackup2.config.Config.extensions" class="py-name" href="#" onclick="return doclink('link-107', 'extensions', 'link-107');">extensions</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L349"></a><tt class="py-lineno">349</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt id="link-108" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-108', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-109" class="py-name"><a title="CedarBackup2.config.Config.extensions" class="py-name" href="#" onclick="return doclink('link-109', 'extensions', 'link-107');">extensions</a></tt><tt class="py-op">.</tt><tt id="link-110" class="py-name"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-110', 'actions', 'link-5');">actions</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line">         <tt class="py-keyword">for</tt> <tt id="link-111" class="py-name" targets="Module CedarBackup2.action=CedarBackup2.action-module.html,Variable CedarBackup2.config.ActionHook.action=CedarBackup2.config.ActionHook-class.html#action"><a title="CedarBackup2.action
+CedarBackup2.config.ActionHook.action" class="py-name" href="#" onclick="return doclink('link-111', 'action', 'link-111');">action</a></tt> <tt class="py-keyword">in</tt> <tt id="link-112" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-112', 'config', 'link-16');">config</a></tt><tt class="py-op">.</tt><tt id="link-113" class="py-name"><a title="CedarBackup2.config.Config.extensions" class="py-name" href="#" onclick="return doclink('link-113', 'extensions', 'link-107');">extensions</a></tt><tt class="py-op">.</tt><tt id="link-114" class="py-name"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-114', 'actions', 'link-5');">actions</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line">               <tt id="link-115" class="py-name"><a title="CedarBackup2.util.getFunctionReference" class="py-name" href="#" onclick="return doclink('link-115', 'getFunctionReference', 'link-3');">getFunctionReference</a></tt><tt class="py-op">(</tt><tt id="link-116" class="py-name"><a title="CedarBackup2.action
+CedarBackup2.config.ActionHook.action" class="py-name" href="#" onclick="return doclink('link-116', 'action', 'link-111');">action</a></tt><tt class="py-op">.</tt><tt id="link-117" class="py-name" targets="Variable CedarBackup2.config.ExtendedAction.module=CedarBackup2.config.ExtendedAction-class.html#module"><a title="CedarBackup2.config.ExtendedAction.module" class="py-name" href="#" onclick="return doclink('link-117', 'module', 'link-117');">module</a></tt><tt class="py-op">,</tt> <tt id="link-118" class="py-name"><a title="CedarBackup2.action
+CedarBackup2.config.ActionHook.action" class="py-name" href="#" onclick="return doclink('link-118', 'action', 'link-111');">action</a></tt><tt class="py-op">.</tt><tt id="link-119" class="py-name" targets="Variable CedarBackup2.config.ExtendedAction.function=CedarBackup2.config.ExtendedAction-class.html#function"><a title="CedarBackup2.config.ExtendedAction.function" class="py-name" href="#" onclick="return doclink('link-119', 'function', 'link-119');">function</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L353"></a><tt class="py-lineno">353</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt> <tt class="py-name">ImportError</tt><tt class="py-op">:</tt> </tt>
+<a name="L354"></a><tt class="py-lineno">354</tt>  <tt class="py-line">               <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"Unable to find function [%s.%s]."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt id="link-120" class="py-name"><a title="CedarBackup2.action
+CedarBackup2.config.ActionHook.action" class="py-name" href="#" onclick="return doclink('link-120', 'action', 'link-111');">action</a></tt><tt class="py-op">.</tt><tt id="link-121" class="py-name"><a title="CedarBackup2.config.ExtendedAction.module" class="py-name" href="#" onclick="return doclink('link-121', 'module', 'link-117');">module</a></tt><tt class="py-op">,</tt> <tt id="link-122" class="py-name"><a title="CedarBackup2.action
+CedarBackup2.config.ActionHook.action" class="py-name" href="#" onclick="return doclink('link-122', 'action', 'link-111');">action</a></tt><tt class="py-op">.</tt><tt id="link-123" class="py-name"><a title="CedarBackup2.config.ExtendedAction.function" class="py-name" href="#" onclick="return doclink('link-123', 'function', 'link-119');">function</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L355"></a><tt class="py-lineno">355</tt>  <tt class="py-line">               <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt> <tt class="py-name">ValueError</tt><tt class="py-op">:</tt> </tt>
+<a name="L357"></a><tt class="py-lineno">357</tt>  <tt class="py-line">               <tt class="py-name">logfunc</tt><tt class="py-op">(</tt><tt class="py-string">"Function [%s.%s] is not callable."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt id="link-124" class="py-name"><a title="CedarBackup2.action
+CedarBackup2.config.ActionHook.action" class="py-name" href="#" onclick="return doclink('link-124', 'action', 'link-111');">action</a></tt><tt class="py-op">.</tt><tt id="link-125" class="py-name"><a title="CedarBackup2.config.ExtendedAction.module" class="py-name" href="#" onclick="return doclink('link-125', 'module', 'link-117');">module</a></tt><tt class="py-op">,</tt> <tt id="link-126" class="py-name"><a title="CedarBackup2.action
+CedarBackup2.config.ActionHook.action" class="py-name" href="#" onclick="return doclink('link-126', 'action', 'link-111');">action</a></tt><tt class="py-op">.</tt><tt id="link-127" class="py-name"><a title="CedarBackup2.config.ExtendedAction.function" class="py-name" href="#" onclick="return doclink('link-127', 'function', 'link-119');">function</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line">               <tt class="py-name">valid</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">valid</tt> </tt>
+</div><a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

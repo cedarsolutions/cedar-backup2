@@ -1,0 +1,1075 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.extend.encrypt</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.extend-module.html">Package&nbsp;extend</a> ::
+        Module&nbsp;encrypt
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.extend.encrypt-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="CedarBackup2.extend.encrypt-module.html">Module CedarBackup2.extend.encrypt</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: iso-8859-1 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment"># vim: set ft=python ts=3 sw=3 expandtab:</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment">#              C E D A R</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#          S O L U T I O N S       "Software done right."</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment">#           S O F T W A R E</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2007,2010 Kenneth J. Pronovici.</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># All rights reserved.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment"># This program is free software; you can redistribute it and/or</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment"># modify it under the terms of the GNU General Public License,</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment"># Version 2, as published by the Free Software Foundation.</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment"># This program is distributed in the hope that it will be useful,</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-comment"># but WITHOUT ANY WARRANTY; without even the implied warranty of</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-comment"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment"># Copies of the GNU General Public License are available from</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment"># the Free Software Foundation website, http://www.gnu.org/.</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-comment"># Author   : Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-comment"># Language : Python 2 (&gt;= 2.7)</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-comment"># Project  : Official Cedar Backup Extensions</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-comment"># Purpose  : Provides an extension to encrypt staging directories.</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-comment"># Module documentation</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-docstring">Provides an extension to encrypt staging directories.</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring">When this extension is executed, all backed-up files in the configured Cedar</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">Backup staging directory will be encrypted using gpg.  Any directory which has</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring">already been encrypted (as indicated by the C{cback.encrypt} file) will be</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-docstring">ignored.</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-docstring">This extension requires a new configuration section &lt;encrypt&gt; and is intended</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-docstring">to be run immediately after the standard stage action or immediately before the</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-docstring">standard store action.  Aside from its own configuration, it requires the</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-docstring">options and staging configuration sections in the standard Cedar Backup</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-docstring">configuration file.</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-docstring">@author: Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-comment"># Imported modules</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-comment"># System modules</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">logging</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-comment"># Cedar Backup modules</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package CedarBackup2=CedarBackup2-module.html"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-0', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module CedarBackup2.actions.util=CedarBackup2.actions.util-module.html,Module CedarBackup2.util=CedarBackup2.util-module.html,Module CedarBackup2.writers.util=CedarBackup2.writers.util-module.html"><a title="CedarBackup2.actions.util
+CedarBackup2.util
+CedarBackup2.writers.util" class="py-name" href="#" onclick="return doclink('link-1', 'util', 'link-1');">util</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Function CedarBackup2.util.resolveCommand()=CedarBackup2.util-module.html#resolveCommand"><a title="CedarBackup2.util.resolveCommand" class="py-name" href="#" onclick="return doclink('link-2', 'resolveCommand', 'link-2');">resolveCommand</a></tt><tt class="py-op">,</tt> <tt id="link-3" class="py-name" targets="Function CedarBackup2.util.executeCommand()=CedarBackup2.util-module.html#executeCommand"><a title="CedarBackup2.util.executeCommand" class="py-name" href="#" onclick="return doclink('link-3', 'executeCommand', 'link-3');">executeCommand</a></tt><tt class="py-op">,</tt> <tt id="link-4" class="py-name" targets="Function CedarBackup2.util.changeOwnership()=CedarBackup2.util-module.html#changeOwnership"><a title="CedarBackup2.util.changeOwnership" class="py-name" href="#" onclick="return doclink('link-4', 'changeOwnership', 'link-4');">changeOwnership</a></tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-5" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-5', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Module CedarBackup2.xmlutil=CedarBackup2.xmlutil-module.html"><a title="CedarBackup2.xmlutil" class="py-name" href="#" onclick="return doclink('link-6', 'xmlutil', 'link-6');">xmlutil</a></tt> <tt class="py-keyword">import</tt> <tt id="link-7" class="py-name" targets="Function CedarBackup2.xmlutil.createInputDom()=CedarBackup2.xmlutil-module.html#createInputDom"><a title="CedarBackup2.xmlutil.createInputDom" class="py-name" href="#" onclick="return doclink('link-7', 'createInputDom', 'link-7');">createInputDom</a></tt><tt class="py-op">,</tt> <tt id="link-8" class="py-name" targets="Function CedarBackup2.xmlutil.addContainerNode()=CedarBackup2.xmlutil-module.html#addContainerNode"><a title="CedarBackup2.xmlutil.addContainerNode" class="py-name" href="#" onclick="return doclink('link-8', 'addContainerNode', 'link-8');">addContainerNode</a></tt><tt class="py-op">,</tt> <tt id="link-9" class="py-name" targets="Function CedarBackup2.xmlutil.addStringNode()=CedarBackup2.xmlutil-module.html#addStringNode"><a title="CedarBackup2.xmlutil.addStringNode" class="py-name" href="#" onclick="return doclink('link-9', 'addStringNode', 'link-9');">addStringNode</a></tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-10" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-10', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="CedarBackup2.xmlutil" class="py-name" href="#" onclick="return doclink('link-11', 'xmlutil', 'link-6');">xmlutil</a></tt> <tt class="py-keyword">import</tt> <tt id="link-12" class="py-name" targets="Function CedarBackup2.xmlutil.readFirstChild()=CedarBackup2.xmlutil-module.html#readFirstChild"><a title="CedarBackup2.xmlutil.readFirstChild" class="py-name" href="#" onclick="return doclink('link-12', 'readFirstChild', 'link-12');">readFirstChild</a></tt><tt class="py-op">,</tt> <tt id="link-13" class="py-name" targets="Function CedarBackup2.xmlutil.readString()=CedarBackup2.xmlutil-module.html#readString"><a title="CedarBackup2.xmlutil.readString" class="py-name" href="#" onclick="return doclink('link-13', 'readString', 'link-13');">readString</a></tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-14" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-14', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-15" class="py-name" targets="Package CedarBackup2.actions=CedarBackup2.actions-module.html,Variable CedarBackup2.cli.Options.actions=CedarBackup2.cli.Options-class.html#actions,Variable CedarBackup2.config.ExtensionsConfig.actions=CedarBackup2.config.ExtensionsConfig-class.html#actions"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-15', 'actions', 'link-15');">actions</a></tt><tt class="py-op">.</tt><tt id="link-16" class="py-name"><a title="CedarBackup2.actions.util
+CedarBackup2.util
+CedarBackup2.writers.util" class="py-name" href="#" onclick="return doclink('link-16', 'util', 'link-1');">util</a></tt> <tt class="py-keyword">import</tt> <tt id="link-17" class="py-name" targets="Function CedarBackup2.actions.util.findDailyDirs()=CedarBackup2.actions.util-module.html#findDailyDirs"><a title="CedarBackup2.actions.util.findDailyDirs" class="py-name" href="#" onclick="return doclink('link-17', 'findDailyDirs', 'link-17');">findDailyDirs</a></tt><tt class="py-op">,</tt> <tt id="link-18" class="py-name" targets="Function CedarBackup2.actions.util.writeIndicatorFile()=CedarBackup2.actions.util-module.html#writeIndicatorFile"><a title="CedarBackup2.actions.util.writeIndicatorFile" class="py-name" href="#" onclick="return doclink('link-18', 'writeIndicatorFile', 'link-18');">writeIndicatorFile</a></tt><tt class="py-op">,</tt> <tt id="link-19" class="py-name" targets="Function CedarBackup2.actions.util.getBackupFiles()=CedarBackup2.actions.util-module.html#getBackupFiles"><a title="CedarBackup2.actions.util.getBackupFiles" class="py-name" href="#" onclick="return doclink('link-19', 'getBackupFiles', 'link-19');">getBackupFiles</a></tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-comment"># Module-wide constants and variables</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt id="link-20" class="py-name" targets="Variable CedarBackup2.actions.collect.logger=CedarBackup2.actions.collect-module.html#logger,Variable CedarBackup2.actions.initialize.logger=CedarBackup2.actions.initialize-module.html#logger,Variable CedarBackup2.actions.purge.logger=CedarBackup2.actions.purge-module.html#logger,Variable CedarBackup2.actions.rebuild.logger=CedarBackup2.actions.rebuild-module.html#logger,Variable CedarBackup2.actions.stage.logger=CedarBackup2.actions.stage-module.html#logger,Variable CedarBackup2.actions.store.logger=CedarBackup2.actions.store-module.html#logger,Variable CedarBackup2.actions.util.logger=CedarBackup2.actions.util-module.html#logger,Variable CedarBackup2.actions.validate.logger=CedarBackup2.actions.validate-module.html#logger,Variable CedarBackup2.cli.logger=CedarBackup2.cli-module.html#logger,Variable CedarBackup2.config.logger=CedarBackup2.config-module.html#logger,Variable CedarBackup2.customize.logger=CedarBackup2.customize-module.html#logger,Variable CedarBackup2.extend.amazons3.logger=CedarBackup2.extend.amazons3-module.html#logger,Variable CedarBackup2.extend.capacity.logger=CedarBackup2.extend.capacity-module.html#logger,Variable CedarBackup2.extend.encrypt.logger=CedarBackup2.extend.encrypt-module.html#logger,Variable CedarBackup2.extend.mbox.logger=CedarBackup2.extend.mbox-module.html#logger,Variable CedarBackup2.extend.mysql.logger=CedarBackup2.extend.mysql-module.html#logger,Variable CedarBackup2.extend.postgresql.logger=CedarBackup2.extend.postgresql-module.html#logger,Variable CedarBackup2.extend.split.logger=CedarBackup2.extend.split-module.html#logger,Variable CedarBackup2.extend.subversion.logger=CedarBackup2.extend.subversion-module.html#logger,Variable CedarBackup2.extend.sysinfo.logger=CedarBackup2.extend.sysinfo-module.html#logger,Variable CedarBackup2.filesystem.logger=CedarBackup2.filesystem-module.html#logger,Variable CedarBackup2.peer.logger=CedarBackup2.peer-module.html#logger,Variable CedarBackup2.tools.amazons3.logger=CedarBackup2.tools.amazons3-module.html#logger,Variable CedarBackup2.tools.span.logger=CedarBackup2.tools.span-module.html#logger,Variable CedarBackup2.util.logger=CedarBackup2.util-module.html#logger,Variable CedarBackup2.writers.cdwriter.logger=CedarBackup2.writers.cdwriter-module.html#logger,Variable CedarBackup2.writers.dvdwriter.logger=CedarBackup2.writers.dvdwriter-module.html#logger,Variable CedarBackup2.writers.util.logger=CedarBackup2.writers.util-module.html#logger,Variable CedarBackup2.xmlutil.logger=CedarBackup2.xmlutil-module.html#logger"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-20', 'logger', 'link-20');">logger</a></tt> <tt class="py-op">=</tt> <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">getLogger</tt><tt class="py-op">(</tt><tt class="py-string">"CedarBackup2.log.extend.encrypt"</tt><tt class="py-op">)</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt id="link-21" class="py-name" targets="Variable CedarBackup2.extend.encrypt.GPG_COMMAND=CedarBackup2.extend.encrypt-module.html#GPG_COMMAND"><a title="CedarBackup2.extend.encrypt.GPG_COMMAND" class="py-name" href="#" onclick="return doclink('link-21', 'GPG_COMMAND', 'link-21');">GPG_COMMAND</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> <tt class="py-string">"gpg"</tt><tt class="py-op">,</tt> <tt class="py-op">]</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt id="link-22" class="py-name" targets="Variable CedarBackup2.extend.encrypt.VALID_ENCRYPT_MODES=CedarBackup2.extend.encrypt-module.html#VALID_ENCRYPT_MODES"><a title="CedarBackup2.extend.encrypt.VALID_ENCRYPT_MODES" class="py-name" href="#" onclick="return doclink('link-22', 'VALID_ENCRYPT_MODES', 'link-22');">VALID_ENCRYPT_MODES</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> <tt class="py-string">"gpg"</tt><tt class="py-op">,</tt> <tt class="py-op">]</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt id="link-23" class="py-name" targets="Variable CedarBackup2.extend.encrypt.ENCRYPT_INDICATOR=CedarBackup2.extend.encrypt-module.html#ENCRYPT_INDICATOR"><a title="CedarBackup2.extend.encrypt.ENCRYPT_INDICATOR" class="py-name" href="#" onclick="return doclink('link-23', 'ENCRYPT_INDICATOR', 'link-23');">ENCRYPT_INDICATOR</a></tt> <tt class="py-op">=</tt> <tt class="py-string">"cback.encrypt"</tt> </tt>
+<a name="EncryptConfig"></a><div id="EncryptConfig-def"><a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"><tt class="py-comment"># EncryptConfig class definition</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt> <a class="py-toggle" href="#" id="EncryptConfig-toggle" onclick="return toggle('EncryptConfig');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.EncryptConfig-class.html">EncryptConfig</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="EncryptConfig-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="EncryptConfig-expanded"><a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"><tt class="py-docstring">   Class representing encrypt configuration.</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"><tt class="py-docstring">   Encrypt configuration is used for encrypting staging directories.</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"><tt class="py-docstring">   The following restrictions exist on data in this class:</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"><tt class="py-docstring">      - The encrypt mode must be one of the values in L{VALID_ENCRYPT_MODES}</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-docstring">      - The encrypt target value must be a non-empty string</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-docstring">   @sort: __init__, __repr__, __str__, __cmp__, encryptMode, encryptTarget</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"> </tt>
+<a name="EncryptConfig.__init__"></a><div id="EncryptConfig.__init__-def"><a name="L100"></a><tt class="py-lineno">100</tt> <a class="py-toggle" href="#" id="EncryptConfig.__init__-toggle" onclick="return toggle('EncryptConfig.__init__');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.EncryptConfig-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">encryptMode</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">encryptTarget</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="EncryptConfig.__init__-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="EncryptConfig.__init__-expanded"><a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"><tt class="py-docstring">      Constructor for the C{EncryptConfig} class.</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"><tt class="py-docstring">      @param encryptMode: Encryption mode</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"><tt class="py-docstring">      @param encryptTarget: Encryption target (for instance, GPG recipient)</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line"><tt class="py-docstring">      @raise ValueError: If one of the values is invalid.</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">      <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encryptMode</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">      <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encryptTarget</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">      <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name" targets="Variable CedarBackup2.extend.encrypt.EncryptConfig.encryptMode=CedarBackup2.extend.encrypt.EncryptConfig-class.html#encryptMode"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-24', 'encryptMode', 'link-24');">encryptMode</a></tt> <tt class="py-op">=</tt> <tt id="link-25" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-25', 'encryptMode', 'link-24');">encryptMode</a></tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">      <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-26" class="py-name" targets="Variable CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget=CedarBackup2.extend.encrypt.EncryptConfig-class.html#encryptTarget"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-26', 'encryptTarget', 'link-26');">encryptTarget</a></tt> <tt class="py-op">=</tt> <tt id="link-27" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-27', 'encryptTarget', 'link-26');">encryptTarget</a></tt> </tt>
+</div><a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"> </tt>
+<a name="EncryptConfig.__repr__"></a><div id="EncryptConfig.__repr__-def"><a name="L114"></a><tt class="py-lineno">114</tt> <a class="py-toggle" href="#" id="EncryptConfig.__repr__-toggle" onclick="return toggle('EncryptConfig.__repr__');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.EncryptConfig-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="EncryptConfig.__repr__-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="EncryptConfig.__repr__-expanded"><a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"><tt class="py-docstring">      Official string representation for class instance.</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-string">"EncryptConfig(%s, %s)"</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-28" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-28', 'encryptMode', 'link-24');">encryptMode</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-29" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-29', 'encryptTarget', 'link-26');">encryptTarget</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"> </tt>
+<a name="EncryptConfig.__str__"></a><div id="EncryptConfig.__str__-def"><a name="L120"></a><tt class="py-lineno">120</tt> <a class="py-toggle" href="#" id="EncryptConfig.__str__-toggle" onclick="return toggle('EncryptConfig.__str__');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.EncryptConfig-class.html#__str__">__str__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="EncryptConfig.__str__-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="EncryptConfig.__str__-expanded"><a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"><tt class="py-docstring">      Informal string representation for class instance.</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-30" class="py-name" targets="Method CedarBackup2.cli.Options.__repr__()=CedarBackup2.cli.Options-class.html#__repr__,Method CedarBackup2.config.ActionDependencies.__repr__()=CedarBackup2.config.ActionDependencies-class.html#__repr__,Method CedarBackup2.config.ActionHook.__repr__()=CedarBackup2.config.ActionHook-class.html#__repr__,Method CedarBackup2.config.BlankBehavior.__repr__()=CedarBackup2.config.BlankBehavior-class.html#__repr__,Method CedarBackup2.config.ByteQuantity.__repr__()=CedarBackup2.config.ByteQuantity-class.html#__repr__,Method CedarBackup2.config.CollectConfig.__repr__()=CedarBackup2.config.CollectConfig-class.html#__repr__,Method CedarBackup2.config.CollectDir.__repr__()=CedarBackup2.config.CollectDir-class.html#__repr__,Method CedarBackup2.config.CollectFile.__repr__()=CedarBackup2.config.CollectFile-class.html#__repr__,Method CedarBackup2.config.CommandOverride.__repr__()=CedarBackup2.config.CommandOverride-class.html#__repr__,Method CedarBackup2.config.Config.__repr__()=CedarBackup2.config.Config-class.html#__repr__,Method CedarBackup2.config.ExtendedAction.__repr__()=CedarBackup2.config.ExtendedAction-class.html#__repr__,Method CedarBackup2.config.ExtensionsConfig.__repr__()=CedarBackup2.config.ExtensionsConfig-class.html#__repr__,Method CedarBackup2.config.LocalPeer.__repr__()=CedarBackup2.config.LocalPeer-class.html#__repr__,Method CedarBackup2.config.OptionsConfig.__repr__()=CedarBackup2.config.OptionsConfig-class.html#__repr__,Method CedarBackup2.config.PeersConfig.__repr__()=CedarBackup2.config.PeersConfig-class.html#__repr__,Method CedarBackup2.config.PostActionHook.__repr__()=CedarBackup2.config.PostActionHook-class.html#__repr__,Method CedarBackup2.config.PreActionHook.__repr__()=CedarBackup2.config.PreActionHook-class.html#__repr__,Method CedarBackup2.config.PurgeConfig.__repr__()=CedarBackup2.config.PurgeConfig-class.html#__repr__,Method CedarBackup2.config.PurgeDir.__repr__()=CedarBackup2.config.PurgeDir-class.html#__repr__,Method CedarBackup2.config.ReferenceConfig.__repr__()=CedarBackup2.config.ReferenceConfig-class.html#__repr__,Method CedarBackup2.config.RemotePeer.__repr__()=CedarBackup2.config.RemotePeer-class.html#__repr__,Method CedarBackup2.config.StageConfig.__repr__()=CedarBackup2.config.StageConfig-class.html#__repr__,Method CedarBackup2.config.StoreConfig.__repr__()=CedarBackup2.config.StoreConfig-class.html#__repr__,Method CedarBackup2.extend.amazons3.AmazonS3Config.__repr__()=CedarBackup2.extend.amazons3.AmazonS3Config-class.html#__repr__,Method CedarBackup2.extend.amazons3.LocalConfig.__repr__()=CedarBackup2.extend.amazons3.LocalConfig-class.html#__repr__,Method CedarBackup2.extend.capacity.CapacityConfig.__repr__()=CedarBackup2.extend.capacity.CapacityConfig-class.html#__repr__,Method CedarBackup2.extend.capacity.LocalConfig.__repr__()=CedarBackup2.extend.capacity.LocalConfig-class.html#__repr__,Method CedarBackup2.extend.capacity.PercentageQuantity.__repr__()=CedarBackup2.extend.capacity.PercentageQuantity-class.html#__repr__,Method CedarBackup2.extend.encrypt.EncryptConfig.__repr__()=CedarBackup2.extend.encrypt.EncryptConfig-class.html#__repr__,Method CedarBackup2.extend.encrypt.LocalConfig.__repr__()=CedarBackup2.extend.encrypt.LocalConfig-class.html#__repr__,Method CedarBackup2.extend.mbox.LocalConfig.__repr__()=CedarBackup2.extend.mbox.LocalConfig-class.html#__repr__,Method CedarBackup2.extend.mbox.MboxConfig.__repr__()=CedarBackup2.extend.mbox.MboxConfig-class.html#__repr__,Method CedarBackup2.extend.mbox.MboxDir.__repr__()=CedarBackup2.extend.mbox.MboxDir-class.html#__repr__,Method CedarBackup2.extend.mbox.MboxFile.__repr__()=CedarBackup2.extend.mbox.MboxFile-class.html#__repr__,Method CedarBackup2.extend.mysql.LocalConfig.__repr__()=CedarBackup2.extend.mysql.LocalConfig-class.html#__repr__,Method CedarBackup2.extend.mysql.MysqlConfig.__repr__()=CedarBackup2.extend.mysql.MysqlConfig-class.html#__repr__,Method CedarBackup2.extend.postgresql.LocalConfig.__repr__()=CedarBackup2.extend.postgresql.LocalConfig-class.html#__repr__,Method CedarBackup2.extend.postgresql.PostgresqlConfig.__repr__()=CedarBackup2.extend.postgresql.PostgresqlConfig-class.html#__repr__,Method CedarBackup2.extend.split.LocalConfig.__repr__()=CedarBackup2.extend.split.LocalConfig-class.html#__repr__,Method CedarBackup2.extend.split.SplitConfig.__repr__()=CedarBackup2.extend.split.SplitConfig-class.html#__repr__,Method CedarBackup2.extend.subversion.BDBRepository.__repr__()=CedarBackup2.extend.subversion.BDBRepository-class.html#__repr__,Method CedarBackup2.extend.subversion.FSFSRepository.__repr__()=CedarBackup2.extend.subversion.FSFSRepository-class.html#__repr__,Method CedarBackup2.extend.subversion.LocalConfig.__repr__()=CedarBackup2.extend.subversion.LocalConfig-class.html#__repr__,Method CedarBackup2.extend.subversion.Repository.__repr__()=CedarBackup2.extend.subversion.Repository-class.html#__repr__,Method CedarBackup2.extend.subversion.RepositoryDir.__repr__()=CedarBackup2.extend.subversion.RepositoryDir-class.html#__repr__,Method CedarBackup2.extend.subversion.SubversionConfig.__repr__()=CedarBackup2.extend.subversion.SubversionConfig-class.html#__repr__,Method CedarBackup2.tools.amazons3.Options.__repr__()=CedarBackup2.tools.amazons3.Options-class.html#__repr__,Method CedarBackup2.util.Diagnostics.__repr__()=CedarBackup2.util.Diagnostics-class.html#__repr__,Method CedarBackup2.util.DirectedGraph.__repr__()=CedarBackup2.util.DirectedGraph-class.html#__repr__"><a title="CedarBackup2.cli.Options.__repr__
+CedarBackup2.config.ActionDependencies.__repr__
+CedarBackup2.config.ActionHook.__repr__
+CedarBackup2.config.BlankBehavior.__repr__
+CedarBackup2.config.ByteQuantity.__repr__
+CedarBackup2.config.CollectConfig.__repr__
+CedarBackup2.config.CollectDir.__repr__
+CedarBackup2.config.CollectFile.__repr__
+CedarBackup2.config.CommandOverride.__repr__
+CedarBackup2.config.Config.__repr__
+CedarBackup2.config.ExtendedAction.__repr__
+CedarBackup2.config.ExtensionsConfig.__repr__
+CedarBackup2.config.LocalPeer.__repr__
+CedarBackup2.config.OptionsConfig.__repr__
+CedarBackup2.config.PeersConfig.__repr__
+CedarBackup2.config.PostActionHook.__repr__
+CedarBackup2.config.PreActionHook.__repr__
+CedarBackup2.config.PurgeConfig.__repr__
+CedarBackup2.config.PurgeDir.__repr__
+CedarBackup2.config.ReferenceConfig.__repr__
+CedarBackup2.config.RemotePeer.__repr__
+CedarBackup2.config.StageConfig.__repr__
+CedarBackup2.config.StoreConfig.__repr__
+CedarBackup2.extend.amazons3.AmazonS3Config.__repr__
+CedarBackup2.extend.amazons3.LocalConfig.__repr__
+CedarBackup2.extend.capacity.CapacityConfig.__repr__
+CedarBackup2.extend.capacity.LocalConfig.__repr__
+CedarBackup2.extend.capacity.PercentageQuantity.__repr__
+CedarBackup2.extend.encrypt.EncryptConfig.__repr__
+CedarBackup2.extend.encrypt.LocalConfig.__repr__
+CedarBackup2.extend.mbox.LocalConfig.__repr__
+CedarBackup2.extend.mbox.MboxConfig.__repr__
+CedarBackup2.extend.mbox.MboxDir.__repr__
+CedarBackup2.extend.mbox.MboxFile.__repr__
+CedarBackup2.extend.mysql.LocalConfig.__repr__
+CedarBackup2.extend.mysql.MysqlConfig.__repr__
+CedarBackup2.extend.postgresql.LocalConfig.__repr__
+CedarBackup2.extend.postgresql.PostgresqlConfig.__repr__
+CedarBackup2.extend.split.LocalConfig.__repr__
+CedarBackup2.extend.split.SplitConfig.__repr__
+CedarBackup2.extend.subversion.BDBRepository.__repr__
+CedarBackup2.extend.subversion.FSFSRepository.__repr__
+CedarBackup2.extend.subversion.LocalConfig.__repr__
+CedarBackup2.extend.subversion.Repository.__repr__
+CedarBackup2.extend.subversion.RepositoryDir.__repr__
+CedarBackup2.extend.subversion.SubversionConfig.__repr__
+CedarBackup2.tools.amazons3.Options.__repr__
+CedarBackup2.util.Diagnostics.__repr__
+CedarBackup2.util.DirectedGraph.__repr__" class="py-name" href="#" onclick="return doclink('link-30', '__repr__', 'link-30');">__repr__</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"> </tt>
+<a name="EncryptConfig.__cmp__"></a><div id="EncryptConfig.__cmp__-def"><a name="L126"></a><tt class="py-lineno">126</tt> <a class="py-toggle" href="#" id="EncryptConfig.__cmp__-toggle" onclick="return toggle('EncryptConfig.__cmp__');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.EncryptConfig-class.html#__cmp__">__cmp__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">other</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="EncryptConfig.__cmp__-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="EncryptConfig.__cmp__-expanded"><a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"><tt class="py-docstring">      Definition of equals operator for this class.</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line"><tt class="py-docstring">      Lists within this class are "unordered" for equality comparisons.</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line"><tt class="py-docstring">      @param other: Other object to compare to.</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line"><tt class="py-docstring">      @return: -1/0/1 depending on whether self is C{&lt;}, C{=} or C{&gt;} other.</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">other</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">         <tt class="py-keyword">return</tt> <tt class="py-number">1</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-31" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-31', 'encryptMode', 'link-24');">encryptMode</a></tt> <tt class="py-op">!=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-32" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-32', 'encryptMode', 'link-24');">encryptMode</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-33" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-33', 'encryptMode', 'link-24');">encryptMode</a></tt> <tt class="py-op">&lt;</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-34" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-34', 'encryptMode', 'link-24');">encryptMode</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-op">-</tt><tt class="py-number">1</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">         <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-number">1</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-35" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-35', 'encryptTarget', 'link-26');">encryptTarget</a></tt> <tt class="py-op">!=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-36" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-36', 'encryptTarget', 'link-26');">encryptTarget</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-37" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-37', 'encryptTarget', 'link-26');">encryptTarget</a></tt> <tt class="py-op">&lt;</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-38" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-38', 'encryptTarget', 'link-26');">encryptTarget</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-op">-</tt><tt class="py-number">1</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">         <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-number">1</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-number">0</tt> </tt>
+</div><a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line"> </tt>
+<a name="EncryptConfig._setEncryptMode"></a><div id="EncryptConfig._setEncryptMode-def"><a name="L147"></a><tt class="py-lineno">147</tt> <a class="py-toggle" href="#" id="EncryptConfig._setEncryptMode-toggle" onclick="return toggle('EncryptConfig._setEncryptMode');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.EncryptConfig-class.html#_setEncryptMode">_setEncryptMode</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="EncryptConfig._setEncryptMode-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="EncryptConfig._setEncryptMode-expanded"><a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line"><tt class="py-docstring">      Property target used to set the encrypt mode.</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line"><tt class="py-docstring">      If not C{None}, the mode must be one of the values in L{VALID_ENCRYPT_MODES}.</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line"><tt class="py-docstring">      @raise ValueError: If the value is not valid.</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">value</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-name">value</tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt id="link-39" class="py-name"><a title="CedarBackup2.extend.encrypt.VALID_ENCRYPT_MODES" class="py-name" href="#" onclick="return doclink('link-39', 'VALID_ENCRYPT_MODES', 'link-22');">VALID_ENCRYPT_MODES</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Encrypt mode must be one of %s."</tt> <tt class="py-op">%</tt> <tt id="link-40" class="py-name"><a title="CedarBackup2.extend.encrypt.VALID_ENCRYPT_MODES" class="py-name" href="#" onclick="return doclink('link-40', 'VALID_ENCRYPT_MODES', 'link-22');">VALID_ENCRYPT_MODES</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">      <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encryptMode</tt> <tt class="py-op">=</tt> <tt class="py-name">value</tt> </tt>
+</div><a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line"> </tt>
+<a name="EncryptConfig._getEncryptMode"></a><div id="EncryptConfig._getEncryptMode-def"><a name="L158"></a><tt class="py-lineno">158</tt> <a class="py-toggle" href="#" id="EncryptConfig._getEncryptMode-toggle" onclick="return toggle('EncryptConfig._getEncryptMode');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.EncryptConfig-class.html#_getEncryptMode">_getEncryptMode</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="EncryptConfig._getEncryptMode-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="EncryptConfig._getEncryptMode-expanded"><a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line"><tt class="py-docstring">      Property target used to get the encrypt mode.</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encryptMode</tt> </tt>
+</div><a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line"> </tt>
+<a name="EncryptConfig._setEncryptTarget"></a><div id="EncryptConfig._setEncryptTarget-def"><a name="L164"></a><tt class="py-lineno">164</tt> <a class="py-toggle" href="#" id="EncryptConfig._setEncryptTarget-toggle" onclick="return toggle('EncryptConfig._setEncryptTarget');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.EncryptConfig-class.html#_setEncryptTarget">_setEncryptTarget</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="EncryptConfig._setEncryptTarget-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="EncryptConfig._setEncryptTarget-expanded"><a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line"><tt class="py-docstring">      Property target used to set the encrypt target.</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">value</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">value</tt><tt class="py-op">)</tt> <tt class="py-op">&lt;</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Encrypt target must be non-empty string."</tt><tt class="py-op">)</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line">      <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encryptTarget</tt> <tt class="py-op">=</tt> <tt class="py-name">value</tt> </tt>
+</div><a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line"> </tt>
+<a name="EncryptConfig._getEncryptTarget"></a><div id="EncryptConfig._getEncryptTarget-def"><a name="L173"></a><tt class="py-lineno">173</tt> <a class="py-toggle" href="#" id="EncryptConfig._getEncryptTarget-toggle" onclick="return toggle('EncryptConfig._getEncryptTarget');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.EncryptConfig-class.html#_getEncryptTarget">_getEncryptTarget</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="EncryptConfig._getEncryptTarget-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="EncryptConfig._getEncryptTarget-expanded"><a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line"><tt class="py-docstring">      Property target used to get the encrypt target.</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encryptTarget</tt> </tt>
+</div><a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line"> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line">   <tt id="link-41" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-41', 'encryptMode', 'link-24');">encryptMode</a></tt> <tt class="py-op">=</tt> <tt class="py-name">property</tt><tt class="py-op">(</tt><tt id="link-42" class="py-name" targets="Method CedarBackup2.extend.encrypt.EncryptConfig._getEncryptMode()=CedarBackup2.extend.encrypt.EncryptConfig-class.html#_getEncryptMode"><a title="CedarBackup2.extend.encrypt.EncryptConfig._getEncryptMode" class="py-name" href="#" onclick="return doclink('link-42', '_getEncryptMode', 'link-42');">_getEncryptMode</a></tt><tt class="py-op">,</tt> <tt id="link-43" class="py-name" targets="Method CedarBackup2.extend.encrypt.EncryptConfig._setEncryptMode()=CedarBackup2.extend.encrypt.EncryptConfig-class.html#_setEncryptMode"><a title="CedarBackup2.extend.encrypt.EncryptConfig._setEncryptMode" class="py-name" href="#" onclick="return doclink('link-43', '_setEncryptMode', 'link-43');">_setEncryptMode</a></tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-name">doc</tt><tt class="py-op">=</tt><tt class="py-string">"Encrypt mode."</tt><tt class="py-op">)</tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">   <tt id="link-44" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-44', 'encryptTarget', 'link-26');">encryptTarget</a></tt> <tt class="py-op">=</tt> <tt class="py-name">property</tt><tt class="py-op">(</tt><tt id="link-45" class="py-name" targets="Method CedarBackup2.extend.encrypt.EncryptConfig._getEncryptTarget()=CedarBackup2.extend.encrypt.EncryptConfig-class.html#_getEncryptTarget"><a title="CedarBackup2.extend.encrypt.EncryptConfig._getEncryptTarget" class="py-name" href="#" onclick="return doclink('link-45', '_getEncryptTarget', 'link-45');">_getEncryptTarget</a></tt><tt class="py-op">,</tt> <tt id="link-46" class="py-name" targets="Method CedarBackup2.extend.encrypt.EncryptConfig._setEncryptTarget()=CedarBackup2.extend.encrypt.EncryptConfig-class.html#_setEncryptTarget"><a title="CedarBackup2.extend.encrypt.EncryptConfig._setEncryptTarget" class="py-name" href="#" onclick="return doclink('link-46', '_setEncryptTarget', 'link-46');">_setEncryptTarget</a></tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-name">doc</tt><tt class="py-op">=</tt><tt class="py-string">"Encrypt target (i.e. GPG recipient)."</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig"></a><div id="LocalConfig-def"><a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line"> </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line"><tt class="py-comment"># LocalConfig class definition</tt> </tt>
+<a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line"> </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt> <a class="py-toggle" href="#" id="LocalConfig-toggle" onclick="return toggle('LocalConfig');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html">LocalConfig</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="LocalConfig-expanded"><a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line"> </tt>
+<a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line"><tt class="py-docstring">   Class representing this extension's configuration document.</tt> </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line"><tt class="py-docstring">   This is not a general-purpose configuration object like the main Cedar</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line"><tt class="py-docstring">   Backup configuration object.  Instead, it just knows how to parse and emit</tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line"><tt class="py-docstring">   encrypt-specific configuration values.  Third parties who need to read and</tt> </tt>
+<a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line"><tt class="py-docstring">   write configuration related to this extension should access it through the</tt> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line"><tt class="py-docstring">   constructor, C{validate} and C{addConfig} methods.</tt> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line"><tt class="py-docstring">   @note: Lists within this class are "unordered" for equality comparisons.</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line"><tt class="py-docstring">   @sort: __init__, __repr__, __str__, __cmp__, encrypt, validate, addConfig</tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig.__init__"></a><div id="LocalConfig.__init__-def"><a name="L203"></a><tt class="py-lineno">203</tt> <a class="py-toggle" href="#" id="LocalConfig.__init__-toggle" onclick="return toggle('LocalConfig.__init__');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">xmlData</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">xmlPath</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">validate</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig.__init__-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig.__init__-expanded"><a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line"><tt class="py-docstring">      Initializes a configuration object.</tt> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line"><tt class="py-docstring">      If you initialize the object without passing either C{xmlData} or</tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line"><tt class="py-docstring">      C{xmlPath} then configuration will be empty and will be invalid until it</tt> </tt>
+<a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line"><tt class="py-docstring">      is filled in properly.</tt> </tt>
+<a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line"><tt class="py-docstring">      No reference to the original XML data or original path is saved off by</tt> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line"><tt class="py-docstring">      this class.  Once the data has been parsed (successfully or not) this</tt> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line"><tt class="py-docstring">      original information is discarded.</tt> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line"><tt class="py-docstring">      Unless the C{validate} argument is C{False}, the L{LocalConfig.validate}</tt> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line"><tt class="py-docstring">      method will be called (with its default arguments) against configuration</tt> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line"><tt class="py-docstring">      after successfully parsing any passed-in XML.  Keep in mind that even if</tt> </tt>
+<a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line"><tt class="py-docstring">      C{validate} is C{False}, it might not be possible to parse the passed-in</tt> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line"><tt class="py-docstring">      XML document if lower-level validations fail.</tt> </tt>
+<a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line"><tt class="py-docstring">      @note: It is strongly suggested that the C{validate} option always be set</tt> </tt>
+<a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line"><tt class="py-docstring">      to C{True} (the default) unless there is a specific need to read in</tt> </tt>
+<a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line"><tt class="py-docstring">      invalid configuration from disk.</tt> </tt>
+<a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line"><tt class="py-docstring">      @param xmlData: XML data representing configuration.</tt> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line"><tt class="py-docstring">      @type xmlData: String data.</tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line"><tt class="py-docstring">      @param xmlPath: Path to an XML file on disk.</tt> </tt>
+<a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line"><tt class="py-docstring">      @type xmlPath: Absolute path to a file on disk.</tt> </tt>
+<a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line"><tt class="py-docstring">      @param validate: Validate the document after parsing it.</tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line"><tt class="py-docstring">      @type validate: Boolean true/false.</tt> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line"><tt class="py-docstring">      @raise ValueError: If both C{xmlData} and C{xmlPath} are passed-in.</tt> </tt>
+<a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line"><tt class="py-docstring">      @raise ValueError: If the XML data in C{xmlData} or C{xmlPath} cannot be parsed.</tt> </tt>
+<a name="L236"></a><tt class="py-lineno">236</tt>  <tt class="py-line"><tt class="py-docstring">      @raise ValueError: If the parsed configuration document is not valid.</tt> </tt>
+<a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line">      <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encrypt</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line">      <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-47" class="py-name" targets="Module CedarBackup2.extend.encrypt=CedarBackup2.extend.encrypt-module.html,Variable CedarBackup2.extend.encrypt.LocalConfig.encrypt=CedarBackup2.extend.encrypt.LocalConfig-class.html#encrypt"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-47', 'encrypt', 'link-47');">encrypt</a></tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">xmlData</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt> <tt class="py-keyword">and</tt> <tt class="py-name">xmlPath</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line">         <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Use either xmlData or xmlPath, but not both."</tt><tt class="py-op">)</tt> </tt>
+<a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">xmlData</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line">         <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-48" class="py-name" targets="Method CedarBackup2.config.Config._parseXmlData()=CedarBackup2.config.Config-class.html#_parseXmlData,Method CedarBackup2.extend.amazons3.LocalConfig._parseXmlData()=CedarBackup2.extend.amazons3.LocalConfig-class.html#_parseXmlData,Method CedarBackup2.extend.capacity.LocalConfig._parseXmlData()=CedarBackup2.extend.capacity.LocalConfig-class.html#_parseXmlData,Method CedarBackup2.extend.encrypt.LocalConfig._parseXmlData()=CedarBackup2.extend.encrypt.LocalConfig-class.html#_parseXmlData,Method CedarBackup2.extend.mbox.LocalConfig._parseXmlData()=CedarBackup2.extend.mbox.LocalConfig-class.html#_parseXmlData,Method CedarBackup2.extend.mysql.LocalConfig._parseXmlData()=CedarBackup2.extend.mysql.LocalConfig-class.html#_parseXmlData,Method CedarBackup2.extend.postgresql.LocalConfig._parseXmlData()=CedarBackup2.extend.postgresql.LocalConfig-class.html#_parseXmlData,Method CedarBackup2.extend.split.LocalConfig._parseXmlData()=CedarBackup2.extend.split.LocalConfig-class.html#_parseXmlData,Method CedarBackup2.extend.subversion.LocalConfig._parseXmlData()=CedarBackup2.extend.subversion.LocalConfig-class.html#_parseXmlData"><a title="CedarBackup2.config.Config._parseXmlData
+CedarBackup2.extend.amazons3.LocalConfig._parseXmlData
+CedarBackup2.extend.capacity.LocalConfig._parseXmlData
+CedarBackup2.extend.encrypt.LocalConfig._parseXmlData
+CedarBackup2.extend.mbox.LocalConfig._parseXmlData
+CedarBackup2.extend.mysql.LocalConfig._parseXmlData
+CedarBackup2.extend.postgresql.LocalConfig._parseXmlData
+CedarBackup2.extend.split.LocalConfig._parseXmlData
+CedarBackup2.extend.subversion.LocalConfig._parseXmlData" class="py-name" href="#" onclick="return doclink('link-48', '_parseXmlData', 'link-48');">_parseXmlData</a></tt><tt class="py-op">(</tt><tt class="py-name">xmlData</tt><tt class="py-op">)</tt> </tt>
+<a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt id="link-49" class="py-name" targets="Module CedarBackup2.actions.validate=CedarBackup2.actions.validate-module.html,Method CedarBackup2.cli.Options.validate()=CedarBackup2.cli.Options-class.html#validate,Method CedarBackup2.config.Config.validate()=CedarBackup2.config.Config-class.html#validate,Method CedarBackup2.extend.amazons3.LocalConfig.validate()=CedarBackup2.extend.amazons3.LocalConfig-class.html#validate,Method CedarBackup2.extend.capacity.LocalConfig.validate()=CedarBackup2.extend.capacity.LocalConfig-class.html#validate,Method CedarBackup2.extend.encrypt.LocalConfig.validate()=CedarBackup2.extend.encrypt.LocalConfig-class.html#validate,Method CedarBackup2.extend.mbox.LocalConfig.validate()=CedarBackup2.extend.mbox.LocalConfig-class.html#validate,Method CedarBackup2.extend.mysql.LocalConfig.validate()=CedarBackup2.extend.mysql.LocalConfig-class.html#validate,Method CedarBackup2.extend.postgresql.LocalConfig.validate()=CedarBackup2.extend.postgresql.LocalConfig-class.html#validate,Method CedarBackup2.extend.split.LocalConfig.validate()=CedarBackup2.extend.split.LocalConfig-class.html#validate,Method CedarBackup2.extend.subversion.LocalConfig.validate()=CedarBackup2.extend.subversion.LocalConfig-class.html#validate,Method CedarBackup2.tools.amazons3.Options.validate()=CedarBackup2.tools.amazons3.Options-class.html#validate,Method CedarBackup2.tools.span.SpanOptions.validate()=CedarBackup2.tools.span.SpanOptions-class.html#validate"><a title="CedarBackup2.actions.validate
+CedarBackup2.cli.Options.validate
+CedarBackup2.config.Config.validate
+CedarBackup2.extend.amazons3.LocalConfig.validate
+CedarBackup2.extend.capacity.LocalConfig.validate
+CedarBackup2.extend.encrypt.LocalConfig.validate
+CedarBackup2.extend.mbox.LocalConfig.validate
+CedarBackup2.extend.mysql.LocalConfig.validate
+CedarBackup2.extend.postgresql.LocalConfig.validate
+CedarBackup2.extend.split.LocalConfig.validate
+CedarBackup2.extend.subversion.LocalConfig.validate
+CedarBackup2.tools.amazons3.Options.validate
+CedarBackup2.tools.span.SpanOptions.validate" class="py-name" href="#" onclick="return doclink('link-49', 'validate', 'link-49');">validate</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-50" class="py-name"><a title="CedarBackup2.actions.validate
+CedarBackup2.cli.Options.validate
+CedarBackup2.config.Config.validate
+CedarBackup2.extend.amazons3.LocalConfig.validate
+CedarBackup2.extend.capacity.LocalConfig.validate
+CedarBackup2.extend.encrypt.LocalConfig.validate
+CedarBackup2.extend.mbox.LocalConfig.validate
+CedarBackup2.extend.mysql.LocalConfig.validate
+CedarBackup2.extend.postgresql.LocalConfig.validate
+CedarBackup2.extend.split.LocalConfig.validate
+CedarBackup2.extend.subversion.LocalConfig.validate
+CedarBackup2.tools.amazons3.Options.validate
+CedarBackup2.tools.span.SpanOptions.validate" class="py-name" href="#" onclick="return doclink('link-50', 'validate', 'link-49');">validate</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line">      <tt class="py-keyword">elif</tt> <tt class="py-name">xmlPath</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line">         <tt class="py-name">xmlData</tt> <tt class="py-op">=</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">xmlPath</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line">         <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-51" class="py-name"><a title="CedarBackup2.config.Config._parseXmlData
+CedarBackup2.extend.amazons3.LocalConfig._parseXmlData
+CedarBackup2.extend.capacity.LocalConfig._parseXmlData
+CedarBackup2.extend.encrypt.LocalConfig._parseXmlData
+CedarBackup2.extend.mbox.LocalConfig._parseXmlData
+CedarBackup2.extend.mysql.LocalConfig._parseXmlData
+CedarBackup2.extend.postgresql.LocalConfig._parseXmlData
+CedarBackup2.extend.split.LocalConfig._parseXmlData
+CedarBackup2.extend.subversion.LocalConfig._parseXmlData" class="py-name" href="#" onclick="return doclink('link-51', '_parseXmlData', 'link-48');">_parseXmlData</a></tt><tt class="py-op">(</tt><tt class="py-name">xmlData</tt><tt class="py-op">)</tt> </tt>
+<a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt id="link-52" class="py-name"><a title="CedarBackup2.actions.validate
+CedarBackup2.cli.Options.validate
+CedarBackup2.config.Config.validate
+CedarBackup2.extend.amazons3.LocalConfig.validate
+CedarBackup2.extend.capacity.LocalConfig.validate
+CedarBackup2.extend.encrypt.LocalConfig.validate
+CedarBackup2.extend.mbox.LocalConfig.validate
+CedarBackup2.extend.mysql.LocalConfig.validate
+CedarBackup2.extend.postgresql.LocalConfig.validate
+CedarBackup2.extend.split.LocalConfig.validate
+CedarBackup2.extend.subversion.LocalConfig.validate
+CedarBackup2.tools.amazons3.Options.validate
+CedarBackup2.tools.span.SpanOptions.validate" class="py-name" href="#" onclick="return doclink('link-52', 'validate', 'link-49');">validate</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L250"></a><tt class="py-lineno">250</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-53" class="py-name"><a title="CedarBackup2.actions.validate
+CedarBackup2.cli.Options.validate
+CedarBackup2.config.Config.validate
+CedarBackup2.extend.amazons3.LocalConfig.validate
+CedarBackup2.extend.capacity.LocalConfig.validate
+CedarBackup2.extend.encrypt.LocalConfig.validate
+CedarBackup2.extend.mbox.LocalConfig.validate
+CedarBackup2.extend.mysql.LocalConfig.validate
+CedarBackup2.extend.postgresql.LocalConfig.validate
+CedarBackup2.extend.split.LocalConfig.validate
+CedarBackup2.extend.subversion.LocalConfig.validate
+CedarBackup2.tools.amazons3.Options.validate
+CedarBackup2.tools.span.SpanOptions.validate" class="py-name" href="#" onclick="return doclink('link-53', 'validate', 'link-49');">validate</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig.__repr__"></a><div id="LocalConfig.__repr__-def"><a name="L252"></a><tt class="py-lineno">252</tt> <a class="py-toggle" href="#" id="LocalConfig.__repr__-toggle" onclick="return toggle('LocalConfig.__repr__');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig.__repr__-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig.__repr__-expanded"><a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L254"></a><tt class="py-lineno">254</tt>  <tt class="py-line"><tt class="py-docstring">      Official string representation for class instance.</tt> </tt>
+<a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L256"></a><tt class="py-lineno">256</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-string">"LocalConfig(%s)"</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-54" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-54', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig.__str__"></a><div id="LocalConfig.__str__-def"><a name="L258"></a><tt class="py-lineno">258</tt> <a class="py-toggle" href="#" id="LocalConfig.__str__-toggle" onclick="return toggle('LocalConfig.__str__');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#__str__">__str__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig.__str__-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig.__str__-expanded"><a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line"><tt class="py-docstring">      Informal string representation for class instance.</tt> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-55" class="py-name"><a title="CedarBackup2.cli.Options.__repr__
+CedarBackup2.config.ActionDependencies.__repr__
+CedarBackup2.config.ActionHook.__repr__
+CedarBackup2.config.BlankBehavior.__repr__
+CedarBackup2.config.ByteQuantity.__repr__
+CedarBackup2.config.CollectConfig.__repr__
+CedarBackup2.config.CollectDir.__repr__
+CedarBackup2.config.CollectFile.__repr__
+CedarBackup2.config.CommandOverride.__repr__
+CedarBackup2.config.Config.__repr__
+CedarBackup2.config.ExtendedAction.__repr__
+CedarBackup2.config.ExtensionsConfig.__repr__
+CedarBackup2.config.LocalPeer.__repr__
+CedarBackup2.config.OptionsConfig.__repr__
+CedarBackup2.config.PeersConfig.__repr__
+CedarBackup2.config.PostActionHook.__repr__
+CedarBackup2.config.PreActionHook.__repr__
+CedarBackup2.config.PurgeConfig.__repr__
+CedarBackup2.config.PurgeDir.__repr__
+CedarBackup2.config.ReferenceConfig.__repr__
+CedarBackup2.config.RemotePeer.__repr__
+CedarBackup2.config.StageConfig.__repr__
+CedarBackup2.config.StoreConfig.__repr__
+CedarBackup2.extend.amazons3.AmazonS3Config.__repr__
+CedarBackup2.extend.amazons3.LocalConfig.__repr__
+CedarBackup2.extend.capacity.CapacityConfig.__repr__
+CedarBackup2.extend.capacity.LocalConfig.__repr__
+CedarBackup2.extend.capacity.PercentageQuantity.__repr__
+CedarBackup2.extend.encrypt.EncryptConfig.__repr__
+CedarBackup2.extend.encrypt.LocalConfig.__repr__
+CedarBackup2.extend.mbox.LocalConfig.__repr__
+CedarBackup2.extend.mbox.MboxConfig.__repr__
+CedarBackup2.extend.mbox.MboxDir.__repr__
+CedarBackup2.extend.mbox.MboxFile.__repr__
+CedarBackup2.extend.mysql.LocalConfig.__repr__
+CedarBackup2.extend.mysql.MysqlConfig.__repr__
+CedarBackup2.extend.postgresql.LocalConfig.__repr__
+CedarBackup2.extend.postgresql.PostgresqlConfig.__repr__
+CedarBackup2.extend.split.LocalConfig.__repr__
+CedarBackup2.extend.split.SplitConfig.__repr__
+CedarBackup2.extend.subversion.BDBRepository.__repr__
+CedarBackup2.extend.subversion.FSFSRepository.__repr__
+CedarBackup2.extend.subversion.LocalConfig.__repr__
+CedarBackup2.extend.subversion.Repository.__repr__
+CedarBackup2.extend.subversion.RepositoryDir.__repr__
+CedarBackup2.extend.subversion.SubversionConfig.__repr__
+CedarBackup2.tools.amazons3.Options.__repr__
+CedarBackup2.util.Diagnostics.__repr__
+CedarBackup2.util.DirectedGraph.__repr__" class="py-name" href="#" onclick="return doclink('link-55', '__repr__', 'link-30');">__repr__</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig.__cmp__"></a><div id="LocalConfig.__cmp__-def"><a name="L264"></a><tt class="py-lineno">264</tt> <a class="py-toggle" href="#" id="LocalConfig.__cmp__-toggle" onclick="return toggle('LocalConfig.__cmp__');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#__cmp__">__cmp__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">other</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig.__cmp__-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig.__cmp__-expanded"><a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line"><tt class="py-docstring">      Definition of equals operator for this class.</tt> </tt>
+<a name="L267"></a><tt class="py-lineno">267</tt>  <tt class="py-line"><tt class="py-docstring">      Lists within this class are "unordered" for equality comparisons.</tt> </tt>
+<a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line"><tt class="py-docstring">      @param other: Other object to compare to.</tt> </tt>
+<a name="L269"></a><tt class="py-lineno">269</tt>  <tt class="py-line"><tt class="py-docstring">      @return: -1/0/1 depending on whether self is C{&lt;}, C{=} or C{&gt;} other.</tt> </tt>
+<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">other</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L272"></a><tt class="py-lineno">272</tt>  <tt class="py-line">         <tt class="py-keyword">return</tt> <tt class="py-number">1</tt> </tt>
+<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-56" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-56', 'encrypt', 'link-47');">encrypt</a></tt> <tt class="py-op">!=</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-57" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-57', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-58" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-58', 'encrypt', 'link-47');">encrypt</a></tt> <tt class="py-op">&lt;</tt> <tt class="py-name">other</tt><tt class="py-op">.</tt><tt id="link-59" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-59', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-op">-</tt><tt class="py-number">1</tt> </tt>
+<a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line">         <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-number">1</tt> </tt>
+<a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-number">0</tt> </tt>
+</div><a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig._setEncrypt"></a><div id="LocalConfig._setEncrypt-def"><a name="L280"></a><tt class="py-lineno">280</tt> <a class="py-toggle" href="#" id="LocalConfig._setEncrypt-toggle" onclick="return toggle('LocalConfig._setEncrypt');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#_setEncrypt">_setEncrypt</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig._setEncrypt-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig._setEncrypt-expanded"><a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line"><tt class="py-docstring">      Property target used to set the encrypt configuration value.</tt> </tt>
+<a name="L283"></a><tt class="py-lineno">283</tt>  <tt class="py-line"><tt class="py-docstring">      If not C{None}, the value must be a C{EncryptConfig} object.</tt> </tt>
+<a name="L284"></a><tt class="py-lineno">284</tt>  <tt class="py-line"><tt class="py-docstring">      @raise ValueError: If the value is not a C{EncryptConfig}</tt> </tt>
+<a name="L285"></a><tt class="py-lineno">285</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L286"></a><tt class="py-lineno">286</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">value</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L287"></a><tt class="py-lineno">287</tt>  <tt class="py-line">         <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encrypt</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L288"></a><tt class="py-lineno">288</tt>  <tt class="py-line">      <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L289"></a><tt class="py-lineno">289</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">isinstance</tt><tt class="py-op">(</tt><tt class="py-name">value</tt><tt class="py-op">,</tt> <tt id="link-60" class="py-name" targets="Class CedarBackup2.extend.encrypt.EncryptConfig=CedarBackup2.extend.encrypt.EncryptConfig-class.html"><a title="CedarBackup2.extend.encrypt.EncryptConfig" class="py-name" href="#" onclick="return doclink('link-60', 'EncryptConfig', 'link-60');">EncryptConfig</a></tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L290"></a><tt class="py-lineno">290</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Value must be a C{EncryptConfig} object."</tt><tt class="py-op">)</tt> </tt>
+<a name="L291"></a><tt class="py-lineno">291</tt>  <tt class="py-line">         <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encrypt</tt> <tt class="py-op">=</tt> <tt class="py-name">value</tt> </tt>
+</div><a name="L292"></a><tt class="py-lineno">292</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig._getEncrypt"></a><div id="LocalConfig._getEncrypt-def"><a name="L293"></a><tt class="py-lineno">293</tt> <a class="py-toggle" href="#" id="LocalConfig._getEncrypt-toggle" onclick="return toggle('LocalConfig._getEncrypt');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#_getEncrypt">_getEncrypt</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig._getEncrypt-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig._getEncrypt-expanded"><a name="L294"></a><tt class="py-lineno">294</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L295"></a><tt class="py-lineno">295</tt>  <tt class="py-line"><tt class="py-docstring">      Property target used to get the encrypt configuration value.</tt> </tt>
+<a name="L296"></a><tt class="py-lineno">296</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L297"></a><tt class="py-lineno">297</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encrypt</tt> </tt>
+</div><a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line"> </tt>
+<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line">   <tt id="link-61" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-61', 'encrypt', 'link-47');">encrypt</a></tt> <tt class="py-op">=</tt> <tt class="py-name">property</tt><tt class="py-op">(</tt><tt id="link-62" class="py-name" targets="Method CedarBackup2.extend.encrypt.LocalConfig._getEncrypt()=CedarBackup2.extend.encrypt.LocalConfig-class.html#_getEncrypt"><a title="CedarBackup2.extend.encrypt.LocalConfig._getEncrypt" class="py-name" href="#" onclick="return doclink('link-62', '_getEncrypt', 'link-62');">_getEncrypt</a></tt><tt class="py-op">,</tt> <tt id="link-63" class="py-name" targets="Method CedarBackup2.extend.encrypt.LocalConfig._setEncrypt()=CedarBackup2.extend.encrypt.LocalConfig-class.html#_setEncrypt"><a title="CedarBackup2.extend.encrypt.LocalConfig._setEncrypt" class="py-name" href="#" onclick="return doclink('link-63', '_setEncrypt', 'link-63');">_setEncrypt</a></tt><tt class="py-op">,</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-string">"Encrypt configuration in terms of a C{EncryptConfig} object."</tt><tt class="py-op">)</tt> </tt>
+<a name="L300"></a><tt class="py-lineno">300</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig.validate"></a><div id="LocalConfig.validate-def"><a name="L301"></a><tt class="py-lineno">301</tt> <a class="py-toggle" href="#" id="LocalConfig.validate-toggle" onclick="return toggle('LocalConfig.validate');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#validate">validate</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig.validate-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig.validate-expanded"><a name="L302"></a><tt class="py-lineno">302</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L303"></a><tt class="py-lineno">303</tt>  <tt class="py-line"><tt class="py-docstring">      Validates configuration represented by the object.</tt> </tt>
+<a name="L304"></a><tt class="py-lineno">304</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L305"></a><tt class="py-lineno">305</tt>  <tt class="py-line"><tt class="py-docstring">      Encrypt configuration must be filled in.  Within that, both the encrypt</tt> </tt>
+<a name="L306"></a><tt class="py-lineno">306</tt>  <tt class="py-line"><tt class="py-docstring">      mode and encrypt target must be filled in.</tt> </tt>
+<a name="L307"></a><tt class="py-lineno">307</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L308"></a><tt class="py-lineno">308</tt>  <tt class="py-line"><tt class="py-docstring">      @raise ValueError: If one of the validations fails.</tt> </tt>
+<a name="L309"></a><tt class="py-lineno">309</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L310"></a><tt class="py-lineno">310</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-64" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-64', 'encrypt', 'link-47');">encrypt</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L311"></a><tt class="py-lineno">311</tt>  <tt class="py-line">         <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Encrypt section is required."</tt><tt class="py-op">)</tt> </tt>
+<a name="L312"></a><tt class="py-lineno">312</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-65" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-65', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-66" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-66', 'encryptMode', 'link-24');">encryptMode</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L313"></a><tt class="py-lineno">313</tt>  <tt class="py-line">         <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Encrypt mode must be set."</tt><tt class="py-op">)</tt> </tt>
+<a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-67" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-67', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-68" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-68', 'encryptTarget', 'link-26');">encryptTarget</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line">         <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Encrypt target must be set."</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L316"></a><tt class="py-lineno">316</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig.addConfig"></a><div id="LocalConfig.addConfig-def"><a name="L317"></a><tt class="py-lineno">317</tt> <a class="py-toggle" href="#" id="LocalConfig.addConfig-toggle" onclick="return toggle('LocalConfig.addConfig');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#addConfig">addConfig</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">xmlDom</tt><tt class="py-op">,</tt> <tt class="py-param">parentNode</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig.addConfig-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig.addConfig-expanded"><a name="L318"></a><tt class="py-lineno">318</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L319"></a><tt class="py-lineno">319</tt>  <tt class="py-line"><tt class="py-docstring">      Adds an &lt;encrypt&gt; configuration section as the next child of a parent.</tt> </tt>
+<a name="L320"></a><tt class="py-lineno">320</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L321"></a><tt class="py-lineno">321</tt>  <tt class="py-line"><tt class="py-docstring">      Third parties should use this function to write configuration related to</tt> </tt>
+<a name="L322"></a><tt class="py-lineno">322</tt>  <tt class="py-line"><tt class="py-docstring">      this extension.</tt> </tt>
+<a name="L323"></a><tt class="py-lineno">323</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L324"></a><tt class="py-lineno">324</tt>  <tt class="py-line"><tt class="py-docstring">      We add the following fields to the document::</tt> </tt>
+<a name="L325"></a><tt class="py-lineno">325</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L326"></a><tt class="py-lineno">326</tt>  <tt class="py-line"><tt class="py-docstring">         encryptMode    //cb_config/encrypt/encrypt_mode</tt> </tt>
+<a name="L327"></a><tt class="py-lineno">327</tt>  <tt class="py-line"><tt class="py-docstring">         encryptTarget  //cb_config/encrypt/encrypt_target</tt> </tt>
+<a name="L328"></a><tt class="py-lineno">328</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L329"></a><tt class="py-lineno">329</tt>  <tt class="py-line"><tt class="py-docstring">      @param xmlDom: DOM tree as from C{impl.createDocument()}.</tt> </tt>
+<a name="L330"></a><tt class="py-lineno">330</tt>  <tt class="py-line"><tt class="py-docstring">      @param parentNode: Parent that the section should be appended to.</tt> </tt>
+<a name="L331"></a><tt class="py-lineno">331</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L332"></a><tt class="py-lineno">332</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-69" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-69', 'encrypt', 'link-47');">encrypt</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L333"></a><tt class="py-lineno">333</tt>  <tt class="py-line">         <tt class="py-name">sectionNode</tt> <tt class="py-op">=</tt> <tt id="link-70" class="py-name"><a title="CedarBackup2.xmlutil.addContainerNode" class="py-name" href="#" onclick="return doclink('link-70', 'addContainerNode', 'link-8');">addContainerNode</a></tt><tt class="py-op">(</tt><tt class="py-name">xmlDom</tt><tt class="py-op">,</tt> <tt class="py-name">parentNode</tt><tt class="py-op">,</tt> <tt class="py-string">"encrypt"</tt><tt class="py-op">)</tt> </tt>
+<a name="L334"></a><tt class="py-lineno">334</tt>  <tt class="py-line">         <tt id="link-71" class="py-name"><a title="CedarBackup2.xmlutil.addStringNode" class="py-name" href="#" onclick="return doclink('link-71', 'addStringNode', 'link-9');">addStringNode</a></tt><tt class="py-op">(</tt><tt class="py-name">xmlDom</tt><tt class="py-op">,</tt> <tt class="py-name">sectionNode</tt><tt class="py-op">,</tt> <tt class="py-string">"encrypt_mode"</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-72" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-72', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-73" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-73', 'encryptMode', 'link-24');">encryptMode</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line">         <tt id="link-74" class="py-name"><a title="CedarBackup2.xmlutil.addStringNode" class="py-name" href="#" onclick="return doclink('link-74', 'addStringNode', 'link-9');">addStringNode</a></tt><tt class="py-op">(</tt><tt class="py-name">xmlDom</tt><tt class="py-op">,</tt> <tt class="py-name">sectionNode</tt><tt class="py-op">,</tt> <tt class="py-string">"encrypt_target"</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-75" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-75', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-76" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-76', 'encryptTarget', 'link-26');">encryptTarget</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L336"></a><tt class="py-lineno">336</tt>  <tt class="py-line"> </tt>
+<a name="LocalConfig._parseXmlData"></a><div id="LocalConfig._parseXmlData-def"><a name="L337"></a><tt class="py-lineno">337</tt> <a class="py-toggle" href="#" id="LocalConfig._parseXmlData-toggle" onclick="return toggle('LocalConfig._parseXmlData');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#_parseXmlData">_parseXmlData</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">xmlData</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig._parseXmlData-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig._parseXmlData-expanded"><a name="L338"></a><tt class="py-lineno">338</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line"><tt class="py-docstring">      Internal method to parse an XML string into the object.</tt> </tt>
+<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line"><tt class="py-docstring">      This method parses the XML document into a DOM tree (C{xmlDom}) and then</tt> </tt>
+<a name="L342"></a><tt class="py-lineno">342</tt>  <tt class="py-line"><tt class="py-docstring">      calls a static method to parse the encrypt configuration section.</tt> </tt>
+<a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L344"></a><tt class="py-lineno">344</tt>  <tt class="py-line"><tt class="py-docstring">      @param xmlData: XML data to be parsed</tt> </tt>
+<a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line"><tt class="py-docstring">      @type xmlData: String data</tt> </tt>
+<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line"><tt class="py-docstring">      @raise ValueError: If the XML cannot be successfully parsed.</tt> </tt>
+<a name="L348"></a><tt class="py-lineno">348</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L349"></a><tt class="py-lineno">349</tt>  <tt class="py-line">      <tt class="py-op">(</tt><tt class="py-name">xmlDom</tt><tt class="py-op">,</tt> <tt class="py-name">parentNode</tt><tt class="py-op">)</tt> <tt class="py-op">=</tt> <tt id="link-77" class="py-name"><a title="CedarBackup2.xmlutil.createInputDom" class="py-name" href="#" onclick="return doclink('link-77', 'createInputDom', 'link-7');">createInputDom</a></tt><tt class="py-op">(</tt><tt class="py-name">xmlData</tt><tt class="py-op">)</tt> </tt>
+<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line">      <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">_encrypt</tt> <tt class="py-op">=</tt> <tt id="link-78" class="py-name" targets="Class CedarBackup2.extend.amazons3.LocalConfig=CedarBackup2.extend.amazons3.LocalConfig-class.html,Class CedarBackup2.extend.capacity.LocalConfig=CedarBackup2.extend.capacity.LocalConfig-class.html,Class CedarBackup2.extend.encrypt.LocalConfig=CedarBackup2.extend.encrypt.LocalConfig-class.html,Class CedarBackup2.extend.mbox.LocalConfig=CedarBackup2.extend.mbox.LocalConfig-class.html,Class CedarBackup2.extend.mysql.LocalConfig=CedarBackup2.extend.mysql.LocalConfig-class.html,Class CedarBackup2.extend.postgresql.LocalConfig=CedarBackup2.extend.postgresql.LocalConfig-class.html,Class CedarBackup2.extend.split.LocalConfig=CedarBackup2.extend.split.LocalConfig-class.html,Class CedarBackup2.extend.subversion.LocalConfig=CedarBackup2.extend.subversion.LocalConfig-class.html"><a title="CedarBackup2.extend.amazons3.LocalConfig
+CedarBackup2.extend.capacity.LocalConfig
+CedarBackup2.extend.encrypt.LocalConfig
+CedarBackup2.extend.mbox.LocalConfig
+CedarBackup2.extend.mysql.LocalConfig
+CedarBackup2.extend.postgresql.LocalConfig
+CedarBackup2.extend.split.LocalConfig
+CedarBackup2.extend.subversion.LocalConfig" class="py-name" href="#" onclick="return doclink('link-78', 'LocalConfig', 'link-78');">LocalConfig</a></tt><tt class="py-op">.</tt><tt id="link-79" class="py-name" targets="Static Method CedarBackup2.extend.encrypt.LocalConfig._parseEncrypt()=CedarBackup2.extend.encrypt.LocalConfig-class.html#_parseEncrypt"><a title="CedarBackup2.extend.encrypt.LocalConfig._parseEncrypt" class="py-name" href="#" onclick="return doclink('link-79', '_parseEncrypt', 'link-79');">_parseEncrypt</a></tt><tt class="py-op">(</tt><tt class="py-name">parentNode</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line"> </tt>
+<a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line">   <tt class="py-decorator">@</tt><tt class="py-decorator">staticmethod</tt> </tt>
+<a name="LocalConfig._parseEncrypt"></a><div id="LocalConfig._parseEncrypt-def"><a name="L353"></a><tt class="py-lineno">353</tt> <a class="py-toggle" href="#" id="LocalConfig._parseEncrypt-toggle" onclick="return toggle('LocalConfig._parseEncrypt');">-</a><tt class="py-line">   <tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt.LocalConfig-class.html#_parseEncrypt">_parseEncrypt</a><tt class="py-op">(</tt><tt class="py-param">parent</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LocalConfig._parseEncrypt-collapsed" style="display:none;" pad="+++" indent="+++++++"></div><div id="LocalConfig._parseEncrypt-expanded"><a name="L354"></a><tt class="py-lineno">354</tt>  <tt class="py-line">      <tt class="py-docstring">"""</tt> </tt>
+<a name="L355"></a><tt class="py-lineno">355</tt>  <tt class="py-line"><tt class="py-docstring">      Parses an encrypt configuration section.</tt> </tt>
+<a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L357"></a><tt class="py-lineno">357</tt>  <tt class="py-line"><tt class="py-docstring">      We read the following individual fields::</tt> </tt>
+<a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line"><tt class="py-docstring">         encryptMode    //cb_config/encrypt/encrypt_mode</tt> </tt>
+<a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line"><tt class="py-docstring">         encryptTarget  //cb_config/encrypt/encrypt_target</tt> </tt>
+<a name="L361"></a><tt class="py-lineno">361</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L362"></a><tt class="py-lineno">362</tt>  <tt class="py-line"><tt class="py-docstring">      @param parent: Parent node to search beneath.</tt> </tt>
+<a name="L363"></a><tt class="py-lineno">363</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L364"></a><tt class="py-lineno">364</tt>  <tt class="py-line"><tt class="py-docstring">      @return: C{EncryptConfig} object or C{None} if the section does not exist.</tt> </tt>
+<a name="L365"></a><tt class="py-lineno">365</tt>  <tt class="py-line"><tt class="py-docstring">      @raise ValueError: If some filled-in value is invalid.</tt> </tt>
+<a name="L366"></a><tt class="py-lineno">366</tt>  <tt class="py-line"><tt class="py-docstring">      """</tt> </tt>
+<a name="L367"></a><tt class="py-lineno">367</tt>  <tt class="py-line">      <tt id="link-80" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-80', 'encrypt', 'link-47');">encrypt</a></tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L368"></a><tt class="py-lineno">368</tt>  <tt class="py-line">      <tt class="py-name">section</tt> <tt class="py-op">=</tt> <tt id="link-81" class="py-name"><a title="CedarBackup2.xmlutil.readFirstChild" class="py-name" href="#" onclick="return doclink('link-81', 'readFirstChild', 'link-12');">readFirstChild</a></tt><tt class="py-op">(</tt><tt class="py-name">parent</tt><tt class="py-op">,</tt> <tt class="py-string">"encrypt"</tt><tt class="py-op">)</tt> </tt>
+<a name="L369"></a><tt class="py-lineno">369</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">section</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L370"></a><tt class="py-lineno">370</tt>  <tt class="py-line">         <tt id="link-82" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-82', 'encrypt', 'link-47');">encrypt</a></tt> <tt class="py-op">=</tt> <tt id="link-83" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig" class="py-name" href="#" onclick="return doclink('link-83', 'EncryptConfig', 'link-60');">EncryptConfig</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L371"></a><tt class="py-lineno">371</tt>  <tt class="py-line">         <tt id="link-84" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-84', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-85" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-85', 'encryptMode', 'link-24');">encryptMode</a></tt> <tt class="py-op">=</tt> <tt id="link-86" class="py-name"><a title="CedarBackup2.xmlutil.readString" class="py-name" href="#" onclick="return doclink('link-86', 'readString', 'link-13');">readString</a></tt><tt class="py-op">(</tt><tt class="py-name">section</tt><tt class="py-op">,</tt> <tt class="py-string">"encrypt_mode"</tt><tt class="py-op">)</tt> </tt>
+<a name="L372"></a><tt class="py-lineno">372</tt>  <tt class="py-line">         <tt id="link-87" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-87', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-88" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-88', 'encryptTarget', 'link-26');">encryptTarget</a></tt> <tt class="py-op">=</tt> <tt id="link-89" class="py-name"><a title="CedarBackup2.xmlutil.readString" class="py-name" href="#" onclick="return doclink('link-89', 'readString', 'link-13');">readString</a></tt><tt class="py-op">(</tt><tt class="py-name">section</tt><tt class="py-op">,</tt> <tt class="py-string">"encrypt_target"</tt><tt class="py-op">)</tt> </tt>
+<a name="L373"></a><tt class="py-lineno">373</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt id="link-90" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-90', 'encrypt', 'link-47');">encrypt</a></tt> </tt>
+</div></div><a name="L374"></a><tt class="py-lineno">374</tt>  <tt class="py-line"> </tt>
+<a name="executeAction"></a><div id="executeAction-def"><a name="L375"></a><tt class="py-lineno">375</tt>  <tt class="py-line"> </tt>
+<a name="L376"></a><tt class="py-lineno">376</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L377"></a><tt class="py-lineno">377</tt>  <tt class="py-line"><tt class="py-comment"># Public functions</tt> </tt>
+<a name="L378"></a><tt class="py-lineno">378</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L379"></a><tt class="py-lineno">379</tt>  <tt class="py-line"> </tt>
+<a name="L380"></a><tt class="py-lineno">380</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L381"></a><tt class="py-lineno">381</tt>  <tt class="py-line"><tt class="py-comment"># executeAction() function</tt> </tt>
+<a name="L382"></a><tt class="py-lineno">382</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L383"></a><tt class="py-lineno">383</tt>  <tt class="py-line"> </tt>
+<a name="L384"></a><tt class="py-lineno">384</tt>  <tt class="py-line"><tt class="py-comment"># pylint: disable=W0613</tt> </tt>
+<a name="L385"></a><tt class="py-lineno">385</tt> <a class="py-toggle" href="#" id="executeAction-toggle" onclick="return toggle('executeAction');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt-module.html#executeAction">executeAction</a><tt class="py-op">(</tt><tt class="py-param">configPath</tt><tt class="py-op">,</tt> <tt class="py-param">options</tt><tt class="py-op">,</tt> <tt class="py-param">config</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="executeAction-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="executeAction-expanded"><a name="L386"></a><tt class="py-lineno">386</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L387"></a><tt class="py-lineno">387</tt>  <tt class="py-line"><tt class="py-docstring">   Executes the encrypt backup action.</tt> </tt>
+<a name="L388"></a><tt class="py-lineno">388</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L389"></a><tt class="py-lineno">389</tt>  <tt class="py-line"><tt class="py-docstring">   @param configPath: Path to configuration file on disk.</tt> </tt>
+<a name="L390"></a><tt class="py-lineno">390</tt>  <tt class="py-line"><tt class="py-docstring">   @type configPath: String representing a path on disk.</tt> </tt>
+<a name="L391"></a><tt class="py-lineno">391</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L392"></a><tt class="py-lineno">392</tt>  <tt class="py-line"><tt class="py-docstring">   @param options: Program command-line options.</tt> </tt>
+<a name="L393"></a><tt class="py-lineno">393</tt>  <tt class="py-line"><tt class="py-docstring">   @type options: Options object.</tt> </tt>
+<a name="L394"></a><tt class="py-lineno">394</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L395"></a><tt class="py-lineno">395</tt>  <tt class="py-line"><tt class="py-docstring">   @param config: Program configuration.</tt> </tt>
+<a name="L396"></a><tt class="py-lineno">396</tt>  <tt class="py-line"><tt class="py-docstring">   @type config: Config object.</tt> </tt>
+<a name="L397"></a><tt class="py-lineno">397</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L398"></a><tt class="py-lineno">398</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: Under many generic error conditions</tt> </tt>
+<a name="L399"></a><tt class="py-lineno">399</tt>  <tt class="py-line"><tt class="py-docstring">   @raise IOError: If there are I/O problems reading or writing files</tt> </tt>
+<a name="L400"></a><tt class="py-lineno">400</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L401"></a><tt class="py-lineno">401</tt>  <tt class="py-line">   <tt id="link-91" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-91', 'logger', 'link-20');">logger</a></tt><tt class="py-op">.</tt><tt id="link-92" class="py-name" targets="Variable CedarBackup2.cli.Options.debug=CedarBackup2.cli.Options-class.html#debug,Variable CedarBackup2.tools.amazons3.Options.debug=CedarBackup2.tools.amazons3.Options-class.html#debug"><a title="CedarBackup2.cli.Options.debug
+CedarBackup2.tools.amazons3.Options.debug" class="py-name" href="#" onclick="return doclink('link-92', 'debug', 'link-92');">debug</a></tt><tt class="py-op">(</tt><tt class="py-string">"Executing encrypt extended action."</tt><tt class="py-op">)</tt> </tt>
+<a name="L402"></a><tt class="py-lineno">402</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-93" class="py-name" targets="Variable CedarBackup2.cli.Options.config=CedarBackup2.cli.Options-class.html#config,Module CedarBackup2.config=CedarBackup2.config-module.html"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-93', 'config', 'link-93');">config</a></tt><tt class="py-op">.</tt><tt id="link-94" class="py-name" targets="Variable CedarBackup2.config.Config.options=CedarBackup2.config.Config-class.html#options"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-94', 'options', 'link-94');">options</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt> <tt class="py-keyword">or</tt> <tt id="link-95" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-95', 'config', 'link-93');">config</a></tt><tt class="py-op">.</tt><tt id="link-96" class="py-name" targets="Module CedarBackup2.actions.stage=CedarBackup2.actions.stage-module.html,Variable CedarBackup2.config.Config.stage=CedarBackup2.config.Config-class.html#stage"><a title="CedarBackup2.actions.stage
+CedarBackup2.config.Config.stage" class="py-name" href="#" onclick="return doclink('link-96', 'stage', 'link-96');">stage</a></tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L403"></a><tt class="py-lineno">403</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Cedar Backup configuration is not properly filled in."</tt><tt class="py-op">)</tt> </tt>
+<a name="L404"></a><tt class="py-lineno">404</tt>  <tt class="py-line">   <tt class="py-name">local</tt> <tt class="py-op">=</tt> <tt id="link-97" class="py-name"><a title="CedarBackup2.extend.amazons3.LocalConfig
+CedarBackup2.extend.capacity.LocalConfig
+CedarBackup2.extend.encrypt.LocalConfig
+CedarBackup2.extend.mbox.LocalConfig
+CedarBackup2.extend.mysql.LocalConfig
+CedarBackup2.extend.postgresql.LocalConfig
+CedarBackup2.extend.split.LocalConfig
+CedarBackup2.extend.subversion.LocalConfig" class="py-name" href="#" onclick="return doclink('link-97', 'LocalConfig', 'link-78');">LocalConfig</a></tt><tt class="py-op">(</tt><tt class="py-name">xmlPath</tt><tt class="py-op">=</tt><tt class="py-name">configPath</tt><tt class="py-op">)</tt> </tt>
+<a name="L405"></a><tt class="py-lineno">405</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">local</tt><tt class="py-op">.</tt><tt id="link-98" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-98', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-99" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-99', 'encryptMode', 'link-24');">encryptMode</a></tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt class="py-op">[</tt><tt class="py-string">"gpg"</tt><tt class="py-op">,</tt> <tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L406"></a><tt class="py-lineno">406</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Unknown encrypt mode [%s]"</tt> <tt class="py-op">%</tt> <tt class="py-name">local</tt><tt class="py-op">.</tt><tt id="link-100" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-100', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-101" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-101', 'encryptMode', 'link-24');">encryptMode</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L407"></a><tt class="py-lineno">407</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">local</tt><tt class="py-op">.</tt><tt id="link-102" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-102', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-103" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-103', 'encryptMode', 'link-24');">encryptMode</a></tt> <tt class="py-op">==</tt> <tt class="py-string">"gpg"</tt><tt class="py-op">:</tt> </tt>
+<a name="L408"></a><tt class="py-lineno">408</tt>  <tt class="py-line">      <tt id="link-104" class="py-name" targets="Function CedarBackup2.extend.encrypt._confirmGpgRecipient()=CedarBackup2.extend.encrypt-module.html#_confirmGpgRecipient"><a title="CedarBackup2.extend.encrypt._confirmGpgRecipient" class="py-name" href="#" onclick="return doclink('link-104', '_confirmGpgRecipient', 'link-104');">_confirmGpgRecipient</a></tt><tt class="py-op">(</tt><tt class="py-name">local</tt><tt class="py-op">.</tt><tt id="link-105" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-105', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-106" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-106', 'encryptTarget', 'link-26');">encryptTarget</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L409"></a><tt class="py-lineno">409</tt>  <tt class="py-line">   <tt class="py-name">dailyDirs</tt> <tt class="py-op">=</tt> <tt id="link-107" class="py-name"><a title="CedarBackup2.actions.util.findDailyDirs" class="py-name" href="#" onclick="return doclink('link-107', 'findDailyDirs', 'link-17');">findDailyDirs</a></tt><tt class="py-op">(</tt><tt id="link-108" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-108', 'config', 'link-93');">config</a></tt><tt class="py-op">.</tt><tt id="link-109" class="py-name"><a title="CedarBackup2.actions.stage
+CedarBackup2.config.Config.stage" class="py-name" href="#" onclick="return doclink('link-109', 'stage', 'link-96');">stage</a></tt><tt class="py-op">.</tt><tt id="link-110" class="py-name" targets="Variable CedarBackup2.config.CollectConfig.targetDir=CedarBackup2.config.CollectConfig-class.html#targetDir,Variable CedarBackup2.config.StageConfig.targetDir=CedarBackup2.config.StageConfig-class.html#targetDir"><a title="CedarBackup2.config.CollectConfig.targetDir
+CedarBackup2.config.StageConfig.targetDir" class="py-name" href="#" onclick="return doclink('link-110', 'targetDir', 'link-110');">targetDir</a></tt><tt class="py-op">,</tt> <tt id="link-111" class="py-name"><a title="CedarBackup2.extend.encrypt.ENCRYPT_INDICATOR" class="py-name" href="#" onclick="return doclink('link-111', 'ENCRYPT_INDICATOR', 'link-23');">ENCRYPT_INDICATOR</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L410"></a><tt class="py-lineno">410</tt>  <tt class="py-line">   <tt class="py-keyword">for</tt> <tt class="py-name">dailyDir</tt> <tt class="py-keyword">in</tt> <tt class="py-name">dailyDirs</tt><tt class="py-op">:</tt> </tt>
+<a name="L411"></a><tt class="py-lineno">411</tt>  <tt class="py-line">      <tt id="link-112" class="py-name" targets="Function CedarBackup2.extend.encrypt._encryptDailyDir()=CedarBackup2.extend.encrypt-module.html#_encryptDailyDir"><a title="CedarBackup2.extend.encrypt._encryptDailyDir" class="py-name" href="#" onclick="return doclink('link-112', '_encryptDailyDir', 'link-112');">_encryptDailyDir</a></tt><tt class="py-op">(</tt><tt class="py-name">dailyDir</tt><tt class="py-op">,</tt> <tt class="py-name">local</tt><tt class="py-op">.</tt><tt id="link-113" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-113', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-114" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-114', 'encryptMode', 'link-24');">encryptMode</a></tt><tt class="py-op">,</tt> <tt class="py-name">local</tt><tt class="py-op">.</tt><tt id="link-115" class="py-name"><a title="CedarBackup2.extend.encrypt
+CedarBackup2.extend.encrypt.LocalConfig.encrypt" class="py-name" href="#" onclick="return doclink('link-115', 'encrypt', 'link-47');">encrypt</a></tt><tt class="py-op">.</tt><tt id="link-116" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-116', 'encryptTarget', 'link-26');">encryptTarget</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L412"></a><tt class="py-lineno">412</tt>  <tt class="py-line">                       <tt id="link-117" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-117', 'config', 'link-93');">config</a></tt><tt class="py-op">.</tt><tt id="link-118" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-118', 'options', 'link-94');">options</a></tt><tt class="py-op">.</tt><tt id="link-119" class="py-name" targets="Variable CedarBackup2.config.OptionsConfig.backupUser=CedarBackup2.config.OptionsConfig-class.html#backupUser"><a title="CedarBackup2.config.OptionsConfig.backupUser" class="py-name" href="#" onclick="return doclink('link-119', 'backupUser', 'link-119');">backupUser</a></tt><tt class="py-op">,</tt> <tt id="link-120" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-120', 'config', 'link-93');">config</a></tt><tt class="py-op">.</tt><tt id="link-121" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-121', 'options', 'link-94');">options</a></tt><tt class="py-op">.</tt><tt id="link-122" class="py-name" targets="Variable CedarBackup2.config.OptionsConfig.backupGroup=CedarBackup2.config.OptionsConfig-class.html#backupGroup"><a title="CedarBackup2.config.OptionsConfig.backupGroup" class="py-name" href="#" onclick="return doclink('link-122', 'backupGroup', 'link-122');">backupGroup</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L413"></a><tt class="py-lineno">413</tt>  <tt class="py-line">      <tt id="link-123" class="py-name"><a title="CedarBackup2.actions.util.writeIndicatorFile" class="py-name" href="#" onclick="return doclink('link-123', 'writeIndicatorFile', 'link-18');">writeIndicatorFile</a></tt><tt class="py-op">(</tt><tt class="py-name">dailyDir</tt><tt class="py-op">,</tt> <tt id="link-124" class="py-name"><a title="CedarBackup2.extend.encrypt.ENCRYPT_INDICATOR" class="py-name" href="#" onclick="return doclink('link-124', 'ENCRYPT_INDICATOR', 'link-23');">ENCRYPT_INDICATOR</a></tt><tt class="py-op">,</tt> <tt id="link-125" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-125', 'config', 'link-93');">config</a></tt><tt class="py-op">.</tt><tt id="link-126" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-126', 'options', 'link-94');">options</a></tt><tt class="py-op">.</tt><tt id="link-127" class="py-name"><a title="CedarBackup2.config.OptionsConfig.backupUser" class="py-name" href="#" onclick="return doclink('link-127', 'backupUser', 'link-119');">backupUser</a></tt><tt class="py-op">,</tt> <tt id="link-128" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-128', 'config', 'link-93');">config</a></tt><tt class="py-op">.</tt><tt id="link-129" class="py-name"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-129', 'options', 'link-94');">options</a></tt><tt class="py-op">.</tt><tt id="link-130" class="py-name"><a title="CedarBackup2.config.OptionsConfig.backupGroup" class="py-name" href="#" onclick="return doclink('link-130', 'backupGroup', 'link-122');">backupGroup</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L414"></a><tt class="py-lineno">414</tt>  <tt class="py-line">   <tt id="link-131" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-131', 'logger', 'link-20');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">info</tt><tt class="py-op">(</tt><tt class="py-string">"Executed the encrypt extended action successfully."</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L415"></a><tt class="py-lineno">415</tt>  <tt class="py-line"> </tt>
+<a name="_encryptDailyDir"></a><div id="_encryptDailyDir-def"><a name="L416"></a><tt class="py-lineno">416</tt>  <tt class="py-line"> </tt>
+<a name="L417"></a><tt class="py-lineno">417</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L418"></a><tt class="py-lineno">418</tt>  <tt class="py-line"><tt class="py-comment"># _encryptDailyDir() function</tt> </tt>
+<a name="L419"></a><tt class="py-lineno">419</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L420"></a><tt class="py-lineno">420</tt>  <tt class="py-line"> </tt>
+<a name="L421"></a><tt class="py-lineno">421</tt> <a class="py-toggle" href="#" id="_encryptDailyDir-toggle" onclick="return toggle('_encryptDailyDir');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt-module.html#_encryptDailyDir">_encryptDailyDir</a><tt class="py-op">(</tt><tt class="py-param">dailyDir</tt><tt class="py-op">,</tt> <tt class="py-param">encryptMode</tt><tt class="py-op">,</tt> <tt class="py-param">encryptTarget</tt><tt class="py-op">,</tt> <tt class="py-param">backupUser</tt><tt class="py-op">,</tt> <tt class="py-param">backupGroup</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_encryptDailyDir-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_encryptDailyDir-expanded"><a name="L422"></a><tt class="py-lineno">422</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L423"></a><tt class="py-lineno">423</tt>  <tt class="py-line"><tt class="py-docstring">   Encrypts the contents of a daily staging directory.</tt> </tt>
+<a name="L424"></a><tt class="py-lineno">424</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L425"></a><tt class="py-lineno">425</tt>  <tt class="py-line"><tt class="py-docstring">   Indicator files are ignored.  All other files are encrypted.  The only valid</tt> </tt>
+<a name="L426"></a><tt class="py-lineno">426</tt>  <tt class="py-line"><tt class="py-docstring">   encrypt mode is C{"gpg"}.</tt> </tt>
+<a name="L427"></a><tt class="py-lineno">427</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L428"></a><tt class="py-lineno">428</tt>  <tt class="py-line"><tt class="py-docstring">   @param dailyDir: Daily directory to encrypt</tt> </tt>
+<a name="L429"></a><tt class="py-lineno">429</tt>  <tt class="py-line"><tt class="py-docstring">   @param encryptMode: Encryption mode (only "gpg" is allowed)</tt> </tt>
+<a name="L430"></a><tt class="py-lineno">430</tt>  <tt class="py-line"><tt class="py-docstring">   @param encryptTarget: Encryption target (GPG recipient for "gpg" mode)</tt> </tt>
+<a name="L431"></a><tt class="py-lineno">431</tt>  <tt class="py-line"><tt class="py-docstring">   @param backupUser: User that target files should be owned by</tt> </tt>
+<a name="L432"></a><tt class="py-lineno">432</tt>  <tt class="py-line"><tt class="py-docstring">   @param backupGroup: Group that target files should be owned by</tt> </tt>
+<a name="L433"></a><tt class="py-lineno">433</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L434"></a><tt class="py-lineno">434</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: If the encrypt mode is not supported.</tt> </tt>
+<a name="L435"></a><tt class="py-lineno">435</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: If the daily staging directory does not exist.</tt> </tt>
+<a name="L436"></a><tt class="py-lineno">436</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L437"></a><tt class="py-lineno">437</tt>  <tt class="py-line">   <tt id="link-132" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-132', 'logger', 'link-20');">logger</a></tt><tt class="py-op">.</tt><tt id="link-133" class="py-name"><a title="CedarBackup2.cli.Options.debug
+CedarBackup2.tools.amazons3.Options.debug" class="py-name" href="#" onclick="return doclink('link-133', 'debug', 'link-92');">debug</a></tt><tt class="py-op">(</tt><tt class="py-string">"Begin encrypting contents of [%s]."</tt><tt class="py-op">,</tt> <tt class="py-name">dailyDir</tt><tt class="py-op">)</tt> </tt>
+<a name="L438"></a><tt class="py-lineno">438</tt>  <tt class="py-line">   <tt class="py-name">fileList</tt> <tt class="py-op">=</tt> <tt id="link-134" class="py-name"><a title="CedarBackup2.actions.util.getBackupFiles" class="py-name" href="#" onclick="return doclink('link-134', 'getBackupFiles', 'link-19');">getBackupFiles</a></tt><tt class="py-op">(</tt><tt class="py-name">dailyDir</tt><tt class="py-op">)</tt> <tt class="py-comment"># ignores indicator files</tt> </tt>
+<a name="L439"></a><tt class="py-lineno">439</tt>  <tt class="py-line">   <tt class="py-keyword">for</tt> <tt class="py-name">path</tt> <tt class="py-keyword">in</tt> <tt class="py-name">fileList</tt><tt class="py-op">:</tt> </tt>
+<a name="L440"></a><tt class="py-lineno">440</tt>  <tt class="py-line">      <tt id="link-135" class="py-name" targets="Function CedarBackup2.extend.encrypt._encryptFile()=CedarBackup2.extend.encrypt-module.html#_encryptFile"><a title="CedarBackup2.extend.encrypt._encryptFile" class="py-name" href="#" onclick="return doclink('link-135', '_encryptFile', 'link-135');">_encryptFile</a></tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt id="link-136" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-136', 'encryptMode', 'link-24');">encryptMode</a></tt><tt class="py-op">,</tt> <tt id="link-137" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-137', 'encryptTarget', 'link-26');">encryptTarget</a></tt><tt class="py-op">,</tt> <tt id="link-138" class="py-name"><a title="CedarBackup2.config.OptionsConfig.backupUser" class="py-name" href="#" onclick="return doclink('link-138', 'backupUser', 'link-119');">backupUser</a></tt><tt class="py-op">,</tt> <tt id="link-139" class="py-name"><a title="CedarBackup2.config.OptionsConfig.backupGroup" class="py-name" href="#" onclick="return doclink('link-139', 'backupGroup', 'link-122');">backupGroup</a></tt><tt class="py-op">,</tt> <tt class="py-name">removeSource</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L441"></a><tt class="py-lineno">441</tt>  <tt class="py-line">   <tt id="link-140" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-140', 'logger', 'link-20');">logger</a></tt><tt class="py-op">.</tt><tt id="link-141" class="py-name"><a title="CedarBackup2.cli.Options.debug
+CedarBackup2.tools.amazons3.Options.debug" class="py-name" href="#" onclick="return doclink('link-141', 'debug', 'link-92');">debug</a></tt><tt class="py-op">(</tt><tt class="py-string">"Completed encrypting contents of [%s]."</tt><tt class="py-op">,</tt> <tt class="py-name">dailyDir</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L442"></a><tt class="py-lineno">442</tt>  <tt class="py-line"> </tt>
+<a name="_encryptFile"></a><div id="_encryptFile-def"><a name="L443"></a><tt class="py-lineno">443</tt>  <tt class="py-line"> </tt>
+<a name="L444"></a><tt class="py-lineno">444</tt>  <tt class="py-line"><tt class="py-comment">##########################</tt> </tt>
+<a name="L445"></a><tt class="py-lineno">445</tt>  <tt class="py-line"><tt class="py-comment"># _encryptFile() function</tt> </tt>
+<a name="L446"></a><tt class="py-lineno">446</tt>  <tt class="py-line"><tt class="py-comment">##########################</tt> </tt>
+<a name="L447"></a><tt class="py-lineno">447</tt>  <tt class="py-line"> </tt>
+<a name="L448"></a><tt class="py-lineno">448</tt> <a class="py-toggle" href="#" id="_encryptFile-toggle" onclick="return toggle('_encryptFile');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt-module.html#_encryptFile">_encryptFile</a><tt class="py-op">(</tt><tt class="py-param">sourcePath</tt><tt class="py-op">,</tt> <tt class="py-param">encryptMode</tt><tt class="py-op">,</tt> <tt class="py-param">encryptTarget</tt><tt class="py-op">,</tt> <tt class="py-param">backupUser</tt><tt class="py-op">,</tt> <tt class="py-param">backupGroup</tt><tt class="py-op">,</tt> <tt class="py-param">removeSource</tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_encryptFile-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_encryptFile-expanded"><a name="L449"></a><tt class="py-lineno">449</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L450"></a><tt class="py-lineno">450</tt>  <tt class="py-line"><tt class="py-docstring">   Encrypts the source file using the indicated mode.</tt> </tt>
+<a name="L451"></a><tt class="py-lineno">451</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L452"></a><tt class="py-lineno">452</tt>  <tt class="py-line"><tt class="py-docstring">   The encrypted file will be owned by the indicated backup user and group.  If</tt> </tt>
+<a name="L453"></a><tt class="py-lineno">453</tt>  <tt class="py-line"><tt class="py-docstring">   C{removeSource} is C{True}, then the source file will be removed after it is</tt> </tt>
+<a name="L454"></a><tt class="py-lineno">454</tt>  <tt class="py-line"><tt class="py-docstring">   successfully encrypted.</tt> </tt>
+<a name="L455"></a><tt class="py-lineno">455</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L456"></a><tt class="py-lineno">456</tt>  <tt class="py-line"><tt class="py-docstring">   Currently, only the C{"gpg"} encrypt mode is supported.</tt> </tt>
+<a name="L457"></a><tt class="py-lineno">457</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L458"></a><tt class="py-lineno">458</tt>  <tt class="py-line"><tt class="py-docstring">   @param sourcePath: Absolute path of the source file to encrypt</tt> </tt>
+<a name="L459"></a><tt class="py-lineno">459</tt>  <tt class="py-line"><tt class="py-docstring">   @param encryptMode: Encryption mode (only "gpg" is allowed)</tt> </tt>
+<a name="L460"></a><tt class="py-lineno">460</tt>  <tt class="py-line"><tt class="py-docstring">   @param encryptTarget: Encryption target (GPG recipient)</tt> </tt>
+<a name="L461"></a><tt class="py-lineno">461</tt>  <tt class="py-line"><tt class="py-docstring">   @param backupUser: User that target files should be owned by</tt> </tt>
+<a name="L462"></a><tt class="py-lineno">462</tt>  <tt class="py-line"><tt class="py-docstring">   @param backupGroup: Group that target files should be owned by</tt> </tt>
+<a name="L463"></a><tt class="py-lineno">463</tt>  <tt class="py-line"><tt class="py-docstring">   @param removeSource: Indicates whether to remove the source file</tt> </tt>
+<a name="L464"></a><tt class="py-lineno">464</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L465"></a><tt class="py-lineno">465</tt>  <tt class="py-line"><tt class="py-docstring">   @return: Path to the newly-created encrypted file.</tt> </tt>
+<a name="L466"></a><tt class="py-lineno">466</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L467"></a><tt class="py-lineno">467</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: If an invalid encrypt mode is passed in.</tt> </tt>
+<a name="L468"></a><tt class="py-lineno">468</tt>  <tt class="py-line"><tt class="py-docstring">   @raise IOError: If there is a problem accessing, encrypting or removing the source file.</tt> </tt>
+<a name="L469"></a><tt class="py-lineno">469</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L470"></a><tt class="py-lineno">470</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">sourcePath</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L471"></a><tt class="py-lineno">471</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Source path [%s] does not exist."</tt> <tt class="py-op">%</tt> <tt class="py-name">sourcePath</tt><tt class="py-op">)</tt> </tt>
+<a name="L472"></a><tt class="py-lineno">472</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-142" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-142', 'encryptMode', 'link-24');">encryptMode</a></tt> <tt class="py-op">==</tt> <tt class="py-string">'gpg'</tt><tt class="py-op">:</tt> </tt>
+<a name="L473"></a><tt class="py-lineno">473</tt>  <tt class="py-line">      <tt class="py-name">encryptedPath</tt> <tt class="py-op">=</tt> <tt id="link-143" class="py-name" targets="Function CedarBackup2.extend.encrypt._encryptFileWithGpg()=CedarBackup2.extend.encrypt-module.html#_encryptFileWithGpg"><a title="CedarBackup2.extend.encrypt._encryptFileWithGpg" class="py-name" href="#" onclick="return doclink('link-143', '_encryptFileWithGpg', 'link-143');">_encryptFileWithGpg</a></tt><tt class="py-op">(</tt><tt class="py-name">sourcePath</tt><tt class="py-op">,</tt> <tt class="py-name">recipient</tt><tt class="py-op">=</tt><tt id="link-144" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptTarget" class="py-name" href="#" onclick="return doclink('link-144', 'encryptTarget', 'link-26');">encryptTarget</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L474"></a><tt class="py-lineno">474</tt>  <tt class="py-line">   <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L475"></a><tt class="py-lineno">475</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Unknown encrypt mode [%s]"</tt> <tt class="py-op">%</tt> <tt id="link-145" class="py-name"><a title="CedarBackup2.extend.encrypt.EncryptConfig.encryptMode" class="py-name" href="#" onclick="return doclink('link-145', 'encryptMode', 'link-24');">encryptMode</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L476"></a><tt class="py-lineno">476</tt>  <tt class="py-line">   <tt id="link-146" class="py-name"><a title="CedarBackup2.util.changeOwnership" class="py-name" href="#" onclick="return doclink('link-146', 'changeOwnership', 'link-4');">changeOwnership</a></tt><tt class="py-op">(</tt><tt class="py-name">encryptedPath</tt><tt class="py-op">,</tt> <tt id="link-147" class="py-name"><a title="CedarBackup2.config.OptionsConfig.backupUser" class="py-name" href="#" onclick="return doclink('link-147', 'backupUser', 'link-119');">backupUser</a></tt><tt class="py-op">,</tt> <tt id="link-148" class="py-name"><a title="CedarBackup2.config.OptionsConfig.backupGroup" class="py-name" href="#" onclick="return doclink('link-148', 'backupGroup', 'link-122');">backupGroup</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L477"></a><tt class="py-lineno">477</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">removeSource</tt><tt class="py-op">:</tt> </tt>
+<a name="L478"></a><tt class="py-lineno">478</tt>  <tt class="py-line">      <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">sourcePath</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L479"></a><tt class="py-lineno">479</tt>  <tt class="py-line">         <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L480"></a><tt class="py-lineno">480</tt>  <tt class="py-line">            <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">remove</tt><tt class="py-op">(</tt><tt class="py-name">sourcePath</tt><tt class="py-op">)</tt> </tt>
+<a name="L481"></a><tt class="py-lineno">481</tt>  <tt class="py-line">            <tt id="link-149" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-149', 'logger', 'link-20');">logger</a></tt><tt class="py-op">.</tt><tt id="link-150" class="py-name"><a title="CedarBackup2.cli.Options.debug
+CedarBackup2.tools.amazons3.Options.debug" class="py-name" href="#" onclick="return doclink('link-150', 'debug', 'link-92');">debug</a></tt><tt class="py-op">(</tt><tt class="py-string">"Completed removing old file [%s]."</tt><tt class="py-op">,</tt> <tt class="py-name">sourcePath</tt><tt class="py-op">)</tt> </tt>
+<a name="L482"></a><tt class="py-lineno">482</tt>  <tt class="py-line">         <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L483"></a><tt class="py-lineno">483</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">IOError</tt><tt class="py-op">(</tt><tt class="py-string">"Failed to remove file [%s] after encrypting it."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">sourcePath</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L484"></a><tt class="py-lineno">484</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">encryptedPath</tt> </tt>
+</div><a name="L485"></a><tt class="py-lineno">485</tt>  <tt class="py-line"> </tt>
+<a name="_encryptFileWithGpg"></a><div id="_encryptFileWithGpg-def"><a name="L486"></a><tt class="py-lineno">486</tt>  <tt class="py-line"> </tt>
+<a name="L487"></a><tt class="py-lineno">487</tt>  <tt class="py-line"><tt class="py-comment">#################################</tt> </tt>
+<a name="L488"></a><tt class="py-lineno">488</tt>  <tt class="py-line"><tt class="py-comment"># _encryptFileWithGpg() function</tt> </tt>
+<a name="L489"></a><tt class="py-lineno">489</tt>  <tt class="py-line"><tt class="py-comment">#################################</tt> </tt>
+<a name="L490"></a><tt class="py-lineno">490</tt>  <tt class="py-line"> </tt>
+<a name="L491"></a><tt class="py-lineno">491</tt> <a class="py-toggle" href="#" id="_encryptFileWithGpg-toggle" onclick="return toggle('_encryptFileWithGpg');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt-module.html#_encryptFileWithGpg">_encryptFileWithGpg</a><tt class="py-op">(</tt><tt class="py-param">sourcePath</tt><tt class="py-op">,</tt> <tt class="py-param">recipient</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_encryptFileWithGpg-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_encryptFileWithGpg-expanded"><a name="L492"></a><tt class="py-lineno">492</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L493"></a><tt class="py-lineno">493</tt>  <tt class="py-line"><tt class="py-docstring">   Encrypts the indicated source file using GPG.</tt> </tt>
+<a name="L494"></a><tt class="py-lineno">494</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L495"></a><tt class="py-lineno">495</tt>  <tt class="py-line"><tt class="py-docstring">   The encrypted file will be in GPG's binary output format and will have the</tt> </tt>
+<a name="L496"></a><tt class="py-lineno">496</tt>  <tt class="py-line"><tt class="py-docstring">   same name as the source file plus a C{".gpg"} extension.  The source file</tt> </tt>
+<a name="L497"></a><tt class="py-lineno">497</tt>  <tt class="py-line"><tt class="py-docstring">   will not be modified or removed by this function call.</tt> </tt>
+<a name="L498"></a><tt class="py-lineno">498</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L499"></a><tt class="py-lineno">499</tt>  <tt class="py-line"><tt class="py-docstring">   @param sourcePath: Absolute path of file to be encrypted.</tt> </tt>
+<a name="L500"></a><tt class="py-lineno">500</tt>  <tt class="py-line"><tt class="py-docstring">   @param recipient: Recipient name to be passed to GPG's C{"-r"} option</tt> </tt>
+<a name="L501"></a><tt class="py-lineno">501</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L502"></a><tt class="py-lineno">502</tt>  <tt class="py-line"><tt class="py-docstring">   @return: Path to the newly-created encrypted file.</tt> </tt>
+<a name="L503"></a><tt class="py-lineno">503</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L504"></a><tt class="py-lineno">504</tt>  <tt class="py-line"><tt class="py-docstring">   @raise IOError: If there is a problem encrypting the file.</tt> </tt>
+<a name="L505"></a><tt class="py-lineno">505</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L506"></a><tt class="py-lineno">506</tt>  <tt class="py-line">   <tt class="py-name">encryptedPath</tt> <tt class="py-op">=</tt> <tt class="py-string">"%s.gpg"</tt> <tt class="py-op">%</tt> <tt class="py-name">sourcePath</tt> </tt>
+<a name="L507"></a><tt class="py-lineno">507</tt>  <tt class="py-line">   <tt id="link-151" class="py-name" targets="Variable CedarBackup2.config.ActionHook.command=CedarBackup2.config.ActionHook-class.html#command,Variable CedarBackup2.config.CommandOverride.command=CedarBackup2.config.CommandOverride-class.html#command"><a title="CedarBackup2.config.ActionHook.command
+CedarBackup2.config.CommandOverride.command" class="py-name" href="#" onclick="return doclink('link-151', 'command', 'link-151');">command</a></tt> <tt class="py-op">=</tt> <tt id="link-152" class="py-name"><a title="CedarBackup2.util.resolveCommand" class="py-name" href="#" onclick="return doclink('link-152', 'resolveCommand', 'link-2');">resolveCommand</a></tt><tt class="py-op">(</tt><tt id="link-153" class="py-name"><a title="CedarBackup2.extend.encrypt.GPG_COMMAND" class="py-name" href="#" onclick="return doclink('link-153', 'GPG_COMMAND', 'link-21');">GPG_COMMAND</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L508"></a><tt class="py-lineno">508</tt>  <tt class="py-line">   <tt class="py-name">args</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> <tt class="py-string">"--batch"</tt><tt class="py-op">,</tt> <tt class="py-string">"--yes"</tt><tt class="py-op">,</tt> <tt class="py-string">"-e"</tt><tt class="py-op">,</tt> <tt class="py-string">"-r"</tt><tt class="py-op">,</tt> <tt class="py-name">recipient</tt><tt class="py-op">,</tt> <tt class="py-string">"-o"</tt><tt class="py-op">,</tt> <tt class="py-name">encryptedPath</tt><tt class="py-op">,</tt> <tt class="py-name">sourcePath</tt><tt class="py-op">,</tt> <tt class="py-op">]</tt> </tt>
+<a name="L509"></a><tt class="py-lineno">509</tt>  <tt class="py-line">   <tt class="py-name">result</tt> <tt class="py-op">=</tt> <tt id="link-154" class="py-name"><a title="CedarBackup2.util.executeCommand" class="py-name" href="#" onclick="return doclink('link-154', 'executeCommand', 'link-3');">executeCommand</a></tt><tt class="py-op">(</tt><tt id="link-155" class="py-name"><a title="CedarBackup2.config.ActionHook.command
+CedarBackup2.config.CommandOverride.command" class="py-name" href="#" onclick="return doclink('link-155', 'command', 'link-151');">command</a></tt><tt class="py-op">,</tt> <tt class="py-name">args</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L510"></a><tt class="py-lineno">510</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">result</tt> <tt class="py-op">!=</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L511"></a><tt class="py-lineno">511</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">IOError</tt><tt class="py-op">(</tt><tt class="py-string">"Error [%d] calling gpg to encrypt [%s]."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">result</tt><tt class="py-op">,</tt> <tt class="py-name">sourcePath</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L512"></a><tt class="py-lineno">512</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">encryptedPath</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L513"></a><tt class="py-lineno">513</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">IOError</tt><tt class="py-op">(</tt><tt class="py-string">"After call to [%s], encrypted file [%s] does not exist."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt id="link-156" class="py-name"><a title="CedarBackup2.config.ActionHook.command
+CedarBackup2.config.CommandOverride.command" class="py-name" href="#" onclick="return doclink('link-156', 'command', 'link-151');">command</a></tt><tt class="py-op">,</tt> <tt class="py-name">encryptedPath</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L514"></a><tt class="py-lineno">514</tt>  <tt class="py-line">   <tt id="link-157" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-157', 'logger', 'link-20');">logger</a></tt><tt class="py-op">.</tt><tt id="link-158" class="py-name"><a title="CedarBackup2.cli.Options.debug
+CedarBackup2.tools.amazons3.Options.debug" class="py-name" href="#" onclick="return doclink('link-158', 'debug', 'link-92');">debug</a></tt><tt class="py-op">(</tt><tt class="py-string">"Completed encrypting file [%s] to [%s]."</tt><tt class="py-op">,</tt> <tt class="py-name">sourcePath</tt><tt class="py-op">,</tt> <tt class="py-name">encryptedPath</tt><tt class="py-op">)</tt> </tt>
+<a name="L515"></a><tt class="py-lineno">515</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">encryptedPath</tt> </tt>
+</div><a name="L516"></a><tt class="py-lineno">516</tt>  <tt class="py-line"> </tt>
+<a name="_confirmGpgRecipient"></a><div id="_confirmGpgRecipient-def"><a name="L517"></a><tt class="py-lineno">517</tt>  <tt class="py-line"> </tt>
+<a name="L518"></a><tt class="py-lineno">518</tt>  <tt class="py-line"><tt class="py-comment">#################################</tt> </tt>
+<a name="L519"></a><tt class="py-lineno">519</tt>  <tt class="py-line"><tt class="py-comment"># _confirmGpgRecpient() function</tt> </tt>
+<a name="L520"></a><tt class="py-lineno">520</tt>  <tt class="py-line"><tt class="py-comment">#################################</tt> </tt>
+<a name="L521"></a><tt class="py-lineno">521</tt>  <tt class="py-line"> </tt>
+<a name="L522"></a><tt class="py-lineno">522</tt> <a class="py-toggle" href="#" id="_confirmGpgRecipient-toggle" onclick="return toggle('_confirmGpgRecipient');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.extend.encrypt-module.html#_confirmGpgRecipient">_confirmGpgRecipient</a><tt class="py-op">(</tt><tt class="py-param">recipient</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_confirmGpgRecipient-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_confirmGpgRecipient-expanded"><a name="L523"></a><tt class="py-lineno">523</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L524"></a><tt class="py-lineno">524</tt>  <tt class="py-line"><tt class="py-docstring">   Confirms that a recipient's public key is known to GPG.</tt> </tt>
+<a name="L525"></a><tt class="py-lineno">525</tt>  <tt class="py-line"><tt class="py-docstring">   Throws an exception if there is a problem, or returns normally otherwise.</tt> </tt>
+<a name="L526"></a><tt class="py-lineno">526</tt>  <tt class="py-line"><tt class="py-docstring">   @param recipient: Recipient name</tt> </tt>
+<a name="L527"></a><tt class="py-lineno">527</tt>  <tt class="py-line"><tt class="py-docstring">   @raise IOError: If the recipient's public key is not known to GPG.</tt> </tt>
+<a name="L528"></a><tt class="py-lineno">528</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L529"></a><tt class="py-lineno">529</tt>  <tt class="py-line">   <tt id="link-159" class="py-name"><a title="CedarBackup2.config.ActionHook.command
+CedarBackup2.config.CommandOverride.command" class="py-name" href="#" onclick="return doclink('link-159', 'command', 'link-151');">command</a></tt> <tt class="py-op">=</tt> <tt id="link-160" class="py-name"><a title="CedarBackup2.util.resolveCommand" class="py-name" href="#" onclick="return doclink('link-160', 'resolveCommand', 'link-2');">resolveCommand</a></tt><tt class="py-op">(</tt><tt id="link-161" class="py-name"><a title="CedarBackup2.extend.encrypt.GPG_COMMAND" class="py-name" href="#" onclick="return doclink('link-161', 'GPG_COMMAND', 'link-21');">GPG_COMMAND</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L530"></a><tt class="py-lineno">530</tt>  <tt class="py-line">   <tt class="py-name">args</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt> <tt class="py-string">"--batch"</tt><tt class="py-op">,</tt> <tt class="py-string">"-k"</tt><tt class="py-op">,</tt> <tt class="py-name">recipient</tt><tt class="py-op">,</tt> <tt class="py-op">]</tt>  <tt class="py-comment"># should use --with-colons if the output will be parsed</tt> </tt>
+<a name="L531"></a><tt class="py-lineno">531</tt>  <tt class="py-line">   <tt class="py-name">result</tt> <tt class="py-op">=</tt> <tt id="link-162" class="py-name"><a title="CedarBackup2.util.executeCommand" class="py-name" href="#" onclick="return doclink('link-162', 'executeCommand', 'link-3');">executeCommand</a></tt><tt class="py-op">(</tt><tt id="link-163" class="py-name"><a title="CedarBackup2.config.ActionHook.command
+CedarBackup2.config.CommandOverride.command" class="py-name" href="#" onclick="return doclink('link-163', 'command', 'link-151');">command</a></tt><tt class="py-op">,</tt> <tt class="py-name">args</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L532"></a><tt class="py-lineno">532</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">result</tt> <tt class="py-op">!=</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L533"></a><tt class="py-lineno">533</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">IOError</tt><tt class="py-op">(</tt><tt class="py-string">"GPG unable to find public key for [%s]."</tt> <tt class="py-op">%</tt> <tt class="py-name">recipient</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L534"></a><tt class="py-lineno">534</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

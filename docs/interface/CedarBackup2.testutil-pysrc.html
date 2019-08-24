@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.testutil</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        Module&nbsp;testutil
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.testutil-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="CedarBackup2.testutil-module.html">Module CedarBackup2.testutil</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: iso-8859-1 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-comment"># vim: set ft=python ts=3 sw=3 expandtab:</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment">#              C E D A R</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-comment">#          S O L U T I O N S       "Software done right."</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-comment">#           S O F T W A R E</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-comment"># Copyright (c) 2004-2006,2008,2010 Kenneth J. Pronovici.</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-comment"># All rights reserved.</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-comment"># This program is free software; you can redistribute it and/or</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment"># modify it under the terms of the GNU General Public License,</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-comment"># Version 2, as published by the Free Software Foundation.</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment"># This program is distributed in the hope that it will be useful,</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-comment"># but WITHOUT ANY WARRANTY; without even the implied warranty of</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-comment"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-comment"># Copies of the GNU General Public License are available from</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-comment"># the Free Software Foundation website, http://www.gnu.org/.</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"><tt class="py-comment"># Author   : Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-comment"># Language : Python 2 (&gt;= 2.7)</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-comment"># Project  : Cedar Backup, release 2</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-comment"># Purpose  : Provides unit-testing utilities.</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-comment"># Module documentation</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"><tt class="py-docstring">Provides unit-testing utilities.</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line"><tt class="py-docstring">These utilities are kept here, separate from util.py, because they provide</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-docstring">common functionality that I do not want exported "publicly" once Cedar Backup</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring">is installed on a system.  They are only used for unit testing, and are only</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-docstring">useful within the source tree.</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-docstring">Many of these functions are in here because they are "good enough" for unit</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-docstring">test work but are not robust enough to be real public functions.  Others (like</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-docstring">L{removedir}) do what they are supposed to, but I don't want responsibility for</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-docstring">making them available to others.</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-docstring">@sort: findResources, commandAvailable,</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-docstring">       buildPath, removedir, extractTar, changeFileAge,</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-docstring">       getMaskAsMode, getLogin, failUnlessAssignRaises, runningAsRoot,</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-docstring">       platformDebian, platformMacOsX, platformCygwin, platformWindows,</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-docstring">       platformHasEcho, platformSupportsLinks, platformSupportsPermissions,</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"><tt class="py-docstring">       platformRequiresBinaryRead</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line"><tt class="py-docstring">@author: Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line"> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line"><tt class="py-comment"># Imported modules</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">sys</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">tarfile</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">time</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">getpass</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">random</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">string</tt> <tt class="py-comment"># pylint: disable=W0402</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-0" class="py-name" targets="Variable CedarBackup2.util.Diagnostics.platform=CedarBackup2.util.Diagnostics-class.html#platform"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-0', 'platform', 'link-0');">platform</a></tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">logging</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">StringIO</tt> <tt class="py-keyword">import</tt> <tt class="py-name">StringIO</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-1" class="py-name" targets="Package CedarBackup2=CedarBackup2-module.html"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-1', 'CedarBackup2', 'link-1');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Module CedarBackup2.actions.util=CedarBackup2.actions.util-module.html,Module CedarBackup2.util=CedarBackup2.util-module.html,Module CedarBackup2.writers.util=CedarBackup2.writers.util-module.html"><a title="CedarBackup2.actions.util
+CedarBackup2.util
+CedarBackup2.writers.util" class="py-name" href="#" onclick="return doclink('link-2', 'util', 'link-2');">util</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Function CedarBackup2.util.encodePath()=CedarBackup2.util-module.html#encodePath"><a title="CedarBackup2.util.encodePath" class="py-name" href="#" onclick="return doclink('link-3', 'encodePath', 'link-3');">encodePath</a></tt><tt class="py-op">,</tt> <tt id="link-4" class="py-name" targets="Function CedarBackup2.util.executeCommand()=CedarBackup2.util-module.html#executeCommand"><a title="CedarBackup2.util.executeCommand" class="py-name" href="#" onclick="return doclink('link-4', 'executeCommand', 'link-4');">executeCommand</a></tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-5" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-5', 'CedarBackup2', 'link-1');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Variable CedarBackup2.cli.Options.config=CedarBackup2.cli.Options-class.html#config,Module CedarBackup2.config=CedarBackup2.config-module.html"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-6', 'config', 'link-6');">config</a></tt> <tt class="py-keyword">import</tt> <tt id="link-7" class="py-name" targets="Class CedarBackup2.config.Config=CedarBackup2.config.Config-class.html"><a title="CedarBackup2.config.Config" class="py-name" href="#" onclick="return doclink('link-7', 'Config', 'link-7');">Config</a></tt><tt class="py-op">,</tt> <tt id="link-8" class="py-name" targets="Class CedarBackup2.config.OptionsConfig=CedarBackup2.config.OptionsConfig-class.html"><a title="CedarBackup2.config.OptionsConfig" class="py-name" href="#" onclick="return doclink('link-8', 'OptionsConfig', 'link-8');">OptionsConfig</a></tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-9" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-9', 'CedarBackup2', 'link-1');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Module CedarBackup2.customize=CedarBackup2.customize-module.html"><a title="CedarBackup2.customize" class="py-name" href="#" onclick="return doclink('link-10', 'customize', 'link-10');">customize</a></tt> <tt class="py-keyword">import</tt> <tt id="link-11" class="py-name" targets="Function CedarBackup2.customize.customizeOverrides()=CedarBackup2.customize-module.html#customizeOverrides"><a title="CedarBackup2.customize.customizeOverrides" class="py-name" href="#" onclick="return doclink('link-11', 'customizeOverrides', 'link-11');">customizeOverrides</a></tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-12" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-12', 'CedarBackup2', 'link-1');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-13" class="py-name" targets="Module CedarBackup2.cli=CedarBackup2.cli-module.html,Function CedarBackup2.cli.cli()=CedarBackup2.cli-module.html#cli,Function CedarBackup2.tools.amazons3.cli()=CedarBackup2.tools.amazons3-module.html#cli,Function CedarBackup2.tools.span.cli()=CedarBackup2.tools.span-module.html#cli"><a title="CedarBackup2.cli
+CedarBackup2.cli.cli
+CedarBackup2.tools.amazons3.cli
+CedarBackup2.tools.span.cli" class="py-name" href="#" onclick="return doclink('link-13', 'cli', 'link-13');">cli</a></tt> <tt class="py-keyword">import</tt> <tt id="link-14" class="py-name" targets="Function CedarBackup2.cli.setupPathResolver()=CedarBackup2.cli-module.html#setupPathResolver"><a title="CedarBackup2.cli.setupPathResolver" class="py-name" href="#" onclick="return doclink('link-14', 'setupPathResolver', 'link-14');">setupPathResolver</a></tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line"> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"><tt class="py-comment"># Public functions</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line"> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line"><tt class="py-comment"># setupDebugLogger() function</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"> </tt>
+<a name="setupDebugLogger"></a><div id="setupDebugLogger-def"><a name="L91"></a><tt class="py-lineno"> 91</tt> <a class="py-toggle" href="#" id="setupDebugLogger-toggle" onclick="return toggle('setupDebugLogger');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#setupDebugLogger">setupDebugLogger</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="setupDebugLogger-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="setupDebugLogger-expanded"><a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-docstring">   Sets up a screen logger for debugging purposes.</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-docstring">   Normally, the CLI functionality configures the logger so that</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"><tt class="py-docstring">   things get written to the right place.  However, for debugging</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-docstring">   it's sometimes nice to just get everything -- debug information</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"><tt class="py-docstring">   and output -- dumped to the screen.  This function takes care</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"><tt class="py-docstring">   of that.</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">   <tt id="link-15" class="py-name" targets="Variable CedarBackup2.actions.collect.logger=CedarBackup2.actions.collect-module.html#logger,Variable CedarBackup2.actions.initialize.logger=CedarBackup2.actions.initialize-module.html#logger,Variable CedarBackup2.actions.purge.logger=CedarBackup2.actions.purge-module.html#logger,Variable CedarBackup2.actions.rebuild.logger=CedarBackup2.actions.rebuild-module.html#logger,Variable CedarBackup2.actions.stage.logger=CedarBackup2.actions.stage-module.html#logger,Variable CedarBackup2.actions.store.logger=CedarBackup2.actions.store-module.html#logger,Variable CedarBackup2.actions.util.logger=CedarBackup2.actions.util-module.html#logger,Variable CedarBackup2.actions.validate.logger=CedarBackup2.actions.validate-module.html#logger,Variable CedarBackup2.cli.logger=CedarBackup2.cli-module.html#logger,Variable CedarBackup2.config.logger=CedarBackup2.config-module.html#logger,Variable CedarBackup2.customize.logger=CedarBackup2.customize-module.html#logger,Variable CedarBackup2.extend.amazons3.logger=CedarBackup2.extend.amazons3-module.html#logger,Variable CedarBackup2.extend.capacity.logger=CedarBackup2.extend.capacity-module.html#logger,Variable CedarBackup2.extend.encrypt.logger=CedarBackup2.extend.encrypt-module.html#logger,Variable CedarBackup2.extend.mbox.logger=CedarBackup2.extend.mbox-module.html#logger,Variable CedarBackup2.extend.mysql.logger=CedarBackup2.extend.mysql-module.html#logger,Variable CedarBackup2.extend.postgresql.logger=CedarBackup2.extend.postgresql-module.html#logger,Variable CedarBackup2.extend.split.logger=CedarBackup2.extend.split-module.html#logger,Variable CedarBackup2.extend.subversion.logger=CedarBackup2.extend.subversion-module.html#logger,Variable CedarBackup2.extend.sysinfo.logger=CedarBackup2.extend.sysinfo-module.html#logger,Variable CedarBackup2.filesystem.logger=CedarBackup2.filesystem-module.html#logger,Variable CedarBackup2.peer.logger=CedarBackup2.peer-module.html#logger,Variable CedarBackup2.tools.amazons3.logger=CedarBackup2.tools.amazons3-module.html#logger,Variable CedarBackup2.tools.span.logger=CedarBackup2.tools.span-module.html#logger,Variable CedarBackup2.util.logger=CedarBackup2.util-module.html#logger,Variable CedarBackup2.writers.cdwriter.logger=CedarBackup2.writers.cdwriter-module.html#logger,Variable CedarBackup2.writers.dvdwriter.logger=CedarBackup2.writers.dvdwriter-module.html#logger,Variable CedarBackup2.writers.util.logger=CedarBackup2.writers.util-module.html#logger,Variable CedarBackup2.xmlutil.logger=CedarBackup2.xmlutil-module.html#logger"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-15', 'logger', 'link-15');">logger</a></tt> <tt class="py-op">=</tt> <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">getLogger</tt><tt class="py-op">(</tt><tt class="py-string">"CedarBackup2"</tt><tt class="py-op">)</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">   <tt id="link-16" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-16', 'logger', 'link-15');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">setLevel</tt><tt class="py-op">(</tt><tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">DEBUG</tt><tt class="py-op">)</tt>    <tt class="py-comment"># let the logger see all messages</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">   <tt class="py-name">formatter</tt> <tt class="py-op">=</tt> <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">Formatter</tt><tt class="py-op">(</tt><tt class="py-name">fmt</tt><tt class="py-op">=</tt><tt class="py-string">"%(message)s"</tt><tt class="py-op">)</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">   <tt class="py-name">handler</tt> <tt class="py-op">=</tt> <tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">StreamHandler</tt><tt class="py-op">(</tt><tt class="py-name">stream</tt><tt class="py-op">=</tt><tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">stdout</tt><tt class="py-op">)</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">   <tt class="py-name">handler</tt><tt class="py-op">.</tt><tt class="py-name">setFormatter</tt><tt class="py-op">(</tt><tt class="py-name">formatter</tt><tt class="py-op">)</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">   <tt class="py-name">handler</tt><tt class="py-op">.</tt><tt class="py-name">setLevel</tt><tt class="py-op">(</tt><tt class="py-name">logging</tt><tt class="py-op">.</tt><tt class="py-name">DEBUG</tt><tt class="py-op">)</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">   <tt id="link-17" class="py-name"><a title="CedarBackup2.actions.collect.logger
+CedarBackup2.actions.initialize.logger
+CedarBackup2.actions.purge.logger
+CedarBackup2.actions.rebuild.logger
+CedarBackup2.actions.stage.logger
+CedarBackup2.actions.store.logger
+CedarBackup2.actions.util.logger
+CedarBackup2.actions.validate.logger
+CedarBackup2.cli.logger
+CedarBackup2.config.logger
+CedarBackup2.customize.logger
+CedarBackup2.extend.amazons3.logger
+CedarBackup2.extend.capacity.logger
+CedarBackup2.extend.encrypt.logger
+CedarBackup2.extend.mbox.logger
+CedarBackup2.extend.mysql.logger
+CedarBackup2.extend.postgresql.logger
+CedarBackup2.extend.split.logger
+CedarBackup2.extend.subversion.logger
+CedarBackup2.extend.sysinfo.logger
+CedarBackup2.filesystem.logger
+CedarBackup2.peer.logger
+CedarBackup2.tools.amazons3.logger
+CedarBackup2.tools.span.logger
+CedarBackup2.util.logger
+CedarBackup2.writers.cdwriter.logger
+CedarBackup2.writers.dvdwriter.logger
+CedarBackup2.writers.util.logger
+CedarBackup2.xmlutil.logger" class="py-name" href="#" onclick="return doclink('link-17', 'logger', 'link-15');">logger</a></tt><tt class="py-op">.</tt><tt class="py-name">addHandler</tt><tt class="py-op">(</tt><tt class="py-name">handler</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line"> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line"><tt class="py-comment">#################</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line"><tt class="py-comment"># setupOverrides</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"><tt class="py-comment">#################</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"> </tt>
+<a name="setupOverrides"></a><div id="setupOverrides-def"><a name="L114"></a><tt class="py-lineno">114</tt> <a class="py-toggle" href="#" id="setupOverrides-toggle" onclick="return toggle('setupOverrides');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#setupOverrides">setupOverrides</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="setupOverrides-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="setupOverrides-expanded"><a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"><tt class="py-docstring">   Set up any platform-specific overrides that might be required.</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"><tt class="py-docstring">   When packages are built, this is done manually (hardcoded) in customize.py</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"><tt class="py-docstring">   and the overrides are set up in cli.cli().  This way, no runtime checks need</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line"><tt class="py-docstring">   to be done.  This is safe, because the package maintainer knows exactly</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line"><tt class="py-docstring">   which platform (Debian or not) the package is being built for.</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line"><tt class="py-docstring">   Unit tests are different, because they might be run anywhere.  So, we</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"><tt class="py-docstring">   attempt to make a guess about plaform using platformDebian(), and use that</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"><tt class="py-docstring">   to set up the custom overrides so that platform-specific unit tests continue</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"><tt class="py-docstring">   to work.</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">   <tt id="link-18" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-18', 'config', 'link-6');">config</a></tt> <tt class="py-op">=</tt> <tt id="link-19" class="py-name"><a title="CedarBackup2.config.Config" class="py-name" href="#" onclick="return doclink('link-19', 'Config', 'link-7');">Config</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">   <tt id="link-20" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-20', 'config', 'link-6');">config</a></tt><tt class="py-op">.</tt><tt id="link-21" class="py-name" targets="Variable CedarBackup2.config.Config.options=CedarBackup2.config.Config-class.html#options"><a title="CedarBackup2.config.Config.options" class="py-name" href="#" onclick="return doclink('link-21', 'options', 'link-21');">options</a></tt> <tt class="py-op">=</tt> <tt id="link-22" class="py-name"><a title="CedarBackup2.config.OptionsConfig" class="py-name" href="#" onclick="return doclink('link-22', 'OptionsConfig', 'link-8');">OptionsConfig</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-23" class="py-name" targets="Function CedarBackup2.testutil.platformDebian()=CedarBackup2.testutil-module.html#platformDebian"><a title="CedarBackup2.testutil.platformDebian" class="py-name" href="#" onclick="return doclink('link-23', 'platformDebian', 'link-23');">platformDebian</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">      <tt id="link-24" class="py-name"><a title="CedarBackup2.customize.customizeOverrides" class="py-name" href="#" onclick="return doclink('link-24', 'customizeOverrides', 'link-11');">customizeOverrides</a></tt><tt class="py-op">(</tt><tt id="link-25" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-25', 'config', 'link-6');">config</a></tt><tt class="py-op">,</tt> <tt id="link-26" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-26', 'platform', 'link-0');">platform</a></tt><tt class="py-op">=</tt><tt class="py-string">"debian"</tt><tt class="py-op">)</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">   <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">      <tt id="link-27" class="py-name"><a title="CedarBackup2.customize.customizeOverrides" class="py-name" href="#" onclick="return doclink('link-27', 'customizeOverrides', 'link-11');">customizeOverrides</a></tt><tt class="py-op">(</tt><tt id="link-28" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-28', 'config', 'link-6');">config</a></tt><tt class="py-op">,</tt> <tt id="link-29" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-29', 'platform', 'link-0');">platform</a></tt><tt class="py-op">=</tt><tt class="py-string">"standard"</tt><tt class="py-op">)</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">   <tt id="link-30" class="py-name"><a title="CedarBackup2.cli.setupPathResolver" class="py-name" href="#" onclick="return doclink('link-30', 'setupPathResolver', 'link-14');">setupPathResolver</a></tt><tt class="py-op">(</tt><tt id="link-31" class="py-name"><a title="CedarBackup2.cli.Options.config
+CedarBackup2.config" class="py-name" href="#" onclick="return doclink('link-31', 'config', 'link-6');">config</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line"> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line"><tt class="py-comment"># findResources() function</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line"> </tt>
+<a name="findResources"></a><div id="findResources-def"><a name="L141"></a><tt class="py-lineno">141</tt> <a class="py-toggle" href="#" id="findResources-toggle" onclick="return toggle('findResources');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#findResources">findResources</a><tt class="py-op">(</tt><tt class="py-param">resources</tt><tt class="py-op">,</tt> <tt class="py-param">dataDirs</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="findResources-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="findResources-expanded"><a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line"><tt class="py-docstring">   Returns a dictionary of locations for various resources.</tt> </tt>
+<a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line"><tt class="py-docstring">   @param resources: List of required resources.</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"><tt class="py-docstring">   @param dataDirs: List of data directories to search within for resources.</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line"><tt class="py-docstring">   @return: Dictionary mapping resource name to resource path.</tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line"><tt class="py-docstring">   @raise Exception: If some resource cannot be found.</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">   <tt class="py-name">mapping</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt> <tt class="py-op">}</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">   <tt class="py-keyword">for</tt> <tt class="py-name">resource</tt> <tt class="py-keyword">in</tt> <tt class="py-name">resources</tt><tt class="py-op">:</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">      <tt class="py-keyword">for</tt> <tt class="py-name">resourceDir</tt> <tt class="py-keyword">in</tt> <tt class="py-name">dataDirs</tt><tt class="py-op">:</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">         <tt class="py-name">path</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">resourceDir</tt><tt class="py-op">,</tt> <tt class="py-name">resource</tt><tt class="py-op">)</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">            <tt class="py-name">mapping</tt><tt class="py-op">[</tt><tt class="py-name">resource</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">path</tt> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">            <tt class="py-keyword">break</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line">      <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">         <tt class="py-keyword">raise</tt> <tt class="py-name">Exception</tt><tt class="py-op">(</tt><tt class="py-string">"Unable to find resource [%s]."</tt> <tt class="py-op">%</tt> <tt class="py-name">resource</tt><tt class="py-op">)</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">mapping</tt> </tt>
+</div><a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line"> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line"> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line"><tt class="py-comment"># commandAvailable() function</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line"> </tt>
+<a name="commandAvailable"></a><div id="commandAvailable-def"><a name="L165"></a><tt class="py-lineno">165</tt> <a class="py-toggle" href="#" id="commandAvailable-toggle" onclick="return toggle('commandAvailable');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#commandAvailable">commandAvailable</a><tt class="py-op">(</tt><tt class="py-param">command</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="commandAvailable-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="commandAvailable-expanded"><a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line"><tt class="py-docstring">   Indicates whether a command is available on $PATH somewhere.</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line"><tt class="py-docstring">   This should work on both Windows and UNIX platforms.</tt> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line"><tt class="py-docstring">   @param command: Commang to search for</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line"><tt class="py-docstring">   @return: Boolean true/false depending on whether command is available.</tt> </tt>
+<a name="L171"></a><tt class="py-lineno">171</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">environ</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-string">"PATH"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">      <tt class="py-keyword">for</tt> <tt class="py-name">path</tt> <tt class="py-keyword">in</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">environ</tt><tt class="py-op">[</tt><tt class="py-string">"PATH"</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt id="link-32" class="py-name" targets="Module CedarBackup2.extend.split=CedarBackup2.extend.split-module.html,Variable CedarBackup2.extend.split.LocalConfig.split=CedarBackup2.extend.split.LocalConfig-class.html#split"><a title="CedarBackup2.extend.split
+CedarBackup2.extend.split.LocalConfig.split" class="py-name" href="#" onclick="return doclink('link-32', 'split', 'link-32');">split</a></tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">sep</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">exists</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt id="link-33" class="py-name" targets="Variable CedarBackup2.config.ActionHook.command=CedarBackup2.config.ActionHook-class.html#command,Variable CedarBackup2.config.CommandOverride.command=CedarBackup2.config.CommandOverride-class.html#command"><a title="CedarBackup2.config.ActionHook.command
+CedarBackup2.config.CommandOverride.command" class="py-name" href="#" onclick="return doclink('link-33', 'command', 'link-33');">command</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L175"></a><tt class="py-lineno">175</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">True</tt> </tt>
+<a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+</div><a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line"> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line"> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line"><tt class="py-comment">#######################</tt> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line"><tt class="py-comment"># buildPath() function</tt> </tt>
+<a name="L181"></a><tt class="py-lineno">181</tt>  <tt class="py-line"><tt class="py-comment">#######################</tt> </tt>
+<a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line"> </tt>
+<a name="buildPath"></a><div id="buildPath-def"><a name="L183"></a><tt class="py-lineno">183</tt> <a class="py-toggle" href="#" id="buildPath-toggle" onclick="return toggle('buildPath');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#buildPath">buildPath</a><tt class="py-op">(</tt><tt class="py-param">components</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="buildPath-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="buildPath-expanded"><a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line"><tt class="py-docstring">   Builds a complete path from a list of components.</tt> </tt>
+<a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line"><tt class="py-docstring">   For instance, constructs C{"/a/b/c"} from C{["/a", "b", "c",]}.</tt> </tt>
+<a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line"><tt class="py-docstring">   @param components: List of components.</tt> </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line"><tt class="py-docstring">   @returns: String path constructed from components.</tt> </tt>
+<a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: If a path cannot be encoded properly.</tt> </tt>
+<a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">   <tt class="py-name">path</tt> <tt class="py-op">=</tt> <tt class="py-name">components</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line">   <tt class="py-keyword">for</tt> <tt class="py-name">component</tt> <tt class="py-keyword">in</tt> <tt class="py-name">components</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">:</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line">      <tt class="py-name">path</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt class="py-name">component</tt><tt class="py-op">)</tt> </tt>
+<a name="L194"></a><tt class="py-lineno">194</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt id="link-34" class="py-name"><a title="CedarBackup2.util.encodePath" class="py-name" href="#" onclick="return doclink('link-34', 'encodePath', 'link-3');">encodePath</a></tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line"> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line"> </tt>
+<a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line"><tt class="py-comment">#######################</tt> </tt>
+<a name="L198"></a><tt class="py-lineno">198</tt>  <tt class="py-line"><tt class="py-comment"># removedir() function</tt> </tt>
+<a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line"><tt class="py-comment">#######################</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line"> </tt>
+<a name="removedir"></a><div id="removedir-def"><a name="L201"></a><tt class="py-lineno">201</tt> <a class="py-toggle" href="#" id="removedir-toggle" onclick="return toggle('removedir');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#removedir">removedir</a><tt class="py-op">(</tt><tt class="py-param">tree</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="removedir-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="removedir-expanded"><a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line"><tt class="py-docstring">   Recursively removes an entire directory.</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line"><tt class="py-docstring">   This is basically taken from an example on python.com.</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line"><tt class="py-docstring">   @param tree: Directory tree to remove.</tt> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: If a path cannot be encoded properly.</tt> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line">   <tt class="py-name">tree</tt> <tt class="py-op">=</tt> <tt id="link-35" class="py-name"><a title="CedarBackup2.util.encodePath" class="py-name" href="#" onclick="return doclink('link-35', 'encodePath', 'link-3');">encodePath</a></tt><tt class="py-op">(</tt><tt class="py-name">tree</tt><tt class="py-op">)</tt> </tt>
+<a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">   <tt class="py-keyword">for</tt> <tt class="py-name">root</tt><tt class="py-op">,</tt> <tt class="py-name">dirs</tt><tt class="py-op">,</tt> <tt class="py-name">files</tt> <tt class="py-keyword">in</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">walk</tt><tt class="py-op">(</tt><tt class="py-name">tree</tt><tt class="py-op">,</tt> <tt class="py-name">topdown</tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">      <tt class="py-keyword">for</tt> <tt id="link-36" class="py-name" targets="Variable CedarBackup2.config.ExtendedAction.name=CedarBackup2.config.ExtendedAction-class.html#name,Variable CedarBackup2.config.LocalPeer.name=CedarBackup2.config.LocalPeer-class.html#name,Variable CedarBackup2.config.RemotePeer.name=CedarBackup2.config.RemotePeer-class.html#name,Variable CedarBackup2.peer.LocalPeer.name=CedarBackup2.peer.LocalPeer-class.html#name,Variable CedarBackup2.peer.RemotePeer.name=CedarBackup2.peer.RemotePeer-class.html#name,Variable CedarBackup2.util.DirectedGraph.name=CedarBackup2.util.DirectedGraph-class.html#name"><a title="CedarBackup2.config.ExtendedAction.name
+CedarBackup2.config.LocalPeer.name
+CedarBackup2.config.RemotePeer.name
+CedarBackup2.peer.LocalPeer.name
+CedarBackup2.peer.RemotePeer.name
+CedarBackup2.util.DirectedGraph.name" class="py-name" href="#" onclick="return doclink('link-36', 'name', 'link-36');">name</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">files</tt><tt class="py-op">:</tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line">         <tt class="py-name">path</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">root</tt><tt class="py-op">,</tt> <tt id="link-37" class="py-name"><a title="CedarBackup2.config.ExtendedAction.name
+CedarBackup2.config.LocalPeer.name
+CedarBackup2.config.RemotePeer.name
+CedarBackup2.peer.LocalPeer.name
+CedarBackup2.peer.RemotePeer.name
+CedarBackup2.util.DirectedGraph.name" class="py-name" href="#" onclick="return doclink('link-37', 'name', 'link-36');">name</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">islink</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line">            <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">remove</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">         <tt class="py-keyword">elif</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">isfile</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line">            <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">remove</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line">      <tt class="py-keyword">for</tt> <tt id="link-38" class="py-name"><a title="CedarBackup2.config.ExtendedAction.name
+CedarBackup2.config.LocalPeer.name
+CedarBackup2.config.RemotePeer.name
+CedarBackup2.peer.LocalPeer.name
+CedarBackup2.peer.RemotePeer.name
+CedarBackup2.util.DirectedGraph.name" class="py-name" href="#" onclick="return doclink('link-38', 'name', 'link-36');">name</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">dirs</tt><tt class="py-op">:</tt> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line">         <tt class="py-name">path</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">root</tt><tt class="py-op">,</tt> <tt id="link-39" class="py-name"><a title="CedarBackup2.config.ExtendedAction.name
+CedarBackup2.config.LocalPeer.name
+CedarBackup2.config.RemotePeer.name
+CedarBackup2.peer.LocalPeer.name
+CedarBackup2.peer.RemotePeer.name
+CedarBackup2.util.DirectedGraph.name" class="py-name" href="#" onclick="return doclink('link-39', 'name', 'link-36');">name</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line">         <tt class="py-keyword">if</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">islink</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line">            <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">remove</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
+<a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line">         <tt class="py-keyword">elif</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">isdir</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line">            <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">rmdir</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
+<a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line">   <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">rmdir</tt><tt class="py-op">(</tt><tt class="py-name">tree</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line"> </tt>
+<a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line"> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line"><tt class="py-comment">########################</tt> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line"><tt class="py-comment"># extractTar() function</tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line"><tt class="py-comment">########################</tt> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line"> </tt>
+<a name="extractTar"></a><div id="extractTar-def"><a name="L229"></a><tt class="py-lineno">229</tt> <a class="py-toggle" href="#" id="extractTar-toggle" onclick="return toggle('extractTar');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#extractTar">extractTar</a><tt class="py-op">(</tt><tt class="py-param">tmpdir</tt><tt class="py-op">,</tt> <tt class="py-param">filepath</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="extractTar-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="extractTar-expanded"><a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line"><tt class="py-docstring">   Extracts the indicated tar file to the indicated tmpdir.</tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line"><tt class="py-docstring">   @param tmpdir: Temp directory to extract to.</tt> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line"><tt class="py-docstring">   @param filepath: Path to tarfile to extract.</tt> </tt>
+<a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: If a path cannot be encoded properly.</tt> </tt>
+<a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L236"></a><tt class="py-lineno">236</tt>  <tt class="py-line">   <tt class="py-comment"># pylint: disable=E1101</tt> </tt>
+<a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line">   <tt class="py-name">tmpdir</tt> <tt class="py-op">=</tt> <tt id="link-40" class="py-name"><a title="CedarBackup2.util.encodePath" class="py-name" href="#" onclick="return doclink('link-40', 'encodePath', 'link-3');">encodePath</a></tt><tt class="py-op">(</tt><tt class="py-name">tmpdir</tt><tt class="py-op">)</tt> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line">   <tt class="py-name">filepath</tt> <tt class="py-op">=</tt> <tt id="link-41" class="py-name"><a title="CedarBackup2.util.encodePath" class="py-name" href="#" onclick="return doclink('link-41', 'encodePath', 'link-3');">encodePath</a></tt><tt class="py-op">(</tt><tt class="py-name">filepath</tt><tt class="py-op">)</tt> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line">   <tt class="py-name">tar</tt> <tt class="py-op">=</tt> <tt class="py-name">tarfile</tt><tt class="py-op">.</tt><tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">filepath</tt><tt class="py-op">)</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line">   <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line">      <tt class="py-name">tar</tt><tt class="py-op">.</tt><tt class="py-name">format</tt> <tt class="py-op">=</tt> <tt class="py-name">tarfile</tt><tt class="py-op">.</tt><tt class="py-name">GNU_FORMAT</tt> </tt>
+<a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line">   <tt class="py-keyword">except</tt> <tt class="py-name">AttributeError</tt><tt class="py-op">:</tt> </tt>
+<a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line">      <tt class="py-name">tar</tt><tt class="py-op">.</tt><tt class="py-name">posix</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line">   <tt class="py-keyword">for</tt> <tt class="py-name">tarinfo</tt> <tt class="py-keyword">in</tt> <tt class="py-name">tar</tt><tt class="py-op">:</tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line">      <tt class="py-name">tar</tt><tt class="py-op">.</tt><tt class="py-name">extract</tt><tt class="py-op">(</tt><tt class="py-name">tarinfo</tt><tt class="py-op">,</tt> <tt class="py-name">tmpdir</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line"> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line"> </tt>
+<a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line"><tt class="py-comment"># changeFileAge() function</tt> </tt>
+<a name="L250"></a><tt class="py-lineno">250</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line"> </tt>
+<a name="changeFileAge"></a><div id="changeFileAge-def"><a name="L252"></a><tt class="py-lineno">252</tt> <a class="py-toggle" href="#" id="changeFileAge-toggle" onclick="return toggle('changeFileAge');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#changeFileAge">changeFileAge</a><tt class="py-op">(</tt><tt class="py-param">filename</tt><tt class="py-op">,</tt> <tt class="py-param">subtract</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="changeFileAge-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="changeFileAge-expanded"><a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L254"></a><tt class="py-lineno">254</tt>  <tt class="py-line"><tt class="py-docstring">   Changes a file age using the C{os.utime} function.</tt> </tt>
+<a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L256"></a><tt class="py-lineno">256</tt>  <tt class="py-line"><tt class="py-docstring">   @note: Some platforms don't seem to be able to set an age precisely.  As a</tt> </tt>
+<a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line"><tt class="py-docstring">   result, whereas we might have intended to set an age of 86400 seconds, we</tt> </tt>
+<a name="L258"></a><tt class="py-lineno">258</tt>  <tt class="py-line"><tt class="py-docstring">   actually get an age of 86399.375 seconds.  When util.calculateFileAge()</tt> </tt>
+<a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line"><tt class="py-docstring">   looks at that the file, it calculates an age of 0.999992766204 days, which</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line"><tt class="py-docstring">   then gets truncated down to zero whole days.  The tests get very confused.</tt> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line"><tt class="py-docstring">   To work around this, I always subtract off one additional second as a fudge</tt> </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line"><tt class="py-docstring">   factor.  That way, the file age will be I{at least} as old as requested</tt> </tt>
+<a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line"><tt class="py-docstring">   later on.</tt> </tt>
+<a name="L264"></a><tt class="py-lineno">264</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line"><tt class="py-docstring">   @param filename: File to operate on.</tt> </tt>
+<a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line"><tt class="py-docstring">   @param subtract: Number of seconds to subtract from the current time.</tt> </tt>
+<a name="L267"></a><tt class="py-lineno">267</tt>  <tt class="py-line"><tt class="py-docstring">   @raise ValueError: If a path cannot be encoded properly.</tt> </tt>
+<a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L269"></a><tt class="py-lineno">269</tt>  <tt class="py-line">   <tt class="py-name">filename</tt> <tt class="py-op">=</tt> <tt id="link-42" class="py-name"><a title="CedarBackup2.util.encodePath" class="py-name" href="#" onclick="return doclink('link-42', 'encodePath', 'link-3');">encodePath</a></tt><tt class="py-op">(</tt><tt class="py-name">filename</tt><tt class="py-op">)</tt> </tt>
+<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line">   <tt class="py-name">newTime</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-number">1</tt> </tt>
+<a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">subtract</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L272"></a><tt class="py-lineno">272</tt>  <tt class="py-line">      <tt class="py-name">newTime</tt> <tt class="py-op">-=</tt> <tt class="py-name">subtract</tt> </tt>
+<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">   <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">utime</tt><tt class="py-op">(</tt><tt class="py-name">filename</tt><tt class="py-op">,</tt> <tt class="py-op">(</tt><tt class="py-name">newTime</tt><tt class="py-op">,</tt> <tt class="py-name">newTime</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line"> </tt>
+<a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line"> </tt>
+<a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line"><tt class="py-comment"># getMaskAsMode() function</tt> </tt>
+<a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line"> </tt>
+<a name="getMaskAsMode"></a><div id="getMaskAsMode-def"><a name="L280"></a><tt class="py-lineno">280</tt> <a class="py-toggle" href="#" id="getMaskAsMode-toggle" onclick="return toggle('getMaskAsMode');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#getMaskAsMode">getMaskAsMode</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="getMaskAsMode-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="getMaskAsMode-expanded"><a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line"><tt class="py-docstring">   Returns the user's current umask inverted to a mode.</tt> </tt>
+<a name="L283"></a><tt class="py-lineno">283</tt>  <tt class="py-line"><tt class="py-docstring">   A mode is mostly a bitwise inversion of a mask, i.e. mask 002 is mode 775.</tt> </tt>
+<a name="L284"></a><tt class="py-lineno">284</tt>  <tt class="py-line"><tt class="py-docstring">   @return: Umask converted to a mode, as an integer.</tt> </tt>
+<a name="L285"></a><tt class="py-lineno">285</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L286"></a><tt class="py-lineno">286</tt>  <tt class="py-line">   <tt class="py-name">umask</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">umask</tt><tt class="py-op">(</tt><tt class="py-number">0777</tt><tt class="py-op">)</tt> </tt>
+<a name="L287"></a><tt class="py-lineno">287</tt>  <tt class="py-line">   <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">umask</tt><tt class="py-op">(</tt><tt class="py-name">umask</tt><tt class="py-op">)</tt> </tt>
+<a name="L288"></a><tt class="py-lineno">288</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-op">~</tt><tt class="py-name">umask</tt> <tt class="py-op">&amp;</tt> <tt class="py-number">0777</tt><tt class="py-op">)</tt>  <tt class="py-comment"># invert, then use only lower bytes</tt> </tt>
+</div><a name="L289"></a><tt class="py-lineno">289</tt>  <tt class="py-line"> </tt>
+<a name="L290"></a><tt class="py-lineno">290</tt>  <tt class="py-line"> </tt>
+<a name="L291"></a><tt class="py-lineno">291</tt>  <tt class="py-line"><tt class="py-comment">######################</tt> </tt>
+<a name="L292"></a><tt class="py-lineno">292</tt>  <tt class="py-line"><tt class="py-comment"># getLogin() function</tt> </tt>
+<a name="L293"></a><tt class="py-lineno">293</tt>  <tt class="py-line"><tt class="py-comment">######################</tt> </tt>
+<a name="L294"></a><tt class="py-lineno">294</tt>  <tt class="py-line"> </tt>
+<a name="getLogin"></a><div id="getLogin-def"><a name="L295"></a><tt class="py-lineno">295</tt> <a class="py-toggle" href="#" id="getLogin-toggle" onclick="return toggle('getLogin');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#getLogin">getLogin</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="getLogin-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="getLogin-expanded"><a name="L296"></a><tt class="py-lineno">296</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L297"></a><tt class="py-lineno">297</tt>  <tt class="py-line"><tt class="py-docstring">   Returns the name of the currently-logged in user.  This might fail under</tt> </tt>
+<a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line"><tt class="py-docstring">   some circumstances - but if it does, our tests would fail anyway.</tt> </tt>
+<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L300"></a><tt class="py-lineno">300</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">getpass</tt><tt class="py-op">.</tt><tt class="py-name">getuser</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L301"></a><tt class="py-lineno">301</tt>  <tt class="py-line"> </tt>
+<a name="L302"></a><tt class="py-lineno">302</tt>  <tt class="py-line"> </tt>
+<a name="L303"></a><tt class="py-lineno">303</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L304"></a><tt class="py-lineno">304</tt>  <tt class="py-line"><tt class="py-comment"># randomFilename() function</tt> </tt>
+<a name="L305"></a><tt class="py-lineno">305</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L306"></a><tt class="py-lineno">306</tt>  <tt class="py-line"> </tt>
+<a name="randomFilename"></a><div id="randomFilename-def"><a name="L307"></a><tt class="py-lineno">307</tt> <a class="py-toggle" href="#" id="randomFilename-toggle" onclick="return toggle('randomFilename');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#randomFilename">randomFilename</a><tt class="py-op">(</tt><tt class="py-param">length</tt><tt class="py-op">,</tt> <tt class="py-param">prefix</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">suffix</tt><tt class="py-op">=</tt><tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="randomFilename-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="randomFilename-expanded"><a name="L308"></a><tt class="py-lineno">308</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L309"></a><tt class="py-lineno">309</tt>  <tt class="py-line"><tt class="py-docstring">   Generates a random filename with the given length.</tt> </tt>
+<a name="L310"></a><tt class="py-lineno">310</tt>  <tt class="py-line"><tt class="py-docstring">   @param length: Length of filename.</tt> </tt>
+<a name="L311"></a><tt class="py-lineno">311</tt>  <tt class="py-line"><tt class="py-docstring">   @return Random filename.</tt> </tt>
+<a name="L312"></a><tt class="py-lineno">312</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L313"></a><tt class="py-lineno">313</tt>  <tt class="py-line">   <tt class="py-name">characters</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">None</tt><tt class="py-op">]</tt> <tt class="py-op">*</tt> <tt class="py-name">length</tt> </tt>
+<a name="L314"></a><tt class="py-lineno">314</tt>  <tt class="py-line">   <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">xrange</tt><tt class="py-op">(</tt><tt class="py-name">length</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L315"></a><tt class="py-lineno">315</tt>  <tt class="py-line">      <tt class="py-name">characters</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">random</tt><tt class="py-op">.</tt><tt class="py-name">choice</tt><tt class="py-op">(</tt><tt class="py-name">string</tt><tt class="py-op">.</tt><tt class="py-name">ascii_uppercase</tt><tt class="py-op">)</tt> </tt>
+<a name="L316"></a><tt class="py-lineno">316</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">prefix</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L317"></a><tt class="py-lineno">317</tt>  <tt class="py-line">      <tt class="py-name">prefix</tt> <tt class="py-op">=</tt> <tt class="py-string">""</tt> </tt>
+<a name="L318"></a><tt class="py-lineno">318</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">suffix</tt> <tt class="py-keyword">is</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L319"></a><tt class="py-lineno">319</tt>  <tt class="py-line">      <tt class="py-name">suffix</tt> <tt class="py-op">=</tt> <tt class="py-string">""</tt> </tt>
+<a name="L320"></a><tt class="py-lineno">320</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-string">"%s%s%s"</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">prefix</tt><tt class="py-op">,</tt> <tt class="py-string">""</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">characters</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">suffix</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L321"></a><tt class="py-lineno">321</tt>  <tt class="py-line"> </tt>
+<a name="L322"></a><tt class="py-lineno">322</tt>  <tt class="py-line"> </tt>
+<a name="L323"></a><tt class="py-lineno">323</tt>  <tt class="py-line"><tt class="py-comment">####################################</tt> </tt>
+<a name="L324"></a><tt class="py-lineno">324</tt>  <tt class="py-line"><tt class="py-comment"># failUnlessAssignRaises() function</tt> </tt>
+<a name="L325"></a><tt class="py-lineno">325</tt>  <tt class="py-line"><tt class="py-comment">####################################</tt> </tt>
+<a name="L326"></a><tt class="py-lineno">326</tt>  <tt class="py-line"> </tt>
+<a name="L327"></a><tt class="py-lineno">327</tt>  <tt class="py-line"><tt class="py-comment"># pylint: disable=W0613</tt> </tt>
+<a name="failUnlessAssignRaises"></a><div id="failUnlessAssignRaises-def"><a name="L328"></a><tt class="py-lineno">328</tt> <a class="py-toggle" href="#" id="failUnlessAssignRaises-toggle" onclick="return toggle('failUnlessAssignRaises');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#failUnlessAssignRaises">failUnlessAssignRaises</a><tt class="py-op">(</tt><tt class="py-param">testCase</tt><tt class="py-op">,</tt> <tt class="py-param">exception</tt><tt class="py-op">,</tt> <tt class="py-param">obj</tt><tt class="py-op">,</tt> <tt class="py-param">prop</tt><tt class="py-op">,</tt> <tt class="py-param">value</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="failUnlessAssignRaises-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="failUnlessAssignRaises-expanded"><a name="L329"></a><tt class="py-lineno">329</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L330"></a><tt class="py-lineno">330</tt>  <tt class="py-line"><tt class="py-docstring">   Equivalent of C{failUnlessRaises}, but used for property assignments instead.</tt> </tt>
+<a name="L331"></a><tt class="py-lineno">331</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L332"></a><tt class="py-lineno">332</tt>  <tt class="py-line"><tt class="py-docstring">   It's nice to be able to use C{failUnlessRaises} to check that a method call</tt> </tt>
+<a name="L333"></a><tt class="py-lineno">333</tt>  <tt class="py-line"><tt class="py-docstring">   raises the exception that you expect.  Unfortunately, this method can't be</tt> </tt>
+<a name="L334"></a><tt class="py-lineno">334</tt>  <tt class="py-line"><tt class="py-docstring">   used to check Python propery assignments, even though these property</tt> </tt>
+<a name="L335"></a><tt class="py-lineno">335</tt>  <tt class="py-line"><tt class="py-docstring">   assignments are actually implemented underneath as methods.</tt> </tt>
+<a name="L336"></a><tt class="py-lineno">336</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L337"></a><tt class="py-lineno">337</tt>  <tt class="py-line"><tt class="py-docstring">   This function (which can be easily called by unit test classes) provides an</tt> </tt>
+<a name="L338"></a><tt class="py-lineno">338</tt>  <tt class="py-line"><tt class="py-docstring">   easy way to wrap the assignment checks.  It's not pretty, or as intuitive as</tt> </tt>
+<a name="L339"></a><tt class="py-lineno">339</tt>  <tt class="py-line"><tt class="py-docstring">   the original check it's modeled on, but it does work.</tt> </tt>
+<a name="L340"></a><tt class="py-lineno">340</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L341"></a><tt class="py-lineno">341</tt>  <tt class="py-line"><tt class="py-docstring">   Let's assume you make this method call::</tt> </tt>
+<a name="L342"></a><tt class="py-lineno">342</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L343"></a><tt class="py-lineno">343</tt>  <tt class="py-line"><tt class="py-docstring">      testCase.failUnlessAssignRaises(ValueError, collectDir, "absolutePath", absolutePath)</tt> </tt>
+<a name="L344"></a><tt class="py-lineno">344</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L345"></a><tt class="py-lineno">345</tt>  <tt class="py-line"><tt class="py-docstring">   If you do this, a test case failure will be raised unless the assignment::</tt> </tt>
+<a name="L346"></a><tt class="py-lineno">346</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L347"></a><tt class="py-lineno">347</tt>  <tt class="py-line"><tt class="py-docstring">      collectDir.absolutePath = absolutePath</tt> </tt>
+<a name="L348"></a><tt class="py-lineno">348</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L349"></a><tt class="py-lineno">349</tt>  <tt class="py-line"><tt class="py-docstring">   fails with a C{ValueError} exception.  The failure message differentiates</tt> </tt>
+<a name="L350"></a><tt class="py-lineno">350</tt>  <tt class="py-line"><tt class="py-docstring">   between the case where no exception was raised and the case where the wrong</tt> </tt>
+<a name="L351"></a><tt class="py-lineno">351</tt>  <tt class="py-line"><tt class="py-docstring">   exception was raised.</tt> </tt>
+<a name="L352"></a><tt class="py-lineno">352</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L353"></a><tt class="py-lineno">353</tt>  <tt class="py-line"><tt class="py-docstring">   @note: Internally, the C{missed} and C{instead} variables are used rather</tt> </tt>
+<a name="L354"></a><tt class="py-lineno">354</tt>  <tt class="py-line"><tt class="py-docstring">   than directly calling C{testCase.fail} upon noticing a problem because the</tt> </tt>
+<a name="L355"></a><tt class="py-lineno">355</tt>  <tt class="py-line"><tt class="py-docstring">   act of "failure" itself generates an exception that would be caught by the</tt> </tt>
+<a name="L356"></a><tt class="py-lineno">356</tt>  <tt class="py-line"><tt class="py-docstring">   general C{except} clause.</tt> </tt>
+<a name="L357"></a><tt class="py-lineno">357</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L358"></a><tt class="py-lineno">358</tt>  <tt class="py-line"><tt class="py-docstring">   @param testCase: PyUnit test case object (i.e. self).</tt> </tt>
+<a name="L359"></a><tt class="py-lineno">359</tt>  <tt class="py-line"><tt class="py-docstring">   @param exception: Exception that is expected to be raised.</tt> </tt>
+<a name="L360"></a><tt class="py-lineno">360</tt>  <tt class="py-line"><tt class="py-docstring">   @param obj: Object whose property is to be assigned to.</tt> </tt>
+<a name="L361"></a><tt class="py-lineno">361</tt>  <tt class="py-line"><tt class="py-docstring">   @param prop: Name of the property, as a string.</tt> </tt>
+<a name="L362"></a><tt class="py-lineno">362</tt>  <tt class="py-line"><tt class="py-docstring">   @param value: Value that is to be assigned to the property.</tt> </tt>
+<a name="L363"></a><tt class="py-lineno">363</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L364"></a><tt class="py-lineno">364</tt>  <tt class="py-line"><tt class="py-docstring">   @see: C{unittest.TestCase.failUnlessRaises}</tt> </tt>
+<a name="L365"></a><tt class="py-lineno">365</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L366"></a><tt class="py-lineno">366</tt>  <tt class="py-line">   <tt class="py-name">missed</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L367"></a><tt class="py-lineno">367</tt>  <tt class="py-line">   <tt class="py-name">instead</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L368"></a><tt class="py-lineno">368</tt>  <tt class="py-line">   <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L369"></a><tt class="py-lineno">369</tt>  <tt class="py-line">      <tt class="py-keyword">exec</tt> <tt class="py-string">"obj.%s = value"</tt> <tt class="py-op">%</tt> <tt class="py-name">prop</tt>    <tt class="py-comment"># pylint: disable=W0122</tt> </tt>
+<a name="L370"></a><tt class="py-lineno">370</tt>  <tt class="py-line">      <tt class="py-name">missed</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L371"></a><tt class="py-lineno">371</tt>  <tt class="py-line">   <tt class="py-keyword">except</tt> <tt class="py-name">exception</tt><tt class="py-op">:</tt> <tt class="py-keyword">pass</tt> </tt>
+<a name="L372"></a><tt class="py-lineno">372</tt>  <tt class="py-line">   <tt class="py-keyword">except</tt> <tt class="py-name">Exception</tt><tt class="py-op">,</tt> <tt class="py-name">e</tt><tt class="py-op">:</tt> </tt>
+<a name="L373"></a><tt class="py-lineno">373</tt>  <tt class="py-line">      <tt class="py-name">instead</tt> <tt class="py-op">=</tt> <tt class="py-name">e</tt> </tt>
+<a name="L374"></a><tt class="py-lineno">374</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">missed</tt><tt class="py-op">:</tt> </tt>
+<a name="L375"></a><tt class="py-lineno">375</tt>  <tt class="py-line">      <tt class="py-name">testCase</tt><tt class="py-op">.</tt><tt class="py-name">fail</tt><tt class="py-op">(</tt><tt class="py-string">"Expected assignment to raise %s, but got no exception."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">exception</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L376"></a><tt class="py-lineno">376</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">instead</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L377"></a><tt class="py-lineno">377</tt>  <tt class="py-line">      <tt class="py-name">testCase</tt><tt class="py-op">.</tt><tt class="py-name">fail</tt><tt class="py-op">(</tt><tt class="py-string">"Expected assignment to raise %s, but got %s instead."</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">ValueError</tt><tt class="py-op">,</tt> <tt class="py-name">instead</tt><tt class="py-op">.</tt><tt class="py-name">__class__</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L378"></a><tt class="py-lineno">378</tt>  <tt class="py-line"> </tt>
+<a name="L379"></a><tt class="py-lineno">379</tt>  <tt class="py-line"> </tt>
+<a name="L380"></a><tt class="py-lineno">380</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L381"></a><tt class="py-lineno">381</tt>  <tt class="py-line"><tt class="py-comment"># captureOutput() function</tt> </tt>
+<a name="L382"></a><tt class="py-lineno">382</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L383"></a><tt class="py-lineno">383</tt>  <tt class="py-line"> </tt>
+<a name="captureOutput"></a><div id="captureOutput-def"><a name="L384"></a><tt class="py-lineno">384</tt> <a class="py-toggle" href="#" id="captureOutput-toggle" onclick="return toggle('captureOutput');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#captureOutput">captureOutput</a><tt class="py-op">(</tt><tt class="py-param">c</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="captureOutput-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="captureOutput-expanded"><a name="L385"></a><tt class="py-lineno">385</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L386"></a><tt class="py-lineno">386</tt>  <tt class="py-line"><tt class="py-docstring">   Captures the output (stdout, stderr) of a function or a method.</tt> </tt>
+<a name="L387"></a><tt class="py-lineno">387</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L388"></a><tt class="py-lineno">388</tt>  <tt class="py-line"><tt class="py-docstring">   Some of our functions don't do anything other than just print output.  We</tt> </tt>
+<a name="L389"></a><tt class="py-lineno">389</tt>  <tt class="py-line"><tt class="py-docstring">   need a way to test these functions (at least nominally) but we don't want</tt> </tt>
+<a name="L390"></a><tt class="py-lineno">390</tt>  <tt class="py-line"><tt class="py-docstring">   any of the output spoiling the test suite output.</tt> </tt>
+<a name="L391"></a><tt class="py-lineno">391</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L392"></a><tt class="py-lineno">392</tt>  <tt class="py-line"><tt class="py-docstring">   This function just creates a dummy file descriptor that can be used as a</tt> </tt>
+<a name="L393"></a><tt class="py-lineno">393</tt>  <tt class="py-line"><tt class="py-docstring">   target by the callable function, rather than C{stdout} or C{stderr}.</tt> </tt>
+<a name="L394"></a><tt class="py-lineno">394</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L395"></a><tt class="py-lineno">395</tt>  <tt class="py-line"><tt class="py-docstring">   @note: This method assumes that C{callable} doesn't take any arguments</tt> </tt>
+<a name="L396"></a><tt class="py-lineno">396</tt>  <tt class="py-line"><tt class="py-docstring">   besides keyword argument C{fd} to specify the file descriptor.</tt> </tt>
+<a name="L397"></a><tt class="py-lineno">397</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L398"></a><tt class="py-lineno">398</tt>  <tt class="py-line"><tt class="py-docstring">   @param c: Callable function or method.</tt> </tt>
+<a name="L399"></a><tt class="py-lineno">399</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L400"></a><tt class="py-lineno">400</tt>  <tt class="py-line"><tt class="py-docstring">   @return: Output of function, as one big string.</tt> </tt>
+<a name="L401"></a><tt class="py-lineno">401</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L402"></a><tt class="py-lineno">402</tt>  <tt class="py-line">   <tt class="py-name">fd</tt> <tt class="py-op">=</tt> <tt class="py-name">StringIO</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L403"></a><tt class="py-lineno">403</tt>  <tt class="py-line">   <tt class="py-name">c</tt><tt class="py-op">(</tt><tt class="py-name">fd</tt><tt class="py-op">=</tt><tt class="py-name">fd</tt><tt class="py-op">)</tt> </tt>
+<a name="L404"></a><tt class="py-lineno">404</tt>  <tt class="py-line">   <tt class="py-name">result</tt> <tt class="py-op">=</tt> <tt class="py-name">fd</tt><tt class="py-op">.</tt><tt class="py-name">getvalue</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L405"></a><tt class="py-lineno">405</tt>  <tt class="py-line">   <tt class="py-name">fd</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L406"></a><tt class="py-lineno">406</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">result</tt> </tt>
+</div><a name="L407"></a><tt class="py-lineno">407</tt>  <tt class="py-line"> </tt>
+<a name="L408"></a><tt class="py-lineno">408</tt>  <tt class="py-line"> </tt>
+<a name="L409"></a><tt class="py-lineno">409</tt>  <tt class="py-line"><tt class="py-comment">#########################</tt> </tt>
+<a name="L410"></a><tt class="py-lineno">410</tt>  <tt class="py-line"><tt class="py-comment"># _isPlatform() function</tt> </tt>
+<a name="L411"></a><tt class="py-lineno">411</tt>  <tt class="py-line"><tt class="py-comment">#########################</tt> </tt>
+<a name="L412"></a><tt class="py-lineno">412</tt>  <tt class="py-line"> </tt>
+<a name="_isPlatform"></a><div id="_isPlatform-def"><a name="L413"></a><tt class="py-lineno">413</tt> <a class="py-toggle" href="#" id="_isPlatform-toggle" onclick="return toggle('_isPlatform');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#_isPlatform">_isPlatform</a><tt class="py-op">(</tt><tt class="py-param">name</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_isPlatform-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="_isPlatform-expanded"><a name="L414"></a><tt class="py-lineno">414</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L415"></a><tt class="py-lineno">415</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether we're running on the indicated platform.</tt> </tt>
+<a name="L416"></a><tt class="py-lineno">416</tt>  <tt class="py-line"><tt class="py-docstring">   @param name: Platform name to check, currently one of "windows" or "macosx"</tt> </tt>
+<a name="L417"></a><tt class="py-lineno">417</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L418"></a><tt class="py-lineno">418</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-43" class="py-name"><a title="CedarBackup2.config.ExtendedAction.name
+CedarBackup2.config.LocalPeer.name
+CedarBackup2.config.RemotePeer.name
+CedarBackup2.peer.LocalPeer.name
+CedarBackup2.peer.RemotePeer.name
+CedarBackup2.util.DirectedGraph.name" class="py-name" href="#" onclick="return doclink('link-43', 'name', 'link-36');">name</a></tt> <tt class="py-op">==</tt> <tt class="py-string">"windows"</tt><tt class="py-op">:</tt> </tt>
+<a name="L419"></a><tt class="py-lineno">419</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt id="link-44" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-44', 'platform', 'link-0');">platform</a></tt><tt class="py-op">.</tt><tt id="link-45" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-45', 'platform', 'link-0');">platform</a></tt><tt class="py-op">(</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">startswith</tt><tt class="py-op">(</tt><tt class="py-string">"Windows"</tt><tt class="py-op">)</tt> </tt>
+<a name="L420"></a><tt class="py-lineno">420</tt>  <tt class="py-line">   <tt class="py-keyword">elif</tt> <tt id="link-46" class="py-name"><a title="CedarBackup2.config.ExtendedAction.name
+CedarBackup2.config.LocalPeer.name
+CedarBackup2.config.RemotePeer.name
+CedarBackup2.peer.LocalPeer.name
+CedarBackup2.peer.RemotePeer.name
+CedarBackup2.util.DirectedGraph.name" class="py-name" href="#" onclick="return doclink('link-46', 'name', 'link-36');">name</a></tt> <tt class="py-op">==</tt> <tt class="py-string">"macosx"</tt><tt class="py-op">:</tt> </tt>
+<a name="L421"></a><tt class="py-lineno">421</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt id="link-47" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-47', 'platform', 'link-0');">platform</a></tt> <tt class="py-op">==</tt> <tt class="py-string">"darwin"</tt> </tt>
+<a name="L422"></a><tt class="py-lineno">422</tt>  <tt class="py-line">   <tt class="py-keyword">elif</tt> <tt id="link-48" class="py-name"><a title="CedarBackup2.config.ExtendedAction.name
+CedarBackup2.config.LocalPeer.name
+CedarBackup2.config.RemotePeer.name
+CedarBackup2.peer.LocalPeer.name
+CedarBackup2.peer.RemotePeer.name
+CedarBackup2.util.DirectedGraph.name" class="py-name" href="#" onclick="return doclink('link-48', 'name', 'link-36');">name</a></tt> <tt class="py-op">==</tt> <tt class="py-string">"debian"</tt><tt class="py-op">:</tt> </tt>
+<a name="L423"></a><tt class="py-lineno">423</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt id="link-49" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-49', 'platform', 'link-0');">platform</a></tt><tt class="py-op">.</tt><tt id="link-50" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-50', 'platform', 'link-0');">platform</a></tt><tt class="py-op">(</tt><tt class="py-name">False</tt><tt class="py-op">,</tt> <tt class="py-name">False</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">find</tt><tt class="py-op">(</tt><tt class="py-string">"debian"</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">0</tt> </tt>
+<a name="L424"></a><tt class="py-lineno">424</tt>  <tt class="py-line">   <tt class="py-keyword">elif</tt> <tt id="link-51" class="py-name"><a title="CedarBackup2.config.ExtendedAction.name
+CedarBackup2.config.LocalPeer.name
+CedarBackup2.config.RemotePeer.name
+CedarBackup2.peer.LocalPeer.name
+CedarBackup2.peer.RemotePeer.name
+CedarBackup2.util.DirectedGraph.name" class="py-name" href="#" onclick="return doclink('link-51', 'name', 'link-36');">name</a></tt> <tt class="py-op">==</tt> <tt class="py-string">"cygwin"</tt><tt class="py-op">:</tt> </tt>
+<a name="L425"></a><tt class="py-lineno">425</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt id="link-52" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-52', 'platform', 'link-0');">platform</a></tt><tt class="py-op">.</tt><tt id="link-53" class="py-name"><a title="CedarBackup2.util.Diagnostics.platform" class="py-name" href="#" onclick="return doclink('link-53', 'platform', 'link-0');">platform</a></tt><tt class="py-op">(</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">startswith</tt><tt class="py-op">(</tt><tt class="py-string">"CYGWIN"</tt><tt class="py-op">)</tt> </tt>
+<a name="L426"></a><tt class="py-lineno">426</tt>  <tt class="py-line">   <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L427"></a><tt class="py-lineno">427</tt>  <tt class="py-line">      <tt class="py-keyword">raise</tt> <tt class="py-name">ValueError</tt><tt class="py-op">(</tt><tt class="py-string">"Unknown platform [%s]."</tt> <tt class="py-op">%</tt> <tt id="link-54" class="py-name"><a title="CedarBackup2.config.ExtendedAction.name
+CedarBackup2.config.LocalPeer.name
+CedarBackup2.config.RemotePeer.name
+CedarBackup2.peer.LocalPeer.name
+CedarBackup2.peer.RemotePeer.name
+CedarBackup2.util.DirectedGraph.name" class="py-name" href="#" onclick="return doclink('link-54', 'name', 'link-36');">name</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L428"></a><tt class="py-lineno">428</tt>  <tt class="py-line"> </tt>
+<a name="L429"></a><tt class="py-lineno">429</tt>  <tt class="py-line"> </tt>
+<a name="L430"></a><tt class="py-lineno">430</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L431"></a><tt class="py-lineno">431</tt>  <tt class="py-line"><tt class="py-comment"># platformDebian() function</tt> </tt>
+<a name="L432"></a><tt class="py-lineno">432</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L433"></a><tt class="py-lineno">433</tt>  <tt class="py-line"> </tt>
+<a name="platformDebian"></a><div id="platformDebian-def"><a name="L434"></a><tt class="py-lineno">434</tt> <a class="py-toggle" href="#" id="platformDebian-toggle" onclick="return toggle('platformDebian');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#platformDebian">platformDebian</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="platformDebian-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="platformDebian-expanded"><a name="L435"></a><tt class="py-lineno">435</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L436"></a><tt class="py-lineno">436</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether this is the Debian platform.</tt> </tt>
+<a name="L437"></a><tt class="py-lineno">437</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L438"></a><tt class="py-lineno">438</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt id="link-55" class="py-name" targets="Function CedarBackup2.testutil._isPlatform()=CedarBackup2.testutil-module.html#_isPlatform"><a title="CedarBackup2.testutil._isPlatform" class="py-name" href="#" onclick="return doclink('link-55', '_isPlatform', 'link-55');">_isPlatform</a></tt><tt class="py-op">(</tt><tt class="py-string">"debian"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L439"></a><tt class="py-lineno">439</tt>  <tt class="py-line"> </tt>
+<a name="L440"></a><tt class="py-lineno">440</tt>  <tt class="py-line"> </tt>
+<a name="L441"></a><tt class="py-lineno">441</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L442"></a><tt class="py-lineno">442</tt>  <tt class="py-line"><tt class="py-comment"># platformMacOsX() function</tt> </tt>
+<a name="L443"></a><tt class="py-lineno">443</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L444"></a><tt class="py-lineno">444</tt>  <tt class="py-line"> </tt>
+<a name="platformMacOsX"></a><div id="platformMacOsX-def"><a name="L445"></a><tt class="py-lineno">445</tt> <a class="py-toggle" href="#" id="platformMacOsX-toggle" onclick="return toggle('platformMacOsX');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#platformMacOsX">platformMacOsX</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="platformMacOsX-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="platformMacOsX-expanded"><a name="L446"></a><tt class="py-lineno">446</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L447"></a><tt class="py-lineno">447</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether this is the Mac OS X platform.</tt> </tt>
+<a name="L448"></a><tt class="py-lineno">448</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L449"></a><tt class="py-lineno">449</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt id="link-56" class="py-name"><a title="CedarBackup2.testutil._isPlatform" class="py-name" href="#" onclick="return doclink('link-56', '_isPlatform', 'link-55');">_isPlatform</a></tt><tt class="py-op">(</tt><tt class="py-string">"macosx"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L450"></a><tt class="py-lineno">450</tt>  <tt class="py-line"> </tt>
+<a name="L451"></a><tt class="py-lineno">451</tt>  <tt class="py-line"> </tt>
+<a name="L452"></a><tt class="py-lineno">452</tt>  <tt class="py-line"><tt class="py-comment">#############################</tt> </tt>
+<a name="L453"></a><tt class="py-lineno">453</tt>  <tt class="py-line"><tt class="py-comment"># platformWindows() function</tt> </tt>
+<a name="L454"></a><tt class="py-lineno">454</tt>  <tt class="py-line"><tt class="py-comment">#############################</tt> </tt>
+<a name="L455"></a><tt class="py-lineno">455</tt>  <tt class="py-line"> </tt>
+<a name="platformWindows"></a><div id="platformWindows-def"><a name="L456"></a><tt class="py-lineno">456</tt> <a class="py-toggle" href="#" id="platformWindows-toggle" onclick="return toggle('platformWindows');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#platformWindows">platformWindows</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="platformWindows-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="platformWindows-expanded"><a name="L457"></a><tt class="py-lineno">457</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L458"></a><tt class="py-lineno">458</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether this is the Windows platform.</tt> </tt>
+<a name="L459"></a><tt class="py-lineno">459</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L460"></a><tt class="py-lineno">460</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt id="link-57" class="py-name"><a title="CedarBackup2.testutil._isPlatform" class="py-name" href="#" onclick="return doclink('link-57', '_isPlatform', 'link-55');">_isPlatform</a></tt><tt class="py-op">(</tt><tt class="py-string">"windows"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L461"></a><tt class="py-lineno">461</tt>  <tt class="py-line"> </tt>
+<a name="L462"></a><tt class="py-lineno">462</tt>  <tt class="py-line"> </tt>
+<a name="L463"></a><tt class="py-lineno">463</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L464"></a><tt class="py-lineno">464</tt>  <tt class="py-line"><tt class="py-comment"># platformCygwin() function</tt> </tt>
+<a name="L465"></a><tt class="py-lineno">465</tt>  <tt class="py-line"><tt class="py-comment">############################</tt> </tt>
+<a name="L466"></a><tt class="py-lineno">466</tt>  <tt class="py-line"> </tt>
+<a name="platformCygwin"></a><div id="platformCygwin-def"><a name="L467"></a><tt class="py-lineno">467</tt> <a class="py-toggle" href="#" id="platformCygwin-toggle" onclick="return toggle('platformCygwin');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#platformCygwin">platformCygwin</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="platformCygwin-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="platformCygwin-expanded"><a name="L468"></a><tt class="py-lineno">468</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L469"></a><tt class="py-lineno">469</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether this is the Cygwin platform.</tt> </tt>
+<a name="L470"></a><tt class="py-lineno">470</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L471"></a><tt class="py-lineno">471</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt id="link-58" class="py-name"><a title="CedarBackup2.testutil._isPlatform" class="py-name" href="#" onclick="return doclink('link-58', '_isPlatform', 'link-55');">_isPlatform</a></tt><tt class="py-op">(</tt><tt class="py-string">"cygwin"</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L472"></a><tt class="py-lineno">472</tt>  <tt class="py-line"> </tt>
+<a name="L473"></a><tt class="py-lineno">473</tt>  <tt class="py-line"> </tt>
+<a name="L474"></a><tt class="py-lineno">474</tt>  <tt class="py-line"><tt class="py-comment">###################################</tt> </tt>
+<a name="L475"></a><tt class="py-lineno">475</tt>  <tt class="py-line"><tt class="py-comment"># platformSupportsLinks() function</tt> </tt>
+<a name="L476"></a><tt class="py-lineno">476</tt>  <tt class="py-line"><tt class="py-comment">###################################</tt> </tt>
+<a name="L477"></a><tt class="py-lineno">477</tt>  <tt class="py-line"> </tt>
+<a name="platformSupportsLinks"></a><div id="platformSupportsLinks-def"><a name="L478"></a><tt class="py-lineno">478</tt> <a class="py-toggle" href="#" id="platformSupportsLinks-toggle" onclick="return toggle('platformSupportsLinks');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#platformSupportsLinks">platformSupportsLinks</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="platformSupportsLinks-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="platformSupportsLinks-expanded"><a name="L479"></a><tt class="py-lineno">479</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L480"></a><tt class="py-lineno">480</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether the platform supports soft-links.</tt> </tt>
+<a name="L481"></a><tt class="py-lineno">481</tt>  <tt class="py-line"><tt class="py-docstring">   Some platforms, like Windows, do not support links, and tests need to take</tt> </tt>
+<a name="L482"></a><tt class="py-lineno">482</tt>  <tt class="py-line"><tt class="py-docstring">   this into account.</tt> </tt>
+<a name="L483"></a><tt class="py-lineno">483</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L484"></a><tt class="py-lineno">484</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-keyword">not</tt> <tt id="link-59" class="py-name" targets="Function CedarBackup2.testutil.platformWindows()=CedarBackup2.testutil-module.html#platformWindows"><a title="CedarBackup2.testutil.platformWindows" class="py-name" href="#" onclick="return doclink('link-59', 'platformWindows', 'link-59');">platformWindows</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L485"></a><tt class="py-lineno">485</tt>  <tt class="py-line"> </tt>
+<a name="L486"></a><tt class="py-lineno">486</tt>  <tt class="py-line"> </tt>
+<a name="L487"></a><tt class="py-lineno">487</tt>  <tt class="py-line"><tt class="py-comment">#########################################</tt> </tt>
+<a name="L488"></a><tt class="py-lineno">488</tt>  <tt class="py-line"><tt class="py-comment"># platformSupportsPermissions() function</tt> </tt>
+<a name="L489"></a><tt class="py-lineno">489</tt>  <tt class="py-line"><tt class="py-comment">#########################################</tt> </tt>
+<a name="L490"></a><tt class="py-lineno">490</tt>  <tt class="py-line"> </tt>
+<a name="platformSupportsPermissions"></a><div id="platformSupportsPermissions-def"><a name="L491"></a><tt class="py-lineno">491</tt> <a class="py-toggle" href="#" id="platformSupportsPermissions-toggle" onclick="return toggle('platformSupportsPermissions');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#platformSupportsPermissions">platformSupportsPermissions</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="platformSupportsPermissions-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="platformSupportsPermissions-expanded"><a name="L492"></a><tt class="py-lineno">492</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L493"></a><tt class="py-lineno">493</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether the platform supports UNIX-style file permissions.</tt> </tt>
+<a name="L494"></a><tt class="py-lineno">494</tt>  <tt class="py-line"><tt class="py-docstring">   Some platforms, like Windows, do not support permissions, and tests need to take</tt> </tt>
+<a name="L495"></a><tt class="py-lineno">495</tt>  <tt class="py-line"><tt class="py-docstring">   this into account.</tt> </tt>
+<a name="L496"></a><tt class="py-lineno">496</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L497"></a><tt class="py-lineno">497</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-keyword">not</tt> <tt id="link-60" class="py-name"><a title="CedarBackup2.testutil.platformWindows" class="py-name" href="#" onclick="return doclink('link-60', 'platformWindows', 'link-59');">platformWindows</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L498"></a><tt class="py-lineno">498</tt>  <tt class="py-line"> </tt>
+<a name="L499"></a><tt class="py-lineno">499</tt>  <tt class="py-line"> </tt>
+<a name="L500"></a><tt class="py-lineno">500</tt>  <tt class="py-line"><tt class="py-comment">########################################</tt> </tt>
+<a name="L501"></a><tt class="py-lineno">501</tt>  <tt class="py-line"><tt class="py-comment"># platformRequiresBinaryRead() function</tt> </tt>
+<a name="L502"></a><tt class="py-lineno">502</tt>  <tt class="py-line"><tt class="py-comment">########################################</tt> </tt>
+<a name="L503"></a><tt class="py-lineno">503</tt>  <tt class="py-line"> </tt>
+<a name="platformRequiresBinaryRead"></a><div id="platformRequiresBinaryRead-def"><a name="L504"></a><tt class="py-lineno">504</tt> <a class="py-toggle" href="#" id="platformRequiresBinaryRead-toggle" onclick="return toggle('platformRequiresBinaryRead');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#platformRequiresBinaryRead">platformRequiresBinaryRead</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="platformRequiresBinaryRead-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="platformRequiresBinaryRead-expanded"><a name="L505"></a><tt class="py-lineno">505</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L506"></a><tt class="py-lineno">506</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether the platform requires binary reads.</tt> </tt>
+<a name="L507"></a><tt class="py-lineno">507</tt>  <tt class="py-line"><tt class="py-docstring">   Some platforms, like Windows, require a special flag to read binary data</tt> </tt>
+<a name="L508"></a><tt class="py-lineno">508</tt>  <tt class="py-line"><tt class="py-docstring">   from files.</tt> </tt>
+<a name="L509"></a><tt class="py-lineno">509</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L510"></a><tt class="py-lineno">510</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt id="link-61" class="py-name"><a title="CedarBackup2.testutil.platformWindows" class="py-name" href="#" onclick="return doclink('link-61', 'platformWindows', 'link-59');">platformWindows</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L511"></a><tt class="py-lineno">511</tt>  <tt class="py-line"> </tt>
+<a name="L512"></a><tt class="py-lineno">512</tt>  <tt class="py-line"> </tt>
+<a name="L513"></a><tt class="py-lineno">513</tt>  <tt class="py-line"><tt class="py-comment">#############################</tt> </tt>
+<a name="L514"></a><tt class="py-lineno">514</tt>  <tt class="py-line"><tt class="py-comment"># platformHasEcho() function</tt> </tt>
+<a name="L515"></a><tt class="py-lineno">515</tt>  <tt class="py-line"><tt class="py-comment">#############################</tt> </tt>
+<a name="L516"></a><tt class="py-lineno">516</tt>  <tt class="py-line"> </tt>
+<a name="platformHasEcho"></a><div id="platformHasEcho-def"><a name="L517"></a><tt class="py-lineno">517</tt> <a class="py-toggle" href="#" id="platformHasEcho-toggle" onclick="return toggle('platformHasEcho');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#platformHasEcho">platformHasEcho</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="platformHasEcho-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="platformHasEcho-expanded"><a name="L518"></a><tt class="py-lineno">518</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L519"></a><tt class="py-lineno">519</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether the platform has a sensible echo command.</tt> </tt>
+<a name="L520"></a><tt class="py-lineno">520</tt>  <tt class="py-line"><tt class="py-docstring">   On some platforms, like Windows, echo doesn't really work for tests.</tt> </tt>
+<a name="L521"></a><tt class="py-lineno">521</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L522"></a><tt class="py-lineno">522</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-keyword">not</tt> <tt id="link-62" class="py-name"><a title="CedarBackup2.testutil.platformWindows" class="py-name" href="#" onclick="return doclink('link-62', 'platformWindows', 'link-59');">platformWindows</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L523"></a><tt class="py-lineno">523</tt>  <tt class="py-line"> </tt>
+<a name="L524"></a><tt class="py-lineno">524</tt>  <tt class="py-line"> </tt>
+<a name="L525"></a><tt class="py-lineno">525</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L526"></a><tt class="py-lineno">526</tt>  <tt class="py-line"><tt class="py-comment"># runningAsRoot() function</tt> </tt>
+<a name="L527"></a><tt class="py-lineno">527</tt>  <tt class="py-line"><tt class="py-comment">###########################</tt> </tt>
+<a name="L528"></a><tt class="py-lineno">528</tt>  <tt class="py-line"> </tt>
+<a name="runningAsRoot"></a><div id="runningAsRoot-def"><a name="L529"></a><tt class="py-lineno">529</tt> <a class="py-toggle" href="#" id="runningAsRoot-toggle" onclick="return toggle('runningAsRoot');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#runningAsRoot">runningAsRoot</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="runningAsRoot-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="runningAsRoot-expanded"><a name="L530"></a><tt class="py-lineno">530</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L531"></a><tt class="py-lineno">531</tt>  <tt class="py-line"><tt class="py-docstring">   Returns boolean indicating whether the effective user id is root.</tt> </tt>
+<a name="L532"></a><tt class="py-lineno">532</tt>  <tt class="py-line"><tt class="py-docstring">   This is always true on platforms that have no concept of root, like Windows.</tt> </tt>
+<a name="L533"></a><tt class="py-lineno">533</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L534"></a><tt class="py-lineno">534</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt id="link-63" class="py-name"><a title="CedarBackup2.testutil.platformWindows" class="py-name" href="#" onclick="return doclink('link-63', 'platformWindows', 'link-59');">platformWindows</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L535"></a><tt class="py-lineno">535</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">True</tt> </tt>
+<a name="L536"></a><tt class="py-lineno">536</tt>  <tt class="py-line">   <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L537"></a><tt class="py-lineno">537</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">geteuid</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt> </tt>
+</div><a name="L538"></a><tt class="py-lineno">538</tt>  <tt class="py-line"> </tt>
+<a name="L539"></a><tt class="py-lineno">539</tt>  <tt class="py-line"> </tt>
+<a name="L540"></a><tt class="py-lineno">540</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L541"></a><tt class="py-lineno">541</tt>  <tt class="py-line"><tt class="py-comment"># availableLocales() function</tt> </tt>
+<a name="L542"></a><tt class="py-lineno">542</tt>  <tt class="py-line"><tt class="py-comment">##############################</tt> </tt>
+<a name="L543"></a><tt class="py-lineno">543</tt>  <tt class="py-line"> </tt>
+<a name="availableLocales"></a><div id="availableLocales-def"><a name="L544"></a><tt class="py-lineno">544</tt> <a class="py-toggle" href="#" id="availableLocales-toggle" onclick="return toggle('availableLocales');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#availableLocales">availableLocales</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="availableLocales-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="availableLocales-expanded"><a name="L545"></a><tt class="py-lineno">545</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L546"></a><tt class="py-lineno">546</tt>  <tt class="py-line"><tt class="py-docstring">   Returns a list of available locales on the system</tt> </tt>
+<a name="L547"></a><tt class="py-lineno">547</tt>  <tt class="py-line"><tt class="py-docstring">   @return: List of string locale names</tt> </tt>
+<a name="L548"></a><tt class="py-lineno">548</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L549"></a><tt class="py-lineno">549</tt>  <tt class="py-line">   <tt class="py-name">locales</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L550"></a><tt class="py-lineno">550</tt>  <tt class="py-line">   <tt id="link-64" class="py-name" targets="Variable CedarBackup2.cli.Options.output=CedarBackup2.cli.Options-class.html#output,Variable CedarBackup2.tools.amazons3.Options.output=CedarBackup2.tools.amazons3.Options-class.html#output"><a title="CedarBackup2.cli.Options.output
+CedarBackup2.tools.amazons3.Options.output" class="py-name" href="#" onclick="return doclink('link-64', 'output', 'link-64');">output</a></tt> <tt class="py-op">=</tt> <tt id="link-65" class="py-name"><a title="CedarBackup2.util.executeCommand" class="py-name" href="#" onclick="return doclink('link-65', 'executeCommand', 'link-4');">executeCommand</a></tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-string">"locale"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-op">[</tt> <tt class="py-string">"-a"</tt><tt class="py-op">,</tt> <tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">returnOutput</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">ignoreStderr</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> </tt>
+<a name="L551"></a><tt class="py-lineno">551</tt>  <tt class="py-line">   <tt class="py-keyword">for</tt> <tt class="py-name">line</tt> <tt class="py-keyword">in</tt> <tt id="link-66" class="py-name"><a title="CedarBackup2.cli.Options.output
+CedarBackup2.tools.amazons3.Options.output" class="py-name" href="#" onclick="return doclink('link-66', 'output', 'link-64');">output</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L552"></a><tt class="py-lineno">552</tt>  <tt class="py-line">      <tt class="py-name">locales</tt><tt class="py-op">.</tt><tt id="link-67" class="py-name" targets="Method CedarBackup2.util.AbsolutePathList.append()=CedarBackup2.util.AbsolutePathList-class.html#append,Method CedarBackup2.util.ObjectTypeList.append()=CedarBackup2.util.ObjectTypeList-class.html#append,Method CedarBackup2.util.RegexList.append()=CedarBackup2.util.RegexList-class.html#append,Method CedarBackup2.util.RegexMatchList.append()=CedarBackup2.util.RegexMatchList-class.html#append,Method CedarBackup2.util.RestrictedContentList.append()=CedarBackup2.util.RestrictedContentList-class.html#append"><a title="CedarBackup2.util.AbsolutePathList.append
+CedarBackup2.util.ObjectTypeList.append
+CedarBackup2.util.RegexList.append
+CedarBackup2.util.RegexMatchList.append
+CedarBackup2.util.RestrictedContentList.append" class="py-name" href="#" onclick="return doclink('link-67', 'append', 'link-67');">append</a></tt><tt class="py-op">(</tt><tt class="py-name">line</tt><tt class="py-op">.</tt><tt class="py-name">rstrip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L553"></a><tt class="py-lineno">553</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">locales</tt> </tt>
+</div><a name="L554"></a><tt class="py-lineno">554</tt>  <tt class="py-line"> </tt>
+<a name="L555"></a><tt class="py-lineno">555</tt>  <tt class="py-line"> </tt>
+<a name="L556"></a><tt class="py-lineno">556</tt>  <tt class="py-line"><tt class="py-comment">####################################</tt> </tt>
+<a name="L557"></a><tt class="py-lineno">557</tt>  <tt class="py-line"><tt class="py-comment"># hexFloatLiteralAllowed() function</tt> </tt>
+<a name="L558"></a><tt class="py-lineno">558</tt>  <tt class="py-line"><tt class="py-comment">####################################</tt> </tt>
+<a name="L559"></a><tt class="py-lineno">559</tt>  <tt class="py-line"> </tt>
+<a name="hexFloatLiteralAllowed"></a><div id="hexFloatLiteralAllowed-def"><a name="L560"></a><tt class="py-lineno">560</tt> <a class="py-toggle" href="#" id="hexFloatLiteralAllowed-toggle" onclick="return toggle('hexFloatLiteralAllowed');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="CedarBackup2.testutil-module.html#hexFloatLiteralAllowed">hexFloatLiteralAllowed</a><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="hexFloatLiteralAllowed-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="hexFloatLiteralAllowed-expanded"><a name="L561"></a><tt class="py-lineno">561</tt>  <tt class="py-line">   <tt class="py-docstring">"""</tt> </tt>
+<a name="L562"></a><tt class="py-lineno">562</tt>  <tt class="py-line"><tt class="py-docstring">   Indicates whether hex float literals are allowed by the interpreter.</tt> </tt>
+<a name="L563"></a><tt class="py-lineno">563</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L564"></a><tt class="py-lineno">564</tt>  <tt class="py-line"><tt class="py-docstring">   As far back as 2004, some Python documentation indicated that octal and hex</tt> </tt>
+<a name="L565"></a><tt class="py-lineno">565</tt>  <tt class="py-line"><tt class="py-docstring">   notation applied only to integer literals.  However, prior to Python 2.5, it</tt> </tt>
+<a name="L566"></a><tt class="py-lineno">566</tt>  <tt class="py-line"><tt class="py-docstring">   was legal to construct a float with an argument like 0xAC on some platforms.</tt> </tt>
+<a name="L567"></a><tt class="py-lineno">567</tt>  <tt class="py-line"><tt class="py-docstring">   This check provides a an indication of whether the current interpreter</tt> </tt>
+<a name="L568"></a><tt class="py-lineno">568</tt>  <tt class="py-line"><tt class="py-docstring">   supports that behavior.</tt> </tt>
+<a name="L569"></a><tt class="py-lineno">569</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L570"></a><tt class="py-lineno">570</tt>  <tt class="py-line"><tt class="py-docstring">   This check exists so that unit tests can continue to test the same thing as</tt> </tt>
+<a name="L571"></a><tt class="py-lineno">571</tt>  <tt class="py-line"><tt class="py-docstring">   always for pre-2.5 interpreters (i.e. making sure backwards compatibility</tt> </tt>
+<a name="L572"></a><tt class="py-lineno">572</tt>  <tt class="py-line"><tt class="py-docstring">   doesn't break) while still continuing to work for later interpreters.</tt> </tt>
+<a name="L573"></a><tt class="py-lineno">573</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L574"></a><tt class="py-lineno">574</tt>  <tt class="py-line"><tt class="py-docstring">   The returned value is True if hex float literals are allowed, False otherwise.</tt> </tt>
+<a name="L575"></a><tt class="py-lineno">575</tt>  <tt class="py-line"><tt class="py-docstring">   """</tt> </tt>
+<a name="L576"></a><tt class="py-lineno">576</tt>  <tt class="py-line">   <tt class="py-keyword">if</tt> <tt class="py-name">map</tt><tt class="py-op">(</tt><tt class="py-name">int</tt><tt class="py-op">,</tt> <tt class="py-op">[</tt><tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">version_info</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">version_info</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">&lt;</tt> <tt class="py-op">[</tt><tt class="py-number">2</tt><tt class="py-op">,</tt> <tt class="py-number">5</tt><tt class="py-op">]</tt> <tt class="py-keyword">and</tt> <tt class="py-keyword">not</tt> <tt id="link-68" class="py-name"><a title="CedarBackup2.testutil.platformWindows" class="py-name" href="#" onclick="return doclink('link-68', 'platformWindows', 'link-59');">platformWindows</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L577"></a><tt class="py-lineno">577</tt>  <tt class="py-line">      <tt class="py-keyword">return</tt> <tt class="py-name">True</tt> </tt>
+<a name="L578"></a><tt class="py-lineno">578</tt>  <tt class="py-line">   <tt class="py-keyword">return</tt> <tt class="py-name">False</tt> </tt>
+</div><a name="L579"></a><tt class="py-lineno">579</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

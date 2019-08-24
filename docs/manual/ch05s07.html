@@ -1,0 +1,79 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Optimized Blanking Stategy</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch05.html" title="Chapter 5. Configuration"><link rel="prev" href="ch05s06.html" title="Configuring your Writer Device"><link rel="next" href="ch06.html" title="Chapter 6. Official Extensions"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Optimized Blanking Stategy</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch05s06.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Configuration</th><td width="20%" align="right"> <a accesskey="n" href="ch06.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-config-blanking"></a>Optimized Blanking Stategy</h2></div></div></div><p>
+         When the optimized blanking strategy has not been configured, Cedar
+         Backup uses a simplistic approach: rewritable media is blanked at the
+         beginning of every week, period.  
+      </p><p>
+         Since rewritable media can be blanked only a finite number of times
+         before becoming unusable, some users &#8212; especially users of
+         rewritable DVD media with its large capacity &#8212; may prefer to
+         blank the media less often.
+      </p><p>
+         If the optimized blanking strategy is configured, Cedar Backup will
+         use a blanking factor and attempt to determine whether future backups
+         will fit on the current media.  If it looks like backups will fit,
+         then the media will not be blanked.
+      </p><p>
+         This feature will only be useful (assuming single disc is used for the
+         whole week's backups) if the estimated total size of the weekly backup
+         is considerably smaller than the capacity of the media (no more than
+         50% of the total media capacity), and only if the size of the backup
+         can be expected to remain fairly constant over time (no frequent rapid
+         growth expected).
+      </p><p>
+         There are two blanking modes: daily and weekly.  If the weekly
+         blanking mode is set, Cedar Backup will only estimate future capacity
+         (and potentially blank the disc) once per week, on the starting day of
+         the week.  If the daily blanking mode is set, Cedar Backup will
+         estimate future capacity (and potentially blank the disc) every time
+         it is run.  <span class="emphasis"><em>You should only use the daily blanking mode in
+         conjunction with daily collect configuration, otherwise you will risk
+         losing data.</em></span>
+      </p><p>
+         If you are using the daily blanking mode, you can typically set the
+         blanking value to 1.0.  This will cause Cedar Backup to blank the
+         media whenever there is not enough space to store the current day's
+         backup.
+      </p><p>
+         If you are using the weekly blanking mode, then finding the correct
+         blanking factor will require some experimentation.  Cedar Backup
+         estimates future capacity based on the configured blanking factor.
+         The disc will be blanked if the following relationship is true:
+      </p><pre class="screen">
+bytes available / (1 + bytes required) &#8804; blanking factor
+      </pre><p>
+         Another way to look at this is to consider the blanking factor as a
+         sort of (upper) backup growth estimate:
+      </p><pre class="screen">
+Total size of weekly backup / Full backup size at the start of the week
+      </pre><p>
+         This ratio can be estimated using a week or two of previous backups.
+         For instance, take this example, where March 10 is the start of the
+         week and March 4 through March 9 represent the incremental backups
+         from the previous week:
+      </p><pre class="screen">
+/opt/backup/staging# du -s 2007/03/*
+3040    2007/03/01
+3044    2007/03/02
+6812    2007/03/03
+3044    2007/03/04
+3152    2007/03/05
+3056    2007/03/06
+3060    2007/03/07
+3056    2007/03/08
+4776    2007/03/09
+6812    2007/03/10
+11824   2007/03/11
+      </pre><p>
+         In this case, the ratio is approximately 4:
+      </p><pre class="screen">
+6812 + (3044 + 3152 + 3056 + 3060 + 3056 + 4776) / 6812 = 3.9571
+      </pre><p>
+         To be safe, you might choose to configure a factor of 5.0.  
+      </p><p>
+         Setting a higher value reduces the risk of exceeding media capacity
+         mid-week but might result in blanking the media more often than is necessary.  
+      </p><p>
+         If you run out of space mid-week, then the solution is to run the
+         rebuild action.  If this happens frequently, a higher blanking factor
+         value should be used.
+      </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch05s06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch05.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Configuring your Writer Device </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 6. Official Extensions</td></tr></table></div></body></html>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.action</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        Module&nbsp;action
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.action-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="CedarBackup2.action-module.html">Module CedarBackup2.action</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: iso-8859-1 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-comment"># vim: set ft=python ts=3 sw=3 expandtab:</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-comment">#              C E D A R</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-comment">#          S O L U T I O N S       "Software done right."</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-comment">#           S O F T W A R E</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-comment"># Author   : Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt class="py-comment"># Language : Python 2 (&gt;= 2.7)</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt class="py-comment"># Project  : Cedar Backup, release 2</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-comment"># Purpose  : Provides implementation of various backup-related actions.</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-comment"># # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"><tt class="py-comment"># Module documentation</tt> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"><tt class="py-docstring">Provides interface backwards compatibility.</tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line"><tt class="py-docstring">In Cedar Backup 2.10.0, a refactoring effort took place to reorganize the code</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"><tt class="py-docstring">for the standard actions.  The code formerly in action.py was split into</tt> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line"><tt class="py-docstring">various other files in the CedarBackup2.actions package.  This mostly-empty</tt> </tt>
+<a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line"><tt class="py-docstring">file remains to preserve the Cedar Backup library interface.</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line"><tt class="py-docstring">@author: Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line"> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line"><tt class="py-comment"># Imported modules</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line"><tt class="py-comment">########################################################################</tt> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line"><tt class="py-comment"># pylint: disable=W0611</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package CedarBackup2=CedarBackup2-module.html"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-0', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Package CedarBackup2.actions=CedarBackup2.actions-module.html,Variable CedarBackup2.cli.Options.actions=CedarBackup2.cli.Options-class.html#actions,Variable CedarBackup2.config.ExtensionsConfig.actions=CedarBackup2.config.ExtensionsConfig-class.html#actions"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-1', 'actions', 'link-1');">actions</a></tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Module CedarBackup2.actions.collect=CedarBackup2.actions.collect-module.html,Variable CedarBackup2.config.Config.collect=CedarBackup2.config.Config-class.html#collect"><a title="CedarBackup2.actions.collect
+CedarBackup2.config.Config.collect" class="py-name" href="#" onclick="return doclink('link-2', 'collect', 'link-2');">collect</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Function CedarBackup2.actions.collect.executeCollect()=CedarBackup2.actions.collect-module.html#executeCollect"><a title="CedarBackup2.actions.collect.executeCollect" class="py-name" href="#" onclick="return doclink('link-3', 'executeCollect', 'link-3');">executeCollect</a></tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-4" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-4', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-5" class="py-name"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-5', 'actions', 'link-1');">actions</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Module CedarBackup2.actions.stage=CedarBackup2.actions.stage-module.html,Variable CedarBackup2.config.Config.stage=CedarBackup2.config.Config-class.html#stage"><a title="CedarBackup2.actions.stage
+CedarBackup2.config.Config.stage" class="py-name" href="#" onclick="return doclink('link-6', 'stage', 'link-6');">stage</a></tt> <tt class="py-keyword">import</tt> <tt id="link-7" class="py-name" targets="Function CedarBackup2.actions.stage.executeStage()=CedarBackup2.actions.stage-module.html#executeStage"><a title="CedarBackup2.actions.stage.executeStage" class="py-name" href="#" onclick="return doclink('link-7', 'executeStage', 'link-7');">executeStage</a></tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-8" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-8', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-9', 'actions', 'link-1');">actions</a></tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Module CedarBackup2.actions.store=CedarBackup2.actions.store-module.html,Variable CedarBackup2.config.Config.store=CedarBackup2.config.Config-class.html#store"><a title="CedarBackup2.actions.store
+CedarBackup2.config.Config.store" class="py-name" href="#" onclick="return doclink('link-10', 'store', 'link-10');">store</a></tt> <tt class="py-keyword">import</tt> <tt id="link-11" class="py-name" targets="Function CedarBackup2.actions.store.executeStore()=CedarBackup2.actions.store-module.html#executeStore"><a title="CedarBackup2.actions.store.executeStore" class="py-name" href="#" onclick="return doclink('link-11', 'executeStore', 'link-11');">executeStore</a></tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-12" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-12', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-13" class="py-name"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-13', 'actions', 'link-1');">actions</a></tt><tt class="py-op">.</tt><tt id="link-14" class="py-name" targets="Module CedarBackup2.actions.purge=CedarBackup2.actions.purge-module.html,Variable CedarBackup2.config.Config.purge=CedarBackup2.config.Config-class.html#purge"><a title="CedarBackup2.actions.purge
+CedarBackup2.config.Config.purge" class="py-name" href="#" onclick="return doclink('link-14', 'purge', 'link-14');">purge</a></tt> <tt class="py-keyword">import</tt> <tt id="link-15" class="py-name" targets="Function CedarBackup2.actions.purge.executePurge()=CedarBackup2.actions.purge-module.html#executePurge"><a title="CedarBackup2.actions.purge.executePurge" class="py-name" href="#" onclick="return doclink('link-15', 'executePurge', 'link-15');">executePurge</a></tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-16" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-16', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-17" class="py-name"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-17', 'actions', 'link-1');">actions</a></tt><tt class="py-op">.</tt><tt id="link-18" class="py-name" targets="Module CedarBackup2.actions.rebuild=CedarBackup2.actions.rebuild-module.html"><a title="CedarBackup2.actions.rebuild" class="py-name" href="#" onclick="return doclink('link-18', 'rebuild', 'link-18');">rebuild</a></tt> <tt class="py-keyword">import</tt> <tt id="link-19" class="py-name" targets="Function CedarBackup2.actions.rebuild.executeRebuild()=CedarBackup2.actions.rebuild-module.html#executeRebuild"><a title="CedarBackup2.actions.rebuild.executeRebuild" class="py-name" href="#" onclick="return doclink('link-19', 'executeRebuild', 'link-19');">executeRebuild</a></tt> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-20" class="py-name"><a title="CedarBackup2" class="py-name" href="#" onclick="return doclink('link-20', 'CedarBackup2', 'link-0');">CedarBackup2</a></tt><tt class="py-op">.</tt><tt id="link-21" class="py-name"><a title="CedarBackup2.actions
+CedarBackup2.cli.Options.actions
+CedarBackup2.config.ExtensionsConfig.actions" class="py-name" href="#" onclick="return doclink('link-21', 'actions', 'link-1');">actions</a></tt><tt class="py-op">.</tt><tt id="link-22" class="py-name" targets="Module CedarBackup2.actions.validate=CedarBackup2.actions.validate-module.html,Method CedarBackup2.cli.Options.validate()=CedarBackup2.cli.Options-class.html#validate,Method CedarBackup2.config.Config.validate()=CedarBackup2.config.Config-class.html#validate,Method CedarBackup2.extend.amazons3.LocalConfig.validate()=CedarBackup2.extend.amazons3.LocalConfig-class.html#validate,Method CedarBackup2.extend.capacity.LocalConfig.validate()=CedarBackup2.extend.capacity.LocalConfig-class.html#validate,Method CedarBackup2.extend.encrypt.LocalConfig.validate()=CedarBackup2.extend.encrypt.LocalConfig-class.html#validate,Method CedarBackup2.extend.mbox.LocalConfig.validate()=CedarBackup2.extend.mbox.LocalConfig-class.html#validate,Method CedarBackup2.extend.mysql.LocalConfig.validate()=CedarBackup2.extend.mysql.LocalConfig-class.html#validate,Method CedarBackup2.extend.postgresql.LocalConfig.validate()=CedarBackup2.extend.postgresql.LocalConfig-class.html#validate,Method CedarBackup2.extend.split.LocalConfig.validate()=CedarBackup2.extend.split.LocalConfig-class.html#validate,Method CedarBackup2.extend.subversion.LocalConfig.validate()=CedarBackup2.extend.subversion.LocalConfig-class.html#validate,Method CedarBackup2.tools.amazons3.Options.validate()=CedarBackup2.tools.amazons3.Options-class.html#validate,Method CedarBackup2.tools.span.SpanOptions.validate()=CedarBackup2.tools.span.SpanOptions-class.html#validate"><a title="CedarBackup2.actions.validate
+CedarBackup2.cli.Options.validate
+CedarBackup2.config.Config.validate
+CedarBackup2.extend.amazons3.LocalConfig.validate
+CedarBackup2.extend.capacity.LocalConfig.validate
+CedarBackup2.extend.encrypt.LocalConfig.validate
+CedarBackup2.extend.mbox.LocalConfig.validate
+CedarBackup2.extend.mysql.LocalConfig.validate
+CedarBackup2.extend.postgresql.LocalConfig.validate
+CedarBackup2.extend.split.LocalConfig.validate
+CedarBackup2.extend.subversion.LocalConfig.validate
+CedarBackup2.tools.amazons3.Options.validate
+CedarBackup2.tools.span.SpanOptions.validate" class="py-name" href="#" onclick="return doclink('link-22', 'validate', 'link-22');">validate</a></tt> <tt class="py-keyword">import</tt> <tt id="link-23" class="py-name" targets="Function CedarBackup2.actions.validate.executeValidate()=CedarBackup2.actions.validate-module.html#executeValidate"><a title="CedarBackup2.actions.validate.executeValidate" class="py-name" href="#" onclick="return doclink('link-23', 'executeValidate', 'link-23');">executeValidate</a></tt> </tt>
+<a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Managed Backups</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch02.html" title="Chapter 2. Basic Concepts"><link rel="prev" href="ch02s05.html" title="Coordination between Master and Clients"><link rel="next" href="ch02s07.html" title="Media and Device Types"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Managed Backups</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch02s05.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Basic Concepts</th><td width="20%" align="right"> <a accesskey="n" href="ch02s07.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-basic-managedbackups"></a>Managed Backups</h2></div></div></div><p>
+         Cedar Backup also supports an optional feature called the
+         <span class="quote">&#8220;<span class="quote">managed backup</span>&#8221;</span>.  This feature is intended for use with
+         remote clients where cron is not available.
+      </p><p>
+         When managed backups are enabled, managed clients must still be
+         configured as usual.  However, rather than using a cron job on the
+         client to execute the collect and purge actions, the master executes
+         these actions on the client via a remote shell.  
+      </p><p>
+         To make this happen, first set up one or more managed clients in Cedar
+         Backup configuration.  Then, invoke Cedar Backup with the
+         <span class="command"><strong>--managed</strong></span> command-line option.  Whenever Cedar
+         Backup invokes an action locally, it will invoke the same action on
+         each of the managed clients.
+      </p><p>
+         Technically, this feature works for any client, not just clients that
+         don't have cron available.  Used this way, it can simplify the setup
+         process, because cron only has to be configured on the master.  For
+         some users, that may be motivation enough to use this feature all of
+         the time.
+      </p><p>
+         However, please keep in mind that this feature depends on a stable
+         network.  If your network connection drops, your backup will be
+         interrupted and will not be complete.  It is even possible that some
+         of the Cedar Backup metadata (like incremental backup state) will be
+         corrupted.  The risk is not high, but it is something you need to be
+         aware of if you choose to use this optional feature.
+      </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch02s05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch02.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch02s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Coordination between Master and Clients </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Media and Device Types</td></tr></table></div></body></html>

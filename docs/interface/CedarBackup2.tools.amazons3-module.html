@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.tools.amazons3</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.tools-module.html">Package&nbsp;tools</a> ::
+        Module&nbsp;amazons3
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.tools.amazons3-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module amazons3</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html">source&nbsp;code</a></span></p>
+<p>Synchonizes a local directory with an Amazon S3 bucket.</p>
+  <p>No configuration is required; all necessary information is taken from 
+  the command-line.  The only thing configuration would help with is the 
+  path resolver interface, and it doesn't seem worth it to require 
+  configuration just to get that.</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.tools.amazons3.Options-class.html" class="summary-name">Options</a><br />
+      Class representing command-line options for the cback-amazons3-sync
+        script.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.amazons3-module.html#cli" class="summary-sig-name">cli</a>()</span><br />
+      Implements the command-line interface for the 
+      <code>cback-amazons3-sync</code> script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#cli">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.amazons3-module.html#_usage" class="summary-sig-name" onclick="show_private();">_usage</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints usage information for the cback-amazons3-sync script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_usage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.amazons3-module.html#_version" class="summary-sig-name" onclick="show_private();">_version</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints version information for the cback script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_version">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.amazons3-module.html#_diagnostics" class="summary-sig-name" onclick="show_private();">_diagnostics</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints runtime diagnostics information.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_diagnostics">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.amazons3-module.html#_executeAction" class="summary-sig-name" onclick="show_private();">_executeAction</a>(<span class="summary-sig-arg">options</span>)</span><br />
+      Implements the guts of the cback-amazons3-sync tool.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_executeAction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.amazons3-module.html#_buildSourceFiles" class="summary-sig-name" onclick="show_private();">_buildSourceFiles</a>(<span class="summary-sig-arg">sourceDir</span>)</span><br />
+      Build a list of files in a source directory</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_buildSourceFiles">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.amazons3-module.html#_checkSourceFiles" class="summary-sig-name" onclick="show_private();">_checkSourceFiles</a>(<span class="summary-sig-arg">sourceDir</span>,
+        <span class="summary-sig-arg">sourceFiles</span>)</span><br />
+      Check source files, trying to guess which ones will have encoding 
+      problems.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_checkSourceFiles">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.amazons3-module.html#_synchronizeBucket" class="summary-sig-name" onclick="show_private();">_synchronizeBucket</a>(<span class="summary-sig-arg">sourceDir</span>,
+        <span class="summary-sig-arg">s3BucketUrl</span>)</span><br />
+      Synchronize a local directory to an Amazon S3 bucket.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_synchronizeBucket">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.amazons3-module.html#_verifyBucketContents" class="summary-sig-name" onclick="show_private();">_verifyBucketContents</a>(<span class="summary-sig-arg">sourceDir</span>,
+        <span class="summary-sig-arg">sourceFiles</span>,
+        <span class="summary-sig-arg">s3BucketUrl</span>)</span><br />
+      Verify that a source directory is equivalent to an Amazon S3 bucket.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_verifyBucketContents">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="AWS_COMMAND"></a><span class="summary-name">AWS_COMMAND</span> = <code title="['aws']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">aws</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SHORT_SWITCHES"></a><span class="summary-name">SHORT_SWITCHES</span> = <code title="'hVbql:o:m:OdsDvw'"><code class="variable-quote">'</code><code class="variable-string">hVbql:o:m:OdsDvw</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.tools.amazons3-module.html#LONG_SWITCHES" class="summary-name">LONG_SWITCHES</a> = <code title="['help',
+ 'version',
+ 'verbose',
+ 'quiet',
+ 'logfile=',
+ 'owner=',
+ 'mode=',
+ 'output',
+..."><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">help</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">version</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">verbose</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">quiet</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">logfi</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2.tools'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2.tools</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="cli"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">cli</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#cli">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Implements the command-line interface for the 
+  <code>cback-amazons3-sync</code> script.</p>
+  <p>Essentially, this is the &quot;main routine&quot; for the 
+  cback-amazons3-sync script.  It does all of the argument processing for 
+  the script, and then also implements the tool functionality.</p>
+  <p>This function looks pretty similiar to 
+  <code>CedarBackup2.cli.cli()</code>.  It's not easy to refactor this code
+  to make it reusable and also readable, so I've decided to just live with 
+  the duplication.</p>
+  <p>A different error code is returned for each type of failure:</p>
+  <ul>
+    <li>
+      <code>1</code>: The Python interpreter version is &lt; 2.7
+    </li>
+    <li>
+      <code>2</code>: Error processing command-line arguments
+    </li>
+    <li>
+      <code>3</code>: Error configuring logging
+    </li>
+    <li>
+      <code>5</code>: Backup was interrupted with a CTRL-C or similar
+    </li>
+    <li>
+      <code>6</code>: Error executing other parts of the script
+    </li>
+  </ul>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Error code as described above.</dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        This script uses print rather than logging to the INFO level, 
+        because it is interactive.  Underlying Cedar Backup functionality 
+        uses the logging mechanism exclusively.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_usage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_usage</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_usage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints usage information for the cback-amazons3-sync script.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_version"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_version</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_version">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints version information for the cback script.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_diagnostics"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_diagnostics</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_diagnostics">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints runtime diagnostics information.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_executeAction"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_executeAction</span>(<span class="sig-arg">options</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_executeAction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Implements the guts of the cback-amazons3-sync tool.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>options</code></strong> (Options object.) - Program command-line options.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>Exception</strong></code> - Under many generic error conditions</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildSourceFiles"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildSourceFiles</span>(<span class="sig-arg">sourceDir</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_buildSourceFiles">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Build a list of files in a source directory</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sourceDir</code></strong> - Local source directory</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>FilesystemList with contents of source directory</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_checkSourceFiles"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_checkSourceFiles</span>(<span class="sig-arg">sourceDir</span>,
+        <span class="sig-arg">sourceFiles</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_checkSourceFiles">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Check source files, trying to guess which ones will have encoding 
+  problems.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sourceDir</code></strong> - Local source directory</li>
+        <li><strong class="pname"><code>sourceDir</code></strong> - Local source directory</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a problem file is found @see <a 
+        href="http://opensourcehacker.com/2011/09/16/fix-linux-filename-encodings-with-python/"
+        
+        target="_top">http://opensourcehacker.com/2011/09/16/fix-linux-filename-encodings-with-python/</a>
+        @see <a 
+        href="http://serverfault.com/questions/82821/how-to-tell-the-language-encoding-of-a-filename-on-linux"
+        
+        target="_top">http://serverfault.com/questions/82821/how-to-tell-the-language-encoding-of-a-filename-on-linux</a>
+        @see <a 
+        href="http://randysofia.com/2014/06/06/aws-cli-and-your-locale/" 
+        target="_top">http://randysofia.com/2014/06/06/aws-cli-and-your-locale/</a></li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_synchronizeBucket"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_synchronizeBucket</span>(<span class="sig-arg">sourceDir</span>,
+        <span class="sig-arg">s3BucketUrl</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_synchronizeBucket">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Synchronize a local directory to an Amazon S3 bucket.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sourceDir</code></strong> - Local source directory</li>
+        <li><strong class="pname"><code>s3BucketUrl</code></strong> - Target S3 bucket URL</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_verifyBucketContents"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_verifyBucketContents</span>(<span class="sig-arg">sourceDir</span>,
+        <span class="sig-arg">sourceFiles</span>,
+        <span class="sig-arg">s3BucketUrl</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.amazons3-pysrc.html#_verifyBucketContents">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Verify that a source directory is equivalent to an Amazon S3 
+  bucket.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sourceDir</code></strong> - Local source directory</li>
+        <li><strong class="pname"><code>sourceFiles</code></strong> - Filesystem list containing contents of source directory</li>
+        <li><strong class="pname"><code>s3BucketUrl</code></strong> - Target S3 bucket URL</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="LONG_SWITCHES"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">LONG_SWITCHES</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">help</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">version</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">verbose</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">quiet</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">logfile=</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">owner=</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">mode=</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">output</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

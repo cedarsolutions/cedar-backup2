@@ -1,0 +1,1960 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.peer.RemotePeer</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.peer-module.html">Module&nbsp;peer</a> ::
+        Class&nbsp;RemotePeer
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.peer.RemotePeer-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class RemotePeer</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">RemotePeer</strong>
+</pre>
+
+<hr />
+<p>Backup peer representing a remote peer in a backup pool.</p>
+  <p>This is a class representing a remote (networked) peer in a backup 
+  pool. Remote peers are backed up using an rcp-compatible copy command.  A
+  remote peer has associated with it a name (which must be a valid 
+  hostname), a collect directory, a working directory and a copy method (an
+  rcp-compatible command).</p>
+  <p>You can also set an optional local user value.  This username will be 
+  used as the local user for any remote copies that are required.  It can 
+  only be used if the root user is executing the backup.  The root user 
+  will <code>su</code> to the local user and execute the remote copies as 
+  that user.</p>
+  <p>The copy method is associated with the peer and not with the actual 
+  request to copy, because we can envision that each remote host might have
+  a different connect method.</p>
+  <p>The public methods other than the constructor are part of a 
+  &quot;backup peer&quot; interface shared with the <code>LocalPeer</code> 
+  class.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">name</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">collectDir</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">workingDir</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">remoteUser</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">rcpCommand</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">localUser</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">rshCommand</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">cbackCommand</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">ignoreFailureMode</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Initializes a remote backup peer.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#stagePeer" class="summary-sig-name">stagePeer</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">targetDir</span>,
+        <span class="summary-sig-arg">ownership</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">permissions</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Stages data from the peer into the indicated local target directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.stagePeer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#checkCollectIndicator" class="summary-sig-name">checkCollectIndicator</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">collectIndicator</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Checks the collect indicator in the peer's staging directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.checkCollectIndicator">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#writeStageIndicator" class="summary-sig-name">writeStageIndicator</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">stageIndicator</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Writes the stage indicator in the peer's staging directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.writeStageIndicator">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#executeRemoteCommand" class="summary-sig-name">executeRemoteCommand</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">command</span>)</span><br />
+      Executes a command on the peer via remote shell.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.executeRemoteCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#executeManagedAction" class="summary-sig-name">executeManagedAction</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">action</span>,
+        <span class="summary-sig-arg">fullBackup</span>)</span><br />
+      Executes a managed action on this peer.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.executeManagedAction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setName" class="summary-sig-name" onclick="show_private();">_setName</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the peer name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getName"></a><span class="summary-sig-name">_getName</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the peer name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setCollectDir" class="summary-sig-name" onclick="show_private();">_setCollectDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the collect directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setCollectDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getCollectDir"></a><span class="summary-sig-name">_getCollectDir</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the collect directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getCollectDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setWorkingDir" class="summary-sig-name" onclick="show_private();">_setWorkingDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the working directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setWorkingDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getWorkingDir"></a><span class="summary-sig-name">_getWorkingDir</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the working directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getWorkingDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setRemoteUser" class="summary-sig-name" onclick="show_private();">_setRemoteUser</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the remote user.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setRemoteUser">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getRemoteUser"></a><span class="summary-sig-name">_getRemoteUser</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the remote user.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getRemoteUser">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setLocalUser" class="summary-sig-name" onclick="show_private();">_setLocalUser</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the local user.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setLocalUser">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getLocalUser"></a><span class="summary-sig-name">_getLocalUser</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the local user.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getLocalUser">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setRcpCommand" class="summary-sig-name" onclick="show_private();">_setRcpCommand</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target to set the rcp command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setRcpCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getRcpCommand"></a><span class="summary-sig-name">_getRcpCommand</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the rcp command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getRcpCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setRshCommand" class="summary-sig-name" onclick="show_private();">_setRshCommand</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target to set the rsh command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setRshCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getRshCommand"></a><span class="summary-sig-name">_getRshCommand</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the rsh command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getRshCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setCbackCommand" class="summary-sig-name" onclick="show_private();">_setCbackCommand</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target to set the cback command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setCbackCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getCbackCommand"></a><span class="summary-sig-name">_getCbackCommand</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the cback command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getCbackCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setIgnoreFailureMode" class="summary-sig-name" onclick="show_private();">_setIgnoreFailureMode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the ignoreFailure mode.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setIgnoreFailureMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getIgnoreFailureMode"></a><span class="summary-sig-name">_getIgnoreFailureMode</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the ignoreFailure mode.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getIgnoreFailureMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getDirContents" class="summary-sig-name" onclick="show_private();">_getDirContents</a>(<span class="summary-sig-arg">path</span>)</span><br />
+      Returns the contents of a directory in terms of a Set.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getDirContents">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_copyRemoteDir" class="summary-sig-name" onclick="show_private();">_copyRemoteDir</a>(<span class="summary-sig-arg">remoteUser</span>,
+        <span class="summary-sig-arg">localUser</span>,
+        <span class="summary-sig-arg">remoteHost</span>,
+        <span class="summary-sig-arg">rcpCommand</span>,
+        <span class="summary-sig-arg">rcpCommandList</span>,
+        <span class="summary-sig-arg">sourceDir</span>,
+        <span class="summary-sig-arg">targetDir</span>,
+        <span class="summary-sig-arg">ownership</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">permissions</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Copies files from the source directory to the target directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._copyRemoteDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_copyRemoteFile" class="summary-sig-name" onclick="show_private();">_copyRemoteFile</a>(<span class="summary-sig-arg">remoteUser</span>,
+        <span class="summary-sig-arg">localUser</span>,
+        <span class="summary-sig-arg">remoteHost</span>,
+        <span class="summary-sig-arg">rcpCommand</span>,
+        <span class="summary-sig-arg">rcpCommandList</span>,
+        <span class="summary-sig-arg">sourceFile</span>,
+        <span class="summary-sig-arg">targetFile</span>,
+        <span class="summary-sig-arg">ownership</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">permissions</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">overwrite</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Copies a remote source file to a target file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._copyRemoteFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_pushLocalFile" class="summary-sig-name" onclick="show_private();">_pushLocalFile</a>(<span class="summary-sig-arg">remoteUser</span>,
+        <span class="summary-sig-arg">localUser</span>,
+        <span class="summary-sig-arg">remoteHost</span>,
+        <span class="summary-sig-arg">rcpCommand</span>,
+        <span class="summary-sig-arg">rcpCommandList</span>,
+        <span class="summary-sig-arg">sourceFile</span>,
+        <span class="summary-sig-arg">targetFile</span>,
+        <span class="summary-sig-arg">overwrite</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Copies a local source file to a remote host.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._pushLocalFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_executeRemoteCommand" class="summary-sig-name" onclick="show_private();">_executeRemoteCommand</a>(<span class="summary-sig-arg">remoteUser</span>,
+        <span class="summary-sig-arg">localUser</span>,
+        <span class="summary-sig-arg">remoteHost</span>,
+        <span class="summary-sig-arg">rshCommand</span>,
+        <span class="summary-sig-arg">rshCommandList</span>,
+        <span class="summary-sig-arg">remoteCommand</span>)</span><br />
+      Executes a command on the peer via remote shell.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._executeRemoteCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_buildCbackCommand" class="summary-sig-name" onclick="show_private();">_buildCbackCommand</a>(<span class="summary-sig-arg">cbackCommand</span>,
+        <span class="summary-sig-arg">action</span>,
+        <span class="summary-sig-arg">fullBackup</span>)</span><br />
+      Builds a Cedar Backup command line for the named action.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._buildCbackCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.RemotePeer-class.html#name" class="summary-name">name</a><br />
+      Name of the peer (a valid DNS hostname).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.RemotePeer-class.html#collectDir" class="summary-name">collectDir</a><br />
+      Path to the peer's collect directory (an absolute local path).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.RemotePeer-class.html#remoteUser" class="summary-name">remoteUser</a><br />
+      Name of the Cedar Backup user on the remote peer.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.RemotePeer-class.html#rcpCommand" class="summary-name">rcpCommand</a><br />
+      An rcp-compatible copy command to use for copying files.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.RemotePeer-class.html#rshCommand" class="summary-name">rshCommand</a><br />
+      An rsh-compatible command to use for remote shells to the peer.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.RemotePeer-class.html#cbackCommand" class="summary-name">cbackCommand</a><br />
+      A chack-compatible command to use for executing managed actions.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.RemotePeer-class.html#workingDir" class="summary-name">workingDir</a><br />
+      Path to the peer's working directory (an absolute local path).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.RemotePeer-class.html#localUser" class="summary-name">localUser</a><br />
+      Name of the Cedar Backup user on the current host.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.RemotePeer-class.html#ignoreFailureMode" class="summary-name">ignoreFailureMode</a><br />
+      Ignore failure mode for peer.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">name</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">collectDir</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">workingDir</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">remoteUser</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">rcpCommand</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">localUser</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">rshCommand</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">cbackCommand</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">ignoreFailureMode</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes a remote backup peer.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>name</code></strong> (String, must be a valid DNS hostname) - Name of the backup peer</li>
+        <li><strong class="pname"><code>collectDir</code></strong> (String representing an absolute path on the remote peer) - Path to the peer's collect directory</li>
+        <li><strong class="pname"><code>workingDir</code></strong> (String representing an absolute path on the current host.) - Working directory that can be used to create temporary files, 
+          etc.</li>
+        <li><strong class="pname"><code>remoteUser</code></strong> (String representing a username, valid via remote shell to the 
+          peer) - Name of the Cedar Backup user on the remote peer</li>
+        <li><strong class="pname"><code>localUser</code></strong> (String representing a username, valid on the current host) - Name of the Cedar Backup user on the current host</li>
+        <li><strong class="pname"><code>rcpCommand</code></strong> (String representing a system command including required arguments) - An rcp-compatible copy command to use for copying files from the 
+          peer</li>
+        <li><strong class="pname"><code>rshCommand</code></strong> (String representing a system command including required arguments) - An rsh-compatible copy command to use for remote shells to the 
+          peer</li>
+        <li><strong class="pname"><code>cbackCommand</code></strong> (String representing a system command including required arguments) - A chack-compatible command to use for executing managed actions</li>
+        <li><strong class="pname"><code>ignoreFailureMode</code></strong> (One of VALID_FAILURE_MODES) - Ignore failure mode for this peer</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If collect directory is not an absolute path</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        If provided, each command will eventually be parsed into a list of 
+        strings suitable for passing to <code>util.executeCommand</code> in
+        order to avoid security holes related to shell interpolation.   
+        This parsing will be done by the <a 
+        href="CedarBackup2.util-module.html#splitCommandLine" 
+        class="link">util.splitCommandLine</a> function.  See the 
+        documentation for that function for some important notes about its 
+        limitations.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="stagePeer"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">stagePeer</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">targetDir</span>,
+        <span class="sig-arg">ownership</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">permissions</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.stagePeer">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Stages data from the peer into the indicated local target 
+  directory.</p>
+  <p>The target directory must already exist before this method is called.
+  If passed in, ownership and permissions will be applied to the files that
+  are copied.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>targetDir</code></strong> (String representing a directory on disk) - Target directory to write data into</li>
+        <li><strong class="pname"><code>ownership</code></strong> (Tuple of numeric ids <code>(uid, gid)</code>) - Owner and group that the staged files should have</li>
+        <li><strong class="pname"><code>permissions</code></strong> (UNIX permissions mode, specified in octal (i.e. 
+          <code>0640</code>).) - Permissions that the staged files should have</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of files copied from the source directory to the target 
+          directory.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If target directory is not a directory, does not exist or is not 
+        absolute.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there were no files to stage (i.e. the directory was empty)</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an IO error copying a file.</li>
+        <li><code><strong class='fraise'>OSError</strong></code> - If there is an OS error copying or changing permissions on a file</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        The returned count of copied files might be inaccurate if some of 
+        the copied files already existed in the staging directory prior to 
+        the copy taking place.  We don't clear the staging directory first,
+        because some extension might also be using it.
+        </li>
+        <li>
+        If you have user/group as strings, call the <a 
+        href="CedarBackup2.util-module.html#getUidGid" 
+        class="link">util.getUidGid</a> function to get the associated 
+        uid/gid as an ownership tuple.
+        </li>
+        <li>
+        Unlike the local peer version of this method, an I/O error might or
+        might not be raised if the directory is empty.  Since we're using a
+        remote copy method, we just don't have the fine-grained control 
+        over our exceptions that's available when we can look directly at 
+        the filesystem, and we can't control whether the remote copy method
+        thinks an empty directory is an error.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="checkCollectIndicator"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">checkCollectIndicator</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">collectIndicator</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.checkCollectIndicator">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Checks the collect indicator in the peer's staging directory.</p>
+  <p>When a peer has completed collecting its backup files, it will write 
+  an empty indicator file into its collect directory.  This method checks 
+  to see whether that indicator has been written.  If the remote copy 
+  command fails, we return <code>False</code> as if the file weren't 
+  there.</p>
+  <p>If you need to, you can override the name of the collect indicator 
+  file by passing in a different name.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>collectIndicator</code></strong> (String representing name of a file in the collect directory) - Name of the collect indicator file to check</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Boolean true/false depending on whether the indicator exists.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        Apparently, we can't count on all rcp-compatible implementations to
+        return sensible errors for some error conditions.  As an example, 
+        the <code>scp</code> command in Debian 'woody' returns a zero 
+        (normal) status even when it can't find a host or if the login or 
+        path is invalid.  Because of this, the implementation of this 
+        method is rather convoluted.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="writeStageIndicator"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">writeStageIndicator</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">stageIndicator</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.writeStageIndicator">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes the stage indicator in the peer's staging directory.</p>
+  <p>When the master has completed collecting its backup files, it will 
+  write an empty indicator file into the peer's collect directory.  The 
+  presence of this file implies that the staging process is complete.</p>
+  <p>If you need to, you can override the name of the stage indicator file 
+  by passing in a different name.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>stageIndicator</code></strong> (String representing name of a file in the collect directory) - Name of the indicator file to write</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an IO error creating the file.</li>
+        <li><code><strong class='fraise'>OSError</strong></code> - If there is an OS error creating or changing permissions on the 
+        file</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        If you have user/group as strings, call the <a 
+        href="CedarBackup2.util-module.html#getUidGid" 
+        class="link">util.getUidGid</a> function to get the associated 
+        uid/gid as an ownership tuple.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="executeRemoteCommand"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">executeRemoteCommand</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">command</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.executeRemoteCommand">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Executes a command on the peer via remote shell.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>command</code></strong> (String command-line suitable for use with rsh.) - Command to execute</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error executing the command on the remote peer.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="executeManagedAction"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">executeManagedAction</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">action</span>,
+        <span class="sig-arg">fullBackup</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer.executeManagedAction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Executes a managed action on this peer.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>action</code></strong> - Name of the action to execute.</li>
+        <li><strong class="pname"><code>fullBackup</code></strong> - Whether a full backup should be executed.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error executing the action on the remote peer.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getDirContents"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getDirContents</span>(<span class="sig-arg">path</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._getDirContents">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the contents of a directory in terms of a Set.</p>
+  <p>The directory's contents are read as a <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html" 
+  class="link">FilesystemList</a> containing only files, and then the list 
+  is converted into a set object for later use.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> (String representing a path on disk) - Directory path to get contents for</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Set of files in the directory</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If path is not a directory or does not exist.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_copyRemoteDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_copyRemoteDir</span>(<span class="sig-arg">remoteUser</span>,
+        <span class="sig-arg">localUser</span>,
+        <span class="sig-arg">remoteHost</span>,
+        <span class="sig-arg">rcpCommand</span>,
+        <span class="sig-arg">rcpCommandList</span>,
+        <span class="sig-arg">sourceDir</span>,
+        <span class="sig-arg">targetDir</span>,
+        <span class="sig-arg">ownership</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">permissions</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._copyRemoteDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Copies files from the source directory to the target directory.</p>
+  <p>This function is not recursive.  Only the files in the directory will 
+  be copied.   Ownership and permissions will be left at their default 
+  values if new values are not specified.  Behavior when copying soft links
+  from the collect directory is dependent on the behavior of the specified 
+  rcp command.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>remoteUser</code></strong> (String representing a username, valid via the copy command) - Name of the Cedar Backup user on the remote peer</li>
+        <li><strong class="pname"><code>localUser</code></strong> (String representing a username, valid on the current host) - Name of the Cedar Backup user on the current host</li>
+        <li><strong class="pname"><code>remoteHost</code></strong> (String representing a hostname, accessible via the copy command) - Hostname of the remote peer</li>
+        <li><strong class="pname"><code>rcpCommand</code></strong> (String representing a system command including required arguments) - An rcp-compatible copy command to use for copying files from the 
+          peer</li>
+        <li><strong class="pname"><code>rcpCommandList</code></strong> (Command as a list to be passed to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a>) - An rcp-compatible copy command to use for copying files</li>
+        <li><strong class="pname"><code>sourceDir</code></strong> (String representing a directory on disk) - Source directory</li>
+        <li><strong class="pname"><code>targetDir</code></strong> (String representing a directory on disk) - Target directory</li>
+        <li><strong class="pname"><code>ownership</code></strong> (Tuple of numeric ids <code>(uid, gid)</code>) - Owner and group that the copied files should have</li>
+        <li><strong class="pname"><code>permissions</code></strong> (UNIX permissions mode, specified in octal (i.e. 
+          <code>0640</code>).) - Permissions that the staged files should have</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of files copied from the source directory to the target 
+          directory.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If source or target is not a directory or does not exist.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an IO error copying the files.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        The returned count of copied files might be inaccurate if some of 
+        the copied files already existed in the staging directory prior to 
+        the copy taking place.  We don't clear the staging directory first,
+        because some extension might also be using it.
+        </li>
+        <li>
+        If you have user/group as strings, call the <a 
+        href="CedarBackup2.util-module.html#getUidGid" 
+        class="link">util.getUidGid</a> function to get the associated 
+        uid/gid as an ownership tuple.
+        </li>
+        <li>
+        We don't have a good way of knowing exactly what files we copied 
+        down from the remote peer, unless we want to parse the output of 
+        the rcp command (ugh).  We could change permissions on everything 
+        in the target directory, but that's kind of ugly too.  Instead, we 
+        use Python's set functionality to figure out what files were added 
+        while we executed the rcp command.  This isn't perfect - for 
+        instance, it's not correct if someone else is messing with the 
+        directory at the same time we're doing the remote copy - but it's 
+        about as good as we're going to get.
+        </li>
+        <li>
+        Apparently, we can't count on all rcp-compatible implementations to
+        return sensible errors for some error conditions.  As an example, 
+        the <code>scp</code> command in Debian 'woody' returns a zero 
+        (normal) status even when it can't find a host or if the login or 
+        path is invalid.  We try to work around this by issuing 
+        <code>IOError</code> if we don't copy any files from the remote 
+        host.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="_copyRemoteFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_copyRemoteFile</span>(<span class="sig-arg">remoteUser</span>,
+        <span class="sig-arg">localUser</span>,
+        <span class="sig-arg">remoteHost</span>,
+        <span class="sig-arg">rcpCommand</span>,
+        <span class="sig-arg">rcpCommandList</span>,
+        <span class="sig-arg">sourceFile</span>,
+        <span class="sig-arg">targetFile</span>,
+        <span class="sig-arg">ownership</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">permissions</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">overwrite</span>=<span class="sig-default">True</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._copyRemoteFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Copies a remote source file to a target file.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>remoteUser</code></strong> (String representing a username, valid via the copy command) - Name of the Cedar Backup user on the remote peer</li>
+        <li><strong class="pname"><code>remoteHost</code></strong> (String representing a hostname, accessible via the copy command) - Hostname of the remote peer</li>
+        <li><strong class="pname"><code>localUser</code></strong> (String representing a username, valid on the current host) - Name of the Cedar Backup user on the current host</li>
+        <li><strong class="pname"><code>rcpCommand</code></strong> (String representing a system command including required arguments) - An rcp-compatible copy command to use for copying files from the 
+          peer</li>
+        <li><strong class="pname"><code>rcpCommandList</code></strong> (Command as a list to be passed to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a>) - An rcp-compatible copy command to use for copying files</li>
+        <li><strong class="pname"><code>sourceFile</code></strong> (String representing a file on disk, as an absolute path) - Source file to copy</li>
+        <li><strong class="pname"><code>targetFile</code></strong> (String representing a file on disk, as an absolute path) - Target file to create</li>
+        <li><strong class="pname"><code>ownership</code></strong> (Tuple of numeric ids <code>(uid, gid)</code>) - Owner and group that the copied should have</li>
+        <li><strong class="pname"><code>permissions</code></strong> (UNIX permissions mode, specified in octal (i.e. 
+          <code>0640</code>).) - Permissions that the staged files should have</li>
+        <li><strong class="pname"><code>overwrite</code></strong> (Boolean true/false.) - Indicates whether it's OK to overwrite the target file.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If the target file already exists.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an IO error copying the file</li>
+        <li><code><strong class='fraise'>OSError</strong></code> - If there is an OS error changing permissions on the file</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        Internally, we have to go through and escape any spaces in the 
+        source path with double-backslash, otherwise things get screwed up.
+        It doesn't seem to be required in the target path. I hope this is 
+        portable to various different rcp methods, but I guess it might not
+        be (all I have to test with is OpenSSH).
+        </li>
+        <li>
+        If you have user/group as strings, call the <a 
+        href="CedarBackup2.util-module.html#getUidGid" 
+        class="link">util.getUidGid</a> function to get the associated 
+        uid/gid as an ownership tuple.
+        </li>
+        <li>
+        We will not overwrite a target file that exists when this method is
+        invoked.  If the target already exists, we'll raise an exception.
+        </li>
+        <li>
+        Apparently, we can't count on all rcp-compatible implementations to
+        return sensible errors for some error conditions.  As an example, 
+        the <code>scp</code> command in Debian 'woody' returns a zero 
+        (normal) status even when it can't find a host or if the login or 
+        path is invalid.  We try to work around this by issuing 
+        <code>IOError</code> the target file does not exist when we're 
+        done.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="_pushLocalFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_pushLocalFile</span>(<span class="sig-arg">remoteUser</span>,
+        <span class="sig-arg">localUser</span>,
+        <span class="sig-arg">remoteHost</span>,
+        <span class="sig-arg">rcpCommand</span>,
+        <span class="sig-arg">rcpCommandList</span>,
+        <span class="sig-arg">sourceFile</span>,
+        <span class="sig-arg">targetFile</span>,
+        <span class="sig-arg">overwrite</span>=<span class="sig-default">True</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._pushLocalFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Copies a local source file to a remote host.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>remoteUser</code></strong> (String representing a username, valid via the copy command) - Name of the Cedar Backup user on the remote peer</li>
+        <li><strong class="pname"><code>localUser</code></strong> (String representing a username, valid on the current host) - Name of the Cedar Backup user on the current host</li>
+        <li><strong class="pname"><code>remoteHost</code></strong> (String representing a hostname, accessible via the copy command) - Hostname of the remote peer</li>
+        <li><strong class="pname"><code>rcpCommand</code></strong> (String representing a system command including required arguments) - An rcp-compatible copy command to use for copying files from the 
+          peer</li>
+        <li><strong class="pname"><code>rcpCommandList</code></strong> (Command as a list to be passed to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a>) - An rcp-compatible copy command to use for copying files</li>
+        <li><strong class="pname"><code>sourceFile</code></strong> (String representing a file on disk, as an absolute path) - Source file to copy</li>
+        <li><strong class="pname"><code>targetFile</code></strong> (String representing a file on disk, as an absolute path) - Target file to create</li>
+        <li><strong class="pname"><code>overwrite</code></strong> (Boolean true/false.) - Indicates whether it's OK to overwrite the target file.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an IO error copying the file</li>
+        <li><code><strong class='fraise'>OSError</strong></code> - If there is an OS error changing permissions on the file</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        We will not overwrite a target file that exists when this method is
+        invoked.  If the target already exists, we'll raise an exception.
+        </li>
+        <li>
+        Internally, we have to go through and escape any spaces in the 
+        source and target paths with double-backslash, otherwise things get
+        screwed up.  I hope this is portable to various different rcp 
+        methods, but I guess it might not be (all I have to test with is 
+        OpenSSH).
+        </li>
+        <li>
+        If you have user/group as strings, call the <a 
+        href="CedarBackup2.util-module.html#getUidGid" 
+        class="link">util.getUidGid</a> function to get the associated 
+        uid/gid as an ownership tuple.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="_setName"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setName</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setName">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the peer name. The value must be a 
+  non-empty string and cannot be <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string or <code>None</code>.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setCollectDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setCollectDir</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setCollectDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the collect directory. The value must be 
+  an absolute path and cannot be <code>None</code>. It does not have to 
+  exist on disk at the time of assignment.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is <code>None</code> or is not an absolute path.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setWorkingDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setWorkingDir</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setWorkingDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the working directory. The value must be 
+  an absolute path and cannot be <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is <code>None</code> or is not an absolute path.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setRemoteUser"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setRemoteUser</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setRemoteUser">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the remote user. The value must be a 
+  non-empty string and cannot be <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string or <code>None</code>.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setLocalUser"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setLocalUser</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setLocalUser">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the local user. The value must be a 
+  non-empty string if it is not <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setRcpCommand"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setRcpCommand</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setRcpCommand">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target to set the rcp command.</p>
+  <p>The value must be a non-empty string or <code>None</code>.  Its value 
+  is stored in the two forms: &quot;raw&quot; as provided by the client, 
+  and &quot;parsed&quot; into a list suitable for being passed to <a 
+  href="CedarBackup2.util-module.html#executeCommand" 
+  class="link">util.executeCommand</a> via <a 
+  href="CedarBackup2.util-module.html#splitCommandLine" 
+  class="link">util.splitCommandLine</a>.</p>
+  <p>However, all the caller will ever see via the property is the actual 
+  value they set (which includes seeing <code>None</code>, even if we 
+  translate that internally to <code>DEF_RCP_COMMAND</code>).  Internally, 
+  we should always use <code>self._rcpCommandList</code> if we want the 
+  actual command list.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setRshCommand"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setRshCommand</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setRshCommand">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target to set the rsh command.</p>
+  <p>The value must be a non-empty string or <code>None</code>.  Its value 
+  is stored in the two forms: &quot;raw&quot; as provided by the client, 
+  and &quot;parsed&quot; into a list suitable for being passed to <a 
+  href="CedarBackup2.util-module.html#executeCommand" 
+  class="link">util.executeCommand</a> via <a 
+  href="CedarBackup2.util-module.html#splitCommandLine" 
+  class="link">util.splitCommandLine</a>.</p>
+  <p>However, all the caller will ever see via the property is the actual 
+  value they set (which includes seeing <code>None</code>, even if we 
+  translate that internally to <code>DEF_RSH_COMMAND</code>).  Internally, 
+  we should always use <code>self._rshCommandList</code> if we want the 
+  actual command list.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setCbackCommand"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setCbackCommand</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setCbackCommand">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target to set the cback command.</p>
+  <p>The value must be a non-empty string or <code>None</code>.  Unlike the
+  other command, this value is only stored in the &quot;raw&quot; form 
+  provided by the client.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setIgnoreFailureMode"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setIgnoreFailureMode</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._setIgnoreFailureMode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the ignoreFailure mode. If not 
+  <code>None</code>, the mode must be one of the values in 
+  VALID_FAILURE_MODES.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_executeRemoteCommand"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_executeRemoteCommand</span>(<span class="sig-arg">remoteUser</span>,
+        <span class="sig-arg">localUser</span>,
+        <span class="sig-arg">remoteHost</span>,
+        <span class="sig-arg">rshCommand</span>,
+        <span class="sig-arg">rshCommandList</span>,
+        <span class="sig-arg">remoteCommand</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._executeRemoteCommand">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Executes a command on the peer via remote shell.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>remoteUser</code></strong> (String representing a username, valid on the remote host) - Name of the Cedar Backup user on the remote peer</li>
+        <li><strong class="pname"><code>localUser</code></strong> (String representing a username, valid on the current host) - Name of the Cedar Backup user on the current host</li>
+        <li><strong class="pname"><code>remoteHost</code></strong> (String representing a hostname, accessible via the copy command) - Hostname of the remote peer</li>
+        <li><strong class="pname"><code>rshCommand</code></strong> (String representing a system command including required arguments) - An rsh-compatible copy command to use for remote shells to the 
+          peer</li>
+        <li><strong class="pname"><code>rshCommandList</code></strong> (Command as a list to be passed to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a>) - An rsh-compatible copy command to use for remote shells to the 
+          peer</li>
+        <li><strong class="pname"><code>remoteCommand</code></strong> (String command-line, with no special shell characters ($, &lt;, 
+          etc.)) - The command to be executed on the remote host</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error executing the remote command</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildCbackCommand"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildCbackCommand</span>(<span class="sig-arg">cbackCommand</span>,
+        <span class="sig-arg">action</span>,
+        <span class="sig-arg">fullBackup</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#RemotePeer._buildCbackCommand">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a Cedar Backup command line for the named action.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>cbackCommand</code></strong> - cback command to execute, including required options</li>
+        <li><strong class="pname"><code>action</code></strong> - Name of the action to execute.</li>
+        <li><strong class="pname"><code>fullBackup</code></strong> - Whether a full backup should be executed.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>String suitable for passing to <a 
+          href="CedarBackup2.peer.RemotePeer-class.html#_executeRemoteCommand"
+          class="link" onclick="show_private();">_executeRemoteCommand</a> 
+          as remoteCommand.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If action is None.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        If the cback command is None, then DEF_CBACK_COMMAND is used.
+      </p>
+</div></td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="name"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">name</h3>
+  <p>Name of the peer (a valid DNS hostname).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getName" class="summary-sig-name" onclick="show_private();">_getName</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the peer name.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setName" class="summary-sig-name" onclick="show_private();">_setName</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the peer name.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="collectDir"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">collectDir</h3>
+  <p>Path to the peer's collect directory (an absolute local path).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getCollectDir" class="summary-sig-name" onclick="show_private();">_getCollectDir</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the collect directory.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setCollectDir" class="summary-sig-name" onclick="show_private();">_setCollectDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the collect directory.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="remoteUser"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">remoteUser</h3>
+  <p>Name of the Cedar Backup user on the remote peer.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getRemoteUser" class="summary-sig-name" onclick="show_private();">_getRemoteUser</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the remote user.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setRemoteUser" class="summary-sig-name" onclick="show_private();">_setRemoteUser</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the remote user.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="rcpCommand"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">rcpCommand</h3>
+  <p>An rcp-compatible copy command to use for copying files.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getRcpCommand" class="summary-sig-name" onclick="show_private();">_getRcpCommand</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the rcp command.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setRcpCommand" class="summary-sig-name" onclick="show_private();">_setRcpCommand</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target to set the rcp command.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="rshCommand"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">rshCommand</h3>
+  <p>An rsh-compatible command to use for remote shells to the peer.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getRshCommand" class="summary-sig-name" onclick="show_private();">_getRshCommand</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the rsh command.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setRshCommand" class="summary-sig-name" onclick="show_private();">_setRshCommand</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target to set the rsh command.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="cbackCommand"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">cbackCommand</h3>
+  <p>A chack-compatible command to use for executing managed actions.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getCbackCommand" class="summary-sig-name" onclick="show_private();">_getCbackCommand</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the cback command.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setCbackCommand" class="summary-sig-name" onclick="show_private();">_setCbackCommand</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target to set the cback command.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="workingDir"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">workingDir</h3>
+  <p>Path to the peer's working directory (an absolute local path).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getWorkingDir" class="summary-sig-name" onclick="show_private();">_getWorkingDir</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the working directory.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setWorkingDir" class="summary-sig-name" onclick="show_private();">_setWorkingDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the working directory.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="localUser"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">localUser</h3>
+  <p>Name of the Cedar Backup user on the current host.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getLocalUser" class="summary-sig-name" onclick="show_private();">_getLocalUser</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the local user.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setLocalUser" class="summary-sig-name" onclick="show_private();">_setLocalUser</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the local user.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ignoreFailureMode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ignoreFailureMode</h3>
+  <p>Ignore failure mode for peer.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_getIgnoreFailureMode" class="summary-sig-name" onclick="show_private();">_getIgnoreFailureMode</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the ignoreFailure mode.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.RemotePeer-class.html#_setIgnoreFailureMode" class="summary-sig-name" onclick="show_private();">_setIgnoreFailureMode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the ignoreFailure mode.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,1036 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.tools.span</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.tools-module.html">Package&nbsp;tools</a> ::
+        Module&nbsp;span
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.tools.span-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module span</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html">source&nbsp;code</a></span></p>
+<p>Spans staged data among multiple discs</p>
+  <p>This is the Cedar Backup span tool.  It is intended for use by people 
+  who stage more data than can fit on a single disc.  It allows a user to 
+  split staged data among more than one disc.  It can't be an extension 
+  because it requires user input when switching media.</p>
+  <p>Most configuration is taken from the Cedar Backup configuration file, 
+  specifically the store section.  A few pieces of configuration are taken 
+  directly from the user.</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.tools.span.SpanOptions-class.html" class="summary-name">SpanOptions</a><br />
+      Tool-specific command-line options.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#cli" class="summary-sig-name">cli</a>()</span><br />
+      Implements the command-line interface for the <code>cback-span</code>
+      script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#cli">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_usage" class="summary-sig-name" onclick="show_private();">_usage</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints usage information for the cback script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_usage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_version" class="summary-sig-name" onclick="show_private();">_version</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints version information for the cback script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_version">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_diagnostics" class="summary-sig-name" onclick="show_private();">_diagnostics</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints runtime diagnostics information.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_diagnostics">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_executeAction" class="summary-sig-name" onclick="show_private();">_executeAction</a>(<span class="summary-sig-arg">options</span>,
+        <span class="summary-sig-arg">config</span>)</span><br />
+      Implements the guts of the cback-span tool.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_executeAction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_findDailyDirs" class="summary-sig-name" onclick="show_private();">_findDailyDirs</a>(<span class="summary-sig-arg">stagingDir</span>)</span><br />
+      Returns a list of all daily staging directories that have not yet 
+      been stored.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_findDailyDirs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_writeStoreIndicator" class="summary-sig-name" onclick="show_private();">_writeStoreIndicator</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">dailyDirs</span>)</span><br />
+      Writes a store indicator file into daily directories.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_writeStoreIndicator">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_getWriter" class="summary-sig-name" onclick="show_private();">_getWriter</a>(<span class="summary-sig-arg">config</span>)</span><br />
+      Gets a writer and media capacity from store configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getWriter">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_writeDisc" class="summary-sig-name" onclick="show_private();">_writeDisc</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">writer</span>,
+        <span class="summary-sig-arg">spanItem</span>)</span><br />
+      Writes a span item to disc.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_writeDisc">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_discInitializeImage" class="summary-sig-name" onclick="show_private();">_discInitializeImage</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">writer</span>,
+        <span class="summary-sig-arg">spanItem</span>)</span><br />
+      Initialize an ISO image for a span item.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_discInitializeImage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_discWriteImage" class="summary-sig-name" onclick="show_private();">_discWriteImage</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">writer</span>)</span><br />
+      Writes a ISO image for a span item.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_discWriteImage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_discConsistencyCheck" class="summary-sig-name" onclick="show_private();">_discConsistencyCheck</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">writer</span>,
+        <span class="summary-sig-arg">spanItem</span>)</span><br />
+      Run a consistency check on an ISO image for a span item.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_discConsistencyCheck">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_consistencyCheck" class="summary-sig-name" onclick="show_private();">_consistencyCheck</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">fileList</span>)</span><br />
+      Runs a consistency check against media in the backup device.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_consistencyCheck">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_getYesNoAnswer" class="summary-sig-name" onclick="show_private();">_getYesNoAnswer</a>(<span class="summary-sig-arg">prompt</span>,
+        <span class="summary-sig-arg">default</span>)</span><br />
+      Get a yes/no answer from the user.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getYesNoAnswer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_getChoiceAnswer" class="summary-sig-name" onclick="show_private();">_getChoiceAnswer</a>(<span class="summary-sig-arg">prompt</span>,
+        <span class="summary-sig-arg">default</span>,
+        <span class="summary-sig-arg">validChoices</span>)</span><br />
+      Get a particular choice from the user.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getChoiceAnswer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_getFloat" class="summary-sig-name" onclick="show_private();">_getFloat</a>(<span class="summary-sig-arg">prompt</span>,
+        <span class="summary-sig-arg">default</span>)</span><br />
+      Get a floating point number from the user.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getFloat">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.tools.span-module.html#_getReturn" class="summary-sig-name" onclick="show_private();">_getReturn</a>(<span class="summary-sig-arg">prompt</span>)</span><br />
+      Get a return key from the user.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getReturn">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2.tools'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2.tools</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="cli"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">cli</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#cli">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Implements the command-line interface for the <code>cback-span</code> 
+  script.</p>
+  <p>Essentially, this is the &quot;main routine&quot; for the cback-span 
+  script.  It does all of the argument processing for the script, and then 
+  also implements the tool functionality.</p>
+  <p>This function looks pretty similiar to 
+  <code>CedarBackup2.cli.cli()</code>.  It's not easy to refactor this code
+  to make it reusable and also readable, so I've decided to just live with 
+  the duplication.</p>
+  <p>A different error code is returned for each type of failure:</p>
+  <ul>
+    <li>
+      <code>1</code>: The Python interpreter version is &lt; 2.7
+    </li>
+    <li>
+      <code>2</code>: Error processing command-line arguments
+    </li>
+    <li>
+      <code>3</code>: Error configuring logging
+    </li>
+    <li>
+      <code>4</code>: Error parsing indicated configuration file
+    </li>
+    <li>
+      <code>5</code>: Backup was interrupted with a CTRL-C or similar
+    </li>
+    <li>
+      <code>6</code>: Error executing other parts of the script
+    </li>
+  </ul>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Error code as described above.</dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        This script uses print rather than logging to the INFO level, 
+        because it is interactive.  Underlying Cedar Backup functionality 
+        uses the logging mechanism exclusively.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_usage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_usage</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_usage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints usage information for the cback script.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_version"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_version</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_version">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints version information for the cback script.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_diagnostics"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_diagnostics</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_diagnostics">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints runtime diagnostics information.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_executeAction"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_executeAction</span>(<span class="sig-arg">options</span>,
+        <span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_executeAction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Implements the guts of the cback-span tool.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>options</code></strong> (SpanOptions object.) - Program command-line options.</li>
+        <li><strong class="pname"><code>config</code></strong> (Config object.) - Program configuration.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>Exception</strong></code> - Under many generic error conditions</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_findDailyDirs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_findDailyDirs</span>(<span class="sig-arg">stagingDir</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_findDailyDirs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns a list of all daily staging directories that have not yet been
+  stored.</p>
+  <p>The store indicator file <code>cback.store</code> will be written to a
+  daily staging directory once that directory is written to disc.  So, this
+  function looks at each daily staging directory within the configured 
+  staging directory, and returns a list of those which do not contain the 
+  indicator file.</p>
+  <p>Returned is a tuple containing two items: a list of daily staging 
+  directories, and a BackupFileList containing all files among those 
+  staging directories.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>stagingDir</code></strong> - Configured staging directory</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple (staging dirs, backup file list)</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_writeStoreIndicator"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_writeStoreIndicator</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">dailyDirs</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_writeStoreIndicator">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes a store indicator file into daily directories.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Config object.</li>
+        <li><strong class="pname"><code>dailyDirs</code></strong> - List of daily directories</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getWriter"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getWriter</span>(<span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getWriter">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets a writer and media capacity from store configuration. Returned is
+  a writer and a media capacity in bytes.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple of (writer, mediaCapacity)</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_writeDisc"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_writeDisc</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">writer</span>,
+        <span class="sig-arg">spanItem</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_writeDisc">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes a span item to disc.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration</li>
+        <li><strong class="pname"><code>writer</code></strong> - Writer to use</li>
+        <li><strong class="pname"><code>spanItem</code></strong> - Span item to write</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_discInitializeImage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_discInitializeImage</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">writer</span>,
+        <span class="sig-arg">spanItem</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_discInitializeImage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initialize an ISO image for a span item.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration</li>
+        <li><strong class="pname"><code>writer</code></strong> - Writer to use</li>
+        <li><strong class="pname"><code>spanItem</code></strong> - Span item to write</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_discWriteImage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_discWriteImage</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">writer</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_discWriteImage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes a ISO image for a span item.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration</li>
+        <li><strong class="pname"><code>writer</code></strong> - Writer to use</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_discConsistencyCheck"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_discConsistencyCheck</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">writer</span>,
+        <span class="sig-arg">spanItem</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_discConsistencyCheck">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run a consistency check on an ISO image for a span item.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration</li>
+        <li><strong class="pname"><code>writer</code></strong> - Writer to use</li>
+        <li><strong class="pname"><code>spanItem</code></strong> - Span item to write</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_consistencyCheck"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_consistencyCheck</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">fileList</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_consistencyCheck">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Runs a consistency check against media in the backup device.</p>
+  <p>The function mounts the device at a temporary mount point in the 
+  working directory, and then compares the passed-in file list's digest map
+  with the one generated from the disc.  The two lists should be 
+  identical.</p>
+  <p>If no exceptions are thrown, there were no problems with the 
+  consistency check.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Config object.</li>
+        <li><strong class="pname"><code>fileList</code></strong> - BackupFileList whose contents to check against</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the check fails</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem working with the media.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Warning:</strong>
+        The implementation of this function is very UNIX-specific.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_getYesNoAnswer"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getYesNoAnswer</span>(<span class="sig-arg">prompt</span>,
+        <span class="sig-arg">default</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getYesNoAnswer">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get a yes/no answer from the user. The default will be placed at the 
+  end of the prompt. A &quot;Y&quot; or &quot;y&quot; is considered yes, 
+  anything else no. A blank (empty) response results in the default.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>prompt</code></strong> - Prompt to show.</li>
+        <li><strong class="pname"><code>default</code></strong> - Default to set if the result is blank</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Boolean true/false corresponding to Y/N</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getChoiceAnswer"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getChoiceAnswer</span>(<span class="sig-arg">prompt</span>,
+        <span class="sig-arg">default</span>,
+        <span class="sig-arg">validChoices</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getChoiceAnswer">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get a particular choice from the user. The default will be placed at 
+  the end of the prompt. The function loops until getting a valid choice. A
+  blank (empty) response results in the default.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>prompt</code></strong> - Prompt to show.</li>
+        <li><strong class="pname"><code>default</code></strong> - Default to set if the result is None or blank.</li>
+        <li><strong class="pname"><code>validChoices</code></strong> - List of valid choices (strings)</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Valid choice from user.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getFloat"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getFloat</span>(<span class="sig-arg">prompt</span>,
+        <span class="sig-arg">default</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getFloat">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get a floating point number from the user. The default will be placed 
+  at the end of the prompt. The function loops until getting a valid 
+  floating point number. A blank (empty) response results in the 
+  default.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>prompt</code></strong> - Prompt to show.</li>
+        <li><strong class="pname"><code>default</code></strong> - Default to set if the result is None or blank.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Floating point number from user</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getReturn"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getReturn</span>(<span class="sig-arg">prompt</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.tools.span-pysrc.html#_getReturn">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get a return key from the user.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>prompt</code></strong> - Prompt to show.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

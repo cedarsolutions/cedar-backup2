@@ -1,0 +1,45 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Installing on a Debian System</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch03.html" title="Chapter 3. Installation"><link rel="prev" href="ch03.html" title="Chapter 3. Installation"><link rel="next" href="ch03s03.html" title="Installing from Source"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Installing on a Debian System</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch03.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Installation</th><td width="20%" align="right"> <a accesskey="n" href="ch03s03.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-install-debian"></a>Installing on a Debian System</h2></div></div></div><p>
+         The Debian buster release will be the last release that includes 
+         packages for Cedar Backup v2.
+      </p><p>
+         The easiest way to install Cedar Backup onto a Debian system is by
+         using a tool such as <span class="command"><strong>apt-get</strong></span> or
+         <span class="command"><strong>aptitude</strong></span>.
+      </p><p>
+         If you are running a Debian release which contains Cedar Backup, you
+         can use your normal Debian mirror as an APT data source. (The Debian
+         <span class="quote">&#8220;<span class="quote">etch</span>&#8221;</span> release is the first release to contain Cedar
+         Backup 2.) Otherwise, you need to install from the Cedar Solutions APT
+         data source.  
+         <a href="#ftn.cedar-install-foot-software" class="footnote" name="cedar-install-foot-software"><sup class="footnote">[13]</sup></a>
+         To do this, add the Cedar Solutions APT data source to
+         your <code class="filename">/etc/apt/sources.list</code> file.
+      </p><p>
+         After you have configured the proper APT data source, install Cedar
+         Backup using this set of commands:
+      </p><pre class="screen">
+$ apt-get update
+$ apt-get install cedar-backup2 cedar-backup2-doc
+      </pre><p>
+         Several of the Cedar Backup dependencies are listed as
+         <span class="quote">&#8220;<span class="quote">recommended</span>&#8221;</span> rather than required.  If you are
+         installing Cedar Backup on a master machine, you must install some or
+         all of the recommended dependencies, depending on which actions you
+         intend to execute.  The stage action normally requires ssh, and the
+         store action requires eject and either cdrecord/mkisofs or
+         dvd+rw-tools.  Clients must also install some sort of ssh
+         server if a remote master will collect backups from them.
+      </p><p>
+         If you would prefer, you can also download the
+         <code class="filename">.deb</code> files and install them by hand with a tool
+         such as <span class="command"><strong>dpkg</strong></span>.  You can find 
+         these files files in the Cedar Solutions APT source.
+      </p><p>
+         In either case, once the package has been installed, you can proceed
+         to configuration as described in <a class="xref" href="ch05.html" title="Chapter 5. Configuration">Chapter 5, <i>Configuration</i></a>.
+      </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+            The Debian package-management tools must generally be run as root.
+            It is safe to install Cedar Backup to a non-standard location and
+            run it as a non-root user.  However, to do this, you must install
+            the source distribution instead of the Debian package.
+         </p></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.cedar-install-foot-software" class="footnote"><p><a href="#cedar-install-foot-software" class="para"><sup class="para">[13] </sup></a>See <a class="ulink" href="http://cedar-solutions.com/debian.html" target="_top">http://cedar-solutions.com/debian.html</a></p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch03.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch03s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 3. Installation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Installing from Source</td></tr></table></div></body></html>

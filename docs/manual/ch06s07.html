@@ -1,0 +1,96 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Encrypt Extension</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch06.html" title="Chapter 6. Official Extensions"><link rel="prev" href="ch06s06.html" title="Mbox Extension"><link rel="next" href="ch06s08.html" title="Split Extension"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Encrypt Extension</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s06.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Official Extensions</th><td width="20%" align="right"> <a accesskey="n" href="ch06s08.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-extensions-encrypt"></a>Encrypt Extension</h2></div></div></div><p>
+         The Encrypt Extension is a Cedar Backup extension used to encrypt
+         backups.  It does this by encrypting the contents of a master's
+         staging directory each day after the stage action is run.  This way,
+         backed-up data is encrypted both when sitting on the master and when
+         written to disc.  This extension must be run before the standard store
+         action, otherwise unencrypted data will be written to disc.
+      </p><p>
+         There are several differents ways encryption could have been built in
+         to or layered on to Cedar Backup.  I asked the mailing list for
+         opinions on the subject in January 2007 and did not get a lot of
+         feedback, so I chose the option that was simplest to understand and
+         simplest to implement.  If other encryption use cases make themselves
+         known in the future, this extension can be enhanced or replaced.
+      </p><p>
+         Currently, this extension supports only GPG.  However, it would be
+         straightforward to support other public-key encryption mechanisms,
+         such as OpenSSL.
+      </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3><p>
+            If you decide to encrypt your backups, be <span class="emphasis"><em>absolutely
+            sure</em></span> that you have your GPG secret key saved off
+            someplace safe &#8212; someplace other than on your backup disc.
+            If you lose your secret key, your backup will be useless.
+         </p><p>
+            I suggest that before you rely on this extension, you should
+            execute a dry run and make sure you can successfully decrypt the
+            backup that is written to disc.
+         </p></div><p>
+         Before configuring the Encrypt extension, you must configure GPG.
+         Either create a new keypair or use an existing one.  Determine which
+         user will execute your backup (typically root) and have that user
+         import <span class="emphasis"><em>and lsign</em></span> the public half of the keypair.
+         Then, save off the secret half of the keypair someplace safe, apart
+         from your backup (i.e. on a floppy disk or USB drive).  Make sure you
+         know the recipient name associated with the public key because you'll
+         need it to configure Cedar Backup.  (If you can run 
+         <span class="command"><strong>gpg -e -r "Recipient Name" file.txt</strong></span> 
+         and it executes cleanly with no user interaction required, you should
+         be OK.)
+      </p><p>
+         An encrypted backup has the same file structure as a normal backup, so
+         all of the instructions in <a class="xref" href="apc.html" title="Appendix C. Data Recovery">Appendix C, <i>Data Recovery</i></a> apply.
+         The only difference is that encrypted files will have an additional
+         <code class="filename">.gpg</code> extension (so
+         for instance <code class="filename">file.tar.gz</code> becomes
+         <code class="filename">file.tar.gz.gpg</code>).  To recover decrypted data, simply
+         log on as a user which has access to the secret key and decrypt the
+         <code class="filename">.gpg</code> file that you are interested in.  Then, recover
+         the data as usual.
+      </p><p>
+         Note: I am being intentionally vague about how to configure and use GPG,
+         because I do not want to encourage neophytes to blindly use this
+         extension.  If you do not already understand GPG well enough to follow
+         the two paragraphs above, <span class="emphasis"><em>do not use this
+         extension</em></span>.  Instead, before encrypting your backups, check
+         out the excellent GNU Privacy Handbook at 
+         <a class="ulink" href="http://www.gnupg.org/gph/en/manual.html" target="_top">http://www.gnupg.org/gph/en/manual.html</a> 
+         and gain an understanding of how encryption can help you or hurt you.
+      </p><p>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </p><pre class="programlisting">
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;encrypt&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.encrypt&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;301&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </pre><p>
+         This extension relies on the options and staging configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <code class="literal">encrypt</code> configuration
+         section.  This is an example Encrypt configuration section:
+      </p><pre class="programlisting">
+&lt;encrypt&gt;
+   &lt;encrypt_mode&gt;gpg&lt;/encrypt_mode&gt;
+   &lt;encrypt_target&gt;Backup User&lt;/encrypt_target&gt;
+&lt;/encrypt&gt;
+      </pre><p>
+         The following elements are part of the Encrypt configuration section:
+      </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">encrypt_mode</code></span></dt><dd><p>Encryption mode.</p><p>
+                  This value specifies which encryption mechanism will be used
+                  by the extension.
+               </p><p>
+                  Currently, only the GPG public-key encryption mechanism is
+                  supported.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be <code class="literal">gpg</code>.
+               </p></dd><dt><span class="term"><code class="literal">encrypt_target</code></span></dt><dd><p>Encryption target.</p><p>
+                  The value in this field is dependent on the encryption mode.
+                  For the <code class="literal">gpg</code> mode, this is the name of the
+                  recipient whose public key will be used to encrypt the backup
+                  data, i.e. the value accepted by <span class="command"><strong>gpg -r</strong></span>.
+               </p></dd></dl></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Mbox Extension </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Split Extension</td></tr></table></div></body></html>

@@ -1,0 +1,201 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Subversion Extension</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch06.html" title="Chapter 6. Official Extensions"><link rel="prev" href="ch06s02.html" title="Amazon S3 Extension"><link rel="next" href="ch06s04.html" title="MySQL Extension"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Subversion Extension</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s02.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Official Extensions</th><td width="20%" align="right"> <a accesskey="n" href="ch06s04.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-extensions-subversion"></a>Subversion Extension</h2></div></div></div><p>
+         The Subversion Extension is a Cedar Backup extension
+         used to back up Subversion 
+         <a href="#ftn.idm2687" class="footnote" name="idm2687"><sup class="footnote">[23]</sup></a>
+         version control repositories via the Cedar Backup command line.
+         It is intended to be run either immediately before or immediately
+         after the standard collect action.
+      </p><p>
+         Each configured Subversion repository can be backed using the same
+         collect modes allowed for filesystems in the standard Cedar Backup
+         collect action (weekly, daily, incremental) and the output can be
+         compressed using either <span class="command"><strong>gzip</strong></span> or
+         <span class="command"><strong>bzip2</strong></span>.
+      </p><p>
+         There are two different kinds of Subversion repositories at this
+         writing: BDB (Berkeley Database) and FSFS (a "filesystem within a
+         filesystem").  This extension backs up both kinds of repositories in
+         the same way, using <span class="command"><strong>svnadmin dump</strong></span> in an incremental
+         mode.  
+      </p><p>
+         It turns out that FSFS repositories can also be backed up just like
+         any other filesystem directory.  If you would rather do the backup
+         that way, then use the normal collect action rather than this
+         extension.  If you decide to do that, be sure to consult the
+         Subversion documentation and make sure you understand the limitations
+         of this kind of backup. 
+      </p><p>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </p><pre class="programlisting">
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;subversion&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.subversion&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;99&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </pre><p>
+         This extension relies on the options and collect configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <code class="literal">subversion</code> configuration
+         section.  This is an example Subversion configuration section:
+      </p><pre class="programlisting">
+&lt;subversion&gt;
+   &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
+   &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
+   &lt;repository&gt;
+      &lt;abs_path&gt;/opt/public/svn/docs&lt;/abs_path&gt;
+   &lt;/repository&gt;
+   &lt;repository&gt;
+      &lt;abs_path&gt;/opt/public/svn/web&lt;/abs_path&gt;
+      &lt;compress_mode&gt;gzip&lt;/compress_mode&gt;
+   &lt;/repository&gt;
+   &lt;repository_dir&gt;
+      &lt;abs_path&gt;/opt/private/svn&lt;/abs_path&gt;
+      &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
+   &lt;/repository_dir&gt;
+&lt;/subversion&gt;
+      </pre><p>
+         The following elements are part of the Subversion configuration section:
+      </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">collect_mode</code></span></dt><dd><p>Default collect mode.</p><p>
+                  The collect mode describes how frequently a Subversion
+                  repository is backed up.  The Subversion extension
+                  recognizes the same collect modes as the standard Cedar
+                  Backup collect action (see <a class="xref" href="ch02.html" title="Chapter 2. Basic Concepts">Chapter 2, <i>Basic Concepts</i></a>).
+               </p><p>
+                  This value is the collect mode that will be used by
+                  default during the backup process.  Individual
+                  repositories (below) may override this value.  If
+                  <span class="emphasis"><em>all</em></span> individual repositories provide
+                  their own value, then this default value may be omitted
+                  from configuration.
+               </p><p>
+                  Note: if your backup device does not suppport multisession
+                  discs, then you should probably use the
+                  <code class="literal">daily</code> collect mode to avoid losing
+                  data.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                  <code class="literal">daily</code>, <code class="literal">weekly</code> or
+                  <code class="literal">incr</code>.
+               </p></dd><dt><span class="term"><code class="literal">compress_mode</code></span></dt><dd><p>Default compress mode.</p><p>
+                  Subversion repositories backups are just
+                  specially-formatted text files, and often compress quite
+                  well using <span class="command"><strong>gzip</strong></span> or
+                  <span class="command"><strong>bzip2</strong></span>.  The compress mode describes how
+                  the backed-up data will be compressed, if at all.  
+               </p><p>
+                  This value is the compress mode that will be used by
+                  default during the backup process.  Individual
+                  repositories (below) may override this value.  If
+                  <span class="emphasis"><em>all</em></span> individual repositories provide
+                  their own value, then this default value may be omitted
+                  from configuration.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                  <code class="literal">none</code>, <code class="literal">gzip</code> or
+                  <code class="literal">bzip2</code>.
+               </p></dd><dt><span class="term"><code class="literal">repository</code></span></dt><dd><p>A Subversion repository be collected.</p><p>
+                  This is a subsection which contains information about
+                  a specific Subversion repository to be backed up.
+               </p><p>
+                  This section can be repeated as many times as is necessary.
+                  At least one repository or repository directory must be
+                  configured.
+               </p><p>
+                  The <code class="literal">repository</code> subsection contains the
+                  following fields:
+               </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">collect_mode</code></span></dt><dd><p>Collect mode for this repository.</p><p>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default collect mode.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                           <code class="literal">daily</code>, <code class="literal">weekly</code> or
+                           <code class="literal">incr</code>.
+                        </p></dd><dt><span class="term"><code class="literal">compress_mode</code></span></dt><dd><p>Compress mode for this repository.</p><p>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default compress mode.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                           <code class="literal">none</code>, <code class="literal">gzip</code> or
+                           <code class="literal">bzip2</code>.
+                        </p></dd><dt><span class="term"><code class="literal">abs_path</code></span></dt><dd><p>
+                           Absolute path of the Subversion repository to
+                           back up.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be an absolute path.
+                        </p></dd></dl></div></dd><dt><span class="term"><code class="literal">repository_dir</code></span></dt><dd><p>A Subversion parent repository directory be collected.</p><p>
+                  This is a subsection which contains information about a
+                  Subversion parent repository directory to be backed up.  Any
+                  subdirectory immediately within this directory is assumed to
+                  be a Subversion repository, and will be backed up.
+               </p><p>
+                  This section can be repeated as many times as is necessary.
+                  At least one repository or repository directory must be
+                  configured.
+               </p><p>
+                  The <code class="literal">repository_dir</code> subsection contains the
+                  following fields:
+               </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">collect_mode</code></span></dt><dd><p>Collect mode for this repository.</p><p>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default collect mode.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                           <code class="literal">daily</code>, <code class="literal">weekly</code> or
+                           <code class="literal">incr</code>.
+                        </p></dd><dt><span class="term"><code class="literal">compress_mode</code></span></dt><dd><p>Compress mode for this repository.</p><p>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default compress mode.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                           <code class="literal">none</code>, <code class="literal">gzip</code> or
+                           <code class="literal">bzip2</code>.
+                        </p></dd><dt><span class="term"><code class="literal">abs_path</code></span></dt><dd><p>
+                           Absolute path of the Subversion repository to
+                           back up.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be an absolute path.
+                        </p></dd><dt><span class="term"><code class="literal">exclude</code></span></dt><dd><p>List of paths or patterns to exclude from the backup.</p><p>
+                           This is a subsection which contains a set of paths
+                           and patterns to be excluded within this subversion
+                           parent directory.
+                        </p><p>
+                           This section is entirely optional, and if it exists
+                           can also be empty.  
+                        </p><p>
+                           The exclude subsection can contain one or more of each of
+                           the following fields:
+                        </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">rel_path</code></span></dt><dd><p>
+                                    A relative path to be excluded from the
+                                    backup.
+                                 </p><p>
+                                    The path is assumed to be relative to the
+                                    subversion parent directory itself.  For instance, if
+                                    the configured subversion parent directory is
+                                    <code class="filename">/opt/svn</code> a
+                                    configured relative path of
+                                    <code class="filename">software</code> would exclude the
+                                    path <code class="filename">/opt/svn/software</code>.
+                                 </p><p>
+                                    This field can be repeated as many times as
+                                    is necessary.
+                                 </p><p>
+                                    <span class="emphasis"><em>Restrictions:</em></span> Must be non-empty.
+                                 </p></dd><dt><span class="term"><code class="literal">pattern</code></span></dt><dd><p>
+                                    A pattern to be excluded from the backup.
+                                 </p><p>
+                                    The pattern must be a Python regular
+                                    expression.  <a href="ch05s02.html#ftn.cedar-config-foot-regex" class="footnoteref"><sup class="footnoteref">[19]</sup></a> 
+                                    It is assumed to be bounded at front and
+                                    back by the beginning and end of the
+                                    string (i.e. it is treated as if it
+                                    begins with <code class="literal">^</code> and
+                                    ends with <code class="literal">$</code>).
+                                 </p><p>
+                                    This field can be repeated as many times as
+                                    is necessary.
+                                 </p><p>
+                                    <span class="emphasis"><em>Restrictions:</em></span> Must be non-empty
+                                 </p></dd></dl></div></dd></dl></div></dd></dl></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idm2687" class="footnote"><p><a href="#idm2687" class="para"><sup class="para">[23] </sup></a>See <a class="ulink" href="http://subversion.org" target="_top">http://subversion.org</a></p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Amazon S3 Extension </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> MySQL Extension</td></tr></table></div></body></html>

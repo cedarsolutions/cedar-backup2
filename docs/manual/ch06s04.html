@@ -1,0 +1,148 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>MySQL Extension</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch06.html" title="Chapter 6. Official Extensions"><link rel="prev" href="ch06s03.html" title="Subversion Extension"><link rel="next" href="ch06s05.html" title="PostgreSQL Extension"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">MySQL Extension</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s03.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Official Extensions</th><td width="20%" align="right"> <a accesskey="n" href="ch06s05.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-extensions-mysql"></a>MySQL Extension</h2></div></div></div><p>
+         The MySQL Extension is a Cedar Backup extension used to back up MySQL
+         <a href="#ftn.idm2848" class="footnote" name="idm2848"><sup class="footnote">[24]</sup></a> 
+         databases via the Cedar Backup command line.  It is intended to be run
+         either immediately before or immediately after the standard collect
+         action.
+      </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+            This extension always produces a full backup.  There is currently
+            no facility for making incremental backups.  If/when someone has a
+            need for this and can describe how to do it, I will update this
+            extension or provide another.
+         </p></div><p>
+         The backup is done via the <span class="command"><strong>mysqldump</strong></span> command
+         included with the MySQL product.  Output can be compressed using
+         <span class="command"><strong>gzip</strong></span> or <span class="command"><strong>bzip2</strong></span>.  Administrators
+         can configure the extension either to back up all databases or to back
+         up only specific databases.  
+      </p><p>
+         The extension assumes that all configured databases can be backed up
+         by a single user.  Often, the <span class="quote">&#8220;<span class="quote">root</span>&#8221;</span> database user will
+         be used.  An alternative is to create a separate MySQL
+         <span class="quote">&#8220;<span class="quote">backup</span>&#8221;</span> user and grant that user rights to read (but not
+         write) various databases as needed.  This second option is probably
+         your best choice.
+      </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3><p>
+            The extension accepts a username and password in configuration.
+            However, you probably do not want to list those values in Cedar
+            Backup configuration.  This is because Cedar Backup will provide these
+            values to <span class="command"><strong>mysqldump</strong></span> via the command-line
+            <code class="option">--user</code> and <code class="option">--password</code> switches,
+            which will be visible to other users in the process listing.
+         </p><p>
+            Instead, you should configure the username and password in one of MySQL's
+            configuration files.  Typically, that would be done by putting a stanza like
+            this in <code class="filename">/root/.my.cnf</code>:
+         </p><pre class="programlisting">
+[mysqldump]
+user     = root
+password = &lt;secret&gt;
+         </pre><p>
+            Of course, if you are executing the backup as a user other than root, then
+            you would create the file in that user's home directory instead.
+         </p><p>
+            As a side note, it is also possible to configure <code class="filename">.my.cnf</code>
+            such that Cedar Backup can back up a remote database server:
+         </p><pre class="programlisting">
+[mysqldump]
+host = remote.host
+         </pre><p>
+            For this to work, you will also need to grant privileges properly
+            for the user which is executing the backup.  See your MySQL documentation 
+            for more information about how this can be done.
+         </p><p>
+            Regardless of whether you are using <code class="filename">~/.my.cnf</code> or
+            <code class="filename">/etc/cback.conf</code> to store database login and
+            password information, you should be careful about who is allowed to
+            view that information.  Typically, this means locking down permissions
+            so that only the file owner can read the file contents (i.e. use mode
+            <code class="literal">0600</code>).
+         </p></div><p>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </p><pre class="programlisting">
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;mysql&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.mysql&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;99&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </pre><p>
+         This extension relies on the options and collect configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <code class="literal">mysql</code> configuration section.
+         This is an example MySQL configuration section:
+      </p><pre class="programlisting">
+&lt;mysql&gt;
+   &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
+   &lt;all&gt;Y&lt;/all&gt;
+&lt;/mysql&gt;
+      </pre><p>
+         If you have decided to configure login information in Cedar Backup
+         rather than using MySQL configuration, then you would add the username
+         and password fields to configuration:
+      </p><pre class="programlisting">
+&lt;mysql&gt;
+   &lt;user&gt;root&lt;/user&gt;
+   &lt;password&gt;password&lt;/password&gt;
+   &lt;compress_mode&gt;bzip2&lt;/compress_mode&gt;
+   &lt;all&gt;Y&lt;/all&gt;
+&lt;/mysql&gt;
+      </pre><p>
+         The following elements are part of the MySQL configuration section:
+      </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">user</code></span></dt><dd><p>Database user.</p><p>
+                  The database user that the backup should be executed as.
+                  Even if you list more than one database (below) all backups
+                  must be done as the same user.  Typically, this would be
+                  <code class="literal">root</code> (i.e. the database root user, not the
+                  system root user).
+               </p><p>
+                  This value is optional.  You should probably configure the
+                  username and password in MySQL configuration instead, as
+                  discussed above.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> If provided, must be
+                  non-empty.
+               </p></dd><dt><span class="term"><code class="literal">password</code></span></dt><dd><p>Password associated with the database user.</p><p>
+                  This value is optional.  You should probably configure the
+                  username and password in MySQL configuration instead, as
+                  discussed above.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> If provided, must be
+                  non-empty.
+               </p></dd><dt><span class="term"><code class="literal">compress_mode</code></span></dt><dd><p>Compress mode.</p><p>
+                  MySQL databases dumps are just
+                  specially-formatted text files, and often compress quite
+                  well using <span class="command"><strong>gzip</strong></span> or
+                  <span class="command"><strong>bzip2</strong></span>.  The compress mode describes how
+                  the backed-up data will be compressed, if at all.  
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                  <code class="literal">none</code>, <code class="literal">gzip</code> or
+                  <code class="literal">bzip2</code>.
+               </p></dd><dt><span class="term"><code class="literal">all</code></span></dt><dd><p>Indicates whether to back up all databases.</p><p>
+                  If this value is <code class="literal">Y</code>, then all MySQL
+                  databases will be backed up.  If this value is
+                  <code class="literal">N</code>, then one or more specific databases
+                  must be specified (see below).
+               </p><p>
+                  If you choose this option, the entire database backup will go
+                  into one big dump file.  
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be a boolean
+                  (<code class="literal">Y</code> or <code class="literal">N</code>).
+               </p></dd><dt><span class="term"><code class="literal">database</code></span></dt><dd><p>Named database to be backed up.</p><p>
+                  If you choose to specify individual databases rather than all
+                  databases, then each database will be backed up into its own
+                  dump file.
+               </p><p>
+                  This field can be repeated as many times as is necessary.  At
+                  least one database must be configured if the all option
+                  (above) is set to <code class="literal">N</code>.  You may not
+                  configure any individual databases if the all option is set
+                  to <code class="literal">Y</code>.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be non-empty.
+               </p></dd></dl></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idm2848" class="footnote"><p><a href="#idm2848" class="para"><sup class="para">[24] </sup></a>See <a class="ulink" href="http://www.mysql.com" target="_top">http://www.mysql.com</a></p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Subversion Extension </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> PostgreSQL Extension</td></tr></table></div></body></html>

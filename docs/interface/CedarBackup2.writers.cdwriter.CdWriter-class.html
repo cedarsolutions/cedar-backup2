@@ -1,0 +1,2356 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.writers.cdwriter.CdWriter</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.writers-module.html">Package&nbsp;writers</a> ::
+        <a href="CedarBackup2.writers.cdwriter-module.html">Module&nbsp;cdwriter</a> ::
+        Class&nbsp;CdWriter
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.writers.cdwriter.CdWriter-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class CdWriter</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">CdWriter</strong>
+</pre>
+
+<hr />
+<p>Class representing a device that knows how to write CD media.</p>
+  <h1 class="heading">Summary</h1>
+    <p>This is a class representing a device that knows how to write CD 
+    media.  It provides common operations for the device, such as ejecting 
+    the media, writing an ISO image to the media, or checking for the 
+    current media capacity.  It also provides a place to store device 
+    attributes, such as whether the device supports writing multisession 
+    discs, etc.</p>
+    <p>This class is implemented in terms of the <code>eject</code> and 
+    <code>cdrecord</code> programs, both of which should be available on 
+    most UN*X platforms.</p>
+  <h1 class="heading">Image Writer Interface</h1>
+    <p>The following methods make up the &quot;image writer&quot; interface
+    shared with other kinds of writers (such as DVD writers):</p>
+<pre class="literalblock">
+  __init__
+  initializeImage()
+  addImageEntry()
+  writeImage()
+  setImageNewDisc()
+  retrieveCapacity()
+  getEstimatedImageSize()
+</pre>
+    <p>Only these methods will be used by other Cedar Backup functionality 
+    that expects a compatible image writer.</p>
+    <p>The media attribute is also assumed to be available.</p>
+  <h1 class="heading">Media Types</h1>
+    <p>This class knows how to write to two different kinds of media, 
+    represented by the following constants:</p>
+    <ul>
+      <li>
+        <code>MEDIA_CDR_74</code>: 74-minute CD-R media (650 MB capacity)
+      </li>
+      <li>
+        <code>MEDIA_CDRW_74</code>: 74-minute CD-RW media (650 MB capacity)
+      </li>
+      <li>
+        <code>MEDIA_CDR_80</code>: 80-minute CD-R media (700 MB capacity)
+      </li>
+      <li>
+        <code>MEDIA_CDRW_80</code>: 80-minute CD-RW media (700 MB capacity)
+      </li>
+    </ul>
+    <p>Most hardware can read and write both 74-minute and 80-minute CD-R 
+    and CD-RW media.  Some older drives may only be able to write CD-R 
+    media. The difference between the two is that CD-RW media can be 
+    rewritten (erased), while CD-R media cannot be.</p>
+    <p>I do not support any other configurations for a couple of reasons.  
+    The first is that I've never tested any other kind of media.  The 
+    second is that anything other than 74 or 80 minute is apparently 
+    non-standard.</p>
+  <h1 class="heading">Device Attributes vs. Media Attributes</h1>
+    <p>A given writer instance has two different kinds of attributes 
+    associated with it, which I call device attributes and media 
+    attributes.  Device attributes are things which can be determined 
+    without looking at the media, such as whether the drive supports 
+    writing multisession disks or has a tray.  Media attributes are 
+    attributes which vary depending on the state of the media, such as the 
+    remaining capacity on a disc.  In general, device attributes are 
+    available via instance variables and are constant over the life of an 
+    object, while media attributes can be retrieved through method 
+    calls.</p>
+  <h1 class="heading">Talking to Hardware</h1>
+    <p>This class needs to talk to CD writer hardware in two different 
+    ways: through cdrecord to actually write to the media, and through the 
+    filesystem to do things like open and close the tray.</p>
+    <p>Historically, CdWriter has interacted with cdrecord using the scsiId
+    attribute, and with most other utilities using the device attribute. 
+    This changed somewhat in Cedar Backup 2.9.0.</p>
+    <p>When Cedar Backup was first written, the only way to interact with 
+    cdrecord was by using a SCSI device id.  IDE devices were mapped to 
+    pseudo-SCSI devices through the kernel.  Later, extended SCSI 
+    &quot;methods&quot; arrived, and it became common to see 
+    <code>ATA:1,0,0</code> or <code>ATAPI:0,0,0</code> as a way to address 
+    IDE hardware.  By late 2006, <code>ATA</code> and <code>ATAPI</code> 
+    had apparently been deprecated in favor of just addressing the IDE 
+    device directly by name, i.e. <code>/dev/cdrw</code>.</p>
+    <p>Because of this latest development, it no longer makes sense to 
+    require a CdWriter to be created with a SCSI id -- there might not be 
+    one.  So, the passed-in SCSI id is now optional.  Also, there is now a 
+    hardwareId attribute.  This attribute is filled in with either the SCSI
+    id (if provided) or the device (otherwise).  The hardware id is the 
+    value that will be passed to cdrecord in the <code>dev=</code> 
+    argument.</p>
+  <h1 class="heading">Testing</h1>
+    <p>It's rather difficult to test this code in an automated fashion, 
+    even if you have access to a physical CD writer drive.  It's even more 
+    difficult to test it if you are running on some build daemon (think of 
+    a Debian autobuilder) which can't be expected to have any hardware or 
+    any media that you could write to.</p>
+    <p>Because of this, much of the implementation below is in terms of 
+    static methods that are supposed to take defined actions based on their
+    arguments.  Public methods are then implemented in terms of a series of
+    calls to simplistic static methods.  This way, we can test as much as 
+    possible of the functionality via testing the static methods, while 
+    hoping that if the static methods are called appropriately, things will
+    work properly.  It's not perfect, but it's much better than no testing 
+    at all.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">device</span>,
+        <span class="summary-sig-arg">scsiId</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">driveSpeed</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">mediaType</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">noEject</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">refreshMediaDelay</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">ejectDelay</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">unittest</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Initializes a CD writer object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="isRewritable"></a><span class="summary-sig-name">isRewritable</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Indicates whether the media is rewritable per configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.isRewritable">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_retrieveProperties" class="summary-sig-name" onclick="show_private();">_retrieveProperties</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Retrieves properties for a device from <code>cdrecord</code>.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._retrieveProperties">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#retrieveCapacity" class="summary-sig-name">retrieveCapacity</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">entireDisc</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">useMulti</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Retrieves capacity for the current media in terms of a 
+      <code>MediaCapacity</code> object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.retrieveCapacity">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getBoundaries" class="summary-sig-name" onclick="show_private();">_getBoundaries</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">entireDisc</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">useMulti</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Gets the ISO boundaries for the media.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getBoundaries">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#openTray" class="summary-sig-name">openTray</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Opens the device's tray and leaves it open.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.openTray">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#closeTray" class="summary-sig-name">closeTray</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Closes the device's tray.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.closeTray">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#refreshMedia" class="summary-sig-name">refreshMedia</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Opens and then immediately closes the device's tray, to refresh the 
+      device's idea of the media.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.refreshMedia">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#writeImage" class="summary-sig-name">writeImage</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">imagePath</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">newDisc</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">writeMulti</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Writes an ISO image to the media in the device.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.writeImage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_blankMedia" class="summary-sig-name" onclick="show_private();">_blankMedia</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Blanks the media in the device, if the media is rewritable.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._blankMedia">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#initializeImage" class="summary-sig-name">initializeImage</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">newDisc</span>,
+        <span class="summary-sig-arg">tmpdir</span>,
+        <span class="summary-sig-arg">mediaLabel</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Initializes the writer's associated ISO image.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.initializeImage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#addImageEntry" class="summary-sig-name">addImageEntry</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">graftPoint</span>)</span><br />
+      Adds a filepath entry to the writer's associated ISO image.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.addImageEntry">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#setImageNewDisc" class="summary-sig-name">setImageNewDisc</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">newDisc</span>)</span><br />
+      Resets (overrides) the newDisc flag on the internal image.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.setImageNewDisc">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#getEstimatedImageSize" class="summary-sig-name">getEstimatedImageSize</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Gets the estimated size of the image associated with the writer.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.getEstimatedImageSize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDevice"></a><span class="summary-sig-name">_getDevice</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getDevice">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getScsiId"></a><span class="summary-sig-name">_getScsiId</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the SCSI id value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getScsiId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getHardwareId"></a><span class="summary-sig-name">_getHardwareId</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the hardware id value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getHardwareId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDriveSpeed"></a><span class="summary-sig-name">_getDriveSpeed</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the drive speed.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getDriveSpeed">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getMedia"></a><span class="summary-sig-name">_getMedia</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the media description.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getMedia">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDeviceType"></a><span class="summary-sig-name">_getDeviceType</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device type.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getDeviceType">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDeviceVendor"></a><span class="summary-sig-name">_getDeviceVendor</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device vendor.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getDeviceVendor">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDeviceId"></a><span class="summary-sig-name">_getDeviceId</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getDeviceId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDeviceBufferSize"></a><span class="summary-sig-name">_getDeviceBufferSize</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device buffer size.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getDeviceBufferSize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDeviceSupportsMulti"></a><span class="summary-sig-name">_getDeviceSupportsMulti</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device-support-multi flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getDeviceSupportsMulti">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDeviceHasTray"></a><span class="summary-sig-name">_getDeviceHasTray</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device-has-tray flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getDeviceHasTray">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDeviceCanEject"></a><span class="summary-sig-name">_getDeviceCanEject</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device-can-eject flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getDeviceCanEject">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getRefreshMediaDelay"></a><span class="summary-sig-name">_getRefreshMediaDelay</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the configured refresh media delay, in 
+      seconds.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getRefreshMediaDelay">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getEjectDelay"></a><span class="summary-sig-name">_getEjectDelay</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the configured eject delay, in seconds.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getEjectDelay">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#unlockTray" class="summary-sig-name">unlockTray</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Unlocks the device's tray.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.unlockTray">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_createImage" class="summary-sig-name" onclick="show_private();">_createImage</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Creates an ISO image based on configuration in self._image.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._createImage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_writeImage" class="summary-sig-name" onclick="show_private();">_writeImage</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">imagePath</span>,
+        <span class="summary-sig-arg">writeMulti</span>,
+        <span class="summary-sig-arg">newDisc</span>)</span><br />
+      Write an ISO image to disc using cdrecord.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._writeImage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_calculateCapacity" class="summary-sig-name" onclick="show_private();">_calculateCapacity</a>(<span class="summary-sig-arg">media</span>,
+        <span class="summary-sig-arg">boundaries</span>)</span><br />
+      Calculates capacity for the media in terms of boundaries.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._calculateCapacity">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_parsePropertiesOutput" class="summary-sig-name" onclick="show_private();">_parsePropertiesOutput</a>(<span class="summary-sig-arg">output</span>)</span><br />
+      Parses the output from a <code>cdrecord</code> properties command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._parsePropertiesOutput">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_parseBoundariesOutput" class="summary-sig-name" onclick="show_private();">_parseBoundariesOutput</a>(<span class="summary-sig-arg">output</span>)</span><br />
+      Parses the output from a <code>cdrecord</code> capacity command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._parseBoundariesOutput">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_buildOpenTrayArgs" class="summary-sig-name" onclick="show_private();">_buildOpenTrayArgs</a>(<span class="summary-sig-arg">device</span>)</span><br />
+      Builds a list of arguments to be passed to a <code>eject</code> 
+      command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildOpenTrayArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_buildCloseTrayArgs" class="summary-sig-name" onclick="show_private();">_buildCloseTrayArgs</a>(<span class="summary-sig-arg">device</span>)</span><br />
+      Builds a list of arguments to be passed to a <code>eject</code> 
+      command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildCloseTrayArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_buildPropertiesArgs" class="summary-sig-name" onclick="show_private();">_buildPropertiesArgs</a>(<span class="summary-sig-arg">hardwareId</span>)</span><br />
+      Builds a list of arguments to be passed to a <code>cdrecord</code> 
+      command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildPropertiesArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_buildBoundariesArgs" class="summary-sig-name" onclick="show_private();">_buildBoundariesArgs</a>(<span class="summary-sig-arg">hardwareId</span>)</span><br />
+      Builds a list of arguments to be passed to a <code>cdrecord</code> 
+      command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildBoundariesArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_buildBlankArgs" class="summary-sig-name" onclick="show_private();">_buildBlankArgs</a>(<span class="summary-sig-arg">hardwareId</span>,
+        <span class="summary-sig-arg">driveSpeed</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Builds a list of arguments to be passed to a <code>cdrecord</code> 
+      command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildBlankArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_buildWriteArgs" class="summary-sig-name" onclick="show_private();">_buildWriteArgs</a>(<span class="summary-sig-arg">hardwareId</span>,
+        <span class="summary-sig-arg">imagePath</span>,
+        <span class="summary-sig-arg">driveSpeed</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">writeMulti</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Builds a list of arguments to be passed to a <code>cdrecord</code> 
+      command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildWriteArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_buildUnlockTrayArgs" class="summary-sig-name" onclick="show_private();">_buildUnlockTrayArgs</a>(<span class="summary-sig-arg">device</span>)</span><br />
+      Builds a list of arguments to be passed to a <code>eject</code> 
+      command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildUnlockTrayArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#device" class="summary-name">device</a><br />
+      Filesystem device name for this writer.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#scsiId" class="summary-name">scsiId</a><br />
+      SCSI id for the device, in the form 
+      <code>[&lt;method&gt;:]scsibus,target,lun</code>.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#hardwareId" class="summary-name">hardwareId</a><br />
+      Hardware id for this writer, either SCSI id or device path.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#driveSpeed" class="summary-name">driveSpeed</a><br />
+      Speed at which the drive writes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#media" class="summary-name">media</a><br />
+      Definition of media that is expected to be in the device.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#deviceType" class="summary-name">deviceType</a><br />
+      Type of the device, as returned from <code>cdrecord -prcap</code>.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#deviceVendor" class="summary-name">deviceVendor</a><br />
+      Vendor of the device, as returned from <code>cdrecord -prcap</code>.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#deviceId" class="summary-name">deviceId</a><br />
+      Device identification, as returned from <code>cdrecord -prcap</code>.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#deviceBufferSize" class="summary-name">deviceBufferSize</a><br />
+      Size of the device's write buffer, in bytes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#deviceSupportsMulti" class="summary-name">deviceSupportsMulti</a><br />
+      Indicates whether device supports multisession discs.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#deviceHasTray" class="summary-name">deviceHasTray</a><br />
+      Indicates whether the device has a media tray.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#deviceCanEject" class="summary-name">deviceCanEject</a><br />
+      Indicates whether the device supports ejecting its media.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#refreshMediaDelay" class="summary-name">refreshMediaDelay</a><br />
+      Refresh media delay, in seconds.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#ejectDelay" class="summary-name">ejectDelay</a><br />
+      Eject delay, in seconds.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">device</span>,
+        <span class="sig-arg">scsiId</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">driveSpeed</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">mediaType</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">noEject</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">refreshMediaDelay</span>=<span class="sig-default">0</span>,
+        <span class="sig-arg">ejectDelay</span>=<span class="sig-default">0</span>,
+        <span class="sig-arg">unittest</span>=<span class="sig-default">False</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes a CD writer object.</p>
+  <p>The current user must have write access to the device at the time the 
+  object is instantiated, or an exception will be thrown.  However, no 
+  media-related validation is done, and in fact there is no need for any 
+  media to be in the drive until one of the other media attribute-related 
+  methods is called.</p>
+  <p>The various instance variables such as <code>deviceType</code>, 
+  <code>deviceVendor</code>, etc. might be <code>None</code>, if we're 
+  unable to parse this specific information from the <code>cdrecord</code> 
+  output.  This information is just for reference.</p>
+  <p>The SCSI id is optional, but the device path is required.  If the SCSI
+  id is passed in, then the hardware id attribute will be taken from the 
+  SCSI id.  Otherwise, the hardware id will be taken from the device.</p>
+  <p>If cdrecord improperly detects whether your writer device has a tray 
+  and can be safely opened and closed, then pass in 
+  <code>noEject=False</code>.  This will override the properties and the 
+  device will never be ejected.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>device</code></strong> (Absolute path to a filesystem device, i.e. <code>/dev/cdrw</code>) - Filesystem device associated with this writer.</li>
+        <li><strong class="pname"><code>scsiId</code></strong> (If provided, SCSI id in the form 
+          <code>[&lt;method&gt;:]scsibus,target,lun</code>) - SCSI id for the device (optional).</li>
+        <li><strong class="pname"><code>driveSpeed</code></strong> (Use <code>2</code> for 2x device, etc. or <code>None</code> to 
+          use device default.) - Speed at which the drive writes.</li>
+        <li><strong class="pname"><code>mediaType</code></strong> (One of the valid media type as discussed above.) - Type of the media that is assumed to be in the drive.</li>
+        <li><strong class="pname"><code>noEject</code></strong> (Boolean true/false) - Overrides properties to indicate that the device does not support
+          eject.</li>
+        <li><strong class="pname"><code>refreshMediaDelay</code></strong> (Number of seconds, an integer &gt;= 0) - Refresh media delay to use, if any</li>
+        <li><strong class="pname"><code>ejectDelay</code></strong> (Number of seconds, an integer &gt;= 0) - Eject delay to use, if any</li>
+        <li><strong class="pname"><code>unittest</code></strong> (Boolean true/false) - Turns off certain validations, for use in unit testing.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the device is not valid for some reason.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the SCSI id is not in a valid form.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the drive speed is not an integer &gt;= 1.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If device properties could not be read for some reason.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>unittest</code> parameter should never be set to 
+        <code>True</code> outside of Cedar Backup code.  It is intended for
+        use in unit testing Cedar Backup internals and has no other 
+        sensible purpose.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_retrieveProperties"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_retrieveProperties</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._retrieveProperties">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Retrieves properties for a device from <code>cdrecord</code>.</p>
+  <p>The results are returned as a tuple of the object device attributes as
+  returned from <a 
+  href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_parsePropertiesOutput"
+  class="link" onclick="show_private();">_parsePropertiesOutput</a>: 
+  <code>(deviceType, deviceVendor, deviceId, deviceBufferSize, 
+  deviceSupportsMulti, deviceHasTray, deviceCanEject)</code>.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Results tuple as described above.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem talking to the device.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="retrieveCapacity"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">retrieveCapacity</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">entireDisc</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">useMulti</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.retrieveCapacity">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Retrieves capacity for the current media in terms of a 
+  <code>MediaCapacity</code> object.</p>
+  <p>If <code>entireDisc</code> is passed in as <code>True</code> the 
+  capacity will be for the entire disc, as if it were to be rewritten from 
+  scratch.  If the drive does not support writing multisession discs or if 
+  <code>useMulti</code> is passed in as <code>False</code>, the capacity 
+  will also be as if the disc were to be rewritten from scratch, but the 
+  indicated boundaries value will be <code>None</code>.  The same will 
+  happen if the disc cannot be read for some reason.  Otherwise, the 
+  capacity (including the boundaries) will represent whatever space remains
+  on the disc to be filled by future sessions.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>entireDisc</code></strong> (Boolean true/false) - Indicates whether to return capacity for entire disc.</li>
+        <li><strong class="pname"><code>useMulti</code></strong> (Boolean true/false) - Indicates whether a multisession disc should be assumed, if 
+          possible.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>MediaCapacity</code> object describing the capacity of the 
+          media.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If the media could not be read for some reason.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getBoundaries"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getBoundaries</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">entireDisc</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">useMulti</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._getBoundaries">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the ISO boundaries for the media.</p>
+  <p>If <code>entireDisc</code> is passed in as <code>True</code> the 
+  boundaries will be <code>None</code>, as if the disc were to be rewritten
+  from scratch.  If the drive does not support writing multisession discs, 
+  the returned value will be <code>None</code>. The same will happen if the
+  disc can't be read for some reason. Otherwise, the returned value will be
+  represent the boundaries of the disc's current contents.</p>
+  <p>The results are returned as a tuple of (lower, upper) as needed by the
+  <code>IsoImage</code> class.  Note that these values are in terms of ISO 
+  sectors, not bytes.  Clients should generally consider the boundaries 
+  value opaque, however.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>entireDisc</code></strong> (Boolean true/false) - Indicates whether to return capacity for entire disc.</li>
+        <li><strong class="pname"><code>useMulti</code></strong> (Boolean true/false) - Indicates whether a multisession disc should be assumed, if 
+          possible.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Boundaries tuple or <code>None</code>, as described above.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If the media could not be read for some reason.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_calculateCapacity"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_calculateCapacity</span>(<span class="sig-arg">media</span>,
+        <span class="sig-arg">boundaries</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._calculateCapacity">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Calculates capacity for the media in terms of boundaries.</p>
+  <p>If <code>boundaries</code> is <code>None</code> or the lower bound is 
+  0 (zero), then the capacity will be for the entire disc minus the initial
+  lead in. Otherwise, capacity will be as if the caller wanted to add an 
+  additional session to the end of the existing data on the disc.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>media</code></strong> - MediaDescription object describing the media capacity.</li>
+        <li><strong class="pname"><code>boundaries</code></strong> - Session boundaries as returned from <a 
+          href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getBoundaries"
+          class="link" onclick="show_private();">_getBoundaries</a>.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd><code>MediaCapacity</code> object describing the capacity of the 
+          media.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="openTray"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">openTray</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.openTray">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Opens the device's tray and leaves it open.</p>
+  <p>This only works if the device has a tray and supports ejecting its 
+  media. We have no way to know if the tray is currently open or closed, so
+  we just send the appropriate command and hope for the best.  If the 
+  device does not have a tray or does not support ejecting its media, then 
+  we do nothing.</p>
+  <p>If the writer was constructed with <code>noEject=True</code>, then 
+  this is a no-op.</p>
+  <p>Starting with Debian wheezy on my backup hardware, I started seeing 
+  consistent problems with the eject command.  I couldn't tell whether 
+  these problems were due to the device management system or to the new 
+  kernel (3.2.0).  Initially, I saw simple eject failures, possibly because
+  I was opening and closing the tray too quickly.  I worked around that 
+  behavior with the new ejectDelay flag.</p>
+  <p>Later, I sometimes ran into issues after writing an image to a disc: 
+  eject would give errors like &quot;unable to eject, last error: 
+  Inappropriate ioctl for device&quot;.  Various sources online (like 
+  Ubuntu bug #875543) suggested that the drive was being locked somehow, 
+  and that the workaround was to run 'eject -i off' to unlock it.  Sure 
+  enough, that fixed the problem for me, so now it's a normal 
+  error-handling strategy.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error talking to the device.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="closeTray"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">closeTray</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.closeTray">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Closes the device's tray.</p>
+  <p>This only works if the device has a tray and supports ejecting its 
+  media. We have no way to know if the tray is currently open or closed, so
+  we just send the appropriate command and hope for the best.  If the 
+  device does not have a tray or does not support ejecting its media, then 
+  we do nothing.</p>
+  <p>If the writer was constructed with <code>noEject=True</code>, then 
+  this is a no-op.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error talking to the device.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="refreshMedia"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">refreshMedia</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.refreshMedia">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Opens and then immediately closes the device's tray, to refresh the 
+  device's idea of the media.</p>
+  <p>Sometimes, a device gets confused about the state of its media.  
+  Often, all it takes to solve the problem is to eject the media and then 
+  immediately reload it.  (There are also configurable eject and refresh 
+  media delays which can be applied, for situations where this makes a 
+  difference.)</p>
+  <p>This only works if the device has a tray and supports ejecting its 
+  media. We have no way to know if the tray is currently open or closed, so
+  we just send the appropriate command and hope for the best.  If the 
+  device does not have a tray or does not support ejecting its media, then 
+  we do nothing.  The configured delays still apply, though.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error talking to the device.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="writeImage"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">writeImage</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">imagePath</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">newDisc</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">writeMulti</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.writeImage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes an ISO image to the media in the device.</p>
+  <p>If <code>newDisc</code> is passed in as <code>True</code>, we assume 
+  that the entire disc will be overwritten, and the media will be blanked 
+  before writing it if possible (i.e. if the media is rewritable).</p>
+  <p>If <code>writeMulti</code> is passed in as <code>True</code>, then a 
+  multisession disc will be written if possible (i.e. if the drive supports
+  writing multisession discs).</p>
+  <p>if <code>imagePath</code> is passed in as <code>None</code>, then the 
+  existing image configured with <code>initializeImage</code> will be used.
+  Under these circumstances, the passed-in <code>newDisc</code> flag will 
+  be ignored.</p>
+  <p>By default, we assume that the disc can be written multisession and 
+  that we should append to the current contents of the disc.  In any case, 
+  the ISO image must be generated appropriately (i.e. must take into 
+  account any existing session boundaries, etc.)</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>imagePath</code></strong> (String representing a path on disk) - Path to an ISO image on disk, or <code>None</code> to use 
+          writer's image</li>
+        <li><strong class="pname"><code>newDisc</code></strong> (Boolean true/false.) - Indicates whether the entire disc will overwritten.</li>
+        <li><strong class="pname"><code>writeMulti</code></strong> (Boolean true/false) - Indicates whether a multisession disc should be written, if 
+          possible.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the image path is not absolute.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some path cannot be encoded properly.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If the media could not be written to for some reason.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If no image is passed in and initializeImage() was not previously 
+        called</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_blankMedia"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_blankMedia</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._blankMedia">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Blanks the media in the device, if the media is rewritable.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If the media could not be written to for some reason.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parsePropertiesOutput"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parsePropertiesOutput</span>(<span class="sig-arg">output</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._parsePropertiesOutput">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses the output from a <code>cdrecord</code> properties command.</p>
+  <p>The <code>output</code> parameter should be a list of strings as 
+  returned from <code>executeCommand</code> for a <code>cdrecord</code> 
+  command with arguments as from <code>_buildPropertiesArgs</code>.  The 
+  list of strings will be parsed to yield information about the properties 
+  of the device.</p>
+  <p>The output is expected to be a huge long list of strings.  
+  Unfortunately, the strings aren't in a completely regular format.  
+  However, the format of individual lines seems to be regular enough that 
+  we can look for specific values.  Two kinds of parsing take place: one 
+  kind of parsing picks out out specific values like the device id, device 
+  vendor, etc. The other kind of parsing just sets a boolean flag 
+  <code>True</code> if a matching line is found.  All of the parsing is 
+  done with regular expressions.</p>
+  <p>Right now, pretty much nothing in the output is required and we should
+  parse an empty document successfully (albeit resulting in a device that 
+  can't eject, doesn't have a tray and doesnt't support multisession 
+  discs).   I had briefly considered erroring out if certain lines weren't 
+  found or couldn't be parsed, but that seems like a bad idea given that 
+  most of the information is just for reference.</p>
+  <p>The results are returned as a tuple of the object device attributes: 
+  <code>(deviceType, deviceVendor, deviceId, deviceBufferSize, 
+  deviceSupportsMulti, deviceHasTray, deviceCanEject)</code>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>output</code></strong> - Output from a <code>cdrecord -prcap</code> command.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Results tuple as described above.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is problem parsing the output.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseBoundariesOutput"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseBoundariesOutput</span>(<span class="sig-arg">output</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._parseBoundariesOutput">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses the output from a <code>cdrecord</code> capacity command.</p>
+  <p>The <code>output</code> parameter should be a list of strings as 
+  returned from <code>executeCommand</code> for a <code>cdrecord</code> 
+  command with arguments as from <code>_buildBoundaryArgs</code>.  The list
+  of strings will be parsed to yield information about the capacity of the 
+  media in the device.</p>
+  <p>Basically, we expect the list of strings to include just one line, a 
+  pair of values.  There isn't supposed to be whitespace, but we allow it 
+  anyway in the regular expression.  Any lines below the one line we parse 
+  are completely ignored.  It would be a good idea to ignore 
+  <code>stderr</code> when executing the <code>cdrecord</code> command that
+  generates output for this method, because sometimes <code>cdrecord</code>
+  spits out kernel warnings about the actual output.</p>
+  <p>The results are returned as a tuple of (lower, upper) as needed by the
+  <code>IsoImage</code> class.  Note that these values are in terms of ISO 
+  sectors, not bytes.  Clients should generally consider the boundaries 
+  value opaque, however.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>output</code></strong> - Output from a <code>cdrecord -msinfo</code> command.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Boundaries tuple as described above.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is problem parsing the output.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        If the boundaries output can't be parsed, we return 
+        <code>None</code>.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_buildOpenTrayArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildOpenTrayArgs</span>(<span class="sig-arg">device</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildOpenTrayArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of arguments to be passed to a <code>eject</code> 
+  command.</p>
+  <p>The arguments will cause the <code>eject</code> command to open the 
+  tray and eject the media.  No validation is done by this method as to 
+  whether this action actually makes sense.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>device</code></strong> - Filesystem device name for this writer, i.e. 
+          <code>/dev/cdrw</code>.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildCloseTrayArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildCloseTrayArgs</span>(<span class="sig-arg">device</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildCloseTrayArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of arguments to be passed to a <code>eject</code> 
+  command.</p>
+  <p>The arguments will cause the <code>eject</code> command to close the 
+  tray and reload the media.  No validation is done by this method as to 
+  whether this action actually makes sense.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>device</code></strong> - Filesystem device name for this writer, i.e. 
+          <code>/dev/cdrw</code>.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildPropertiesArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildPropertiesArgs</span>(<span class="sig-arg">hardwareId</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildPropertiesArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of arguments to be passed to a <code>cdrecord</code> 
+  command.</p>
+  <p>The arguments will cause the <code>cdrecord</code> command to ask the 
+  device for a list of its capacities via the <code>-prcap</code> 
+  switch.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>hardwareId</code></strong> - Hardware id for the device (either SCSI id or device path)</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildBoundariesArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildBoundariesArgs</span>(<span class="sig-arg">hardwareId</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildBoundariesArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of arguments to be passed to a <code>cdrecord</code> 
+  command.</p>
+  <p>The arguments will cause the <code>cdrecord</code> command to ask the 
+  device for the current multisession boundaries of the media using the 
+  <code>-msinfo</code> switch.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>hardwareId</code></strong> - Hardware id for the device (either SCSI id or device path)</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildBlankArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildBlankArgs</span>(<span class="sig-arg">hardwareId</span>,
+        <span class="sig-arg">driveSpeed</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildBlankArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of arguments to be passed to a <code>cdrecord</code> 
+  command.</p>
+  <p>The arguments will cause the <code>cdrecord</code> command to blank 
+  the media in the device identified by <code>hardwareId</code>.  No 
+  validation is done by this method as to whether the action makes sense 
+  (i.e. to whether the media even can be blanked).</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>hardwareId</code></strong> - Hardware id for the device (either SCSI id or device path)</li>
+        <li><strong class="pname"><code>driveSpeed</code></strong> - Speed at which the drive writes.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildWriteArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildWriteArgs</span>(<span class="sig-arg">hardwareId</span>,
+        <span class="sig-arg">imagePath</span>,
+        <span class="sig-arg">driveSpeed</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">writeMulti</span>=<span class="sig-default">True</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildWriteArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of arguments to be passed to a <code>cdrecord</code> 
+  command.</p>
+  <p>The arguments will cause the <code>cdrecord</code> command to write 
+  the indicated ISO image (<code>imagePath</code>) to the media in the 
+  device identified by <code>hardwareId</code>.  The 
+  <code>writeMulti</code> argument controls whether to write a multisession
+  disc.  No validation is done by this method as to whether the action 
+  makes sense (i.e. to whether the device even can write multisession 
+  discs, for instance).</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>hardwareId</code></strong> - Hardware id for the device (either SCSI id or device path)</li>
+        <li><strong class="pname"><code>imagePath</code></strong> - Path to an ISO image on disk.</li>
+        <li><strong class="pname"><code>driveSpeed</code></strong> - Speed at which the drive writes.</li>
+        <li><strong class="pname"><code>writeMulti</code></strong> - Indicates whether to write a multisession disc.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="initializeImage"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">initializeImage</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">newDisc</span>,
+        <span class="sig-arg">tmpdir</span>,
+        <span class="sig-arg">mediaLabel</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.initializeImage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes the writer's associated ISO image.</p>
+  <p>This method initializes the <code>image</code> instance variable so 
+  that the caller can use the <code>addImageEntry</code> method.  Once 
+  entries have been added, the <code>writeImage</code> method can be called
+  with no arguments.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>newDisc</code></strong> (Boolean true/false.) - Indicates whether the disc should be re-initialized</li>
+        <li><strong class="pname"><code>tmpdir</code></strong> (String representing a directory path on disk) - Temporary directory to use if needed</li>
+        <li><strong class="pname"><code>mediaLabel</code></strong> (String, no more than 25 characters long) - Media label to be applied to the image, if any</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addImageEntry"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addImageEntry</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">graftPoint</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.addImageEntry">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a filepath entry to the writer's associated ISO image.</p>
+  <p>The contents of the filepath -- but not the path itself -- will be 
+  added to the image at the indicated graft point.  If you don't want to 
+  use a graft point, just pass <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> (String representing a path on disk) - File or directory to be added to the image</li>
+        <li><strong class="pname"><code>graftPoint</code></strong> (String representing a graft point path, as described above) - Graft point to be used when adding this entry</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If initializeImage() was not previously called</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        Before calling this method, you must call <a 
+        href="CedarBackup2.writers.cdwriter.CdWriter-class.html#initializeImage"
+        class="link">initializeImage</a>.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="setImageNewDisc"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setImageNewDisc</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">newDisc</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.setImageNewDisc">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Resets (overrides) the newDisc flag on the internal image.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>newDisc</code></strong> - New disc flag to set</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If initializeImage() was not previously called</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getEstimatedImageSize"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getEstimatedImageSize</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.getEstimatedImageSize">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the estimated size of the image associated with the writer.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Estimated size of the image, in bytes.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem calling <code>mkisofs</code>.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If initializeImage() was not previously called</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="unlockTray"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">unlockTray</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter.unlockTray">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Unlocks the device's tray.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error talking to the device.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_createImage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_createImage</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._createImage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Creates an ISO image based on configuration in self._image.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Path to the newly-created ISO image on disk.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error writing the image to disk.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If there are no filesystem entries in the image</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_writeImage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_writeImage</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">imagePath</span>,
+        <span class="sig-arg">writeMulti</span>,
+        <span class="sig-arg">newDisc</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._writeImage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Write an ISO image to disc using cdrecord. The disc is blanked first 
+  if <code>newDisc</code> is <code>True</code>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>imagePath</code></strong> - Path to an ISO image on disk</li>
+        <li><strong class="pname"><code>writeMulti</code></strong> - Indicates whether a multisession disc should be written, if 
+          possible.</li>
+        <li><strong class="pname"><code>newDisc</code></strong> - Indicates whether the entire disc will overwritten.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildUnlockTrayArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildUnlockTrayArgs</span>(<span class="sig-arg">device</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.cdwriter-pysrc.html#CdWriter._buildUnlockTrayArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of arguments to be passed to a <code>eject</code> 
+  command.</p>
+  <p>The arguments will cause the <code>eject</code> command to unlock the 
+  tray.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>device</code></strong> - Filesystem device name for this writer, i.e. 
+          <code>/dev/cdrw</code>.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="device"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">device</h3>
+  <p>Filesystem device name for this writer.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getDevice" class="summary-sig-name" onclick="show_private();">_getDevice</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="scsiId"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">scsiId</h3>
+  <p>SCSI id for the device, in the form 
+  <code>[&lt;method&gt;:]scsibus,target,lun</code>.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getScsiId" class="summary-sig-name" onclick="show_private();">_getScsiId</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the SCSI id value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="hardwareId"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">hardwareId</h3>
+  <p>Hardware id for this writer, either SCSI id or device path.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getHardwareId" class="summary-sig-name" onclick="show_private();">_getHardwareId</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the hardware id value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="driveSpeed"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">driveSpeed</h3>
+  <p>Speed at which the drive writes.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getDriveSpeed" class="summary-sig-name" onclick="show_private();">_getDriveSpeed</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the drive speed.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="media"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">media</h3>
+  <p>Definition of media that is expected to be in the device.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getMedia" class="summary-sig-name" onclick="show_private();">_getMedia</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the media description.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deviceType"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">deviceType</h3>
+  <p>Type of the device, as returned from <code>cdrecord -prcap</code>.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getDeviceType" class="summary-sig-name" onclick="show_private();">_getDeviceType</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device type.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deviceVendor"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">deviceVendor</h3>
+  <p>Vendor of the device, as returned from <code>cdrecord 
+  -prcap</code>.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getDeviceVendor" class="summary-sig-name" onclick="show_private();">_getDeviceVendor</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device vendor.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deviceId"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">deviceId</h3>
+  <p>Device identification, as returned from <code>cdrecord 
+  -prcap</code>.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getDeviceId" class="summary-sig-name" onclick="show_private();">_getDeviceId</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device id.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deviceBufferSize"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">deviceBufferSize</h3>
+  <p>Size of the device's write buffer, in bytes.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getDeviceBufferSize" class="summary-sig-name" onclick="show_private();">_getDeviceBufferSize</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device buffer size.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deviceSupportsMulti"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">deviceSupportsMulti</h3>
+  <p>Indicates whether device supports multisession discs.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getDeviceSupportsMulti" class="summary-sig-name" onclick="show_private();">_getDeviceSupportsMulti</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device-support-multi flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deviceHasTray"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">deviceHasTray</h3>
+  <p>Indicates whether the device has a media tray.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getDeviceHasTray" class="summary-sig-name" onclick="show_private();">_getDeviceHasTray</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device-has-tray flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deviceCanEject"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">deviceCanEject</h3>
+  <p>Indicates whether the device supports ejecting its media.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getDeviceCanEject" class="summary-sig-name" onclick="show_private();">_getDeviceCanEject</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device-can-eject flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="refreshMediaDelay"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">refreshMediaDelay</h3>
+  <p>Refresh media delay, in seconds.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getRefreshMediaDelay" class="summary-sig-name" onclick="show_private();">_getRefreshMediaDelay</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the configured refresh media delay, in 
+      seconds.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ejectDelay"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ejectDelay</h3>
+  <p>Eject delay, in seconds.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.cdwriter.CdWriter-class.html#_getEjectDelay" class="summary-sig-name" onclick="show_private();">_getEjectDelay</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the configured eject delay, in seconds.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

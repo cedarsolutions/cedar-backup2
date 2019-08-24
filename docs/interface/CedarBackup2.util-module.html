@@ -1,0 +1,1951 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.util</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        Module&nbsp;util
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.util-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module util</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.util-pysrc.html">source&nbsp;code</a></span></p>
+<p>Provides general-purpose utilities.</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.AbsolutePathList-class.html" class="summary-name">AbsolutePathList</a><br />
+      Class representing a list of absolute paths.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.ObjectTypeList-class.html" class="summary-name">ObjectTypeList</a><br />
+      Class representing a list containing only objects with a certain 
+        type.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.RestrictedContentList-class.html" class="summary-name">RestrictedContentList</a><br />
+      Class representing a list containing only object with certain 
+        values.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.RegexMatchList-class.html" class="summary-name">RegexMatchList</a><br />
+      Class representing a list containing only strings that match a 
+        regular expression.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.RegexList-class.html" class="summary-name">RegexList</a><br />
+      Class representing a list of valid regular expression strings.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util._Vertex-class.html" class="summary-name" onclick="show_private();">_Vertex</a><br />
+      Represents a vertex (or node) in a directed graph.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.DirectedGraph-class.html" class="summary-name">DirectedGraph</a><br />
+      Represents a directed graph.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.PathResolverSingleton-class.html" class="summary-name">PathResolverSingleton</a><br />
+      Singleton used for resolving executable paths.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.UnorderedList-class.html" class="summary-name">UnorderedList</a><br />
+      Class representing an &quot;unordered list&quot;.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.Pipe-class.html" class="summary-name">Pipe</a><br />
+      Specialized pipe class for use by <code>executeCommand</code>.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util.Diagnostics-class.html" class="summary-name">Diagnostics</a><br />
+      Class holding runtime diagnostic information.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#sortDict" class="summary-sig-name">sortDict</a>(<span class="summary-sig-arg">d</span>)</span><br />
+      Returns the keys of the dictionary sorted by value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#sortDict">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#convertSize" class="summary-sig-name">convertSize</a>(<span class="summary-sig-arg">size</span>,
+        <span class="summary-sig-arg">fromUnit</span>,
+        <span class="summary-sig-arg">toUnit</span>)</span><br />
+      Converts a size in one unit to a size in another unit.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#convertSize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#getUidGid" class="summary-sig-name">getUidGid</a>(<span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">group</span>)</span><br />
+      Get the uid/gid associated with a user/group pair</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#getUidGid">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#changeOwnership" class="summary-sig-name">changeOwnership</a>(<span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">group</span>)</span><br />
+      Changes ownership of path to match the user and group.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#changeOwnership">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#splitCommandLine" class="summary-sig-name">splitCommandLine</a>(<span class="summary-sig-arg">commandLine</span>)</span><br />
+      Splits a command line string into a list of arguments.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#splitCommandLine">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#resolveCommand" class="summary-sig-name">resolveCommand</a>(<span class="summary-sig-arg">command</span>)</span><br />
+      Resolves the real path to a command through the path resolver 
+      mechanism.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#resolveCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#executeCommand" class="summary-sig-name">executeCommand</a>(<span class="summary-sig-arg">command</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">returnOutput</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">ignoreStderr</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">doNotLog</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">outputFile</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Executes a shell command, hopefully in a safe way.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#executeCommand">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#calculateFileAge" class="summary-sig-name">calculateFileAge</a>(<span class="summary-sig-arg">path</span>)</span><br />
+      Calculates the age (in days) of a file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#calculateFileAge">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#encodePath" class="summary-sig-name">encodePath</a>(<span class="summary-sig-arg">path</span>)</span><br />
+      Safely encodes a filesystem path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#encodePath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#nullDevice" class="summary-sig-name">nullDevice</a>()</span><br />
+      Attempts to portably return the null device on this system.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#nullDevice">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#deriveDayOfWeek" class="summary-sig-name">deriveDayOfWeek</a>(<span class="summary-sig-arg">dayName</span>)</span><br />
+      Converts English day name to numeric day of week as from 
+      <code>time.localtime</code>.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#deriveDayOfWeek">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#isStartOfWeek" class="summary-sig-name">isStartOfWeek</a>(<span class="summary-sig-arg">startingDay</span>)</span><br />
+      Indicates whether &quot;today&quot; is the backup starting day per 
+      configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#isStartOfWeek">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#buildNormalizedPath" class="summary-sig-name">buildNormalizedPath</a>(<span class="summary-sig-arg">path</span>)</span><br />
+      Returns a &quot;normalized&quot; path based on a path name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#buildNormalizedPath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#removeKeys" class="summary-sig-name">removeKeys</a>(<span class="summary-sig-arg">d</span>,
+        <span class="summary-sig-arg">keys</span>)</span><br />
+      Removes all of the keys from the dictionary.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#removeKeys">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#displayBytes" class="summary-sig-name">displayBytes</a>(<span class="summary-sig-arg">bytes</span>,
+        <span class="summary-sig-arg">digits</span>=<span class="summary-sig-default">2</span>)</span><br />
+      Format a byte quantity so it can be sensibly displayed.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#displayBytes">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#getFunctionReference" class="summary-sig-name">getFunctionReference</a>(<span class="summary-sig-arg">module</span>,
+        <span class="summary-sig-arg">function</span>)</span><br />
+      Gets a reference to a named function.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#getFunctionReference">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="isRunningAsRoot"></a><span class="summary-sig-name">isRunningAsRoot</span>()</span><br />
+      Indicates whether the program is running as the root user.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#isRunningAsRoot">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#mount" class="summary-sig-name">mount</a>(<span class="summary-sig-arg">devicePath</span>,
+        <span class="summary-sig-arg">mountPoint</span>,
+        <span class="summary-sig-arg">fsType</span>)</span><br />
+      Mounts the indicated device at the indicated mount point.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#mount">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#unmount" class="summary-sig-name">unmount</a>(<span class="summary-sig-arg">mountPoint</span>,
+        <span class="summary-sig-arg">removeAfter</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">attempts</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">waitSeconds</span>=<span class="summary-sig-default">0</span>)</span><br />
+      Unmounts whatever device is mounted at the indicated mount point.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#unmount">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#deviceMounted" class="summary-sig-name">deviceMounted</a>(<span class="summary-sig-arg">devicePath</span>)</span><br />
+      Indicates whether a specific filesystem device is currently mounted.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#deviceMounted">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#sanitizeEnvironment" class="summary-sig-name">sanitizeEnvironment</a>()</span><br />
+      Sanitizes the operating system environment.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#sanitizeEnvironment">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#dereferenceLink" class="summary-sig-name">dereferenceLink</a>(<span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">absolute</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Deference a soft link, optionally normalizing it to an absolute path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#dereferenceLink">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#checkUnique" class="summary-sig-name">checkUnique</a>(<span class="summary-sig-arg">prefix</span>,
+        <span class="summary-sig-arg">values</span>)</span><br />
+      Checks that all values are unique.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#checkUnique">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.util-module.html#parseCommaSeparatedString" class="summary-sig-name">parseCommaSeparatedString</a>(<span class="summary-sig-arg">commaString</span>)</span><br />
+      Parses a list of values out of a comma-separated string.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.util-pysrc.html#parseCommaSeparatedString">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ISO_SECTOR_SIZE"></a><span class="summary-name">ISO_SECTOR_SIZE</span> = <code title="2048.0">2048.0</code><br />
+      Size of an ISO image sector, in bytes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="BYTES_PER_SECTOR"></a><span class="summary-name">BYTES_PER_SECTOR</span> = <code title="2048.0">2048.0</code><br />
+      Number of bytes (B) per ISO sector.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="BYTES_PER_KBYTE"></a><span class="summary-name">BYTES_PER_KBYTE</span> = <code title="1024.0">1024.0</code><br />
+      Number of bytes (B) per kilobyte (kB).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="BYTES_PER_MBYTE"></a><span class="summary-name">BYTES_PER_MBYTE</span> = <code title="1048576.0">1048576.0</code><br />
+      Number of bytes (B) per megabyte (MB).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="BYTES_PER_GBYTE"></a><span class="summary-name">BYTES_PER_GBYTE</span> = <code title="1073741824.0">1073741824.0</code><br />
+      Number of bytes (B) per megabyte (GB).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="KBYTES_PER_MBYTE"></a><span class="summary-name">KBYTES_PER_MBYTE</span> = <code title="1024.0">1024.0</code><br />
+      Number of kilobytes (kB) per megabyte (MB).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="MBYTES_PER_GBYTE"></a><span class="summary-name">MBYTES_PER_GBYTE</span> = <code title="1024.0">1024.0</code><br />
+      Number of megabytes (MB) per gigabyte (GB).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SECONDS_PER_MINUTE"></a><span class="summary-name">SECONDS_PER_MINUTE</span> = <code title="60.0">60.0</code><br />
+      Number of seconds per minute.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="MINUTES_PER_HOUR"></a><span class="summary-name">MINUTES_PER_HOUR</span> = <code title="60.0">60.0</code><br />
+      Number of minutes per hour.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="HOURS_PER_DAY"></a><span class="summary-name">HOURS_PER_DAY</span> = <code title="24.0">24.0</code><br />
+      Number of hours per day.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SECONDS_PER_DAY"></a><span class="summary-name">SECONDS_PER_DAY</span> = <code title="86400.0">86400.0</code><br />
+      Number of seconds per day.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNIT_BYTES"></a><span class="summary-name">UNIT_BYTES</span> = <code title="0">0</code><br />
+      Constant representing the byte (B) unit for conversion.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNIT_KBYTES"></a><span class="summary-name">UNIT_KBYTES</span> = <code title="1">1</code><br />
+      Constant representing the kilobyte (kB) unit for conversion.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNIT_MBYTES"></a><span class="summary-name">UNIT_MBYTES</span> = <code title="2">2</code><br />
+      Constant representing the megabyte (MB) unit for conversion.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNIT_GBYTES"></a><span class="summary-name">UNIT_GBYTES</span> = <code title="4">4</code><br />
+      Constant representing the gigabyte (GB) unit for conversion.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UNIT_SECTORS"></a><span class="summary-name">UNIT_SECTORS</span> = <code title="3">3</code><br />
+      Constant representing the ISO sector unit for conversion.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="_UID_GID_AVAILABLE"></a><span class="summary-name">_UID_GID_AVAILABLE</span> = <code title="True">True</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="outputLogger"></a><span class="summary-name">outputLogger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="MTAB_FILE"></a><span class="summary-name">MTAB_FILE</span> = <code title="'/etc/mtab'"><code class="variable-quote">'</code><code class="variable-string">/etc/mtab</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="MOUNT_COMMAND"></a><span class="summary-name">MOUNT_COMMAND</span> = <code title="['mount']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">mount</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="UMOUNT_COMMAND"></a><span class="summary-name">UMOUNT_COMMAND</span> = <code title="['umount']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">umount</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_LANGUAGE"></a><span class="summary-name">DEFAULT_LANGUAGE</span> = <code title="'C'"><code class="variable-quote">'</code><code class="variable-string">C</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="LANG_VAR"></a><span class="summary-name">LANG_VAR</span> = <code title="'LANG'"><code class="variable-quote">'</code><code class="variable-string">LANG</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.util-module.html#LOCALE_VARS" class="summary-name">LOCALE_VARS</a> = <code title="['LC_ADDRESS',
+ 'LC_ALL',
+ 'LC_COLLATE',
+ 'LC_CTYPE',
+ 'LC_IDENTIFICATION',
+ 'LC_MEASUREMENT',
+ 'LC_MESSAGES',
+ 'LC_MONETARY',
+..."><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">LC_ADDRESS</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">LC_ALL</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">LC_COLLATE</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">LC_CTYPE</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="sortDict"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">sortDict</span>(<span class="sig-arg">d</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#sortDict">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the keys of the dictionary sorted by value.</p>
+  <p>There are cuter ways to do this in Python 2.4, but we were originally 
+  attempting to stay compatible with Python 2.3.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>d</code></strong> - Dictionary to operate on</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of dictionary keys sorted in order by dictionary value.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="convertSize"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">convertSize</span>(<span class="sig-arg">size</span>,
+        <span class="sig-arg">fromUnit</span>,
+        <span class="sig-arg">toUnit</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#convertSize">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Converts a size in one unit to a size in another unit.</p>
+  <p>This is just a convenience function so that the functionality can be 
+  implemented in just one place.  Internally, we convert values to bytes 
+  and then to the final unit.</p>
+  <p>The available units are:</p>
+  <ul>
+    <li>
+      <code>UNIT_BYTES</code> - Bytes
+    </li>
+    <li>
+      <code>UNIT_KBYTES</code> - Kilobytes, where 1 kB = 1024 B
+    </li>
+    <li>
+      <code>UNIT_MBYTES</code> - Megabytes, where 1 MB = 1024 kB
+    </li>
+    <li>
+      <code>UNIT_GBYTES</code> - Gigabytes, where 1 GB = 1024 MB
+    </li>
+    <li>
+      <code>UNIT_SECTORS</code> - Sectors, where 1 sector = 2048 B
+    </li>
+  </ul>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>size</code></strong> (Integer or float value in units of <code>fromUnit</code>) - Size to convert</li>
+        <li><strong class="pname"><code>fromUnit</code></strong> (One of the units listed above) - Unit to convert from</li>
+        <li><strong class="pname"><code>toUnit</code></strong> (One of the units listed above) - Unit to convert to</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number converted to new unit, as a float.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If one of the units is invalid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getUidGid"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getUidGid</span>(<span class="sig-arg">user</span>,
+        <span class="sig-arg">group</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#getUidGid">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get the uid/gid associated with a user/group pair</p>
+  <p>This is a no-op if user/group functionality is not available on the 
+  platform.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>user</code></strong> (User name as a string) - User name</li>
+        <li><strong class="pname"><code>group</code></strong> (Group name as a string) - Group name</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple <code>(uid, gid)</code> matching passed-in user and group.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the ownership user/group values are invalid</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="changeOwnership"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">changeOwnership</span>(<span class="sig-arg">path</span>,
+        <span class="sig-arg">user</span>,
+        <span class="sig-arg">group</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#changeOwnership">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Changes ownership of path to match the user and group.</p>
+  <p>This is a no-op if user/group functionality is not available on the 
+  platform, or if the either passed-in user or group is <code>None</code>.
+  Further, we won't even try to do it unless running as root, since it's 
+  unlikely to work.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> - Path whose ownership to change.</li>
+        <li><strong class="pname"><code>user</code></strong> - User which owns file.</li>
+        <li><strong class="pname"><code>group</code></strong> - Group which owns file.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="splitCommandLine"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">splitCommandLine</span>(<span class="sig-arg">commandLine</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#splitCommandLine">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Splits a command line string into a list of arguments.</p>
+  <p>Unfortunately, there is no &quot;standard&quot; way to parse a command
+  line string, and it's actually not an easy problem to solve portably 
+  (essentially, we have to emulate the shell argument-processing logic).  
+  This code only respects double quotes (<code>&quot;</code>) for grouping 
+  arguments, not single quotes (<code>'</code>).  Make sure you take this 
+  into account when building your command line.</p>
+  <p>Incidentally, I found this particular parsing method while digging 
+  around in Google Groups, and I tweaked it for my own use.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>commandLine</code></strong> (String, i.e. &quot;cback --verbose stage store&quot;) - Command line string</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of arguments, suitable for passing to <code>popen2</code>.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the command line is None.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="resolveCommand"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">resolveCommand</span>(<span class="sig-arg">command</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#resolveCommand">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Resolves the real path to a command through the path resolver 
+  mechanism.</p>
+  <p>Both extensions and standard Cedar Backup functionality need a way to 
+  resolve the &quot;real&quot; location of various executables.  Normally, 
+  they assume that these executables are on the system path, but some 
+  callers need to specify an alternate location.</p>
+  <p>Ideally, we want to handle this configuration in a central location.  
+  The Cedar Backup path resolver mechanism (a singleton called <a 
+  href="CedarBackup2.util.PathResolverSingleton-class.html" 
+  class="link">PathResolverSingleton</a>) provides the central location to 
+  store the mappings.  This function wraps access to the singleton, and is 
+  what all functions (extensions or standard functionality) should call if 
+  they need to find a command.</p>
+  <p>The passed-in command must actually be a list, in the standard form 
+  used by all existing Cedar Backup code (something like 
+  <code>[&quot;svnlook&quot;, ]</code>).  The lookup will actually be done 
+  on the first element in the list, and the returned command will always be
+  in list form as well.</p>
+  <p>If the passed-in command can't be resolved or no mapping exists, then 
+  the command itself will be returned unchanged.  This way, we neatly fall 
+  back on default behavior if we have no sensible alternative.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>command</code></strong> (List form of command, i.e. <code>[&quot;svnlook&quot;, ]</code>.) - Command to resolve.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Path to command or just command itself if no mapping exists.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="executeCommand"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">executeCommand</span>(<span class="sig-arg">command</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">returnOutput</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">ignoreStderr</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">doNotLog</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">outputFile</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#executeCommand">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Executes a shell command, hopefully in a safe way.</p>
+  <p>This function exists to replace direct calls to <code>os.popen</code> 
+  in the Cedar Backup code.  It's not safe to call a function such as 
+  <code>os.popen()</code> with untrusted arguments, since that can cause 
+  problems if the string contains non-safe variables or other constructs 
+  (imagine that the argument is <code>$WHATEVER</code>, but 
+  <code>$WHATEVER</code> contains something like <code>&quot;; rm -fR ~/; 
+  echo&quot;</code> in the current environment).</p>
+  <p>Instead, it's safer to pass a list of arguments in the style supported
+  bt <code>popen2</code> or <code>popen4</code>.  This function actually 
+  uses a specialized <code>Pipe</code> class implemented using either 
+  <code>subprocess.Popen</code> or <code>popen2.Popen4</code>.</p>
+  <p>Under the normal case, this function will return a tuple of 
+  <code>(status, None)</code> where the status is the wait-encoded return 
+  status of the call per the <code>popen2.Popen4</code> documentation.  If 
+  <code>returnOutput</code> is passed in as <code>True</code>, the function
+  will return a tuple of <code>(status, output)</code> where 
+  <code>output</code> is a list of strings, one entry per line in the 
+  output from the command.  Output is always logged to the 
+  <code>outputLogger.info()</code> target, regardless of whether it's 
+  returned.</p>
+  <p>By default, <code>stdout</code> and <code>stderr</code> will be 
+  intermingled in the output. However, if you pass in 
+  <code>ignoreStderr=True</code>, then only <code>stdout</code> will be 
+  included in the output.</p>
+  <p>The <code>doNotLog</code> parameter exists so that callers can force 
+  the function to not log command output to the debug log.  Normally, you 
+  would want to log. However, if you're using this function to write huge 
+  output files (i.e. database backups written to <code>stdout</code>) then 
+  you might want to avoid putting all that information into the debug 
+  log.</p>
+  <p>The <code>outputFile</code> parameter exists to make it easier for a 
+  caller to push output into a file, i.e. as a substitute for redirection 
+  to a file.  If this value is passed in, each time a line of output is 
+  generated, it will be written to the file using 
+  <code>outputFile.write()</code>.  At the end, the file descriptor will be
+  flushed using <code>outputFile.flush()</code>.  The caller maintains 
+  responsibility for closing the file object appropriately.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>command</code></strong> (List of individual arguments that make up the command) - Shell command to execute</li>
+        <li><strong class="pname"><code>args</code></strong> (List of additional arguments to the command) - List of arguments to the command</li>
+        <li><strong class="pname"><code>returnOutput</code></strong> (Boolean <code>True</code> or <code>False</code>) - Indicates whether to return the output of the command</li>
+        <li><strong class="pname"><code>ignoreStderr</code></strong> (Boolean True or False) - Whether stderr should be discarded</li>
+        <li><strong class="pname"><code>doNotLog</code></strong> (Boolean <code>True</code> or <code>False</code>) - Indicates that output should not be logged.</li>
+        <li><strong class="pname"><code>outputFile</code></strong> (File object as returned from <code>open()</code> or 
+          <code>file()</code>.) - File object that all output should be written to.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple of <code>(result, output)</code> as described above.</dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        I know that it's a bit confusing that the command and the arguments
+        are both lists.  I could have just required the caller to pass in 
+        one big list.  However, I think it makes some sense to keep the 
+        command (the constant part of what we're executing, i.e. 
+        <code>&quot;scp -B&quot;</code>) separate from its arguments, even 
+        if they both end up looking kind of similar.
+        </li>
+        <li>
+        You cannot redirect output via shell constructs (i.e. 
+        <code>&gt;file</code>, <code>2&gt;/dev/null</code>, etc.) using 
+        this function.  The redirection string would be passed to the 
+        command just like any other argument.  However, you can implement 
+        the equivalent to redirection using <code>ignoreStderr</code> and 
+        <code>outputFile</code>, as discussed above.
+        </li>
+        <li>
+        The operating system environment is partially sanitized before the 
+        command is invoked.  See <a 
+        href="CedarBackup2.util-module.html#sanitizeEnvironment" 
+        class="link">sanitizeEnvironment</a> for details.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="calculateFileAge"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">calculateFileAge</span>(<span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#calculateFileAge">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Calculates the age (in days) of a file.</p>
+  <p>The &quot;age&quot; of a file is the amount of time since the file was
+  last used, per the most recent of the file's <code>st_atime</code> and 
+  <code>st_mtime</code> values.</p>
+  <p>Technically, we only intend this function to work with files, but it 
+  will probably work with anything on the filesystem.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> - Path to a file on disk.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Age of the file in days (possibly fractional).</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>OSError</strong></code> - If the file doesn't exist.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="encodePath"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">encodePath</span>(<span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#encodePath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Safely encodes a filesystem path.</p>
+  <p>Many Python filesystem functions, such as <code>os.listdir</code>, 
+  behave differently if they are passed unicode arguments versus simple 
+  string arguments.  For instance, <code>os.listdir</code> generally 
+  returns unicode path names if it is passed a unicode argument, and string
+  pathnames if it is passed a string argument.</p>
+  <p>However, this behavior often isn't as consistent as we might like.  As
+  an example, <code>os.listdir</code> &quot;gives up&quot; if it finds a 
+  filename that it can't properly encode given the current locale settings.
+  This means that the returned list is a mixed set of unicode and simple 
+  string paths.  This has consequences later, because other filesystem 
+  functions like <code>os.path.join</code> will blow up if they are given 
+  one string path and one unicode path.</p>
+  <p>On comp.lang.python, Martin v. L&#246;wis explained the 
+  <code>os.listdir</code> behavior like this:</p>
+<pre class="literalblock">
+  The operating system (POSIX) does not have the inherent notion that file
+  names are character strings. Instead, in POSIX, file names are primarily
+  byte strings. There are some bytes which are interpreted as characters
+  (e.g. '\x2e', which is '.', or '\x2f', which is '/'), but apart from
+  that, most OS layers think these are just bytes.
+
+  Now, most *people* think that file names are character strings.  To
+  interpret a file name as a character string, you need to know what the
+  encoding is to interpret the file names (which are byte strings) as
+  character strings.
+
+  There is, unfortunately, no operating system API to carry the notion of a
+  file system encoding. By convention, the locale settings should be used
+  to establish this encoding, in particular the LC_CTYPE facet of the
+  locale. This is defined in the environment variables LC_CTYPE, LC_ALL,
+  and LANG (searched in this order).
+
+  If LANG is not set, the &quot;C&quot; locale is assumed, which uses ASCII as its
+  file system encoding. In this locale, '\xe2\x99\xaa\xe2\x99\xac' is not a
+  valid file name (at least it cannot be interpreted as characters, and
+  hence not be converted to Unicode).
+
+  Now, your Python script has requested that all file names *should* be
+  returned as character (ie. Unicode) strings, but Python cannot comply,
+  since there is no way to find out what this byte string means, in terms
+  of characters.
+
+  So we have three options:
+
+  1. Skip this string, only return the ones that can be converted to Unicode.
+     Give the user the impression the file does not exist.
+  2. Return the string as a byte string
+  3. Refuse to listdir altogether, raising an exception (i.e. return nothing)
+
+  Python has chosen alternative 2, allowing the application to implement 1
+  or 3 on top of that if it wants to (or come up with other strategies,
+  such as user feedback).
+</pre>
+  <p>As a solution, he suggests that rather than passing unicode paths into
+  the filesystem functions, that I should sensibly encode the path first.  
+  That is what this function accomplishes.  Any function which takes a 
+  filesystem path as an argument should encode it first, before using it 
+  for any other purpose.</p>
+  <p>I confess I still don't completely understand how this works.  On a 
+  system with filesystem encoding &quot;ISO-8859-1&quot;, a path 
+  <code>u&quot;\xe2\x99\xaa\xe2\x99\xac&quot;</code> is converted into the 
+  string <code>&quot;\xe2\x99\xaa\xe2\x99\xac&quot;</code>.  However, on a 
+  system with a &quot;utf-8&quot; encoding, the result is a completely 
+  different string: 
+  <code>&quot;\xc3\xa2\xc2\x99\xc2\xaa\xc3\xa2\xc2\x99\xc2\xac&quot;</code>.
+  A quick test where I write to the first filename and open the second 
+  proves that the two strings represent the same file on disk, which is all
+  I really care about.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> - Path to encode</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Path, as a string, encoded appropriately</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the path cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        As a special case, if <code>path</code> is <code>None</code>, then 
+        this function will return <code>None</code>.
+        </li>
+        <li>
+        To provide several examples of encoding values, my Debian sarge box
+        with an ext3 filesystem has Python filesystem encoding 
+        <code>ISO-8859-1</code>.  User Anarcat's Debian box with a xfs 
+        filesystem has filesystem encoding <code>ANSI_X3.4-1968</code>.  
+        Both my iBook G4 running Mac OS X 10.4 and user Dag Rende's SuSE 
+        9.3 box both have filesystem encoding <code>UTF-8</code>.
+        </li>
+        <li>
+        Just because a filesystem has <code>UTF-8</code> encoding doesn't 
+        mean that it will be able to handle all extended-character 
+        filenames.  For instance, certain extended-character (but not 
+        UTF-8) filenames -- like the ones in the regression test tar file 
+        <code>test/data/tree13.tar.gz</code> -- are not valid under Mac OS 
+        X, and it's not even possible to extract them from the tarfile on 
+        that platform.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="nullDevice"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">nullDevice</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#nullDevice">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Attempts to portably return the null device on this system.</p>
+  <p>The null device is something like <code>/dev/null</code> on a UNIX 
+  system.  The name varies on other platforms.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="deriveDayOfWeek"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">deriveDayOfWeek</span>(<span class="sig-arg">dayName</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#deriveDayOfWeek">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Converts English day name to numeric day of week as from 
+  <code>time.localtime</code>.</p>
+  <p>For instance, the day <code>monday</code> would be converted to the 
+  number <code>0</code>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>dayName</code></strong> (string, i.e. <code>&quot;monday&quot;</code>, 
+          <code>&quot;tuesday&quot;</code>, etc.) - Day of week to convert</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Integer, where Monday is 0 and Sunday is 6; or -1 if no 
+          conversion is possible.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="isStartOfWeek"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">isStartOfWeek</span>(<span class="sig-arg">startingDay</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#isStartOfWeek">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Indicates whether &quot;today&quot; is the backup starting day per 
+  configuration.</p>
+  <p>If the current day's English name matches the indicated starting day, 
+  then today is a starting day.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>startingDay</code></strong> (string, i.e. <code>&quot;monday&quot;</code>, 
+          <code>&quot;tuesday&quot;</code>, etc.) - Configured starting day.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Boolean indicating whether today is the starting day.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="buildNormalizedPath"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">buildNormalizedPath</span>(<span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#buildNormalizedPath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns a &quot;normalized&quot; path based on a path name.</p>
+  <p>A normalized path is a representation of a path that is also a valid 
+  file name.  To make a valid file name out of a complete path, we have to 
+  convert or remove some characters that are significant to the filesystem 
+  -- in particular, the path separator and any leading <code>'.'</code> 
+  character (which would cause the file to be hidden in a file 
+  listing).</p>
+  <p>Note that this is a one-way transformation -- you can't safely derive 
+  the original path from the normalized path.</p>
+  <p>To normalize a path, we begin by looking at the first character.  If 
+  the first character is <code>'/'</code> or <code>'\'</code>, it gets 
+  removed.  If the first character is <code>'.'</code>, it gets converted 
+  to <code>'_'</code>.  Then, we look through the rest of the path and 
+  convert all remaining <code>'/'</code> or <code>'\'</code> characters 
+  <code>'-'</code>, and all remaining whitespace characters to 
+  <code>'_'</code>.</p>
+  <p>As a special case, a path consisting only of a single <code>'/'</code>
+  or <code>'\'</code> character will be converted to <code>'-'</code>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> - Path to normalize</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Normalized path as described above.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the path is None</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="removeKeys"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">removeKeys</span>(<span class="sig-arg">d</span>,
+        <span class="sig-arg">keys</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#removeKeys">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Removes all of the keys from the dictionary. The dictionary is altered
+  in-place. Each key must exist in the dictionary.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>d</code></strong> - Dictionary to operate on</li>
+        <li><strong class="pname"><code>keys</code></strong> - List of keys to remove</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>KeyError</strong></code> - If one of the keys does not exist</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="displayBytes"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">displayBytes</span>(<span class="sig-arg">bytes</span>,
+        <span class="sig-arg">digits</span>=<span class="sig-default">2</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#displayBytes">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Format a byte quantity so it can be sensibly displayed.</p>
+  <p>It's rather difficult to look at a number like &quot;72372224 
+  bytes&quot; and get any meaningful information out of it.  It would be 
+  more useful to see something like &quot;69.02 MB&quot;.  That's what this
+  function does.  Any time you want to display a byte value, i.e.:</p>
+<pre class="literalblock">
+  print &quot;Size: %s bytes&quot; % bytes
+</pre>
+  <p>Call this function instead:</p>
+<pre class="literalblock">
+  print &quot;Size: %s&quot; % displayBytes(bytes)
+</pre>
+  <p>What comes out will be sensibly formatted.  The indicated number of 
+  digits will be listed after the decimal point, rounded based on whatever 
+  rules are used by Python's standard <code>%f</code> string format 
+  specifier. (Values less than 1 kB will be listed in bytes and will not 
+  have a decimal point, since the concept of a fractional byte is 
+  nonsensical.)</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>bytes</code></strong> (Integer number of bytes.) - Byte quantity.</li>
+        <li><strong class="pname"><code>digits</code></strong> (Integer value, typically 2-5.) - Number of digits to display after the decimal point.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>String, formatted for sensible display.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getFunctionReference"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getFunctionReference</span>(<span class="sig-arg">module</span>,
+        <span class="sig-arg">function</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#getFunctionReference">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets a reference to a named function.</p>
+  <p>This does some hokey-pokey to get back a reference to a dynamically 
+  named function.  For instance, say you wanted to get a reference to the 
+  <code>os.path.isdir</code> function.  You could use:</p>
+<pre class="literalblock">
+  myfunc = getFunctionReference(&quot;os.path&quot;, &quot;isdir&quot;)
+</pre>
+  <p>Although we won't bomb out directly, behavior is pretty much undefined
+  if you pass in <code>None</code> or <code>&quot;&quot;</code> for either 
+  <code>module</code> or <code>function</code>.</p>
+  <p>The only validation we enforce is that whatever we get back must be 
+  callable.</p>
+  <p>I derived this code based on the internals of the Python unittest 
+  implementation.  I don't claim to completely understand how it works.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>module</code></strong> (Something like &quot;os.path&quot; or 
+          &quot;CedarBackup2.util&quot;) - Name of module associated with function.</li>
+        <li><strong class="pname"><code>function</code></strong> (Something like &quot;isdir&quot; or &quot;getUidGid&quot;) - Name of function</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Reference to function associated with name.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ImportError</strong></code> - If the function cannot be found.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the resulting reference is not callable.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Copyright:</strong>
+        Some of this code, prior to customization, was originally part of 
+        the Python 2.3 codebase.  Python code is copyright (c) 2001, 2002 
+        Python Software Foundation; All Rights Reserved.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="mount"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">mount</span>(<span class="sig-arg">devicePath</span>,
+        <span class="sig-arg">mountPoint</span>,
+        <span class="sig-arg">fsType</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#mount">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Mounts the indicated device at the indicated mount point.</p>
+  <p>For instance, to mount a CD, you might use device path 
+  <code>/dev/cdrw</code>, mount point <code>/media/cdrw</code> and 
+  filesystem type <code>iso9660</code>.  You can safely use any filesystem 
+  type that is supported by <code>mount</code> on your platform.  If the 
+  type is <code>None</code>, we'll attempt to let <code>mount</code> 
+  auto-detect it.  This may or may not work on all systems.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>devicePath</code></strong> - Path of device to be mounted.</li>
+        <li><strong class="pname"><code>mountPoint</code></strong> - Path that device should be mounted at.</li>
+        <li><strong class="pname"><code>fsType</code></strong> - Type of the filesystem assumed to be available via the device.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If the device cannot be mounted.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        This only works on platforms that have a concept of 
+        &quot;mounting&quot; a filesystem through a command-line 
+        <code>&quot;mount&quot;</code> command, like UNIXes.  It won't work
+        on Windows.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="unmount"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">unmount</span>(<span class="sig-arg">mountPoint</span>,
+        <span class="sig-arg">removeAfter</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">attempts</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">waitSeconds</span>=<span class="sig-default">0</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#unmount">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Unmounts whatever device is mounted at the indicated mount point.</p>
+  <p>Sometimes, it might not be possible to unmount the mount point 
+  immediately, if there are still files open there.  Use the 
+  <code>attempts</code> and <code>waitSeconds</code> arguments to indicate 
+  how many unmount attempts to make and how many seconds to wait between 
+  attempts.  If you pass in zero attempts, no attempts will be made 
+  (duh).</p>
+  <p>If the indicated mount point is not really a mount point per 
+  <code>os.path.ismount()</code>, then it will be ignored.  This seems to 
+  be a safer check then looking through <code>/etc/mtab</code>, since 
+  <code>ismount()</code> is already in the Python standard library and is 
+  documented as working on all POSIX systems.</p>
+  <p>If <code>removeAfter</code> is <code>True</code>, then the mount point
+  will be removed using <code>os.rmdir()</code> after the unmount action 
+  succeeds.  If for some reason the mount point is not a directory, then it
+  will not be removed.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>mountPoint</code></strong> - Mount point to be unmounted.</li>
+        <li><strong class="pname"><code>removeAfter</code></strong> - Remove the mount point after unmounting it.</li>
+        <li><strong class="pname"><code>attempts</code></strong> - Number of times to attempt the unmount.</li>
+        <li><strong class="pname"><code>waitSeconds</code></strong> - Number of seconds to wait between repeated attempts.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If the mount point is still mounted after attempts are exhausted.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        This only works on platforms that have a concept of 
+        &quot;mounting&quot; a filesystem through a command-line 
+        <code>&quot;mount&quot;</code> command, like UNIXes.  It won't work
+        on Windows.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="deviceMounted"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">deviceMounted</span>(<span class="sig-arg">devicePath</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#deviceMounted">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Indicates whether a specific filesystem device is currently 
+  mounted.</p>
+  <p>We determine whether the device is mounted by looking through the 
+  system's <code>mtab</code> file.  This file shows every currently-mounted
+  filesystem, ordered by device.  We only do the check if the 
+  <code>mtab</code> file exists and is readable. Otherwise, we assume that 
+  the device is not mounted.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>devicePath</code></strong> - Path of device to be checked</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>True if device is mounted, false otherwise.</dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        This only works on platforms that have a concept of an mtab file to
+        show mounted volumes, like UNIXes.  It won't work on Windows.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="sanitizeEnvironment"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">sanitizeEnvironment</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#sanitizeEnvironment">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Sanitizes the operating system environment.</p>
+  <p>The operating system environment is contained in 
+  <code>os.environ</code>.  This method sanitizes the contents of that 
+  dictionary.</p>
+  <p>Currently, all it does is reset the locale (removing 
+  <code>$LC_*</code>) and set the default language (<code>$LANG</code>) to 
+  <a href="CedarBackup2.util-module.html#DEFAULT_LANGUAGE" 
+  class="link">DEFAULT_LANGUAGE</a>.  This way, we can count on consistent 
+  localization regardless of what the end-user has configured. This is 
+  important for code that needs to parse program output.</p>
+  <p>The <code>os.environ</code> dictionary is modifed in-place.  If 
+  <code>$LANG</code> is already set to the proper value, it is not re-set, 
+  so we can avoid the memory leaks that are documented to occur on 
+  BSD-based systems.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Copy of the sanitized environment.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="dereferenceLink"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">dereferenceLink</span>(<span class="sig-arg">path</span>,
+        <span class="sig-arg">absolute</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#dereferenceLink">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Deference a soft link, optionally normalizing it to an absolute 
+  path.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> - Path of link to dereference</li>
+        <li><strong class="pname"><code>absolute</code></strong> - Whether to normalize the result to an absolute path</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Dereferenced path, or original path if original is not a link.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="checkUnique"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">checkUnique</span>(<span class="sig-arg">prefix</span>,
+        <span class="sig-arg">values</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#checkUnique">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Checks that all values are unique.</p>
+  <p>The values list is checked for duplicate values.  If there are 
+  duplicates, an exception is thrown.  All duplicate values are listed in 
+  the exception.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>prefix</code></strong> - Prefix to use in the thrown exception</li>
+        <li><strong class="pname"><code>values</code></strong> - List of values to check</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If there are duplicates in the list</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="parseCommaSeparatedString"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">parseCommaSeparatedString</span>(<span class="sig-arg">commaString</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.util-pysrc.html#parseCommaSeparatedString">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parses a list of values out of a comma-separated string.</p>
+  <p>The items in the list are split by comma, and then have whitespace 
+  stripped.  As a special case, if <code>commaString</code> is 
+  <code>None</code>, then <code>None</code> will be returned.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>commaString</code></strong> - List of values in comma-separated string format.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Values from commaString split into a list, or <code>None</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="LOCALE_VARS"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">LOCALE_VARS</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">LC_ADDRESS</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">LC_ALL</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">LC_COLLATE</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">LC_CTYPE</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">LC_IDENTIFICATION</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">LC_MEASUREMENT</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">LC_MESSAGES</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">LC_MONETARY</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

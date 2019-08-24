@@ -1,0 +1,1593 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.writers.util.IsoImage</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.writers-module.html">Package&nbsp;writers</a> ::
+        <a href="CedarBackup2.writers.util-module.html">Module&nbsp;util</a> ::
+        Class&nbsp;IsoImage
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.writers.util.IsoImage-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class IsoImage</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">IsoImage</strong>
+</pre>
+
+<hr />
+<p>Represents an ISO filesystem image.</p>
+  <h1 class="heading">Summary</h1>
+    <p>This object represents an ISO 9660 filesystem image.  It is 
+    implemented in terms of the <code>mkisofs</code> program, which has 
+    been ported to many operating systems and platforms.  A &quot;sensible 
+    subset&quot; of the <code>mkisofs</code> functionality is made 
+    available through the public interface, allowing callers to set a 
+    variety of basic options such as publisher id, application id, etc. as 
+    well as specify exactly which files and directories they want included 
+    in their image.</p>
+    <p>By default, the image is created using the Rock Ridge protocol 
+    (using the <code>-r</code> option to <code>mkisofs</code>) because Rock
+    Ridge discs are generally more useful on UN*X filesystems than standard
+    ISO 9660 images.  However, callers can fall back to the default 
+    <code>mkisofs</code> functionality by setting the 
+    <code>useRockRidge</code> instance variable to <code>False</code>.  
+    Note, however, that this option is not well-tested.</p>
+  <h1 class="heading">Where Files and Directories are Placed in the Image</h1>
+    <p>Although this class is implemented in terms of the 
+    <code>mkisofs</code> program, its standard &quot;image contents&quot; 
+    semantics are slightly different than the original <code>mkisofs</code>
+    semantics.  The difference is that files and directories are added to 
+    the image with some additional information about their source directory
+    kept intact.</p>
+    <p>As an example, suppose you add the file <code>/etc/profile</code> to
+    your image and you do not configure a graft point.  The file 
+    <code>/profile</code> will be created in the image.  The behavior for 
+    directories is similar.  For instance, suppose that you add 
+    <code>/etc/X11</code> to the image and do not configure a graft point.
+    In this case, the directory <code>/X11</code> will be created in the 
+    image, even if the original <code>/etc/X11</code> directory is empty.  
+    <i>This behavior differs from the standard <code>mkisofs</code> 
+    behavior!</i></p>
+    <p>If a graft point is configured, it will be used to modify the point 
+    at which a file or directory is added into an image.  Using the 
+    examples from above, let's assume you set a graft point of 
+    <code>base</code> when adding <code>/etc/profile</code> and 
+    <code>/etc/X11</code> to your image.  In this case, the file 
+    <code>/base/profile</code> and the directory <code>/base/X11</code> 
+    would be added to the image.</p>
+    <p>I feel that this behavior is more consistent than the original 
+    <code>mkisofs</code> behavior.  However, to be fair, it is not quite as
+    flexible, and some users might not like it.  For this reason, the 
+    <code>contentsOnly</code> parameter to the <a 
+    href="CedarBackup2.writers.util.IsoImage-class.html#addEntry" 
+    class="link">addEntry</a> method can be used to revert to the original 
+    behavior if desired.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">device</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">boundaries</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">graftPoint</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Initializes an empty ISO image object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#addEntry" class="summary-sig-name">addEntry</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">graftPoint</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">override</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">contentsOnly</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Adds an individual file or directory into the ISO image.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage.addEntry">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#getEstimatedSize" class="summary-sig-name">getEstimatedSize</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Returns the estimated size (in bytes) of the ISO image.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage.getEstimatedSize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getEstimatedSize" class="summary-sig-name" onclick="show_private();">_getEstimatedSize</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">entries</span>)</span><br />
+      Returns the estimated size (in bytes) for the passed-in entries 
+      dictionary.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getEstimatedSize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#writeImage" class="summary-sig-name">writeImage</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">imagePath</span>)</span><br />
+      Writes this image to disk using the image path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage.writeImage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_buildGeneralArgs" class="summary-sig-name" onclick="show_private();">_buildGeneralArgs</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Builds a list of general arguments to be passed to a 
+      <code>mkisofs</code> command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._buildGeneralArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_buildSizeArgs" class="summary-sig-name" onclick="show_private();">_buildSizeArgs</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">entries</span>)</span><br />
+      Builds a list of arguments to be passed to a <code>mkisofs</code> 
+      command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._buildSizeArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_buildWriteArgs" class="summary-sig-name" onclick="show_private();">_buildWriteArgs</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">entries</span>,
+        <span class="summary-sig-arg">imagePath</span>)</span><br />
+      Builds a list of arguments to be passed to a <code>mkisofs</code> 
+      command.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._buildWriteArgs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setDevice" class="summary-sig-name" onclick="show_private();">_setDevice</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the device value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setDevice">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDevice"></a><span class="summary-sig-name">_getDevice</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the device value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getDevice">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setBoundaries" class="summary-sig-name" onclick="show_private();">_setBoundaries</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the boundaries tuple.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setBoundaries">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getBoundaries"></a><span class="summary-sig-name">_getBoundaries</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the boundaries value.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getBoundaries">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setGraftPoint" class="summary-sig-name" onclick="show_private();">_setGraftPoint</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the graft point.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setGraftPoint">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getGraftPoint"></a><span class="summary-sig-name">_getGraftPoint</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the graft point.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getGraftPoint">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setUseRockRidge" class="summary-sig-name" onclick="show_private();">_setUseRockRidge</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the use RockRidge flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setUseRockRidge">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getUseRockRidge"></a><span class="summary-sig-name">_getUseRockRidge</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the use RockRidge flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getUseRockRidge">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setApplicationId" class="summary-sig-name" onclick="show_private();">_setApplicationId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the application id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setApplicationId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getApplicationId"></a><span class="summary-sig-name">_getApplicationId</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the application id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getApplicationId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setBiblioFile" class="summary-sig-name" onclick="show_private();">_setBiblioFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the biblio file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setBiblioFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getBiblioFile"></a><span class="summary-sig-name">_getBiblioFile</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the biblio file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getBiblioFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setPublisherId" class="summary-sig-name" onclick="show_private();">_setPublisherId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the publisher id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setPublisherId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getPublisherId"></a><span class="summary-sig-name">_getPublisherId</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the publisher id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getPublisherId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setPreparerId" class="summary-sig-name" onclick="show_private();">_setPreparerId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the preparer id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setPreparerId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getPreparerId"></a><span class="summary-sig-name">_getPreparerId</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the preparer id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getPreparerId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setVolumeId" class="summary-sig-name" onclick="show_private();">_setVolumeId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the volume id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setVolumeId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getVolumeId"></a><span class="summary-sig-name">_getVolumeId</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the volume id.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getVolumeId">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_buildDirEntries" class="summary-sig-name" onclick="show_private();">_buildDirEntries</a>(<span class="summary-sig-arg">entries</span>)</span><br />
+      Uses an entries dictionary to build a list of directory locations for
+      use by <code>mkisofs</code>.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._buildDirEntries">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.util.IsoImage-class.html#device" class="summary-name">device</a><br />
+      Device that image will be written to (device path or SCSI id).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.util.IsoImage-class.html#boundaries" class="summary-name">boundaries</a><br />
+      Session boundaries as required by <code>mkisofs</code>.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.util.IsoImage-class.html#graftPoint" class="summary-name">graftPoint</a><br />
+      Default image-wide graft point (see <a 
+      href="CedarBackup2.writers.util.IsoImage-class.html#addEntry" 
+      class="link">addEntry</a> for details).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.util.IsoImage-class.html#useRockRidge" class="summary-name">useRockRidge</a><br />
+      Indicates whether to use RockRidge (default is <code>True</code>).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.util.IsoImage-class.html#applicationId" class="summary-name">applicationId</a><br />
+      Optionally specifies the ISO header application id value.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.util.IsoImage-class.html#biblioFile" class="summary-name">biblioFile</a><br />
+      Optionally specifies the ISO bibliographic file name.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.util.IsoImage-class.html#publisherId" class="summary-name">publisherId</a><br />
+      Optionally specifies the ISO header publisher id value.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.util.IsoImage-class.html#preparerId" class="summary-name">preparerId</a><br />
+      Optionally specifies the ISO header preparer id value.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.writers.util.IsoImage-class.html#volumeId" class="summary-name">volumeId</a><br />
+      Optionally specifies the ISO header volume id value.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">device</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">boundaries</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">graftPoint</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes an empty ISO image object.</p>
+  <p>Only the most commonly-used configuration items can be set using this 
+  constructor.  If you have a need to change the others, do so immediately 
+  after creating your object.</p>
+  <p>The device and boundaries values are both required in order to write 
+  multisession discs.  If either is missing or <code>None</code>, a 
+  multisession disc will not be written.  The boundaries tuple is in terms 
+  of ISO sectors, as built by an image writer class and returned in a <a 
+  href="CedarBackup2.writers.cdwriter.MediaCapacity-class.html" 
+  class="link">writer.MediaCapacity</a> object.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>device</code></strong> (Either be a filesystem path or a SCSI address) - Name of the device that the image will be written to</li>
+        <li><strong class="pname"><code>boundaries</code></strong> (Tuple <code>(last_sess_start,next_sess_start)</code> as returned 
+          from <code>cdrecord -msinfo</code>, or <code>None</code>) - Session boundaries as required by <code>mkisofs</code></li>
+        <li><strong class="pname"><code>graftPoint</code></strong> (String representing a graft point path (see <a 
+          href="CedarBackup2.writers.util.IsoImage-class.html#addEntry" 
+          class="link">addEntry</a>).) - Default graft point for this page.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addEntry"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addEntry</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">graftPoint</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">override</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">contentsOnly</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage.addEntry">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds an individual file or directory into the ISO image.</p>
+  <p>The path must exist and must be a file or a directory.  By default, 
+  the entry will be placed into the image at the root directory, but this 
+  behavior can be overridden using the <code>graftPoint</code> parameter or
+  instance variable.</p>
+  <p>You can use the <code>contentsOnly</code> behavior to revert to the 
+  &quot;original&quot; <code>mkisofs</code> behavior for adding 
+  directories, which is to add only the items within the directory, and not
+  the directory itself.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> (String representing a path on disk) - File or directory to be added to the image</li>
+        <li><strong class="pname"><code>graftPoint</code></strong> (String representing a graft point path, as described above) - Graft point to be used when adding this entry</li>
+        <li><strong class="pname"><code>override</code></strong> (Boolean true/false) - Override an existing entry with the same path.</li>
+        <li><strong class="pname"><code>contentsOnly</code></strong> (Boolean true/false) - Add directory contents only (standard <code>mkisofs</code> 
+          behavior).</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If path is not a file or directory, or does not exist.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the path has already been added, and override is not set.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        Things get <i>odd</i> if you try to add a directory to an image 
+        that will be written to a multisession disc, and the same directory
+        already exists in an earlier session on that disc.  Not all of the 
+        data gets written.  You really wouldn't want to do this anyway, I 
+        guess.
+        </li>
+        <li>
+        An exception will be thrown if the path has already been added to 
+        the image, unless the <code>override</code> parameter is set to 
+        <code>True</code>.
+        </li>
+        <li>
+        The method <code>graftPoints</code> parameter overrides the 
+        object-wide instance variable.  If neither the method parameter or 
+        object-wide value is set, the path will be written at the image 
+        root.  The graft point behavior is determined by the value which is
+        in effect <i>at the time this method is called</i>, so you 
+        <i>must</i> set the object-wide value before calling this method 
+        for the first time, or your image may not be consistent.
+        </li>
+        <li>
+        You <i>cannot</i> use the local <code>graftPoint</code> parameter 
+        to &quot;turn off&quot; an object-wide instance variable by setting
+        it to <code>None</code>.  Python's default argument functionality 
+        buys us a lot, but it can't make this method psychic. :)
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="getEstimatedSize"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getEstimatedSize</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage.getEstimatedSize">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the estimated size (in bytes) of the ISO image.</p>
+  <p>This is implemented via the <code>-print-size</code> option to 
+  <code>mkisofs</code>, so it might take a bit of time to execute.  
+  However, the result is as accurate as we can get, since it takes into 
+  account all of the ISO overhead, the true cost of directories in the 
+  structure, etc, etc.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Estimated size of the image, in bytes.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem calling <code>mkisofs</code>.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If there are no filesystem entries in the image</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getEstimatedSize"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getEstimatedSize</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">entries</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._getEstimatedSize">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Returns the estimated size (in bytes) for the passed-in entries 
+  dictionary.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Estimated size of the image, in bytes.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem calling <code>mkisofs</code>.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="writeImage"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">writeImage</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">imagePath</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage.writeImage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes this image to disk using the image path.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>imagePath</code></strong> (String representing a path on disk) - Path to write image out as</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an error writing the image to disk.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If there are no filesystem entries in the image</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildDirEntries"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildDirEntries</span>(<span class="sig-arg">entries</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._buildDirEntries">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Uses an entries dictionary to build a list of directory locations for 
+  use by <code>mkisofs</code>.</p>
+  <p>We build a list of entries that can be passed to <code>mkisofs</code>.
+  Each entry is either raw (if no graft point was configured) or in 
+  graft-point form as described above (if a graft point was configured).  
+  The dictionary keys are the path names, and the values are the graft 
+  points, if any.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>entries</code></strong> - Dictionary of image entries (i.e. self.entries)</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List of directory locations for use by <code>mkisofs</code></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildGeneralArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildGeneralArgs</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._buildGeneralArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of general arguments to be passed to a 
+  <code>mkisofs</code> command.</p>
+  <p>The various instance variables (<code>applicationId</code>, etc.) are 
+  filled into the list of arguments if they are set. By default, we will 
+  build a RockRidge disc.  If you decide to change this, think hard about 
+  whether you know what you're doing.  This option is not well-tested.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildSizeArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildSizeArgs</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">entries</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._buildSizeArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of arguments to be passed to a <code>mkisofs</code> 
+  command.</p>
+  <p>The various instance variables (<code>applicationId</code>, etc.) are 
+  filled into the list of arguments if they are set.  The command will be 
+  built to just return size output (a simple count of sectors via the 
+  <code>-print-size</code> option), rather than an image file on disk.</p>
+  <p>By default, we will build a RockRidge disc.  If you decide to change 
+  this, think hard about whether you know what you're doing.  This option 
+  is not well-tested.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>entries</code></strong> - Dictionary of image entries (i.e. self.entries)</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_buildWriteArgs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_buildWriteArgs</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">entries</span>,
+        <span class="sig-arg">imagePath</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._buildWriteArgs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Builds a list of arguments to be passed to a <code>mkisofs</code> 
+  command.</p>
+  <p>The various instance variables (<code>applicationId</code>, etc.) are 
+  filled into the list of arguments if they are set.  The command will be 
+  built to write an image to disk.</p>
+  <p>By default, we will build a RockRidge disc.  If you decide to change 
+  this, think hard about whether you know what you're doing.  This option 
+  is not well-tested.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>entries</code></strong> - Dictionary of image entries (i.e. self.entries)</li>
+        <li><strong class="pname"><code>imagePath</code></strong> (String representing a path on disk) - Path to write image out as</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List suitable for passing to <a 
+          href="CedarBackup2.util-module.html#executeCommand" 
+          class="link">util.executeCommand</a> as <code>args</code>.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setDevice"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setDevice</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setDevice">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the device value. If not 
+  <code>None</code>, the value can be either an absolute path or a SCSI 
+  id.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setBoundaries"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setBoundaries</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setBoundaries">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the boundaries tuple. If not 
+  <code>None</code>, the value must be a tuple of two integers.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the tuple values are not integers.</li>
+        <li><code><strong class='fraise'>IndexError</strong></code> - If the tuple does not contain enough elements.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setGraftPoint"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setGraftPoint</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setGraftPoint">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the graft point. The value must be a 
+  non-empty string if it is not <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setUseRockRidge"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setUseRockRidge</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setUseRockRidge">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the use RockRidge flag. No validations, 
+  but we normalize the value to <code>True</code> or 
+  <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setApplicationId"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setApplicationId</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setApplicationId">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the application id. The value must be a 
+  non-empty string if it is not <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setBiblioFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setBiblioFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setBiblioFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the biblio file. The value must be a 
+  non-empty string if it is not <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setPublisherId"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setPublisherId</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setPublisherId">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the publisher id. The value must be a 
+  non-empty string if it is not <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setPreparerId"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setPreparerId</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setPreparerId">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the preparer id. The value must be a 
+  non-empty string if it is not <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setVolumeId"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setVolumeId</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.writers.util-pysrc.html#IsoImage._setVolumeId">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the volume id. The value must be a 
+  non-empty string if it is not <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="device"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">device</h3>
+  <p>Device that image will be written to (device path or SCSI id).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getDevice" class="summary-sig-name" onclick="show_private();">_getDevice</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the device value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setDevice" class="summary-sig-name" onclick="show_private();">_setDevice</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the device value.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="boundaries"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">boundaries</h3>
+  <p>Session boundaries as required by <code>mkisofs</code>.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getBoundaries" class="summary-sig-name" onclick="show_private();">_getBoundaries</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the boundaries value.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setBoundaries" class="summary-sig-name" onclick="show_private();">_setBoundaries</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the boundaries tuple.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="graftPoint"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">graftPoint</h3>
+  <p>Default image-wide graft point (see <a 
+  href="CedarBackup2.writers.util.IsoImage-class.html#addEntry" 
+  class="link">addEntry</a> for details).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getGraftPoint" class="summary-sig-name" onclick="show_private();">_getGraftPoint</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the graft point.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setGraftPoint" class="summary-sig-name" onclick="show_private();">_setGraftPoint</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the graft point.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="useRockRidge"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">useRockRidge</h3>
+  <p>Indicates whether to use RockRidge (default is <code>True</code>).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getUseRockRidge" class="summary-sig-name" onclick="show_private();">_getUseRockRidge</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the use RockRidge flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setUseRockRidge" class="summary-sig-name" onclick="show_private();">_setUseRockRidge</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the use RockRidge flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="applicationId"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">applicationId</h3>
+  <p>Optionally specifies the ISO header application id value.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getApplicationId" class="summary-sig-name" onclick="show_private();">_getApplicationId</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the application id.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setApplicationId" class="summary-sig-name" onclick="show_private();">_setApplicationId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the application id.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="biblioFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">biblioFile</h3>
+  <p>Optionally specifies the ISO bibliographic file name.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getBiblioFile" class="summary-sig-name" onclick="show_private();">_getBiblioFile</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the biblio file.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setBiblioFile" class="summary-sig-name" onclick="show_private();">_setBiblioFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the biblio file.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="publisherId"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">publisherId</h3>
+  <p>Optionally specifies the ISO header publisher id value.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getPublisherId" class="summary-sig-name" onclick="show_private();">_getPublisherId</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the publisher id.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setPublisherId" class="summary-sig-name" onclick="show_private();">_setPublisherId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the publisher id.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="preparerId"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">preparerId</h3>
+  <p>Optionally specifies the ISO header preparer id value.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getPreparerId" class="summary-sig-name" onclick="show_private();">_getPreparerId</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the preparer id.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setPreparerId" class="summary-sig-name" onclick="show_private();">_setPreparerId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the preparer id.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="volumeId"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">volumeId</h3>
+  <p>Optionally specifies the ISO header volume id value.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_getVolumeId" class="summary-sig-name" onclick="show_private();">_getVolumeId</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the volume id.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.writers.util.IsoImage-class.html#_setVolumeId" class="summary-sig-name" onclick="show_private();">_setVolumeId</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the volume id.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

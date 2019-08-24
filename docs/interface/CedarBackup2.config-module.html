@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.config</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        Module&nbsp;config
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.config-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module config</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.config-pysrc.html">source&nbsp;code</a></span></p>
+<p>Provides configuration-related objects.</p>
+  <h1 class="heading">Summary</h1>
+    <p>Cedar Backup stores all of its configuration in an XML document 
+    typically called <code>cback.conf</code>.  The standard location for 
+    this document is in <code>/etc</code>, but users can specify a 
+    different location if they want to.</p>
+    <p>The <code>Config</code> class is a Python object representation of a
+    Cedar Backup XML configuration file.  The representation is two-way: 
+    XML data can be used to create a <code>Config</code> object, and then 
+    changes to the object can be propogated back to disk.  A 
+    <code>Config</code> object can even be used to create a configuration 
+    file from scratch programmatically.</p>
+    <p>The <code>Config</code> class is intended to be the only 
+    Python-language interface to Cedar Backup configuration on disk.  Cedar
+    Backup will use the class as its internal representation of 
+    configuration, and applications external to Cedar Backup itself (such 
+    as a hypothetical third-party configuration tool written in Python or a
+    third party extension module) should also use the class when they need 
+    to read and write configuration files.</p>
+  <h1 class="heading">Backwards Compatibility</h1>
+    <p>The configuration file format has changed between Cedar Backup 1.x 
+    and Cedar Backup 2.x.  Any Cedar Backup 1.x configuration file is also 
+    a valid Cedar Backup 2.x configuration file.  However, it doesn't work 
+    to go the other direction, as the 2.x configuration files contains 
+    additional configuration is not accepted by older versions of the 
+    software.</p>
+  <h1 class="heading">XML Configuration Structure</h1>
+    <p>A <code>Config</code> object can either be created 
+    &quot;empty&quot;, or can be created based on XML input (either in the 
+    form of a string or read in from a file on disk). Generally speaking, 
+    the XML input <i>must</i> result in a <code>Config</code> object which 
+    passes the validations laid out below in the <i>Validation</i> 
+    section.</p>
+    <p>An XML configuration file is composed of seven sections:</p>
+    <ul>
+      <li>
+        <i>reference</i>: specifies reference information about the file 
+        (author, revision, etc)
+      </li>
+      <li>
+        <i>extensions</i>: specifies mappings to Cedar Backup extensions 
+        (external code)
+      </li>
+      <li>
+        <i>options</i>: specifies global configuration options
+      </li>
+      <li>
+        <i>peers</i>: specifies the set of peers in a master's backup pool
+      </li>
+      <li>
+        <i>collect</i>: specifies configuration related to the collect 
+        action
+      </li>
+      <li>
+        <i>stage</i>: specifies configuration related to the stage action
+      </li>
+      <li>
+        <i>store</i>: specifies configuration related to the store action
+      </li>
+      <li>
+        <i>purge</i>: specifies configuration related to the purge action
+      </li>
+    </ul>
+    <p>Each section is represented by an class in this module, and then the
+    overall <code>Config</code> class is a composition of the various other
+    classes.</p>
+    <p>Any configuration section that is missing in the XML document (or 
+    has not been filled into an &quot;empty&quot; document) will just be 
+    set to <code>None</code> in the object representation.  The same goes 
+    for individual fields within each configuration section.  Keep in mind 
+    that the document might not be completely valid if some sections or 
+    fields aren't filled in - but that won't matter until validation takes 
+    place (see the <i>Validation</i> section below).</p>
+  <h1 class="heading">Unicode vs. String Data</h1>
+    <p>By default, all string data that comes out of XML documents in 
+    Python is unicode data (i.e. <code>u&quot;whatever&quot;</code>).  This
+    is fine for many things, but when it comes to filesystem paths, it can 
+    cause us some problems.  We really want strings to be encoded in the 
+    filesystem encoding rather than being unicode. So, most elements in 
+    configuration which represent filesystem paths are coverted to plain 
+    strings using <a href="CedarBackup2.util-module.html#encodePath" 
+    class="link">util.encodePath</a>.  The main exception is the various 
+    <code>absoluteExcludePath</code> and <code>relativeExcludePath</code> 
+    lists.  These are <i>not</i> converted, because they are generally only
+    used for filtering, not for filesystem operations.</p>
+  <h1 class="heading">Validation</h1>
+    <p>There are two main levels of validation in the <code>Config</code> 
+    class and its children.  The first is field-level validation.  
+    Field-level validation comes into play when a given field in an object 
+    is assigned to or updated. We use Python's <code>property</code> 
+    functionality to enforce specific validations on field values, and in 
+    some places we even use customized list classes to enforce validations 
+    on list members.  You should expect to catch a <code>ValueError</code> 
+    exception when making assignments to configuration class fields.</p>
+    <p>The second level of validation is post-completion validation.  
+    Certain validations don't make sense until a document is fully 
+    &quot;complete&quot;.  We don't want these validations to apply all of 
+    the time, because it would make building up a document from scratch a 
+    real pain.  For instance, we might have to do things in the right order
+    to keep from throwing exceptions, etc.</p>
+    <p>All of these post-completion validations are encapsulated in the <a 
+    href="CedarBackup2.config.Config-class.html#validate" 
+    class="link">Config.validate</a> method.  This method can be called at 
+    any time by a client, and will always be called immediately after 
+    creating a <code>Config</code> object from XML data and before 
+    exporting a <code>Config</code> object to XML.  This way, we get decent
+    ease-of-use but we also don't accept or emit invalid configuration 
+    files.</p>
+    <p>The <a href="CedarBackup2.config.Config-class.html#validate" 
+    class="link">Config.validate</a> implementation actually takes two 
+    passes to completely validate a configuration document.  The first pass
+    at validation is to ensure that the proper sections are filled into the
+    document.  There are default requirements, but the caller has the 
+    opportunity to override these defaults.</p>
+    <p>The second pass at validation ensures that any filled-in section 
+    contains valid data.  Any section which is not set to <code>None</code>
+    is validated according to the rules for that section (see below).</p>
+    <p><i>Reference Validations</i></p>
+    <p>No validations.</p>
+    <p><i>Extensions Validations</i></p>
+    <p>The list of actions may be either <code>None</code> or an empty list
+    <code>[]</code> if desired. Each extended action must include a name, a
+    module and a function.  Then, an extended action must include either an
+    index or dependency information. Which one is required depends on which
+    order mode is configured.</p>
+    <p><i>Options Validations</i></p>
+    <p>All fields must be filled in except the rsh command.  The rcp and 
+    rsh commands are used as default values for all remote peers.  Remote 
+    peers can also rely on the backup user as the default remote user name 
+    if they choose.</p>
+    <p><i>Peers Validations</i></p>
+    <p>Local peers must be completely filled in, including both name and 
+    collect directory.  Remote peers must also fill in the name and collect
+    directory, but can leave the remote user and rcp command unset.  In 
+    this case, the remote user is assumed to match the backup user from the
+    options section and rcp command is taken directly from the options 
+    section.</p>
+    <p><i>Collect Validations</i></p>
+    <p>The target directory must be filled in.  The collect mode, archive 
+    mode and ignore file are all optional.  The list of absolute paths to 
+    exclude and patterns to exclude may be either <code>None</code> or an 
+    empty list <code>[]</code> if desired.</p>
+    <p>Each collect directory entry must contain an absolute path to 
+    collect, and then must either be able to take collect mode, archive 
+    mode and ignore file configuration from the parent 
+    <code>CollectConfig</code> object, or must set each value on its own.  
+    The list of absolute paths to exclude, relative paths to exclude and 
+    patterns to exclude may be either <code>None</code> or an empty list 
+    <code>[]</code> if desired.  Any list of absolute paths to exclude or 
+    patterns to exclude will be combined with the same list in the 
+    <code>CollectConfig</code> object to make the complete list for a given
+    directory.</p>
+    <p><i>Stage Validations</i></p>
+    <p>The target directory must be filled in.  There must be at least one 
+    peer (remote or local) between the two lists of peers.  A list with no 
+    entries can be either <code>None</code> or an empty list 
+    <code>[]</code> if desired.</p>
+    <p>If a set of peers is provided, this configuration completely 
+    overrides configuration in the peers configuration section, and the 
+    same validations apply.</p>
+    <p><i>Store Validations</i></p>
+    <p>The device type and drive speed are optional, and all other values 
+    are required (missing booleans will be set to defaults, which is 
+    OK).</p>
+    <p>The image writer functionality in the <code>writer</code> module is 
+    supposed to be able to handle a device speed of <code>None</code>.  Any
+    caller which needs a &quot;real&quot; (non-<code>None</code>) value for
+    the device type can use <code>DEFAULT_DEVICE_TYPE</code>, which is 
+    guaranteed to be sensible.</p>
+    <p><i>Purge Validations</i></p>
+    <p>The list of purge directories may be either <code>None</code> or an 
+    empty list <code>[]</code> if desired.  All purge directories must 
+    contain a path and a retain days value.</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ActionDependencies-class.html" class="summary-name">ActionDependencies</a><br />
+      Class representing dependencies associated with an extended action.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ActionHook-class.html" class="summary-name">ActionHook</a><br />
+      Class representing a hook associated with an action.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.PreActionHook-class.html" class="summary-name">PreActionHook</a><br />
+      Class representing a pre-action hook associated with an action.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.PostActionHook-class.html" class="summary-name">PostActionHook</a><br />
+      Class representing a pre-action hook associated with an action.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ExtendedAction-class.html" class="summary-name">ExtendedAction</a><br />
+      Class representing an extended action.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CommandOverride-class.html" class="summary-name">CommandOverride</a><br />
+      Class representing a piece of Cedar Backup command override 
+        configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectFile-class.html" class="summary-name">CollectFile</a><br />
+      Class representing a Cedar Backup collect file.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectDir-class.html" class="summary-name">CollectDir</a><br />
+      Class representing a Cedar Backup collect directory.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.PurgeDir-class.html" class="summary-name">PurgeDir</a><br />
+      Class representing a Cedar Backup purge directory.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.LocalPeer-class.html" class="summary-name">LocalPeer</a><br />
+      Class representing a Cedar Backup peer.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.RemotePeer-class.html" class="summary-name">RemotePeer</a><br />
+      Class representing a Cedar Backup peer.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ReferenceConfig-class.html" class="summary-name">ReferenceConfig</a><br />
+      Class representing a Cedar Backup reference configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ExtensionsConfig-class.html" class="summary-name">ExtensionsConfig</a><br />
+      Class representing Cedar Backup extensions configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.OptionsConfig-class.html" class="summary-name">OptionsConfig</a><br />
+      Class representing a Cedar Backup global options configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.PeersConfig-class.html" class="summary-name">PeersConfig</a><br />
+      Class representing Cedar Backup global peer configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.CollectConfig-class.html" class="summary-name">CollectConfig</a><br />
+      Class representing a Cedar Backup collect configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StageConfig-class.html" class="summary-name">StageConfig</a><br />
+      Class representing a Cedar Backup stage configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.StoreConfig-class.html" class="summary-name">StoreConfig</a><br />
+      Class representing a Cedar Backup store configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.PurgeConfig-class.html" class="summary-name">PurgeConfig</a><br />
+      Class representing a Cedar Backup purge configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.Config-class.html" class="summary-name">Config</a><br />
+      Class representing a Cedar Backup XML configuration document.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.ByteQuantity-class.html" class="summary-name">ByteQuantity</a><br />
+      Class representing a byte quantity.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config.BlankBehavior-class.html" class="summary-name">BlankBehavior</a><br />
+      Class representing optimized store-action media blanking behavior.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config-module.html#readByteQuantity" class="summary-sig-name">readByteQuantity</a>(<span class="summary-sig-arg">parent</span>,
+        <span class="summary-sig-arg">name</span>)</span><br />
+      Read a byte size value from an XML document.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#readByteQuantity">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.config-module.html#addByteQuantityNode" class="summary-sig-name">addByteQuantityNode</a>(<span class="summary-sig-arg">xmlDom</span>,
+        <span class="summary-sig-arg">parentNode</span>,
+        <span class="summary-sig-arg">nodeName</span>,
+        <span class="summary-sig-arg">byteQuantity</span>)</span><br />
+      Adds a text node as the next child of a parent, to contain a byte 
+      size.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.config-pysrc.html#addByteQuantityNode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_DEVICE_TYPE"></a><span class="summary-name">DEFAULT_DEVICE_TYPE</span> = <code title="'cdwriter'"><code class="variable-quote">'</code><code class="variable-string">cdwriter</code><code class="variable-quote">'</code></code><br />
+      The default device type.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_MEDIA_TYPE"></a><span class="summary-name">DEFAULT_MEDIA_TYPE</span> = <code title="'cdrw-74'"><code class="variable-quote">'</code><code class="variable-string">cdrw-74</code><code class="variable-quote">'</code></code><br />
+      The default media type.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_DEVICE_TYPES"></a><span class="summary-name">VALID_DEVICE_TYPES</span> = <code title="['cdwriter', 'dvdwriter']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">cdwriter</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">dvdwriter</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      List of valid device types.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.config-module.html#VALID_MEDIA_TYPES" class="summary-name">VALID_MEDIA_TYPES</a> = <code title="['cdr-74', 'cdrw-74', 'cdr-80', 'cdrw-80', 'dvd+r', 'dvd+rw']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">cdr-74</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdrw-74</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdr-80</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdrw-80</code><code class="variable-quote">'</code><code class="variable-op">,</code><code class="variable-ellipsis">...</code></code><br />
+      List of valid media types.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_COLLECT_MODES"></a><span class="summary-name">VALID_COLLECT_MODES</span> = <code title="['daily', 'weekly', 'incr']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">daily</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">weekly</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">incr</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      List of valid collect modes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_ARCHIVE_MODES"></a><span class="summary-name">VALID_ARCHIVE_MODES</span> = <code title="['tar', 'targz', 'tarbz2']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">tar</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">targz</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">tarbz2</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      List of valid archive modes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_ORDER_MODES"></a><span class="summary-name">VALID_ORDER_MODES</span> = <code title="['index', 'dependency']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">index</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">dependency</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      List of valid extension order modes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_CD_MEDIA_TYPES"></a><span class="summary-name">VALID_CD_MEDIA_TYPES</span> = <code title="['cdr-74', 'cdrw-74', 'cdr-80', 'cdrw-80']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">cdr-74</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdrw-74</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdr-80</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdrw-80</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_DVD_MEDIA_TYPES"></a><span class="summary-name">VALID_DVD_MEDIA_TYPES</span> = <code title="['dvd+r', 'dvd+rw']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">dvd+r</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">dvd+rw</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_COMPRESS_MODES"></a><span class="summary-name">VALID_COMPRESS_MODES</span> = <code title="['none', 'gzip', 'bzip2']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">none</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">gzip</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">bzip2</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      List of valid compress modes.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_BLANK_MODES"></a><span class="summary-name">VALID_BLANK_MODES</span> = <code title="['daily', 'weekly']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">daily</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">weekly</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_BYTE_UNITS"></a><span class="summary-name">VALID_BYTE_UNITS</span> = <code title="[0, 1, 2, 4]"><code class="variable-group">[</code>0<code class="variable-op">, </code>1<code class="variable-op">, </code>2<code class="variable-op">, </code>4<code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_FAILURE_MODES"></a><span class="summary-name">VALID_FAILURE_MODES</span> = <code title="['none', 'all', 'daily', 'weekly']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">none</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">all</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">daily</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">weekly</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REWRITABLE_MEDIA_TYPES"></a><span class="summary-name">REWRITABLE_MEDIA_TYPES</span> = <code title="['cdrw-74', 'cdrw-80', 'dvd+rw']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">cdrw-74</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdrw-80</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">dvd+rw</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ACTION_NAME_REGEX"></a><span class="summary-name">ACTION_NAME_REGEX</span> = <code title="'^[a-z0-9]*$'"><code class="variable-quote">'</code><code class="variable-string">^[a-z0-9]*$</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="readByteQuantity"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">readByteQuantity</span>(<span class="sig-arg">parent</span>,
+        <span class="sig-arg">name</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#readByteQuantity">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Read a byte size value from an XML document.</p>
+  <p>A byte size value is an interpreted string value.  If the string value
+  ends with &quot;MB&quot; or &quot;GB&quot;, then the string before that 
+  is interpreted as megabytes or gigabytes.  Otherwise, it is intepreted as
+  bytes.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>parent</code></strong> - Parent node to search beneath.</li>
+        <li><strong class="pname"><code>name</code></strong> - Name of node to search for.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>ByteQuantity parsed from XML document</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addByteQuantityNode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addByteQuantityNode</span>(<span class="sig-arg">xmlDom</span>,
+        <span class="sig-arg">parentNode</span>,
+        <span class="sig-arg">nodeName</span>,
+        <span class="sig-arg">byteQuantity</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.config-pysrc.html#addByteQuantityNode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a text node as the next child of a parent, to contain a byte 
+  size.</p>
+  <p>If the <code>byteQuantity</code> is None, then the node will be 
+  created, but will be empty (i.e. will contain no text node child).</p>
+  <p>The size in bytes will be normalized.  If it is larger than 1.0 GB, it
+  will be shown in GB (&quot;1.0 GB&quot;).  If it is larger than 1.0 MB 
+  (&quot;1.0 MB&quot;), it will be shown in MB.  Otherwise, it will be 
+  shown in bytes (&quot;423413&quot;).</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>xmlDom</code></strong> - DOM tree as from <code>impl.createDocument()</code>.</li>
+        <li><strong class="pname"><code>parentNode</code></strong> - Parent node to create child for.</li>
+        <li><strong class="pname"><code>nodeName</code></strong> - Name of the new container node.</li>
+        <li><strong class="pname"><code>byteQuantity</code></strong> - ByteQuantity object to put into the XML document</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Reference to the newly-created node.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="VALID_MEDIA_TYPES"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">VALID_MEDIA_TYPES</h3>
+  List of valid media types.
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">cdr-74</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdrw-74</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdr-80</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">cdrw-80</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">dvd+r</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">dvd+rw</code><code class="variable-quote">'</code><code class="variable-group">]</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

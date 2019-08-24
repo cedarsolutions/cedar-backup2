@@ -1,0 +1,2150 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.cli.Options</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.cli-module.html">Module&nbsp;cli</a> ::
+        Class&nbsp;Options
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.cli.Options-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class Options</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">Options</strong>
+</pre>
+
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="CedarBackup2.tools.span.SpanOptions-class.html">tools.span.SpanOptions</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>Class representing command-line options for the cback script.</p>
+  <p>The <code>Options</code> class is a Python object representation of 
+  the command-line options of the cback script.</p>
+  <p>The object representation is two-way: a command line string or a list 
+  of command line arguments can be used to create an <code>Options</code> 
+  object, and then changes to the object can be propogated back to a list 
+  of command-line arguments or to a command-line string.  An 
+  <code>Options</code> object can even be created from scratch 
+  programmatically (if you have a need for that).</p>
+  <p>There are two main levels of validation in the <code>Options</code> 
+  class.  The first is field-level validation.  Field-level validation 
+  comes into play when a given field in an object is assigned to or 
+  updated.  We use Python's <code>property</code> functionality to enforce 
+  specific validations on field values, and in some places we even use 
+  customized list classes to enforce validations on list members.  You 
+  should expect to catch a <code>ValueError</code> exception when making 
+  assignments to fields if you are programmatically filling an object.</p>
+  <p>The second level of validation is post-completion validation.  Certain
+  validations don't make sense until an object representation of options is
+  fully &quot;complete&quot;.  We don't want these validations to apply all
+  of the time, because it would make building up a valid object from 
+  scratch a real pain. For instance, we might have to do things in the 
+  right order to keep from throwing exceptions, etc.</p>
+  <p>All of these post-completion validations are encapsulated in the <a 
+  href="CedarBackup2.cli.Options-class.html#validate" 
+  class="link">Options.validate</a> method.  This method can be called at 
+  any time by a client, and will always be called immediately after 
+  creating a <code>Options</code> object from a command line and before 
+  exporting a <code>Options</code> object back to a command line.  This 
+  way, we get acceptable ease-of-use but we also don't accept or emit 
+  invalid command lines.</p>
+
+<hr />
+<div class="fields">      <p><strong>Note:</strong>
+        Lists within this class are &quot;unordered&quot; for equality 
+        comparisons.
+      </p>
+</div><!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">argumentList</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">argumentString</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">validate</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Initializes an options object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#__repr__" class="summary-sig-name">__repr__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Official string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.__repr__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#__str__" class="summary-sig-name">__str__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Informal string representation for class instance.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.__str__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#__cmp__" class="summary-sig-name">__cmp__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">other</span>)</span><br />
+      Definition of equals operator for this class.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.__cmp__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getActions"></a><span class="summary-sig-name">_getActions</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the actions list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getActions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getConfig"></a><span class="summary-sig-name">_getConfig</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the config parameter.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getConfig">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDebug"></a><span class="summary-sig-name">_getDebug</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the debug flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getDebug">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDiagnostics"></a><span class="summary-sig-name">_getDiagnostics</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the diagnostics flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getDiagnostics">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getFull"></a><span class="summary-sig-name">_getFull</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the full flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getFull">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getHelp"></a><span class="summary-sig-name">_getHelp</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the help flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getHelp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getLogfile"></a><span class="summary-sig-name">_getLogfile</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the logfile parameter.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getLogfile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getManaged"></a><span class="summary-sig-name">_getManaged</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the managed flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getManaged">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getManagedOnly"></a><span class="summary-sig-name">_getManagedOnly</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the managedOnly flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getManagedOnly">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getMode"></a><span class="summary-sig-name">_getMode</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the mode parameter.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getOutput"></a><span class="summary-sig-name">_getOutput</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the output flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getOutput">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getOwner" class="summary-sig-name" onclick="show_private();">_getOwner</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the owner parameter.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getOwner">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getQuiet"></a><span class="summary-sig-name">_getQuiet</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the quiet flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getQuiet">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getStacktrace"></a><span class="summary-sig-name">_getStacktrace</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the stacktrace flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getStacktrace">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getUnsupported"></a><span class="summary-sig-name">_getUnsupported</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the unsupported flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getUnsupported">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getVerbose"></a><span class="summary-sig-name">_getVerbose</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the verbose flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getVerbose">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getVersion"></a><span class="summary-sig-name">_getVersion</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the version flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getVersion">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_parseArgumentList" class="summary-sig-name" onclick="show_private();">_parseArgumentList</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">argumentList</span>)</span><br />
+      Internal method to parse a list of command-line arguments.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._parseArgumentList">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setActions" class="summary-sig-name" onclick="show_private();">_setActions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the actions list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setActions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_setConfig"></a><span class="summary-sig-name">_setConfig</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the config parameter.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setConfig">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setDebug" class="summary-sig-name" onclick="show_private();">_setDebug</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the debug flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setDebug">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setDiagnostics" class="summary-sig-name" onclick="show_private();">_setDiagnostics</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the diagnostics flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setDiagnostics">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setFull" class="summary-sig-name" onclick="show_private();">_setFull</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the full flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setFull">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setHelp" class="summary-sig-name" onclick="show_private();">_setHelp</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the help flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setHelp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setLogfile" class="summary-sig-name" onclick="show_private();">_setLogfile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the logfile parameter.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setLogfile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setManaged" class="summary-sig-name" onclick="show_private();">_setManaged</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the managed flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setManaged">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setManagedOnly" class="summary-sig-name" onclick="show_private();">_setManagedOnly</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the managedOnly flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setManagedOnly">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_setMode"></a><span class="summary-sig-name">_setMode</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the mode parameter.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setOutput" class="summary-sig-name" onclick="show_private();">_setOutput</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the output flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setOutput">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setOwner" class="summary-sig-name" onclick="show_private();">_setOwner</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the owner parameter.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setOwner">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setQuiet" class="summary-sig-name" onclick="show_private();">_setQuiet</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the quiet flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setQuiet">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setStacktrace" class="summary-sig-name" onclick="show_private();">_setStacktrace</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the stacktrace flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setStacktrace">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setUnsupported" class="summary-sig-name" onclick="show_private();">_setUnsupported</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the unsupported flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setUnsupported">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setVerbose" class="summary-sig-name" onclick="show_private();">_setVerbose</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the verbose flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setVerbose">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setVersion" class="summary-sig-name" onclick="show_private();">_setVersion</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the version flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setVersion">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#buildArgumentList" class="summary-sig-name">buildArgumentList</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">validate</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Extracts options into a list of command line arguments.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.buildArgumentList">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#buildArgumentString" class="summary-sig-name">buildArgumentString</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">validate</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Extracts options into a string of command-line arguments.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.buildArgumentString">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#validate" class="summary-sig-name">validate</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Validates command-line options represented by the object.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.validate">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#actions" class="summary-name">actions</a><br />
+      Command-line actions list.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#config" class="summary-name">config</a><br />
+      Command-line configuration file (<code>-c,--config</code>) parameter.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#debug" class="summary-name">debug</a><br />
+      Command-line debug (<code>-d,--debug</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#diagnostics" class="summary-name">diagnostics</a><br />
+      Command-line diagnostics (<code>-D,--diagnostics</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#full" class="summary-name">full</a><br />
+      Command-line full-backup (<code>-f,--full</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#help" class="summary-name">help</a><br />
+      Command-line help (<code>-h,--help</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#logfile" class="summary-name">logfile</a><br />
+      Command-line logfile (<code>-l,--logfile</code>) parameter.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#managed" class="summary-name">managed</a><br />
+      Command-line managed (<code>-M,--managed</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#managedOnly" class="summary-name">managedOnly</a><br />
+      Command-line managed-only (<code>-N,--managed-only</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#mode" class="summary-name">mode</a><br />
+      Command-line mode (<code>-m,--mode</code>) parameter.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#output" class="summary-name">output</a><br />
+      Command-line output (<code>-O,--output</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#owner" class="summary-name">owner</a><br />
+      Command-line owner (<code>-o,--owner</code>) parameter, as tuple 
+      <code>(user,group)</code>.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#quiet" class="summary-name">quiet</a><br />
+      Command-line quiet (<code>-q,--quiet</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#stacktrace" class="summary-name">stacktrace</a><br />
+      Command-line stacktrace (<code>-s,--stack</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#unsupported" class="summary-name">unsupported</a><br />
+      Command-line unsupported (<code>-u,--unsupported</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#verbose" class="summary-name">verbose</a><br />
+      Command-line verbose (<code>-b,--verbose</code>) flag.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html#version" class="summary-name">version</a><br />
+      Command-line version (<code>-V,--version</code>) flag.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">argumentList</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">argumentString</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">validate</span>=<span class="sig-default">True</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes an options object.</p>
+  <p>If you initialize the object without passing either 
+  <code>argumentList</code> or <code>argumentString</code>, the object will
+  be empty and will be invalid until it is filled in properly.</p>
+  <p>No reference to the original arguments is saved off by this class.  
+  Once the data has been parsed (successfully or not) this original 
+  information is discarded.</p>
+  <p>The argument list is assumed to be a list of arguments, not including 
+  the name of the command, something like <code>sys.argv[1:]</code>.  If 
+  you pass <code>sys.argv</code> instead, things are not going to work.</p>
+  <p>The argument string will be parsed into an argument list by the <a 
+  href="CedarBackup2.util-module.html#splitCommandLine" 
+  class="link">util.splitCommandLine</a> function (see the documentation 
+  for that function for some important notes about its limitations).  There
+  is an assumption that the resulting list will be equivalent to 
+  <code>sys.argv[1:]</code>, just like <code>argumentList</code>.</p>
+  <p>Unless the <code>validate</code> argument is <code>False</code>, the 
+  <a href="CedarBackup2.cli.Options-class.html#validate" 
+  class="link">Options.validate</a> method will be called (with its default
+  arguments) after successfully parsing any passed-in command line.  This 
+  validation ensures that appropriate actions, etc. have been specified.  
+  Keep in mind that even if <code>validate</code> is <code>False</code>, it
+  might not be possible to parse the passed-in command line, so an 
+  exception might still be raised.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>argumentList</code></strong> (List of arguments, i.e. <code>sys.argv</code>) - Command line for a program.</li>
+        <li><strong class="pname"><code>argumentString</code></strong> (String, i.e. &quot;cback --verbose stage store&quot;) - Command line for a program.</li>
+        <li><strong class="pname"><code>validate</code></strong> (Boolean true/false.) - Validate the command line after parsing it.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>getopt.GetoptError</strong></code> - If the command-line arguments could not be parsed.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the command-line arguments are invalid.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        The command line format is specified by the <a 
+        href="CedarBackup2.cli-module.html#_usage" class="link" 
+        onclick="show_private();">_usage</a> function. Call <a 
+        href="CedarBackup2.cli-module.html#_usage" class="link" 
+        onclick="show_private();">_usage</a> to see a usage statement for 
+        the cback script.
+        </li>
+        <li>
+        It is strongly suggested that the <code>validate</code> option 
+        always be set to <code>True</code> (the default) unless there is a 
+        specific need to read in invalid command line arguments.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="__repr__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__repr__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.__repr__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Official string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__repr__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__str__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__str__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Informal representation operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.__str__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Informal string representation for class instance.</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__str__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="__cmp__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__cmp__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">other</span>)</span>
+    <br /><em class="fname">(Comparison operator)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.__cmp__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Definition of equals operator for this class. Lists within this class 
+  are &quot;unordered&quot; for equality comparisons.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>other</code></strong> - Other object to compare to.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>-1/0/1 depending on whether self is <code>&lt;</code>, 
+          <code>=</code> or <code>&gt;</code> other.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getOwner"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getOwner</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._getOwner">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to get the owner parameter. The parameter is a 
+  tuple of <code>(user, group)</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_parseArgumentList"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_parseArgumentList</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">argumentList</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._parseArgumentList">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Internal method to parse a list of command-line arguments.</p>
+  <p>Most of the validation we do here has to do with whether the arguments
+  can be parsed and whether any values which exist are valid.  We don't do 
+  any validation as to whether required elements exist or whether elements 
+  exist in the proper combination (instead, that's the job of the <a 
+  href="CedarBackup2.cli.Options-class.html#validate" 
+  class="link">validate</a> method).</p>
+  <p>For any of the options which supply parameters, if the option is 
+  duplicated with long and short switches (i.e. <code>-l</code> and a 
+  <code>--logfile</code>) then the long switch is used.  If the same option
+  is duplicated with the same switch (long or short), then the last entry 
+  on the command line is used.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>argumentList</code></strong> (List of arguments to a command, i.e. <code>sys.argv[1:]</code>) - List of arguments to a command.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the argument list cannot be successfully parsed.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setActions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setActions</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setActions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the actions list. We don't restrict the 
+  contents of actions.  They're validated somewhere else.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setDebug"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setDebug</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setDebug">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the debug flag. No validations, but we 
+  normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setDiagnostics"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setDiagnostics</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setDiagnostics">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the diagnostics flag. No validations, but 
+  we normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setFull"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setFull</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setFull">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the full flag. No validations, but we 
+  normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setHelp"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setHelp</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setHelp">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the help flag. No validations, but we 
+  normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setLogfile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setLogfile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setLogfile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the logfile parameter.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setManaged"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setManaged</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setManaged">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the managed flag. No validations, but we 
+  normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setManagedOnly"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setManagedOnly</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setManagedOnly">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the managedOnly flag. No validations, but 
+  we normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setOutput"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setOutput</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setOutput">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the output flag. No validations, but we 
+  normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setOwner"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setOwner</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setOwner">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the owner parameter. If not 
+  <code>None</code>, the owner must be a <code>(user,group)</code> tuple or
+  list. Strings (and inherited children of strings) are explicitly 
+  disallowed. The value will be normalized to a tuple.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setQuiet"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setQuiet</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setQuiet">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the quiet flag. No validations, but we 
+  normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setStacktrace"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setStacktrace</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setStacktrace">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the stacktrace flag. No validations, but 
+  we normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setUnsupported"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setUnsupported</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setUnsupported">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the unsupported flag. No validations, but 
+  we normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setVerbose"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setVerbose</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setVerbose">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the verbose flag. No validations, but we 
+  normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setVersion"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setVersion</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options._setVersion">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the version flag. No validations, but we 
+  normalize the value to <code>True</code> or <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="buildArgumentList"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">buildArgumentList</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">validate</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.buildArgumentList">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Extracts options into a list of command line arguments.</p>
+  <p>The original order of the various arguments (if, indeed, the object 
+  was initialized with a command-line) is not preserved in this generated 
+  argument list.   Besides that, the argument list is normalized to use the
+  long option names (i.e. --version rather than -V).  The resulting list 
+  will be suitable for passing back to the constructor in the 
+  <code>argumentList</code> parameter.  Unlike <a 
+  href="CedarBackup2.cli.Options-class.html#buildArgumentString" 
+  class="link">buildArgumentString</a>, string arguments are not quoted 
+  here, because there is no need for it.</p>
+  <p>Unless the <code>validate</code> parameter is <code>False</code>, the 
+  <a href="CedarBackup2.cli.Options-class.html#validate" 
+  class="link">Options.validate</a> method will be called (with its default
+  arguments) against the options before extracting the command line.  If 
+  the options are not valid, then an argument list will not be 
+  extracted.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>validate</code></strong> (Boolean true/false.) - Validate the options before extracting the command line.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>List representation of command-line arguments.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If options within the object are invalid.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        It is strongly suggested that the <code>validate</code> option 
+        always be set to <code>True</code> (the default) unless there is a 
+        specific need to extract an invalid command line.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="buildArgumentString"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">buildArgumentString</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">validate</span>=<span class="sig-default">True</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.buildArgumentString">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Extracts options into a string of command-line arguments.</p>
+  <p>The original order of the various arguments (if, indeed, the object 
+  was initialized with a command-line) is not preserved in this generated 
+  argument string.   Besides that, the argument string is normalized to use
+  the long option names (i.e. --version rather than -V) and to quote all 
+  string arguments with double quotes (<code>&quot;</code>).  The resulting
+  string will be suitable for passing back to the constructor in the 
+  <code>argumentString</code> parameter.</p>
+  <p>Unless the <code>validate</code> parameter is <code>False</code>, the 
+  <a href="CedarBackup2.cli.Options-class.html#validate" 
+  class="link">Options.validate</a> method will be called (with its default
+  arguments) against the options before extracting the command line.  If 
+  the options are not valid, then an argument string will not be 
+  extracted.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>validate</code></strong> (Boolean true/false.) - Validate the options before extracting the command line.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>String representation of command-line arguments.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If options within the object are invalid.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        It is strongly suggested that the <code>validate</code> option 
+        always be set to <code>True</code> (the default) unless there is a 
+        specific need to extract an invalid command line.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="validate"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">validate</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#Options.validate">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Validates command-line options represented by the object.</p>
+  <p>Unless <code>--help</code> or <code>--version</code> are supplied, at 
+  least one action must be specified.  Other validations (as for allowed 
+  values for particular options) will be taken care of at assignment time 
+  by the properties functionality.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If one of the validations fails.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The command line format is specified by the <a 
+        href="CedarBackup2.cli-module.html#_usage" class="link" 
+        onclick="show_private();">_usage</a> function. Call <a 
+        href="CedarBackup2.cli-module.html#_usage" class="link" 
+        onclick="show_private();">_usage</a> to see a usage statement for 
+        the cback script.
+      </p>
+</div></td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="actions"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">actions</h3>
+  <p>Command-line actions list.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getActions" class="summary-sig-name" onclick="show_private();">_getActions</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the actions list.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setActions" class="summary-sig-name" onclick="show_private();">_setActions</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the actions list.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="config"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">config</h3>
+  <p>Command-line configuration file (<code>-c,--config</code>) 
+  parameter.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getConfig" class="summary-sig-name" onclick="show_private();">_getConfig</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the config parameter.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setConfig" class="summary-sig-name" onclick="show_private();">_setConfig</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the config parameter.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="debug"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">debug</h3>
+  <p>Command-line debug (<code>-d,--debug</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getDebug" class="summary-sig-name" onclick="show_private();">_getDebug</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the debug flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setDebug" class="summary-sig-name" onclick="show_private();">_setDebug</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the debug flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="diagnostics"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">diagnostics</h3>
+  <p>Command-line diagnostics (<code>-D,--diagnostics</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getDiagnostics" class="summary-sig-name" onclick="show_private();">_getDiagnostics</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the diagnostics flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setDiagnostics" class="summary-sig-name" onclick="show_private();">_setDiagnostics</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the diagnostics flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="full"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">full</h3>
+  <p>Command-line full-backup (<code>-f,--full</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getFull" class="summary-sig-name" onclick="show_private();">_getFull</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the full flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setFull" class="summary-sig-name" onclick="show_private();">_setFull</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the full flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="help"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">help</h3>
+  <p>Command-line help (<code>-h,--help</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getHelp" class="summary-sig-name" onclick="show_private();">_getHelp</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the help flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setHelp" class="summary-sig-name" onclick="show_private();">_setHelp</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the help flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="logfile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">logfile</h3>
+  <p>Command-line logfile (<code>-l,--logfile</code>) parameter.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getLogfile" class="summary-sig-name" onclick="show_private();">_getLogfile</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the logfile parameter.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setLogfile" class="summary-sig-name" onclick="show_private();">_setLogfile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the logfile parameter.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="managed"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">managed</h3>
+  <p>Command-line managed (<code>-M,--managed</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getManaged" class="summary-sig-name" onclick="show_private();">_getManaged</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the managed flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setManaged" class="summary-sig-name" onclick="show_private();">_setManaged</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the managed flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="managedOnly"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">managedOnly</h3>
+  <p>Command-line managed-only (<code>-N,--managed-only</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getManagedOnly" class="summary-sig-name" onclick="show_private();">_getManagedOnly</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the managedOnly flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setManagedOnly" class="summary-sig-name" onclick="show_private();">_setManagedOnly</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the managedOnly flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="mode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">mode</h3>
+  <p>Command-line mode (<code>-m,--mode</code>) parameter.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getMode" class="summary-sig-name" onclick="show_private();">_getMode</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the mode parameter.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setMode" class="summary-sig-name" onclick="show_private();">_setMode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the mode parameter.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="output"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">output</h3>
+  <p>Command-line output (<code>-O,--output</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getOutput" class="summary-sig-name" onclick="show_private();">_getOutput</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the output flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setOutput" class="summary-sig-name" onclick="show_private();">_setOutput</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the output flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="owner"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">owner</h3>
+  <p>Command-line owner (<code>-o,--owner</code>) parameter, as tuple 
+  <code>(user,group)</code>.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getOwner" class="summary-sig-name" onclick="show_private();">_getOwner</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the owner parameter.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setOwner" class="summary-sig-name" onclick="show_private();">_setOwner</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the owner parameter.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="quiet"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">quiet</h3>
+  <p>Command-line quiet (<code>-q,--quiet</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getQuiet" class="summary-sig-name" onclick="show_private();">_getQuiet</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the quiet flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setQuiet" class="summary-sig-name" onclick="show_private();">_setQuiet</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the quiet flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="stacktrace"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">stacktrace</h3>
+  <p>Command-line stacktrace (<code>-s,--stack</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getStacktrace" class="summary-sig-name" onclick="show_private();">_getStacktrace</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the stacktrace flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setStacktrace" class="summary-sig-name" onclick="show_private();">_setStacktrace</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the stacktrace flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="unsupported"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">unsupported</h3>
+  <p>Command-line unsupported (<code>-u,--unsupported</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getUnsupported" class="summary-sig-name" onclick="show_private();">_getUnsupported</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the unsupported flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setUnsupported" class="summary-sig-name" onclick="show_private();">_setUnsupported</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the unsupported flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="verbose"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">verbose</h3>
+  <p>Command-line verbose (<code>-b,--verbose</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getVerbose" class="summary-sig-name" onclick="show_private();">_getVerbose</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the verbose flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setVerbose" class="summary-sig-name" onclick="show_private();">_setVerbose</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the verbose flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="version"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">version</h3>
+  <p>Command-line version (<code>-V,--version</code>) flag.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_getVersion" class="summary-sig-name" onclick="show_private();">_getVersion</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the version flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.cli.Options-class.html#_setVersion" class="summary-sig-name" onclick="show_private();">_setVersion</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the version flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

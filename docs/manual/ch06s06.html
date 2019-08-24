@@ -1,0 +1,205 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Mbox Extension</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch06.html" title="Chapter 6. Official Extensions"><link rel="prev" href="ch06s05.html" title="PostgreSQL Extension"><link rel="next" href="ch06s07.html" title="Encrypt Extension"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Mbox Extension</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s05.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Official Extensions</th><td width="20%" align="right"> <a accesskey="n" href="ch06s07.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-extensions-mbox"></a>Mbox Extension</h2></div></div></div><p>
+         The Mbox Extension is a Cedar Backup extension used to incrementally
+         back up UNIX-style <span class="quote">&#8220;<span class="quote">mbox</span>&#8221;</span> mail folders via the Cedar
+         Backup command line.  It is intended to be run either immediately
+         before or immediately after the standard collect action.
+      </p><p>
+         Mbox mail folders are not well-suited to being backed up by the normal
+         Cedar Backup incremental backup process.  This is because active
+         folders are typically appended to on a daily basis.  This forces the
+         incremental backup process to back them up every day in order to avoid
+         losing data.  This can result in quite a bit of wasted space when
+         backing up large mail folders.
+      </p><p>
+         What the mbox extension does is leverage the
+         <span class="command"><strong>grepmail</strong></span> utility to back up only email messages
+         which have been received since the last incremental backup.  This way,
+         even if a folder is added to every day, only the recently-added
+         messages are backed up.  This can potentially save a lot of space.
+      </p><p>
+         Each configured mbox file or directory can be backed using the same
+         collect modes allowed for filesystems in the standard Cedar Backup
+         collect action (weekly, daily, incremental) and the output can be
+         compressed using either <span class="command"><strong>gzip</strong></span> or
+         <span class="command"><strong>bzip2</strong></span>.
+      </p><p>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </p><pre class="programlisting">
+&lt;extensions&gt;
+   &lt;action&gt;
+      &lt;name&gt;mbox&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.mbox&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;99&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </pre><p>
+         This extension relies on the options and collect configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <code class="literal">mbox</code> configuration
+         section.  This is an example mbox configuration section:
+      </p><pre class="programlisting">
+&lt;mbox&gt;
+   &lt;collect_mode&gt;incr&lt;/collect_mode&gt;
+   &lt;compress_mode&gt;gzip&lt;/compress_mode&gt;
+   &lt;file&gt;
+      &lt;abs_path&gt;/home/user1/mail/greylist&lt;/abs_path&gt;
+      &lt;collect_mode&gt;daily&lt;/collect_mode&gt;
+   &lt;/file&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/home/user2/mail&lt;/abs_path&gt;
+   &lt;/dir&gt;
+   &lt;dir&gt;
+      &lt;abs_path&gt;/home/user3/mail&lt;/abs_path&gt;
+      &lt;exclude&gt;
+         &lt;rel_path&gt;spam&lt;/rel_path&gt;
+         &lt;pattern&gt;.*debian.*&lt;/pattern&gt;
+      &lt;/exclude&gt;
+   &lt;/dir&gt;
+&lt;/mbox&gt;
+      </pre><p>
+         Configuration is much like the standard collect action.  Differences
+         come from the fact that mbox directories are <span class="emphasis"><em>not</em></span>
+         collected recursively.
+      </p><p>
+         Unlike collect configuration, exclusion information can only be
+         configured at the mbox directory level (there are no global
+         exclusions).  Another difference is that no absolute exclusion
+         paths are allowed &#8212; only relative path exclusions and patterns.
+      </p><p>
+         The following elements are part of the mbox configuration section:
+      </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">collect_mode</code></span></dt><dd><p>Default collect mode.</p><p>
+                  The collect mode describes how frequently an mbox file
+                  or directory is backed up.  The mbox extension
+                  recognizes the same collect modes as the standard Cedar
+                  Backup collect action (see <a class="xref" href="ch02.html" title="Chapter 2. Basic Concepts">Chapter 2, <i>Basic Concepts</i></a>).
+               </p><p>
+                  This value is the collect mode that will be used by default
+                  during the backup process.  Individual files or directories
+                  (below) may override this value.  If <span class="emphasis"><em>all</em></span>
+                  individual files or directories provide their own value, then
+                  this default value may be omitted from configuration.
+               </p><p>
+                  Note: if your backup device does not suppport multisession
+                  discs, then you should probably use the
+                  <code class="literal">daily</code> collect mode to avoid losing
+                  data.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                  <code class="literal">daily</code>, <code class="literal">weekly</code> or
+                  <code class="literal">incr</code>.
+               </p></dd><dt><span class="term"><code class="literal">compress_mode</code></span></dt><dd><p>Default compress mode.</p><p>
+                  Mbox file or directory backups are just text, and often compress
+                  quite well using <span class="command"><strong>gzip</strong></span> or
+                  <span class="command"><strong>bzip2</strong></span>.  The compress mode describes how
+                  the backed-up data will be compressed, if at all.  
+               </p><p>
+                  This value is the compress mode that will be used by default
+                  during the backup process.  Individual files or directories
+                  (below) may override this value.  If <span class="emphasis"><em>all</em></span>
+                  individual files or directories provide their own value, then
+                  this default value may be omitted from configuration.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                  <code class="literal">none</code>, <code class="literal">gzip</code> or
+                  <code class="literal">bzip2</code>.
+               </p></dd><dt><span class="term"><code class="literal">file</code></span></dt><dd><p>An individual mbox file to be collected.</p><p>
+                  This is a subsection which contains information about
+                  an individual mbox file to be backed up.
+               </p><p>
+                  This section can be repeated as many times as is necessary.
+                  At least one mbox file or directory must be configured.
+               </p><p>
+                  The file subsection contains the following fields:
+               </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">collect_mode</code></span></dt><dd><p>Collect mode for this file.</p><p>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default collect mode.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                           <code class="literal">daily</code>, <code class="literal">weekly</code> or
+                           <code class="literal">incr</code>.
+                        </p></dd><dt><span class="term"><code class="literal">compress_mode</code></span></dt><dd><p>Compress mode for this file.</p><p>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default compress mode.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                           <code class="literal">none</code>, <code class="literal">gzip</code> or
+                           <code class="literal">bzip2</code>.
+                        </p></dd><dt><span class="term"><code class="literal">abs_path</code></span></dt><dd><p>
+                           Absolute path of the mbox file to back up.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be an absolute path.
+                        </p></dd></dl></div></dd><dt><span class="term"><code class="literal">dir</code></span></dt><dd><p>An mbox directory to be collected.</p><p>
+                  This is a subsection which contains information about an mbox
+                  directory to be backed up.  An mbox directory is a directory
+                  containing mbox files.  Every file in an mbox directory is
+                  assumed to be an mbox file.  Mbox directories are
+                  <span class="emphasis"><em>not</em></span> collected recursively.  Only the
+                  files immediately within the configured directory will be
+                  backed-up and any subdirectories will be ignored.
+               </p><p>
+                  This section can be repeated as many times as is necessary.
+                  At least one mbox file or directory must be configured.
+               </p><p>
+                  The dir subsection contains the following fields:
+               </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">collect_mode</code></span></dt><dd><p>Collect mode for this file.</p><p>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default collect mode.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                           <code class="literal">daily</code>, <code class="literal">weekly</code> or
+                           <code class="literal">incr</code>.
+                        </p></dd><dt><span class="term"><code class="literal">compress_mode</code></span></dt><dd><p>Compress mode for this file.</p><p>
+                           This field is optional.  If it doesn't exist, the backup
+                           will use the default compress mode.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be one of
+                           <code class="literal">none</code>, <code class="literal">gzip</code> or
+                           <code class="literal">bzip2</code>.
+                        </p></dd><dt><span class="term"><code class="literal">abs_path</code></span></dt><dd><p>
+                           Absolute path of the mbox directory to back up.
+                        </p><p>
+                           <span class="emphasis"><em>Restrictions:</em></span> Must be an absolute path.
+                        </p></dd><dt><span class="term"><code class="literal">exclude</code></span></dt><dd><p>List of paths or patterns to exclude from the backup.</p><p>
+                           This is a subsection which contains a set of paths
+                           and patterns to be excluded within this mbox
+                           directory.
+                        </p><p>
+                           This section is entirely optional, and if it exists can
+                           also be empty.  
+                        </p><p>
+                           The exclude subsection can contain one or more of each of
+                           the following fields:
+                        </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">rel_path</code></span></dt><dd><p>
+                                    A relative path to be excluded from the
+                                    backup.
+                                 </p><p>
+                                    The path is assumed to be relative to the
+                                    mbox directory itself.  For instance, if
+                                    the configured mbox directory is
+                                    <code class="filename">/home/user2/mail</code> a
+                                    configured relative path of
+                                    <code class="filename">SPAM</code> would exclude the
+                                    path <code class="filename">/home/user2/mail/SPAM</code>.
+                                 </p><p>
+                                    This field can be repeated as many times as
+                                    is necessary.
+                                 </p><p>
+                                    <span class="emphasis"><em>Restrictions:</em></span> Must be non-empty.
+                                 </p></dd><dt><span class="term"><code class="literal">pattern</code></span></dt><dd><p>
+                                    A pattern to be excluded from the backup.
+                                 </p><p>
+                                    The pattern must be a Python regular
+                                    expression.  <a href="ch05s02.html#ftn.cedar-config-foot-regex" class="footnoteref"><sup class="footnoteref">[19]</sup></a> 
+                                    It is assumed to be bounded at front and
+                                    back by the beginning and end of the
+                                    string (i.e. it is treated as if it
+                                    begins with <code class="literal">^</code> and
+                                    ends with <code class="literal">$</code>).
+                                 </p><p>
+                                    This field can be repeated as many times as
+                                    is necessary.
+                                 </p><p>
+                                    <span class="emphasis"><em>Restrictions:</em></span> Must be non-empty
+                                 </p></dd></dl></div></dd></dl></div></dd></dl></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">PostgreSQL Extension </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Encrypt Extension</td></tr></table></div></body></html>

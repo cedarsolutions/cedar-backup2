@@ -1,0 +1,1610 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.filesystem.FilesystemList</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.filesystem-module.html">Module&nbsp;filesystem</a> ::
+        Class&nbsp;FilesystemList
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.filesystem.FilesystemList-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class FilesystemList</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+    
+         |    
+      list --+
+             |
+            <strong class="uidshort">FilesystemList</strong>
+</pre>
+
+<dl><dt>Known Subclasses:</dt>
+<dd>
+      <ul class="subclass-list">
+<li><a href="CedarBackup2.filesystem.BackupFileList-class.html">BackupFileList</a></li><li>, <a href="CedarBackup2.filesystem.PurgeItemList-class.html">PurgeItemList</a></li>  </ul>
+</dd></dl>
+
+<hr />
+<p>Represents a list of filesystem items.</p>
+  <p>This is a generic class that represents a list of filesystem items.  
+  Callers can add individual files or directories to the list, or can 
+  recursively add the contents of a directory.  The class also allows for 
+  up-front exclusions in several forms (all files, all directories, all 
+  items matching a pattern, all items whose basename matches a pattern, or 
+  all directories containing a specific &quot;ignore file&quot;).  Symbolic
+  links are typically backed up non-recursively, i.e. the link to a 
+  directory is backed up, but not the contents of that link (we don't want 
+  to deal with recursive loops, etc.).</p>
+  <p>The custom methods such as <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#addFile" 
+  class="link">addFile</a> will only add items if they exist on the 
+  filesystem and do not match any exclusions that are already in place. 
+  However, since a FilesystemList is a subclass of Python's standard list 
+  class, callers can also add items to the list in the usual way, using 
+  methods like <code>append()</code> or <code>insert()</code>.  No 
+  validations apply to items added to the list in this way; however, many 
+  list-manipulation methods deal &quot;gracefully&quot; with items that 
+  don't exist in the filesystem, often by ignoring them.</p>
+  <p>Once a list has been created, callers can remove individual items from
+  the list using standard methods like <code>pop()</code> or 
+  <code>remove()</code> or they can use custom methods to remove specific 
+  types of entries or entries which match a particular pattern.</p>
+
+<hr />
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        Regular expression patterns that apply to paths are assumed to be 
+        bounded at front and back by the beginning and end of the string, 
+        i.e. they are treated as if they begin with <code>^</code> and end 
+        with <code>$</code>.  This is true whether we are matching a 
+        complete path or a basename.
+        </li>
+        <li>
+        Some platforms, like Windows, do not support soft links.  On those 
+        platforms, the ignore-soft-links flag can be set, but it won't do 
+        any good because the operating system never reports a file as a 
+        soft link.
+        </li>
+      </ul>
+</div><!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">new empty list</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Initializes a list with no configured exclusions.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#addFile" class="summary-sig-name">addFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>)</span><br />
+      Adds a file to the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.addFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#addDir" class="summary-sig-name">addDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>)</span><br />
+      Adds a directory to the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.addDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#addDirContents" class="summary-sig-name">addDirContents</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">recursive</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">addSelf</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">linkDepth</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">dereference</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Adds the contents of a directory to the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.addDirContents">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeFiles" class="summary-sig-name">removeFiles</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pattern</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Removes file entries from the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeFiles">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeDirs" class="summary-sig-name">removeDirs</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pattern</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Removes directory entries from the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeDirs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeLinks" class="summary-sig-name">removeLinks</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pattern</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Removes soft link entries from the list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeLinks">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeMatch" class="summary-sig-name">removeMatch</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">pattern</span>)</span><br />
+      Removes from the list all entries matching a pattern.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeMatch">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#removeInvalid" class="summary-sig-name">removeInvalid</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Removes from the list all entries that do not exist on disk.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeInvalid">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="normalize"></a><span class="summary-sig-name">normalize</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Normalizes the list, ensuring that each entry is unique.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.normalize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeFiles" class="summary-sig-name" onclick="show_private();">_setExcludeFiles</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the exclude files flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludeFiles">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getExcludeFiles"></a><span class="summary-sig-name">_getExcludeFiles</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the exclude files flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._getExcludeFiles">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeDirs" class="summary-sig-name" onclick="show_private();">_setExcludeDirs</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the exclude directories flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludeDirs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getExcludeDirs"></a><span class="summary-sig-name">_getExcludeDirs</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the exclude directories flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._getExcludeDirs">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeLinks" class="summary-sig-name" onclick="show_private();">_setExcludeLinks</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the exclude soft links flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludeLinks">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getExcludeLinks"></a><span class="summary-sig-name">_getExcludeLinks</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the exclude soft links flag.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._getExcludeLinks">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludePaths" class="summary-sig-name" onclick="show_private();">_setExcludePaths</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the exclude paths list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludePaths">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getExcludePaths"></a><span class="summary-sig-name">_getExcludePaths</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the absolute exclude paths list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._getExcludePaths">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludePatterns" class="summary-sig-name" onclick="show_private();">_setExcludePatterns</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the exclude patterns list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludePatterns">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getExcludePatterns"></a><span class="summary-sig-name">_getExcludePatterns</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the exclude patterns list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._getExcludePatterns">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeBasenamePatterns" class="summary-sig-name" onclick="show_private();">_setExcludeBasenamePatterns</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the exclude basename patterns list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludeBasenamePatterns">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getExcludeBasenamePatterns"></a><span class="summary-sig-name">_getExcludeBasenamePatterns</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the exclude basename patterns list.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._getExcludeBasenamePatterns">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setIgnoreFile" class="summary-sig-name" onclick="show_private();">_setIgnoreFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the ignore file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setIgnoreFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getIgnoreFile"></a><span class="summary-sig-name">_getIgnoreFile</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the ignore file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._getIgnoreFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_addDirContentsInternal" class="summary-sig-name" onclick="show_private();">_addDirContentsInternal</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">path</span>,
+        <span class="summary-sig-arg">includePath</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">recursive</span>=<span class="summary-sig-default">True</span>,
+        <span class="summary-sig-arg">linkDepth</span>=<span class="summary-sig-default">0</span>,
+        <span class="summary-sig-arg">dereference</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Internal implementation of <code>addDirContents</code>.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._addDirContentsInternal">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#verify" class="summary-sig-name">verify</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Verifies that all entries in the list exist on disk.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.verify">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>list</code></b>:
+      <code>__add__</code>,
+      <code>__contains__</code>,
+      <code>__delitem__</code>,
+      <code>__delslice__</code>,
+      <code>__eq__</code>,
+      <code>__ge__</code>,
+      <code>__getattribute__</code>,
+      <code>__getitem__</code>,
+      <code>__getslice__</code>,
+      <code>__gt__</code>,
+      <code>__iadd__</code>,
+      <code>__imul__</code>,
+      <code>__iter__</code>,
+      <code>__le__</code>,
+      <code>__len__</code>,
+      <code>__lt__</code>,
+      <code>__mul__</code>,
+      <code>__ne__</code>,
+      <code>__new__</code>,
+      <code>__repr__</code>,
+      <code>__reversed__</code>,
+      <code>__rmul__</code>,
+      <code>__setitem__</code>,
+      <code>__setslice__</code>,
+      <code>__sizeof__</code>,
+      <code>append</code>,
+      <code>count</code>,
+      <code>extend</code>,
+      <code>index</code>,
+      <code>insert</code>,
+      <code>pop</code>,
+      <code>remove</code>,
+      <code>reverse</code>,
+      <code>sort</code>
+      </p>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__setattr__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>list</code></b>:
+      <code>__hash__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.filesystem.FilesystemList-class.html#excludeFiles" class="summary-name">excludeFiles</a><br />
+      Boolean indicating whether files should be excluded.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.filesystem.FilesystemList-class.html#excludeDirs" class="summary-name">excludeDirs</a><br />
+      Boolean indicating whether directories should be excluded.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.filesystem.FilesystemList-class.html#excludeLinks" class="summary-name">excludeLinks</a><br />
+      Boolean indicating whether soft links should be excluded.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.filesystem.FilesystemList-class.html#excludePaths" class="summary-name">excludePaths</a><br />
+      List of absolute paths to be excluded.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.filesystem.FilesystemList-class.html#excludePatterns" class="summary-name">excludePatterns</a><br />
+      List of regular expression patterns (matching complete path) to be 
+      excluded.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.filesystem.FilesystemList-class.html#excludeBasenamePatterns" class="summary-name">excludeBasenamePatterns</a><br />
+      List of regular expression patterns (matching basename) to be 
+      excluded.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.filesystem.FilesystemList-class.html#ignoreFile" class="summary-name">ignoreFile</a><br />
+      Name of file which will cause directory contents to be ignored.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes a list with no configured exclusions.</p>
+  <dl class="fields">
+    <dt>Returns: new empty list</dt>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.addFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a file to the list.</p>
+  <p>The path must exist and must be a file or a link to an existing file.
+  It will be added to the list subject to any exclusions that are in 
+  place.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> (String representing a path on disk) - File path to be added to the list</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of items added to the list.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If path is not a file or does not exist.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the path could not be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addDir"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addDir</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.addDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds a directory to the list.</p>
+  <p>The path must exist and must be a directory or a link to an existing 
+  directory.  It will be added to the list subject to any exclusions that 
+  are in place.  The <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#ignoreFile" 
+  class="link">ignoreFile</a> does not apply to this method, only to <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#addDirContents" 
+  class="link">addDirContents</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> (String representing a path on disk) - Directory path to be added to the list</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of items added to the list.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If path is not a directory or does not exist.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the path could not be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="addDirContents"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">addDirContents</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">recursive</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">addSelf</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">linkDepth</span>=<span class="sig-default">0</span>,
+        <span class="sig-arg">dereference</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.addDirContents">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Adds the contents of a directory to the list.</p>
+  <p>The path must exist and must be a directory or a link to a directory. 
+  The contents of the directory (as well as the directory path itself) will
+  be recursively added to the list, subject to any exclusions that are in 
+  place.  If you only want the directory and its immediate contents to be 
+  added, then pass in <code>recursive=False</code>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> (String representing a path on disk) - Directory path whose contents should be added to the list</li>
+        <li><strong class="pname"><code>recursive</code></strong> (Boolean value) - Indicates whether directory contents should be added recursively.</li>
+        <li><strong class="pname"><code>addSelf</code></strong> (Boolean value) - Indicates whether the directory itself should be added to the 
+          list.</li>
+        <li><strong class="pname"><code>linkDepth</code></strong> (Integer value, where zero means not to follow any soft links) - Maximum depth of the tree at which soft links should be followed</li>
+        <li><strong class="pname"><code>dereference</code></strong> (Boolean value) - Indicates whether soft links, if followed, should be dereferenced</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of items recursively added to the list</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If path is not a directory or does not exist.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the path could not be encoded properly.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        If a directory's absolute path matches an exclude pattern or path, 
+        or if the directory contains the configured ignore file, then the 
+        directory and all of its contents will be recursively excluded from
+        the list.
+        </li>
+        <li>
+        If the passed-in directory happens to be a soft link, it will be 
+        recursed.  However, the linkDepth parameter controls whether any 
+        soft links <i>within</i> the directory will be recursed.  The link 
+        depth is maximum depth of the tree at which soft links should be 
+        followed.  So, a depth of 0 does not follow any soft links, a depth
+        of 1 follows only links within the passed-in directory, a depth of 
+        2 follows the links at the next level down, etc.
+        </li>
+        <li>
+        Any invalid soft links (i.e.  soft links that point to non-existent
+        items) will be silently ignored.
+        </li>
+        <li>
+        The <a 
+        href="CedarBackup2.filesystem.FilesystemList-class.html#excludeDirs"
+        class="link">excludeDirs</a> flag only controls whether any given 
+        directory path itself is added to the list once it has been 
+        discovered.  It does <i>not</i> modify any behavior related to 
+        directory recursion.
+        </li>
+        <li>
+        If you call this method <i>on a link to a directory</i> that link 
+        will never be dereferenced (it may, however, be followed).
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="removeFiles"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">removeFiles</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pattern</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeFiles">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Removes file entries from the list.</p>
+  <p>If <code>pattern</code> is not passed in or is <code>None</code>, then
+  all file entries will be removed from the list.  Otherwise, only those 
+  file entries matching the pattern will be removed.  Any entry which does 
+  not exist on disk will be ignored (use <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#removeInvalid" 
+  class="link">removeInvalid</a> to purge those entries).</p>
+  <p>This method might be fairly slow for large lists, since it must check 
+  the type of each item in the list.  If you know ahead of time that you 
+  want to exclude all files, then you will be better off setting <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#excludeFiles" 
+  class="link">excludeFiles</a> to <code>True</code> before adding items to
+  the list.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pattern</code></strong> - Regular expression pattern representing entries to remove</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of entries removed</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the passed-in pattern is not a valid regular expression.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="removeDirs"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">removeDirs</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pattern</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeDirs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Removes directory entries from the list.</p>
+  <p>If <code>pattern</code> is not passed in or is <code>None</code>, then
+  all directory entries will be removed from the list.  Otherwise, only 
+  those directory entries matching the pattern will be removed.  Any entry 
+  which does not exist on disk will be ignored (use <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#removeInvalid" 
+  class="link">removeInvalid</a> to purge those entries).</p>
+  <p>This method might be fairly slow for large lists, since it must check 
+  the type of each item in the list.  If you know ahead of time that you 
+  want to exclude all directories, then you will be better off setting <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#excludeDirs" 
+  class="link">excludeDirs</a> to <code>True</code> before adding items to 
+  the list (note that this will not prevent you from recursively adding the
+  <i>contents</i> of directories).</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pattern</code></strong> - Regular expression pattern representing entries to remove</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of entries removed</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the passed-in pattern is not a valid regular expression.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="removeLinks"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">removeLinks</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pattern</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeLinks">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Removes soft link entries from the list.</p>
+  <p>If <code>pattern</code> is not passed in or is <code>None</code>, then
+  all soft link entries will be removed from the list.  Otherwise, only 
+  those soft link entries matching the pattern will be removed.  Any entry 
+  which does not exist on disk will be ignored (use <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#removeInvalid" 
+  class="link">removeInvalid</a> to purge those entries).</p>
+  <p>This method might be fairly slow for large lists, since it must check 
+  the type of each item in the list.  If you know ahead of time that you 
+  want to exclude all soft links, then you will be better off setting <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#excludeLinks" 
+  class="link">excludeLinks</a> to <code>True</code> before adding items to
+  the list.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pattern</code></strong> - Regular expression pattern representing entries to remove</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of entries removed</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the passed-in pattern is not a valid regular expression.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="removeMatch"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">removeMatch</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">pattern</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeMatch">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Removes from the list all entries matching a pattern.</p>
+  <p>This method removes from the list all entries which match the passed 
+  in <code>pattern</code>.  Since there is no need to check the type of 
+  each entry, it is faster to call this method than to call the <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#removeFiles" 
+  class="link">removeFiles</a>, <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#removeDirs" 
+  class="link">removeDirs</a> or <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#removeLinks" 
+  class="link">removeLinks</a> methods individually.  If you know which 
+  patterns you will want to remove ahead of time, you may be better off 
+  setting <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#excludePatterns" 
+  class="link">excludePatterns</a> or <a 
+  href="CedarBackup2.filesystem.FilesystemList-class.html#excludeBasenamePatterns"
+  class="link">excludeBasenamePatterns</a> before adding items to the 
+  list.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>pattern</code></strong> - Regular expression pattern representing entries to remove</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of entries removed.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the passed-in pattern is not a valid regular expression.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        Unlike when using the exclude lists, the pattern here is <i>not</i>
+        bounded at the front and the back of the string.  You can use any 
+        pattern you want.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="removeInvalid"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">removeInvalid</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.removeInvalid">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Removes from the list all entries that do not exist on disk.</p>
+  <p>This method removes from the list all entries which do not currently 
+  exist on disk in some form.  No attention is paid to whether the entries 
+  are files or directories.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Number of entries removed.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setExcludeFiles"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setExcludeFiles</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludeFiles">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the exclude files flag. No validations, 
+  but we normalize the value to <code>True</code> or 
+  <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setExcludeDirs"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setExcludeDirs</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludeDirs">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the exclude directories flag. No 
+  validations, but we normalize the value to <code>True</code> or 
+  <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setExcludeLinks"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setExcludeLinks</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludeLinks">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the exclude soft links flag. No 
+  validations, but we normalize the value to <code>True</code> or 
+  <code>False</code>.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setExcludePaths"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setExcludePaths</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludePaths">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the exclude paths list. A 
+  <code>None</code> value is converted to an empty list. Elements do not 
+  have to exist on disk at the time of assignment.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If any list element is not an absolute path.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setExcludePatterns"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setExcludePatterns</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludePatterns">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the exclude patterns list. A 
+  <code>None</code> value is converted to an empty list.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setExcludeBasenamePatterns"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setExcludeBasenamePatterns</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setExcludeBasenamePatterns">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the exclude basename patterns list. A 
+  <code>None</code> value is converted to an empty list.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setIgnoreFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setIgnoreFile</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._setIgnoreFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the ignore file. The value must be a 
+  non-empty string if it is not <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_addDirContentsInternal"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_addDirContentsInternal</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">path</span>,
+        <span class="sig-arg">includePath</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">recursive</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">linkDepth</span>=<span class="sig-default">0</span>,
+        <span class="sig-arg">dereference</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList._addDirContentsInternal">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Internal implementation of <code>addDirContents</code>.</p>
+  <p>This internal implementation exists due to some refactoring.  
+  Basically, some subclasses have a need to add the contents of a 
+  directory, but not the directory itself.  This is different than the 
+  standard <code>FilesystemList</code> behavior and actually ends up making
+  a special case out of the first call in the recursive chain.  Since I 
+  don't want to expose the modified interface, <code>addDirContents</code> 
+  ends up being wholly implemented in terms of this method.</p>
+  <p>The linkDepth parameter controls whether soft links are followed when 
+  we are adding the contents recursively.  Any recursive calls reduce the 
+  value by one.  If the value zero or less, then soft links will just be 
+  added as directories, but will not be followed.  This means that links 
+  are followed to a <i>constant depth</i> starting from the top-most 
+  directory.</p>
+  <p>There is one difference between soft links and directories: soft links
+  that are added recursively are not placed into the list explicitly.  This
+  is because if we do add the links recursively, the resulting tar file 
+  gets a little confused (it has a link and a directory with the same 
+  name).</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>path</code></strong> - Directory path whose contents should be added to the list.</li>
+        <li><strong class="pname"><code>includePath</code></strong> - Indicates whether to include the path as well as contents.</li>
+        <li><strong class="pname"><code>recursive</code></strong> - Indicates whether directory contents should be added recursively.</li>
+        <li><strong class="pname"><code>linkDepth</code></strong> - Depth of soft links that should be followed</li>
+        <li><strong class="pname"><code>dereference</code></strong> - Indicates whether soft links, if followed, should be dereferenced</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of items recursively added to the list</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If path is not a directory or does not exist.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        If you call this method <i>on a link to a directory</i> that link 
+        will never be dereferenced (it may, however, be followed).
+      </p>
+</div></td></tr></table>
+</div>
+<a name="verify"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">verify</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.filesystem-pysrc.html#FilesystemList.verify">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Verifies that all entries in the list exist on disk.</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd><code>True</code> if all entries exist, <code>False</code> 
+          otherwise.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="excludeFiles"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">excludeFiles</h3>
+  <p>Boolean indicating whether files should be excluded.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludeFiles" class="summary-sig-name" onclick="show_private();">_getExcludeFiles</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the exclude files flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeFiles" class="summary-sig-name" onclick="show_private();">_setExcludeFiles</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the exclude files flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="excludeDirs"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">excludeDirs</h3>
+  <p>Boolean indicating whether directories should be excluded.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludeDirs" class="summary-sig-name" onclick="show_private();">_getExcludeDirs</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the exclude directories flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeDirs" class="summary-sig-name" onclick="show_private();">_setExcludeDirs</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the exclude directories flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="excludeLinks"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">excludeLinks</h3>
+  <p>Boolean indicating whether soft links should be excluded.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludeLinks" class="summary-sig-name" onclick="show_private();">_getExcludeLinks</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the exclude soft links flag.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeLinks" class="summary-sig-name" onclick="show_private();">_setExcludeLinks</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the exclude soft links flag.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="excludePaths"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">excludePaths</h3>
+  <p>List of absolute paths to be excluded.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludePaths" class="summary-sig-name" onclick="show_private();">_getExcludePaths</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the absolute exclude paths list.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludePaths" class="summary-sig-name" onclick="show_private();">_setExcludePaths</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the exclude paths list.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="excludePatterns"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">excludePatterns</h3>
+  <p>List of regular expression patterns (matching complete path) to be 
+  excluded.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludePatterns" class="summary-sig-name" onclick="show_private();">_getExcludePatterns</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the exclude patterns list.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludePatterns" class="summary-sig-name" onclick="show_private();">_setExcludePatterns</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the exclude patterns list.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="excludeBasenamePatterns"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">excludeBasenamePatterns</h3>
+  <p>List of regular expression patterns (matching basename) to be 
+  excluded.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getExcludeBasenamePatterns" class="summary-sig-name" onclick="show_private();">_getExcludeBasenamePatterns</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the exclude basename patterns list.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setExcludeBasenamePatterns" class="summary-sig-name" onclick="show_private();">_setExcludeBasenamePatterns</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the exclude basename patterns list.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ignoreFile"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ignoreFile</h3>
+  <p>Name of file which will cause directory contents to be ignored.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_getIgnoreFile" class="summary-sig-name" onclick="show_private();">_getIgnoreFile</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the ignore file.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.filesystem.FilesystemList-class.html#_setIgnoreFile" class="summary-sig-name" onclick="show_private();">_setIgnoreFile</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the ignore file.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

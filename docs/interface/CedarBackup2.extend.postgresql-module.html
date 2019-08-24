@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.extend.postgresql</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.extend-module.html">Package&nbsp;extend</a> ::
+        Module&nbsp;postgresql
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.extend.postgresql-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module postgresql</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.extend.postgresql-pysrc.html">source&nbsp;code</a></span></p>
+<p>Provides an extension to back up PostgreSQL databases.</p>
+  <p>This is a Cedar Backup extension used to back up PostgreSQL databases 
+  via the Cedar Backup command line.  It requires a new configurations 
+  section &lt;postgresql&gt; and is intended to be run either immediately 
+  before or immediately after the standard collect action.  Aside from its 
+  own configuration, it requires the options and collect configuration 
+  sections in the standard Cedar Backup configuration file.</p>
+  <p>The backup is done via the <code>pg_dump</code> or 
+  <code>pg_dumpall</code> commands included with the PostgreSQL product.  
+  Output can be compressed using <code>gzip</code> or <code>bzip2</code>. 
+  Administrators can configure the extension either to back up all 
+  databases or to back up only specific databases.  The extension assumes 
+  that the current user has passwordless access to the database since there
+  is no easy way to pass a password to the <code>pg_dump</code> client. 
+  This can be accomplished using appropriate voodoo in the 
+  <code>pg_hda.conf</code> file.</p>
+  <p>Note that this code always produces a full backup.  There is currently
+  no facility for making incremental backups.</p>
+  <p>You should always make <code>/etc/cback.conf</code> unreadble to 
+  non-root users once you place postgresql configuration into it, since 
+  postgresql configuration will contain information about available 
+  PostgreSQL databases and usernames.</p>
+  <p>Use of this extension <i>may</i> expose usernames in the process 
+  listing (via <code>ps</code>) when the backup is running if the username 
+  is specified in the configuration.</p>
+
+<hr />
+<div class="fields">      <dl><dt>Authors:</dt>
+        <dd>
+          Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;,
+          Antoine Beaupre &lt;anarcat@koumbit.org&gt;
+        </dd>
+      </dl>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.postgresql.PostgresqlConfig-class.html" class="summary-name">PostgresqlConfig</a><br />
+      Class representing PostgreSQL configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.postgresql.LocalConfig-class.html" class="summary-name">LocalConfig</a><br />
+      Class representing this extension's configuration document.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.postgresql-module.html#executeAction" class="summary-sig-name">executeAction</a>(<span class="summary-sig-arg">configPath</span>,
+        <span class="summary-sig-arg">options</span>,
+        <span class="summary-sig-arg">config</span>)</span><br />
+      Executes the PostgreSQL backup action.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.postgresql-pysrc.html#executeAction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.postgresql-module.html#_backupDatabase" class="summary-sig-name" onclick="show_private();">_backupDatabase</a>(<span class="summary-sig-arg">targetDir</span>,
+        <span class="summary-sig-arg">compressMode</span>,
+        <span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">backupUser</span>,
+        <span class="summary-sig-arg">backupGroup</span>,
+        <span class="summary-sig-arg">database</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Backs up an individual PostgreSQL database, or all databases.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.postgresql-pysrc.html#_backupDatabase">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.postgresql-module.html#_getOutputFile" class="summary-sig-name" onclick="show_private();">_getOutputFile</a>(<span class="summary-sig-arg">targetDir</span>,
+        <span class="summary-sig-arg">database</span>,
+        <span class="summary-sig-arg">compressMode</span>)</span><br />
+      Opens the output file used for saving the PostgreSQL dump.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.postgresql-pysrc.html#_getOutputFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.postgresql-module.html#backupDatabase" class="summary-sig-name">backupDatabase</a>(<span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">backupFile</span>,
+        <span class="summary-sig-arg">database</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Backs up an individual PostgreSQL database, or all databases.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.postgresql-pysrc.html#backupDatabase">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="POSTGRESQLDUMP_COMMAND"></a><span class="summary-name">POSTGRESQLDUMP_COMMAND</span> = <code title="['pg_dump']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">pg_dump</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="POSTGRESQLDUMPALL_COMMAND"></a><span class="summary-name">POSTGRESQLDUMPALL_COMMAND</span> = <code title="['pg_dumpall']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">pg_dumpall</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2.extend'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2.extend</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="executeAction"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">executeAction</span>(<span class="sig-arg">configPath</span>,
+        <span class="sig-arg">options</span>,
+        <span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.postgresql-pysrc.html#executeAction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Executes the PostgreSQL backup action.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>configPath</code></strong> (String representing a path on disk.) - Path to configuration file on disk.</li>
+        <li><strong class="pname"><code>options</code></strong> (Options object.) - Program command-line options.</li>
+        <li><strong class="pname"><code>config</code></strong> (Config object.) - Program configuration.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - Under many generic error conditions</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If a backup could not be written for some reason.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_backupDatabase"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_backupDatabase</span>(<span class="sig-arg">targetDir</span>,
+        <span class="sig-arg">compressMode</span>,
+        <span class="sig-arg">user</span>,
+        <span class="sig-arg">backupUser</span>,
+        <span class="sig-arg">backupGroup</span>,
+        <span class="sig-arg">database</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.postgresql-pysrc.html#_backupDatabase">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Backs up an individual PostgreSQL database, or all databases.</p>
+  <p>This internal method wraps the public method and adds some 
+  functionality, like figuring out a filename, etc.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>targetDir</code></strong> - Directory into which backups should be written.</li>
+        <li><strong class="pname"><code>compressMode</code></strong> - Compress mode to be used for backed-up files.</li>
+        <li><strong class="pname"><code>user</code></strong> - User to use for connecting to the database.</li>
+        <li><strong class="pname"><code>backupUser</code></strong> - User to own resulting file.</li>
+        <li><strong class="pname"><code>backupGroup</code></strong> - Group to own resulting file.</li>
+        <li><strong class="pname"><code>database</code></strong> - Name of database, or <code>None</code> for all databases.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Name of the generated backup file.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some value is missing or invalid.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem executing the PostgreSQL dump.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getOutputFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getOutputFile</span>(<span class="sig-arg">targetDir</span>,
+        <span class="sig-arg">database</span>,
+        <span class="sig-arg">compressMode</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.postgresql-pysrc.html#_getOutputFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Opens the output file used for saving the PostgreSQL dump.</p>
+  <p>The filename is either <code>&quot;postgresqldump.txt&quot;</code> or 
+  <code>&quot;postgresqldump-&lt;database&gt;.txt&quot;</code>.  The 
+  <code>&quot;.gz&quot;</code> or <code>&quot;.bz2&quot;</code> extension 
+  is added if <code>compress</code> is <code>True</code>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>targetDir</code></strong> - Target directory to write file in.</li>
+        <li><strong class="pname"><code>database</code></strong> - Name of the database (if any)</li>
+        <li><strong class="pname"><code>compressMode</code></strong> - Compress mode to be used for backed-up files.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple of (Output file object, filename)</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="backupDatabase"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">backupDatabase</span>(<span class="sig-arg">user</span>,
+        <span class="sig-arg">backupFile</span>,
+        <span class="sig-arg">database</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.postgresql-pysrc.html#backupDatabase">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Backs up an individual PostgreSQL database, or all databases.</p>
+  <p>This function backs up either a named local PostgreSQL database or all
+  local PostgreSQL databases, using the passed in user for connectivity. 
+  This is <i>always</i> a full backup.  There is no facility for 
+  incremental backups.</p>
+  <p>The backup data will be written into the passed-in back file.  
+  Normally, this would be an object as returned from <code>open()</code>, 
+  but it is possible to use something like a <code>GzipFile</code> to write
+  compressed output.  The caller is responsible for closing the passed-in 
+  backup file.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>user</code></strong> (String representing PostgreSQL username.) - User to use for connecting to the database.</li>
+        <li><strong class="pname"><code>backupFile</code></strong> (Python file object as from <code>open()</code> or 
+          <code>file()</code>.) - File use for writing backup.</li>
+        <li><strong class="pname"><code>database</code></strong> (String representing database name, or <code>None</code> for all 
+          databases.) - Name of the database to be backed up.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some value is missing or invalid.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem executing the PostgreSQL dump.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        Typically, you would use the <code>root</code> user to back up all 
+        databases.
+      </p>
+</div></td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

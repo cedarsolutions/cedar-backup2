@@ -1,0 +1,310 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>The cback-span command</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch04.html" title="Chapter 4. Command Line Tools"><link rel="prev" href="ch04s03.html" title="The cback-amazons3-sync command"><link rel="next" href="ch05.html" title="Chapter 5. Configuration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The <span class="command"><strong>cback-span</strong></span> command</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04s03.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Command Line Tools</th><td width="20%" align="right"> <a accesskey="n" href="ch05.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-commandline-cbackspan"></a>The <span class="command"><strong>cback-span</strong></span> command</h2></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-cbackspan-intro"></a>Introduction</h3></div></div></div><p>
+            Cedar Backup was designed &#8212; and is still primarily focused
+            &#8212; around weekly backups to a single CD or DVD.  Most users
+            who back up more data than fits on a single disc seem to stop their
+            backup process at the stage step, using Cedar Backup as an
+            easy way to collect data.  
+         </p><p>
+            However, some users have expressed a need to write these large
+            kinds of backups to disc &#8212; if not every day, then at least
+            occassionally.  The <span class="command"><strong>cback-span</strong></span> tool was written
+            to meet those needs.  If you have staged more data than fits on a
+            single CD or DVD, you can use <span class="command"><strong>cback-span</strong></span> to
+            split that data between multiple discs.
+         </p><p>
+            <span class="command"><strong>cback-span</strong></span> is not a general-purpose
+            disc-splitting tool.  It is a specialized program that requires
+            Cedar Backup configuration to run.  All it can do is read Cedar
+            Backup configuration, find any staging directories that have not
+            yet been written to disc, and split the files in those directories
+            between discs.
+         </p><p>
+            <span class="command"><strong>cback-span</strong></span> accepts many of the same command-line
+            options as <span class="command"><strong>cback</strong></span>, but <span class="emphasis"><em>must</em></span>
+            be run interactively.  It cannot be run from cron.  This is
+            intentional.  It is intended to be a useful tool, not a new part of
+            the backup process (that is the purpose of an extension).
+         </p><p>
+            In order to use <span class="command"><strong>cback-span</strong></span>, you must configure
+            your backup such that the largest individual backup file can fit on
+            a single disc.  <span class="emphasis"><em>The command will not split a single file
+            onto more than one disc.</em></span>  All it can do is split large
+            directories onto multiple discs.  Files in those directories will
+            be arbitrarily split up so that space is utilized most efficiently.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-cbackspan-syntax"></a>Syntax</h3></div></div></div><p>
+            The <span class="command"><strong>cback-span</strong></span> command has the following syntax:
+         </p><pre class="screen">
+ Usage: cback-span [switches]
+
+ Cedar Backup 'span' tool.
+
+ This Cedar Backup utility spans staged data between multiple discs.
+ It is a utility, not an extension, and requires user interaction.
+
+ The following switches are accepted, mostly to set up underlying
+ Cedar Backup functionality:
+
+   -h, --help     Display this usage/help listing
+   -V, --version  Display version information
+   -b, --verbose  Print verbose output as well as logging to disk
+   -c, --config   Path to config file (default: /etc/cback.conf)
+   -l, --logfile  Path to logfile (default: /var/log/cback.log)
+   -o, --owner    Logfile ownership, user:group (default: root:adm)
+   -m, --mode     Octal logfile permissions mode (default: 640)
+   -O, --output   Record some sub-command (i.e. cdrecord) output to the log
+   -d, --debug    Write debugging information to the log (implies --output)
+   -s, --stack    Dump a Python stack trace instead of swallowing exceptions
+         </pre></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-cbackspan-options"></a>Switches</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">-h</code>, <code class="option">--help</code></span></dt><dd><p>Display usage/help listing.</p></dd><dt><span class="term"><code class="option">-V</code>, <code class="option">--version</code></span></dt><dd><p>Display version information.</p></dd><dt><span class="term"><code class="option">-b</code>, <code class="option">--verbose</code></span></dt><dd><p>
+                     Print verbose output to the screen as well writing to the
+                     logfile.  When this option is enabled, most information
+                     that would normally be written to the logfile will also be
+                     written to the screen.
+                  </p></dd><dt><span class="term"><code class="option">-c</code>, <code class="option">--config</code></span></dt><dd><p>
+                     Specify the path to an alternate configuration file.
+                     The default configuration file is <code class="filename">/etc/cback.conf</code>.
+                  </p></dd><dt><span class="term"><code class="option">-l</code>, <code class="option">--logfile</code></span></dt><dd><p>
+                     Specify the path to an alternate logfile.  The default
+                     logfile file is <code class="filename">/var/log/cback.log</code>.
+                  </p></dd><dt><span class="term"><code class="option">-o</code>, <code class="option">--owner</code></span></dt><dd><p>
+                    Specify the ownership of the logfile, in the form
+                    <code class="literal">user:group</code>.  The default ownership is
+                    <code class="literal">root:adm</code>, to match the Debian standard
+                    for most logfiles. This value will only be used when
+                    creating a new logfile.  If the logfile already exists when
+                    the <span class="command"><strong>cback</strong></span> command is executed, it will
+                    retain its existing ownership and mode. Only user and group
+                    names may be used, not numeric uid and gid values.
+                  </p></dd><dt><span class="term"><code class="option">-m</code>, <code class="option">--mode</code></span></dt><dd><p>
+                    Specify  the  permissions  for  the logfile, using the
+                    numeric mode as in chmod(1).  The default mode is
+                    <code class="literal">0640</code> (<code class="literal">-rw-r-----</code>).
+                    This value will only be used when creating a new logfile.
+                    If the logfile already exists when the
+                    <span class="command"><strong>cback</strong></span> command is executed, it will retain
+                    its existing ownership and mode.
+                  </p></dd><dt><span class="term"><code class="option">-O</code>, <code class="option">--output</code></span></dt><dd><p>
+                     Record some sub-command output to the logfile.  When this
+                     option is enabled, all output from system commands will be
+                     logged.  This might be useful for debugging or just for
+                     reference.  Cedar Backup uses system commands mostly for
+                     dealing with the CD/DVD recorder and its media.
+                  </p></dd><dt><span class="term"><code class="option">-d</code>, <code class="option">--debug</code></span></dt><dd><p>
+                     Write debugging information to the logfile.  This option
+                     produces a high volume of output, and would generally only
+                     be needed when debugging a problem.  This option implies
+                     the <code class="option">--output</code> option, as well.
+                  </p></dd><dt><span class="term"><code class="option">-s</code>, <code class="option">--stack</code></span></dt><dd><p>
+                     Dump a Python stack trace instead of swallowing
+                     exceptions.  This forces Cedar Backup to dump the entire
+                     Python stack trace associated with an error, rather than
+                     just propagating last message it received back up to the
+                     user interface.  Under some circumstances, this is useful
+                     information to include along with a bug report.
+                  </p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-cbackspan-using"></a>Using <span class="command"><strong>cback-span</strong></span></h3></div></div></div><p>
+            As discussed above, the <span class="command"><strong>cback-span</strong></span> is an
+            interactive command.  It cannot be run from cron.  
+         </p><p>
+            You can typically use the default answer for most questions.
+            The only two questions that you may not want the default answer
+            for are the fit algorithm and the cushion percentage.  
+         </p><p>
+            The cushion percentage is used by <span class="command"><strong>cback-span</strong></span> to
+            determine what capacity to shoot for when splitting up your staging
+            directories.  A 650 MB disc does not fit fully 650 MB of data.
+            It's usually more like 627 MB of data.  The cushion percentage
+            tells <span class="command"><strong>cback-span</strong></span> how much overhead to reserve
+            for the filesystem.  The default of 4% is usually OK, but if you
+            have problems you may need to increase it slightly.
+         </p><p>
+            The fit algorithm tells <span class="command"><strong>cback-span</strong></span> how it
+            should determine which items should be placed on each disc.  
+            If you don't like the result from one algorithm, you can reject
+            that solution and choose a different algorithm.
+         </p><p>
+            The four available fit algorithms are:
+         </p><div class="variablelist"><dl class="variablelist"><dt><span class="term">worst</span></dt><dd><p>
+                     The <em class="firstterm">worst-fit</em> algorithm.
+                  </p><p>
+                     The worst-fit algorithm proceeds through a sorted list
+                     of items (sorted from smallest to largest) until running
+                     out of items or meeting capacity exactly.  If capacity is
+                     exceeded, the item that caused capacity to be exceeded is
+                     thrown away and the next one is tried.  The algorithm
+                     effectively includes the maximum number of items possible
+                     in its search for optimal capacity utilization.  It tends
+                     to be somewhat slower than either the best-fit or
+                     alternate-fit algorithm, probably because on average it
+                     has to look at more items before completing.
+                  </p></dd><dt><span class="term">best</span></dt><dd><p>
+                     The <em class="firstterm">best-fit</em> algorithm.
+                  </p><p>
+                     The best-fit algorithm proceeds through a sorted list of
+                     items (sorted from largest to smallest) until running out
+                     of items or meeting capacity exactly.  If capacity is
+                     exceeded, the item that caused capacity to be exceeded is
+                     thrown away and the next one is tried.  The algorithm
+                     effectively includes the minimum number of items possible
+                     in its search for optimal capacity utilization.  For large
+                     lists of mixed-size items, it's not unusual to see the
+                     algorithm achieve 100% capacity utilization by including
+                     fewer than 1% of the items.  Probably because it often has
+                     to look at fewer of the items before completing, it tends
+                     to be a little faster than the worst-fit or alternate-fit
+                     algorithms.
+                  </p></dd><dt><span class="term">first</span></dt><dd><p>
+                     The <em class="firstterm">first-fit</em> algorithm. 
+                  </p><p>
+                     The first-fit algorithm proceeds through an unsorted list
+                     of items until running out of items or meeting capacity
+                     exactly.  If capacity is exceeded, the item that caused
+                     capacity to be exceeded is thrown away and the next one is
+                     tried.  This algorithm generally performs more poorly than
+                     the other algorithms both in terms of capacity utilization
+                     and item utilization, but can be as much as an order of
+                     magnitude faster on large lists of items because it
+                     doesn't require any sorting.
+                  </p></dd><dt><span class="term">alternate</span></dt><dd><p>
+                     A hybrid algorithm that I call
+                     <em class="firstterm">alternate-fit</em>.  
+                  </p><p>
+                     This algorithm tries to balance small and large items to
+                     achieve better end-of-disk performance.  Instead of just
+                     working one direction through a list, it alternately works
+                     from the start and end of a sorted list (sorted from
+                     smallest to largest), throwing away any item which causes
+                     capacity to be exceeded.  The algorithm tends to be slower
+                     than the best-fit and first-fit algorithms, and slightly
+                     faster than the worst-fit algorithm, probably because of
+                     the number of items it considers on average before
+                     completing.  It often achieves slightly better capacity
+                     utilization than the worst-fit algorithm, while including
+                     slightly fewer items.
+                  </p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-cbackspan-sample"></a>Sample run</h3></div></div></div><p>
+            Below is a log showing a sample <span class="command"><strong>cback-span</strong></span> run.
+         </p><pre class="screen">
+================================================
+           Cedar Backup 'span' tool
+================================================
+
+This the Cedar Backup span tool.  It is used to split up staging
+data when that staging data does not fit onto a single disc.
+
+This utility operates using Cedar Backup configuration.  Configuration
+specifies which staging directory to look at and which writer device
+and media type to use.
+
+Continue? [Y/n]: 
+===
+
+Cedar Backup store configuration looks like this:
+
+   Source Directory...: /tmp/staging
+   Media Type.........: cdrw-74
+   Device Type........: cdwriter
+   Device Path........: /dev/cdrom
+   Device SCSI ID.....: None
+   Drive Speed........: None
+   Check Data Flag....: True
+   No Eject Flag......: False
+
+Is this OK? [Y/n]: 
+===
+
+Please wait, indexing the source directory (this may take a while)...
+===
+
+The following daily staging directories have not yet been written to disc:
+
+   /tmp/staging/2007/02/07
+   /tmp/staging/2007/02/08
+   /tmp/staging/2007/02/09
+   /tmp/staging/2007/02/10
+   /tmp/staging/2007/02/11
+   /tmp/staging/2007/02/12
+   /tmp/staging/2007/02/13
+   /tmp/staging/2007/02/14
+
+The total size of the data in these directories is 1.00 GB.
+
+Continue? [Y/n]: 
+===
+
+Based on configuration, the capacity of your media is 650.00 MB.
+
+Since estimates are not perfect and there is some uncertainly in
+media capacity calculations, it is good to have a "cushion",
+a percentage of capacity to set aside.  The cushion reduces the
+capacity of your media, so a 1.5% cushion leaves 98.5% remaining.
+
+What cushion percentage? [4.00]: 
+===
+
+The real capacity, taking into account the 4.00% cushion, is 627.25 MB.
+It will take at least 2 disc(s) to store your 1.00 GB of data.
+
+Continue? [Y/n]: 
+===
+
+Which algorithm do you want to use to span your data across
+multiple discs?
+
+The following algorithms are available:
+
+   first....: The "first-fit" algorithm
+   best.....: The "best-fit" algorithm
+   worst....: The "worst-fit" algorithm
+   alternate: The "alternate-fit" algorithm
+
+If you don't like the results you will have a chance to try a
+different one later.
+
+Which algorithm? [worst]: 
+===
+
+Please wait, generating file lists (this may take a while)...
+===
+
+Using the "worst-fit" algorithm, Cedar Backup can split your data
+into 2 discs.
+
+Disc 1: 246 files, 615.97 MB, 98.20% utilization
+Disc 2: 8 files, 412.96 MB, 65.84% utilization
+
+Accept this solution? [Y/n]: n
+===
+
+Which algorithm do you want to use to span your data across
+multiple discs?
+
+The following algorithms are available:
+
+   first....: The "first-fit" algorithm
+   best.....: The "best-fit" algorithm
+   worst....: The "worst-fit" algorithm
+   alternate: The "alternate-fit" algorithm
+
+If you don't like the results you will have a chance to try a
+different one later.
+
+Which algorithm? [worst]: alternate
+===
+
+Please wait, generating file lists (this may take a while)...
+===
+
+Using the "alternate-fit" algorithm, Cedar Backup can split your data
+into 2 discs.
+
+Disc 1: 73 files, 627.25 MB, 100.00% utilization
+Disc 2: 181 files, 401.68 MB, 64.04% utilization
+
+Accept this solution? [Y/n]: y
+===
+
+Please place the first disc in your backup device.
+Press return when ready.
+===
+
+Initializing image...
+Writing image to disc...
+         </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The <span class="command"><strong>cback-amazons3-sync</strong></span> command </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 5. Configuration</td></tr></table></div></body></html>

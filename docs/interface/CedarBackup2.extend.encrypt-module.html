@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.extend.encrypt</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.extend-module.html">Package&nbsp;extend</a> ::
+        Module&nbsp;encrypt
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.extend.encrypt-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module encrypt</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html">source&nbsp;code</a></span></p>
+<p>Provides an extension to encrypt staging directories.</p>
+  <p>When this extension is executed, all backed-up files in the configured
+  Cedar Backup staging directory will be encrypted using gpg.  Any 
+  directory which has already been encrypted (as indicated by the 
+  <code>cback.encrypt</code> file) will be ignored.</p>
+  <p>This extension requires a new configuration section &lt;encrypt&gt; 
+  and is intended to be run immediately after the standard stage action or 
+  immediately before the standard store action.  Aside from its own 
+  configuration, it requires the options and staging configuration sections
+  in the standard Cedar Backup configuration file.</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.encrypt.EncryptConfig-class.html" class="summary-name">EncryptConfig</a><br />
+      Class representing encrypt configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.encrypt.LocalConfig-class.html" class="summary-name">LocalConfig</a><br />
+      Class representing this extension's configuration document.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.encrypt-module.html#executeAction" class="summary-sig-name">executeAction</a>(<span class="summary-sig-arg">configPath</span>,
+        <span class="summary-sig-arg">options</span>,
+        <span class="summary-sig-arg">config</span>)</span><br />
+      Executes the encrypt backup action.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#executeAction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.encrypt-module.html#_encryptDailyDir" class="summary-sig-name" onclick="show_private();">_encryptDailyDir</a>(<span class="summary-sig-arg">dailyDir</span>,
+        <span class="summary-sig-arg">encryptMode</span>,
+        <span class="summary-sig-arg">encryptTarget</span>,
+        <span class="summary-sig-arg">backupUser</span>,
+        <span class="summary-sig-arg">backupGroup</span>)</span><br />
+      Encrypts the contents of a daily staging directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#_encryptDailyDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.encrypt-module.html#_encryptFile" class="summary-sig-name" onclick="show_private();">_encryptFile</a>(<span class="summary-sig-arg">sourcePath</span>,
+        <span class="summary-sig-arg">encryptMode</span>,
+        <span class="summary-sig-arg">encryptTarget</span>,
+        <span class="summary-sig-arg">backupUser</span>,
+        <span class="summary-sig-arg">backupGroup</span>,
+        <span class="summary-sig-arg">removeSource</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Encrypts the source file using the indicated mode.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#_encryptFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.encrypt-module.html#_encryptFileWithGpg" class="summary-sig-name" onclick="show_private();">_encryptFileWithGpg</a>(<span class="summary-sig-arg">sourcePath</span>,
+        <span class="summary-sig-arg">recipient</span>)</span><br />
+      Encrypts the indicated source file using GPG.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#_encryptFileWithGpg">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.encrypt-module.html#_confirmGpgRecipient" class="summary-sig-name" onclick="show_private();">_confirmGpgRecipient</a>(<span class="summary-sig-arg">recipient</span>)</span><br />
+      Confirms that a recipient's public key is known to GPG.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#_confirmGpgRecipient">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="GPG_COMMAND"></a><span class="summary-name">GPG_COMMAND</span> = <code title="['gpg']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">gpg</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALID_ENCRYPT_MODES"></a><span class="summary-name">VALID_ENCRYPT_MODES</span> = <code title="['gpg']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">gpg</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ENCRYPT_INDICATOR"></a><span class="summary-name">ENCRYPT_INDICATOR</span> = <code title="'cback.encrypt'"><code class="variable-quote">'</code><code class="variable-string">cback.encrypt</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2.extend'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2.extend</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="executeAction"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">executeAction</span>(<span class="sig-arg">configPath</span>,
+        <span class="sig-arg">options</span>,
+        <span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#executeAction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Executes the encrypt backup action.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>configPath</code></strong> (String representing a path on disk.) - Path to configuration file on disk.</li>
+        <li><strong class="pname"><code>options</code></strong> (Options object.) - Program command-line options.</li>
+        <li><strong class="pname"><code>config</code></strong> (Config object.) - Program configuration.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - Under many generic error conditions</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there are I/O problems reading or writing files</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_encryptDailyDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_encryptDailyDir</span>(<span class="sig-arg">dailyDir</span>,
+        <span class="sig-arg">encryptMode</span>,
+        <span class="sig-arg">encryptTarget</span>,
+        <span class="sig-arg">backupUser</span>,
+        <span class="sig-arg">backupGroup</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#_encryptDailyDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Encrypts the contents of a daily staging directory.</p>
+  <p>Indicator files are ignored.  All other files are encrypted.  The only
+  valid encrypt mode is <code>&quot;gpg&quot;</code>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>dailyDir</code></strong> - Daily directory to encrypt</li>
+        <li><strong class="pname"><code>encryptMode</code></strong> - Encryption mode (only &quot;gpg&quot; is allowed)</li>
+        <li><strong class="pname"><code>encryptTarget</code></strong> - Encryption target (GPG recipient for &quot;gpg&quot; mode)</li>
+        <li><strong class="pname"><code>backupUser</code></strong> - User that target files should be owned by</li>
+        <li><strong class="pname"><code>backupGroup</code></strong> - Group that target files should be owned by</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the encrypt mode is not supported.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the daily staging directory does not exist.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_encryptFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_encryptFile</span>(<span class="sig-arg">sourcePath</span>,
+        <span class="sig-arg">encryptMode</span>,
+        <span class="sig-arg">encryptTarget</span>,
+        <span class="sig-arg">backupUser</span>,
+        <span class="sig-arg">backupGroup</span>,
+        <span class="sig-arg">removeSource</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#_encryptFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Encrypts the source file using the indicated mode.</p>
+  <p>The encrypted file will be owned by the indicated backup user and 
+  group.  If <code>removeSource</code> is <code>True</code>, then the 
+  source file will be removed after it is successfully encrypted.</p>
+  <p>Currently, only the <code>&quot;gpg&quot;</code> encrypt mode is 
+  supported.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sourcePath</code></strong> - Absolute path of the source file to encrypt</li>
+        <li><strong class="pname"><code>encryptMode</code></strong> - Encryption mode (only &quot;gpg&quot; is allowed)</li>
+        <li><strong class="pname"><code>encryptTarget</code></strong> - Encryption target (GPG recipient)</li>
+        <li><strong class="pname"><code>backupUser</code></strong> - User that target files should be owned by</li>
+        <li><strong class="pname"><code>backupGroup</code></strong> - Group that target files should be owned by</li>
+        <li><strong class="pname"><code>removeSource</code></strong> - Indicates whether to remove the source file</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Path to the newly-created encrypted file.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If an invalid encrypt mode is passed in.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem accessing, encrypting or removing the source 
+        file.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_encryptFileWithGpg"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_encryptFileWithGpg</span>(<span class="sig-arg">sourcePath</span>,
+        <span class="sig-arg">recipient</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#_encryptFileWithGpg">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Encrypts the indicated source file using GPG.</p>
+  <p>The encrypted file will be in GPG's binary output format and will have
+  the same name as the source file plus a <code>&quot;.gpg&quot;</code> 
+  extension.  The source file will not be modified or removed by this 
+  function call.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sourcePath</code></strong> - Absolute path of file to be encrypted.</li>
+        <li><strong class="pname"><code>recipient</code></strong> - Recipient name to be passed to GPG's <code>&quot;-r&quot;</code> 
+          option</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Path to the newly-created encrypted file.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem encrypting the file.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_confirmGpgRecipient"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_confirmGpgRecipient</span>(<span class="sig-arg">recipient</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.encrypt-pysrc.html#_confirmGpgRecipient">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Confirms that a recipient's public key is known to GPG. Throws an 
+  exception if there is a problem, or returns normally otherwise.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>recipient</code></strong> - Recipient name</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>IOError</strong></code> - If the recipient's public key is not known to GPG.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.extend.subversion</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.extend-module.html">Package&nbsp;extend</a> ::
+        Module&nbsp;subversion
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.extend.subversion-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module subversion</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html">source&nbsp;code</a></span></p>
+<p>Provides an extension to back up Subversion repositories.</p>
+  <p>This is a Cedar Backup extension used to back up Subversion 
+  repositories via the Cedar Backup command line.  Each Subversion 
+  repository can be backed using the same collect modes allowed for 
+  filesystems in the standard Cedar Backup collect action: weekly, daily, 
+  incremental.</p>
+  <p>This extension requires a new configuration section &lt;subversion&gt;
+  and is intended to be run either immediately before or immediately after 
+  the standard collect action.  Aside from its own configuration, it 
+  requires the options and collect configuration sections in the standard 
+  Cedar Backup configuration file.</p>
+  <p>There are two different kinds of Subversion repositories at this 
+  writing: BDB (Berkeley Database) and FSFS (a &quot;filesystem within a 
+  filesystem&quot;).  Although the repository type can be specified in 
+  configuration, that information is just kept around for reference.  It 
+  doesn't affect the backup.  Both kinds of repositories are backed up in 
+  the same way, using <code>svnadmin dump</code> in an incremental 
+  mode.</p>
+  <p>It turns out that FSFS repositories can also be backed up just like 
+  any other filesystem directory.  If you would rather do that, then use 
+  the normal collect action.  This is probably simpler, although it carries
+  its own advantages and disadvantages (plus you will have to be careful to
+  exclude the working directories Subversion uses when building an update 
+  to commit). Check the Subversion documentation for more information.</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.subversion.RepositoryDir-class.html" class="summary-name">RepositoryDir</a><br />
+      Class representing Subversion repository directory.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.subversion.Repository-class.html" class="summary-name">Repository</a><br />
+      Class representing generic Subversion repository configuration..
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.subversion.SubversionConfig-class.html" class="summary-name">SubversionConfig</a><br />
+      Class representing Subversion configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.subversion.LocalConfig-class.html" class="summary-name">LocalConfig</a><br />
+      Class representing this extension's configuration document.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.subversion.BDBRepository-class.html" class="summary-name">BDBRepository</a><br />
+      Class representing Subversion BDB (Berkeley Database) repository 
+        configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.subversion.FSFSRepository-class.html" class="summary-name">FSFSRepository</a><br />
+      Class representing Subversion FSFS repository configuration.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#executeAction" class="summary-sig-name">executeAction</a>(<span class="summary-sig-arg">configPath</span>,
+        <span class="summary-sig-arg">options</span>,
+        <span class="summary-sig-arg">config</span>)</span><br />
+      Executes the Subversion backup action.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#executeAction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_getCollectMode" class="summary-sig-name" onclick="show_private();">_getCollectMode</a>(<span class="summary-sig-arg">local</span>,
+        <span class="summary-sig-arg">repository</span>)</span><br />
+      Gets the collect mode that should be used for a repository.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getCollectMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_getCompressMode" class="summary-sig-name" onclick="show_private();">_getCompressMode</a>(<span class="summary-sig-arg">local</span>,
+        <span class="summary-sig-arg">repository</span>)</span><br />
+      Gets the compress mode that should be used for a repository.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getCompressMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_getRevisionPath" class="summary-sig-name" onclick="show_private();">_getRevisionPath</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">repository</span>)</span><br />
+      Gets the path to the revision file associated with a repository.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getRevisionPath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_getBackupPath" class="summary-sig-name" onclick="show_private();">_getBackupPath</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">repositoryPath</span>,
+        <span class="summary-sig-arg">compressMode</span>,
+        <span class="summary-sig-arg">startRevision</span>,
+        <span class="summary-sig-arg">endRevision</span>)</span><br />
+      Gets the backup file path (including correct extension) associated 
+      with a repository.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getBackupPath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_getRepositoryPaths" class="summary-sig-name" onclick="show_private();">_getRepositoryPaths</a>(<span class="summary-sig-arg">repositoryDir</span>)</span><br />
+      Gets a list of child repository paths within a repository directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getRepositoryPaths">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_getExclusions" class="summary-sig-name" onclick="show_private();">_getExclusions</a>(<span class="summary-sig-arg">repositoryDir</span>)</span><br />
+      Gets exclusions (file and patterns) associated with an repository 
+      directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getExclusions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_backupRepository" class="summary-sig-name" onclick="show_private();">_backupRepository</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">local</span>,
+        <span class="summary-sig-arg">todayIsStart</span>,
+        <span class="summary-sig-arg">fullBackup</span>,
+        <span class="summary-sig-arg">repository</span>)</span><br />
+      Backs up an individual Subversion repository.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_backupRepository">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_getOutputFile" class="summary-sig-name" onclick="show_private();">_getOutputFile</a>(<span class="summary-sig-arg">backupPath</span>,
+        <span class="summary-sig-arg">compressMode</span>)</span><br />
+      Opens the output file used for saving the Subversion dump.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getOutputFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_loadLastRevision" class="summary-sig-name" onclick="show_private();">_loadLastRevision</a>(<span class="summary-sig-arg">revisionPath</span>)</span><br />
+      Loads the indicated revision file from disk into an integer.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_loadLastRevision">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#_writeLastRevision" class="summary-sig-name" onclick="show_private();">_writeLastRevision</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">revisionPath</span>,
+        <span class="summary-sig-arg">endRevision</span>)</span><br />
+      Writes the end revision to the indicated revision file on disk.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_writeLastRevision">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#backupRepository" class="summary-sig-name">backupRepository</a>(<span class="summary-sig-arg">repositoryPath</span>,
+        <span class="summary-sig-arg">backupFile</span>,
+        <span class="summary-sig-arg">startRevision</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">endRevision</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Backs up an individual Subversion repository.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#backupRepository">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#getYoungestRevision" class="summary-sig-name">getYoungestRevision</a>(<span class="summary-sig-arg">repositoryPath</span>)</span><br />
+      Gets the youngest (newest) revision in a Subversion repository using 
+      <code>svnlook</code>.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#getYoungestRevision">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#backupBDBRepository" class="summary-sig-name">backupBDBRepository</a>(<span class="summary-sig-arg">repositoryPath</span>,
+        <span class="summary-sig-arg">backupFile</span>,
+        <span class="summary-sig-arg">startRevision</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">endRevision</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Backs up an individual Subversion BDB repository.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#backupBDBRepository">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.subversion-module.html#backupFSFSRepository" class="summary-sig-name">backupFSFSRepository</a>(<span class="summary-sig-arg">repositoryPath</span>,
+        <span class="summary-sig-arg">backupFile</span>,
+        <span class="summary-sig-arg">startRevision</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">endRevision</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Backs up an individual Subversion FSFS repository.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#backupFSFSRepository">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SVNLOOK_COMMAND"></a><span class="summary-name">SVNLOOK_COMMAND</span> = <code title="['svnlook']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">svnlook</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SVNADMIN_COMMAND"></a><span class="summary-name">SVNADMIN_COMMAND</span> = <code title="['svnadmin']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">svnadmin</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REVISION_PATH_EXTENSION"></a><span class="summary-name">REVISION_PATH_EXTENSION</span> = <code title="'svnlast'"><code class="variable-quote">'</code><code class="variable-string">svnlast</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2.extend'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2.extend</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="executeAction"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">executeAction</span>(<span class="sig-arg">configPath</span>,
+        <span class="sig-arg">options</span>,
+        <span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#executeAction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Executes the Subversion backup action.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>configPath</code></strong> (String representing a path on disk.) - Path to configuration file on disk.</li>
+        <li><strong class="pname"><code>options</code></strong> (Options object.) - Program command-line options.</li>
+        <li><strong class="pname"><code>config</code></strong> (Config object.) - Program configuration.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - Under many generic error conditions</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If a backup could not be written for some reason.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getCollectMode"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getCollectMode</span>(<span class="sig-arg">local</span>,
+        <span class="sig-arg">repository</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getCollectMode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the collect mode that should be used for a repository. Use 
+  repository's if possible, otherwise take from subversion section.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>repository</code></strong> - Repository object.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Collect mode to use.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getCompressMode"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getCompressMode</span>(<span class="sig-arg">local</span>,
+        <span class="sig-arg">repository</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getCompressMode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the compress mode that should be used for a repository. Use 
+  repository's if possible, otherwise take from subversion section.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>local</code></strong> - LocalConfig object.</li>
+        <li><strong class="pname"><code>repository</code></strong> - Repository object.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Compress mode to use.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getRevisionPath"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getRevisionPath</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">repository</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getRevisionPath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the path to the revision file associated with a repository.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Config object.</li>
+        <li><strong class="pname"><code>repository</code></strong> - Repository object.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Absolute path to the revision file associated with the 
+          repository.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getBackupPath"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getBackupPath</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">repositoryPath</span>,
+        <span class="sig-arg">compressMode</span>,
+        <span class="sig-arg">startRevision</span>,
+        <span class="sig-arg">endRevision</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getBackupPath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the backup file path (including correct extension) associated 
+  with a repository.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Config object.</li>
+        <li><strong class="pname"><code>repositoryPath</code></strong> - Path to the indicated repository</li>
+        <li><strong class="pname"><code>compressMode</code></strong> - Compress mode to use for this repository.</li>
+        <li><strong class="pname"><code>startRevision</code></strong> - Starting repository revision.</li>
+        <li><strong class="pname"><code>endRevision</code></strong> - Ending repository revision.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Absolute path to the backup file associated with the repository.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getRepositoryPaths"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getRepositoryPaths</span>(<span class="sig-arg">repositoryDir</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getRepositoryPaths">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets a list of child repository paths within a repository 
+  directory.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>repositoryDir</code></strong> - RepositoryDirectory</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getExclusions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getExclusions</span>(<span class="sig-arg">repositoryDir</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getExclusions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets exclusions (file and patterns) associated with an repository 
+  directory.</p>
+  <p>The returned files value is a list of absolute paths to be excluded 
+  from the backup for a given directory.  It is derived from the repository
+  directory's relative exclude paths.</p>
+  <p>The returned patterns value is a list of patterns to be excluded from 
+  the backup for a given directory.  It is derived from the repository 
+  directory's list of patterns.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>repositoryDir</code></strong> - Repository directory object.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple (files, patterns) indicating what to exclude.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_backupRepository"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_backupRepository</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">local</span>,
+        <span class="sig-arg">todayIsStart</span>,
+        <span class="sig-arg">fullBackup</span>,
+        <span class="sig-arg">repository</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_backupRepository">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Backs up an individual Subversion repository.</p>
+  <p>This internal method wraps the public methods and adds some 
+  functionality to work better with the extended action itself.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration.</li>
+        <li><strong class="pname"><code>local</code></strong> - Local configuration</li>
+        <li><strong class="pname"><code>todayIsStart</code></strong> - Indicates whether today is start of week</li>
+        <li><strong class="pname"><code>fullBackup</code></strong> - Full backup flag</li>
+        <li><strong class="pname"><code>repository</code></strong> - Repository to operate on</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some value is missing or invalid.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem executing the Subversion dump.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getOutputFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getOutputFile</span>(<span class="sig-arg">backupPath</span>,
+        <span class="sig-arg">compressMode</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_getOutputFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Opens the output file used for saving the Subversion dump.</p>
+  <p>If the compress mode is &quot;gzip&quot;, we'll open a 
+  <code>GzipFile</code>, and if the compress mode is &quot;bzip2&quot;, 
+  we'll open a <code>BZ2File</code>.  Otherwise, we'll just return an 
+  object from the normal <code>open()</code> method.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>backupPath</code></strong> - Path to file to open.</li>
+        <li><strong class="pname"><code>compressMode</code></strong> - Compress mode of file (&quot;none&quot;, &quot;gzip&quot;, 
+          &quot;bzip&quot;).</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Output file object.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_loadLastRevision"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_loadLastRevision</span>(<span class="sig-arg">revisionPath</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_loadLastRevision">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Loads the indicated revision file from disk into an integer.</p>
+  <p>If we can't load the revision file successfully (either because it 
+  doesn't exist or for some other reason), then a revision of -1 will be 
+  returned - but the condition will be logged.  This way, we err on the 
+  side of backing up too much, because anyone using this will presumably be
+  adding 1 to the revision, so they don't duplicate any backups.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>revisionPath</code></strong> - Path to the revision file on disk.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Integer representing last backed-up revision, -1 on error or if 
+          none can be read.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_writeLastRevision"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_writeLastRevision</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">revisionPath</span>,
+        <span class="sig-arg">endRevision</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#_writeLastRevision">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes the end revision to the indicated revision file on disk.</p>
+  <p>If we can't write the revision file successfully for any reason, we'll
+  log the condition but won't throw an exception.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Config object.</li>
+        <li><strong class="pname"><code>revisionPath</code></strong> - Path to the revision file on disk.</li>
+        <li><strong class="pname"><code>endRevision</code></strong> - Last revision backed up on this run.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="backupRepository"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">backupRepository</span>(<span class="sig-arg">repositoryPath</span>,
+        <span class="sig-arg">backupFile</span>,
+        <span class="sig-arg">startRevision</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">endRevision</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#backupRepository">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Backs up an individual Subversion repository.</p>
+  <p>The starting and ending revision values control an incremental backup.
+  If the starting revision is not passed in, then revision zero (the start 
+  of the repository) is assumed.  If the ending revision is not passed in, 
+  then the youngest revision in the database will be used as the 
+  endpoint.</p>
+  <p>The backup data will be written into the passed-in back file.  
+  Normally, this would be an object as returned from <code>open</code>, but
+  it is possible to use something like a <code>GzipFile</code> to write 
+  compressed output.  The caller is responsible for closing the passed-in 
+  backup file.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>repositoryPath</code></strong> (String path representing Subversion repository on disk.) - Path to Subversion repository to back up</li>
+        <li><strong class="pname"><code>backupFile</code></strong> (Python file object as from <code>open()</code> or 
+          <code>file()</code>.) - Python file object to use for writing backup.</li>
+        <li><strong class="pname"><code>startRevision</code></strong> (Integer value &gt;= 0.) - Starting repository revision to back up (for incremental backups)</li>
+        <li><strong class="pname"><code>endRevision</code></strong> (Integer value &gt;= 0.) - Ending repository revision to back up (for incremental backups)</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some value is missing or invalid.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem executing the Subversion dump.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        This function should either be run as root or as the owner of the 
+        Subversion repository.
+        </li>
+        <li>
+        It is apparently <i>not</i> a good idea to interrupt this function.
+        Sometimes, this leaves the repository in a &quot;wedged&quot; 
+        state, which requires recovery using <code>svnadmin recover</code>.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="getYoungestRevision"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getYoungestRevision</span>(<span class="sig-arg">repositoryPath</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#getYoungestRevision">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the youngest (newest) revision in a Subversion repository using 
+  <code>svnlook</code>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>repositoryPath</code></strong> (String path representing Subversion repository on disk.) - Path to Subversion repository to look in.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Youngest revision as an integer.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If there is a problem parsing the <code>svnlook</code> output.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem executing the <code>svnlook</code> command.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        This function should either be run as root or as the owner of the 
+        Subversion repository.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="backupBDBRepository"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">backupBDBRepository</span>(<span class="sig-arg">repositoryPath</span>,
+        <span class="sig-arg">backupFile</span>,
+        <span class="sig-arg">startRevision</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">endRevision</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#backupBDBRepository">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Backs up an individual Subversion BDB repository. This function is 
+  deprecated.  Use <a 
+  href="CedarBackup2.extend.subversion-module.html#backupRepository" 
+  class="link">backupRepository</a> instead.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="backupFSFSRepository"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">backupFSFSRepository</span>(<span class="sig-arg">repositoryPath</span>,
+        <span class="sig-arg">backupFile</span>,
+        <span class="sig-arg">startRevision</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">endRevision</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.subversion-pysrc.html#backupFSFSRepository">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Backs up an individual Subversion FSFS repository. This function is 
+  deprecated.  Use <a 
+  href="CedarBackup2.extend.subversion-module.html#backupRepository" 
+  class="link">backupRepository</a> instead.</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Extensions</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch02.html" title="Chapter 2. Basic Concepts"><link rel="prev" href="ch02s08.html" title="Incremental Backups"><link rel="next" href="ch03.html" title="Chapter 3. Installation"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Extensions</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch02s08.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Basic Concepts</th><td width="20%" align="right"> <a accesskey="n" href="ch03.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-basic-extensions"></a>Extensions</h2></div></div></div><p>
+         Imagine that there is a third party developer who understands how to
+         back up a certain kind of database repository.  This third party
+         might want to integrate his or her specialized backup into the Cedar
+         Backup process, perhaps thinking of the database backup as a sort of
+         <span class="quote">&#8220;<span class="quote">collect</span>&#8221;</span> step.
+      </p><p>
+         Prior to Cedar Backup version 2, any such integration would have been
+         completely independent of Cedar Backup itself.  The
+         <span class="quote">&#8220;<span class="quote">external</span>&#8221;</span> backup functionality would have had to
+         maintain its own configuration and would not have had access to any
+         Cedar Backup configuration.
+      </p><p>
+         Starting with version 2, Cedar Backup allows
+         <em class="firstterm">extensions</em> to the backup process.   An
+         extension is an action that isn't part of the standard backup process
+         (i.e. not collect, stage, store or purge), but can be executed by Cedar
+         Backup when properly configured.
+      </p><p>
+         Extension authors implement an <span class="quote">&#8220;<span class="quote">action process</span>&#8221;</span> function
+         with a certain interface, and are allowed to add their own sections to
+         the Cedar Backup configuration file, so that all backup configuration
+         can be centralized.  Then, the action process function is associated
+         with an action name which can be executed from the
+         <span class="command"><strong>cback</strong></span> command line like any other action.
+      </p><p>
+         Hopefully, as the Cedar Backup user community grows, users will
+         contribute their own extensions back to the community.  Well-written
+         general-purpose extensions will be accepted into the official
+         codebase.
+      </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+            Users should see <a class="xref" href="ch05.html" title="Chapter 5. Configuration">Chapter 5, <i>Configuration</i></a> for more
+            information on how extensions are configured, and <a class="xref" href="ch06.html" title="Chapter 6. Official Extensions">Chapter 6, <i>Official Extensions</i></a> for details on all of the
+            officially-supported extensions.  
+         </p><p>
+            Developers may be interested in <a class="xref" href="apa.html" title="Appendix A. Extension Architecture Interface">Appendix A, <i>Extension Architecture Interface</i></a>.
+         </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch02s08.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch02.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Incremental Backups </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 3. Installation</td></tr></table></div></body></html>

@@ -1,0 +1,129 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Appendix C. Data Recovery</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="prev" href="apb.html" title="Appendix B. Dependencies"><link rel="next" href="apcs02.html" title="Recovering Filesystem Data"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Appendix C. Data Recovery</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apb.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apcs02.html">Next</a></td></tr></table><hr></div><div class="appendix"><div class="titlepage"><div><div><h1 class="title"><a name="cedar-recovering"></a>Appendix C. Data Recovery</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="apc.html#cedar-recovering-finding">Finding your Data</a></span></dt><dt><span class="sect1"><a href="apcs02.html">Recovering Filesystem Data</a></span></dt><dd><dl><dt><span class="sect2"><a href="apcs02.html#cedar-recovering-filesystem-full">Full Restore</a></span></dt><dt><span class="sect2"><a href="apcs02.html#cedar-recovering-filesystem-partial">Partial Restore</a></span></dt></dl></dd><dt><span class="sect1"><a href="apcs03.html">Recovering MySQL Data</a></span></dt><dt><span class="sect1"><a href="apcs04.html">Recovering Subversion Data</a></span></dt><dt><span class="sect1"><a href="apcs05.html">Recovering Mailbox Data</a></span></dt><dt><span class="sect1"><a href="apcs06.html">Recovering Data split by the Split Extension</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-recovering-finding"></a>Finding your Data</h2></div></div></div><p>
+         The first step in data recovery is finding the data that you want to
+         recover.  You need to decide whether you are going to to restore off
+         backup media, or out of some existing staging data that has not yet
+         been purged.  The only difference is, if you purge staging data less
+         frequently than once per week, you might have some data available in
+         the staging directories which would not be found on your backup media,
+         depending on how you rotate your media.  (And of course, if your
+         system is trashed or stolen, you probably will not have access to your
+         old staging data in any case.)
+      </p><p>
+         Regardless of the data source you choose, you will find the data
+         organized in the same way.  The remainder of these examples will work
+         off an example backup disc, but the contents of the staging directory
+         will look pretty much like the contents of the disc, with data
+         organized first by date and then by backup peer name.
+      </p><p>
+         This is the root directory of my example disc:
+      </p><pre class="screen">
+root:/mnt/cdrw# ls -l
+total 4
+drwxr-x---  3 backup backup 4096 Sep 01 06:30 2005/
+      </pre><p>
+         In this root directory is one subdirectory for each year represented
+         in the backup.  In this example, the backup represents data entirely
+         from the year 2005.  If your configured backup week happens to span a
+         year boundary, there would be two subdirectories here (for example,
+         one for 2005 and one for 2006).
+      </p><p>
+         Within each year directory is one subdirectory for each month
+         represented in the backup.  
+      </p><pre class="screen">
+root:/mnt/cdrw/2005# ls -l
+total 2
+dr-xr-xr-x  6 root root 2048 Sep 11 05:30 09/
+      </pre><p>
+         In this example, the backup represents data entirely from the month of
+         September, 2005.  If your configured backup week happens to span a month
+         boundary, there would be two subdirectories here (for example, one for
+         August 2005 and one for September 2005).  
+      </p><p>
+         Within each month directory is one subdirectory for each day represented
+         in the backup.
+      </p><pre class="screen">
+root:/mnt/cdrw/2005/09# ls -l
+total 8
+dr-xr-xr-x  5 root root 2048 Sep  7 05:30 07/
+dr-xr-xr-x  5 root root 2048 Sep  8 05:30 08/
+dr-xr-xr-x  5 root root 2048 Sep  9 05:30 09/
+dr-xr-xr-x  5 root root 2048 Sep 11 05:30 11/
+      </pre><p>
+         Depending on how far into the week your backup media is from, you might
+         have as few as one daily directory in here, or as many as seven.  
+      </p><p>
+         Within each daily directory is a stage indicator (indicating when
+         the directory was staged) and one directory for each peer configured
+         in the backup:
+      </p><pre class="screen">
+root:/mnt/cdrw/2005/09/07# ls -l
+total 10
+dr-xr-xr-x  2 root root 2048 Sep  7 02:31 host1/
+-r--r--r--  1 root root    0 Sep  7 03:27 cback.stage
+dr-xr-xr-x  2 root root 4096 Sep  7 02:30 host2/
+dr-xr-xr-x  2 root root 4096 Sep  7 03:23 host3/
+      </pre><p>
+         In this case, you can see that my backup includes three machines, and
+         that the backup data was staged on September 7, 2005 at 03:27.
+      </p><p>
+         Within the directory for a given host are all of the files collected
+         on that host.  This might just include tarfiles from a normal Cedar
+         Backup collect run, and might also include files
+         <span class="quote">&#8220;<span class="quote">collected</span>&#8221;</span> from Cedar Backup extensions or by other
+         third-party processes on your system.
+      </p><pre class="screen">
+root:/mnt/cdrw/2005/09/07/host1# ls -l
+total 157976
+-r--r--r--  1 root root 11206159 Sep  7 02:30 boot.tar.bz2
+-r--r--r--  1 root root        0 Sep  7 02:30 cback.collect
+-r--r--r--  1 root root     3199 Sep  7 02:30 dpkg-selections.txt.bz2
+-r--r--r--  1 root root   908325 Sep  7 02:30 etc.tar.bz2
+-r--r--r--  1 root root      389 Sep  7 02:30 fdisk-l.txt.bz2
+-r--r--r--  1 root root  1003100 Sep  7 02:30 ls-laR.txt.bz2
+-r--r--r--  1 root root    19800 Sep  7 02:30 mysqldump.txt.bz2
+-r--r--r--  1 root root  4133372 Sep  7 02:30 opt-local.tar.bz2
+-r--r--r--  1 root root 44794124 Sep  8 23:34 opt-public.tar.bz2
+-r--r--r--  1 root root 30028057 Sep  7 02:30 root.tar.bz2
+-r--r--r--  1 root root  4747070 Sep  7 02:30 svndump-0:782-opt-svn-repo1.txt.bz2
+-r--r--r--  1 root root   603863 Sep  7 02:30 svndump-0:136-opt-svn-repo2.txt.bz2
+-r--r--r--  1 root root   113484 Sep  7 02:30 var-lib-jspwiki.tar.bz2
+-r--r--r--  1 root root 19556660 Sep  7 02:30 var-log.tar.bz2
+-r--r--r--  1 root root 14753855 Sep  7 02:30 var-mail.tar.bz2
+         </pre><p>
+         As you can see, I back up variety of different things on host1.  I run
+         the normal collect action, as well as the sysinfo, mysql and
+         subversion extensions.   The resulting backup files are named in a way
+         that makes it easy to determine what they represent.
+      </p><p>
+         Files of the form <code class="filename">*.tar.bz2</code> represent directories
+         backed up by the collect action.  The first part of the name (before
+         <span class="quote">&#8220;<span class="quote">.tar.bz2</span>&#8221;</span>), represents the path to the directory.  For
+         example, <code class="filename">boot.tar.gz</code> contains data from
+         <code class="filename">/boot</code>, and
+         <code class="filename">var-lib-jspwiki.tar.bz2</code> contains data from
+         <code class="filename">/var/lib/jspwiki</code>.
+      </p><p>
+         The <code class="filename">fdisk-l.txt.bz2</code>,
+         <code class="filename">ls-laR.tar.bz2</code> and
+         <code class="filename">dpkg-selections.tar.bz2</code> files are produced by the
+         sysinfo extension.
+      </p><p>
+         The <code class="filename">mysqldump.txt.bz2</code> file is produced by the
+         mysql extension.  It represents a system-wide database dump, because I
+         use the <span class="quote">&#8220;<span class="quote">all</span>&#8221;</span> flag in configuration.  If I were to
+         configure Cedar Backup to dump individual datbases, then the filename
+         would contain the database name (something like
+         <code class="filename">mysqldump-bugs.txt.bz2</code>).
+      </p><p>
+         Finally, the files of the form <code class="filename">svndump-*.txt.bz2</code>
+         are produced by the subversion extension.  There is one dump file for
+         each configured repository, and the dump file name represents the name
+         of the repository and the revisions in that dump.  So, the file
+         <code class="filename">svndump-0:782-opt-svn-repo1.txt.bz2</code>
+         represents revisions 0-782 of the repository at
+         <code class="filename">/opt/svn/repo1</code>.  You can tell that this
+         file contains a full backup of the repository to this point, because
+         the starting revision is zero.  Later incremental backups would have a
+         non-zero starting revision, i.e. perhaps 783-785, followed by 786-800,
+         etc.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apb.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apcs02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Appendix B. Dependencies </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Recovering Filesystem Data</td></tr></table></div></body></html>

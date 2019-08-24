@@ -1,0 +1,258 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>The Backup Process</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch02.html" title="Chapter 2. Basic Concepts"><link rel="prev" href="ch02s03.html" title="Cedar Backup Pools"><link rel="next" href="ch02s05.html" title="Coordination between Master and Clients"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The Backup Process</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch02s03.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Basic Concepts</th><td width="20%" align="right"> <a accesskey="n" href="ch02s05.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-basic-process"></a>The Backup Process</h2></div></div></div><p>
+         The Cedar Backup backup process is structured in terms of a set of
+         decoupled actions which execute independently (based on a schedule in
+         <span class="command"><strong>cron</strong></span>) rather than through some highly coordinated
+         flow of control.  
+      </p><p>
+         This design decision has both positive and negative consequences.  On
+         the one hand, the code is much simpler and can choose to simply abort
+         or log an error if its expectations are not met.  On the other hand,
+         the administrator must coordinate the various actions during initial
+         set-up.  See <a class="xref" href="ch02s05.html" title="Coordination between Master and Clients">the section called &#8220;Coordination between Master and Clients&#8221;</a> (later in this
+         chapter) for more information on this subject.
+      </p><p>
+         A standard backup run consists of four steps (actions), some of which
+         execute on the master machine, and some of which execute on one or
+         more client machines.  These actions are:
+         <em class="firstterm">collect</em>, <em class="firstterm">stage</em>,
+         <em class="firstterm">store</em> and <em class="firstterm">purge</em>.
+      </p><p>
+         In general, more than one action may be specified on the command-line.
+         If more than one action is specified, then actions will be taken in a
+         sensible order (generally collect, stage, store, purge).   A special
+         <em class="firstterm">all</em> action is also allowed, which implies all
+         of the standard actions in the same sensible order.
+      </p><p>
+         The <span class="command"><strong>cback</strong></span> command also supports several actions
+         that are not part of the standard backup run and cannot be executed
+         along with any other actions.  These actions are
+         <em class="firstterm">validate</em>, <em class="firstterm">initialize</em> and
+         <em class="firstterm">rebuild</em>.  All of the various actions are
+         discussed further below.
+      </p><p>
+         See <a class="xref" href="ch05.html" title="Chapter 5. Configuration">Chapter 5, <i>Configuration</i></a> for more information on how a
+         backup run is configured.
+      </p><div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Flexibility</b></p></div></div></div><p>
+            Cedar Backup was designed to be flexible.  It allows you to decide
+            for yourself which backup steps you care about executing (and when
+            you execute them), based on your own situation and your own
+            priorities.
+         </p><p>
+            As an example, I always back up every machine I own.  I typically
+            keep 7-10 days of staging directories around, but switch CD/DVD media
+            mostly every week.  That way, I can periodically take a disc
+            off-site in case the machine gets stolen or damaged.  
+         </p><p>
+            If you're not worried about these risks, then there's no need to
+            write to disc.  In fact, some users prefer to use their master
+            machine as a simple <span class="quote">&#8220;<span class="quote">consolidation point</span>&#8221;</span>.  They don't
+            back up any data on the master, and don't write to disc at all.
+            They just use Cedar Backup to handle the mechanics of moving
+            backed-up data to a central location.  This isn't quite what Cedar
+            Backup was written to do, but it is flexible enough to meet their
+            needs.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-basic-process-collect"></a>The Collect Action</h3></div></div></div><p>
+            The collect action is the first action in a standard backup run.
+            It executes on both master and client nodes.  Based on configuration,
+            this action traverses the peer's filesystem and gathers files to be
+            backed up.  Each configured high-level directory is collected up
+            into its own <span class="command"><strong>tar</strong></span> file in the <em class="firstterm">collect
+            directory</em>.   The tarfiles can either be uncompressed
+            (<code class="filename">.tar</code>) or compressed with either
+            <span class="command"><strong>gzip</strong></span> (<code class="filename">.tar.gz</code>) or
+            <span class="command"><strong>bzip2</strong></span> (<code class="filename">.tar.bz2</code>).
+         </p><p>
+            There are three supported collect modes:
+            <em class="firstterm">daily</em>, <em class="firstterm">weekly</em> and
+            <em class="firstterm">incremental</em>.  Directories configured for
+            daily backups are backed up every day.  Directories configured for
+            weekly backups are backed up on the first day of the week.
+            Directories configured for incremental backups are traversed every
+            day, but only the files which have changed (based on a saved-off
+            <em class="firstterm">SHA hash</em>) are actually backed up.
+         </p><p>
+            Collect configuration also allows for a variety of ways to filter
+            files and directories out of the backup.  For instance,
+            administrators can configure an <em class="firstterm">ignore indicator
+            file</em> 
+            <a href="#ftn.idm262" class="footnote" name="idm262"><sup class="footnote">[7]</sup></a> 
+            or specify absolute paths or filename patterns 
+            <a href="#ftn.idm265" class="footnote" name="idm265"><sup class="footnote">[8]</sup></a>
+            to be excluded.  You can even configure a backup <span class="quote">&#8220;<span class="quote">link
+            farm</span>&#8221;</span> rather than explicitly listing files and directories
+            in configuration.
+         </p><p>
+            This action is optional on the master.  You only need to configure
+            and execute the collect action on the master if you have data to
+            back up on that machine.  If you plan to use the master only as a
+            <span class="quote">&#8220;<span class="quote">consolidation point</span>&#8221;</span> to collect data from other
+            machines, then there is no need to execute the collect action
+            there.  If you run the collect action on the master, it behaves the
+            same there as anywhere else, and you have to stage the master's
+            collected data just like any other client (typically by configuring
+            a local peer in the stage action).
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-basic-process-stage"></a>The Stage Action</h3></div></div></div><p>
+            The stage action is the second action in a standard backup run.  It
+            executes on the master peer node.  The master works down the list of
+            peers in its backup pool and stages (copies) the collected backup
+            files from each of them into a daily staging directory by peer
+            name.
+         </p><p>
+            For the purposes of this action, the master node can be configured
+            to treat itself as a client node.  If you intend to back up data on
+            the master, configure the master as a local peer.  Otherwise, just
+            configure each of the clients as a remote peer.
+         </p><p> 
+            Local and remote client peers are treated differently.  Local peer
+            collect directories are assumed to be accessible via normal copy
+            commands (i.e. on a mounted filesystem) while remote peer collect
+            directories are accessed via an <em class="firstterm">RSH-compatible</em>
+            command such as <span class="command"><strong>ssh</strong></span>.
+         </p><p>
+            If a given peer is not ready to be staged, the stage process will
+            log an error, abort the backup for that peer, and then move on to
+            its other peers.  This way, one broken peer cannot break a backup
+            for other peers which are up and running.
+         </p><p>
+            Keep in mind that Cedar Backup is flexible about what actions must
+            be executed as part of a backup.  If you would prefer, you can stop
+            the backup process at this step, and skip the store step.  In this
+            case, the staged directories will represent your backup rather than
+            a disc.
+         </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+               Directories <span class="quote">&#8220;<span class="quote">collected</span>&#8221;</span> by another process can be
+               staged by Cedar Backup.  If the file
+               <code class="filename">cback.collect</code> exists in a collect directory
+               when the stage action is taken, then that directory will be
+               staged.
+            </p></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-basic-process-store"></a>The Store Action</h3></div></div></div><p>
+            The store action is the third action in a standard backup run.  It
+            executes on the master peer node.  The master machine determines the
+            location of the current staging directory, and then writes the
+            contents of that staging directory to disc.  After the contents of
+            the directory have been written to disc, an optional validation
+            step ensures that the write was successful.
+         </p><p>
+            If the backup is running on the first day of the week, if the drive
+            does not support multisession discs, or if the
+            <code class="option">--full</code> option is passed to the
+            <span class="command"><strong>cback</strong></span> command, the disc will be rebuilt from
+            scratch.   Otherwise, a new ISO session will be added to the disc
+            each day the backup runs.  
+         </p><p>
+            This action is entirely optional.  If you would prefer to just
+            stage backup data from a set of peers to a master machine, and have
+            the staged directories represent your backup rather than a disc,
+            this is fine. 
+         </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3><p>
+               The store action is not supported on the Mac OS X (darwin)
+               platform.  On that platform, the <span class="quote">&#8220;<span class="quote">automount</span>&#8221;</span>
+               function of the Finder interferes significantly with Cedar
+               Backup's ability to mount and unmount media and write to the CD
+               or DVD hardware.  The Cedar Backup writer and image
+               functionality works on this platform, but the effort required to
+               fight the operating system about who owns the media and the
+               device makes it nearly impossible to execute the store action
+               successfully.
+            </p></div><div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Current Staging Directory</b></p></div></div></div><p>
+               The store action tries to be smart about finding the current
+               staging directory.  It first checks the current day's staging
+               directory.  If that directory exists, and it has not yet been
+               written to disc (i.e. there is no store indicator), then it will
+               be used.  Otherwise, the store action will look for an unused
+               staging directory for either the previous day or the next day,
+               in that order.  A warning will be written to the log under 
+               these circumstances (controlled by the &lt;warn_midnite&gt;
+               configuration value).
+            </p><p>
+               This behavior varies slightly when the <code class="option">--full</code>
+               option is in effect.  Under these circumstances, any existing
+               store indicator will be ignored.  Also, the store action will
+               always attempt to use the current day's staging directory,
+               ignoring any staging directories for the previous day or the
+               next day.  This way, running a full store action more than once
+               concurrently will always produce the same results.  (You might
+               imagine a use case where a person wants to make several copies
+               of the same full backup.)
+            </p></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-basic-process-purge"></a>The Purge Action</h3></div></div></div><p>
+            The purge action is the fourth and final action in a standard
+            backup run.  It executes both on the master and client peer nodes.
+            Configuration specifies how long to retain files in certain
+            directories, and older files and empty directories are purged.
+         </p><p>
+            Typically, collect directories are purged daily, and stage
+            directories are purged weekly or slightly less often (if a disc
+            gets corrupted, older backups may still be available on the
+            master).  Some users also choose to purge the configured working
+            directory (which is used for temporary files) to eliminate any
+            leftover files which might have resulted from changes to
+            configuration.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-basic-process-all"></a>The All Action</h3></div></div></div><p>
+            The all action is a pseudo-action which causes all of the actions
+            in a standard backup run to be executed together in order.  It
+            cannot be combined with any other actions on the command line.
+         </p><p>
+            Extensions <span class="emphasis"><em>cannot</em></span> be executed as part of the
+            all action.  If you need to execute an extended action, you must
+            specify the other actions you want to run individually on the
+            command line.  <a href="#ftn.idm307" class="footnote" name="idm307"><sup class="footnote">[9]</sup></a>
+         </p><p>
+            The all action does not have its own configuration.  Instead, it
+            relies on the individual configuration sections for all of the
+            other actions.  
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-basic-process-validate"></a>The Validate Action</h3></div></div></div><p>
+            The validate action is used to validate configuration
+            on a particular peer node, either master or client.   It cannot be
+            combined with any other actions on the command line.
+         </p><p>
+            The validate action checks that the configuration file can be
+            found, that the configuration file is valid, and that certain
+            portions of the configuration file make sense (for instance, making
+            sure that specified users exist, directories are readable and
+            writable as necessary, etc.).
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-basic-process-initialize"></a>The Initialize Action</h3></div></div></div><p>
+            The initialize action is used to initialize media for use with
+            Cedar Backup.  This is an optional step.  By default, Cedar Backup
+            does not need to use initialized media and will write to whatever
+            media exists in the writer device.  
+         </p><p>
+            However, if the <span class="quote">&#8220;<span class="quote">check media</span>&#8221;</span> store configuration
+            option is set to true, Cedar Backup will check the media before
+            writing to it and will error out if the media has not been
+            initialized. 
+         </p><p>
+            Initializing the media consists of writing a mostly-empty image
+            using a known media label (the media label will begin with
+            <span class="quote">&#8220;<span class="quote">CEDAR BACKUP</span>&#8221;</span>).
+         </p><p>
+            Note that only rewritable media (CD-RW, DVD+RW) can be initialized.
+            It doesn't make any sense to initialize media that cannot be
+            rewritten (CD-R, DVD+R), since Cedar Backup would then not be able
+            to use that media for a backup.  You can still configure Cedar
+            Backup to check non-rewritable media; in this case, the check will
+            also pass if the media is apparently unused (i.e. has no media
+            label).
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-basic-process-rebuild"></a>The Rebuild Action</h3></div></div></div><p>
+            The rebuild action is an exception-handling action that is executed
+            independent of a standard backup run.  It cannot be combined with
+            any other actions on the command line.
+         </p><p>
+            The rebuild action attempts to rebuild <span class="quote">&#8220;<span class="quote">this week's</span>&#8221;</span>
+            disc from any remaining unpurged staging directories.  Typically,
+            it is used to make a copy of a backup, replace lost or damaged
+            media, or to switch to new media mid-week for some other reason.
+         </p><p>
+            To decide what data to write to disc again, the rebuild action
+            looks back and finds the first day of the current week.  Then, it finds
+            any remaining staging directories between that date and the current
+            date.  If any staging directories are found, they are all written
+            to disc in one big ISO session.
+         </p><p>
+            The rebuild action does not have its own configuration.  It relies
+            on configuration for other other actions, especially the store
+            action.
+         </p></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idm262" class="footnote"><p><a href="#idm262" class="para"><sup class="para">[7] </sup></a>Analagous to <code class="filename">.cvsignore</code> in CVS</p></div><div id="ftn.idm265" class="footnote"><p><a href="#idm265" class="para"><sup class="para">[8] </sup></a>In terms of Python regular expressions</p></div><div id="ftn.idm307" class="footnote"><p><a href="#idm307" class="para"><sup class="para">[9] </sup></a>Some users find this surprising,
+            because extensions are configured with sequence numbers.  I did it
+            this way because I felt that running extensions as part of the all
+            action would sometimes result in surprising behavior.  I am not
+            planning to change the way this works.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch02s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch02.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch02s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Cedar Backup Pools </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Coordination between Master and Clients</td></tr></table></div></body></html>

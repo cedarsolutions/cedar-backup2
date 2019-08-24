@@ -1,0 +1,108 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Appendix B. Dependencies</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="prev" href="apa.html" title="Appendix A. Extension Architecture Interface"><link rel="next" href="apc.html" title="Appendix C. Data Recovery"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Appendix B. Dependencies</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apa.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apc.html">Next</a></td></tr></table><hr></div><div class="appendix"><div class="titlepage"><div><div><h1 class="title"><a name="cedar-depends"></a>Appendix B. Dependencies</h1></div></div></div><div class="simplesect"><div class="titlepage"></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">Python 2.7</span></dt><dd><p>
+                  Cedar Backup is written in Python 2 and requires version 2.7 or
+                  greater of the language.  Python 2.7 was originally released on
+                  4 Jul 2010, and is the last supported release of Python 2. As
+                  of this writing, all current Linux and BSD distributions
+                  include it.
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="http://www.python.org" target="_top">http://www.python.org</a></td></tr><tr><td>Debian</td><td><a class="ulink" href="http://packages.debian.org/stable/python/python2.7" target="_top">http://packages.debian.org/stable/python/python2.7</a></td></tr><tr><td>RPM</td><td><a class="ulink" href="http://rpmfind.net/linux/rpm2html/search.php?query=python" target="_top">http://rpmfind.net/linux/rpm2html/search.php?query=python</a></td></tr></tbody></table></div><p>
+                  If you can't find a package for your system, install from the package
+                  source, using the <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> link.
+               </p></dd><dt><span class="term">RSH Server and Client</span></dt><dd><p>
+                  Although Cedar Backup will technically work with any RSH-compatible
+                  server and client pair (such as the classic <span class="quote">&#8220;<span class="quote">rsh</span>&#8221;</span> client),
+                  most users should only use an SSH (secure shell) server and client.
+               </p><p>
+                  The defacto standard today is OpenSSH.  Some systems package the server
+                  and the client together, and others package the server and the client
+                  separately.  Note that <em class="firstterm">master</em> nodes need an
+                  SSH client, and <em class="firstterm">client</em> nodes need to run an
+                  SSH server.
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="http://www.openssh.com/" target="_top">http://www.openssh.com/</a></td></tr><tr><td>Debian</td><td><a class="ulink" href="http://packages.debian.org/stable/net/ssh" target="_top">http://packages.debian.org/stable/net/ssh</a></td></tr><tr><td>RPM</td><td><a class="ulink" href="http://rpmfind.net/linux/rpm2html/search.php?query=openssh" target="_top">http://rpmfind.net/linux/rpm2html/search.php?query=openssh</a></td></tr></tbody></table></div><p>
+                  If you can't find SSH client or server packages for your
+                  system, install from the package source, using the
+                  <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> link.
+               </p></dd><dt><span class="term"><span class="command"><strong>mkisofs</strong></span></span></dt><dd><p>
+                  The <span class="command"><strong>mkisofs</strong></span> command is used create ISO filesystem
+                  images that can later be written to backup media.  
+               </p><p>
+                  On Debian platforms, <span class="command"><strong>mkisofs</strong></span> is not
+                  distributed and <span class="command"><strong>genisoimage</strong></span> is used
+                  instead.  The Debian package takes care of this for you.
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="https://en.wikipedia.org/wiki/Cdrtools" target="_top">https://en.wikipedia.org/wiki/Cdrtools</a></td></tr><tr><td>RPM</td><td><a class="ulink" href="http://rpmfind.net/linux/rpm2html/search.php?query=mkisofs" target="_top">http://rpmfind.net/linux/rpm2html/search.php?query=mkisofs</a></td></tr></tbody></table></div><p>
+                  If you can't find a package for your system, install from the package
+                  source, using the <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> link.
+               </p></dd><dt><span class="term"><span class="command"><strong>cdrecord</strong></span></span></dt><dd><p>
+                  The <span class="command"><strong>cdrecord</strong></span> command is used to write
+                  ISO images to CD media in a backup device.  
+               </p><p>
+                  On Debian platforms, <span class="command"><strong>cdrecord</strong></span> is not
+                  distributed and <span class="command"><strong>wodim</strong></span> is used
+                  instead.  The Debian package takes care of this for you.
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="https://en.wikipedia.org/wiki/Cdrtools" target="_top">https://en.wikipedia.org/wiki/Cdrtools</a></td></tr><tr><td>RPM</td><td><a class="ulink" href="http://rpmfind.net/linux/rpm2html/search.php?query=cdrecord" target="_top">http://rpmfind.net/linux/rpm2html/search.php?query=cdrecord</a></td></tr></tbody></table></div><p>
+                  If you can't find a package for your system, install from the package
+                  source, using the <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> link.
+               </p></dd><dt><span class="term"><span class="command"><strong>dvd+rw-tools</strong></span></span></dt><dd><p>
+                  The dvd+rw-tools package provides the
+                  <span class="command"><strong>growisofs</strong></span> utility, which is used to write
+                  ISO images to DVD media in a backup device.
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="http://fy.chalmers.se/~appro/linux/DVD+RW/" target="_top">http://fy.chalmers.se/~appro/linux/DVD+RW/</a></td></tr><tr><td>Debian</td><td><a class="ulink" href="http://packages.debian.org/stable/utils/dvd+rw-tools" target="_top">http://packages.debian.org/stable/utils/dvd+rw-tools</a></td></tr><tr><td>RPM</td><td><a class="ulink" href="http://rpmfind.net/linux/rpm2html/search.php?query=dvd+rw-tools" target="_top">http://rpmfind.net/linux/rpm2html/search.php?query=dvd+rw-tools</a></td></tr></tbody></table></div><p>
+                  If you can't find a package for your system, install from the package
+                  source, using the <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> link.
+               </p></dd><dt><span class="term"><span class="command"><strong>eject</strong></span> and <span class="command"><strong>volname</strong></span></span></dt><dd><p>
+                  The <span class="command"><strong>eject</strong></span> command is used to open and
+                  close the tray on a backup device (if the backup device has a
+                  tray).  Sometimes, the tray must be opened and closed in
+                  order to "reset" the device so it notices recent changes to a
+                  disc.  
+               </p><p>
+                  The <span class="command"><strong>volname</strong></span> command is used to determine
+                  the volume name of media in a backup device.  
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="http://sourceforge.net/projects/eject" target="_top">http://sourceforge.net/projects/eject</a></td></tr><tr><td>Debian</td><td><a class="ulink" href="http://packages.debian.org/stable/utils/eject" target="_top">http://packages.debian.org/stable/utils/eject</a></td></tr><tr><td>RPM</td><td><a class="ulink" href="http://rpmfind.net/linux/rpm2html/search.php?query=eject" target="_top">http://rpmfind.net/linux/rpm2html/search.php?query=eject</a></td></tr></tbody></table></div><p>
+                  If you can't find a package for your system, install from the package
+                  source, using the <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> link.
+               </p></dd><dt><span class="term"><span class="command"><strong>mount</strong></span> and <span class="command"><strong>umount</strong></span></span></dt><dd><p>
+                  The <span class="command"><strong>mount</strong></span> and <span class="command"><strong>umount</strong></span>
+                  commands are used to mount and unmount CD/DVD media after it has
+                  been written, in order to run a consistency check.
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="https://www.kernel.org/pub/linux/utils/util-linux/" target="_top">https://www.kernel.org/pub/linux/utils/util-linux/</a></td></tr><tr><td>Debian</td><td><a class="ulink" href="http://packages.debian.org/stable/base/mount" target="_top">http://packages.debian.org/stable/base/mount</a></td></tr><tr><td>RPM</td><td><a class="ulink" href="http://rpmfind.net/linux/rpm2html/search.php?query=mount" target="_top">http://rpmfind.net/linux/rpm2html/search.php?query=mount</a></td></tr></tbody></table></div><p>
+                  If you can't find a package for your system, install from the package
+                  source, using the <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> link.
+               </p></dd><dt><span class="term"><span class="command"><strong>grepmail</strong></span></span></dt><dd><p>
+                  The <span class="command"><strong>grepmail</strong></span> command is used by the mbox
+                  extension to pull out only recent messages from mbox mail
+                  folders. 
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="http://sourceforge.net/projects/grepmail/" target="_top">http://sourceforge.net/projects/grepmail/</a></td></tr><tr><td>Debian</td><td><a class="ulink" href="http://packages.debian.org/stable/mail/grepmail" target="_top">http://packages.debian.org/stable/mail/grepmail</a></td></tr><tr><td>RPM</td><td><a class="ulink" href="http://rpmfind.net/linux/rpm2html/search.php?query=grepmail" target="_top">http://rpmfind.net/linux/rpm2html/search.php?query=grepmail</a></td></tr></tbody></table></div><p>
+                  If you can't find a package for your system, install from the package
+                  source, using the <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> link.
+               </p></dd><dt><span class="term"><span class="command"><strong>gpg</strong></span></span></dt><dd><p>
+                  The <span class="command"><strong>gpg</strong></span> command is used by the encrypt
+                  extension to encrypt files.
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="https://www.gnupg.org/" target="_top">https://www.gnupg.org/</a></td></tr><tr><td>Debian</td><td><a class="ulink" href="http://packages.debian.org/stable/utils/gnupg" target="_top">http://packages.debian.org/stable/utils/gnupg</a></td></tr><tr><td>RPM</td><td><a class="ulink" href="http://rpmfind.net/linux/rpm2html/search.php?query=gnupg" target="_top">http://rpmfind.net/linux/rpm2html/search.php?query=gnupg</a></td></tr></tbody></table></div><p>
+                  If you can't find a package for your system, install from the package
+                  source, using the <span class="quote">&#8220;<span class="quote">upstream</span>&#8221;</span> link.
+               </p></dd><dt><span class="term"><span class="command"><strong>split</strong></span></span></dt><dd><p>
+                  The <span class="command"><strong>split</strong></span> command is used by the split
+                  extension to split up large files.
+               </p><p>
+                  This command is typically part of the core operating system
+                  install and is not distributed in a separate package.
+               </p></dd><dt><span class="term"><span class="command"><strong>AWS CLI</strong></span></span></dt><dd><p>
+                  AWS CLI is Amazon's official command-line tool for interacting
+                  with the Amazon Web Services infrastruture.  Cedar Backup uses
+                  AWS CLI to copy backup data up to Amazon S3 cloud storage.
+               </p><p>
+                  After you install AWS CLI, you need to configure your connection
+                  to AWS with an appropriate access id and access key. Amazon provides a good 
+                  <a class="ulink" href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html" target="_top">setup guide</a>.
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="http://aws.amazon.com/documentation/cli/" target="_top">http://aws.amazon.com/documentation/cli/</a></td></tr><tr><td>Debian</td><td><a class="ulink" href="https://packages.debian.org/stable/awscli" target="_top">https://packages.debian.org/stable/awscli</a></td></tr></tbody></table></div><p>
+                  The initial implementation of the amazons3 extension was written
+                  using AWS CLI 1.4.  As of this writing, not all Linux distributions
+                  include a package for this version.  On these platforms, the
+                  easiest way to install it is via PIP: <code class="literal">apt-get install python-pip</code>,
+                  and then <code class="literal">pip install awscli</code>.  The Debian package includes
+                  an appropriate dependency starting with the jessie release.
+               </p></dd><dt><span class="term"><span class="command"><strong>Chardet</strong></span></span></dt><dd><p>
+                  The <span class="command"><strong>cback-amazons3-sync</strong></span> command relies on the
+                  Chardet python package to check filename encoding.  You only need
+                  this package if you are going to use the sync tool.
+               </p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th>Source</th><th>URL</th></tr></thead><tbody><tr><td>upstream</td><td><a class="ulink" href="https://github.com/chardet/chardet" target="_top">https://github.com/chardet/chardet</a></td></tr><tr><td>debian</td><td><a class="ulink" href="https://packages.debian.org/stable/python-chardet" target="_top">https://packages.debian.org/stable/python-chardet</a></td></tr></tbody></table></div></dd></dl></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apa.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apc.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Appendix A. Extension Architecture Interface </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Appendix C. Data Recovery</td></tr></table></div></body></html>

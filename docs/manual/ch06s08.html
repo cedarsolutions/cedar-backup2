@@ -1,0 +1,76 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Split Extension</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch06.html" title="Chapter 6. Official Extensions"><link rel="prev" href="ch06s07.html" title="Encrypt Extension"><link rel="next" href="ch06s09.html" title="Capacity Extension"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Split Extension</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06s07.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Official Extensions</th><td width="20%" align="right"> <a accesskey="n" href="ch06s09.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-extensions-split"></a>Split Extension</h2></div></div></div><p>
+         The Split Extension is a Cedar Backup extension used to split up
+         large files within staging directories.  It is probably only useful
+         in combination with the <span class="command"><strong>cback-span</strong></span> command, which
+         requires individual files within staging directories to each be
+         smaller than a single disc.
+      </p><p>
+         You would normally run this action immediately after the standard
+         stage action, but you could also choose to run it by hand immediately
+         before running <span class="command"><strong>cback-span</strong></span>.
+      </p><p>
+         The split extension uses the standard UNIX <span class="command"><strong>split</strong></span>
+         tool to split the large files up.  This tool simply splits the files
+         on bite-size boundaries.  It has no knowledge of file formats.  
+      </p><p>
+         <span class="emphasis"><em>Note: this means that in order to recover the data in your
+         original large file, you must have every file that the original file
+         was split into.</em></span>  Think carefully about whether this is what
+         you want.  It doesn't sound like a huge limitation.  However,
+         <span class="command"><strong>cback-span</strong></span> might put an indivdual file on
+         <span class="emphasis"><em>any</em></span> disc in a set &#8212; the files split from
+         one larger file will not necessarily be together.  That means you will
+         probably need every disc in your backup set in order to recover any
+         data from the backup set.
+      </p><p>
+         To enable this extension, add the following section to the Cedar Backup
+         configuration file:
+      </p><pre class="programlisting">
+&lt;extensions&gt; 
+   &lt;action&gt;
+      &lt;name&gt;split&lt;/name&gt;
+      &lt;module&gt;CedarBackup2.extend.split&lt;/module&gt;
+      &lt;function&gt;executeAction&lt;/function&gt;
+      &lt;index&gt;299&lt;/index&gt;
+   &lt;/action&gt;
+&lt;/extensions&gt;
+      </pre><p>
+         This extension relies on the options and staging configuration
+         sections in the standard Cedar Backup configuration file, and then
+         also requires its own <code class="literal">split</code> configuration
+         section.  This is an example Split configuration section:
+      </p><pre class="programlisting">
+&lt;split&gt;
+   &lt;size_limit&gt;250 MB&lt;/size_limit&gt;
+   &lt;split_size&gt;100 MB&lt;/split_size&gt;
+&lt;/split&gt;
+      </pre><p>
+         The following elements are part of the Split configuration section:
+      </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">size_limit</code></span></dt><dd><p>Size limit.</p><p>
+                  Files with a size strictly larger than this limit will
+                  be split by the extension.
+               </p><p>
+                  You can enter this value in two different forms.  It can
+                  either be a simple number, in which case the value is assumed
+                  to be in bytes; or it can be a number followed by a unit
+                  (KB, MB, GB).  
+               </p><p>
+                  Valid examples are <span class="quote">&#8220;<span class="quote">10240</span>&#8221;</span>, <span class="quote">&#8220;<span class="quote">250
+                  MB</span>&#8221;</span> or <span class="quote">&#8220;<span class="quote">1.1 GB</span>&#8221;</span>.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be a size as described above.
+               </p></dd><dt><span class="term"><code class="literal">split_size</code></span></dt><dd><p>Split size.</p><p>
+                  This is the size of the chunks that a large file will be split into.
+                  The final chunk may be smaller if the split size doesn't divide
+                  evenly into the file size.
+               </p><p>
+                  You can enter this value in two different forms.  It can
+                  either be a simple number, in which case the value is assumed
+                  to be in bytes; or it can be a number followed by a unit
+                  (KB, MB, GB).  
+               </p><p>
+                  Valid examples are <span class="quote">&#8220;<span class="quote">10240</span>&#8221;</span>, <span class="quote">&#8220;<span class="quote">250
+                  MB</span>&#8221;</span> or <span class="quote">&#8220;<span class="quote">1.1 GB</span>&#8221;</span>.
+               </p><p>
+                  <span class="emphasis"><em>Restrictions:</em></span> Must be a size as described above.
+               </p></dd></dl></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s07.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Encrypt Extension </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Capacity Extension</td></tr></table></div></body></html>

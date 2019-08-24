@@ -1,0 +1,39 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Migrating from Version 2 to Version 3</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch01.html" title="Chapter 1. Introduction"><link rel="prev" href="ch01.html" title="Chapter 1. Introduction"><link rel="next" href="ch01s03.html" title="How to Get Support"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Migrating from Version 2 to Version 3</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Introduction</th><td width="20%" align="right"> <a accesskey="n" href="ch01s03.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-intro-migrating"></a>Migrating from Version 2 to Version 3</h2></div></div></div><p>
+         There are two releases of Cedar Backup: version 2 and version 3. This
+         project (Cedar Backup v2) uses the Python 2 interpreter, and 
+         <a class="ulink" href="https://bitbucket.org/cedarsolutions/cedar-backup3" target="_top">Cedar Backup v3</a> 
+         uses the Python 3 interpreter. Because Python 2 is approaching its end
+         of life, and Cedar Backup v3 has been available since July of 2015,
+         Cedar Backup v2 is unsupported as of 11 Nov 2017.  There will be no
+         additional releases, and users who report problems will be referred to
+         the new version. Please move to Cedar Backup v3.
+      </p><p>
+         The main difference between Cedar Backup version 2 and Cedar Backup
+         version 3 is the targeted Python interpreter.  Cedar Backup version 2
+         was designed for Python 2, while version 3 is a conversion of the
+         original code to Python 3.  Other than that, both versions are
+         functionally equivalent.  The configuration format is unchanged, and
+         you can mix-and-match masters and clients of different versions in the
+         same backup pool.  Both versions will be fully supported until around
+         the time of the Python 2 end-of-life in 2020, but you should plan to
+         migrate sooner than that if possible.
+      </p><p>
+         A major design goal for version 3 was to facilitate easy migration
+         testing for users, by making it possible to install version 3 on the
+         same server where version 2 was already in use.  A side effect of this
+         design choice is that all of the executables, configuration files, and
+         logs changed names in version 3.  Where version 2 used
+         "cback", version 3 uses "cback3":
+         <code class="filename">cback3.conf</code> instead of
+         <code class="filename">cback.conf</code>, <code class="filename">cback3.log</code> instead
+         of <code class="filename">cback.log</code>, etc.
+      </p><p>
+         So, while migrating from version 2 to version 3 is relatively
+         straightforward, you will have to make some changes manually.  You
+         will need to create a new configuration file (or soft link to the old
+         one), modify your cron jobs to use the new executable name, etc.  You
+         can migrate one server at a time in your pool with no ill effects, or
+         even incrementally migrate a single server by using version 2 and
+         version 3 on different days of the week or for different parts of the
+         backup.
+      </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch01s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 1. Introduction </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> How to Get Support</td></tr></table></div></body></html>

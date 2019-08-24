@@ -1,0 +1,131 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Recovering Filesystem Data</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="apc.html" title="Appendix C. Data Recovery"><link rel="prev" href="apc.html" title="Appendix C. Data Recovery"><link rel="next" href="apcs03.html" title="Recovering MySQL Data"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Recovering Filesystem Data</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apc.html">Prev</a> </td><th width="60%" align="center">Appendix C. Data Recovery</th><td width="20%" align="right"> <a accesskey="n" href="apcs03.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-recovering-filesystem"></a>Recovering Filesystem Data</h2></div></div></div><p>
+         Filesystem data is gathered by the standard Cedar Backup collect
+         action.  This data is placed into files of the form
+         <code class="filename">*.tar</code>.  The first part of the name (before
+         <span class="quote">&#8220;<span class="quote">.tar</span>&#8221;</span>), represents the path to the directory.  For
+         example, <code class="filename">boot.tar</code> would contain data from
+         <code class="filename">/boot</code>, and
+         <code class="filename">var-lib-jspwiki.tar</code> would contain data from
+         <code class="filename">/var/lib/jspwiki</code>.  (As a special case, data from
+         the root directory would be placed in <code class="filename">-.tar</code>).
+         Remember that your tarfile might have a bzip2
+         (<code class="filename">.bz2</code>) or gzip (<code class="filename">.gz</code>)
+         extension, depending on what compression you specified in
+         configuration.
+      </p><p>
+         If you are using full backups every day, the latest backup data is
+         always within the latest daily directory stored on your backup media or
+         within your staging directory.  If you have some or all of your
+         directories configured to do incremental backups, then the first day
+         of the week holds the full backups and the other days represent
+         incremental differences relative to that first day of the week.
+      </p><div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Where to extract your backup</b></p></div></div></div><p>
+            If you are restoring a home directory or some other non-system
+            directory as part of a full restore, it is probably fine to extract
+            the backup directly into the filesystem.  
+         </p><p>
+            If you are restoring a system directory like
+            <code class="filename">/etc</code> as part of a full restore, extracting
+            directly into the filesystem is likely to break things, especially
+            if you re-installed a newer version of your operating system than
+            the one you originally backed up.  It's better to extract
+            directories like this to a temporary location and pick out only the
+            files you find you need.
+         </p><p>
+            When doing a partial restore, I suggest <span class="emphasis"><em>always</em></span>
+            extracting to a temporary location.  Doing it this way gives you
+            more control over what you restore, and helps you avoid compounding
+            your original problem with another one (like overwriting the wrong
+            file, oops).
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-recovering-filesystem-full"></a>Full Restore</h3></div></div></div><p>
+            To do a full system restore, find the newest applicable full backup
+            and extract it.  If you have some incremental backups, extract them
+            into the same place as the full backup, one by one starting from
+            oldest to newest.  (This way, if a file changed every day you will
+            always get the latest one.)
+         </p><p>
+            All of the backed-up files are stored in the tar file in a relative
+            fashion, so you can extract from the tar file either directly into
+            the filesystem, or into a temporary location.   
+         </p><p>
+            For example, to restore <code class="filename">boot.tar.bz2</code> directly
+            into <code class="filename">/boot</code>, execute <span class="command"><strong>tar</strong></span>
+            from your root directory (<code class="filename">/</code>):
+         </p><pre class="screen">
+root:/# bzcat boot.tar.bz2 | tar xvf -
+         </pre><p>
+            Of course, use <span class="command"><strong>zcat</strong></span> or just <span class="command"><strong>cat</strong></span>,
+            depending on what kind of compression is in use.
+         </p><p>
+            If you want to extract <code class="filename">boot.tar.gz</code> into a
+            temporary location like <code class="filename">/tmp/boot</code> instead,
+            just change directories first.  In this case, you'd execute the
+            <span class="command"><strong>tar</strong></span> command from within
+            <code class="filename">/tmp</code> instead of <code class="filename">/</code>.
+         </p><pre class="screen">
+root:/tmp# bzcat boot.tar.bz2 | tar xvf -
+         </pre><p>
+            Again, use <span class="command"><strong>zcat</strong></span> or just <span class="command"><strong>cat</strong></span> as
+            appropriate.
+         </p><p>
+            For more information, you might want to check out the manpage or
+            GNU info documentation for the <span class="command"><strong>tar</strong></span> command.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-recovering-filesystem-partial"></a>Partial Restore</h3></div></div></div><p>
+            Most users will need to do a partial restore much more frequently
+            than a full restore.  Perhaps you accidentally removed your home
+            directory, or forgot to check in some version of a file before
+            deleting it.  Or, perhaps the person who packaged Apache for your
+            system blew away your web server configuration on upgrade (it
+            happens).  The solution to these and other kinds of problems is a
+            partial restore (assuming you've backed up the proper things).
+         </p><p>
+            The procedure is similar to a full restore.  The specific steps
+            depend on how much information you have about the file you are
+            looking for.  Where with a full restore, you can confidently
+            extract the full backup followed by each of the incremental
+            backups, this might not be what you want when doing a partial
+            restore.  You may need to take more care in finding the right
+            version of a file &#8212; since the same file, if changed frequently,
+            would appear in more than one backup.
+         </p><p>
+            Start by finding the backup media that contains the file you are
+            looking for.  If you rotate your backup media, and your last known
+            <span class="quote">&#8220;<span class="quote">contact</span>&#8221;</span> with the file was a while ago, you may need
+            to look on older media to find it.  This may take some effort if
+            you are not sure when the change you are trying to correct took
+            place.
+         </p><p>
+            Once you have decided to look at a particular piece of backup media, 
+            find the correct peer (host), and look for the file in the full backup:
+         </p><pre class="screen">
+root:/tmp# bzcat boot.tar.bz2 | tar tvf - path/to/file
+         </pre><p>
+            Of course, use <span class="command"><strong>zcat</strong></span> or just <span class="command"><strong>cat</strong></span>,
+            depending on what kind of compression is in use.
+         </p><p>
+            The <code class="option">tvf</code> tells <span class="command"><strong>tar</strong></span> to search for
+            the file in question and just list the results rather than
+            extracting the file.  Note that the filename is relative (with no
+            starting <code class="literal">/</code>).  Alternately, you can omit the
+            <code class="filename">path/to/file</code> and search through the output
+            using <span class="command"><strong>more</strong></span> or <span class="command"><strong>less</strong></span>
+         </p><p>
+            If you haven't found what you are looking for, work your way through the
+            incremental files for the directory in question.  One of them may also
+            have the file if it changed during the course of the backup.  Or, move
+            to older or newer media and see if you can find the file there.
+         </p><p>
+            Once you have found your file, extract it using <code class="option">xvf</code>:
+         </p><pre class="screen">
+root:/tmp# bzcat boot.tar.bz2 | tar xvf - path/to/file
+         </pre><p>
+            Again, use <span class="command"><strong>zcat</strong></span> or just <span class="command"><strong>cat</strong></span> as
+            appropriate.
+         </p><p>
+            Inspect the file and make sure it's what you're looking for.
+            Again, you may need to move to older or newer media to find the
+            exact version of your file.
+         </p><p>
+            For more information, you might want to check out the manpage or
+            GNU info documentation for the <span class="command"><strong>tar</strong></span> command.
+         </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apc.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apc.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apcs03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Appendix C. Data Recovery </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Recovering MySQL Data</td></tr></table></div></body></html>

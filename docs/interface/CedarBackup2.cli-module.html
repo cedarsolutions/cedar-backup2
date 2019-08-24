@@ -1,0 +1,1154 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.cli</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        Module&nbsp;cli
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.cli-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module cli</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.cli-pysrc.html">source&nbsp;code</a></span></p>
+<p>Provides command-line interface implementation for the cback 
+  script.</p>
+  <h1 class="heading">Summary</h1>
+    <p>The functionality in this module encapsulates the command-line 
+    interface for the cback script.  The cback script itself is very short,
+    basically just an invokation of one function implemented here.  That, 
+    in turn, makes it simpler to validate the command line interface (for 
+    instance, it's easier to run pychecker against a module, and unit tests
+    are easier, too).</p>
+    <p>The objects and functions implemented in this module are probably 
+    not useful to any code external to Cedar Backup.   Anyone else 
+    implementing their own command-line interface would have to reimplement
+    (or at least enhance) all of this anyway.</p>
+  <h1 class="heading">Backwards Compatibility</h1>
+    <p>The command line interface has changed between Cedar Backup 1.x and 
+    Cedar Backup 2.x.  Some new switches have been added, and the actions 
+    have become simple arguments rather than switches (which is a much more
+    standard command line format).  Old 1.x command lines are generally no 
+    longer valid.</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli.Options-class.html" class="summary-name">Options</a><br />
+      Class representing command-line options for the cback script.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli._ActionItem-class.html" class="summary-name" onclick="show_private();">_ActionItem</a><br />
+      Class representing a single action to be executed.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli._ManagedActionItem-class.html" class="summary-name" onclick="show_private();">_ManagedActionItem</a><br />
+      Class representing a single action to be executed on a managed 
+        peer.
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli._ActionSet-class.html" class="summary-name" onclick="show_private();">_ActionSet</a><br />
+      Class representing a set of local actions to be executed.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#cli" class="summary-sig-name">cli</a>()</span><br />
+      Implements the command-line interface for the <code>cback</code> 
+      script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#cli">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_usage" class="summary-sig-name" onclick="show_private();">_usage</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints usage information for the cback script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_usage">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_version" class="summary-sig-name" onclick="show_private();">_version</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints version information for the cback script.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_version">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_diagnostics" class="summary-sig-name" onclick="show_private();">_diagnostics</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints runtime diagnostics information.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_diagnostics">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_unsupported" class="summary-sig-name" onclick="show_private();">_unsupported</a>(<span class="summary-sig-arg">fd</span>=<span class="summary-sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span><br />
+      Prints a message explaining that Cedar Backup2 is unsupported.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_unsupported">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#setupLogging" class="summary-sig-name">setupLogging</a>(<span class="summary-sig-arg">options</span>)</span><br />
+      Set up logging based on command-line options.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#setupLogging">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_setupLogfile" class="summary-sig-name" onclick="show_private();">_setupLogfile</a>(<span class="summary-sig-arg">options</span>)</span><br />
+      Sets up and creates logfile as needed.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupLogfile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_setupFlowLogging" class="summary-sig-name" onclick="show_private();">_setupFlowLogging</a>(<span class="summary-sig-arg">logfile</span>,
+        <span class="summary-sig-arg">options</span>)</span><br />
+      Sets up flow logging.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupFlowLogging">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_setupOutputLogging" class="summary-sig-name" onclick="show_private();">_setupOutputLogging</a>(<span class="summary-sig-arg">logfile</span>,
+        <span class="summary-sig-arg">options</span>)</span><br />
+      Sets up command output logging.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupOutputLogging">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_setupDiskFlowLogging" class="summary-sig-name" onclick="show_private();">_setupDiskFlowLogging</a>(<span class="summary-sig-arg">flowLogger</span>,
+        <span class="summary-sig-arg">logfile</span>,
+        <span class="summary-sig-arg">options</span>)</span><br />
+      Sets up on-disk flow logging.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupDiskFlowLogging">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_setupScreenFlowLogging" class="summary-sig-name" onclick="show_private();">_setupScreenFlowLogging</a>(<span class="summary-sig-arg">flowLogger</span>,
+        <span class="summary-sig-arg">options</span>)</span><br />
+      Sets up on-screen flow logging.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupScreenFlowLogging">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#_setupDiskOutputLogging" class="summary-sig-name" onclick="show_private();">_setupDiskOutputLogging</a>(<span class="summary-sig-arg">outputLogger</span>,
+        <span class="summary-sig-arg">logfile</span>,
+        <span class="summary-sig-arg">options</span>)</span><br />
+      Sets up on-disk command output logging.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupDiskOutputLogging">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.cli-module.html#setupPathResolver" class="summary-sig-name">setupPathResolver</a>(<span class="summary-sig-arg">config</span>)</span><br />
+      Set up the path resolver singleton based on configuration.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.cli-pysrc.html#setupPathResolver">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_CONFIG"></a><span class="summary-name">DEFAULT_CONFIG</span> = <code title="'/etc/cback.conf'"><code class="variable-quote">'</code><code class="variable-string">/etc/cback.conf</code><code class="variable-quote">'</code></code><br />
+      The default configuration file.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_LOGFILE"></a><span class="summary-name">DEFAULT_LOGFILE</span> = <code title="'/var/log/cback.log'"><code class="variable-quote">'</code><code class="variable-string">/var/log/cback.log</code><code class="variable-quote">'</code></code><br />
+      The default log file path.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_OWNERSHIP"></a><span class="summary-name">DEFAULT_OWNERSHIP</span> = <code title="['root', 'adm']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">root</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">adm</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      Default ownership for the logfile.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DEFAULT_MODE"></a><span class="summary-name">DEFAULT_MODE</span> = <code title="416">416</code><br />
+      Default file permissions mode on the logfile.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli-module.html#VALID_ACTIONS" class="summary-name">VALID_ACTIONS</a> = <code title="['collect',
+ 'stage',
+ 'store',
+ 'purge',
+ 'rebuild',
+ 'validate',
+ 'initialize',
+ 'all']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">collect</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">stage</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">store</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">purge</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">rebuil</code><code class="variable-ellipsis">...</code></code><br />
+      List of valid actions.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="COMBINE_ACTIONS"></a><span class="summary-name">COMBINE_ACTIONS</span> = <code title="['collect', 'stage', 'store', 'purge']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">collect</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">stage</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">store</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">purge</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      List of actions which can be combined with other actions.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="NONCOMBINE_ACTIONS"></a><span class="summary-name">NONCOMBINE_ACTIONS</span> = <code title="['rebuild', 'validate', 'initialize', 'all']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">rebuild</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">validate</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">initialize</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">all</code><code class="variable-quote">'</code><code class="variable-group">]</code></code><br />
+      List of actions which cannot be combined with other actions.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DISK_LOG_FORMAT"></a><span class="summary-name">DISK_LOG_FORMAT</span> = <code title="'%(asctime)s --&gt; [%(levelname)-7s] %(message)s'"><code class="variable-quote">'</code><code class="variable-string">%(asctime)s --&gt; [%(levelname)-7s] %(message)s</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DISK_OUTPUT_FORMAT"></a><span class="summary-name">DISK_OUTPUT_FORMAT</span> = <code title="'%(message)s'"><code class="variable-quote">'</code><code class="variable-string">%(message)s</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SCREEN_LOG_FORMAT"></a><span class="summary-name">SCREEN_LOG_FORMAT</span> = <code title="'%(message)s'"><code class="variable-quote">'</code><code class="variable-string">%(message)s</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SCREEN_LOG_STREAM"></a><span class="summary-name">SCREEN_LOG_STREAM</span> = <code title="&lt;epydoc.docintrospecter._DevNull object&gt;">&lt;epydoc.docintrospecter._DevNull object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="DATE_FORMAT"></a><span class="summary-name">DATE_FORMAT</span> = <code title="'%Y-%m-%dT%H:%M:%S %Z'"><code class="variable-quote">'</code><code class="variable-string">%Y-%m-%dT%H:%M:%S %Z</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REBUILD_INDEX"></a><span class="summary-name">REBUILD_INDEX</span> = <code title="0">0</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VALIDATE_INDEX"></a><span class="summary-name">VALIDATE_INDEX</span> = <code title="0">0</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="INITIALIZE_INDEX"></a><span class="summary-name">INITIALIZE_INDEX</span> = <code title="0">0</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="COLLECT_INDEX"></a><span class="summary-name">COLLECT_INDEX</span> = <code title="100">100</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STAGE_INDEX"></a><span class="summary-name">STAGE_INDEX</span> = <code title="200">200</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="STORE_INDEX"></a><span class="summary-name">STORE_INDEX</span> = <code title="300">300</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="PURGE_INDEX"></a><span class="summary-name">PURGE_INDEX</span> = <code title="400">400</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SHORT_SWITCHES"></a><span class="summary-name">SHORT_SWITCHES</span> = <code title="'hVbqc:fMNl:o:m:OdsDu'"><code class="variable-quote">'</code><code class="variable-string">hVbqc:fMNl:o:m:OdsDu</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.cli-module.html#LONG_SWITCHES" class="summary-name">LONG_SWITCHES</a> = <code title="['help',
+ 'version',
+ 'verbose',
+ 'quiet',
+ 'config=',
+ 'full',
+ 'managed',
+ 'managed-only',
+..."><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">help</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">version</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">verbose</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">quiet</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">confi</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="cli"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">cli</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#cli">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Implements the command-line interface for the <code>cback</code> 
+  script.</p>
+  <p>Essentially, this is the &quot;main routine&quot; for the cback 
+  script.  It does all of the argument processing for the script, and then 
+  sets about executing the indicated actions.</p>
+  <p>As a general rule, only the actions indicated on the command line will
+  be executed.   We will accept any of the built-in actions and any of the 
+  configured extended actions (which makes action list verification a two- 
+  step process).</p>
+  <p>The <code>'all'</code> action has a special meaning: it means that the
+  built-in set of actions (collect, stage, store, purge) will all be 
+  executed, in that order. Extended actions will be ignored as part of the 
+  <code>'all'</code> action.</p>
+  <p>Raised exceptions always result in an immediate return.  Otherwise, we
+  generally return when all specified actions have been completed.  Actions
+  are ignored if the help, version or validate flags are set.</p>
+  <p>A different error code is returned for each type of failure:</p>
+  <ul>
+    <li>
+      <code>1</code>: The Python interpreter version is &lt; 2.7
+    </li>
+    <li>
+      <code>2</code>: Error processing command-line arguments
+    </li>
+    <li>
+      <code>3</code>: Error configuring logging
+    </li>
+    <li>
+      <code>4</code>: Error parsing indicated configuration file
+    </li>
+    <li>
+      <code>5</code>: Backup was interrupted with a CTRL-C or similar
+    </li>
+    <li>
+      <code>6</code>: Error executing specified backup actions
+    </li>
+  </ul>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>Error code as described above.</dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        This function contains a good amount of logging at the INFO level, 
+        because this is the right place to document high-level flow of 
+        control (i.e. what the command-line options were, what config file 
+        was being used, etc.)
+        </li>
+        <li>
+        We assume that anything that <i>must</i> be seen on the screen is 
+        logged at the ERROR level.  Errors that occur before logging can be
+        configured are written to <code>sys.stderr</code>.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="_usage"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_usage</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_usage">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints usage information for the cback script.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_version"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_version</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_version">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints version information for the cback script.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_diagnostics"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_diagnostics</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_diagnostics">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints runtime diagnostics information.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_unsupported"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_unsupported</span>(<span class="sig-arg">fd</span>=<span class="sig-default">&lt;epydoc.docintrospecter._DevNull object&gt;</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_unsupported">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Prints a message explaining that Cedar Backup2 is unsupported.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>fd</code></strong> - File descriptor used to print information.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The <code>fd</code> is used rather than <code>print</code> to 
+        facilitate unit testing.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="setupLogging"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setupLogging</span>(<span class="sig-arg">options</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#setupLogging">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set up logging based on command-line options.</p>
+  <p>There are two kinds of logging: flow logging and output logging.  
+  Output logging contains information about system commands executed by 
+  Cedar Backup, for instance the calls to <code>mkisofs</code> or 
+  <code>mount</code>, etc.  Flow logging contains error and informational 
+  messages used to understand program flow. Flow log messages and output 
+  log messages are written to two different loggers target 
+  (<code>CedarBackup2.log</code> and <code>CedarBackup2.output</code>).  
+  Flow log messages are written at the ERROR, INFO and DEBUG log levels, 
+  while output log messages are generally only written at the INFO log 
+  level.</p>
+  <p>By default, output logging is disabled.  When the 
+  <code>options.output</code> or <code>options.debug</code> flags are set, 
+  output logging will be written to the configured logfile.  Output logging
+  is never written to the screen.</p>
+  <p>By default, flow logging is enabled at the ERROR level to the screen 
+  and at the INFO level to the configured logfile.  If the 
+  <code>options.quiet</code> flag is set, flow logging is enabled at the 
+  INFO level to the configured logfile only (i.e. no output will be sent to
+  the screen).  If the <code>options.verbose</code> flag is set, flow 
+  logging is enabled at the INFO level to both the screen and the 
+  configured logfile.  If the <code>options.debug</code> flag is set, flow 
+  logging is enabled at the DEBUG level to both the screen and the 
+  configured logfile.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>options</code></strong> (<a href="CedarBackup2.cli.Options-class.html" 
+          class="link">Options</a> object) - Command-line options.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Path to logfile on disk.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setupLogfile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setupLogfile</span>(<span class="sig-arg">options</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupLogfile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Sets up and creates logfile as needed.</p>
+  <p>If the logfile already exists on disk, it will be left as-is, under 
+  the assumption that it was created with appropriate ownership and 
+  permissions. If the logfile does not exist on disk, it will be created as
+  an empty file. Ownership and permissions will remain at their defaults 
+  unless user/group and/or mode are set in the options.  We ignore errors 
+  setting the indicated user and group.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>options</code></strong> - Command-line options.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Path to logfile on disk.</dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        This function is vulnerable to a race condition.  If the log file 
+        does not exist when the function is run, it will attempt to create 
+        the file as safely as possible (using <code>O_CREAT</code>).  If 
+        two processes attempt to create the file at the same time, then one
+        of them will fail.  In practice, this shouldn't really be a 
+        problem, but it might happen occassionally if two instances of 
+        cback run concurrently or if cback collides with logrotate or 
+        something.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_setupFlowLogging"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setupFlowLogging</span>(<span class="sig-arg">logfile</span>,
+        <span class="sig-arg">options</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupFlowLogging">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Sets up flow logging.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>logfile</code></strong> - Path to logfile on disk.</li>
+        <li><strong class="pname"><code>options</code></strong> - Command-line options.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setupOutputLogging"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setupOutputLogging</span>(<span class="sig-arg">logfile</span>,
+        <span class="sig-arg">options</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupOutputLogging">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Sets up command output logging.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>logfile</code></strong> - Path to logfile on disk.</li>
+        <li><strong class="pname"><code>options</code></strong> - Command-line options.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setupDiskFlowLogging"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setupDiskFlowLogging</span>(<span class="sig-arg">flowLogger</span>,
+        <span class="sig-arg">logfile</span>,
+        <span class="sig-arg">options</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupDiskFlowLogging">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Sets up on-disk flow logging.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>flowLogger</code></strong> - Python flow logger object.</li>
+        <li><strong class="pname"><code>logfile</code></strong> - Path to logfile on disk.</li>
+        <li><strong class="pname"><code>options</code></strong> - Command-line options.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setupScreenFlowLogging"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setupScreenFlowLogging</span>(<span class="sig-arg">flowLogger</span>,
+        <span class="sig-arg">options</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupScreenFlowLogging">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Sets up on-screen flow logging.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>flowLogger</code></strong> - Python flow logger object.</li>
+        <li><strong class="pname"><code>options</code></strong> - Command-line options.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setupDiskOutputLogging"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setupDiskOutputLogging</span>(<span class="sig-arg">outputLogger</span>,
+        <span class="sig-arg">logfile</span>,
+        <span class="sig-arg">options</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#_setupDiskOutputLogging">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Sets up on-disk command output logging.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>outputLogger</code></strong> - Python command output logger object.</li>
+        <li><strong class="pname"><code>logfile</code></strong> - Path to logfile on disk.</li>
+        <li><strong class="pname"><code>options</code></strong> - Command-line options.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="setupPathResolver"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setupPathResolver</span>(<span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.cli-pysrc.html#setupPathResolver">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set up the path resolver singleton based on configuration.</p>
+  <p>Cedar Backup's path resolver is implemented in terms of a singleton, 
+  the <a href="CedarBackup2.util.PathResolverSingleton-class.html" 
+  class="link">PathResolverSingleton</a> class.  This function takes 
+  options configuration, converts it into the dictionary form needed by the
+  singleton, and then initializes the singleton.  After that, any function 
+  that needs to resolve the path of a command can use the singleton.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> (<a href="CedarBackup2.config.Config-class.html" 
+          class="link">Config</a> object) - Configuration</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="VALID_ACTIONS"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">VALID_ACTIONS</h3>
+  List of valid actions.
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">collect</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">stage</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">store</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">purge</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">rebuild</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">validate</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">initialize</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">all</code><code class="variable-quote">'</code><code class="variable-group">]</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="LONG_SWITCHES"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">LONG_SWITCHES</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">help</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">version</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">verbose</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">quiet</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">config=</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">full</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">managed</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">managed-only</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

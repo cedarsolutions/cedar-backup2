@@ -1,0 +1,962 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.extend.mbox</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.extend-module.html">Package&nbsp;extend</a> ::
+        Module&nbsp;mbox
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.extend.mbox-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module mbox</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html">source&nbsp;code</a></span></p>
+<p>Provides an extension to back up mbox email files.</p>
+  <h1 class="heading">Backing up email</h1>
+    <p>Email folders (often stored as mbox flatfiles) are not well-suited 
+    being backed up with an incremental backup like the one offered by 
+    Cedar Backup.  This is because mbox files often change on a daily 
+    basis, forcing the incremental backup process to back them up every day
+    in order to avoid losing data.  This can result in quite a bit of 
+    wasted space when backing up large folders.  (Note that the alternative
+    maildir format does not share this problem, since it typically uses one
+    file per message.)</p>
+    <p>One solution to this problem is to design a smarter incremental 
+    backup process, which backs up baseline content on the first day of the
+    week, and then backs up only new messages added to that folder on every
+    other day of the week.  This way, the backup for any single day is only
+    as large as the messages placed into the folder on that day.  The 
+    backup isn't as &quot;perfect&quot; as the incremental backup process, 
+    because it doesn't preserve information about messages deleted from the
+    backed-up folder.  However, it should be much more space-efficient, and
+    in a recovery situation, it seems better to restore too much data 
+    rather than too little.</p>
+  <h1 class="heading">What is this extension?</h1>
+    <p>This is a Cedar Backup extension used to back up mbox email files 
+    via the Cedar Backup command line.  Individual mbox files or 
+    directories containing mbox files can be backed up using the same 
+    collect modes allowed for filesystems in the standard Cedar Backup 
+    collect action: weekly, daily, incremental.  It implements the 
+    &quot;smart&quot; incremental backup process discussed above, using 
+    functionality provided by the <code>grepmail</code> utility.</p>
+    <p>This extension requires a new configuration section &lt;mbox&gt; and
+    is intended to be run either immediately before or immediately after 
+    the standard collect action.  Aside from its own configuration, it 
+    requires the options and collect configuration sections in the standard
+    Cedar Backup configuration file.</p>
+    <p>The mbox action is conceptually similar to the standard collect 
+    action, except that mbox directories are not collected recursively.  
+    This implies some configuration changes (i.e. there's no need for 
+    global exclusions or an ignore file).  If you back up a directory, all 
+    of the mbox files in that directory are backed up into a single tar 
+    file using the indicated compression method.</p>
+
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        Kenneth J. Pronovici &lt;pronovic@ieee.org&gt;
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.mbox.MboxFile-class.html" class="summary-name">MboxFile</a><br />
+      Class representing mbox file configuration..
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.mbox.MboxDir-class.html" class="summary-name">MboxDir</a><br />
+      Class representing mbox directory configuration..
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.mbox.MboxConfig-class.html" class="summary-name">MboxConfig</a><br />
+      Class representing mbox configuration.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.extend.mbox.LocalConfig-class.html" class="summary-name">LocalConfig</a><br />
+      Class representing this extension's configuration document.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#executeAction" class="summary-sig-name">executeAction</a>(<span class="summary-sig-arg">configPath</span>,
+        <span class="summary-sig-arg">options</span>,
+        <span class="summary-sig-arg">config</span>)</span><br />
+      Executes the mbox backup action.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#executeAction">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_getCollectMode" class="summary-sig-name" onclick="show_private();">_getCollectMode</a>(<span class="summary-sig-arg">local</span>,
+        <span class="summary-sig-arg">item</span>)</span><br />
+      Gets the collect mode that should be used for an mbox file or 
+      directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getCollectMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_getCompressMode" class="summary-sig-name" onclick="show_private();">_getCompressMode</a>(<span class="summary-sig-arg">local</span>,
+        <span class="summary-sig-arg">item</span>)</span><br />
+      Gets the compress mode that should be used for an mbox file or 
+      directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getCompressMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_getRevisionPath" class="summary-sig-name" onclick="show_private();">_getRevisionPath</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">item</span>)</span><br />
+      Gets the path to the revision file associated with a repository.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getRevisionPath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_loadLastRevision" class="summary-sig-name" onclick="show_private();">_loadLastRevision</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">item</span>,
+        <span class="summary-sig-arg">fullBackup</span>,
+        <span class="summary-sig-arg">collectMode</span>)</span><br />
+      Loads the last revision date for this item from disk and returns it.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_loadLastRevision">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_writeNewRevision" class="summary-sig-name" onclick="show_private();">_writeNewRevision</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">item</span>,
+        <span class="summary-sig-arg">newRevision</span>)</span><br />
+      Writes new revision information to disk.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_writeNewRevision">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_getExclusions" class="summary-sig-name" onclick="show_private();">_getExclusions</a>(<span class="summary-sig-arg">mboxDir</span>)</span><br />
+      Gets exclusions (file and patterns) associated with an mbox 
+      directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getExclusions">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_getBackupPath" class="summary-sig-name" onclick="show_private();">_getBackupPath</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">mboxPath</span>,
+        <span class="summary-sig-arg">compressMode</span>,
+        <span class="summary-sig-arg">newRevision</span>,
+        <span class="summary-sig-arg">targetDir</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Gets the backup file path (including correct extension) associated 
+      with an mbox path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getBackupPath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_getTarfilePath" class="summary-sig-name" onclick="show_private();">_getTarfilePath</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">mboxPath</span>,
+        <span class="summary-sig-arg">compressMode</span>,
+        <span class="summary-sig-arg">newRevision</span>)</span><br />
+      Gets the tarfile backup file path (including correct extension) 
+      associated with an mbox path.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getTarfilePath">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_getOutputFile" class="summary-sig-name" onclick="show_private();">_getOutputFile</a>(<span class="summary-sig-arg">backupPath</span>,
+        <span class="summary-sig-arg">compressMode</span>)</span><br />
+      Opens the output file used for saving backup information.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getOutputFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_backupMboxFile" class="summary-sig-name" onclick="show_private();">_backupMboxFile</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">absolutePath</span>,
+        <span class="summary-sig-arg">fullBackup</span>,
+        <span class="summary-sig-arg">collectMode</span>,
+        <span class="summary-sig-arg">compressMode</span>,
+        <span class="summary-sig-arg">lastRevision</span>,
+        <span class="summary-sig-arg">newRevision</span>,
+        <span class="summary-sig-arg">targetDir</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Backs up an individual mbox file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_backupMboxFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.extend.mbox-module.html#_backupMboxDir" class="summary-sig-name" onclick="show_private();">_backupMboxDir</a>(<span class="summary-sig-arg">config</span>,
+        <span class="summary-sig-arg">absolutePath</span>,
+        <span class="summary-sig-arg">fullBackup</span>,
+        <span class="summary-sig-arg">collectMode</span>,
+        <span class="summary-sig-arg">compressMode</span>,
+        <span class="summary-sig-arg">lastRevision</span>,
+        <span class="summary-sig-arg">newRevision</span>,
+        <span class="summary-sig-arg">excludePaths</span>,
+        <span class="summary-sig-arg">excludePatterns</span>)</span><br />
+      Backs up a directory containing mbox files.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_backupMboxDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="&lt;logging.Logger object&gt;">&lt;logging.Logger object&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="GREPMAIL_COMMAND"></a><span class="summary-name">GREPMAIL_COMMAND</span> = <code title="['grepmail']"><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">grepmail</code><code class="variable-quote">'</code><code class="variable-group">]</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="REVISION_PATH_EXTENSION"></a><span class="summary-name">REVISION_PATH_EXTENSION</span> = <code title="'mboxlast'"><code class="variable-quote">'</code><code class="variable-string">mboxlast</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'CedarBackup2.extend'"><code class="variable-quote">'</code><code class="variable-string">CedarBackup2.extend</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="executeAction"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">executeAction</span>(<span class="sig-arg">configPath</span>,
+        <span class="sig-arg">options</span>,
+        <span class="sig-arg">config</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#executeAction">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Executes the mbox backup action.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>configPath</code></strong> (String representing a path on disk.) - Path to configuration file on disk.</li>
+        <li><strong class="pname"><code>options</code></strong> (Options object.) - Program command-line options.</li>
+        <li><strong class="pname"><code>config</code></strong> (Config object.) - Program configuration.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - Under many generic error conditions</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If a backup could not be written for some reason.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getCollectMode"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getCollectMode</span>(<span class="sig-arg">local</span>,
+        <span class="sig-arg">item</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getCollectMode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the collect mode that should be used for an mbox file or 
+  directory. Use file- or directory-specific value if possible, otherwise 
+  take from mbox section.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>local</code></strong> - LocalConfig object.</li>
+        <li><strong class="pname"><code>item</code></strong> - Mbox file or directory</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Collect mode to use.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getCompressMode"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getCompressMode</span>(<span class="sig-arg">local</span>,
+        <span class="sig-arg">item</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getCompressMode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the compress mode that should be used for an mbox file or 
+  directory. Use file- or directory-specific value if possible, otherwise 
+  take from mbox section.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>local</code></strong> - LocalConfig object.</li>
+        <li><strong class="pname"><code>item</code></strong> - Mbox file or directory</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Compress mode to use.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getRevisionPath"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getRevisionPath</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">item</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getRevisionPath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the path to the revision file associated with a repository.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration.</li>
+        <li><strong class="pname"><code>item</code></strong> - Mbox file or directory</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Absolute path to the revision file associated with the 
+          repository.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_loadLastRevision"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_loadLastRevision</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">item</span>,
+        <span class="sig-arg">fullBackup</span>,
+        <span class="sig-arg">collectMode</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_loadLastRevision">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Loads the last revision date for this item from disk and returns 
+  it.</p>
+  <p>If this is a full backup, or if the revision file cannot be loaded for
+  some reason, then <code>None</code> is returned.  This indicates that 
+  there is no previous revision, so the entire mail file or directory 
+  should be backed up.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration.</li>
+        <li><strong class="pname"><code>item</code></strong> - Mbox file or directory</li>
+        <li><strong class="pname"><code>fullBackup</code></strong> - Indicates whether this is a full backup</li>
+        <li><strong class="pname"><code>collectMode</code></strong> - Indicates the collect mode for this item</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Revision date as a datetime.datetime object or <code>None</code>.</dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        We write the actual revision object to disk via pickle, so we don't
+        deal with the datetime precision or format at all.  Whatever's in 
+        the object is what we write.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_writeNewRevision"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_writeNewRevision</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">item</span>,
+        <span class="sig-arg">newRevision</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_writeNewRevision">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes new revision information to disk.</p>
+  <p>If we can't write the revision file successfully for any reason, we'll
+  log the condition but won't throw an exception.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration.</li>
+        <li><strong class="pname"><code>item</code></strong> - Mbox file or directory</li>
+        <li><strong class="pname"><code>newRevision</code></strong> - Revision date as a datetime.datetime object.</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        We write the actual revision object to disk via pickle, so we don't
+        deal with the datetime precision or format at all.  Whatever's in 
+        the object is what we write.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_getExclusions"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getExclusions</span>(<span class="sig-arg">mboxDir</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getExclusions">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets exclusions (file and patterns) associated with an mbox 
+  directory.</p>
+  <p>The returned files value is a list of absolute paths to be excluded 
+  from the backup for a given directory.  It is derived from the mbox 
+  directory's relative exclude paths.</p>
+  <p>The returned patterns value is a list of patterns to be excluded from 
+  the backup for a given directory.  It is derived from the mbox 
+  directory's list of patterns.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>mboxDir</code></strong> - Mbox directory object.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple (files, patterns) indicating what to exclude.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_getBackupPath"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getBackupPath</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">mboxPath</span>,
+        <span class="sig-arg">compressMode</span>,
+        <span class="sig-arg">newRevision</span>,
+        <span class="sig-arg">targetDir</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getBackupPath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the backup file path (including correct extension) associated 
+  with an mbox path.</p>
+  <p>We assume that if the target directory is passed in, that we're 
+  backing up a directory.  Under these circumstances, we'll just use the 
+  basename of the individual path as the output file.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration.</li>
+        <li><strong class="pname"><code>mboxPath</code></strong> - Path to the indicated mbox file or directory</li>
+        <li><strong class="pname"><code>compressMode</code></strong> - Compress mode to use for this mbox path</li>
+        <li><strong class="pname"><code>newRevision</code></strong> - Revision this backup path represents</li>
+        <li><strong class="pname"><code>targetDir</code></strong> - Target directory in which the path should exist</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Absolute path to the backup file associated with the repository.</dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The backup path only contains the current date in YYYYMMDD format, 
+        but that's OK because the index information (stored elsewhere) is 
+        the actual date object.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_getTarfilePath"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getTarfilePath</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">mboxPath</span>,
+        <span class="sig-arg">compressMode</span>,
+        <span class="sig-arg">newRevision</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getTarfilePath">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Gets the tarfile backup file path (including correct extension) 
+  associated with an mbox path.</p>
+  <p>Along with the path, the tar archive mode is returned in a form that 
+  can be used with <a 
+  href="CedarBackup2.filesystem.BackupFileList-class.html#generateTarfile" 
+  class="link">BackupFileList.generateTarfile</a>.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration.</li>
+        <li><strong class="pname"><code>mboxPath</code></strong> - Path to the indicated mbox file or directory</li>
+        <li><strong class="pname"><code>compressMode</code></strong> - Compress mode to use for this mbox path</li>
+        <li><strong class="pname"><code>newRevision</code></strong> - Revision this backup path represents</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Tuple of (absolute path to tarfile, tar archive mode)</dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        The tarfile path only contains the current date in YYYYMMDD format,
+        but that's OK because the index information (stored elsewhere) is 
+        the actual date object.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_getOutputFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_getOutputFile</span>(<span class="sig-arg">backupPath</span>,
+        <span class="sig-arg">compressMode</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_getOutputFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Opens the output file used for saving backup information.</p>
+  <p>If the compress mode is &quot;gzip&quot;, we'll open a 
+  <code>GzipFile</code>, and if the compress mode is &quot;bzip2&quot;, 
+  we'll open a <code>BZ2File</code>.  Otherwise, we'll just return an 
+  object from the normal <code>open()</code> method.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>backupPath</code></strong> - Path to file to open.</li>
+        <li><strong class="pname"><code>compressMode</code></strong> - Compress mode of file (&quot;none&quot;, &quot;gzip&quot;, 
+          &quot;bzip&quot;).</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Output file object.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_backupMboxFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_backupMboxFile</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">absolutePath</span>,
+        <span class="sig-arg">fullBackup</span>,
+        <span class="sig-arg">collectMode</span>,
+        <span class="sig-arg">compressMode</span>,
+        <span class="sig-arg">lastRevision</span>,
+        <span class="sig-arg">newRevision</span>,
+        <span class="sig-arg">targetDir</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_backupMboxFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Backs up an individual mbox file.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration.</li>
+        <li><strong class="pname"><code>absolutePath</code></strong> - Path to mbox file to back up.</li>
+        <li><strong class="pname"><code>fullBackup</code></strong> - Indicates whether this should be a full backup.</li>
+        <li><strong class="pname"><code>collectMode</code></strong> - Indicates the collect mode for this item</li>
+        <li><strong class="pname"><code>compressMode</code></strong> - Compress mode of file (&quot;none&quot;, &quot;gzip&quot;, 
+          &quot;bzip&quot;)</li>
+        <li><strong class="pname"><code>lastRevision</code></strong> - Date of last backup as datetime.datetime</li>
+        <li><strong class="pname"><code>newRevision</code></strong> - Date of new (current) backup as datetime.datetime</li>
+        <li><strong class="pname"><code>targetDir</code></strong> - Target directory to write the backed-up file into</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some value is missing or invalid.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem backing up the mbox file.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_backupMboxDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_backupMboxDir</span>(<span class="sig-arg">config</span>,
+        <span class="sig-arg">absolutePath</span>,
+        <span class="sig-arg">fullBackup</span>,
+        <span class="sig-arg">collectMode</span>,
+        <span class="sig-arg">compressMode</span>,
+        <span class="sig-arg">lastRevision</span>,
+        <span class="sig-arg">newRevision</span>,
+        <span class="sig-arg">excludePaths</span>,
+        <span class="sig-arg">excludePatterns</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.extend.mbox-pysrc.html#_backupMboxDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Backs up a directory containing mbox files.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>config</code></strong> - Cedar Backup configuration.</li>
+        <li><strong class="pname"><code>absolutePath</code></strong> - Path to mbox directory to back up.</li>
+        <li><strong class="pname"><code>fullBackup</code></strong> - Indicates whether this should be a full backup.</li>
+        <li><strong class="pname"><code>collectMode</code></strong> - Indicates the collect mode for this item</li>
+        <li><strong class="pname"><code>compressMode</code></strong> - Compress mode of file (&quot;none&quot;, &quot;gzip&quot;, 
+          &quot;bzip&quot;)</li>
+        <li><strong class="pname"><code>lastRevision</code></strong> - Date of last backup as datetime.datetime</li>
+        <li><strong class="pname"><code>newRevision</code></strong> - Date of new (current) backup as datetime.datetime</li>
+        <li><strong class="pname"><code>excludePaths</code></strong> - List of absolute paths to exclude.</li>
+        <li><strong class="pname"><code>excludePatterns</code></strong> - List of patterns to exclude.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If some value is missing or invalid.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is a problem backing up the mbox file.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

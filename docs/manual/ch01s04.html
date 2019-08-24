@@ -1,0 +1,77 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>History</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch01.html" title="Chapter 1. Introduction"><link rel="prev" href="ch01s03.html" title="How to Get Support"><link rel="next" href="ch02.html" title="Chapter 2. Basic Concepts"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">History</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01s03.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Introduction</th><td width="20%" align="right"> <a accesskey="n" href="ch02.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-intro-history"></a>History</h2></div></div></div><p>
+         Cedar Backup began life in late 2000 as a set of Perl scripts called
+         <span class="application">kbackup</span>.   These scripts met an immediate
+         need (which was to back up skyjammer.com and some personal machines)
+         but proved to be unstable, overly verbose and rather difficult to
+         maintain.
+      </p><p>
+         In early 2002, work began on a rewrite of
+         <span class="application">kbackup</span>.  The goal was to address many of
+         the shortcomings of the original application, as well as to clean up
+         the code and make it available to the general public.  While doing
+         research related to code I could borrow or base the rewrite on, I
+         discovered that there was already an existing backup package with the
+         name <span class="application">kbackup</span>, so I decided to change the
+         name to <span class="application">Cedar Backup</span> instead.
+      </p><p>
+         Because I had become fed up with the prospect of maintaining a large
+         volume of Perl code, I decided to abandon that language in favor of
+         Python. <a href="#ftn.idm164" class="footnote" name="idm164"><sup class="footnote">[1]</sup></a> At the time, I chose Python mostly because I was
+         interested in learning it, but in retrospect it turned out to be a
+         very good decision.  From my perspective, Python has almost all of the
+         strengths of Perl, but few of its inherent weaknesses (I feel that
+         primarily, Python code often ends up being much more readable than
+         Perl code).
+      </p><p>
+         Around this same time, skyjammer.com and cedar-solutions.com were
+         converted to run Debian GNU/Linux (potato) 
+         <a href="#ftn.idm168" class="footnote" name="idm168"><sup class="footnote">[2]</sup></a>
+         and I entered the Debian new maintainer queue, so I also made it a
+         goal to implement Debian packages along with a Python source
+         distribution for the new release.
+      </p><p>
+         Version 1.0 of <span class="application">Cedar Backup</span> was released in
+         June of 2002.  We immediately began using it to back up skyjammer.com
+         and cedar-solutions.com, where it proved to be much more stable than
+         the original code.  
+      </p><p>
+         In the meantime, I continued to improve as a Python programmer and
+         also started doing a significant amount of professional development in
+         Java.  It soon became obvious that the internal structure of
+         <span class="application">Cedar Backup</span> 1.0, while much better than
+         <span class="application">kbackup</span>, still left something to be
+         desired.  In November 2003, I began an attempt at cleaning up the
+         codebase.  I converted all of the internal documentation to use
+         Epydoc, <a href="#ftn.idm175" class="footnote" name="idm175"><sup class="footnote">[3]</sup></a>
+         and updated the code to use the newly-released Python logging package
+         <a href="#ftn.idm178" class="footnote" name="idm178"><sup class="footnote">[4]</sup></a> after having a good experience with Java's log4j.
+         However, I was still not satisfied with the code, which did not lend
+         itself to the automated regression testing I had used when working
+         with junit in my Java code.
+      </p><p>
+         So, rather than releasing the cleaned-up code, I instead began another
+         ground-up rewrite in May 2004.  With this rewrite, I applied
+         everything I had learned from other Java and Python projects I had
+         undertaken over the last few years.  I structured the code to take
+         advantage of Python's unique ability to blend procedural code with
+         object-oriented code, and I made automated unit testing a primary
+         requirement.  The result was the 2.0 release, which is cleaner, more
+         compact, better focused, and better documented than any release before
+         it.  Utility code is less application-specific, and is now usable as a
+         general-purpose library.  The 2.0 release also includes a complete
+         regression test suite of over 3000 tests, which will help to ensure
+         that quality is maintained as development continues into the future.
+         <a href="#ftn.idm182" class="footnote" name="idm182"><sup class="footnote">[5]</sup></a> 
+      </p><p>
+         The 3.0 release of Cedar Backup is a Python 3 conversion of the 2.0
+         release, with minimal additional functionality.  The conversion from
+         Python 2 to Python 3 started in mid-2015, about 5 years before the
+         anticipated deprecation of Python 2 in 2020.  Support for the 2.0
+         release was dropped on 11 Nov 2017.  All users should migrate to
+         the 3.0 release at this time.
+      </p><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idm164" class="footnote"><p><a href="#idm164" class="para"><sup class="para">[1] </sup></a>See <a class="ulink" href="http://www.python.org/" target="_top">http://www.python.org/</a>
+         .</p></div><div id="ftn.idm168" class="footnote"><p><a href="#idm168" class="para"><sup class="para">[2] </sup></a>Debian's stable releases are named after characters
+         in the Toy Story movie.</p></div><div id="ftn.idm175" class="footnote"><p><a href="#idm175" class="para"><sup class="para">[3] </sup></a>Epydoc is a Python code documentation tool.
+         See <a class="ulink" href="http://epydoc.sourceforge.net/" target="_top">http://epydoc.sourceforge.net/</a>.</p></div><div id="ftn.idm178" class="footnote"><p><a href="#idm178" class="para"><sup class="para">[4] </sup></a>See <a class="ulink" href="http://docs.python.org/lib/module-logging.html" target="_top">http://docs.python.org/lib/module-logging.html</a>
+         .</p></div><div id="ftn.idm182" class="footnote"><p><a href="#idm182" class="para"><sup class="para">[5] </sup></a>Tests are implemented using Python's unit test
+         framework.  See <a class="ulink" href="http://docs.python.org/lib/module-unittest.html" target="_top">http://docs.python.org/lib/module-unittest.html</a>.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">How to Get Support </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 2. Basic Concepts</td></tr></table></div></body></html>

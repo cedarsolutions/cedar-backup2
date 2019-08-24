@@ -1,0 +1,930 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>CedarBackup2.peer.LocalPeer</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="CedarBackup2-module.html">Package&nbsp;CedarBackup2</a> ::
+        <a href="CedarBackup2.peer-module.html">Module&nbsp;peer</a> ::
+        Class&nbsp;LocalPeer
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="CedarBackup2.peer.LocalPeer-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class LocalPeer</h1><p class="nomargin-top"><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer">source&nbsp;code</a></span></p>
+<pre class="base-tree">
+object --+
+         |
+        <strong class="uidshort">LocalPeer</strong>
+</pre>
+
+<hr />
+<p>Backup peer representing a local peer in a backup pool.</p>
+  <p>This is a class representing a local (non-network) peer in a backup 
+  pool. Local peers are backed up by simple filesystem copy operations.  A 
+  local peer has associated with it a name (typically, but not necessarily,
+  a hostname) and a collect directory.</p>
+  <p>The public methods other than the constructor are part of a 
+  &quot;backup peer&quot; interface shared with the <code>RemotePeer</code>
+  class.</p>
+
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">collectDir</span>,
+        <span class="summary-sig-arg">ignoreFailureMode</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Initializes a local backup peer.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#stagePeer" class="summary-sig-name">stagePeer</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">targetDir</span>,
+        <span class="summary-sig-arg">ownership</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">permissions</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Stages data from the peer into the indicated local target directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer.stagePeer">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#checkCollectIndicator" class="summary-sig-name">checkCollectIndicator</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">collectIndicator</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Checks the collect indicator in the peer's staging directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer.checkCollectIndicator">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#writeStageIndicator" class="summary-sig-name">writeStageIndicator</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">stageIndicator</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">ownership</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">permissions</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Writes the stage indicator in the peer's staging directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer.writeStageIndicator">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_setName" class="summary-sig-name" onclick="show_private();">_setName</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the peer name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._setName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getName"></a><span class="summary-sig-name">_getName</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the peer name.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._getName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_setCollectDir" class="summary-sig-name" onclick="show_private();">_setCollectDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the collect directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._setCollectDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getCollectDir"></a><span class="summary-sig-name">_getCollectDir</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the collect directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._getCollectDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_setIgnoreFailureMode" class="summary-sig-name" onclick="show_private();">_setIgnoreFailureMode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span><br />
+      Property target used to set the ignoreFailure mode.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._setIgnoreFailureMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getIgnoreFailureMode"></a><span class="summary-sig-name">_getIgnoreFailureMode</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Property target used to get the ignoreFailure mode.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._getIgnoreFailureMode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_copyLocalDir" class="summary-sig-name" onclick="show_private();">_copyLocalDir</a>(<span class="summary-sig-arg">sourceDir</span>,
+        <span class="summary-sig-arg">targetDir</span>,
+        <span class="summary-sig-arg">ownership</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">permissions</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Copies files from the source directory to the target directory.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._copyLocalDir">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_copyLocalFile" class="summary-sig-name" onclick="show_private();">_copyLocalFile</a>(<span class="summary-sig-arg">sourceFile</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">targetFile</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">ownership</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">permissions</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">overwrite</span>=<span class="summary-sig-default">True</span>)</span><br />
+      Copies a source file to a target file.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._copyLocalFile">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.LocalPeer-class.html#name" class="summary-name">name</a><br />
+      Name of the peer.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.LocalPeer-class.html#collectDir" class="summary-name">collectDir</a><br />
+      Path to the peer's collect directory (an absolute local path).
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="CedarBackup2.peer.LocalPeer-class.html#ignoreFailureMode" class="summary-name">ignoreFailureMode</a><br />
+      Ignore failure mode for peer.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">name</span>,
+        <span class="sig-arg">collectDir</span>,
+        <span class="sig-arg">ignoreFailureMode</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Initializes a local backup peer.</p>
+  <p>Note that the collect directory must be an absolute path, but does not
+  have to exist when the object is instantiated.  We do a lazy validation 
+  on this value since we could (potentially) be creating peer objects 
+  before an ongoing backup completed.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>name</code></strong> (String, typically a hostname) - Name of the backup peer</li>
+        <li><strong class="pname"><code>collectDir</code></strong> (String representing an absolute local path on disk) - Path to the peer's collect directory</li>
+        <li><strong class="pname"><code>ignoreFailureMode</code></strong> (One of VALID_FAILURE_MODES) - Ignore failure mode for this peer</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the name is empty.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If collect directory is not an absolute path.</li>
+    </ul></dd>
+    <dt>Overrides:
+        object.__init__
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="stagePeer"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">stagePeer</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">targetDir</span>,
+        <span class="sig-arg">ownership</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">permissions</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer.stagePeer">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Stages data from the peer into the indicated local target 
+  directory.</p>
+  <p>The collect and target directories must both already exist before this
+  method is called.  If passed in, ownership and permissions will be 
+  applied to the files that are copied.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>targetDir</code></strong> (String representing a directory on disk) - Target directory to write data into</li>
+        <li><strong class="pname"><code>ownership</code></strong> (Tuple of numeric ids <code>(uid, gid)</code>) - Owner and group that the staged files should have</li>
+        <li><strong class="pname"><code>permissions</code></strong> (UNIX permissions mode, specified in octal (i.e. 
+          <code>0640</code>).) - Permissions that the staged files should have</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of files copied from the source directory to the target 
+          directory.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If collect directory is not a directory or does not exist</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If target directory is not a directory, does not exist or is not 
+        absolute.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there were no files to stage (i.e. the directory was empty)</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an IO error copying a file.</li>
+        <li><code><strong class='fraise'>OSError</strong></code> - If there is an OS error copying or changing permissions on a file</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        The caller is responsible for checking that the indicator exists, 
+        if they care.  This function only stages the files within the 
+        directory.
+        </li>
+        <li>
+        If you have user/group as strings, call the <a 
+        href="CedarBackup2.util-module.html#getUidGid" 
+        class="link">util.getUidGid</a> function to get the associated 
+        uid/gid as an ownership tuple.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="checkCollectIndicator"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">checkCollectIndicator</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">collectIndicator</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer.checkCollectIndicator">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Checks the collect indicator in the peer's staging directory.</p>
+  <p>When a peer has completed collecting its backup files, it will write 
+  an empty indicator file into its collect directory.  This method checks 
+  to see whether that indicator has been written.  We're &quot;stupid&quot;
+  here - if the collect directory doesn't exist, you'll naturally get back 
+  <code>False</code>.</p>
+  <p>If you need to, you can override the name of the collect indicator 
+  file by passing in a different name.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>collectIndicator</code></strong> (String representing name of a file in the collect directory) - Name of the collect indicator file to check</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Boolean true/false depending on whether the indicator exists.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="writeStageIndicator"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">writeStageIndicator</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">stageIndicator</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">ownership</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">permissions</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer.writeStageIndicator">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Writes the stage indicator in the peer's staging directory.</p>
+  <p>When the master has completed collecting its backup files, it will 
+  write an empty indicator file into the peer's collect directory.  The 
+  presence of this file implies that the staging process is complete.</p>
+  <p>If you need to, you can override the name of the stage indicator file 
+  by passing in a different name.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>stageIndicator</code></strong> (String representing name of a file in the collect directory) - Name of the indicator file to write</li>
+        <li><strong class="pname"><code>ownership</code></strong> (Tuple of numeric ids <code>(uid, gid)</code>) - Owner and group that the indicator file should have</li>
+        <li><strong class="pname"><code>permissions</code></strong> (UNIX permissions mode, specified in octal (i.e. 
+          <code>0640</code>).) - Permissions that the indicator file should have</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If collect directory is not a directory or does not exist</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an IO error creating the file.</li>
+        <li><code><strong class='fraise'>OSError</strong></code> - If there is an OS error creating or changing permissions on the 
+        file</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        If you have user/group as strings, call the <a 
+        href="CedarBackup2.util-module.html#getUidGid" 
+        class="link">util.getUidGid</a> function to get the associated 
+        uid/gid as an ownership tuple.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_copyLocalDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_copyLocalDir</span>(<span class="sig-arg">sourceDir</span>,
+        <span class="sig-arg">targetDir</span>,
+        <span class="sig-arg">ownership</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">permissions</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._copyLocalDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Copies files from the source directory to the target directory.</p>
+  <p>This function is not recursive.  Only the files in the directory will 
+  be copied.   Ownership and permissions will be left at their default 
+  values if new values are not specified.  The source and target 
+  directories are allowed to be soft links to a directory, but besides that
+  soft links are ignored.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sourceDir</code></strong> (String representing a directory on disk) - Source directory</li>
+        <li><strong class="pname"><code>targetDir</code></strong> (String representing a directory on disk) - Target directory</li>
+        <li><strong class="pname"><code>ownership</code></strong> (Tuple of numeric ids <code>(uid, gid)</code>) - Owner and group that the copied files should have</li>
+        <li><strong class="pname"><code>permissions</code></strong> (UNIX permissions mode, specified in octal (i.e. 
+          <code>0640</code>).) - Permissions that the staged files should have</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>Number of files copied from the source directory to the target 
+          directory.</dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If source or target is not a directory or does not exist.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an IO error copying the files.</li>
+        <li><code><strong class='fraise'>OSError</strong></code> - If there is an OS error copying or changing permissions on a files</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <p><strong>Note:</strong>
+        If you have user/group as strings, call the <a 
+        href="CedarBackup2.util-module.html#getUidGid" 
+        class="link">util.getUidGid</a> function to get the associated 
+        uid/gid as an ownership tuple.
+      </p>
+</div></td></tr></table>
+</div>
+<a name="_copyLocalFile"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_copyLocalFile</span>(<span class="sig-arg">sourceFile</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">targetFile</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">ownership</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">permissions</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">overwrite</span>=<span class="sig-default">True</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._copyLocalFile">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Copies a source file to a target file.</p>
+  <p>If the source file is <code>None</code> then the target file will be 
+  created or overwritten as an empty file.  If the target file is 
+  <code>None</code>, this method is a no-op.  Attempting to copy a soft 
+  link or a directory will result in an exception.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>sourceFile</code></strong> (String representing a file on disk, as an absolute path) - Source file to copy</li>
+        <li><strong class="pname"><code>targetFile</code></strong> (String representing a file on disk, as an absolute path) - Target file to create</li>
+        <li><strong class="pname"><code>ownership</code></strong> (Tuple of numeric ids <code>(uid, gid)</code>) - Owner and group that the copied should have</li>
+        <li><strong class="pname"><code>permissions</code></strong> (UNIX permissions mode, specified in octal (i.e. 
+          <code>0640</code>).) - Permissions that the staged files should have</li>
+        <li><strong class="pname"><code>overwrite</code></strong> (Boolean true/false.) - Indicates whether it's OK to overwrite the target file.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the passed-in source file is not a regular file.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If the target file already exists.</li>
+        <li><code><strong class='fraise'>IOError</strong></code> - If there is an IO error copying the file</li>
+        <li><code><strong class='fraise'>OSError</strong></code> - If there is an OS error copying or changing permissions on a file</li>
+    </ul></dd>
+  </dl>
+<div class="fields">      <strong>Notes:</strong>
+      <ul class="nomargin-top">
+        <li>
+        If you have user/group as strings, call the <a 
+        href="CedarBackup2.util-module.html#getUidGid" 
+        class="link">util.getUidGid</a> function to get the associated 
+        uid/gid as an ownership tuple.
+        </li>
+        <li>
+        We will not overwrite a target file that exists when this method is
+        invoked.  If the target already exists, we'll raise an exception.
+        </li>
+      </ul>
+</div></td></tr></table>
+</div>
+<a name="_setName"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setName</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._setName">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the peer name. The value must be a 
+  non-empty string and cannot be <code>None</code>.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is an empty string or <code>None</code>.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setCollectDir"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setCollectDir</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._setCollectDir">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the collect directory. The value must be 
+  an absolute path and cannot be <code>None</code>. It does not have to 
+  exist on disk at the time of assignment.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is <code>None</code> or is not an absolute path.</li>
+        <li><code><strong class='fraise'>ValueError</strong></code> - If a path cannot be encoded properly.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_setIgnoreFailureMode"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_setIgnoreFailureMode</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="CedarBackup2.peer-pysrc.html#LocalPeer._setIgnoreFailureMode">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Property target used to set the ignoreFailure mode. If not 
+  <code>None</code>, the mode must be one of the values in 
+  VALID_FAILURE_MODES.</p>
+  <dl class="fields">
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'>ValueError</strong></code> - If the value is not valid.</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="name"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">name</h3>
+  <p>Name of the peer.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_getName" class="summary-sig-name" onclick="show_private();">_getName</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the peer name.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_setName" class="summary-sig-name" onclick="show_private();">_setName</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the peer name.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="collectDir"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">collectDir</h3>
+  <p>Path to the peer's collect directory (an absolute local path).</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_getCollectDir" class="summary-sig-name" onclick="show_private();">_getCollectDir</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the collect directory.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_setCollectDir" class="summary-sig-name" onclick="show_private();">_setCollectDir</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the collect directory.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="ignoreFailureMode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">ignoreFailureMode</h3>
+  <p>Ignore failure mode for peer.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_getIgnoreFailureMode" class="summary-sig-name" onclick="show_private();">_getIgnoreFailureMode</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Property target used to get the ignoreFailure mode.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="CedarBackup2.peer.LocalPeer-class.html#_setIgnoreFailureMode" class="summary-sig-name" onclick="show_private();">_setIgnoreFailureMode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">value</span>)</span>
+        - Property target used to set the ignoreFailure mode.
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="CedarBackup2-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://bitbucket.org/cedarsolutions/cedar-backup2">CedarBackup2</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

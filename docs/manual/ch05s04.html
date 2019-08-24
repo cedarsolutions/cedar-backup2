@@ -1,0 +1,223 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Setting up a Client Peer Node</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch05.html" title="Chapter 5. Configuration"><link rel="prev" href="ch05s03.html" title="Setting up a Pool of One"><link rel="next" href="ch05s05.html" title="Setting up a Master Peer Node"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Setting up a Client Peer Node</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch05s03.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Configuration</th><td width="20%" align="right"> <a accesskey="n" href="ch05s05.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-config-client"></a>Setting up a Client Peer Node</h2></div></div></div><p>
+         Cedar Backup has been designed to backup entire <span class="quote">&#8220;<span class="quote">pools</span>&#8221;</span>
+         of machines.  In any given pool, there is one master and some number
+         of clients.  Most of the work takes place on the master, so
+         configuring a client is a little simpler than configuring a master.
+      </p><p>
+         Backups are designed to take place over an RSH or SSH connection.
+         Because RSH is generally considered insecure, you are encouraged to
+         use SSH rather than RSH. This document will only describe how to
+         configure Cedar Backup to use SSH; if you want to use RSH, you're on
+         your own. 
+      </p><p>
+         Once you complete all of these configuration steps, your backups will
+         run as scheduled out of cron. Any errors that occur will be reported
+         in daily emails to your root user (or the user that receives root's
+         email). If you don't receive any emails, then you know your backup
+         worked.
+      </p><p>
+         Note: all of these configuration steps should be run as the root user,
+         unless otherwise indicated.
+      </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+            See <a class="xref" href="apd.html" title="Appendix D. Securing Password-less SSH Connections">Appendix D, <i>Securing Password-less SSH Connections</i></a> for some important notes on
+            how to optionally further secure password-less SSH connections to
+            your clients.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2236"></a>Step 1: Decide when you will run your backup.</h3></div></div></div><p>
+            There are four parts to a Cedar Backup run: collect, stage, store
+            and purge. The usual way of setting off these steps is through a
+            set of cron jobs.  Although you won't create your cron jobs just
+            yet, you should decide now when you will run your backup so you are
+            prepared for later.
+         </p><p>
+            Backing up large directories and creating ISO filesystem images can be
+            intensive operations, and could slow your computer down
+            significantly. Choose a backup time that will not interfere with
+            normal use of your computer.  Usually, you will want the backup to
+            occur every day, but it is possible to configure cron to execute
+            the backup only one day per week, three days per week, etc.
+         </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3><p>
+               Because of the way Cedar Backup works, you must ensure that your
+               backup <span class="emphasis"><em>always</em></span> runs on the first day of your
+               configured week.  This is because Cedar Backup will only clear
+               incremental backup information and re-initialize your media when
+               running on the first day of the week.  If you skip running Cedar
+               Backup on the first day of the week, your backups will likely be
+               <span class="quote">&#8220;<span class="quote">confused</span>&#8221;</span> until the next week begins, or until you
+               re-run the backup using the <code class="option">--full</code> flag.
+            </p></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2245"></a>Step 2: Make sure email works.</h3></div></div></div><p>
+            Cedar Backup relies on email for problem notification.  This
+            notification works through the magic of cron.  Cron will email any
+            output from each job it executes to the user associated with the
+            job.  Since by default Cedar Backup only writes output to the
+            terminal if errors occur, this neatly ensures that notification
+            emails will only be sent out if errors occur.
+         </p><p>
+            In order to receive problem notifications, you must make sure that
+            email works for the user which is running the Cedar Backup cron
+            jobs (typically root).  Refer to your distribution's documentation
+            for information on how to configure email on your system.  Note
+            that you may prefer to configure root's email to forward to some
+            other user, so you do not need to check the root user's mail in
+            order to see Cedar Backup errors.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2249"></a>Step 3: Configure the master in your backup pool.</h3></div></div></div><p>
+            You will not be able to complete the client configuration until at
+            least step 3 of the master's configuration has been completed. In
+            particular, you will need to know the master's public SSH identity
+            to fully configure a client.
+         </p><p>
+            To find the master's public SSH identity, log in as the backup
+            user on the master and <span class="command"><strong>cat</strong></span> the public identity
+            file <code class="filename">~/.ssh/id_rsa.pub</code>:
+         </p><pre class="programlisting">
+user@machine&gt; cat ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEA0vOKjlfwohPg1oPRdrmwHk75l3mI9Tb/WRZfVnu2Pw69
+uyphM9wBLRo6QfOC2T8vZCB8o/ZIgtAM3tkM0UgQHxKBXAZ+H36TOgg7BcI20I93iGtzpsMA/uXQy8kH
+HgZooYqQ9pw+ZduXgmPcAAv2b5eTm07wRqFt/U84k6bhTzs= user@machine
+         </pre></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2256"></a>Step 4: Configure your backup user.</h3></div></div></div><p>
+             Choose a user to be used for backups. Some platforms may come with
+             a "ready made" backup user. For other platforms, you may have to
+             create a user yourself. You may choose any id you like, but a
+             descriptive name such as <code class="literal">backup</code> or
+             <code class="literal">cback</code> is a good choice.  See your
+             distribution's documentation for information on how to add a user.
+         </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+               Standard Debian systems come with a user named
+               <code class="literal">backup</code>.  You may choose to stay with this
+               user or create another one.
+            </p></div><p>
+             Once you have created your backup user, you must create an SSH
+             keypair for it. Log in as your backup user, and then run the
+             command <span class="command"><strong>ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa</strong></span>:
+         </p><pre class="programlisting">
+user@machine&gt; ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+Generating public/private rsa key pair.
+Created directory '/home/user/.ssh'.
+Your identification has been saved in /home/user/.ssh/id_rsa.
+Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+The key fingerprint is:
+11:3e:ad:72:95:fe:96:dc:1e:3b:f4:cc:2c:ff:15:9e user@machine
+         </pre><p>
+            The default permissions for this directory should be fine.
+            However, if the directory existed before you ran
+            <span class="command"><strong>ssh-keygen</strong></span>, then you may need to modify the
+            permissions.  Make sure that the <code class="filename">~/.ssh</code>
+            directory is readable only by the backup user (i.e. mode
+            <code class="literal">700</code>), that the
+            <code class="filename">~/.ssh/id_rsa</code> file is only readable and
+            writable only by the backup user (i.e. mode <code class="literal">600</code>)
+            and that the <code class="filename">~/.ssh/id_rsa.pub</code> file is
+            writable only by the backup user (i.e. mode <code class="literal">600</code>
+            or mode <code class="literal">644</code>).
+         </p><p>
+            Finally, take the master's public SSH identity (which you found in
+            step 2) and cut-and-paste it into the file
+            <code class="filename">~/.ssh/authorized_keys</code>.  Make sure the
+            identity value is pasted into the file <span class="emphasis"><em>all on one
+            line</em></span>, and that the <code class="filename">authorized_keys</code>
+            file is owned by your backup user and has permissions
+            <code class="literal">600</code>.
+         </p><p>
+            If you have other preferences or standard ways of setting up your
+            users' SSH configuration (i.e. different key type, etc.), feel free
+            to do things your way.  The important part is that the master must
+            be able to SSH into a client <span class="emphasis"><em>with no password entry
+            required</em></span>.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2283"></a>Step 5: Create your backup tree.</h3></div></div></div><p>
+            Cedar Backup requires a backup directory tree on disk. This
+            directory tree must be roughly as big as the amount of data that
+            will be backed up on a nightly basis (more if you elect not to
+            purge it all every night).
+         </p><p>
+            You should create a collect directory and a working (temporary)
+            directory. One recommended layout is this:
+         </p><pre class="programlisting">
+/opt/
+     backup/
+            collect/
+            tmp/
+         </pre><p>
+            If you will be backing up sensitive information (i.e. password
+            files), it is recommended that these directories be owned by the
+            backup user (whatever you named it), with permissions
+            <code class="literal">700</code>. 
+         </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+               You don't have to use <code class="filename">/opt</code> as the root of your
+               directory structure.  Use anything you would like.  I use
+               <code class="filename">/opt</code> because it is my <span class="quote">&#8220;<span class="quote">dumping
+               ground</span>&#8221;</span> for filesystems that Debian does not manage.
+            </p><p>
+               Some users have requested that the Debian packages set up a more
+               "standard" location for backups right out-of-the-box.  I have
+               resisted doing this because it's difficult to choose an
+               appropriate backup location from within the package.  If you
+               would prefer, you can create the backup directory structure
+               within some existing Debian directory such as
+               <code class="filename">/var/backups</code> or
+               <code class="filename">/var/tmp</code>.
+            </p></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2298"></a>Step 6: Create the Cedar Backup configuration file.</h3></div></div></div><p>
+            Following the instructions in <a class="xref" href="ch05s02.html" title="Configuration File Format">the section called &#8220;Configuration File Format&#8221;</a> (above), create a configuration
+            file for your machine.  Since you are working with a client, you
+            must configure all action-specific sections for the collect and
+            purge actions.
+         </p><p>
+            The usual location for the Cedar Backup config file is
+            <code class="filename">/etc/cback.conf</code>.  If you change the location,
+            make sure you edit your cronjobs (below) to point the
+            <span class="command"><strong>cback</strong></span> script at the correct config file (using
+            the <code class="option">--config</code> option).
+         </p><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3><p>
+               Configuration files should always be writable only by root
+               (or by the file owner, if the owner is not root).
+            </p><p>
+               If you intend to place confidental information into the Cedar
+               Backup configuration file, make sure that you set the filesystem
+               permissions on the file appropriately.  For instance, if you
+               configure any extensions that require passwords or other similar
+               information, you should make the file readable only to root or
+               to the file owner (if the owner is not root).
+            </p></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2309"></a>Step 7: Validate the Cedar Backup configuration file.</h3></div></div></div><p>
+            Use the command <span class="command"><strong>cback validate</strong></span> to validate your
+            configuration file. This command checks that the configuration file
+            can be found and parsed, and also checks for typical configuration
+            problems.  This command <span class="emphasis"><em>only</em></span> validates
+            configuration on the one client, not the master or any other
+            clients in a pool.
+         </p><p>
+            Note: the most common cause of configuration problems is in not
+            closing XML tags properly. Any XML tag that is
+            <span class="quote">&#8220;<span class="quote">opened</span>&#8221;</span> must be <span class="quote">&#8220;<span class="quote">closed</span>&#8221;</span> appropriately.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2317"></a>Step 8: Test your backup.</h3></div></div></div><p>
+            Use the command <span class="command"><strong>cback --full collect purge</strong></span>.  If the 
+            command completes with no output, then the backup was run successfully.
+            Just to be sure that everything worked properly, check the logfile 
+            (<code class="filename">/var/log/cback.log</code>) for errors.
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idm2322"></a>Step 9: Modify the backup cron jobs.</h3></div></div></div><p>
+            Since Cedar Backup should be run as root, you should add a set of
+            lines like this to your <code class="filename">/etc/crontab</code> file:
+         </p><pre class="programlisting">
+30 00 * * * root  cback collect
+30 06 * * * root  cback purge
+         </pre><p>
+            You should consider adding the <code class="option">--output</code> or
+            <code class="option">-O</code> switch to your <span class="command"><strong>cback</strong></span>
+            command-line in cron.  This will result in larger logs, but could
+            help diagnose problems when commands like
+            <span class="command"><strong>cdrecord</strong></span> or <span class="command"><strong>mkisofs</strong></span> fail
+            mysteriously.
+         </p><p>
+            You will need to coordinate the collect and purge actions on the
+            client so that the collect action completes before the master
+            attempts to stage, and so that the purge action does not begin
+            until after the master has completed staging.  Usually, allowing an
+            hour or two between steps should be sufficient.  <a href="#ftn.cedar-config-foot-coordinate" class="footnote" name="cedar-config-foot-coordinate"><sup class="footnote">[21]</sup></a>
+         </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+               For general information about using cron, see the manpage for
+               crontab(5).
+            </p><p>
+               On a Debian system, execution of daily backups is controlled by
+               the file <code class="filename">/etc/cron.d/cedar-backup2</code>.  As
+               installed, this file contains several different settings, all
+               commented out.  Uncomment the <span class="quote">&#8220;<span class="quote">Client machine</span>&#8221;</span>
+               entries in the file, and change the lines so that the backup
+               goes off when you want it to.
+            </p></div></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.cedar-config-foot-coordinate" class="footnote"><p><a href="#cedar-config-foot-coordinate" class="para"><sup class="para">[21] </sup></a>See <a class="xref" href="ch02s05.html" title="Coordination between Master and Clients">the section called &#8220;Coordination between Master and Clients&#8221;</a> in <a class="xref" href="ch02.html" title="Chapter 2. Basic Concepts">Chapter 2, <i>Basic Concepts</i></a>.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch05s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch05.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch05s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Setting up a Pool of One </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Setting up a Master Peer Node</td></tr></table></div></body></html>

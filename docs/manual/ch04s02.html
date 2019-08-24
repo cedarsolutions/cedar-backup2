@@ -1,0 +1,139 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>The cback command</title><link rel="stylesheet" type="text/css" href="styles.css"><meta name="generator" content="DocBook XSL Stylesheets V1.79.1"><link rel="home" href="index.html" title="Cedar Backup 2 Software Manual"><link rel="up" href="ch04.html" title="Chapter 4. Command Line Tools"><link rel="prev" href="ch04.html" title="Chapter 4. Command Line Tools"><link rel="next" href="ch04s03.html" title="The cback-amazons3-sync command"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The <span class="command"><strong>cback</strong></span> command</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Command Line Tools</th><td width="20%" align="right"> <a accesskey="n" href="ch04s03.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cedar-commandline-cback"></a>The <span class="command"><strong>cback</strong></span> command</h2></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-cback-intro"></a>Introduction</h3></div></div></div><p>
+            Cedar Backup's primary command-line interface is the
+            <span class="command"><strong>cback</strong></span> command.  It controls the entire
+            backup process.  
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-cback-syntax"></a>Syntax</h3></div></div></div><p>
+            The <span class="command"><strong>cback</strong></span> command has the following syntax:
+         </p><pre class="screen">
+ Usage: cback [switches] action(s)
+
+ The following switches are accepted:
+
+   -h, --help         Display this usage/help listing
+   -V, --version      Display version information
+   -b, --verbose      Print verbose output as well as logging to disk
+   -q, --quiet        Run quietly (display no output to the screen)
+   -c, --config       Path to config file (default: /etc/cback.conf)
+   -f, --full         Perform a full backup, regardless of configuration
+   -M, --managed      Include managed clients when executing actions
+   -N, --managed-only Include ONLY managed clients when executing actions
+   -l, --logfile      Path to logfile (default: /var/log/cback.log)
+   -o, --owner        Logfile ownership, user:group (default: root:adm)
+   -m, --mode         Octal logfile permissions mode (default: 640)
+   -O, --output       Record some sub-command (i.e. cdrecord) output to the log
+   -d, --debug        Write debugging information to the log (implies --output)
+   -s, --stack        Dump a Python stack trace instead of swallowing exceptions
+   -D, --diagnostics  Print runtime diagnostics to the screen and exit
+
+ The following actions may be specified:
+
+   all                Take all normal actions (collect, stage, store, purge)
+   collect            Take the collect action
+   stage              Take the stage action
+   store              Take the store action
+   purge              Take the purge action
+   rebuild            Rebuild "this week's" disc if possible
+   validate           Validate configuration only
+   initialize         Initialize media for use with Cedar Backup
+
+ You may also specify extended actions that have been defined in
+ configuration.
+
+ You must specify at least one action to take.  More than one of
+ the "collect", "stage", "store" or "purge" actions and/or
+ extended actions may be specified in any arbitrary order; they
+ will be executed in a sensible order.  The "all", "rebuild",
+ "validate", and "initialize" actions may not be combined with
+ other actions.
+         </pre><p>
+            Note that the all action <span class="emphasis"><em>only</em></span> executes the
+            standard four actions.  It never executes any of the configured
+            extensions.  <a href="#ftn.idm560" class="footnote" name="idm560"><sup class="footnote">[16]</sup></a>
+         </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-cback-options"></a>Switches</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">-h</code>, <code class="option">--help</code></span></dt><dd><p>Display usage/help listing.</p></dd><dt><span class="term"><code class="option">-V</code>, <code class="option">--version</code></span></dt><dd><p>Display version information.</p></dd><dt><span class="term"><code class="option">-b</code>, <code class="option">--verbose</code></span></dt><dd><p>
+                     Print verbose output to the screen as well writing to the
+                     logfile.  When this option is enabled, most information
+                     that would normally be written to the logfile will also be
+                     written to the screen.
+                  </p></dd><dt><span class="term"><code class="option">-q</code>, <code class="option">--quiet</code></span></dt><dd><p>Run quietly (display no output to the screen).</p></dd><dt><span class="term"><code class="option">-c</code>, <code class="option">--config</code></span></dt><dd><p>
+                     Specify the path to an alternate configuration file.
+                     The default configuration file is <code class="filename">/etc/cback.conf</code>.
+                  </p></dd><dt><span class="term"><code class="option">-f</code>, <code class="option">--full</code></span></dt><dd><p>
+                    Perform a full backup, regardless of configuration.  For
+                    the collect action, this means that any existing
+                    information related to incremental backups will be ignored
+                    and rewritten; for the store action, this means that a new
+                    disc will be started.
+                  </p></dd><dt><span class="term"><code class="option">-M</code>, <code class="option">--managed</code></span></dt><dd><p>
+                     Include managed clients when executing actions.  If the
+                     action being executed is listed as a managed action for a
+                     managed client, execute the action on that client after
+                     executing the action locally.
+                  </p></dd><dt><span class="term"><code class="option">-N</code>, <code class="option">--managed-only</code></span></dt><dd><p>
+                     Include <span class="emphasis"><em>only</em></span> managed clients when
+                     executing actions.  If the action being executed is listed
+                     as a managed action for a managed client, execute the action
+                     on that client &#8212; but <span class="emphasis"><em>do not</em></span>
+                     execute the action locally.
+                  </p></dd><dt><span class="term"><code class="option">-l</code>, <code class="option">--logfile</code></span></dt><dd><p>
+                     Specify the path to an alternate logfile.  The default
+                     logfile file is <code class="filename">/var/log/cback.log</code>.
+                  </p></dd><dt><span class="term"><code class="option">-o</code>, <code class="option">--owner</code></span></dt><dd><p>
+                    Specify the ownership of the logfile, in the form
+                    <code class="literal">user:group</code>.  The default ownership is
+                    <code class="literal">root:adm</code>, to match the Debian standard
+                    for most logfiles. This value will only be used when
+                    creating a new logfile.  If the logfile already exists when
+                    the <span class="command"><strong>cback</strong></span> command is executed, it will
+                    retain its existing ownership and mode. Only user and group
+                    names may be used, not numeric uid and gid values.
+                  </p></dd><dt><span class="term"><code class="option">-m</code>, <code class="option">--mode</code></span></dt><dd><p>
+                    Specify  the  permissions  for  the logfile, using the
+                    numeric mode as in chmod(1).  The default mode is
+                    <code class="literal">0640</code> (<code class="literal">-rw-r-----</code>).
+                    This value will only be used when creating a new logfile.
+                    If the logfile already exists when the
+                    <span class="command"><strong>cback</strong></span> command is executed, it will retain
+                    its existing ownership and mode.
+                  </p></dd><dt><span class="term"><code class="option">-O</code>, <code class="option">--output</code></span></dt><dd><p>
+                     Record some sub-command output to the logfile.  When this
+                     option is enabled, all output from system commands will be
+                     logged.  This might be useful for debugging or just for
+                     reference.
+                  </p></dd><dt><span class="term"><code class="option">-d</code>, <code class="option">--debug</code></span></dt><dd><p>
+                     Write debugging information to the logfile.  This option
+                     produces a high volume of output, and would generally only
+                     be needed when debugging a problem.  This option implies
+                     the <code class="option">--output</code> option, as well.
+                  </p></dd><dt><span class="term"><code class="option">-s</code>, <code class="option">--stack</code></span></dt><dd><p>
+                     Dump a Python stack trace instead of swallowing
+                     exceptions.  This forces Cedar Backup to dump the entire
+                     Python stack trace associated with an error, rather than
+                     just propagating last message it received back up to the
+                     user interface.  Under some circumstances, this is useful
+                     information to include along with a bug report.
+                  </p></dd><dt><span class="term"><code class="option">-D</code>, <code class="option">--diagnostics</code></span></dt><dd><p>
+                     Display runtime diagnostic information and then exit.
+                     This diagnostic information is often useful when filing a
+                     bug report.
+                  </p></dd></dl></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="cedar-commandline-cback-actions"></a>Actions</h3></div></div></div><p>
+            You can find more information about the various actions in <a class="xref" href="ch02s04.html" title="The Backup Process">the section called &#8220;The Backup Process&#8221;</a> (in <a class="xref" href="ch02.html" title="Chapter 2. Basic Concepts">Chapter 2, <i>Basic Concepts</i></a>).
+            In general, you may specify any combination of the
+            <code class="literal">collect</code>, <code class="literal">stage</code>,
+            <code class="literal">store</code> or <code class="literal">purge</code> actions, and
+            the specified actions will be executed in a sensible order.  Or,
+            you can specify one of the <code class="literal">all</code>,
+            <code class="literal">rebuild</code>, <code class="literal">validate</code>, or
+            <code class="literal">initialize</code> actions (but these actions may not be
+            combined with other actions).
+         </p><p>
+            If you have configured any Cedar Backup extensions, then the
+            actions associated with those extensions may also be specified on
+            the command line.  If you specify any other actions along with an
+            extended action, the actions will be executed in a sensible order
+            per configuration.  The <code class="literal">all</code> action never
+            executes extended actions, however.
+         </p></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idm560" class="footnote"><p><a href="#idm560" class="para"><sup class="para">[16] </sup></a>Some users find this surprising,
+            because extensions are configured with sequence numbers.  I did it
+            this way because I felt that running extensions as part of the all
+            action would sometimes result in <span class="quote">&#8220;<span class="quote">surprising</span>&#8221;</span>
+            behavior.  Better to be definitive than confusing.</p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch04s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 4. Command Line Tools </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> The <span class="command"><strong>cback-amazons3-sync</strong></span> command</td></tr></table></div></body></html>
