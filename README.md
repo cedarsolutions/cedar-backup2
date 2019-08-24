@@ -91,7 +91,7 @@ was the last release that includedpackages for Cedar Backup v2.
 ## Support
 
 As of 11 Nov 2017, Cedar Backup v2 is unsupported.  Please move to 
-[Cedar Backup v3](https://github.org/cedarsolutions/cedar-backup3), 
+[Cedar Backup v3](https://github.com/cedarsolutions/cedar-backup3), 
 which uses the Python 3 interpreter.
 
 ## Migrating from Version 2 to Version 3
