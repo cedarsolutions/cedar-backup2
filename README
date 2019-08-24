@@ -9,9 +9,6 @@ Backup v2 is unsupported as of 11 Nov 2017. There will be no additional
 releases, and users who report problems will be referred to the new
 version. Please move to Cedar Backup v3.
 
-For migration instructions, see the user manual or the notes in the
-BitBucket wiki: https://bitbucket.org/cedarsolutions/cedar-backup2/wiki/Home
-
 ----------------------------------------------------------------------------
 
 Cedar Backup is a software package designed to manage system backups for a
@@ -42,5 +39,5 @@ the first release always lacked.
 
 For more information, see the Cedar Backup web site:
 
-   https://bitbucket.org/cedarsolutions/cedar-backup2
+   https://github.com/cedarsolutions/cedar-backup2
 
