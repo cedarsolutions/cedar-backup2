@@ -1,6 +1,6 @@
 _There are two releases of Cedar Backup: version 2 and version 3.
 This project (Cedar Backup v2) uses the Python 2 interpreter, and 
-[Cedar Backup v3](https://github.com/cedarsolutions/cedar-backup3) 
+[Cedar Backup v3](https://github.com/pronovic/cedar-backup3) 
 uses the Python 3 interpreter.   Because Python 2 is 
 approaching its [end of life](http://legacy.python.org/dev/peps/pep-0373/#id2), 
 and Cedar Backup v3 has been available since July of 2015, 
@@ -59,12 +59,12 @@ instance: the `IsoImage` class represents an ISO CD image;
 the `CdWriter` class represents a CD-R/CD-RW writer device; and the
 `FilesystemList` class represents a list of files and directories on a
 filesystem.  For more information, see the 
-[public interface documentation](https://cedarsolutions.github.io/cedar-backup2/docs/interface/index.html), 
+[public interface documentation](https://pronovic.github.io/cedar-backup2/docs/interface/index.html), 
 generated from the source code using [Epydoc](http://epydoc.sourceforge.net).
 
 ## Documentation
 
-See the [Changelog](https://github.com/cedarsolutions/cedar-backup2/blob/master/Changelog) for
+See the [Changelog](https://github.com/pronovic/cedar-backup2/blob/master/Changelog) for
 recent changes.
 
 The Cedar Backup Software Manual documents the process of setting up and using
@@ -74,8 +74,8 @@ data, and how to get support.
 
 The following versions of the manual are available:
 
-* [Single-page HTML](https://cedarsolutions.github.io/cedar-backup2/docs/manual/manual.html)
-* [Multiple-page HTML](https://cedarsolutions.github.io/cedar-backup2/docs/manual/index.html)
+* [Single-page HTML](https://pronovic.github.io/cedar-backup2/docs/manual/manual.html)
+* [Multiple-page HTML](https://pronovic.github.io/cedar-backup2/docs/manual/index.html)
 
 Most users will want to look at the multiple-page HTML version.
 
@@ -91,7 +91,7 @@ was the last release that includedpackages for Cedar Backup v2.
 ## Support
 
 As of 11 Nov 2017, Cedar Backup v2 is unsupported.  Please move to 
-[Cedar Backup v3](https://github.com/cedarsolutions/cedar-backup3), 
+[Cedar Backup v3](https://github.com/pronovic/cedar-backup3), 
 which uses the Python 3 interpreter.
 
 ## Migrating from Version 2 to Version 3
